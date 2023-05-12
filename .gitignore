@@ -30,3 +30,24 @@
 *.exe
 *.out
 *.app
+
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Hh]oudiniTemp/
+/Assets/AssetStoreTools*
+/FBEngine/lib*
+/cmake-build-debug*
+/cmake-build-release*
+
+/.vs/
+/.DS_Store/
+
+# Builds
+*.apk
+*.unitypackage
+
+steam_appid.txt
+.vs
