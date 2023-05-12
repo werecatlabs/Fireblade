@@ -1,0 +1,690 @@
+if (APPLE)
+    project(FBGraphicsOgreNext C CXX OBJC)
+else()
+    project(FBGraphicsOgreNext C CXX)
+endif()
+
+add_compile_definitions (FB_OGRE_USE_PARTICLE_UNIVERSE=0)
+add_compile_definitions (RAPIDJSON_HAS_STDSTRING=1)
+add_compile_definitions (OGRE_STATIC_LIB)
+add_compile_definitions (FREEIMAGE_LIB)
+#add_compile_definitions (OGRE_USE_SIMD=0)
+#add_compile_definitions (OGRE_THREAD_SUPPORT=0)
+#add_compile_definitions (OGRE_THREAD_PROVIDER=0)
+
+if (FB_BUILD_OGRENEXT_DEPRECATED)
+    add_compile_definitions (OGRE_DEPRECATED_2_2)
+endif()
+
+set(FB_HEADER_REL_PATH "${FB_ROOT}/FBEngine/cpp/Project/FBGraphicsOgreNext/../../Include/FBGraphicsOgreNext")
+set(FB_SOURCE_REL_PATH "${FB_ROOT}/FBEngine/cpp/Project/FBGraphicsOgreNext/../../Source/FBGraphicsOgreNext")
+
+file(GLOB HEADER_FILES "../../Include/FBGraphicsOgreNext/*.h" "../../Include/FBGraphicsOgreNext/*.inl")
+file(GLOB SOURCE_FILES "../../Source/FBGraphicsOgreNext/*.h" "../../Source/FBGraphicsOgreNext/*.cpp")
+
+if (WIN32)
+    file(GLOB HEADER_FILES_OGRE_INCLUDE_WIN32 "../../Include/FBGraphicsOgreNext/Window/Windows/*.h")
+    file(GLOB SOURCE_FILES_OGRE_INCLUDE_WIN32 "../../Source/FBGraphicsOgreNext/Window/Windows/*.cpp")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_INCLUDE_WIN32})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_INCLUDE_WIN32})
+elseif(APPLE)
+    set(CMAKE_MACOSX_RPATH 1)
+    find_library(COCOA_LIBRARY Cocoa)
+    find_library(FOUNDATION_LIBRARY Foundation)
+    find_library(IOKIT_LIBRARY IOKit)
+    find_path(COCOA_INCLUDE_DIR Cocoa/Cocoa.h)
+    find_library(CARBON_LIBRARY Carbon)
+
+    #add_definitions(-x objective-c++)
+
+    file(GLOB HEADER_FILES_OGRE_INCLUDE_OSX "../../Include/FBGraphicsOgreNext/Window/Apple/*.h")
+    file(GLOB SOURCE_FILES_OGRE_INCLUDE_OSX "../../Source/FBGraphicsOgreNext/Window/Apple/*.cpp" "../../Source/FBGraphicsOgreNext/Window/Apple/*.mm")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_INCLUDE_OSX})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_INCLUDE_OSX})
+
+    file(GLOB HEADER_FILES_OGRE_INCLUDE_OSX "../../Include/FBGraphicsOgreNext/Window/Apple/macOS/*.h")
+    file(GLOB SOURCE_FILES_OGRE_INCLUDE_OSX "../../Source/FBGraphicsOgreNext/Window/Apple/macOS/*.cpp" "../../Source/FBGraphicsOgreNext/Window/Apple/macOS/*.mm")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_INCLUDE_OSX})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_INCLUDE_OSX})
+elseif(UNIX)
+    file(GLOB HEADER_FILES_OGRE_INCLUDE_UNIX "../../Include/FBGraphicsOgreNext/Window/linux/*.h")
+    file(GLOB SOURCE_FILES_OGRE_INCLUDE_UNIX "../../Source/FBGraphicsOgreNext/Window/linux/*.cpp")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_INCLUDE_UNIX})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_INCLUDE_UNIX})
+endif()
+
+file(GLOB HEADER_FILES_CORE "../../Include/FBGraphicsOgreNext/Core/*.h")
+file(GLOB SOURCE_FILES_CORE "../../Source/FBGraphicsOgreNext/Core/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_CORE})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_CORE})
+
+file(GLOB HEADER_FILES_ADDONS "../../Include/FBGraphicsOgreNext/AddOns/*.h")
+file(GLOB SOURCE_FILES_ADDONS "../../Source/FBGraphicsOgreNext/AddOns/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_ADDONS})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_ADDONS})
+
+file(GLOB HEADER_FILES_JOBS "../../Include/FBGraphicsOgreNext/Jobs/*.h")
+file(GLOB SOURCE_FILES_JOBS "../../Source/FBGraphicsOgreNext/Jobs/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_JOBS})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_JOBS})
+
+file(GLOB HEADER_FILES_LOD "../../Include/FBGraphicsOgreNext/LOD/*.h")
+file(GLOB SOURCE_FILES_LOD "../../Source/FBGraphicsOgreNext/LOD/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_LOD})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_LOD})
+
+file(GLOB_RECURSE HEADER_FILES_TERRA "../../Include/FBGraphicsOgreNext/Terra/*.h")
+file(GLOB_RECURSE SOURCE_FILES_TERRA "../../Source/FBGraphicsOgreNext/Terra/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_TERRA})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_TERRA})
+
+file(GLOB HEADER_FILES_UTILS "../../Include/FBGraphicsOgreNext/Utils/*.h")
+file(GLOB SOURCE_FILES_UTILS "../../Source/FBGraphicsOgreNext/Utils/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_UTILS})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_UTILS})
+
+file(GLOB HEADER_FILES_WRAPPER "../../Include/FBGraphicsOgreNext/Wrapper/*.h" "../../Include/FBGraphicsOgreNext/Wrapper/*.inl")
+file(GLOB SOURCE_FILES_WRAPPER "../../Source/FBGraphicsOgreNext/Wrapper/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_WRAPPER})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_WRAPPER})
+
+if(APPLE)
+    file(GLOB HEADER_FILES_WRAPPER "../../Include/FBGraphicsOgreNext/Wrapper/Apple/*.h" "../../Include/FBGraphicsOgreNext/WrapperApple/*.inl")
+    file(GLOB SOURCE_FILES_WRAPPER "../../Source/FBGraphicsOgreNext/Wrapper/Apple/*.cpp" "../../Source/FBGraphicsOgreNext/Wrapper/Apple/*.mm")
+    list(APPEND HEADER_FILES ${HEADER_FILES_WRAPPER})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_WRAPPER})
+endif()
+
+file(GLOB HEADER_FILES_OGRE "../../Include/FBGraphicsOgreNext/Ogre/*.h")
+file(GLOB SOURCE_FILES_OGRE "../../Source/FBGraphicsOgreNext/Ogre/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGRE})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE})
+
+file(GLOB HEADER_FILES_OGRE_INCLUDE "../../Include/FBGraphicsOgreNext/Ogre/include/*.h")
+file(GLOB SOURCE_FILES_OGRE_INCLUDE "../../Source/FBGraphicsOgreNext/Ogre/src/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_INCLUDE})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_INCLUDE})
+
+if (WIN32)
+    file(GLOB HEADER_FILES_OGRE_INCLUDE_WIN32 "../../Include/FBGraphicsOgreNext/Ogre/include/win32/*.h")
+    file(GLOB SOURCE_FILES_OGRE_INCLUDE_WIN32 "../../Source/FBGraphicsOgreNext/Ogre/include/win32/*.cpp")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_INCLUDE_WIN32})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_INCLUDE_WIN32})
+elseif(APPLE)
+    file(GLOB HEADER_FILES_OGRE_INCLUDE_OSX "../../Include/FBGraphicsOgreNext/Ogre/include/osx/*.h")
+    file(GLOB SOURCE_FILES_OGRE_INCLUDE_OSX "../../Source/FBGraphicsOgreNext/Ogre/include/osx/*.cpp")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_INCLUDE_OSX})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_INCLUDE_OSX})
+elseif(UNIX)
+    file(GLOB HEADER_FILES_OGRE_INCLUDE_UNIX "../../Include/FBGraphicsOgreNext/Ogre/include/linux/*.h")
+    file(GLOB SOURCE_FILES_OGRE_INCLUDE_UNIX "../../Source/FBGraphicsOgreNext/Ogre/include/linux/*.cpp")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_INCLUDE_UNIX})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_INCLUDE_UNIX})
+endif()
+
+file(GLOB_RECURSE HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/Components/Hlms/Common/*.h")
+file(GLOB_RECURSE SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/Components/Hlms/Common/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+
+file(GLOB_RECURSE HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/Components/Hlms/Pbs/*.h")
+file(GLOB_RECURSE SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/Components/Hlms/Pbs/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+
+#file(GLOB HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/Components/Hlms/PbsMobile/include/*.h")
+#file(GLOB SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/Components/Hlms/PbsMobile/src/*.cpp")
+#list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+#list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+
+file(GLOB_RECURSE HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/Components/Hlms/Unlit/*.h")
+file(GLOB_RECURSE SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/Components/Hlms/Unlit/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+
+#file(GLOB_RECURSE HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/Components/Hlms/UnlitMobile/*.h")
+#file(GLOB_RECURSE SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/Components/Hlms/UnlitMobile/*.cpp")
+#list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+#list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+
+file(GLOB HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/Components/Overlay/include/*.h")
+file(GLOB SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/Components/Overlay/src/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+
+file(GLOB HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/*.h")
+file(GLOB SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+
+file(GLOB HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Animation/*.h")
+file(GLOB SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/Animation/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+
+file(GLOB HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/CommandBuffer/*.h")
+file(GLOB SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/CommandBuffer/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+
+file(GLOB_RECURSE HEADER_FILES_OGREMAIN_COMPOSITOR "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Compositor/*.h")
+file(GLOB_RECURSE SOURCE_FILES_OGREMAIN_COMPOSITOR "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/Compositor/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN_COMPOSITOR})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN_COMPOSITOR})
+
+file(GLOB_RECURSE HEADER_FILES_OGREMAIN_COMPOSITOR "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Compute/*.h")
+file(GLOB_RECURSE SOURCE_FILES_OGREMAIN_COMPOSITOR "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/Compute/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN_COMPOSITOR})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN_COMPOSITOR})
+
+
+if (FB_BUILD_OGRENEXT_DEPRECATED)
+    file(GLOB HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Deprecated/*.h")
+    file(GLOB SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/Deprecated/*.cpp")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+endif()
+
+file(GLOB HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Hash/*.h")
+file(GLOB SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/Hash/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+
+file(GLOB HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math/*.h")
+file(GLOB SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/Math/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+
+file(GLOB HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math/Array/*.h")
+file(GLOB SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/Math/Array/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+
+if (FB_USE_C_MATH)
+    file(GLOB HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math/Array/C/*.h")
+    file(GLOB SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/Math/Array/C/*.cpp")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+elseif (FB_USE_NEON_MATH)
+    file(GLOB HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math/Array/NEON/Single/*.h")
+    file(GLOB SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/Math/Array/NEON/Single/*.cpp")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+elseif (FB_USE_SIMD)
+    file(GLOB HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math/Array/SSE2/Single/*.h")
+    file(GLOB SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/Math/Array/SSE2/Single/*.cpp")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+endif()
+
+file(GLOB HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math/Simple/*.h")
+file(GLOB SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/Math/Simple/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+
+file(GLOB HEADER_FILES_OGREMAIN "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math/Simple/C/*.h")
+file(GLOB SOURCE_FILES_OGREMAIN "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/Math/Simple/C/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN})
+
+file(GLOB_RECURSE HEADER_FILES_OGREMAIN_COMPOSITOR "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/ogrestd/*.h")
+file(GLOB_RECURSE SOURCE_FILES_OGREMAIN_COMPOSITOR "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/ogrestd/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN_COMPOSITOR})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN_COMPOSITOR})
+
+if (WIN32)
+    set(THREAD_SOURCE_FILES
+            ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/Threading/OgreBarrierWin.cpp
+            ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/Threading/OgreDefaultWorkQueueStandard.cpp
+            ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/Threading/OgreLightweightMutexWin.cpp
+            ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/Threading/OgreThreadsWin.cpp
+            ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/Threading/OgreWaitableEvent.cpp
+            )
+
+    list(APPEND SOURCE_FILES ${THREAD_SOURCE_FILES})
+elseif(APPLE)
+    set(THREAD_SOURCE_FILES
+            ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/Threading/OgreBarrierPThreads.cpp
+            ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/Threading/OgreDefaultWorkQueueStandard.cpp
+            ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/Threading/OgreLightweightMutexPThreads.cpp
+            ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/Threading/OgreThreadsPThreads.cpp
+            ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/Threading/OgreWaitableEvent.cpp
+            )
+
+    list(APPEND SOURCE_FILES ${THREAD_SOURCE_FILES})
+elseif(UNIX)
+    set(THREAD_SOURCE_FILES
+            ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/Threading/OgreBarrierPThreads.cpp
+            ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/Threading/OgreDefaultWorkQueueStandard.cpp
+            ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/Threading/OgreLightweightMutexPThreads.cpp
+            ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/Threading/OgreThreadsPThreads.cpp
+            ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/Threading/OgreWaitableEvent.cpp
+            )
+
+    list(APPEND SOURCE_FILES ${THREAD_SOURCE_FILES})
+endif()
+
+
+#file(GLOB HEADER_FILES_OGREMAIN_THREADING "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Threading/*.h")
+#file(GLOB SOURCE_FILES_OGREMAIN_THREADING "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/Threading/*.cpp")
+#list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN_THREADING})
+#list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN_THREADING})
+
+file(GLOB HEADER_FILES_OGREMAIN_THREADING "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Vao/*.h")
+file(GLOB SOURCE_FILES_OGREMAIN_THREADING "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/Vao/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN_THREADING})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN_THREADING})
+
+if (WIN32)
+    file(GLOB_RECURSE HEADER_FILES_OGREMAIN_WIN32 "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/WIN32/*.h")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN_WIN32})
+
+    set(SOURCE_FILES_OGREMAIN_WIN32 
+        ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/WIN32/OgreConfigDialog.cpp
+        ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/WIN32/OgreErrorDialog.cpp
+        ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/WIN32/OgreFileSystemLayer.cpp
+        ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/WIN32/OgreOptimisedUtilDirectXMath.cpp
+        ${FB_SOURCE_REL_PATH}/Ogre/OgreMain/src/WIN32/OgreTimer.cpp)
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN_WIN32})
+
+    if (MINGW)
+        set(SOURCE_FILES_OGREMAIN_WIN32_MINGW "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/WIN32/OgreMinGWSupport.cpp")
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN_WIN32_MINGW})
+    endif()
+elseif(APPLE)
+    file(GLOB_RECURSE HEADER_FILES_OGREMAIN_MACOS "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/OSX/*.h")
+    file(GLOB_RECURSE SOURCE_FILES_OGREMAIN_MACOS "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/OSX/*.cpp" "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/OSX/*.mm")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN_MACOS})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN_MACOS})
+elseif(UNIX)
+    file(GLOB_RECURSE HEADER_FILES_OGREMAIN_LINUX "../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/GLX/*.h")
+    file(GLOB_RECURSE SOURCE_FILES_OGREMAIN_LINUX "../../Source/FBGraphicsOgreNext/Ogre/OgreMain/src/GLX/*.cpp")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGREMAIN_LINUX})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGREMAIN_LINUX})
+endif()
+
+if (WIN32)
+    if (FB_BUILD_RENDERER_DX11)
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/Direct3D11/include/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/Direct3D11/src/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/Direct3D11/include/Vao/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/Direct3D11/src/Vao/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/Direct3D11/include/VendorExtensions/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/Direct3D11/src/VendorExtensions/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/Direct3D11/include/Windowing/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/Direct3D11/src/Windowing/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/Direct3D11/include/Windowing/WIN32/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/Direct3D11/src/Windowing/WIN32/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+    endif()
+
+    if (FB_BUILD_RENDERER_OPENGL)
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/*.h" "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/GL/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/GL/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/GLSL/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/GLSL/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/Vao/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/Vao/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+    
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/windowing/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing/*.h" "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/windowing/WIN32/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing/WIN32/*.h" "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing/WIN32/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+    endif()
+	
+	if (FB_BUILD_RENDERER_GL3PLUS)
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/*.h" "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/GL/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/GL/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/GLSL/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/GLSL/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/Vao/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/Vao/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+    
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/windowing/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing/*.h" "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/windowing/WIN32/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing/WIN32/*.h" "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing/WIN32/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+    endif()
+
+        if (FB_BUILD_RENDERER_OPENGL OR FB_BUILD_RENDERER_GL3PLUS)
+            file(GLOB HEADER_FILES_SUBFOLDER "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GLSupport/include/*.h")
+            file(GLOB SOURCE_FILES_SUBFOLDER "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GLSupport/src/*.cpp")
+            list(APPEND HEADER_FILES ${HEADER_FILES_SUBFOLDER})
+            list(APPEND SOURCE_FILES ${SOURCE_FILES_SUBFOLDER})
+
+            file(GLOB HEADER_FILES_SUBFOLDER "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GLSupport/include/GLSL/*.h")
+            file(GLOB SOURCE_FILES_SUBFOLDER "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GLSupport/src/GLSL/*.cpp")
+            list(APPEND HEADER_FILES ${HEADER_FILES_SUBFOLDER})
+            list(APPEND SOURCE_FILES ${SOURCE_FILES_SUBFOLDER})
+
+            file(GLOB HEADER_FILES_SUBFOLDER "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GLSupport/include/win32/*.h")
+            file(GLOB SOURCE_FILES_SUBFOLDER "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GLSupport/src/win32/*.cpp")
+            list(APPEND HEADER_FILES ${HEADER_FILES_SUBFOLDER})
+            list(APPEND SOURCE_FILES ${SOURCE_FILES_SUBFOLDER})
+        endif()
+elseif(APPLE)
+    if (FB_BUILD_RENDERER_OPENGL)
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/GL/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/GL/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/GLSL/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/GLSL/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/Vao/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/Vao/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/windowing/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing/*.cpp")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/windowing/OSX/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing/OSX/*.cpp" "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing/OSX/*.mm")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+    endif()
+
+    if (FB_BUILD_RENDERER_METAL)
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/Metal/include/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/Metal/src/*.mm")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/Metal/include/Vao/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/Metal/src/Vao/*.mm")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+        file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/Metal/include/Windowing/OSX/*.h")
+        file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/Metal/src/Windowing/OSX/*.cpp" "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/Metal/src/Windowing/OSX/*.mm")
+        list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+        list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+    endif()
+elseif(UNIX)
+    file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/*.h")
+    file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/*.cpp")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+    file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/GL/*.h")
+    file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/GL/*.cpp")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+    file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/GLSL/*.h")
+    file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/GLSL/*.cpp")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+    file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/Vao/*.h")
+    file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/Vao/*.cpp")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+    file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/windowing/*.h")
+    file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing/*.cpp")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+
+    file(GLOB HEADER_FILES_OGRE_RENDERSYSTEM "../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/windowing/GLX/*.h")
+    file(GLOB SOURCE_FILES_OGRE_RENDERSYSTEM "../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing/GLX/*.cpp")
+    list(APPEND HEADER_FILES ${HEADER_FILES_OGRE_RENDERSYSTEM})
+    list(APPEND SOURCE_FILES ${SOURCE_FILES_OGRE_RENDERSYSTEM})
+endif()
+
+foreach(_source IN ITEMS ${HEADER_FILES})
+    get_filename_component(_source_file_path "${_source}" DIRECTORY)
+    string(REPLACE "${FB_HEADER_REL_PATH}" "" _group_file_path "${_source_file_path}")
+    string(REPLACE "/" "\\" _group_file_path "${_group_file_path}")
+    source_group("Header Files\\${_group_file_path}" FILES "${_source}")
+endforeach()
+
+foreach(_source IN ITEMS ${SOURCE_FILES})
+    get_filename_component(_source_file_path "${_source}" DIRECTORY)
+    string(REPLACE "${FB_SOURCE_REL_PATH}" "" _group_file_path "${_source_file_path}")
+    string(REPLACE "/" "\\" _group_file_path "${_group_file_path}")
+    source_group("Source Files\\${_group_file_path}" FILES "${_source}")
+endforeach()
+
+filter_items(${HEADER_FILES} "OgreMain/include/Android/.*")
+filter_items(${SOURCE_FILES} "OgreMain/src/Android/.*")
+
+include_directories( ${FB_ROOT}/Dependencies/boost )
+include_directories( ${FB_ROOT}/Dependencies/tinyxml/include )
+include_directories( ${FB_ROOT}/Dependencies/utf8/source )
+
+if (FB_USE_ONETBB)
+    include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/onetbb/include )
+elseif (FB_USE_TBB)
+    include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/tbb/include )
+endif()
+
+include_directories( ${FB_ROOT}/AdditionalLibraries/assimp/include )
+include_directories( ${FB_ROOT}/AdditionalLibraries/ogrenext/Dependencies/include )
+include_directories( ${FB_ROOT}/AdditionalLibraries/rapidjson/include )
+include_directories( ${FB_ROOT}/AdditionalLibraries/rapidjson/include/rapidjson )
+
+if(WIN32)
+    include_directories( ${FB_ROOT}/AdditionalLibraries/assimp/include/vc142 )
+elseif(APPLE)
+    include_directories( ${FB_ROOT}/AdditionalLibraries/assimp/include/vc142 )
+else()
+    include_directories( ${FB_ROOT}/AdditionalLibraries/assimp/include/vc142 )
+endif()
+
+if(WIN32)
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/include/win32 )
+elseif(APPLE)
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/include/osx )
+else()
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/include/linux )
+endif()
+
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/include )
+
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include )
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Android )
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Animation)
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/CommandBuffer )
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Compositor )
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Compositor/Pass )
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Compositor/Pass/PassClear )
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Compute )
+#include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Deprecated )
+
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math )
+
+if (FB_USE_C_MATH)
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math/Array )
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math/Array/C )
+elseif (FB_USE_NEON_MATH)
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math/Array/NEON )
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math/Array/NEON/Single )
+elseif (FB_USE_SIMD)
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math/Array/SSE2 )
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math/Array/SSE2/Single )
+endif()
+
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math/Simple )
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math/Simple/C )
+
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/ogrestd )
+
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/Components/Overlay/include )
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/Components/Paging/include )
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/Components/Bites/include )
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/Components/Hlms/Common/include )
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/Components/Hlms/Pbs/include )
+#include_directories( ../../Include/FBGraphicsOgreNext/Ogre/Components/Hlms/PbsMobile/include )
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/Components/Hlms/Unlit/include )
+include_directories( ../../Include/FBGraphicsOgreNext/Ogre/PlugIns/CgProgramManager/include )
+
+
+
+if (WIN32)
+    if (FB_BUILD_RENDERER_DX11)
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/Direct3D11/include )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/Direct3D11/include/Deprecated )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/Direct3D11/include/Vao )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/Direct3D11/include/VenderExtensions )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/Direct3D11/include/Windowing )
+    endif ()
+
+    if (FB_BUILD_RENDERER_OPENGL)
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/GLSL )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/Vao )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/windowing )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/windowing/WIN32 )
+        include_directories( ../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src )
+        #include_directories( ../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing )
+        include_directories( ../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing/WIN32 )
+    endif()
+	
+	if (FB_BUILD_RENDERER_GL3PLUS)
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/GLSL )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/Vao )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/windowing )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/windowing/WIN32 )
+        include_directories( ../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src )
+        #include_directories( ../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing )
+        include_directories( ../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing/WIN32 )
+    endif()
+
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL/src/atifs/include )
+
+    if (FB_BUILD_RENDERER_NULL)
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/NULL/include )
+    endif()
+elseif(APPLE)
+    if (FB_BUILD_RENDERER_OPENGL)
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/GLSL )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/Vao )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/windowing )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/windowing/OSX )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing )
+        include_directories( ../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src )
+        #include_directories( ../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing )
+        include_directories( ../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing/OSX )
+    endif()
+
+    #include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GLES2/include )
+
+    if (FB_BUILD_RENDERER_METAL)
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/Metal/include )
+        include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/Metal/include/Windowing/OSX )
+    endif()
+elseif(UNIX)
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include )
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/GLSL )
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/Vao )
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/windowing )
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/include/windowing/GLX )
+    include_directories( ../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src )
+    include_directories( ../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing )
+    include_directories( ../../Source/FBGraphicsOgreNext/Ogre/RenderSystems/GL3Plus/src/windowing/GLX )
+endif()
+
+include_directories( ../../Include )
+include_directories( ../../Include/FBGraphicsOgreNext )
+include_directories( ../../Include/FBGraphicsOgreNext/Extern )
+include_directories( ../../Include/FBGraphicsOgreNext/Deferred )
+
+if(WIN32)
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/WIN32 )
+elseif(APPLE)
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/OSX )
+else()
+    include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/GLX )
+endif()
+
+#if (FB_BUILD_IMGUI)
+#    include_directories( ${CMAKE_SOURCE_DIR}/AdditionalLibraries/imgui )
+#    include_directories( ${CMAKE_SOURCE_DIR}/AdditionalLibraries/imgui/backends )
+#endif()
+
+if (FB_USE_PRECOMPILED_HEADERS)
+    use_precompiled_header(FBGraphicsOgreNext "FBGraphicsOgreNext/FBGraphicsOgreNextPCH.h" "${CMAKE_SOURCE_DIR}/FBEngine/cpp/Source/FBGraphicsOgreNext/FBGraphicsOgreNextPCH.cpp")
+
+    file(GLOB_RECURSE OGRE_SOURCE_FILES "${CMAKE_SOURCE_DIR}/FBEngine/cpp/Source/FBGraphicsOgreNext/Ogre/*.cpp")
+    set_source_files_properties(${OGRE_SOURCE_FILES} PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
+    
+    file(GLOB_RECURSE OGRE_SOURCE_FILES "${CMAKE_SOURCE_DIR}/FBEngine/cpp/Source/FBGraphicsOgreNext/Terra/*.cpp")
+    set_source_files_properties(${OGRE_SOURCE_FILES} PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
+endif()
+
+add_library(FBGraphicsOgreNext STATIC ${HEADER_FILES} ${SOURCE_FILES})
+set_target_properties (FBGraphicsOgreNext PROPERTIES FOLDER Engine/Cpp/Render)
+
+if (APPLE)
+    target_compile_options(FBGraphicsOgreNext PRIVATE "-fobjc-arc")
+    set_target_properties(FBGraphicsOgreNext PROPERTIES LINK_FLAGS "-fobjc-arc")
+endif()
+
+if (APPLE)
+    set_target_properties(FBGraphicsOgreNext PROPERTIES
+            LINK_FLAGS "-framework Cocoa -framework OpenGL")
+endif ()
