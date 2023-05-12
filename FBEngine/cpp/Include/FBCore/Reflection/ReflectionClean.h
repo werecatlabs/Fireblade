@@ -1,0 +1,16 @@
+#undef FB_PASS_STRUCT
+#undef FB_PASS_XML
+#undef FB_PASS_JSON
+#undef FB_PASS_PROPERTIES
+#undef FB_STRUCT
+#undef FB_STRUCT_INHERIT
+#undef FB_CLASS
+#undef FB_CLASS_INHERIT
+#undef FB_CONSTRUCTOR
+#undef FB_ATTR
+#undef FB_ATTR_NAME
+#undef FB_ATTR_PRIVATE
+#undef FB_TEXT
+#undef FB_CHILD
+#undef FB_ARRAY_PROPERTY
+#undef FB_INHERIT
