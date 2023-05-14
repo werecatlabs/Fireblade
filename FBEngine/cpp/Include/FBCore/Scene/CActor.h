@@ -266,15 +266,6 @@ namespace fb
                 Thread::UpdateState updateState, Thread::Task task,
                 boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> p );
 
-            /** Get object data as a json String. */
-            String toJson() const override;
-
-            /** Get object data as a json structure. */
-            SmartPtr<IData> toData() const override;
-
-            /** Set object data from json structure. */
-            void fromData( SmartPtr<IData> data ) override;
-
             /** Adds a child to this actor. */
             void addChild( SmartPtr<IActor> child ) override;
 
@@ -417,6 +408,8 @@ namespace fb
 
             void setEntity( u32 entity ) override;
             
+            static void registerClass();
+
             FB_CLASS_REGISTER_DECL;
 
         protected:

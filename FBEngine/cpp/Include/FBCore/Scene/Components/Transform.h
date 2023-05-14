@@ -85,6 +85,8 @@ namespace fb
             void updateWorldFromLocal() override;
             void updateLocalFromWorld() override;
 
+            static void registerClass();
+
             FB_CLASS_REGISTER_DECL;
 
         protected:

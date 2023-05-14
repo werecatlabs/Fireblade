@@ -382,27 +382,6 @@ namespace fb
         T getYaw( bool reprojectAxis = true ) const;
 
         /**
-         * @brief Returns the object data as a JSON string.
-         *
-         * @return The object data as a JSON string.
-         */
-        String toJson() const;
-
-        /**
-         * @brief Get object data as a structure.
-         *
-         * @return SmartPtr<IData> data structure.
-         */
-        SmartPtr<IData> toData() const;
-
-        /**
-         * @brief Set object data from a structure.
-         *
-         * @param SmartPtr<IData> data structure.
-         */
-        void fromData( SmartPtr<IData> data );
-
-        /**
          * @brief Calculates the norm of this quaternion.
          *
          * @return The norm of the quaternion.

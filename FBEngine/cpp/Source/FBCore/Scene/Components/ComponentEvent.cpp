@@ -1,6 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/ComponentEvent.h>
 #include <FBCore/Interface/Scene/IComponentEventListener.h>
+#include <FBCore/Base/Properties.h>
 
 namespace fb
 {

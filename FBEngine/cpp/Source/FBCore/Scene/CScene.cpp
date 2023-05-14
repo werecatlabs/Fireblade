@@ -11,7 +11,6 @@
 #include <FBCore/Interface/System/ITaskLock.h>
 #include <FBCore/Interface/System/ITaskManager.h>
 #include <FBCore/Interface/System/ITimer.h>
-#include <FBCore/Data/DefineDataStructures.h>
 #include <FBCore/Base/DataUtil.h>
 #include <FBCore/Base/DebugTrace.h>
 #include <FBCore/Memory/Data.h>
@@ -85,26 +84,26 @@ namespace fb
 
                 timer->setTimeSinceLevelLoad( 0.0 );
 
-                auto data = fb::make_ptr<Data<data::fb_scene>>();
-                auto sceneData = data->getDataAsType<data::fb_scene>();
+                //auto data = fb::make_ptr<Data<data::fb_scene>>();
+                //auto sceneData = data->getDataAsType<data::fb_scene>();
 
-                auto scenePath = StringUtil::cleanupPath( path );
-                auto stream = fileSystem->open( scenePath, true, false, false, false, false );
-                if( !stream )
-                {
-                    stream = fileSystem->open( scenePath, true, false, false, true, true );
-                }
+                //auto scenePath = StringUtil::cleanupPath( path );
+                //auto stream = fileSystem->open( scenePath, true, false, false, false, false );
+                //if( !stream )
+                //{
+                //    stream = fileSystem->open( scenePath, true, false, false, true, true );
+                //}
 
-                if( stream )
-                {
-                    auto name = Path::getFileNameWithoutExtension( path );
-                    setName( name );
+                //if( stream )
+                //{
+                //    auto name = Path::getFileNameWithoutExtension( path );
+                //    setName( name );
 
-                    auto dataStr = stream->getAsString();
-                    DataUtil::parse( dataStr, sceneData );
+                //    auto dataStr = stream->getAsString();
+                //    DataUtil::parse( dataStr, sceneData );
 
-                    fromData( data );
-                }
+                //    fromData( data );
+                //}
 
                 //auto cameraManagerResetJob = fb::make_ptr<CameraManagerReset>();
                 //jobQueue->queueJob( cameraManagerResetJob );
@@ -158,27 +157,27 @@ namespace fb
             auto fileSystem = applicationManager->getFileSystem();
             FB_ASSERT( fileSystem );
 
-            auto data = toData();
-            FB_ASSERT( data );
+            //auto data = toData();
+            //FB_ASSERT( data );
 
-            if( data )
-            {
-                setName( Path::getFileNameWithoutExtension( path ) );
+            //if( data )
+            //{
+            //    setName( Path::getFileNameWithoutExtension( path ) );
 
-                auto sceneData = data->getDataAsType<data::fb_scene>();
-                auto dataStr = DataUtil::toString( sceneData, true );
-                FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );
+            //    auto sceneData = data->getDataAsType<data::fb_scene>();
+            //    auto dataStr = DataUtil::toString( sceneData, true );
+            //    FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );
 
-                auto scenePath = StringUtil::cleanupPath( path );
-                FB_ASSERT( !StringUtil::isNullOrEmpty( scenePath ) );
+            //    auto scenePath = StringUtil::cleanupPath( path );
+            //    FB_ASSERT( !StringUtil::isNullOrEmpty( scenePath ) );
 
-                if( StringUtil::isNullOrEmpty( Path::getFileExtension( scenePath ) ) )
-                {
-                    scenePath += ".fbscene";
-                }
+            //    if( StringUtil::isNullOrEmpty( Path::getFileExtension( scenePath ) ) )
+            //    {
+            //        scenePath += ".fbscene";
+            //    }
 
-                fileSystem->writeAllText( scenePath, dataStr );
-            }
+            //    fileSystem->writeAllText( scenePath, dataStr );
+            //}
         }
 
         void CScene::saveScene()
@@ -413,7 +412,7 @@ namespace fb
                 {
                     auto handle = actor->getHandle();
                     auto id = handle->getId();
-                    FB_ASSERT( id != 0 );
+                    //FB_ASSERT( id != 0 );
 
                     FB_ASSERT( StringUtil::isNullOrEmpty( handle->getUUID() ) == false );
 
@@ -791,79 +790,6 @@ namespace fb
             }
 
             return result;
-        }
-
-        String CScene::toJson() const
-        {
-            return "";
-        }
-
-        SmartPtr<IData> CScene::toData() const
-        {
-            auto pSceneData = fb::make_ptr<Data<data::fb_scene>>();
-            auto sceneData = pSceneData->getDataAsType<data::fb_scene>();
-
-            auto actors = getActors();
-            for( auto actor : actors )
-            {
-                if( actor )
-                {
-                    auto pActorData = actor->toData();
-                    auto actorData = pActorData->getDataAsType<data::actor_data>();
-
-                    sceneData->actors.push_back( *actorData );
-                }
-            }
-
-            return pSceneData;
-        }
-
-        void CScene::fromData( SmartPtr<IData> data )
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto graphicsSystem = applicationManager->getGraphicsSystem();
-            FB_ASSERT( graphicsSystem );
-
-            auto prefabManager = applicationManager->getPrefabManager();
-            FB_ASSERT( prefabManager );
-
-            //auto graphicsSceneManager = graphicsSystem->getSceneManager();
-            //FB_ASSERT( graphicsSceneManager );
-
-            //graphicsSceneManager->setAmbientLight( ColourF::White * 0.5f );
-            //graphicsSceneManager->setEnableShadows( true );
-
-            setupCache();
-
-            auto sceneData = data->getDataAsType<data::fb_scene>();
-            for( auto &actorData : sceneData->actors )
-            {
-                auto data = fb::make_ptr<Data<data::actor_data>>();
-                data->setData( &actorData );
-
-                auto actor = prefabManager->loadActor( data, nullptr );
-                addActor( actor );
-
-                // registerAllUpdates(actor);
-
-                // if( applicationManager->isEditor() )
-                //{
-                //    if( applicationManager->isPlaying() )
-                //    {
-                //        m_playQueue.push( actor );
-                //    }
-                //    else
-                //    {
-                //        m_editQueue.push( actor );
-                //    }
-                //}
-                // else
-                //{
-                //    m_playQueue.push( actor );
-                //}
-            }
         }
 
         String CScene::getFilePath() const

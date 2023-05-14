@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/Scene/ISceneManager.h>
-#include <FBCore/Reflection/ReflectionClassDefinition.h>
+#include <FBCore/Rtti/ReflectionClassDefinition.h>
 #include <FBCore/Base/StringUtil.h>
 
 namespace fb

@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/System/IState.h>
-#include <FBCore/Reflection/ReflectionClassDefinition.h>
+#include <FBCore/Rtti/ReflectionClassDefinition.h>
 
 namespace fb
 {

@@ -123,7 +123,7 @@ namespace fb
              * @param name The name of the actor to retrieve.
              * @return The actor with the specified name. Can be null.
              */
-            virtual SmartPtr<IActor> getActorByName( const String& name ) const = 0;
+            virtual SmartPtr<IActor> getActorByName( const String &name ) const = 0;
 
             /**
              * Gets the component with the specified ID.
@@ -166,12 +166,7 @@ namespace fb
              * @return An array of SmartPtrs to components of the specified type.
              */
             template <class T>
-            Array<SmartPtr<T>> getComponentsByType( u32 type ) const
-            {
-                auto typeInfo = T::typeInfo();
-                auto components = getComponents( typeInfo );
-                return Array<SmartPtr<T>>( components.begin(), components.end() );
-            }
+            Array<SmartPtr<T>> getComponentsByType( u32 type ) const;
 
             /**
              * Returns the first object of the specified type found in the current scene.
@@ -179,34 +174,46 @@ namespace fb
              * @return A SmartPtr to the first object of the specified type found in the current scene, or a null pointer if none found.
              */
             template <class T>
-            SmartPtr<T> getObjectByType() const
+            SmartPtr<T> getObjectByType() const;
+
+            FB_CLASS_REGISTER_DECL;
+        };
+
+        template <class T>
+        Array<SmartPtr<T>> ISceneManager::getComponentsByType( u32 type ) const
+        {
+            auto typeInfo = T::typeInfo();
+            auto components = getComponents( typeInfo );
+            return Array<SmartPtr<T>>( components.begin(), components.end() );
+        }
+
+        template <class T>
+        SmartPtr<T> ISceneManager::getObjectByType() const
+        {
+            auto scene = getCurrentScene();
+            auto actors = scene->getActors();
+            for( auto actor : actors )
             {
-                auto scene = getCurrentScene();
-                auto actors = scene->getActors();
-                for( auto actor : actors )
+                auto component = actor->getComponent<T>();
+                if( component )
                 {
-                    auto component = actor->getComponent<T>();
+                    return component;
+                }
+
+                auto children = actor->getAllChildren();
+                for( auto child : children )
+                {
+                    component = child->getComponent<T>();
                     if( component )
                     {
                         return component;
                     }
-
-                    auto children = actor->getAllChildren();
-                    for( auto child : children )
-                    {
-                        component = child->getComponent<T>();
-                        if( component )
-                        {
-                            return component;
-                        }
-                    }
                 }
-
-                return nullptr;
             }
 
-            FB_CLASS_REGISTER_DECL;
-        };
+            return nullptr;
+        }
+
     }  // namespace scene
 }  // namespace fb
 

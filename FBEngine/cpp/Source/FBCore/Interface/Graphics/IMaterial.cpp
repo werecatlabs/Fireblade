@@ -2,7 +2,7 @@
 #include <FBCore/Interface/Graphics/IMaterial.h>
 #include <FBCore/Interface/Graphics/IMaterialNode.h>
 #include <FBCore/Interface/Graphics/IMaterialPass.h>
-#include <FBCore/Reflection/ReflectionClassDefinition.h>
+#include <FBCore/Rtti/ReflectionClassDefinition.h>
 #include <FBCore/Base/StringUtil.h>
 
 namespace fb

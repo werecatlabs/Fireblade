@@ -2,7 +2,7 @@
 #include <FBCore/Interface/Ai/IAiSteering3.h>
 #include <FBCore/Memory/TypeManager.h>
 #include <FBCore/Base/StringUtil.h>
-#include <FBCore/Reflection/ReflectionClassDefinition.h>
+#include <FBCore/Rtti/ReflectionClassDefinition.h>
 
 namespace fb
 {

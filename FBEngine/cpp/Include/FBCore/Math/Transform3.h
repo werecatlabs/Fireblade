@@ -209,24 +209,6 @@ namespace fb
         Quaternion<T> convertLocalToWorldOrientation( const Quaternion<T> &localOrientation );
 
         /**
-         * Returns the transform data in JSON format.
-         * @return The JSON-formatted transform data.
-         */
-        String toJson() const;
-
-        /**
-         * Returns the transform data in a structure.
-         * @return The transform data as a SmartPtr<IData> object.
-         */
-        SmartPtr<IData> toData() const;
-
-        /**
-         * Sets the transform data from a structure.
-         * @param data The SmartPtr<IData> object containing the transform data.
-         */
-        void fromData( SmartPtr<IData> data );
-
-        /**
          * Transforms an AABB from local space to world space.
          * @param aabb The AABB in local space.
          * @return The AABB in world space.

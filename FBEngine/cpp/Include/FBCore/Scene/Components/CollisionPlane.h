@@ -21,8 +21,6 @@ namespace fb
             /** @copydoc IObject::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            void createPlane( const data::collider &collider );
-
             FB_CLASS_REGISTER_DECL;
 
         protected:

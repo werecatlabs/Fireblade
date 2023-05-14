@@ -335,21 +335,6 @@ namespace fb
          */
         static Vector3 fromCoords( T radius, T latitude, T longitude );
 
-        /** Converts the Vector3 to a JSON string.
-         * @return A JSON string representing the Vector3.
-         */
-        String toJson() const;
-
-        /** Converts the Vector3 to a IData structure.
-         * @return An IData structure representing the Vector3.
-         */
-        SmartPtr<IData> toData() const;
-
-        /** Sets the Vector3 from a IData structure.
-         * @param data The IData structure to set the Vector3 from.
-         */
-        void fromData( SmartPtr<IData> data );
-
         /** Checks whether the vector's elements are valid numbers (not NaN or infinity).
          * @return True if the vector is valid, false otherwise.
          */

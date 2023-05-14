@@ -23,12 +23,13 @@ namespace fb
             FB_ASSERT( factoryManager );
 
             auto newActor = sceneManager->createActor();
-            auto prefabData = prefab->toData();
-            newActor->fromData( prefabData );
+            //auto prefabData = prefab->toData();
+            //newActor->fromData( prefabData );
 
             return newActor;
         }
 
+        /*
         SmartPtr<IActor> CPrefabManager::loadActor( data::actor_data &data,
                                                     SmartPtr<IActor> parent )
         {
@@ -49,8 +50,8 @@ namespace fb
                 auto actorData = factoryManager->make_ptr<Data<data::actor_data>>();
                 FB_ASSERT( actorData );
 
-                actorData->setData( &data );
-                actor->fromData( actorData );
+                //actorData->setData( &data );
+                //actor->fromData( actorData );
 
                 return actor;
             }
@@ -61,12 +62,15 @@ namespace fb
 
             return nullptr;
         }
+        */
 
         SmartPtr<IActor> CPrefabManager::loadActor( SmartPtr<IData> data,
                                                     SmartPtr<IActor> parent )
         {
-            auto pData = data->getDataAsType<data::actor_data>();
-            return loadActor( *pData, parent );
+            //auto pData = data->getDataAsType<data::actor_data>();
+            //return loadActor( *pData, parent );
+
+            return nullptr;
         }
 
         SmartPtr<IPrefab> CPrefabManager::loadPrefab( const String &filePath )
@@ -121,16 +125,16 @@ namespace fb
             }
             else if(ext == ".prefab")
             {
-                auto jsonStr = fileSystem->readAllText( filePath );
+                //auto jsonStr = fileSystem->readAllText( filePath );
 
-                data::actor_data data;
-                DataUtil::parse( jsonStr, &data );
+                //data::actor_data data;
+                //DataUtil::parse( jsonStr, &data );
 
-                auto actor = loadActor( data, nullptr );
-                actor->updateTransform();
+                //auto actor = loadActor( data, nullptr );
+                //actor->updateTransform();
 
-                prefab->setActor( actor );
-                return prefab;
+                //prefab->setActor( actor );
+                //return prefab;
             }
 
             return nullptr;
@@ -227,18 +231,18 @@ namespace fb
                 }
                 else if(ext == ".prefab")
                 {
-                    auto jsonStr = fileSystem->readAllText( name );
+                    //auto jsonStr = fileSystem->readAllText( name );
 
-                    auto pData = fb::make_ptr<Data<data::actor_data>>();
-                    auto data = pData->getDataAsType<data::actor_data>();
-                    DataUtil::parse( jsonStr, data );
+                    //auto pData = fb::make_ptr<Data<data::actor_data>>();
+                    //auto data = pData->getDataAsType<data::actor_data>();
+                    //DataUtil::parse( jsonStr, data );
 
-                    auto actor = loadActor( *data, nullptr );
-                    actor->updateTransform();
+                    //auto actor = loadActor( *data, nullptr );
+                    //actor->updateTransform();
 
-                    prefab->setActor( actor );
-                    prefab->setData( pData );
-                    return prefab;
+                    //prefab->setActor( actor );
+                    //prefab->setData( pData );
+                    //return prefab;
                 }
             }
             catch(std::exception &e)
@@ -300,10 +304,10 @@ namespace fb
             auto fileSystem = applicationManager->getFileSystem();
             FB_ASSERT( fileSystem );
 
-            auto data = prefab->toJson();
-            FB_ASSERT( !StringUtil::isNullOrEmpty( data ) );
+            //auto data = prefab->toJson();
+            //FB_ASSERT( !StringUtil::isNullOrEmpty( data ) );
 
-            fileSystem->writeAllText( filePath, data );
+            //fileSystem->writeAllText( filePath, data );
         }
     } // namespace scene
 }     // end namespace fb

@@ -2,41 +2,37 @@
 #define XmlUtil_h__
 
 #include <FBCore/Base/Properties.h>
-#include <FBCore/Base/DataBinding.h>
-#include <FBCore/Base/DataMacros.h>
 #include <FBCore/Base/Array.h>
-#include <tinyxml.h>
 
 namespace fb
 {
     class XmlUtil
     {
     public:
-        template <class X>
-        static void bind( TiXmlElement *xmle, bool from, Array<X> *ANI, const char *tagname )
-        {
-            if( from )
-            {
-                for( TiXmlElement *child = xmle->FirstChildElement( tagname ); child;
-                     child = child->NextSiblingElement( tagname ) )
-                {
-                    X ani;
-                    TXB_binding( &ani, child, 1 );
-                    ANI->push_back( ani );
-                }
-            }
-            else
-            {
-                for( size_t i = 0; i < ANI->size(); i++ )
-                {
-                    X *ani = &ANI->at( i );
+        static SharedPtr<TiXmlDocument> loadFile( const String &filePath );
+        static SharedPtr<TiXmlDocument> loadFile( const StringW &filePath );
 
-                    TiXmlElement Xani( tagname );
-                    TXB_binding( ani, &Xani, 0 );
-                    xmle->InsertEndChild( Xani );
-                }
-            }
-        }
+        static String getFromFile( const String &filePath );
+        static String getFromFile( const StringW &filePath );
+
+        static SharedPtr<TiXmlDocument> parseDocument( const String &xmlString );
+
+        static String getText( TiXmlElement *parent, const String &childName );
+        static String getText( TiXmlElement *element );
+
+        static StringW getTextW( TiXmlElement *parent, const StringW &childName );
+        static StringW getTextW( TiXmlElement *element );
+
+        /** Write the properties of a property group to an xml structure. */
+        static void writeProperties( const Properties &properties, TiXmlNode *pCurNode );
+
+        /** */
+        static void writeChildProperties( const Properties &properties, TiXmlNode *pCurNode );
+
+        /** */
+        static void loadProperties( Properties &properties, const TiXmlNode *propertyGroupNode );
+
+        static String getString( const char *pStr );
     };
 }  // end namespace fb
 

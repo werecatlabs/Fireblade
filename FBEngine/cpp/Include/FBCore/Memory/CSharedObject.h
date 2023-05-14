@@ -10,7 +10,7 @@
 #include <FBCore/Memory/GarbageCollector.h>
 #include <FBCore/Memory/TypeManager.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Reflection/ReflectionClassDefinition.h>
+#include <FBCore/Rtti/ReflectionClassDefinition.h>
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Base/StringTypes.h>
 #include <FBCore/Base/Handle.h>
@@ -145,19 +145,19 @@ namespace fb
         void setFactoryData( hash32 factoryData ) override;
 
         /** @copydoc ISharedObject::toJson */
-        String toJson() const override;
+        String toJson() const;
 
         /** @copydoc ISharedObject::toXml */
-        String toXml() const override;
+        String toXml() const;
 
         /** @copydoc ISharedObject::toString */
-        virtual String toString() const override;
+        virtual String toString() const;
 
         /** @copydoc ISharedObject::toData */
-        virtual SmartPtr<IData> toData() const override;
+        virtual SmartPtr<IData> toData() const;
 
         /** @copydoc ISharedObject::fromData */
-        virtual void fromData( SmartPtr<IData> data ) override;
+        virtual void fromData( SmartPtr<IData> data );
 
         /** @copydoc ISharedObject::getChildObjects */
         virtual Array<SmartPtr<ISharedObject>> getChildObjects() const override;

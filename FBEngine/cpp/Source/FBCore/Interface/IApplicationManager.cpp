@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/IApplicationManager.h>
-#include <FBCore/Reflection/ReflectionClassDefinition.h>
+#include <FBCore/Rtti/ReflectionClassDefinition.h>
 #include <FBCore/Base/DebugTrace.h>
 #include <FBCore/Memory/CSharedObject.h>
 

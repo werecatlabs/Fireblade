@@ -3,7 +3,6 @@
 #include <FBCore/Memory/Data.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Base/DataUtil.h>
-#include <FBCore/Data/DefineDataStructures.h>
 
 namespace fb
 {
@@ -41,40 +40,6 @@ namespace fb
             }
 
             return *this;
-        }
-
-        String PluginEvent::toJson() const
-        {
-            auto data = toData();
-            auto pData = data->getDataAsType<data::plugin_event>();
-            return DataUtil::toString( pData );
-        }
-
-        SmartPtr<IData> PluginEvent::toData() const
-        {
-            auto pData = fb::make_ptr<Data<data::plugin_event>>();
-            auto data = pData->getDataAsType<data::plugin_event>();
-
-            data->type = getType();
-            data->arg1 = getArgument( 0 );
-            data->arg2 = getArgument( 1 );
-            data->arg3 = getArgument( 2 );
-            data->arg4 = getArgument( 3 );
-
-            return pData;
-        }
-
-        void PluginEvent::fromData( SmartPtr<IData> data )
-        {
-            auto pData = data->getDataAsType<data::plugin_event>();
-            m_type = pData->type;
-
-            FB_ASSERT( m_data.size() < NUM_ARGS );
-
-            m_data[0] = pData->arg1;
-            m_data[1] = pData->arg2;
-            m_data[2] = pData->arg3;
-            m_data[3] = pData->arg4;
         }
 
         const String &PluginEvent::getArg1() const

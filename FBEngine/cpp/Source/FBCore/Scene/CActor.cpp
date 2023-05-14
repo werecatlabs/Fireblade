@@ -6,8 +6,8 @@
 #include <FBCore/Math/Core/MathUtil.h>
 #include <FBCore/Base/LogManager.h>
 #include <FBCore/Base/BitUtil.h>
-#include <FBCore/Data/DefineDataStructures.h>
-#include <FBApplication/ApplicationUtil.h> // todo remove
+#include <FBCore/Base/CoreUtil.h>
+#include <rttr/registration>
 
 namespace fb
 {
@@ -253,14 +253,14 @@ namespace fb
             {
                 auto components = getComponents();
 
-                std::sort(
-                    components.begin(), components.end(),
-                    []( const SmartPtr<ISharedObject> &a, const SmartPtr<ISharedObject> &b ) -> bool {
-                        auto aPriority = ApplicationUtil::getEventPriority( a );
-                        auto bPriority = ApplicationUtil::getEventPriority( b );
+                //std::sort(
+                //    components.begin(), components.end(),
+                //    []( const SmartPtr<ISharedObject> &a, const SmartPtr<ISharedObject> &b ) -> bool {
+                //        auto aPriority = ApplicationUtil::getEventPriority( a );
+                //        auto bPriority = ApplicationUtil::getEventPriority( b );
 
-                        return aPriority > bPriority;
-                    } );
+                //        return aPriority > bPriority;
+                //    } );
 
                 for( auto component : components )
                 {
@@ -292,14 +292,14 @@ namespace fb
             {
                 auto components = getComponents();
 
-                std::sort(
-                    components.begin(), components.end(),
-                    []( const SmartPtr<ISharedObject> &a, const SmartPtr<ISharedObject> &b ) -> bool {
-                        auto aPriority = ApplicationUtil::getEventPriority( a );
-                        auto bPriority = ApplicationUtil::getEventPriority( b );
+                //std::sort(
+                //    components.begin(), components.end(),
+                //    []( const SmartPtr<ISharedObject> &a, const SmartPtr<ISharedObject> &b ) -> bool {
+                //        auto aPriority = ApplicationUtil::getEventPriority( a );
+                //        auto bPriority = ApplicationUtil::getEventPriority( b );
 
-                        return aPriority > bPriority;
-                    } );
+                //        return aPriority > bPriority;
+                //    } );
 
                 for( auto component : components )
                 {
@@ -1826,255 +1826,6 @@ namespace fb
             // components = p;
         }
 
-        String CActor::toJson() const
-        {
-            auto data = toData();
-            auto actorData = data->getDataAsType<data::actor_data>();
-            return DataUtil::toString( actorData );
-        }
-
-        SmartPtr<IData> CActor::toData() const
-        {
-            // FB_ASSERT(getLoadingState() == LoadingState::Unloaded);
-            // FB_ASSERT(getHandle()->getInstanceId() != std::numeric_limits<u32>::max());
-
-            auto pActorData = fb::make_ptr<Data<data::actor_data>>();
-            auto actorData = pActorData->getDataAsType<data::actor_data>();
-
-            actorData->label = getName();
-            actorData->isStatic = isStatic();
-            actorData->isVisible = isVisible();
-            actorData->isEnabled = isEnabled();
-
-            if( auto handle = getHandle() )
-            {
-                auto uuid = handle->getUUID();
-                if( StringUtil::isNullOrEmpty( uuid ) )
-                {
-                    uuid = StringUtil::getUUID();
-                }
-
-                actorData->uuid = uuid;
-            }
-
-            if( auto transform = getTransform() )
-            {
-                auto localTransform = transform->getLocalTransform();
-                auto worldTransform = transform->getWorldTransform();
-
-                auto localTransformData = localTransform.toData();
-                actorData->localTransform = *localTransformData->getDataAsType<data::transform_data>();
-
-                auto worldTransformData = worldTransform.toData();
-                actorData->worldTransform = *worldTransformData->getDataAsType<data::transform_data>();
-            }
-
-            if( auto p = getChildrenPtr() )
-            {
-                auto &children = *p;
-                for( auto child : children )
-                {
-                    if( child )
-                    {
-                        FB_ASSERT( child->getHandle()->getInstanceId() !=
-                                   std::numeric_limits<u32>::max() );
-
-                        auto pChildActorData = child->toData();
-                        auto childActorData = pChildActorData->getDataAsType<data::actor_data>();
-
-                        actorData->children.push_back( *childActorData );
-                    }
-                }
-            }
-
-#if defined _DEBUG
-            auto pActorDataType = pActorData->getDataAsType<data::actor_data>();
-            auto numDataChildren = pActorDataType->children.size();
-
-            auto actorChildren = getChildrenPtr();
-            //auto numActorChildren = actorChildren.size();
-
-            //FB_ASSERT( numDataChildren == numActorChildren );
-#endif
-
-            auto components = getComponents();
-            for( auto component : components )
-            {
-                auto pComponentData = component->toData();
-                if( pComponentData )
-                {
-                    auto componentData = pComponentData->getDataAsType<data::component_data>();
-                    if( componentData )
-                    {
-                        auto typeinfo = component->getTypeInfo();
-                        FB_ASSERT( typeinfo );
-
-                        auto typeManager = TypeManager::instance();
-                        FB_ASSERT( typeManager );
-
-                        auto className = typeManager->getName( typeinfo );
-                        componentData->componentType = StringUtil::replaceAll( className, "class ", "" );
-                        actorData->components.push_back( *componentData );
-                    }
-                }
-            }
-
-            return pActorData;
-        }
-
-        void CActor::fromData( SmartPtr<IData> data )
-        {
-            try
-            {
-                FB_ASSERT( data );
-
-                if( !data )
-                {
-                    FB_LOG_ERROR( "CActor::fromData data null." );
-                    return;
-                }
-
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto factoryManager = applicationManager->getFactoryManager();
-                FB_ASSERT( factoryManager );
-
-                auto sceneManager = applicationManager->getSceneManager();
-                FB_ASSERT( sceneManager );
-
-                auto actorData = data->getDataAsType<data::actor_data>();
-                setName( actorData->label );
-
-                auto enabled = actorData->isEnabled;
-                auto visible = actorData->isVisible;
-                auto isstatic = actorData->isStatic;
-
-                setEnabled( enabled );
-                setVisible( visible );
-                setStatic( isstatic );
-
-                if( auto handle = getHandle() )
-                {
-                    auto uuid = actorData->uuid;
-                    if( StringUtil::isNullOrEmpty( uuid ) )
-                    {
-                        uuid = StringUtil::getUUID();
-                    }
-
-                    handle->setUUID( uuid );
-                }
-
-                if( auto transform = getTransform() )
-                {
-                    auto localTransform = transform->getLocalTransform();
-
-                    auto localTransformData = factoryManager->make_ptr<Data<data::transform_data>>();
-                    localTransformData->setData( &actorData->localTransform );
-
-                    localTransform.fromData( localTransformData );
-
-                    auto worldTransform = transform->getWorldTransform();
-
-                    auto transformData = factoryManager->make_ptr<Data<data::transform_data>>();
-                    transformData->setData( &actorData->worldTransform );
-
-                    worldTransform.fromData( transformData );
-
-                    transform->setLocalTransform( localTransform );
-                    transform->setWorldTransform( worldTransform );
-                }
-
-                auto components = Array<SmartPtr<IComponent>>();
-                components.reserve( actorData->components.size() );
-
-                for( auto &component : actorData->components )
-                {
-                    auto pComponent =
-                        factoryManager->createObjectFromType<BaseComponent>( component.componentType );
-                    if( !pComponent )
-                    {
-                        auto componentType =
-                            StringUtil::replaceAll( component.componentType, "fb::", "" );
-                        pComponent = factoryManager->createObjectFromType<IComponent>( componentType );
-                    }
-
-                    if( !pComponent )
-                    {
-                        auto componentType =
-                            ApplicationUtil::getComponentFactoryType( component.componentType );
-                        pComponent = factoryManager->createObjectFromType<IComponent>( componentType );
-                    }
-
-                    if( pComponent )
-                    {
-                        components.push_back( pComponent );
-                    }
-                }
-
-                for( size_t i = 0; i < components.size(); ++i )
-                {
-                    try
-                    {
-                        auto &pComponent = components[i];
-                        addComponentInstance( pComponent );
-                    }
-                    catch( std::exception &e )
-                    {
-                        FB_LOG_EXCEPTION( e );
-                    }
-                }
-
-                for( size_t i = 0; i < components.size(); ++i )
-                {
-                    try
-                    {
-                        auto &pComponent = components[i];
-                        auto &pComponentData = actorData->components[i];
-                        // FB_ASSERT(pComponent);
-
-                        if( pComponent )
-                        {
-                            pComponent->setActor( this );
-
-                            auto componentData = factoryManager->make_ptr<Data<data::component_data>>();
-                            componentData->setData( &pComponentData );
-
-                            pComponent->fromData( componentData );
-
-                            pComponent->load( nullptr );
-                            componentLoaded( pComponent );
-                        }
-                    }
-                    catch( std::exception &e )
-                    {
-                        FB_LOG_EXCEPTION( e );
-                    }
-                }
-
-                for( auto &child : actorData->children )
-                {
-                    auto childActor = sceneManager->createActor();
-                    FB_ASSERT( childActor );
-
-                    auto pData = fb::make_ptr<Data<data::actor_data>>();
-                    pData->setData( &child );
-                    childActor->fromData( pData );
-                    addChild( childActor );
-
-                    FB_ASSERT( childActor->getChildrenPtr()->size() == child.children.size() );
-                    // FB_ASSERT(childActor->getComponents<IComponent>().size() ==
-                    // child.components.size());
-                }
-
-                updateTransform();
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
         void CActor::addChild( SmartPtr<IActor> child )
         {
             FB_ASSERT( child );
@@ -2621,5 +2372,15 @@ namespace fb
         {
             m_owner = owner;
         }
+
+        void CActor::registerClass()
+        {
+            using namespace fb;
+            using namespace rttr;
+
+            registration::class_<CActor>( "Actor" )
+                .property( "transform", &CActor::m_transform );
+        }
+
     }  // namespace scene
 }  // end namespace fb

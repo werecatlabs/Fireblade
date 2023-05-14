@@ -1,6 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Base/Property.h>
 #include <FBCore/Base/StringUtil.h>
+#include <rttr/registration>
 
 namespace fb
 {
@@ -196,4 +197,19 @@ namespace fb
     {
         return m_type;
     }
+
+    void Property::registerClass()
+    {
+        using namespace fb;
+        using namespace rttr;
+
+        registration::class_<Property>( "Property" )
+            .property( "label", &Property::m_label )
+            .property( "name", &Property::m_name )
+            .property( "value", &Property::m_value )
+            .property( "type", &Property::m_type )
+            .property( "readOnly", &Property::m_readOnly )
+            .property( "attributes", &Property::m_attributes );
+    }
+
 }  // end namespace fb

@@ -72,12 +72,6 @@ namespace fb
         /** Const data. */
         const T *ptr() const;
 
-        /** Get object data as json. */
-        String toJson() const;
-
-        /** Get object data as a structure. */
-        SmartPtr<IData> toData() const;
-
         /** Checks if the vector's elements have a valid value. */
         bool isValid() const;
 

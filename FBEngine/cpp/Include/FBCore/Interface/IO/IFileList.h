@@ -1,5 +1,5 @@
-#ifndef __I_FILE_LIST_H_INCLUDED__
-#define __I_FILE_LIST_H_INCLUDED__
+#ifndef IFileList_h__
+#define IFileList_h__
 
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Base/Array.h>
@@ -9,6 +9,7 @@
 
 namespace fb
 {
+
     /** Provides a list of files and folders. */
     class IFileList : public ISharedObject
     {
@@ -20,7 +21,7 @@ namespace fb
          *
          * @return The number of files and directories in the file list.
          */
-        virtual u32 getFileCount() const = 0;
+        virtual u32 getNumFiles() const = 0;
 
         /**
          * @brief Returns the name of a file in the list, based on an index.
@@ -147,4 +148,4 @@ namespace fb
     };
 }  // end namespace fb
 
-#endif
+#endif // IFileList_h__

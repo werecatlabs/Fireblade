@@ -43,31 +43,6 @@ namespace fb
 
     }  // end namespace core
 
-    namespace data
-    {
-        struct base_data;
-
-        struct attribute;
-        struct texture_map;
-        struct material;
-        struct material_data;
-
-        struct material_node;
-        struct material_texture;
-        struct material_pass;
-        struct material_scheme;
-        struct material_graph;
-
-        struct vec4;
-        struct property;
-        struct properties;
-        struct vertex;
-        struct sub_mesh;
-        struct mesh;
-        struct transform_data;
-        struct debug_draw;
-    }  // end namespace data
-
     class IConsole;
 
     // aerodynamics
@@ -149,37 +124,17 @@ namespace fb
     class IEvent;
     class ILogManager;
 
-    // combat
-    class CombatBodyListener2;
-    class CombatBody2;
-    class CombatHitData2;
-
     // database
     class IDatabase;
     class IDatabaseQuery;
     class IDatabaseManager;
-
-    // flash
-    class IFlashPlayer;
-    class IFlashControl;
-    class IFlashControlManager;
 
     // finite state machine
     class IFSM;
     class IFSMListener;
     class IFSMManager;
 
-    // game
-    class IAnchorPoint;
-    class IAnchorPoint2;
-    class IAnchorPoint3;
-
-    class IQuery;
-    class IQueryManager;
-    class IProject;
-    class IConfigurationListener;
-    class IConfigurationProperty;
-    class IConfigurationManager;
+    
 
     // graphics
     namespace render
@@ -272,10 +227,7 @@ namespace fb
     class IIKJoint;
     class IIKManager;
 
-    // job
-    class IJob;
-    class IJobListener;
-    class IJobQueueListener;
+
 
     // mesh
     class IIndexBuffer;
@@ -537,12 +489,15 @@ namespace fb
     class IJob;
     class IJobGroup;
     class IJobQueue;
+    class IJobListener;
+    class IJobQueueListener;
     class ILibrary;
     class IOutputManager;
     class IPlugin;
     class IPluginManager;
     class IProfile;
     class IProfiler;
+    class IProject;
     class IProcessManager;
     class ITransformNode;
     class ISelectionManager;
@@ -645,379 +600,40 @@ namespace fb
     class TransformStateData;
 }  // end namespace fb
 
-namespace fb
-{
-    // json data structures
-    namespace data
-    {
-        struct render_settings_data;
-        struct project_data;
-
-        struct importer_data;
-        struct drag_drop_data;
-        struct mesh_importer_data;
-
-        struct resolution_entry;
-        struct fsaa_entry;
-        struct resolution_data;
-        struct render_system_config;
-
-        struct tree_prototype_data;
-        struct tree_instance_data;
-
-        struct field;
-        struct rows;
-        struct query;
-
-        struct PluginEvent;
-
-        struct road;
-        struct road_node;
-        struct road_element;
-        struct road_section;
-        struct road_connection;
-        struct road_connection_data;
-        struct road_network;
-        struct city_data;
-        struct terrain_data;
-        struct procedural_scene;
-        struct procedural_world;
-
-        struct block_node;
-        struct block_data;
-
-        struct osm;
-        struct bounds_data;
-        struct node_data;
-        struct tag_data;
-        struct nd_data;
-        struct way_data;
-        struct relation;
-        struct member;
-
-        struct actor_data;
-        struct director_data;
-        struct component_eventhandler_data;
-        struct sub_component_data;
-        struct component_data;
-        struct fb_scene;
-
-        struct json_component;
-        struct json_actor;
-        struct json_scene;
-
-        struct renderer_data;
-        struct mesh_renderer_data;
-    }  // namespace data
-
-    // aero data structures
-    namespace data
-    {
-
-        struct esc_data;
-        struct aircraft_input_data;
-        struct aircraft_curve_value;
-        struct aircraft_curve_data;
-        struct aircraft_aerofoil_data;
-        struct aircraft_cog_data;
-        struct aircraft_control_surface_data;
-        struct aircraft_wing_data;
-        struct aircraft_engine_data;
-        struct aircraft_ground_effect_data;
-        struct aircraft_prop_wash_data;
-        struct aircraft_prop_wash_data;
-        struct aircraft_data;
-        struct aircraft_wheel_data;
-    }  // namespace data
-
-    // json data structures
-    namespace data
-    {
-        struct prefab_data;
-
-        struct s_component_data;
-        struct directorylisting;
-        struct dialogstate;
-        struct s_flight_recording_file;
-
-        struct vec4;
-        struct dialog_data;
-        struct model_component_data;
-
-        struct file_data;
-
-        struct AttributeData;
-        struct PropertyData;
-        struct PropertiesData;
-
-        struct fsm_data;
-        struct camera_data;
-        struct plugin_event;
-
-        struct model_load_data;
-        struct model_data;
-
-        struct vertex;
-        struct sub_mesh;
-        struct mesh;
-
-        struct collision_object;
-
-        struct model_wind;
-        struct collider_data;
-        struct gameobject_component_data;
-        struct prefab_data;
-        struct tree_prototype_data;
-        struct tree_instance_data;
-        struct terrain_data;
-
-        struct resolution_entry;
-        struct resolution_data;
-        struct system_settings_data;
-        struct glow_rope_data;
-        struct rotor_data;
-        struct transform_data;
-
-        struct sphere_collider;
-        struct plane_collider;
-        struct box_collider;
-        struct mesh_collider;
-        struct terrain_collider;
-        struct compond_collider;
-        struct collider;
-        struct physics_material;
-        struct bounds_data;
-        struct constraint_data;
-        struct rigid_body;
-        struct layer_data;
-        struct model_layer_data;
-
-        struct buoyancy_data;
-        struct actor_data;
-        struct component_event_data;
-        struct actor_event_data;
-        struct debug_draw;
-        struct debug_text_data;
-        struct object_select_data;
-        struct object_bounds_data;
-
-        struct pid_data;
-        struct pid_scaler_data;
-        struct stab_settings_data;
-        struct drone_stab_settings;
-        struct multi_rotor_ctrl_data;
-        struct water_ripples;
-
-        struct scene_node_data;
-        struct path_data;
-
-        struct model_physics_setup_flight_data;
-        struct model_physics_setup_data;
-        struct models_physics_setup_data;
-
-        struct configured_model_component_data;
-        struct configured_model_data;
-
-        struct switch_indicators_data;
-        struct setup_wizard_data;
-        struct four_wheeled_vehicle_data;
-        struct cg_info_mode;
-
-        struct aircraft_input_data;
-        struct aircraft_curve_value;
-        struct aircraft_curve_data;
-        struct aircraft_aerofoil_data;
-        struct aircraft_cog_data;
-        struct aircraft_control_surface_data;
-        struct aircraft_wing_data;
-        struct aircraft_engine_data;
-        struct aircraft_ground_effect_data;
-        struct aircraft_prop_wash_data;
-        struct aircraft_prop_wash_data;
-        struct aircraft_data;
-        struct car_data;
-        struct truck_data;
-        struct aircraft_wheel_data;
-
-        struct esc_data;
-
-        struct CMapData;
-
-        struct plugin_event;
-        struct plugin_events;
-
-        struct servo_hole_data;
-        struct servo_data;
-        struct swash_plate_data;
-        struct model_control_data;
-
-        struct multi_rotor_prop_data;
-        struct multi_rotor_motor_data;
-        struct collider;
-
-        struct directorylisting;
-        struct resource_map_entry;
-        struct resource_map;
-
-        struct movable_object_data;
-
-        struct four_wheeled_vehicle_wheel_data;
-        struct swash_plate_position;
-
-        struct system_settings_data;
-        struct scenery_data;
-        struct model_data;
-        struct car_data;
-
-        struct vehicle_data;
-        struct vehicle_wheel_data;
-
-        typedef std::string String;
-
-    }  // namespace data
-}  // namespace fb
 
 namespace fb
 {
     namespace scene
     {
-        struct ActorTransform;
-        class Transform;
-
-        class StartLocation;
-
-        struct EntityCellData;
-
-        class TransformAvatar;
-
-        class TextAsset;
-        class StringReader;
-        class Shader;
-        class RaceView;
-        class RaceManagerView;
-        class RaceRewards;
-        class Statistics;
-
-        class Drone_Controller;
-        class Motorbike_Controller;
-
-        class Texture;
-        class UpgradeLevels;
-        class PlayerControl;
-        class WheelHit;
-        class Skidmark;
-
-        class TerrainData;
-        class TerrainLayer;
-
-        class SplatPrototype;
-        class Ranker;
-        class ProgressTracker;
-        class SoundManager;
-        class WaypointList;
-
-        // racing
-        class RacingCarController;
-
-        // audio
         class AudioClip;
         class AudioSource;
 
         class Camera;
-        class CameraController;
-        class FlightInfo;
 
         class FiniteStateMachine;
-
-        class ParticleGroundEffect;
-        class ProceduralObject;
-        class ProceduralRenderable;
-        class ProceduralScene;
-        class ProceduralSceneRenderer;
-        class ProceduralRenderer;
-        class CityGenerator;
-        class ProceduralCity;
-        class Building;
-        class Road;
-        class RoadNode;
-        class Sidewalk;
-        class SidewalkNode;
-        class RoadConnection;
-        class Block;
-        class BlockNode;
-        class LotNode;
-        class Lot;
-        class LSystem;
-        class LSystemTurtle;
-        class ProceduralPath;
-        class River;
-        class RiverNode;
-        class ProceduralCell;
-        class EditorFpsCameraController;
-        class SphericalCameraController;
-        class FragCounter;
-        class MatchLogic;
-        class MovementControlFPS;
-        class Player;
-        class CollisionNode;
-        class PhysicsResponse2;
-        class Position25;
-
-        class Destructible;
-        class Collision;
-        class CollisionMesh;
-        class Destructible;
-        class EnergyContainer;
-        class PuzzleMatchElement;
-        class PuzzleMatchManager;
-        class BasicPhysicsObject;
-        class MovementControl2;
-        class Grid2Container;
-        class WeaponContainer;
-        class PuzzleMatchWorld;
-        class GravitonLogic;
-        class ObjectContainer;
-        class PropertiesComponent;
-        class EntitySelection2;
-        class ScreenSpaceRotation;
-        class SoundContainer;
-        class Tooltip;
-        class WheelController;
+        
         class MeshRenderer;
         class Mesh;
-        class TerrainBlendMap;
-        class TerrainSystem;
-        class VehicleController;
 
         class Constraint;
         class Rigidbody;
 
         class Collision;
+        class CollisionMesh;
         class CollisionBox;
-
         class Material;
-        class VehicleComponent;
-        class VehicleConstraint;
-        class VehicleRigidbody;
-        class Receiver;
-        class ControlSurface;
-        class VehiclePhysics;
-        class Engine;
-        class Servo;
-        class Rotor;
-        class MultiRotorCtrl;
-        class DroneController;
-        class FlybarCtrl;
-        class Servo;
-        class Rotor;
-        class MultiRotorMotor;
-        class MultiRotorProp;
-        class Swashplate;
-        class Muffler;
+        class Skybox;
+        class Shader;
+        class Texture;
+        class Tooltip;
+        class Transform;
+        class WheelController;
 
-        class Weapon;
-        class WeaponFireArm2;
-        class WeaponFireArm3;
+        // terrain
+        class TerrainBlendMap;
+        class TerrainSystem;
+        class TerrainData;
+        class TerrainLayer;
 
         // ui
         class Button;
@@ -1033,19 +649,6 @@ namespace fb
         class Text;
         class UIComponent;
 
-        class Skybox;
-        class Application;
-
-        class GraphicsSettings;
-        class PhysicsSettings;
-        class SimulatorApplication;
-        class TruckSimulatorApplication;
-        class SystemSettings;
-        class VideoSettings;
-
-        class Vehicle;
-        class VehicleCar;
-        class VehicleRadioControlled;
     }  // namespace scene
 }  // namespace fb
 

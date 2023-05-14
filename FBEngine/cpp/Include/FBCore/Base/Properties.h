@@ -83,14 +83,11 @@ namespace fb
         Vector3D getPropertyAsVector3D( const String &name,
                                         Vector3D defaultValue = Vector3D::zero() ) const;
 
-        /** Gets an array of the properties in the property group. */
+        /** Sets an array of the properties. */
+        void setPropertiesAsArray(const Array<Property>& array);
+
+        /** Gets an array of the properties. */
         Array<Property> getPropertiesAsArray() const;
-
-        /** Gets the properties data. */
-        SmartPtr<IData> toData() const override;
-
-        /** Set object data from a structure. */
-        void fromData( SmartPtr<IData> data ) override;
 
         /** A copy operator to copy the properties of one object to another. */
         Properties &operator=( const Properties &other );
@@ -413,6 +410,8 @@ namespace fb
         @return Returns true if the property was found. Returns false if the property was not found.
         */
         bool getPropertyValue( const String &name, Array<String> &value ) const;
+
+        static void registerClass();
 
         FB_CLASS_REGISTER_DECL;
 

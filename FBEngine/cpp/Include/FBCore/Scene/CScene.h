@@ -94,15 +94,6 @@ namespace fb
 
             bool isValid() const override;
 
-            /** Get object data as a json String. */
-            String toJson() const override;
-
-            /** Get object data as a json structure. */
-            SmartPtr<IData> toData() const override;
-
-            /** Set object data from json structure. */
-            void fromData( SmartPtr<IData> data ) override;
-
             String getFilePath() const override;
             void setFilePath( const String &val ) override;
 

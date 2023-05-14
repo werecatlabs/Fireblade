@@ -1,12 +1,12 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Resource/CMeshManager.h>
 #include <FBCore/Base/LogManager.h>
-#include <FBCore/Data/DefineDataStructures.h>
 #include <FBCore/Interface/Graphics/ISceneNode.h>
 #include <FBCore/Interface/IO/IFileSystem.h>
 #include <FBCore/Interface/IO/IStream.h>
 #include <FBCore/Interface/Mesh/IMeshLoader.h>
 #include <FBCore/Base/DataUtil.h>
+#include <FBCore/Base/Path.h>
 #include <FBCore/Memory/Data.h>
 #include <FBMesh/FBMesh.h> // todo remove
 
@@ -358,6 +358,7 @@ namespace fb
 
                 if( fileSystem->isExistingFile( fileDataPath ) )
                 {
+                    /*
                     auto dataStr = fileSystem->readAllText( fileDataPath );
 
                     auto data = fb::make_ptr<Data<data::mesh_importer_data>>();
@@ -378,9 +379,11 @@ namespace fb
                         m_meshResources.push_back( meshResource );
                         return meshResource;
                     }
+                    */
                 }
                 else
                 {
+                    /*
                     data::mesh_importer_data meshData;
                     auto dataStr = DataUtil::toString( &meshData, true );
                     fileSystem->writeAllText( fileDataPath, dataStr );
@@ -408,6 +411,7 @@ namespace fb
 
                     m_meshResources.push_back( meshResource );
                     return meshResource;
+                    */
                 }
             }
         }

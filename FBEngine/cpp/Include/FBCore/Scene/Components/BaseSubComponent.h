@@ -43,10 +43,6 @@ namespace fb
              */
             void setParent( SmartPtr<IComponent> parent ) override;
 
-            SmartPtr<IData> toData() const;
-
-            void fromData( SmartPtr<IData> data );
-
             /**
              * Gets the data associated with the component as a properties object.
              * @return The data associated with the component as a properties object.

@@ -254,15 +254,15 @@ namespace fb
             auto extension = Path::getFileExtension( filePath );
             if( extension == ".fbx" || extension == ".FBX" )
             {
-                data::mesh_importer_data meshImportData;
+                //data::mesh_importer_data meshImportData;
                 // meshImportData.path = filePath;
                 // data = DataUtil::toString(&meshImportData);
             }
             else
             {
-                data::importer_data importData;
-                importData.path = filePath;
-                data = DataUtil::toString( &importData );
+                //data::importer_data importData;
+                //importData.path = filePath;
+                //data = DataUtil::toString( &importData );
             }
 
             // if (db)

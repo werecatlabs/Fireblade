@@ -369,15 +369,15 @@ namespace fb
             auto extension = Path::getFileExtension( filePath );
             if( extension == ".fbx" || extension == ".FBX" )
             {
-                data::mesh_importer_data meshImportData;
+                //data::mesh_importer_data meshImportData;
                 // meshImportData.path = filePath;
                 // data = DataUtil::toString(&meshImportData);
             }
             else
             {
-                data::importer_data importData;
-                importData.path = filePath;
-                data = DataUtil::toString( &importData );
+                //data::importer_data importData;
+                //importData.path = filePath;
+                //data = DataUtil::toString( &importData );
             }
 
             // if (db)
@@ -771,17 +771,17 @@ namespace fb
         }
         else if( ext == ".resource" )
         {
-            auto jsonStr = fileSystem->readAllText( path );
+            //auto jsonStr = fileSystem->readAllText( path );
 
-            auto pData = fb::make_ptr<Data<data::properties>>();
-            auto data = pData->getDataAsType<data::properties>();
-            DataUtil::parse( jsonStr, data );
+            //auto pData = fb::make_ptr<Data<data::properties>>();
+            //auto data = pData->getDataAsType<data::properties>();
+            //DataUtil::parse( jsonStr, data );
 
-            auto director = fb::make_ptr<scene::CDirector>();
-            director->fromData( pData );
+            //auto director = fb::make_ptr<scene::CDirector>();
+            //director->fromData( pData );
 
-            assetDatabaseManager->addResourceEntry( director );
-            return director;
+            //assetDatabaseManager->addResourceEntry( director );
+            //return director;
         }
 
         return nullptr;

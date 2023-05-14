@@ -32,7 +32,7 @@ namespace fb
                                                SmartPtr<scene::IActor> parent ) override;
 
             /** @copydoc IResourceManager::loadActor */
-            SmartPtr<scene::IActor> loadActor( data::actor_data &data, SmartPtr<scene::IActor> parent );
+            //SmartPtr<scene::IActor> loadActor( data::actor_data &data, SmartPtr<scene::IActor> parent );
 
             /** @copydoc IResourceManager::loadPrefab */
             SmartPtr<IPrefab> loadPrefab( const String &filePath ) override;

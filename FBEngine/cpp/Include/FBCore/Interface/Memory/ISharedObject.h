@@ -223,22 +223,6 @@ namespace fb
          */
         virtual bool isPoolElement() const = 0;
 
-        /** Gets a json string. */
-        virtual String toJson() const = 0;
-
-        /** Gets a xml string. */
-        virtual String toXml() const = 0;
-
-        /** Get object data as a json structure.
-        @return An object containing the object data.
-        */
-        virtual SmartPtr<IData> toData() const = 0;
-
-        /** Set object data from json structure.
-        @param data An object containing the object data.
-        */
-        virtual void fromData( SmartPtr<IData> data ) = 0;
-
         /** Used to get child objects that make up the object composition.
         @return An array with the child objects.
         */

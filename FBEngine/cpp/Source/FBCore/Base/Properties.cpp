@@ -3,7 +3,6 @@
 #include <FBCore/Base/VectorUtil.h>
 #include <FBCore/Base/Exception.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Base/Data.h>
 #include <FBCore/Memory/Data.h>
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/System/IFactory.h>
@@ -14,6 +13,7 @@
 #include <FBCore/Interface/Mesh/IMeshResource.h>
 #include <FBCore/Interface/Resource/IResource.h>
 #include <FBCore/Interface/Resource/IResourceDatabase.h>
+#include <rttr/registration>
 
 namespace fb
 {
@@ -343,54 +343,14 @@ namespace fb
         FB_EXCEPTION( "Could not get property" );
     }
 
+    void Properties::setPropertiesAsArray( const Array<Property> &array )
+    {
+        m_properties = array;
+    }
+
     Array<Property> Properties::getPropertiesAsArray() const
     {
         return m_properties;
-    }
-
-    SmartPtr<IData> Properties::toData() const
-    {
-        auto data = fb::make_ptr<Data<data::properties>>();
-        auto pData = data->getDataAsType<data::properties>();
-
-        auto propertiesArray = getPropertiesAsArray();
-        for( auto property : propertiesArray )
-        {
-            data::property p;
-            p.name = property.getName();
-            p.value = property.getValue();
-
-            auto attributes = property.getAttributes();
-            for( auto &attribute : attributes )
-            {
-                data::attribute a;
-                a.name = attribute.first;
-                a.value = attribute.second;
-                p.attributes.push_back( a );
-            }
-
-            pData->properties_.push_back( p );
-        }
-
-        return data;
-    }
-
-    void Properties::fromData( SmartPtr<IData> data )
-    {
-        auto pData = data->getDataAsType<data::properties>();
-        for( auto &p : pData->properties_ )
-        {
-            Property property;
-            property.setName( p.name );
-            property.setValue( p.value );
-
-            for( auto &a : p.attributes )
-            {
-                property.setAttribute( a.name, a.value );
-            }
-
-            m_properties.push_back( property );
-        }
     }
 
     String Properties::getProperty( const String &name, String defaultValue ) const
@@ -976,7 +936,7 @@ namespace fb
             return true;
         }
 
-        return false;        
+        return false;
     }
 
     bool Properties::getPropertyValue( const String &name, Array<String> &value ) const
@@ -990,6 +950,17 @@ namespace fb
         }
 
         return false;
+    }
+
+    void Properties::registerClass()
+    {
+        using namespace fb;
+        using namespace rttr;
+
+        registration::class_<Properties>( "Properties" )
+            .property( "name", &Properties::m_name )
+            .property( "properties", &Properties::m_properties )
+            .property( "children", &Properties::m_children );
     }
 
 }  // end namespace fb

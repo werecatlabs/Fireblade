@@ -83,6 +83,7 @@ namespace fb
         /** Gets the type of the property. */
         String getType() const;
 
+	
         /** Sets the property to read only. */
         void setReadOnly( bool readOnly );
 
@@ -112,6 +113,8 @@ namespace fb
 
         /** Sets an any value. */
         void setAny( const Any &any );
+
+        static void registerClass();
 
     private:
         String m_label;

@@ -29,15 +29,6 @@ namespace fb
             /** @copydoc IPluginEvent::setArgument */
             void setArgument( size_t index, const String &value ) override;
 
-            /** @copydoc IPluginEvent::toJson */
-            String toJson() const override;
-
-            /** @copydoc IPluginEvent::toData */
-            SmartPtr<IData> toData() const override;
-
-            /** @copydoc IPluginEvent::fromData */
-            void fromData( SmartPtr<IData> data ) override;
-
             PluginEvent &operator=( const PluginEvent &other );
 
             const String &getArg1() const;

@@ -15,9 +15,9 @@ namespace fb
         FactoryUtil::addFactory<EventJob>();
         FactoryUtil::addFactory<FSMManager>();
         FactoryUtil::addFactory<Properties>();
-        FactoryUtil::addFactory<StateQueueStandard>(); 
-        FactoryUtil::addFactory<StateContextStandard>(); 
-        FactoryUtil::addFactory<StateManagerStandard>();     
+        FactoryUtil::addFactory<StateQueueStandard>();
+        FactoryUtil::addFactory<StateContextStandard>();
+        FactoryUtil::addFactory<StateManagerStandard>();
         FactoryUtil::addFactory<WorkerThread>();
 
         FactoryUtil::addFactory<SceneNodeState>();
@@ -38,4 +38,5 @@ namespace fb
     void FBCore::unload( SmartPtr<ISharedObject> data )
     {
     }
+
 }  // end namespace fb

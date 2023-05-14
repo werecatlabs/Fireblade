@@ -1,6 +1,5 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Math/Vector3.h>
-#include <FBCore/Base/Data.h>
 #include <FBCore/Base/DataUtil.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Memory/Data.h>
@@ -142,37 +141,6 @@ namespace fb
             v[1] = -w[0] * u[2];
             v[2] = w[0] * u[1];
         }
-    }
-
-    template <class T>
-    String Vector3<T>::toJson() const
-    {
-        auto data = toData();
-        auto v = data->template getDataAsType<data::vec4>();
-        return DataUtil::toString( v );
-    }
-
-    template <class T>
-    SmartPtr<IData> Vector3<T>::toData() const
-    {
-        auto data = fb::make_ptr<Data<data::vec4>>();
-        auto v = data->getDataAsType<data::vec4>();
-
-        v->x = static_cast<f32>( X() );
-        v->y = static_cast<f32>( Y() );
-        v->z = static_cast<f32>( Z() );
-
-        return data;
-    }
-
-    template <class T>
-    void Vector3<T>::fromData( SmartPtr<IData> data )
-    {
-        auto v = data->getDataAsType<data::vec4>();
-
-        X() = static_cast<T>( v->x );
-        Y() = static_cast<T>( v->y );
-        Z() = static_cast<T>( v->z );
     }
 
     // explicit instantiation

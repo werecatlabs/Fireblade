@@ -189,15 +189,6 @@ namespace fb
             /** @copydoc IComponent::setDirty */
             virtual void setDirty( bool dirty );
 
-            /** @copydoc IComponent::toJson */
-            String toJson() const override;
-
-            /** @copydoc IComponent::toData */
-            SmartPtr<IData> toData() const override;
-
-            /** @copydoc IComponent::fromData */
-            void fromData( SmartPtr<IData> data ) override;
-
             /** @copydoc IComponent::getChildObjects */
             Array<SmartPtr<ISharedObject>> getChildObjects() const override;
 

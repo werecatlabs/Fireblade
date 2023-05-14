@@ -14,47 +14,7 @@
 #include <FBCore/Base/Properties.h>
 #include <FBCore/Base/VectorUtil.h>
 #include <FBCore/Base/SingletonPool.h>
-
-#include <FBCore/Data/DefineDataStructures.h>
-#include <FBCore/Data/C/ActorData.h>
-#include <FBCore/Data/C/ActorEventData.h>
-#include <FBCore/Data/C/ActorInfoData.h>
-#include <FBCore/Data/C/AudioListenerState.h>
-#include <FBCore/Data/C/CameraData.h>
-#include <FBCore/Data/C/ColliderBoxData.h>
-#include <FBCore/Data/C/ColliderData.h>
-#include <FBCore/Data/C/ColliderPlaneData.h>
-#include <FBCore/Data/C/DebugData.h>
-#include <FBCore/Data/C/DebugLineData.h>
-#include <FBCore/Data/C/GameObjectTransformData.h>
-#include <FBCore/Data/C/InputStateData.h>
-#include <FBCore/Data/C/RaycastResultData.h>
-#include <FBCore/Data/C/RigidBodyData.h>
-#include <FBCore/Data/C/StateData.h>
-#include <FBCore/Data/C/StatsData.h>
-#include <FBCore/Data/C/StringData.h>
-#include <FBCore/Data/C/SwitchIndicatorsData.h>
-#include <FBCore/Data/C/TransformData.h>
-#include <FBCore/Data/C/VectorData.h>
-#include <FBCore/Data/DataInterfaceUtil.h>
-#include <FBCore/Data/XMLUtil.h>
-#include <FBCore/Data/OSMUtil.h>
-#include <FBCore/Data/C/VectorData.h>
-#include <FBCore/Data/C/CameraData.h>
-#include <FBCore/Data/C/ActorData.h>
-#include <FBCore/Data/C/ActorEventData.h>
-#include <FBCore/Data/C/ComponentData.h>
-#include <FBCore/Data/C/CollisionData.h>
-#include <FBCore/Data/C/DebugData.h>
-#include <FBCore/Data/C/ObjectTransformData.h>
-#include <FBCore/Data/C/PhysicsStateData.h>
-#include <FBCore/Data/C/RaycastResultData.h>
-#include <FBCore/Data/C/RigidBodyData.h>
-#include <FBCore/Data/C/StateData.h>
-#include <FBCore/Data/C/StringData.h>
-
-#include <FBCore/Math/Polygon2.h>
-#include <FBCore/Math/Polygon3.h>
+#include <FBCore/Base/XmlUtil.h>
 
 #include <FBCore/Interface/IApplicationClient.h>
 #include <FBCore/Interface/IApplicationManager.h>
@@ -458,7 +418,14 @@
 
 // math
 #include <FBCore/Math/Core/MathUtil.h>
+#include <FBCore/Math/Spline/LinearSpline1.h>
+#include <FBCore/Math/Spline/LinearSpline2.h>
+#include <FBCore/Math/Spline/LinearSpline3.h>
+#include <FBCore/Math/Spline/LinearSpline4.h>
+#include <FBCore/Math/Spline/RotationalSpline3.h>
 #include <FBCore/Math/Euler.h>
+#include <FBCore/Math/Polygon2.h>
+#include <FBCore/Math/Polygon3.h>
 #include <FBCore/Math/Vector2.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Vector4.h>
@@ -468,7 +435,45 @@
 #include <FBCore/Memory/FactoryTemplate.h>
 #include <FBCore/Memory/FactoryUtil.h>
 
-#include <FBCore/Reflection/ReflectionClassDefinition.h>
+#include <FBCore/Resource/CMeshManager.h>
+#include <FBCore/Resource/CPrefabManager.h>
+#include <FBCore/Resource/CResourceDatabase.h>
+
+#include <FBCore/Rtti/ReflectionClassDefinition.h>
+
+#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Camera.h>
+#include <FBCore/Scene/Components/Component.h>
+#include <FBCore/Scene/Components/Constraint.h>
+#include <FBCore/Scene/Components/Collision.h>
+#include <FBCore/Scene/Components/CollisionBox.h>
+#include <FBCore/Scene/Components/CollisionMesh.h>
+#include <FBCore/Scene/Components/CollisionPlane.h>
+#include <FBCore/Scene/Components/CollisionSphere.h>
+#include <FBCore/Scene/Components/CollisionTerrain.h>
+#include <FBCore/Scene/Components/Light.h>
+#include <FBCore/Scene/Components/Material.h>
+#include <FBCore/Scene/Components/Mesh.h>
+#include <FBCore/Scene/Components/MeshRenderer.h>
+#include <FBCore/Scene/Components/Rigidbody.h>
+#include <FBCore/Scene/Components/Skybox.h>
+#include <FBCore/Scene/Components/Transform.h>
+#include <FBCore/Scene/Components/Terrain/TerrainSystem.h>
+#include <FBCore/Scene/Components/Terrain/TerrainLayer.h>
+#include <FBCore/Scene/Components/Terrain/TerrainBlendMap.h>
+#include <FBCore/Scene/Components/UserComponent.h>
+
+#include <FBCore/Scene/Components/UI/Button.h>
+#include <FBCore/Scene/Components/UI/Layout.h>
+#include <FBCore/Scene/Components/UI/Image.h>
+#include <FBCore/Scene/Components/UI/InputField.h>
+#include <FBCore/Scene/Components/UI/Text.h>
+#include <FBCore/Scene/Components/UI/Layout.h>
+#include <FBCore/Scene/Components/UI/CanvasTransform.h>
+
+#include <FBCore/Scene/CActor.h>
+#include <FBCore/Scene/CSceneManager.h>
+#include <FBCore/Scene/CScene.h>
 
 #include <FBCore/State/Messages/CommonStateChangeMsgs.h>
 #include <FBCore/State/Messages/StateMessageBuffer.h>
@@ -535,8 +540,12 @@
 #include <FBCore/State/States/OverlayElementState.h>
 #include <FBCore/State/States/OverlayTextState.h>
 #include <FBCore/State/States/ViewportState.h>
+
 #include <FBCore/System/ApplicationManager.h>
 #include <FBCore/System/ApplicationManagerMT.h>
+#include <FBCore/System/CommandManager.h>
+#include <FBCore/System/CommandManagerMT.h>
+#include <FBCore/System/CSelectionManager.h>
 #include <FBCore/System/DebugUtil.h>
 #include <FBCore/System/Job.h>
 #include <FBCore/System/JobQueue.h>

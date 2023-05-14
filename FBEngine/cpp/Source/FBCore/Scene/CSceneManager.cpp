@@ -14,6 +14,7 @@
 #include <FBCore/Interface/System/ITaskLock.h>
 #include <FBCore/Interface/System/ITaskManager.h>
 #include <FBCore/Interface/System/IThreadPool.h>
+#include <FBCore/Base/Path.h>
 
 namespace fb
 {

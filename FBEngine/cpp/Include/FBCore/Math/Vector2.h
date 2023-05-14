@@ -196,12 +196,6 @@ namespace fb
         /** Returns a unit vector. */
         static Vector2 unit();
 
-        /** Turns this vector into json string. */
-        String toJson() const;
-
-        /** Turns this vector into a data object. */
-        SmartPtr<IData> toData() const;
-
         /** Checks if the vector's elements have a valid value. */
         bool isValid() const;
 

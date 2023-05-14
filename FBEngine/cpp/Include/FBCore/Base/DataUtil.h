@@ -8,11 +8,25 @@
 #include <FBCore/Memory/SmartPtr.h>
 #include <FBCore/Base/StringTypes.h>
 #include <FBCore/Base/Properties.h>
-#include <FBCore/Base/Data.h>
+//#include <FBCore/Extern/rttr/registration.h>
+//#include <boost/json.hpp>
+
+namespace boost
+{
+    namespace json
+    {
+        class object;
+    }  // namespace json
+}  // namespace boost
+
+namespace rttr
+{
+	class instance;
+}  // namespace rttr
 
 namespace fb
 {
-    
+
     /** Utility class used to convert data. */
     class DataUtil
     {
@@ -21,30 +35,16 @@ namespace fb
         static String toString( T *ptr, bool formatted = false );
 
         template <class T>
-        static String toString( RawPtr<T> ptr, bool formatted = false );
-
-        template <class T>
-        static String toString( SmartPtr<T> ptr, bool formatted = false );
-
-        template <class T>
-        static void parse( const String &jsonData, T *ptr );
-
-        template <class T>
-        static void parse( const String &jsonData, RawPtr<T> ptr );
+        static void parse( const String &jsonDataStr, T *ptr );
 
         template <class T>
         static void parseXML( const String &xmlData, T *ptr );
 
-        template <class T>
-        static void parseXML( const String &xmlData, RawPtr<T> ptr );
-
-        template <class T>
-        static data::vec4 toData( const Vector3<T> &v )
-        {
-            FB_ASSERT( v.isValid() );
-            return data::vec4( v.x, v.y, v.z, T( 0.0 ) );
-        }
+        static String objectToJsonStr(const rttr::instance &instance);
     };
+
+
+
 }  // end namespace fb
 
 #endif  // DataUtil_h__

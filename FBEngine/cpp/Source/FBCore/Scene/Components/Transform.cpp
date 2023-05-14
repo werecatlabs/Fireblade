@@ -2,6 +2,7 @@
 #include <FBCore/Scene/Components/Transform.h>
 #include <FBCore/Scene/CSceneManager.h>
 #include <FBCore/FBCore.h>
+#include <rttr/registration>
 
 namespace fb
 {
@@ -652,6 +653,16 @@ namespace fb
             {
                 FB_LOG_EXCEPTION( e );
             }
+        }
+
+        void Transform::registerClass()
+        {
+            using namespace fb;
+            using namespace rttr;
+
+            registration::class_<Transform>( "Transform" )
+                .property( "worldTransform", &Transform::m_worldTransform )
+                .property( "localTransform", &Transform::m_localTransform );
         }
 
     }  // namespace scene
