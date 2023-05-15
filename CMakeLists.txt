@@ -509,15 +509,15 @@ if (FB_BUILD_ENGINE)
 endif()
 
 if (FB_BUILD_PLUGINS)
-    add_subdirectory(Plugins)
+    #add_subdirectory(Plugins)
 endif()
 
-add_subdirectory(Samples)
+#add_subdirectory(Samples)
  
 if (FB_BUILD_TESTS)
-    add_subdirectory(Tests)
+    #add_subdirectory(Tests)
 endif()
 
 if (FB_BUILD_TOOLS)
-    add_subdirectory(Tools)
+    #add_subdirectory(Tools)
 endif()

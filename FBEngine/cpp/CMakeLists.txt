@@ -2,12 +2,12 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(cpp_defines)
 include(cpp_compiler_options)
 
-add_subdirectory(Project/FBAero)
-add_subdirectory(Project/FBAi)
-add_subdirectory(Project/FBAnimation)
-add_subdirectory(Project/FBApplication)
-add_subdirectory(Project/FBAudio)
-add_subdirectory(Project/FBAssimp)
+#add_subdirectory(Project/FBAero)
+#add_subdirectory(Project/FBAi)
+#add_subdirectory(Project/FBAnimation)
+#add_subdirectory(Project/FBApplication)
+#add_subdirectory(Project/FBAudio)
+#add_subdirectory(Project/FBAssimp)
 
 if (FB_BUILD_BULLETPHYSICS)
 	add_subdirectory(Project/FBBulletPhysics)
@@ -22,24 +22,24 @@ if (FB_BUILD_IMGUI)
 endif ()
 
 add_subdirectory(Project/FBCore)
-add_subdirectory(Project/FBCPlusPlus)
+#add_subdirectory(Project/FBCPlusPlus)
 
 if (FB_BUILD_DIRECTSHOW)
-	add_subdirectory(Project/FBDirectShow)
+	#add_subdirectory(Project/FBDirectShow)
 endif ()
 
-add_subdirectory(Project/FBFFMpeg)
+#add_subdirectory(Project/FBFFMpeg)
 
 if (FB_BUILD_FMOD)
-	add_subdirectory(Project/FBFMODStudio)
+	#add_subdirectory(Project/FBFMODStudio)
 endif ()
 
-add_subdirectory(Project/FBRuntime)
+#add_subdirectory(Project/FBRuntime)
 
 add_subdirectory(Project/FBGraphics)
 
 if (FB_GRAPHICS_SYSTEM_CLAW)
-	add_subdirectory(Project/FBGraphicsClaw)
+	#add_subdirectory(Project/FBGraphicsClaw)
 endif()
 
 if (FB_GRAPHICS_SYSTEM_OGRE)
@@ -50,16 +50,12 @@ if (FB_GRAPHICS_SYSTEM_OGRENEXT)
 	add_subdirectory(Project/FBGraphicsOgreNext)
 endif()
 
-if (FB_GRAPHICS_SYSTEM_SOFTWARE)
-	add_subdirectory(Project/FBGraphicsSoftware)
-endif()
-
 #add_subdirectory(Project/FBGStreamer)
 add_subdirectory(Project/FBRenderUI)
 
 add_subdirectory(Project/FBFileSystem)
 
-add_subdirectory(Project/FBLightmapper)
+#add_subdirectory(Project/FBLightmapper)
 add_subdirectory(Project/FBMesh)
 
 if (FB_ENABLE_LUA)
@@ -78,18 +74,18 @@ if (FB_ENABLE_PYTHON)
 endif()
 
 #add_subdirectory(Project/FBState)
-add_subdirectory(Project/FBParticleSystem)
-add_subdirectory(Project/FBProcedural)
-add_subdirectory(Project/FBVehicle)
-add_subdirectory(Project/FBInput)
-add_subdirectory(Project/FBPlugin)
+#add_subdirectory(Project/FBParticleSystem)
+#add_subdirectory(Project/FBProcedural)
+#add_subdirectory(Project/FBVehicle)
+#add_subdirectory(Project/FBInput)
+#add_subdirectory(Project/FBPlugin)
 
 if (FB_BUILD_PHYSX)
 	add_subdirectory(Project/FBPhysx)
 endif()
 
-add_subdirectory(Project/FBPhysics2)
-add_subdirectory(Project/FBPhysics3)
+#add_subdirectory(Project/FBPhysics2)
+#add_subdirectory(Project/FBPhysics3)
 
 if (FB_BUILD_SQLITE)
 	add_subdirectory(Project/FBSQLite)
@@ -99,14 +95,14 @@ if (FB_BUILD_ODE)
 	add_subdirectory(Project/FBODE3)
 endif()
 	
-add_subdirectory(Project/FBRakNet)
+#add_subdirectory(Project/FBRakNet)
 add_subdirectory(Project/FBOISInput)
-add_subdirectory(Project/FBTest)
+#add_subdirectory(Project/FBTest)
 
 if (FB_USE_HOUDINI)
 	add_subdirectory(Project/FBHoudini)
 endif()
 
 if (FB_BUILD_WXWIDGETS)
-	add_subdirectory(Project/FBWxWidgets)
+	#add_subdirectory(Project/FBWxWidgets)
 endif ()
