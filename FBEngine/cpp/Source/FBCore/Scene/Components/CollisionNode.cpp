@@ -18,7 +18,7 @@ namespace fb
 
         u32 CollisionNode::getRootType() const
         {
-            // FB_LOCK_MUTEX(Mutex);
+            // RecursiveMutex::ScopedLock lock(Mutex);
 
             // SmartPtr<CollisionNode> parent = getParent();
             // if(!parent)

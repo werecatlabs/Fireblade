@@ -3,7 +3,7 @@
 #include <FBCore/Base/DataUtil.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Memory/Data.h>
-#include <FBCore/Rtti/ReflectionClassDefinition.h>
+#include <FBCore/Rtti/RttiClassDefinition.h>
 
 namespace fb
 {

@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/Scene/ICameraController.h>
-#include <FBCore/Rtti/ReflectionClassDefinition.h>
+#include <FBCore/Rtti/RttiClassDefinition.h>
 
 namespace fb
 {

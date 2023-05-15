@@ -57,7 +57,7 @@ namespace fb
         /** Adds a child to this node. */
         virtual void addChild( SmartPtr<Node> child )
         {
-            FB_LOCK_MUTEX( Mutex );
+            RecursiveMutex::ScopedLock lock( m_mutex );  
 
             child->remove();  // remove from current parent
             m_children.push_back( child );
@@ -69,7 +69,7 @@ namespace fb
         /** Removes a child of this node. */
         virtual bool removeChild( SmartPtr<Node> child )
         {
-            FB_LOCK_MUTEX( Mutex );
+            RecursiveMutex::ScopedLock lock( m_mutex );  
             child->m_parent = nullptr;
             return false;  // m_children.erase_element(child);
         }
@@ -77,7 +77,7 @@ namespace fb
         /** Finds a child. */
         virtual SmartPtr<Node> findChild( u32 id ) const
         {
-            FB_LOCK_MUTEX( Mutex );
+            RecursiveMutex::ScopedLock lock( m_mutex );  
 
             for( u32 i = 0; i < m_children.size(); ++i )
             {
@@ -104,7 +104,7 @@ namespace fb
         /** Removes all children. */
         virtual void removeAllChildren()
         {
-            FB_LOCK_MUTEX( Mutex );
+            RecursiveMutex::ScopedLock lock( m_mutex );  
             for( u32 i = 0; i < m_children.size(); ++i )
             {
                 removeChild( m_children[i] );
@@ -114,7 +114,7 @@ namespace fb
         /** Fills an Array with the children of this entity. */
         virtual Array<SmartPtr<Node>> getChildren() const
         {
-            FB_LOCK_MUTEX( Mutex );
+            RecursiveMutex::ScopedLock lock( m_mutex );  
             Array<SmartPtr<Node>> children;
             children.reserve( m_children.size() );
 
@@ -133,7 +133,7 @@ namespace fb
         SmartPtr<Node> m_parent;
         Array<SmartPtr<Node>> m_children;
 
-        FB_MUTEX_MUTABLE( Mutex );
+        mutable RecursiveMutex m_mutex;  
     };
 
     FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, Node, T, CSharedObject<T> );

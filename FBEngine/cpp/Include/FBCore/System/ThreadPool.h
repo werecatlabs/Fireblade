@@ -86,7 +86,7 @@ namespace fb
         Array<u32> m_queueLengthMilliseconds;
         Array<u32> m_reserveFlags;
 
-        FB_MUTEX_MUTABLE( Mutex );
+        mutable RecursiveMutex m_mutex;  
     };
 }  // end namespace fb
 

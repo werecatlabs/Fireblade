@@ -100,17 +100,17 @@ namespace fb
              */
             virtual bool isVisible() const = 0;
 
-            /** Sets whether this gui item is enabled. */
+            /** Sets whether this ui item is enabled. */
             virtual void setEnabled( bool enabled, bool cascade = true ) = 0;
 
-            /** Sets whether this gui item is enabled. */
+            /** Sets whether this ui item is enabled. */
             virtual bool isEnabled() const = 0;
 
             /** Gets the parent element. */
             virtual SmartPtr<IUIElement> getParent() const = 0;
 
             /** Sets the parent element. */
-            virtual void setParent( SmartPtr<IUIElement> val ) = 0;
+            virtual void setParent( SmartPtr<IUIElement> parent ) = 0;
 
             /** Gets the children of the gui item. */
             virtual SharedPtr<ConcurrentArray<SmartPtr<IUIElement>>> getChildren() const = 0;
@@ -251,29 +251,33 @@ namespace fb
             virtual void _getObject( void **ppObject ) const = 0;
 
             template <class T>
-            Array<SmartPtr<T>> getChildrenByType() const
-            {
-                Array<SmartPtr<T>> childrenByType;
-
-                if( auto p = getChildren() )
-                {
-                    auto &children = *p;
-                    childrenByType.reserve( children.size() );
-
-                    for( auto &child : children )
-                    {
-                        if( child->isDerived<T>() )
-                        {
-                            childrenByType.push_back( child );
-                        }
-                    }
-                }
-
-                return childrenByType;
-            }
+            Array<SmartPtr<T>> getChildrenByType() const;
 
             FB_CLASS_REGISTER_DECL;
         };
+
+        template <class T>
+        Array<SmartPtr<T>> IUIElement::getChildrenByType() const
+        {
+            Array<SmartPtr<T>> childrenByType;
+
+            if( auto p = getChildren() )
+            {
+                auto &children = *p;
+                childrenByType.reserve( children.size() );
+
+                for( auto &child : children )
+                {
+                    if( child->isDerived<T>() )
+                    {
+                        childrenByType.push_back( child );
+                    }
+                }
+            }
+
+            return childrenByType;
+        }
+
     }  // end namespace ui
 }  // end namespace fb
 

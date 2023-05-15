@@ -10,7 +10,7 @@
 #include <FBCore/Memory/GarbageCollector.h>
 #include <FBCore/Memory/TypeManager.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Rtti/ReflectionClassDefinition.h>
+#include <FBCore/Rtti/RttiClassDefinition.h>
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Base/StringTypes.h>
 #include <FBCore/Base/Handle.h>

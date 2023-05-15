@@ -1,5 +1,5 @@
-#ifndef ReflectionClass_h__
-#define ReflectionClass_h__
+#ifndef RttiClass_h__
+#define RttiClass_h__
 
 #include <boost/describe.hpp>
 #include <boost/mp11.hpp>
@@ -57,4 +57,4 @@ public: \
     BOOST_DESCRIBE_CLASS( C, Bases, Public, Protected, Private )
 
 
-#endif  // ReflectionClass_h__
+#endif  // RttiClass_h__

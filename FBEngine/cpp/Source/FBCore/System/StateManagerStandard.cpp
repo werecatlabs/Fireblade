@@ -301,7 +301,7 @@ namespace fb
 
         // StateData& states = m_states[task];
 
-        // FB_SPIN_LOCK_WRITE(states.Mutex);
+        // SpinRWMutex::ScopedLock lock(states.Mutex);
         // states.m_states[state.get()] = state;
     }
 
@@ -315,7 +315,7 @@ namespace fb
 
         // StateData& states = m_states[task];
 
-        ////FB_SPIN_LOCK_WRITE(states.Mutex);
+        ////SpinRWMutex::ScopedLock lock(states.Mutex);
         // states.m_states.erase(state.get());
     }
 

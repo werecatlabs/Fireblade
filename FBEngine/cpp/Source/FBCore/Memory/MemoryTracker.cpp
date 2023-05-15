@@ -86,7 +86,7 @@ namespace fb
     {
         if( m_recordEnable )
         {
-            FB_LOCK_MUTEX( Mutex );
+            RecursiveMutex::ScopedLock lock( m_mutex );  
 
             // FB_ASSERT(mAllocations.find(ptr) == mAllocations.end() && "Double allocation with same
             // address - " 	"this probably means you have a mismatched allocation / deallocation style, "
@@ -112,7 +112,7 @@ namespace fb
                 return;
             }
 
-            FB_LOCK_MUTEX( Mutex );
+            RecursiveMutex::ScopedLock lock( m_mutex );  
 
             AllocationMap::iterator i = m_allocations.find( ptr );
             FB_ASSERT( i != m_allocations.end() &&

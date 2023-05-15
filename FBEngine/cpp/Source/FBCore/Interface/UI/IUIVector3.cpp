@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/UI/IUIVector3.h>
 #include <FBCore/Base/StringUtil.h>
-#include <FBCore/Rtti/ReflectionClassDefinition.h>
+#include <FBCore/Rtti/RttiClassDefinition.h>
 
 namespace fb
 {

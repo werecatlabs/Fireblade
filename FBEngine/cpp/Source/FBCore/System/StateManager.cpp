@@ -107,7 +107,7 @@ namespace fb
 
     SmartPtr<IStateContext> StateManager::findStateObject( u32 id ) const
     {
-        // FB_LOCK_MUTEX(Mutex);
+        // RecursiveMutex::ScopedLock lock(Mutex);
         // for(u32 i=0; i<m_stateObjects.size(); ++i)
         //{
         //	const SmartPtr<IStateObject>& stateObject = m_stateObjects[i];
@@ -183,7 +183,7 @@ namespace fb
 
         // StateData& states = m_states[task];
 
-        // FB_SPIN_LOCK_WRITE(states.Mutex);
+        // SpinRWMutex::ScopedLock lock(states.Mutex);
         // states.m_states[state.get()] = state;
     }
 
@@ -197,7 +197,7 @@ namespace fb
 
         // StateData& states = m_states[task];
 
-        ////FB_SPIN_LOCK_WRITE(states.Mutex);
+        ////SpinRWMutex::ScopedLock lock(states.Mutex);
         // states.m_states.erase(state.get());
     }
 

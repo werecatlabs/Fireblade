@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/Graphics/IAnimationController.h>
-#include <FBCore/Rtti/ReflectionClassDefinition.h>
+#include <FBCore/Rtti/RttiClassDefinition.h>
 
 namespace fb
 {

@@ -197,7 +197,7 @@ namespace fb
     template <class... Args>
     void ConcurrentArrayBase<T, A>::emplace_back( Args &&... )
     {
-        //FB_SPIN_LOCK_WRITE(m_mutex);
+        //SpinRWMutex::ScopedLock lock(m_mutex);
         //auto pArray = getArray();
         //pArray->emplace_back(val);
     }

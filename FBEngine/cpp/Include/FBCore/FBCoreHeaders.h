@@ -439,7 +439,7 @@
 #include <FBCore/Resource/CPrefabManager.h>
 #include <FBCore/Resource/CResourceDatabase.h>
 
-#include <FBCore/Rtti/ReflectionClassDefinition.h>
+#include <FBCore/Rtti/RttiClassDefinition.h>
 
 #include <FBCore/Scene/Components/BaseComponent.h>
 #include <FBCore/Scene/Components/Camera.h>

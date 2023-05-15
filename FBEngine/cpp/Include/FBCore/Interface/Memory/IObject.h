@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Base/StringTypes.h>
-#include <FBCore/Rtti/ReflectionClass.h>
+#include <FBCore/Rtti/RttiClass.h>
 #include <FBCore/Memory/TypeManager.h>
 
 namespace fb

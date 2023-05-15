@@ -1,5 +1,5 @@
-#ifndef ReflectionClassDefinition_h__
-#define ReflectionClassDefinition_h__
+#ifndef RttiClassDefinition_h__
+#define RttiClassDefinition_h__
 
 #include <FBCore/Memory/TypeManager.h>
 
@@ -198,4 +198,4 @@
     template <> \
     ObjectSetup<TEMPLATE_CLASS<TYPE> > TEMPLATE_CLASS<T>::objectSetupTemplate##TYPE;
 
-#endif  // ReflectionClassDefinition_h__
+#endif  // RttiClassDefinition_h__

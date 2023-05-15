@@ -97,7 +97,7 @@ namespace fb
 
     void TimerWin32::update()
     {
-        FB_LOCK_MUTEX( Mutex );
+        RecursiveMutex::ScopedLock lock( m_mutex );  
 
         u32 lastTime = StaticTime;
         StaticTime = getRealTime();

@@ -17,7 +17,7 @@ namespace fb
 
     Vector3<real_Num> BoxShapeState::getExtents() const
     {
-        FB_SPIN_LOCK_READ( m_mutex );
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_extents;
     }
 
@@ -25,7 +25,7 @@ namespace fb
     {
         if( !MathUtil<real_Num>::equals( m_extents, extents ) )
         {
-            FB_SPIN_LOCK_WRITE( m_mutex );
+            SpinRWMutex::ScopedLock lock( m_mutex, true);
             m_extents = extents;
             setDirty( true );
         }

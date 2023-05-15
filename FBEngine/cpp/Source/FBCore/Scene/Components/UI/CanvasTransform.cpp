@@ -467,33 +467,47 @@ namespace fb
 
         void CanvasTransform::setSize( const Vector2F &size )
         {
-            auto data = getDataPtrByType<canvas_transform>();
-            data->size = size;
-            data->absoluteSize = size;
+            if( auto data = getDataPtrByType<canvas_transform>() )
+            {
+                data->size = size;
+                data->absoluteSize = size;
+            }
         }
 
         Vector2F CanvasTransform::getAnchor() const
         {
-            auto data = getDataPtrByType<canvas_transform>();
-            return data->anchor;
+            if( auto data = getDataPtrByType<canvas_transform>() )
+            {
+                return data->anchor;
+            }
+
+            return Vector2F::zero();
         }
 
         void CanvasTransform::setAnchor( const Vector2F &anchor )
         {
-            auto data = getDataPtrByType<canvas_transform>();
-            data->anchor = anchor;
+            if( auto data = getDataPtrByType<canvas_transform>() )
+            {
+                data->anchor = anchor;
+            }
         }
 
         Vector2F CanvasTransform::getPivot() const
         {
-            auto data = getDataPtrByType<canvas_transform>();
-            return data->pivot;
+            if( auto data = getDataPtrByType<canvas_transform>() )
+            {
+                return data->pivot;
+            }
+
+            return Vector2F::zero();
         }
 
         void CanvasTransform::setPivot( const Vector2F &pivot )
         {
-            auto data = getDataPtrByType<canvas_transform>();
-            data->pivot = pivot;
+            if( auto data = getDataPtrByType<canvas_transform>() )
+            {
+                data->pivot = pivot;
+            }
         }
 
         SmartPtr<Properties> CanvasTransform::getProperties() const
@@ -502,15 +516,17 @@ namespace fb
             {
                 auto properties = BaseComponent::getProperties();
 
-                auto data = getDataPtrByType<canvas_transform>();
-
                 static const auto horizontalStr = String( "Horizontal" );
                 static const auto verticalStr = String( "Vertical" );
 
-                properties->setProperty( "Position", data->position );
-                properties->setProperty( "Size", data->size );
-                properties->setProperty( "Anchor", data->anchor );
-                properties->setProperty( "Pivot", data->pivot );
+                auto data = getDataPtrByType<canvas_transform>();
+                if( data )
+                {
+                    properties->setProperty( "Position", data->position );
+                    properties->setProperty( "Size", data->size );
+                    properties->setProperty( "Anchor", data->anchor );
+                    properties->setProperty( "Pivot", data->pivot );
+                }
 
                 properties->setProperty( horizontalStr, "" );
                 properties->setProperty( verticalStr, "" );

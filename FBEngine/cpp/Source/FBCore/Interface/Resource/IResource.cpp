@@ -4,7 +4,7 @@
 
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/Resource/IResource.h>
-#include <FBCore/Rtti/ReflectionClassDefinition.h>
+#include <FBCore/Rtti/RttiClassDefinition.h>
 
 namespace fb
 {

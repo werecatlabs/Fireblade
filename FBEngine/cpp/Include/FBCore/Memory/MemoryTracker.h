@@ -95,7 +95,7 @@ namespace fb
         static MemoryTracker &get();
 
     protected:
-        FB_MUTEX( Mutex );
+        RecursiveMutex m_mutex;  
 
         // Allocation record
         struct Alloc

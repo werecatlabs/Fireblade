@@ -125,7 +125,7 @@ namespace fb
                 auto pParent = actor->getParent();
                 if( pParent )
                 {
-                    FB_SPIN_LOCK_WRITE( m_mutex );
+                    SpinRWMutex::ScopedLock lock( m_mutex, true);
 
                     auto parentTransform = pParent->getTransform();
                     if( parentTransform )
@@ -475,7 +475,7 @@ namespace fb
                     }
                     else
                     {
-                        FB_SPIN_LOCK_WRITE( m_mutex );
+                        SpinRWMutex::ScopedLock lock( m_mutex, true);
                         auto localTransform = getLocalTransform();
 
                         auto worldTransform = getWorldTransform();
@@ -485,7 +485,7 @@ namespace fb
                 }
                 else
                 {
-                    FB_SPIN_LOCK_WRITE( m_mutex );
+                    SpinRWMutex::ScopedLock lock( m_mutex, true);
                     auto localTransform = getLocalTransform();
 
                     auto worldTransform = getWorldTransform();
@@ -499,7 +499,7 @@ namespace fb
 
         SmartPtr<Properties> Transform::getProperties() const
         {
-            FB_SPIN_LOCK_READ( m_mutex );
+            SpinRWMutex::ScopedLock lock( m_mutex, false );
 
             auto properties = fb::make_ptr<Properties>();
 

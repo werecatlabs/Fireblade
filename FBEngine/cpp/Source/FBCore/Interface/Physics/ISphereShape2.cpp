@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/Physics/ISphereShape2.h>
 
-#include <FBCore/Rtti/ReflectionClassDefinition.h>
+#include <FBCore/Rtti/RttiClassDefinition.h>
 
 namespace fb
 {

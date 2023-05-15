@@ -18,7 +18,6 @@ namespace fb
         FB_CLASS_REGISTER_DECL;
 
     protected:
-        FB_SPIN_MUTEX_MUTABLE( m_mutex );
         Vector3<real_Num> m_extents = Vector3<real_Num>::unit();
     };
 }  // end namespace fb

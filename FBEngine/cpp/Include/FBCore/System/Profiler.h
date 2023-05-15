@@ -89,7 +89,8 @@ namespace fb
         Array<SmartPtr<IProfile>> m_profiles;  ///< The array of profiles managed by the profiler.
         time_interval m_nextUpdateTime = 0.0;  ///< The time of the next results log update.
 
-        FB_MUTEX_MUTABLE( Mutex );  ///< The mutex used to protect the profiler data.
+        ///< The mutex used to protect the profiler data.
+        mutable RecursiveMutex m_mutex;  
     };
 
 }  // end namespace fb

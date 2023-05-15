@@ -43,25 +43,25 @@ namespace fb
 
         T &operator[]( const Key &key )
         {
-            FB_SPIN_LOCK_WRITE( m_mutex );
+            SpinRWMutex::ScopedLock lock( m_mutex, true);
             return m_map[key];
         }
 
         T &operator[]( Key &&key )
         {
-            FB_SPIN_LOCK_WRITE( m_mutex );
+            SpinRWMutex::ScopedLock lock( m_mutex, true);
             return m_map[key];
         }
 
         void clear()
         {
-            FB_SPIN_LOCK_WRITE( m_mutex );
+            SpinRWMutex::ScopedLock lock( m_mutex, true);
             m_map.clear();
         }
 
         bool empty() const
         {
-            FB_SPIN_LOCK_READ( m_mutex );
+            SpinRWMutex::ScopedLock lock( m_mutex, false );
             return m_map.empty() == 0;
         }
 
@@ -71,7 +71,7 @@ namespace fb
         }
 
     protected:
-        FB_SPIN_MUTEX_MUTABLE( m_mutex );
+        mutable SpinRWMutex m_mutex;
         std::unordered_map<Key, T> m_map;
     };
 

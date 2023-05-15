@@ -90,7 +90,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            FB_SPIN_MUTEX_MUTABLE( m_mutex );
+            mutable SpinRWMutex m_mutex;
 
             // SmartPtr<TransformState> m_state;
 

@@ -22,7 +22,7 @@ namespace fb
 
     SceneNodeState::SceneNodeState( const SceneNodeState &state )
     {
-        // FB_SPIN_LOCK_READ(state.Mutex);
+        // SpinRWMutex::ScopedLock lock(state.Mutex);
         //*this = state;
     }
 

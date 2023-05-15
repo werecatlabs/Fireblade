@@ -83,12 +83,25 @@ namespace fb
         using EventTimesQueue = std::deque<unsigned long>;
         EventTimesQueue mEventTimes;
 
-        FB_MUTEX( Mutex );
+        RecursiveMutex m_mutex;
     };
+
+    inline u32 TimerWin32::getTimeMilliseconds() const
+    {
+        if( isStopped() )
+        {
+            return LastVirtualTime;
+        }
+
+        return LastVirtualTime + static_cast<u32>( ( StaticTime - StartRealTime ) * VirtualTimerSpeed );
+    }
+
+    inline bool TimerWin32::isStopped() const
+    {
+        return VirtualTimerStopCounter != 0;
+    }
 
 #endif
 }  // end namespace fb
-
-#include <FBCore/System/TimerWin32.inl>
 
 #endif  // TimerWin_h__
