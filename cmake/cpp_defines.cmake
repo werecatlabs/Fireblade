@@ -496,8 +496,7 @@ else()
     add_compile_definitions (FB_END_USER_INSTALL=0)
 endif()
 
-
-
+add_compile_definitions (FB_USE_NGPLANT=0)
 
 add_compile_definitions(
 $<$<CONFIG:Debug>:FB_VERBOSE_LOG=1>

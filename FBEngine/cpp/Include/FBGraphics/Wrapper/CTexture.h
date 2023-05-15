@@ -115,15 +115,6 @@ namespace fb
             /** @copydoc ITexture::setUsageFlags */
             void setUsageFlags( u32 usageFlags ) override;
 
-            /** @copydoc IObject::toJson */
-            String toJson() const override;
-
-            /** @copydoc IObject::toData */
-            SmartPtr<IData> toData() const override;
-
-            /** @copydoc IObject::fromData */
-            void fromData( SmartPtr<IData> data ) override;
-
             /** @copydoc IResource::getProperties */
             SmartPtr<Properties> getProperties() const override;
 

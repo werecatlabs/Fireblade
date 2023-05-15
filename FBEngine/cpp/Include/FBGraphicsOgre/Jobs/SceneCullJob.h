@@ -4,7 +4,7 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include "FBCore/Interface/System/IJob.h"
 #include <OgreSceneManager.h>
-#include <FBGraphicsOgre/CameraVisibilityState.h>  //todo remove
+#include <FBGraphicsOgre/Ogre/CameraVisibilityState.h>  //todo remove
 
 namespace fb
 {

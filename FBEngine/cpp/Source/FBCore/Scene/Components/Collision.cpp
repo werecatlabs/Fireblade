@@ -13,7 +13,7 @@ namespace fb
     namespace scene
     {
 
-        FB_CLASS_REGISTER_DERIVED( fb, Collision, BaseComponent );
+        FB_CLASS_REGISTER_DERIVED( fb, Collision, Component );
 
         SmartPtr<physics::IPhysicsMaterial3> Collision::getMaterial() const
         {
@@ -37,7 +37,7 @@ namespace fb
 
         void Collision::load( SmartPtr<ISharedObject> data )
         {
-            BaseComponent::load( data );
+            Component::load( data );
         }
 
         void Collision::unload( SmartPtr<ISharedObject> data )
@@ -58,7 +58,7 @@ namespace fb
                     }
                 }
 
-                BaseComponent::unload( data );
+                Component::unload( data );
             }
             catch( std::exception &e )
             {
@@ -126,7 +126,7 @@ namespace fb
         {
             try
             {
-                auto properties = BaseComponent::getProperties();
+                auto properties = Component::getProperties();
 
                 properties->setProperty( "isTrigger", m_isTrigger );
                 properties->setProperty( "extents", m_extents );

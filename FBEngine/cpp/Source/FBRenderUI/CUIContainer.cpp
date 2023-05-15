@@ -103,7 +103,7 @@ namespace fb
             FB_ASSERT_TRUE( !element );
 
             {
-                const String id = XMLUtil::getString( element->Attribute( "id" ) );
+                const String id = XmlUtil::getString( element->Attribute( "id" ) );
                 if( id.length() > 0 )
                 {
                     setName( id );
@@ -116,14 +116,14 @@ namespace fb
             f32 width;
             f32 height;
 
-            value = XMLUtil::getString( element->Attribute( "posX" ) );
+            value = XmlUtil::getString( element->Attribute( "posX" ) );
             sscanf( value.c_str(), "%f", &left );
-            value = XMLUtil::getString( element->Attribute( "posY" ) );
+            value = XmlUtil::getString( element->Attribute( "posY" ) );
             sscanf( value.c_str(), "%f", &top );
 
-            value = XMLUtil::getString( element->Attribute( "width" ) );
+            value = XmlUtil::getString( element->Attribute( "width" ) );
             sscanf( value.c_str(), "%f", &width );
-            value = XMLUtil::getString( element->Attribute( "height" ) );
+            value = XmlUtil::getString( element->Attribute( "height" ) );
             sscanf( value.c_str(), "%f", &height );
 
             // m_overlayContainer = overlayManager->addElement(String("Panel"), getName());

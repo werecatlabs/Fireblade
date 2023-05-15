@@ -209,44 +209,6 @@ namespace fb
             m_passes = ptr;
         }
 
-        String CMaterialTechnique::toJson() const
-        {
-            auto data = toData();
-            auto textureData = data->getDataAsType<data::material_scheme>();
-            return DataUtil::toString( textureData, true );
-        }
-
-        SmartPtr<IData> CMaterialTechnique::toData() const
-        {
-            auto data = fb::make_ptr<Data<data::material_scheme>>();
-            auto materialSchemeData = data->getDataAsType<data::material_scheme>();
-
-            auto passes = getPasses();
-            for( auto pass : passes )
-            {
-                auto pPassData = pass->toData();
-                auto passData = pPassData->getDataAsType<data::material_pass>();
-                materialSchemeData->passes.push_back( *passData );
-            }
-
-            return data;
-        }
-
-        void CMaterialTechnique::fromData( SmartPtr<IData> data )
-        {
-            auto scheme = data->getDataAsType<data::material_scheme>();
-
-            auto &passes = scheme->passes;
-            for( auto &pass : passes )
-            {
-                auto pPass = createPass();
-
-                auto pPassData = fb::make_ptr<Data<data::material_pass>>();
-                pPassData->setData( &pass );
-                pPass->fromData( pPassData );
-            }
-        }
-
         SmartPtr<Properties> CMaterialTechnique::getProperties() const
         {
             auto properties = CMaterialNode<IMaterialTechnique>::getProperties();

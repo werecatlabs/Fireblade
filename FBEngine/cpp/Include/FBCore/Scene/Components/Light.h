@@ -1,7 +1,7 @@
 #ifndef LightComponent_h__
 #define LightComponent_h__
 
-#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Component.h>
 #include <FBCore/Interface/Graphics/ILight.h>
 
 namespace fb
@@ -12,7 +12,7 @@ namespace fb
         /**
          * A component that represents a light in the scene.
          */
-        class Light : public BaseComponent
+        class Light : public Component
         {
         public:
             Light();

@@ -1,13 +1,13 @@
 #ifndef TerrainLayer_h__
 #define TerrainLayer_h__
 
-#include <FBCore/Scene/Components/BaseSubComponent.h>
+#include <FBCore/Scene/Components/SubComponent.h>
 
 namespace fb
 {
     namespace scene
     {
-        class TerrainLayer : public BaseSubComponent
+        class TerrainLayer : public SubComponent
         {
         public:
             TerrainLayer();

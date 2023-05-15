@@ -81,10 +81,10 @@ namespace fb
             bool isDirty() const;
 
             /** @copydoc IObject::toJson */
-            String toJson() const override;
+            String toJson() const;
 
             /** @copydoc IObject::toData */
-            SmartPtr<IData> toData() const override;
+            SmartPtr<IData> toData() const;
 
             /** @copydoc IObject::fromData */
             void fromData( SmartPtr<IData> data ) override;

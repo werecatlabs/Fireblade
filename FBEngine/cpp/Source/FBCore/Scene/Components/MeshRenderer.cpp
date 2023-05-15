@@ -143,7 +143,7 @@ namespace fb
             {
                 setLoadingState( LoadingState::Loading );
 
-                BaseComponent::load( data );
+                Component::load( data );
 
                 setLoadingState( LoadingState::Loaded );
             }
@@ -191,7 +191,7 @@ namespace fb
                         }
                     }
 
-                    BaseComponent::unload( data );
+                    Component::unload( data );
 
                     setLoadingState( LoadingState::Unloaded );
                 }
@@ -254,7 +254,7 @@ namespace fb
 
         IFSM::ReturnType MeshRenderer::handleComponentEvent( u32 state, IFSM::Event eventType )
         {
-            BaseComponent::handleComponentEvent( state, eventType );
+            Component::handleComponentEvent( state, eventType );
 
             switch( eventType )
             {

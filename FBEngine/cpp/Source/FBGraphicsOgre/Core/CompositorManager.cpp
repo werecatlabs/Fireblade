@@ -1,7 +1,7 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
 #include <FBGraphicsOgre/Core/CompositorManager.h>
-#include "FBGraphicsOgre/HDRListener.h"
-#include "FBGraphicsOgre/DepthOfFieldEffect.h"
+#include "FBGraphicsOgre/Ogre/HDRListener.h"
+#include "FBGraphicsOgre/Ogre/DepthOfFieldEffect.h"
 #include <FBCore/FBCore.h>
 #include <OgreViewport.h>
 

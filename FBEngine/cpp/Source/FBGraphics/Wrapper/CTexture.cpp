@@ -202,34 +202,6 @@ namespace fb
             m_usageFlags = usageFlags;
         }
 
-        String CTexture::toJson() const
-        {
-            if( auto data = toData() )
-            {
-                auto textureData = data->getDataAsType<data::material_texture>();
-                return DataUtil::toString( textureData, true );
-            }
-
-            return nullptr;
-        }
-
-        SmartPtr<IData> CTexture::toData() const
-        {
-            auto data = fb::make_ptr<Data<data::material_texture>>();
-            auto textureData = data->getDataAsType<data::material_texture>();
-
-            textureData->texturePath = "";
-
-            return data;
-        }
-
-        void CTexture::fromData( SmartPtr<IData> data )
-        {
-            auto textureData = data->getDataAsType<data::material_texture>();
-
-            const auto &texturePath = textureData->texturePath;
-        }
-
         SmartPtr<Properties> CTexture::getProperties() const
         {
             auto properties = CResourceGraphics<ITexture>::getProperties();

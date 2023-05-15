@@ -1,6 +1,5 @@
 #include <FBMesh/FBMeshPCH.h>
 #include "FBMesh/NGPlantLoader.h"
-#include "FBMesh/FBMeshConfig.h"
 #include <FBCore/Base/Path.h>
 #include <FBCore/Interface/Mesh/IVertexElement.h>
 #include "FBMesh/CMesh.h"
@@ -9,7 +8,7 @@
 #include "FBMesh/CSubMesh.h"
 #include <FBMesh/CVertexDeclaration.h>
 
-#ifdef FB_USE_NGPLANT
+#if FB_USE_NGPLANT
 #    include <ngpcore/p3dmodel.h>
 #    include <ngpcore/p3dmodelstemtube.h>
 #    include <ngpcore/p3dmodelstemquad.h>
@@ -23,7 +22,7 @@
 
 namespace fb
 {
-#ifdef FB_USE_NGPLANT
+#if FB_USE_NGPLANT
     class TreeVertex
     {
     public:

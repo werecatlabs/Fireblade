@@ -199,7 +199,7 @@ namespace fb
 
         IFSM::ReturnType CollisionMesh::handleComponentEvent( u32 state, IFSM::Event eventType )
         {
-            BaseComponent::handleComponentEvent( state, eventType );
+            Component::handleComponentEvent( state, eventType );
 
             switch( eventType )
             {

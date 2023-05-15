@@ -39,12 +39,12 @@ namespace fb
     //	}
     //	else if(ext==(".gui"))
     //	{
-    //		//FB_LOCK_MUTEX(OgreMutex);
+    //		//RecursiveMutex::ScopedLock lock(OgreMutex);
     //		//CGUIManager::getSingletonPtr()->reloadCurrentLayout();
     //	}
     //	else if(ext==(".cg") || ext==(".hlsl") || ext==(".glsl"))
     //	{
-    //		//FB_LOCK_MUTEX(OgreMutex);
+    //		//RecursiveMutex::ScopedLock lock(OgreMutex);
     //		////IApplicationManager::instance()->getGraphicsSystem()->reloadResources("material");
 
     //		//reloadAResourceGroupWithoutDestroyingIt("gpuProgram");
@@ -56,7 +56,7 @@ namespace fb
     //	}
     //	else if(ext==(".material"))
     //	{
-    //		//FB_LOCK_MUTEX(OgreMutex);
+    //		//RecursiveMutex::ScopedLock lock(OgreMutex);
     //		////IApplicationManager::instance()->getGraphicsSystem()->reloadResources("material");
 
     //		//reloadAResourceGroupWithoutDestroyingIt("material");

@@ -7,7 +7,7 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, Constraint, BaseComponent );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, Constraint, Component );
         const String Constraint::constraints[4] = { "6dof", "6dofSpring", " ", " " };
         const int Constraint::STIFFNESS = StringUtil::getHash( "stiffness" );
         const u32 Constraint::SET_BREAK_FORCE_HASH = StringUtil::getHash( "SET_BREAK_FORCE_HASH" );
@@ -1223,7 +1223,7 @@ namespace fb
                 m_makeBreakable = nullptr;
                 m_makeUnbreakable = nullptr;
 
-                BaseComponent::unload( data );
+                Component::unload( data );
 
                 setLoadingState( LoadingState::Unloaded );
             }
@@ -1301,7 +1301,7 @@ namespace fb
 
         Array<SmartPtr<ISharedObject>> Constraint::getChildObjects() const
         {
-            auto objects = BaseComponent::getChildObjects();
+            auto objects = Component::getChildObjects();
 
             if( m_bodyA )
             {

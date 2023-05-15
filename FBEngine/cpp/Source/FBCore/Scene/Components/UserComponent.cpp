@@ -1,15 +1,15 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/UserComponent.h>
 #include "FBCore/Scene/CSceneManager.h"
-#include <FBApplication/Script/ScriptInvokerStandard.h>
-#include <FBApplication/Script/ScriptEvent.h>
+#include <FBCore/Script/ScriptInvoker.h>
+#include <FBCore/Script/ScriptEvent.h>
 #include <FBCore/FBCore.h>
 
 namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, UserComponent, BaseComponent );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, UserComponent, Component );
 
         const hash_type UserComponent::UPDATE_HASH = StringUtil::getHash( "update" );
 
@@ -23,7 +23,7 @@ namespace fb
             FB_ASSERT( factoryManager );
             FB_ASSERT( factoryManager->isValid() );
 
-            auto invoker = fb::make_ptr<ScriptInvokerStandard>( this );
+            auto invoker = fb::make_ptr<ScriptInvoker>( this );
             setInvoker( invoker );
 
             auto receiver = fb::make_ptr<ScriptReceiver>( this );
@@ -180,7 +180,7 @@ namespace fb
 
         SmartPtr<Properties> UserComponent::getProperties() const
         {
-            auto properties = BaseComponent::getProperties();
+            auto properties = Component::getProperties();
             properties->setProperty( "className", m_className );
             properties->setProperty( "updateInEditMode", m_updateInEditMode );
             return properties;
@@ -226,7 +226,7 @@ namespace fb
 
         IFSM::ReturnType UserComponent::handleComponentEvent( u32 state, IFSM::Event eventType )
         {
-            BaseComponent::handleComponentEvent( state, eventType );
+            Component::handleComponentEvent( state, eventType );
 
             switch( eventType )
             {

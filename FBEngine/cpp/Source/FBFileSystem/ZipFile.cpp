@@ -47,7 +47,7 @@ namespace fb
 
     size_t ZipFile::read( void *buffer, size_t sizeToRead )
     {
-        // FB_LOCK_MUTEX(reader->Mutex);
+        // RecursiveMutex::ScopedLock lock(reader->Mutex);
         zzip_ssize_t r = zzip_file_read( m_zipFile, buffer, sizeToRead );
         if( r < 0 )
         {

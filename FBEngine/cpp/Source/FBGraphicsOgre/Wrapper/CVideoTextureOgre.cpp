@@ -1,6 +1,6 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
 #include <FBGraphicsOgre/Wrapper/CVideoTextureOgre.h>
-#include <FBGraphicsOgre/OgreUtil.h>
+#include <FBGraphicsOgre/Ogre/OgreUtil.h>
 #include <FBCore/FBCore.h>
 #include <Ogre.h>
 

@@ -3,7 +3,7 @@
 #include <FBGraphicsOgre/Wrapper/CMaterialTextureOgre.h>
 #include <FBGraphicsOgre/Wrapper/CMaterialTechniqueOgre.h>
 #include <FBGraphicsOgre/Wrapper/CMaterialOgre.h>
-#include <FBGraphicsOgre/OgreUtil.h>
+#include <FBGraphicsOgre/Ogre/OgreUtil.h>
 #include <FBCore/FBCore.h>
 #include <FBGraphics/FBGraphics.h>
 #include <Ogre.h>

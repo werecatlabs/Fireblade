@@ -3,7 +3,7 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include "FBCore/Interface/System/IJob.h"
-#include "FBGraphicsOgre/InstanceObject.h"
+#include "FBGraphicsOgre/Ogre/InstanceObject.h"
 
 namespace fb
 {

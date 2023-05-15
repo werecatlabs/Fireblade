@@ -1,6 +1,6 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
 #include <FBGraphicsOgre/Wrapper/CWater.h>
-#include <FBGraphicsOgre/WaterMesh.h>
+#include <FBGraphicsOgre/Ogre/WaterMesh.h>
 #include <FBCore/FBCore.h>
 
 #define COMPLEXITY 32  // watch out - number of polys is 2*ACCURACY*ACCURACY !

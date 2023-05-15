@@ -1006,12 +1006,12 @@ namespace fb
             //	else if( value==(String("AnimatorPosition")) )
             //	{
             //		const TiXmlElement* element = pCurNode->ToElement();
-            //		String name = XMLUtil::getString(element->Attribute("id"));
+            //		String name = XmlUtil::getString(element->Attribute("id"));
             //		Vector2F start =
-            //StringUtil::parseVector2<f32>(XMLUtil::getString(element->Attribute("start"))); 		Vector2F
-            //end = StringUtil::parseVector2<f32>(XMLUtil::getString(element->Attribute("end"))); 		f32
-            //animLength = StringUtil::parseFloat(XMLUtil::getString(element->Attribute("animLength")));
-            //		bool loop = StringUtil::parseBool(XMLUtil::getString(element->Attribute("loop")),
+            //StringUtil::parseVector2<f32>(XmlUtil::getString(element->Attribute("start"))); 		Vector2F
+            //end = StringUtil::parseVector2<f32>(XmlUtil::getString(element->Attribute("end"))); 		f32
+            //animLength = StringUtil::parseFloat(XmlUtil::getString(element->Attribute("animLength")));
+            //		bool loop = StringUtil::parseBool(XmlUtil::getString(element->Attribute("loop")),
             //false);
 
             //		/*

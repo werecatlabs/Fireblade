@@ -22,7 +22,7 @@ namespace fb
         void Mesh::load( SmartPtr<ISharedObject> data )
         {
             setLoadingState( LoadingState::Loading );
-            BaseComponent::load( data );
+            Component::load( data );
             setLoadingState( LoadingState::Loaded );
         }
 
@@ -36,7 +36,7 @@ namespace fb
                     setLoadingState( LoadingState::Unloading );
 
                     m_mesh = nullptr;
-                    BaseComponent::unload( data );
+                    Component::unload( data );
 
                     setLoadingState( LoadingState::Unloaded );
                 }
@@ -157,7 +157,7 @@ namespace fb
 
         IFSM::ReturnType Mesh::handleComponentEvent( u32 state, IFSM::Event eventType )
         {
-            BaseComponent::handleComponentEvent( state, eventType );
+            Component::handleComponentEvent( state, eventType );
 
             switch( eventType )
             {

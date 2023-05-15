@@ -2,14 +2,14 @@
 #define TextureComponent_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Component.h>
 
 namespace fb
 {
     namespace scene
     {
 
-        class Texture : public BaseComponent
+        class Texture : public Component
         {
         public:
             Texture();

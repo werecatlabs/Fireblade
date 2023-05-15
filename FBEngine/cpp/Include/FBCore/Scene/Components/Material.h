@@ -1,14 +1,14 @@
 #ifndef MaterialComponent_h__
 #define MaterialComponent_h__
 
-#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Component.h>
 
 namespace fb
 {
     namespace scene
     {
 
-        class Material : public BaseComponent
+        class Material : public Component
         {
         public:
             Material();

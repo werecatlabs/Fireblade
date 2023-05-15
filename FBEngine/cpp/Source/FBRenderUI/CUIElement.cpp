@@ -987,53 +987,6 @@ namespace fb
         }
 
         template <class T>
-        s32 CUIElement<T>::setProperty( hash32 hash, const Parameter &param )
-        {
-            if( hash == StringUtil::getHash( "visible" ) )
-            {
-                setVisible( param.getBool() );
-            }
-
-            return 0;
-        }
-
-        template <class T>
-        s32 CUIElement<T>::getObject( u32 hash, SmartPtr<ISharedObject> &object ) const
-        {
-            if( hash == StringUtil::getHash( "userProperties" ) )
-            {
-                // if(!m_userProperties)
-                //	m_userProperties = SmartPtr<ISharedObject>(new GUIElementProperties, true);
-
-                object = m_userProperties;
-            }
-            else if( hash == StringUtil::getHash( "animations" ) )
-            {
-                // object = m_animatorContainer;
-            }
-
-            // for(u32 i=0; i<m_children.size(); ++i)
-            //{
-            //	GUIElement* pGUIItem = (GUIElement*)m_children[i];
-            //	if(hash == pGUIItem->getHashId())
-            //	{
-            //		object = pGUIItem;
-            //	}
-            // }
-
-            // SmartPtr<IGUIElement> pCompGUIItem;
-            // for(u32 i=0; i<m_children.size(); ++i)
-            //{
-            //	GUIElement* pGUIItem = (GUIElement*)m_children[i];
-            //	pGUIItem->getObject(hash, object);
-            //	if(!object.isNull())
-            //		return 0;
-            // }
-
-            return 0;
-        }
-
-        template <class T>
         void CUIElement<T>::setPosition( const Vector2F &position )
         {
             if( auto stateContext = getStateObject() )
@@ -1151,54 +1104,6 @@ namespace fb
             {
                 element->setZOrder( order );
             }
-        }
-
-        template <class T>
-        SmartPtr<IScriptInvoker> &CUIElement<T>::getInvoker()
-        {
-            return m_scriptInvoker;
-        }
-
-        template <class T>
-        const SmartPtr<IScriptInvoker> &CUIElement<T>::getInvoker() const
-        {
-            return m_scriptInvoker;
-        }
-
-        template <class T>
-        void CUIElement<T>::setInvoker( SmartPtr<IScriptInvoker> invoker )
-        {
-            m_scriptInvoker = invoker;
-        }
-
-        template <class T>
-        SmartPtr<IScriptReceiver> &CUIElement<T>::getReceiver()
-        {
-            return m_scriptReceiver;
-        }
-
-        template <class T>
-        const SmartPtr<IScriptReceiver> &CUIElement<T>::getReceiver() const
-        {
-            return m_scriptReceiver;
-        }
-
-        template <class T>
-        void CUIElement<T>::setReceiver( SmartPtr<IScriptReceiver> receiver )
-        {
-            m_scriptReceiver = receiver;
-        }
-
-        template <class T>
-        void CUIElement<T>::_setData( SmartPtr<IScriptData> data )
-        {
-            m_scriptData = data;
-        }
-
-        template <class T>
-        SmartPtr<IScriptData> CUIElement<T>::_getData() const
-        {
-            return m_scriptData;
         }
 
         template <class T>
@@ -1345,18 +1250,6 @@ namespace fb
         }
 
         template <class T>
-        s32 CUIElement<T>::setProperty( hash32 hash, const String &value )
-        {
-            return 0;
-        }
-
-        template <class T>
-        s32 CUIElement<T>::setProperty( hash32 hash, void *param )
-        {
-            return 0;
-        }
-
-        template <class T>
         u32 CUIElement<T>::getHashId() const
         {
             return (u32)m_hashId;
@@ -1377,54 +1270,6 @@ namespace fb
         template <class T>
         void CUIElement<T>::handleEvent( const SmartPtr<IEvent> &event )
         {
-        }
-
-        template <class T>
-        s32 CUIElement<T>::setProperty( hash32 hash, const Parameters &params )
-        {
-            return 0;
-        }
-
-        template <class T>
-        s32 CUIElement<T>::getProperty( hash32 hash, Parameters &params ) const
-        {
-            return 0;
-        }
-
-        template <class T>
-        s32 CUIElement<T>::getProperty( hash32 hash, Parameter &param )
-        {
-            return 0;
-        }
-
-        // template <class T>
-        // s32 CUIElement<T>::getProperty(hash32 hash, const Parameter& param)
-        //{
-        //	return 0;
-        // }
-
-        template <class T>
-        s32 CUIElement<T>::getProperty( hash32 hash, String &value ) const
-        {
-            return 0;
-        }
-
-        template <class T>
-        s32 CUIElement<T>::getProperty( hash32 hash, void *param ) const
-        {
-            return 0;
-        }
-
-        template <class T>
-        s32 CUIElement<T>::callFunction( u32 hash, SmartPtr<ISharedObject> object, Parameters &results )
-        {
-            return 0;
-        }
-
-        template <class T>
-        s32 CUIElement<T>::callFunction( u32 hash, const Parameters &params, Parameters &results )
-        {
-            return 0;
         }
 
         template <class T>

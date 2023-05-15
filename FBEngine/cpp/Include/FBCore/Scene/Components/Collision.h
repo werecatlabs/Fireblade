@@ -2,7 +2,7 @@
 #define Collision_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Component.h>
 #include <FBCore/Math/AABB3.h>
 
 namespace fb
@@ -11,7 +11,7 @@ namespace fb
     {
 
         /** Base class for a collision component. */
-        class Collision : public BaseComponent
+        class Collision : public Component
         {
         public:
             /** Default constructor. */

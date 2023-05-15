@@ -200,7 +200,7 @@ namespace fb
     SmartPtr<IStream> ObfuscatedZipArchive::open( const String &filename, bool input, bool binary,
                                                   bool truncate, bool ignorePath )
     {
-        FB_LOCK_MUTEX( Mutex );
+        RecursiveMutex::ScopedLock lock( m_mutex );  
 
         auto filePath = filename;
         if( ignorePath )

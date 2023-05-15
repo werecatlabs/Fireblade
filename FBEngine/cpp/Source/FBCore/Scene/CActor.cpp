@@ -2,7 +2,7 @@
 #include <FBCore/Scene/CActor.h>
 #include <FBCore/Scene/CSceneManager.h>
 #include <FBCore/Scene/Components/Transform.h>
-#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Component.h>
 #include <FBCore/Math/Core/MathUtil.h>
 #include <FBCore/Base/LogManager.h>
 #include <FBCore/Base/BitUtil.h>
@@ -227,7 +227,7 @@ namespace fb
                 {
                     if( component )
                     {
-                        auto c = fb::static_pointer_cast<BaseComponent>( component );
+                        auto c = fb::static_pointer_cast<Component>( component );
                         c->awake();
                     }
                 }
@@ -266,7 +266,7 @@ namespace fb
                 {
                     if( component )
                     {
-                        auto c = fb::static_pointer_cast<BaseComponent>( component );
+                        auto c = fb::static_pointer_cast<Component>( component );
                         c->play();
                     }
                 }
@@ -305,7 +305,7 @@ namespace fb
                 {
                     if( component )
                     {
-                        auto c = fb::static_pointer_cast<BaseComponent>( component );
+                        auto c = fb::static_pointer_cast<Component>( component );
                         c->edit();
                     }
                 }
@@ -334,7 +334,7 @@ namespace fb
                 {
                     if( component )
                     {
-                        auto c = fb::static_pointer_cast<BaseComponent>( component );
+                        auto c = fb::static_pointer_cast<Component>( component );
                         c->levelWasLoaded( 0 );
                     }
                 }
@@ -363,7 +363,7 @@ namespace fb
                 {
                     if( component )
                     {
-                        auto c = fb::static_pointer_cast<BaseComponent>( component );
+                        auto c = fb::static_pointer_cast<Component>( component );
                         c->reset();
                     }
                 }
@@ -392,7 +392,7 @@ namespace fb
                 {
                     if( component )
                     {
-                        auto c = fb::static_pointer_cast<BaseComponent>( component );
+                        auto c = fb::static_pointer_cast<Component>( component );
                         c->hierarchyChanged();
                     }
                 }
@@ -421,7 +421,7 @@ namespace fb
                 {
                     if( component )
                     {
-                        auto c = fb::static_pointer_cast<BaseComponent>( component );
+                        auto c = fb::static_pointer_cast<Component>( component );
                         c->childAdded( child );
                     }
                 }
@@ -450,7 +450,7 @@ namespace fb
                 {
                     if( component )
                     {
-                        auto c = fb::static_pointer_cast<BaseComponent>( component );
+                        auto c = fb::static_pointer_cast<Component>( component );
                         c->childRemoved( child );
                     }
                 }
@@ -1383,7 +1383,7 @@ namespace fb
                         {
                             if( component )
                             {
-                                auto c = fb::static_pointer_cast<BaseComponent>( component );
+                                auto c = fb::static_pointer_cast<Component>( component );
                                 if( c )
                                 {
                                     c->actorUnload();
@@ -2041,7 +2041,7 @@ namespace fb
                 auto components = getComponents();
                 for( auto component : components )
                 {
-                    auto c = fb::static_pointer_cast<BaseComponent>( component );
+                    auto c = fb::static_pointer_cast<Component>( component );
                     c->parentChanged( parent, oldParent );
                 }
             }

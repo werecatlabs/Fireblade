@@ -43,7 +43,7 @@ namespace fb
 
             const TiXmlElement *element = pNode->ToElement();
             FB_ASSERT_TRUE( !element );
-            const String id = "";  // XMLUtil::getString(element->Attribute("id"));
+            const String id = "";  // XmlUtil::getString(element->Attribute("id"));
             if( id.length() > 0 )
             {
                 setName( id );
@@ -78,7 +78,7 @@ namespace fb
             //overlayManager->findElement(parent->getName()); 	cont->addChild(m_container);
             // }
 
-            // bool isVisible = StringUtil::parseBool(XMLUtil::getString(element->Attribute("visible")));
+            // bool isVisible = StringUtil::parseBool(XmlUtil::getString(element->Attribute("visible")));
             // if (parent)
             //{
             //	isVisible = isVisible && parent->isVisible();

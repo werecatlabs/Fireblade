@@ -29,7 +29,7 @@ namespace fb
         {
             const TiXmlElement *element = pNode->ToElement();
             {
-                const String id = XMLUtil::getString( element->Attribute( "id" ) );
+                const String id = XmlUtil::getString( element->Attribute( "id" ) );
                 if(id.length() > 0)
                 {
                     setName( id );
@@ -43,7 +43,7 @@ namespace fb
             f32 height = 0.0f;
             String alignment;
 
-            // const String templateId = XMLUtil::getString(element->Attribute("template"));
+            // const String templateId = XmlUtil::getString(element->Attribute("template"));
             // if(templateId.length() > 0)
             //{
             //	SmartPtr<CUIItemTemplate> templateItem =
@@ -57,7 +57,7 @@ namespace fb
             //	}
             // }
 
-            String materialName = XMLUtil::getString( element->Attribute( "fileName" ) );
+            String materialName = XmlUtil::getString( element->Attribute( "fileName" ) );
             // const Ogre::SmartPtr<IMaterial>& material =
             // Ogre::MaterialManager::getSingletonPtr()->getByName(materialName.c_str());
             // if(!material.isNull())
@@ -89,28 +89,28 @@ namespace fb
             //	material->unload();
             //}
 
-            value = XMLUtil::getString( element->Attribute( "posX" ) );
+            value = XmlUtil::getString( element->Attribute( "posX" ) );
             if(value.length() > 0)
                 left = StringUtil::parseFloat( value );
 
-            value = XMLUtil::getString( element->Attribute( "posY" ) );
+            value = XmlUtil::getString( element->Attribute( "posY" ) );
             if(value.length() > 0)
                 top = StringUtil::parseFloat( value );
 
-            value = XMLUtil::getString( element->Attribute( "width" ) );
+            value = XmlUtil::getString( element->Attribute( "width" ) );
             if(value.length() > 0)
                 width = StringUtil::parseFloat( value );
 
-            value = XMLUtil::getString( element->Attribute( "height" ) );
+            value = XmlUtil::getString( element->Attribute( "height" ) );
             if(value.length() > 0)
                 height = StringUtil::parseFloat( value );
 
             Vector2F scale = Vector2F::UNIT;
-            value = XMLUtil::getString( element->Attribute( "scaleX" ) );
+            value = XmlUtil::getString( element->Attribute( "scaleX" ) );
             if(value.length() > 0)
                 scale.X() = StringUtil::parseFloat( value );
 
-            value = XMLUtil::getString( element->Attribute( "scaleY" ) );
+            value = XmlUtil::getString( element->Attribute( "scaleY" ) );
             if(value.length() > 0)
                 scale.Y() = StringUtil::parseFloat( value );
 
@@ -140,7 +140,7 @@ namespace fb
                 // m_container->setMaterialName(materialName);
                 m_container->setFileName( materialName );
 
-                const String pAlignmentStr = XMLUtil::getString( element->Attribute( "alignment" ) );
+                const String pAlignmentStr = XmlUtil::getString( element->Attribute( "alignment" ) );
                 if(pAlignmentStr.length() > 0)
                 {
                     alignment = pAlignmentStr;
@@ -161,7 +161,7 @@ namespace fb
                 // }
 
                 bool isVisible = true;
-                value = XMLUtil::getString( element->Attribute( "visible" ) );
+                value = XmlUtil::getString( element->Attribute( "visible" ) );
                 if(value == String( "false" ))
                     isVisible = false;
 

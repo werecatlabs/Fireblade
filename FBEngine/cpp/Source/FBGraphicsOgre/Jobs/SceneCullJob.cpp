@@ -1,6 +1,6 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
 #include "FBGraphicsOgre/Jobs/SceneCullJob.h"
-#include "FBGraphicsOgre/CameraVisibilityState.h"
+#include "FBGraphicsOgre/Ogre/CameraVisibilityState.h"
 #include <FBCore/FBCore.h>
 
 namespace fb

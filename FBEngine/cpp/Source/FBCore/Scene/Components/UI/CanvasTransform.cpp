@@ -514,7 +514,7 @@ namespace fb
         {
             try
             {
-                auto properties = BaseComponent::getProperties();
+                auto properties = Component::getProperties();
 
                 static const auto horizontalStr = String( "Horizontal" );
                 static const auto verticalStr = String( "Vertical" );
@@ -566,7 +566,7 @@ namespace fb
         {
             try
             {
-                BaseComponent::setProperties( properties );
+                Component::setProperties( properties );
 
                 auto data = getDataPtrByType<canvas_transform>();
 
@@ -712,7 +712,7 @@ namespace fb
 
         IFSM::ReturnType CanvasTransform::handleComponentEvent( u32 state, IFSM::Event eventType )
         {
-            BaseComponent::handleComponentEvent( state, eventType );
+            Component::handleComponentEvent( state, eventType );
 
             switch( eventType )
             {

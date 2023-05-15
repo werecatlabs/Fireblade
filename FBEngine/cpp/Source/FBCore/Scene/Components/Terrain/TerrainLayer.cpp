@@ -7,7 +7,7 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, TerrainLayer, BaseSubComponent );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, TerrainLayer, SubComponent );
 
         TerrainLayer::TerrainLayer()
         {
@@ -37,7 +37,7 @@ namespace fb
                 setLoadingState( LoadingState::Unloading );
 
                 m_baseTexture = nullptr;
-                BaseSubComponent::unload( data );
+                SubComponent::unload( data );
 
                 setLoadingState( LoadingState::Unloaded );
             }
@@ -49,7 +49,7 @@ namespace fb
 
         SmartPtr<Properties> TerrainLayer::getProperties() const
         {
-            auto properties = BaseSubComponent::getProperties();
+            auto properties = SubComponent::getProperties();
 
             properties->setProperty( "baseTexture", m_baseTexture );
             properties->setProperty( "index", m_index );

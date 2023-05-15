@@ -1,7 +1,7 @@
 #ifndef UIComponent_h__
 #define UIComponent_h__
 
-#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Component.h>
 
 namespace fb
 {
@@ -14,7 +14,7 @@ namespace fb
          * This class provides functionality for UI elements and manages their properties,
          * state, visibility, input handling, and more.
          */
-        class UIComponent : public BaseComponent
+        class UIComponent : public Component
         {
         public:
             /**

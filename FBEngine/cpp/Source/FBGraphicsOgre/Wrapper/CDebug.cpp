@@ -1,6 +1,6 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
 #include <FBGraphicsOgre/Wrapper/CDebug.h>
-#include <FBGraphicsOgre/DynamicLines.h>
+#include <FBGraphicsOgre/Ogre/DynamicLines.h>
 #include <FBGraphicsOgre/Wrapper/CDebugLine.h>
 #include <FBCore/FBCore.h>
 #include <Ogre.h>

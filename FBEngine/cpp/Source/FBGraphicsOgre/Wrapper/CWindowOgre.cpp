@@ -1,7 +1,7 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
 #include <FBGraphicsOgre/Wrapper/CWindowOgre.h>
 #include <FBGraphicsOgre/Wrapper/CViewportOgre.h>
-#include <FBGraphicsOgre/OgreUtil.h>
+#include <FBGraphicsOgre/Ogre/OgreUtil.h>
 #include <FBCore/FBCore.h>
 #include <Ogre.h>
 #include <OgreOverlayManager.h>

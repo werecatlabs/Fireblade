@@ -1,8 +1,8 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
 #include <FBGraphicsOgre/Wrapper/CResourceGroupManager.h>
 #include <FBGraphicsOgre/Wrapper/CGraphicsSystemOgre.h>
-#include <FBGraphicsOgre/ResourceGroupHelper.h>
-#include <FBGraphicsOgre/FBOgreDataStream.h>
+#include <FBGraphicsOgre/Ogre/ResourceGroupHelper.h>
+#include <FBGraphicsOgre/Core/FBOgreDataStream.h>
 #include <FBCore/FBCore.h>
 #include <Ogre.h>
 #include <OgreFontManager.h>

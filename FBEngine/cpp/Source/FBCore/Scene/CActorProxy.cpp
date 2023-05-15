@@ -2,8 +2,7 @@
 #include <FBCore/Scene/CActorProxy.h>
 #include <FBCore/Scene/CSceneManager.h>
 #include <FBCore/Scene/Components/Transform.h>
-#include <FBCore/Scene/Components/BaseComponent.h>
-#include <FBApplication/ApplicationUtil.h>
+#include <FBCore/Scene/Components/Component.h>
 #include <FBCore/FBCore.h>
 
 namespace fb

@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Resource/CResourceDatabaseMT.h>
-#include <FBApplication/Database/AssetDatabaseManager.h>
+#include <FBCore/Database/AssetDatabaseManager.h>
 #include <FBCore/FBCore.h>
 
 namespace fb

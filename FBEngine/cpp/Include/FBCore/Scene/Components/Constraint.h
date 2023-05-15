@@ -1,7 +1,7 @@
 #ifndef Constraint_h__
 #define Constraint_h__
 
-#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Component.h>
 #include <FBCore/Atomics/AtomicFloat.h>
 #include <FBCore/Interface/Physics/FBPhysicsTypes.h>
 #include <FBCore/System/Job.h>
@@ -12,7 +12,7 @@ namespace fb
     namespace scene
     {
 
-        class Constraint : public BaseComponent
+        class Constraint : public Component
         {
         public:
             enum class Type

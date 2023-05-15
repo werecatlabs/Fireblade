@@ -26,7 +26,7 @@ namespace fb
             {
                 setLoadingState( LoadingState::Loading );
 
-                BaseComponent::load( data );
+                Component::load( data );
 
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
@@ -99,7 +99,7 @@ namespace fb
                         }
                     }
 
-                    BaseComponent::unload( data );
+                    Component::unload( data );
 
                     setLoadingState( LoadingState::Unloaded );
                 }
@@ -150,7 +150,7 @@ namespace fb
 
         SmartPtr<Properties> Light::getProperties() const
         {
-            auto properties = BaseComponent::getProperties();
+            auto properties = Component::getProperties();
 
             auto diffuseColour = getDiffuseColour();
             auto specularColour = getSpecularColour();

@@ -1,8 +1,8 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
 #include <FBGraphicsOgre/Wrapper/CProfilerOgre.h>
 #include <FBGraphicsOgre/Wrapper/CProfileOgre.h>
-#include <FBGraphicsOgre/Plot.hpp>
-#include <FBGraphicsOgre/Addons/COgreProfiler.h>
+#include <FBGraphicsOgre/Ogre/Plot.hpp>
+#include <FBGraphicsOgre/Ogre/COgreProfiler.h>
 #include <FBCore/FBCore.h>
 #include <OgreOverlaySystem.h>
 #include <Ogre.h>

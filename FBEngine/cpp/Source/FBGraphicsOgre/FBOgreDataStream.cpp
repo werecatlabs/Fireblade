@@ -1,5 +1,5 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
-#include <FBGraphicsOgre/FBOgreDataStream.h>
+#include <FBGraphicsOgre/Core/FBOgreDataStream.h>
 #include <FBCore/Interface/IO/IStream.h>
 
 namespace fb

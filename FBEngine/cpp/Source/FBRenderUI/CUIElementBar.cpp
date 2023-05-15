@@ -4,7 +4,6 @@
 #include "FBRenderUI/CUIItemTemplate.h"
 #include <FBRenderUI/CUIImage.h>
 #include <FBCore/FBCore.h>
-#include <tinyxml.h>
 
 namespace fb
 {
@@ -25,67 +24,6 @@ namespace fb
             SmartPtr<render::IOverlayManager> overlayManager =
                 core::IApplicationManager::instance()->getGraphicsSystem()->getOverlayManager();
             overlayManager->removeElement( m_container );
-        }
-
-        void CUIElementBar::initialise( SmartPtr<IUIElement> &parent, const TiXmlNode *pNode )
-        {
-            SmartPtr<render::IOverlayManager> overlayManager =
-                core::IApplicationManager::instance()->getGraphicsSystem()->getOverlayManager();
-
-            const TiXmlElement *element = pNode->ToElement();
-            FB_ASSERT_TRUE( !element );
-            {
-                String id( element->Attribute( "id" ) );
-                if( id.length() > 0 )
-                {
-                    setName( id );
-                }
-            }
-
-            String value;
-            f32 left;
-            f32 top;
-            f32 width;
-            f32 height;
-
-            value = element->Attribute( "posX" );
-            sscanf( value.c_str(), "%f", &left );
-            value = element->Attribute( "posY" );
-            sscanf( value.c_str(), "%f", &top );
-
-            value = element->Attribute( "width" );
-            sscanf( value.c_str(), "%f", &width );
-            value = element->Attribute( "height" );
-            sscanf( value.c_str(), "%f", &height );
-
-            // m_container = overlayManager->addElement(String("Panel"), getName());
-            m_container->setMetricsMode( render::IOverlayElement::GMM_RELATIVE );
-
-            //m_container->setLeft( left );
-            //m_container->setTop( top );
-            //m_container->setWidth( width );
-            //m_container->setHeight( height );
-
-            setPosition( Vector2F( left, top ) );
-            setSize( Vector2F( width, height ) );
-
-            SmartPtr<render::IOverlay> overlay = overlayManager->findOverlay( parent->getName() );
-            if( overlay )
-            {
-                overlay->addElement( m_container );
-            }
-
-            auto zorder = m_container->getZOrder();
-
-            auto numChildren = (u32)parent->getChildren()->size();
-            auto newZOrder = zorder + numChildren + 1;
-            m_container->setZOrder( newZOrder );
-
-            m_barOrientation = static_cast<u8>( BarOrientation::BO_HORIZONTAL );
-            if( String( element->Attribute( "barOrientation" ) ) == ( "vertical" ) )
-            {
-                m_barOrientation = static_cast<u8>( BarOrientation::BO_VERTICAL );
-            }
         }
 
         void CUIElementBar::onToggleVisibility()

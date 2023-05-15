@@ -8,7 +8,7 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, TerrainSystem, BaseComponent );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, TerrainSystem, Component );
 
         TerrainSystem::TerrainSystem()
         {
@@ -25,7 +25,7 @@ namespace fb
             {
                 setLoadingState( LoadingState::Loading );
 
-                BaseComponent::load( data );
+                Component::load( data );
 
                 setLoadingState( LoadingState::Loaded );
             }
@@ -66,7 +66,7 @@ namespace fb
                         }
                     }
 
-                    BaseComponent::unload( data );
+                    Component::unload( data );
 
                     setLoadingState( LoadingState::Unloaded );
                 }
@@ -138,7 +138,7 @@ namespace fb
 
         SmartPtr<Properties> TerrainSystem::getProperties() const
         {
-            if( auto properties = BaseComponent::getProperties() )
+            if( auto properties = Component::getProperties() )
             {
                 properties->setProperty( "layers", 0 );
 

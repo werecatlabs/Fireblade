@@ -1,7 +1,7 @@
 #ifndef __Rigidbody_h__
 #define __Rigidbody_h__
 
-#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Component.h>
 #include <FBCore/Math/AABB3.h>
 
 namespace fb
@@ -13,7 +13,7 @@ namespace fb
          * @brief Represents a rigid body component in the physics simulation, handling physical interactions.
          * @extends BaseComponent
          */
-        class Rigidbody : public BaseComponent
+        class Rigidbody : public Component
         {
         public:
             /** @brief Constructor */

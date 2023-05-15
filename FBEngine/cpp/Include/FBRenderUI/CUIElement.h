@@ -205,67 +205,6 @@ namespace fb
 
             virtual void setOrder( u32 order );
 
-            //
-            // IScriptObjects
-            //
-
-            /** Gets an object call script functions. */
-            virtual SmartPtr<IScriptInvoker> &getInvoker();
-
-            /** Gets an object call script functions. */
-            virtual const SmartPtr<IScriptInvoker> &getInvoker() const;
-
-            /** Sets an object call script functions. */
-            virtual void setInvoker( SmartPtr<IScriptInvoker> invoker );
-
-            /** Gets an object to receive script calls. */
-            virtual SmartPtr<IScriptReceiver> &getReceiver();
-
-            /** Gets an object to receive script calls. */
-            virtual const SmartPtr<IScriptReceiver> &getReceiver() const;
-
-            /** Sets an object to receive script calls. */
-            virtual void setReceiver( SmartPtr<IScriptReceiver> receiver );
-
-            /** Internal function used by the script system. */
-            virtual void _setData( SmartPtr<IScriptData> data );
-
-            /** Internal function used by the script system. */
-            virtual SmartPtr<IScriptData> _getData() const;
-
-            /** Sets a property. */
-            virtual s32 setProperty( hash32 hash, const String &value );
-
-            /** Gets a property. */
-            virtual s32 getProperty( hash32 hash, String &value ) const;
-
-            /** Sets a property. */
-            virtual s32 setProperty( hash32 hash, const Parameter &param );
-
-            /** Sets a property. */
-            virtual s32 setProperty( hash32 hash, const Parameters &params );
-
-            /** Sets a property. */
-            virtual s32 setProperty( hash32 hash, void *param );
-
-            /** Gets a property. */
-            virtual s32 getProperty( hash32 hash, Parameter &param );
-
-            /** Gets a property. */
-            virtual s32 getProperty( hash32 hash, Parameters &params ) const;
-
-            /** Gets a property. */
-            virtual s32 getProperty( hash32 hash, void *param ) const;
-
-            /** Overridden from IScriptObject*/
-            virtual s32 getObject( u32 hash, SmartPtr<ISharedObject> &object ) const;
-
-            /** Calls a function. */
-            virtual s32 callFunction( u32 hash, const Parameters &params, Parameters &results );
-
-            /** Calls a function. */
-            virtual s32 callFunction( u32 hash, SmartPtr<ISharedObject> object, Parameters &results );
-
             /** Internal function. */
             virtual void _onInitialiseStart();
 
@@ -322,30 +261,9 @@ namespace fb
 
             void setHandleInputEvents( bool handleInputEvents );
 
-            bool isThreadSafe() const
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                auto graphicsSystem = applicationManager->getGraphicsSystem();
-                auto renderTask = graphicsSystem->getRenderTask();
+            bool isThreadSafe() const;
 
-                auto task = Thread::getCurrentTask();
-
-                const auto &loadingState = CSharedObject<T>::getLoadingState();
-
-                return loadingState == LoadingState::Loaded && task == renderTask;
-            }
-
-            void addMessage( SmartPtr<IStateMessage> message )
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                auto graphicsSystem = applicationManager->getGraphicsSystem();
-
-                if( auto stateObject = CUIElement<T>::getStateObject() )
-                {
-                    const auto stateTask = graphicsSystem->getStateTask();
-                    stateObject->addMessage( stateTask, message );
-                }
-            }
+            void addMessage( SmartPtr<IStateMessage> message );
 
         protected:
             class ElementStateListener : public CSharedObject<IStateListener>
@@ -387,13 +305,6 @@ namespace fb
 
             SmartPtr<IUIContainer> m_container;
 
-            SmartPtr<IScriptInvoker> m_scriptInvoker;
-
-            SmartPtr<IScriptReceiver> m_scriptReceiver;
-
-            /// The data used by the script system.
-            SmartPtr<IScriptData> m_scriptData;
-            
             /// The parent gui element.
             SmartPtr<IUIElement> m_parent;
 
@@ -443,6 +354,34 @@ namespace fb
             /// The number of the next name extension.
             static u32 m_nextGeneratedNameExt;
         };
+
+        template <class T>
+        bool CUIElement<T>::isThreadSafe() const
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            auto renderTask = graphicsSystem->getRenderTask();
+
+            auto task = Thread::getCurrentTask();
+
+            const auto &loadingState = CSharedObject<T>::getLoadingState();
+
+            return loadingState == LoadingState::Loaded && task == renderTask;
+        }
+
+        template <class T>
+        void CUIElement<T>::addMessage( SmartPtr<IStateMessage> message )
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+
+            if( auto stateObject = CUIElement<T>::getStateObject() )
+            {
+                const auto stateTask = graphicsSystem->getStateTask();
+                stateObject->addMessage( stateTask, message );
+            }
+        }
+
     }  // end namespace ui
 }  // end namespace fb
 

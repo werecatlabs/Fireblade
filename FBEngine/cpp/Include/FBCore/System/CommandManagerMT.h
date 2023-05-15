@@ -1,7 +1,7 @@
 #ifndef CommandManagerMT_H
 #define CommandManagerMT_H
 
-#include <FBApplication/FBApplicationPrerequisites.h>
+#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/ICommandManager.h>
 #include <FBCore/Memory/CSharedObject.h>
 

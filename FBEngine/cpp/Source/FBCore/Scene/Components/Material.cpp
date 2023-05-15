@@ -9,7 +9,7 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, Material, BaseComponent );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, Material, Component );
 
         Material::Material()
         {
@@ -29,7 +29,7 @@ namespace fb
             {
                 setLoadingState( LoadingState::Loading );
 
-                BaseComponent::load( data );
+                Component::load( data );
                 // updateMaterial();
                 // updateImageComponent();
 
@@ -52,7 +52,7 @@ namespace fb
 
                     m_material = nullptr;
                     m_materialListener = nullptr;
-                    BaseComponent::unload( data );
+                    Component::unload( data );
 
                     setLoadingState( LoadingState::Unloaded );
                 }
@@ -113,7 +113,7 @@ namespace fb
 
         IFSM::ReturnType Material::handleComponentEvent( u32 state, IFSM::Event eventType )
         {
-            BaseComponent::handleComponentEvent( state, eventType );
+            Component::handleComponentEvent( state, eventType );
 
             switch( eventType )
             {
@@ -173,7 +173,7 @@ namespace fb
 
         SmartPtr<Properties> Material::getProperties() const
         {
-            auto properties = BaseComponent::getProperties();
+            auto properties = Component::getProperties();
             FB_ASSERT( properties );
 
             static const auto mainTextureStr = String( "Main Texture" );

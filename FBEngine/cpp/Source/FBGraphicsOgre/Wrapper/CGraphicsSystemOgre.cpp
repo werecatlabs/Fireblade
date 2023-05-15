@@ -1,7 +1,7 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
 #include <FBGraphicsOgre/Wrapper/CGraphicsSystemOgre.h>
-#include <FBGraphicsOgre/Addons/CellSceneManager.h>
-#include <FBGraphicsOgre/Addons/BasicSceneManager.h>
+#include <FBGraphicsOgre/Ogre/CellSceneManager.h>
+#include <FBGraphicsOgre/Ogre/BasicSceneManager.h>
 #include <FBGraphicsOgre/Core/CompositorManager.h>
 #include <FBGraphicsOgre/Wrapper/CMeshManager.h>
 #include <FBGraphicsOgre/Wrapper/CDebug.h>
@@ -15,10 +15,10 @@
 #include <FBGraphicsOgre/Wrapper/CTextureManagerOgre.h>
 #include <FBGraphicsOgre/Wrapper/CWindowOgre.h>
 #include <FBGraphicsOgre/Wrapper/CFontManager.h>
-#include <FBGraphicsOgre/ResourceGroupHelper.h>
-#include <FBGraphicsOgre/ResourceLoadingListener.h>
+#include <FBGraphicsOgre/Ogre/ResourceGroupHelper.h>
+#include <FBGraphicsOgre/Ogre/ResourceLoadingListener.h>
 #include <FBGraphicsOgre/FBOgreTypes.h>
-#include <FBGraphicsOgre/MaterialListener.h>
+#include <FBGraphicsOgre/Ogre/MaterialListener.h>
 #include <FBCore/FBCore.h>
 #include <FBApplication/FBApplication.h>
 

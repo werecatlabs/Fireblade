@@ -45,6 +45,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/cJSON )
 include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/tinyxml/include )
 include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/utf8/source )
 include_directories( ${CMAKE_SOURCE_DIR}/FBEngine/cpp/Include )
+include_directories( ${CMAKE_SOURCE_DIR}/FBEngine/cpp/Include/FBCore/Extern )
 include_directories( ${CMAKE_SOURCE_DIR}/AdditionalLibraries )
 
 if(APPLE)

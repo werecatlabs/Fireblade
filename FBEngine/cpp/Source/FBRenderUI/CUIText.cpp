@@ -240,26 +240,6 @@ namespace fb
             CUIElement::setSize( size );
         }
 
-        s32 CUIText::setProperty( hash32 hash, const String &value )
-        {
-            if( hash == StringUtil::getHash( "text" ) )
-            {
-                setText( value );
-            }
-
-            return CUIElement::setProperty( hash, value );
-        }
-
-        s32 CUIText::getProperty( hash32 hash, String &value ) const
-        {
-            if( hash == StringUtil::getHash( "text" ) )
-            {
-                value = getText();
-            }
-
-            return 0;
-        }
-
         void CUIText::_getObject( void **ppObject ) const
         {
             *ppObject = m_overlayText.get();

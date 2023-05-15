@@ -1,7 +1,7 @@
 #ifndef CollisionNode_h__
 #define CollisionNode_h__
 
-#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Component.h>
 #include "FBCore/Base/Node.h"
 
 namespace fb
@@ -10,7 +10,7 @@ namespace fb
     {
 
         /** Used to create a collision graph for the game logic. */
-        class CollisionNode : public BaseComponent
+        class CollisionNode : public Component
         {
         public:
             CollisionNode();

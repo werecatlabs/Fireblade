@@ -2,13 +2,13 @@
 #define TerrainBlendMap_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Scene/Components/BaseSubComponent.h>
+#include <FBCore/Scene/Components/SubComponent.h>
 
 namespace fb
 {
     namespace scene
     {
-        class TerrainBlendMap : public BaseSubComponent
+        class TerrainBlendMap : public SubComponent
         {
         public:
             /** Creates a TerrainBlendMap object. */

@@ -12,7 +12,7 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, Rigidbody, BaseComponent );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, Rigidbody, Component );
         //FB_CLASS_REGISTER_DERIVED( fb::component, Rigidbody::RigidbodyListener,
         //                           physics::IPhysicsBodyListener3 );
 
@@ -31,7 +31,7 @@ namespace fb
             {
                 setLoadingState( LoadingState::Loading );
 
-                BaseComponent::load( data );
+                Component::load( data );
 
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
@@ -363,7 +363,7 @@ namespace fb
                 }
                 */
 
-                BaseComponent::unload( data );
+                Component::unload( data );
 
                 setLoadingState( LoadingState::Unloaded );
             }

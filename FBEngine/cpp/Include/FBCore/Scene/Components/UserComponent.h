@@ -1,14 +1,14 @@
 #ifndef UserComponent_h__
 #define UserComponent_h__
 
-#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Component.h>
 #include <FBCore/Interface/Script/IScriptReceiver.h>
 
 namespace fb
 {
     namespace scene
     {
-        class UserComponent : public BaseComponent
+        class UserComponent : public Component
         {
         public:
             static const hash_type UPDATE_HASH;

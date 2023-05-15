@@ -180,7 +180,7 @@ namespace fb
             {
                 setLoadingState( LoadingState::Loading );
 
-                BaseComponent::load( data );
+                Component::load( data );
 
                 setLoadingState( LoadingState::Loaded );
             }
@@ -230,7 +230,7 @@ namespace fb
                         }
                     }
 
-                    BaseComponent::unload( data );
+                    Component::unload( data );
 
                     setLoadingState( LoadingState::Unloaded );
                 }
@@ -257,7 +257,7 @@ namespace fb
 
         SmartPtr<Properties> Renderer::getProperties() const
         {
-            if( auto properties = BaseComponent::getProperties() )
+            if( auto properties = Component::getProperties() )
             {
                 properties->setProperty( "castShadows", static_cast<s32>( m_castShadows ) );
 
@@ -296,7 +296,7 @@ namespace fb
 
         IFSM::ReturnType Renderer::handleComponentEvent( u32 state, IFSM::Event eventType )
         {
-            BaseComponent::handleComponentEvent( state, eventType );
+            Component::handleComponentEvent( state, eventType );
 
             switch( eventType )
             {

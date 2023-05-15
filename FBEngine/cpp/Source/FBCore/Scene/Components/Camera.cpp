@@ -6,11 +6,11 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, Camera, BaseComponent );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, Camera, Component );
         u32 Camera::m_nameExt = 0;
         u32 Camera::m_zorderExt = 0;
 
-        Camera::Camera() : BaseComponent()
+        Camera::Camera() : Component()
         {
         }
 
@@ -25,7 +25,7 @@ namespace fb
             {
                 setLoadingState( LoadingState::Loading );
 
-                BaseComponent::load( data );
+                Component::load( data );
 
                 auto actor = getActor();
 
@@ -164,7 +164,7 @@ namespace fb
                         }
                     }
 
-                    BaseComponent::unload( data );
+                    Component::unload( data );
 
                     setLoadingState( LoadingState::Unloaded );
                 }
@@ -200,7 +200,7 @@ namespace fb
 
         SmartPtr<Properties> Camera::getProperties() const
         {
-            if( auto properties = BaseComponent::getProperties() )
+            if( auto properties = Component::getProperties() )
             {
                 properties->setProperty( "isActive", m_isActive );
 
@@ -213,12 +213,12 @@ namespace fb
         void Camera::setProperties( SmartPtr<Properties> properties )
         {
             properties->getPropertyValue( "isActive", m_isActive );
-            BaseComponent::setProperties( properties );
+            Component::setProperties( properties );
         }
 
         Array<SmartPtr<ISharedObject>> Camera::getChildObjects() const
         {
-            auto objects = BaseComponent::getChildObjects();
+            auto objects = Component::getChildObjects();
 
             objects.push_back( m_camera );
             objects.push_back( m_node );

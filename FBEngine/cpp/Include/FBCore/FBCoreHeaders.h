@@ -16,6 +16,9 @@
 #include <FBCore/Base/SingletonPool.h>
 #include <FBCore/Base/XmlUtil.h>
 
+#include <FBCore/Database/DatabaseManager.h>
+#include <FBCore/Database/AssetDatabaseManager.h>
+
 #include <FBCore/Interface/IApplicationClient.h>
 #include <FBCore/Interface/IApplicationManager.h>
 
@@ -441,9 +444,9 @@
 
 #include <FBCore/Rtti/RttiClassDefinition.h>
 
-#include <FBCore/Scene/Components/BaseComponent.h>
-#include <FBCore/Scene/Components/Camera.h>
 #include <FBCore/Scene/Components/Component.h>
+#include <FBCore/Scene/Components/Camera.h>
+#include <FBCore/Scene/Components/ComponentT.h>
 #include <FBCore/Scene/Components/Constraint.h>
 #include <FBCore/Scene/Components/Collision.h>
 #include <FBCore/Scene/Components/CollisionBox.h>
@@ -474,6 +477,13 @@
 #include <FBCore/Scene/CActor.h>
 #include <FBCore/Scene/CSceneManager.h>
 #include <FBCore/Scene/CScene.h>
+
+#include <FBCore/Script/ScriptEvent.h>
+#include <FBCore/Script/ScriptClass.h>
+#include <FBCore/Script/ScriptFunction.h>
+#include <FBCore/Script/ScriptInvoker.h>
+#include <FBCore/Script/ScriptReceiverAdapter.h>
+#include <FBCore/Script/ScriptVariable.h>
 
 #include <FBCore/State/Messages/CommonStateChangeMsgs.h>
 #include <FBCore/State/Messages/StateMessageBuffer.h>

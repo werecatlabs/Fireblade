@@ -28,9 +28,6 @@ namespace fb
             void setTextSize( f32 textSize ) override;
             f32 getTextSize() const override;
 
-            s32 setProperty( hash32 hash, const String &value ) override;
-            s32 getProperty( hash32 hash, String &value ) const override;
-
             void _getObject( void **ppObject ) const override;
 
             //

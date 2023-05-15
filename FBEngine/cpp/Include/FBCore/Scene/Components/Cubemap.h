@@ -1,14 +1,14 @@
 #ifndef Cubemap_h__
 #define Cubemap_h__
 
-#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Component.h>
 
 namespace fb
 {
     namespace scene
     {
 
-        class Cubemap : public BaseComponent
+        class Cubemap : public Component
         {
         public:
             Cubemap();

@@ -27,7 +27,7 @@ namespace fb
         {
             const TiXmlElement *element = pNode->ToElement();
             FB_ASSERT_TRUE( !element );
-            const String id = XMLUtil::getString( element->Attribute( "id" ) );
+            const String id = XmlUtil::getString( element->Attribute( "id" ) );
             if( id.length() > 0 )
             {
                 setName( id );
@@ -39,17 +39,17 @@ namespace fb
             f32 width;
             f32 height;
 
-            value = XMLUtil::getString( element->Attribute( "posX" ) );
+            value = XmlUtil::getString( element->Attribute( "posX" ) );
             sscanf( value.c_str(), "%f", &left );
-            value = XMLUtil::getString( element->Attribute( "posY" ) );
+            value = XmlUtil::getString( element->Attribute( "posY" ) );
             sscanf( value.c_str(), "%f", &top );
 
-            value = XMLUtil::getString( element->Attribute( "width" ) );
+            value = XmlUtil::getString( element->Attribute( "width" ) );
             sscanf( value.c_str(), "%f", &width );
-            value = XMLUtil::getString( element->Attribute( "height" ) );
+            value = XmlUtil::getString( element->Attribute( "height" ) );
             sscanf( value.c_str(), "%f", &height );
 
-            String material = XMLUtil::getString( element->Attribute( "material" ) );
+            String material = XmlUtil::getString( element->Attribute( "material" ) );
 
             SmartPtr<render::IOverlayManager> overlayManager =
                 core::IApplicationManager::instance()->getGraphicsSystem()->getOverlayManager();
@@ -70,14 +70,14 @@ namespace fb
             setPosition( Vector2F( left, top ) );
             setSize( Vector2F( width, height ) );
 
-            String halignment = XMLUtil::getString( element->Attribute( "halign" ) );
+            String halignment = XmlUtil::getString( element->Attribute( "halign" ) );
             if( halignment == String( "center" ) )
             {
                 // m_pOverlayElement->setHorizontalAlignment(Ogre::GHA_CENTER);
             }
 
             bool isVisible = true;
-            value = XMLUtil::getString( element->Attribute( "visible" ) );
+            value = XmlUtil::getString( element->Attribute( "visible" ) );
             if( value == String( "false" ) )
                 isVisible = false;
 

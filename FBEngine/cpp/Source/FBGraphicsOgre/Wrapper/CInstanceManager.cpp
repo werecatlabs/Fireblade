@@ -1,7 +1,7 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
 #include <FBGraphicsOgre/Wrapper/CInstanceManager.h>
-#include <FBGraphicsOgre/NGPlantLoader.h>
-#include <FBGraphicsOgre/InstanceObject.h>
+#include <FBGraphicsOgre/Ogre/NGPlantLoader.h>
+#include <FBGraphicsOgre/Ogre/InstanceObject.h>
 #include <FBCore/FBCore.h>
 
 #include "FBGraphicsOgre/Terrain/TerrainComponent/OgreTerrain.h"

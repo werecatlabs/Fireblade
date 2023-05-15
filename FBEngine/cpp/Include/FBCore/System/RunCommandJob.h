@@ -1,7 +1,7 @@
 #ifndef RunCommandJob_h__
 #define RunCommandJob_h__
 
-#include <FBApplication/FBApplicationPrerequisites.h>
+#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/System/Job.h>
 
 namespace fb

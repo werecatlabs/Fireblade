@@ -49,15 +49,6 @@ namespace fb
             SmartPtr<IMaterial> getMaterial() const override;
             void setMaterial( SmartPtr<IMaterial> material ) override;
 
-            /** @copydoc IObject::toJson */
-            String toJson() const override;
-
-            /** @copydoc IObject::toData */
-            SmartPtr<IData> toData() const override;
-
-            /** @copydoc IObject::fromData */
-            void fromData( SmartPtr<IData> data ) override;
-
             /** @copydoc IResource::getProperties */
             SmartPtr<Properties> getProperties() const override;
 

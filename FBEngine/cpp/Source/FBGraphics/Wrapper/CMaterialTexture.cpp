@@ -162,67 +162,6 @@ namespace fb
             *ppObject = nullptr;
         }
 
-        String CMaterialTexture::toJson() const
-        {
-            auto data = toData();
-            auto textureData = data->getDataAsType<data::material_texture>();
-            return DataUtil::toString( textureData, true );
-        }
-
-        SmartPtr<IData> CMaterialTexture::toData() const
-        {
-            try
-            {
-                auto data = fb::make_ptr<Data<data::material_texture>>();
-                auto textureData = data->getDataAsType<data::material_texture>();
-
-                if( m_texture )
-                {
-                    auto handle = m_texture->getHandle();
-                    textureData->texturePath = handle->getUUID();
-                }
-
-                return data;
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-
-            return nullptr;
-        }
-
-        void CMaterialTexture::fromData( SmartPtr<IData> data )
-        {
-            try
-            {
-                auto textureData = data->getDataAsType<data::material_texture>();
-
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto resourceDatabase = applicationManager->getResourceDatabase();
-                if( !resourceDatabase )
-                {
-                    FB_LOG( "Resource database null." );
-                }
-
-                if( resourceDatabase )
-                {
-                    auto texturePath = textureData->texturePath;
-                    if( !StringUtil::isNullOrEmpty( texturePath ) )
-                    {
-                        SmartPtr<ITexture> texture = resourceDatabase->loadResourceById( texturePath );
-                        setTexture( texture );
-                    }
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
         SmartPtr<Properties> CMaterialTexture::getProperties() const
         {
             try

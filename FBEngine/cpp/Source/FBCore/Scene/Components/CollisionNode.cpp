@@ -6,7 +6,7 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb, CollisionNode, BaseComponent );
+        FB_CLASS_REGISTER_DERIVED( fb, CollisionNode, Component );
 
         CollisionNode::CollisionNode()
         {

@@ -346,9 +346,18 @@ namespace fb
             ///
             atomic_bool m_quit = false;
         };
+
+        inline SmartPtr<ILogManager> ApplicationManager::getLogManager() const
+        {
+            return m_logManager;
+        }
+
+        inline SmartPtr<IFactoryManager> ApplicationManager::getFactoryManager() const
+        {
+            return m_factoryManager;
+        }
+
     }  // namespace core
 }  // namespace fb
-
-#include <FBCore/System/ApplicationManager.inl>
 
 #endif  // CApplicationManager_h__

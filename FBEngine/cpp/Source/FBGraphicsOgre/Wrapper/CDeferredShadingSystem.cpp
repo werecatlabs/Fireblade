@@ -2,7 +2,7 @@
 #include <FBGraphicsOgre/Wrapper/CDeferredShadingSystem.h>
 #include <FBGraphicsOgre/Deferred/DeferredShading.h>
 #include <FBGraphicsOgre/Deferred/SharedData.h>
-#include <FBGraphicsOgre/MaterialListener.h>
+#include <FBGraphicsOgre/Ogre/MaterialListener.h>
 #include <FBGraphicsOgre/Templates/DeferredShadingSystemTemplate.h>
 #include <FBCore/FBCore.h>
 

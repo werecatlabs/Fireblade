@@ -66,7 +66,7 @@ namespace fb
     protected:
         String getZzipErrorDescription( s32 zzipError );
 
-        FB_MUTEX( Mutex );
+        RecursiveMutex m_mutex;  
 
         /// Handle to root zip file
         ZZIP_DIR *mZzipDir = nullptr;

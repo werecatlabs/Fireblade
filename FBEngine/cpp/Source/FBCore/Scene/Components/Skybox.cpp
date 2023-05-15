@@ -8,7 +8,7 @@ namespace fb
     namespace scene
     {
 
-        FB_CLASS_REGISTER_DERIVED( fb::scene, Skybox, BaseComponent );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, Skybox, Component );
 
         Skybox::Skybox()
         {
@@ -27,7 +27,7 @@ namespace fb
             {
                 setLoadingState( LoadingState::Loading );
 
-                BaseComponent::load( data );
+                Component::load( data );
 
                 m_textures.resize( 6 );
 
@@ -98,7 +98,7 @@ namespace fb
                     m_textures.clear();
                     m_materialSharedListener = nullptr;
 
-                    BaseComponent::unload( data );
+                    Component::unload( data );
 
                     setLoadingState( LoadingState::Unloaded );
                 }
@@ -217,7 +217,7 @@ namespace fb
 
         SmartPtr<Properties> Skybox::getProperties() const
         {
-            auto properties = BaseComponent::getProperties();
+            auto properties = Component::getProperties();
 
             properties->setProperty( "Front",
                                      m_textures[static_cast<u32>(

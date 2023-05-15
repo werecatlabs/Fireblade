@@ -1,14 +1,14 @@
 #ifndef SkyboxComponent_h__
 #define SkyboxComponent_h__
 
-#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Component.h>
 #include <FBCore/Interface/System/IStateListener.h>
 
 namespace fb
 {
     namespace scene
     {
-        class Skybox : public BaseComponent
+        class Skybox : public Component
         {
         public:
             Skybox();

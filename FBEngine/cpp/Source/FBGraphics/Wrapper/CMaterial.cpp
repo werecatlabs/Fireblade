@@ -67,96 +67,96 @@ namespace fb
 
         void CMaterial::saveToFile( const String &filePath )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
+            //auto applicationManager = core::IApplicationManager::instance();
+            //FB_ASSERT( applicationManager );
 
-            auto fileSystem = applicationManager->getFileSystem();
-            FB_ASSERT( fileSystem );
+            //auto fileSystem = applicationManager->getFileSystem();
+            //FB_ASSERT( fileSystem );
 
-            auto pData = toData();
+            //auto pData = toData();
 
-            auto mat = pData->getDataAsType<data::material_graph>();
-            auto materialStr = DataUtil::toString( mat, true );
+            //auto mat = pData->getDataAsType<data::material_graph>();
+            //auto materialStr = DataUtil::toString( mat, true );
 
-            fileSystem->writeAllText( filePath, materialStr );
+            //fileSystem->writeAllText( filePath, materialStr );
         }
 
         void CMaterial::loadFromFile( const String &filePath )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
+            //auto applicationManager = core::IApplicationManager::instance();
+            //FB_ASSERT( applicationManager );
 
-            auto fileSystem = applicationManager->getFileSystem();
-            FB_ASSERT( fileSystem );
+            //auto fileSystem = applicationManager->getFileSystem();
+            //FB_ASSERT( fileSystem );
 
-            auto stream = fileSystem->open( filePath, true, false, false, false, false );
-            if( !stream )
-            {
-                stream = fileSystem->open( filePath, true, false, false, true, true );
-            }
+            //auto stream = fileSystem->open( filePath, true, false, false, false, false );
+            //if( !stream )
+            //{
+            //    stream = fileSystem->open( filePath, true, false, false, true, true );
+            //}
 
-            if( stream )
-            {
-                auto materialStr = stream->getAsString();
+            //if( stream )
+            //{
+            //    auto materialStr = stream->getAsString();
 
-                data::material_graph materialData;
-                DataUtil::parse( materialStr, &materialData );
+            //    data::material_graph materialData;
+            //    DataUtil::parse( materialStr, &materialData );
 
-                FileInfo fileInfo;
-                if( fileSystem->findFileInfo( filePath, fileInfo ) )
-                {
-                    auto fileId = fileInfo.fileId;
-                    setFileSystemId( fileId );
-                }
+            //    FileInfo fileInfo;
+            //    if( fileSystem->findFileInfo( filePath, fileInfo ) )
+            //    {
+            //        auto fileId = fileInfo.fileId;
+            //        setFileSystemId( fileId );
+            //    }
 
-                setFilePath( filePath );
+            //    setFilePath( filePath );
 
-                auto data = fb::make_ptr<Data<data::material_graph>>();
-                data->setData( &materialData );
+            //    auto data = fb::make_ptr<Data<data::material_graph>>();
+            //    data->setData( &materialData );
 
-                fromData( data );
-                load( nullptr );
-            }
+            //    fromData( data );
+            //    load( nullptr );
+            //}
         }
 
         void CMaterial::save()
         {
-            try
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
+            //try
+            //{
+            //    auto applicationManager = core::IApplicationManager::instance();
+            //    FB_ASSERT( applicationManager );
 
-                auto fileSystem = applicationManager->getFileSystem();
-                FB_ASSERT( fileSystem );
+            //    auto fileSystem = applicationManager->getFileSystem();
+            //    FB_ASSERT( fileSystem );
 
-                auto data = toData();
-                FB_ASSERT( data );
+            //    auto data = toData();
+            //    FB_ASSERT( data );
 
-                auto materialData = data->getDataAsType<data::material_graph>();
+            //    auto materialData = data->getDataAsType<data::material_graph>();
 
-                auto dataStr = DataUtil::toString( materialData, true );
-                FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );
+            //    auto dataStr = DataUtil::toString( materialData, true );
+            //    FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );
 
-                auto fileId = getFileSystemId();
-                if( fileId != 0 )
-                {
-                    FileInfo fileInfo;
-                    if( fileSystem->findFileInfo( fileId, fileInfo ) )
-                    {
-                        auto filePath = String( fileInfo.filePath.c_str() );
-                        fileSystem->writeAllText( filePath, dataStr );
-                    }
-                    else
-                    {
-                        FB_LOG_ERROR( "Could not save material: " +
-                                      String( fileInfo.filePath.c_str() ) );
-                    }
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
+            //    auto fileId = getFileSystemId();
+            //    if( fileId != 0 )
+            //    {
+            //        FileInfo fileInfo;
+            //        if( fileSystem->findFileInfo( fileId, fileInfo ) )
+            //        {
+            //            auto filePath = String( fileInfo.filePath.c_str() );
+            //            fileSystem->writeAllText( filePath, dataStr );
+            //        }
+            //        else
+            //        {
+            //            FB_LOG_ERROR( "Could not save material: " +
+            //                          String( fileInfo.filePath.c_str() ) );
+            //        }
+            //    }
+            //}
+            //catch( std::exception &e )
+            //{
+            //    FB_LOG_EXCEPTION( e );
+            //}
         }
 
         void CMaterial::load( SmartPtr<ISharedObject> data )
@@ -982,99 +982,99 @@ namespace fb
 
         String CMaterial::toJson() const
         {
-            auto data = toData();
-            if( data )
-            {
-                auto materialData = data->getDataAsType<data::material_graph>();
-                return DataUtil::toString( materialData, true );
-            }
+            //auto data = toData();
+            //if( data )
+            //{
+            //    auto materialData = data->getDataAsType<data::material_graph>();
+            //    return DataUtil::toString( materialData, true );
+            //}
 
             return nullptr;
         }
 
         SmartPtr<IData> CMaterial::toData() const
         {
-            try
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
+            //try
+            //{
+            //    auto applicationManager = core::IApplicationManager::instance();
+            //    FB_ASSERT( applicationManager );
 
-                auto factoryManager = applicationManager->getFactoryManager();
-                FB_ASSERT( factoryManager );
+            //    auto factoryManager = applicationManager->getFactoryManager();
+            //    FB_ASSERT( factoryManager );
 
-                auto data = fb::make_ptr<Data<data::material_graph>>();
-                auto materialData = data->getDataAsType<data::material_graph>();
-                materialData->materialType = static_cast<s32>( getMaterialType() );
+            //    auto data = fb::make_ptr<Data<data::material_graph>>();
+            //    auto materialData = data->getDataAsType<data::material_graph>();
+            //    materialData->materialType = static_cast<s32>( getMaterialType() );
 
-                auto techniques = getTechniques();
-                for( auto technique : techniques )
-                {
-                    auto pTechniqueData = technique->toData();
-                    auto techniqueData = pTechniqueData->getDataAsType<data::material_scheme>();
+            //    auto techniques = getTechniques();
+            //    for( auto technique : techniques )
+            //    {
+            //        auto pTechniqueData = technique->toData();
+            //        auto techniqueData = pTechniqueData->getDataAsType<data::material_scheme>();
 
-                    materialData->schemes.push_back( *techniqueData );
-                }
+            //        materialData->schemes.push_back( *techniqueData );
+            //    }
 
-                return data;
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
+            //    return data;
+            //}
+            //catch( std::exception &e )
+            //{
+            //    FB_LOG_EXCEPTION( e );
+            //}
 
             return nullptr;
         }
 
         void CMaterial::fromData( SmartPtr<IData> data )
         {
-            try
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
+            //try
+            //{
+            //    auto applicationManager = core::IApplicationManager::instance();
+            //    FB_ASSERT( applicationManager );
 
-                auto factoryManager = applicationManager->getFactoryManager();
-                FB_ASSERT( factoryManager );
+            //    auto factoryManager = applicationManager->getFactoryManager();
+            //    FB_ASSERT( factoryManager );
 
-                auto materialData = data->getDataAsType<data::material_graph>();
+            //    auto materialData = data->getDataAsType<data::material_graph>();
 
-                auto data = factoryManager->make_ptr<Data<data::material_graph>>();
+            //    auto data = factoryManager->make_ptr<Data<data::material_graph>>();
 
-                auto materialType = static_cast<MaterialType>( materialData->materialType );
-                FB_ASSERT( materialType < IMaterial::MaterialType::Count );
-                setMaterialType( materialType );
+            //    auto materialType = static_cast<MaterialType>( materialData->materialType );
+            //    FB_ASSERT( materialType < IMaterial::MaterialType::Count );
+            //    setMaterialType( materialType );
 
-                createMaterialByType();
+            //    createMaterialByType();
 
-                auto count = 0;
+            //    auto count = 0;
 
-                auto techniques = getTechniques();
+            //    auto techniques = getTechniques();
 
-                auto &schemes = materialData->schemes;
+            //    auto &schemes = materialData->schemes;
 
-                for( auto &scheme : schemes )
-                {
-                    auto technique = SmartPtr<IMaterialTechnique>();
+            //    for( auto &scheme : schemes )
+            //    {
+            //        auto technique = SmartPtr<IMaterialTechnique>();
 
-                    if( count < techniques.size() )
-                    {
-                        technique = techniques[count];
-                    }
-                    else
-                    {
-                        technique = createTechnique();
-                    }
+            //        if( count < techniques.size() )
+            //        {
+            //            technique = techniques[count];
+            //        }
+            //        else
+            //        {
+            //            technique = createTechnique();
+            //        }
 
-                    auto pSchemeData = factoryManager->make_ptr<Data<data::material_scheme>>();
-                    pSchemeData->setData( &scheme );
-                    technique->fromData( pSchemeData );
+            //        auto pSchemeData = factoryManager->make_ptr<Data<data::material_scheme>>();
+            //        pSchemeData->setData( &scheme );
+            //        technique->fromData( pSchemeData );
 
-                    count++;
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
+            //        count++;
+            //    }
+            //}
+            //catch( std::exception &e )
+            //{
+            //    FB_LOG_EXCEPTION( e );
+            //}
         }
 
         SmartPtr<Properties> CMaterial::getProperties() const

@@ -1,7 +1,7 @@
 #ifndef UIComponentUtil_h__
 #define UIComponentUtil_h__
 
-#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Component.h>
 #include <FBCore/Scene/Components/UI/CanvasTransform.h>
 
 namespace fb

@@ -172,23 +172,6 @@ namespace fb
         }
 
         template <class T>
-        String CMaterialNode<T>::toJson() const
-        {
-            return String( "" );
-        }
-
-        template <class T>
-        SmartPtr<IData> CMaterialNode<T>::toData() const
-        {
-            return nullptr;
-        }
-
-        template <class T>
-        void CMaterialNode<T>::fromData( SmartPtr<IData> data )
-        {
-        }
-
-        template <class T>
         SmartPtr<Properties> CMaterialNode<T>::getProperties() const
         {
             auto properties = fb::make_ptr<Properties>();

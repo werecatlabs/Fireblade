@@ -375,44 +375,6 @@ namespace fb
             return 0.f;
         }
 
-        s32 CUIAnimatedMaterial::callFunction( u32 hash, const Parameters &params, Parameters &results )
-        {
-            // if(hash == StringUtil::getHash("play"))
-            //{
-            //	play();
-            //
-            // }
-            // else if(hash == StringUtil::getHash("pause"))
-            //{
-            //	pause();
-            //
-            // }
-            // else if(hash == StringUtil::STOP_HASH)
-            //{
-            //	stop();
-            //
-            // }
-
-            return 0;
-        }
-
-        s32 CUIAnimatedMaterial::callFunction( u32 hash, SmartPtr<ISharedObject> object,
-                                               Parameters &results )
-        {
-            return 0;
-        }
-
-        s32 CUIAnimatedMaterial::setProperty( hash32 hash, const Parameter &param )
-        {
-            if( hash == StringUtil::getHash( "frameNumber" ) )
-            {
-                u32 frameNumber = param.getU32();
-                // m_animationFunction->setTime((f32)(frameNumber+1) / (f32)m_numFrames);
-            }
-
-            return CUIElement::setProperty( hash, param );
-        }
-
         u32 CUIAnimatedMaterial::getCurrentFrame() const
         {
             // Ogre::SmartPtr<IMaterial> mat =

@@ -13,7 +13,6 @@
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/FSM/FSMListener.h>
 
-
 namespace fb
 {
     namespace scene
@@ -262,9 +261,8 @@ namespace fb
                 Thread::UpdateState updateState, Thread::Task task ) const;
 
             /** @copydoc IActor::setRegisteredComponents */
-            void setRegisteredComponents(
-                Thread::UpdateState updateState, Thread::Task task,
-                boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> p );
+            void setRegisteredComponents( Thread::UpdateState updateState, Thread::Task task,
+                                          boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> p );
 
             /** Adds a child to this actor. */
             void addChild( SmartPtr<IActor> child ) override;
@@ -291,7 +289,7 @@ namespace fb
             Array<SmartPtr<IActor>> getAllChildren() const override;
 
             /** @copydoc IActor::getAllChildren */
-	        Array<SmartPtr<IActor>> getAllChildren( SmartPtr<IActor> parent ) const;
+            Array<SmartPtr<IActor>> getAllChildren( SmartPtr<IActor> parent ) const;
 
             /** @copydoc IActor::getProperties */
             SmartPtr<Properties> getProperties() const override;
@@ -407,7 +405,7 @@ namespace fb
             u32 getEntity() const override;
 
             void setEntity( u32 entity ) override;
-            
+
             static void registerClass();
 
             FB_CLASS_REGISTER_DECL;
@@ -441,7 +439,7 @@ namespace fb
             atomic_bool m_autoUpdateComponents = true;
             atomic_bool m_destroyOnLoad = false;
 
-            u32 m_entity = static_cast<u32>(0);
+            u32 m_entity = static_cast<u32>( 0 );
 
             static u32 m_idExt;
         };
@@ -495,7 +493,7 @@ namespace fb
         {
             return m_components;
         }
-    } // namespace scene
-}     // namespace fb
+    }  // namespace scene
+}  // namespace fb
 
 #endif  // CActor_h__

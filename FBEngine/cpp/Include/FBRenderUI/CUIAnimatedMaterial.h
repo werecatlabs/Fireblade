@@ -35,11 +35,6 @@ namespace fb
 
             void setSize( const Vector2F &size ) override;
 
-            // IScriptObject functions
-            s32 setProperty( hash32 hash, const Parameter &param ) override;
-            s32 callFunction( u32 hash, const Parameters &params, Parameters &results ) override;
-            s32 callFunction( u32 hash, SmartPtr<ISharedObject> object, Parameters &results ) override;
-
         private:
             void setFrameTime( f32 time );
             f32 getFrameTime() const;
@@ -86,7 +81,6 @@ namespace fb
             // AnimationFunction* m_animationFunction;
         };
 
-        using CAnimatedMaterialPtr = SmartPtr<CUIAnimatedMaterial>;
     } // end namespace ui
 }     // end namespace fb
 

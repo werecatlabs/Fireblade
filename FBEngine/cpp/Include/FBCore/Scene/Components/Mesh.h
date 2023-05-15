@@ -1,7 +1,7 @@
 #ifndef MeshComponent_h__
 #define MeshComponent_h__
 
-#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Component.h>
 
 namespace fb
 {
@@ -10,7 +10,7 @@ namespace fb
         /**
          * Component that represents a mesh.
          */
-        class Mesh : public BaseComponent
+        class Mesh : public Component
         {
         public:
             /**

@@ -1,6 +1,6 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
 #include <FBGraphicsOgre/Wrapper/CDecalCursor.h>
-#include <FBGraphicsOgre/DecalCursor.h>
+#include <FBGraphicsOgre/Ogre/DecalCursor.h>
 #include <FBCore/FBCore.h>
 #include <Ogre.h>
 

@@ -1,14 +1,14 @@
 #ifndef CanvasTransform_h__
 #define CanvasTransform_h__
 
-#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Component.h>
 
 namespace fb
 {
     namespace scene
     {
 
-        class CanvasTransform : public BaseComponent
+        class CanvasTransform : public Component
         {
         public:
             /** Enum for horizontal alignment. */

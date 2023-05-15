@@ -6,7 +6,7 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb, TerrainBlendMap, BaseSubComponent );
+        FB_CLASS_REGISTER_DERIVED( fb, TerrainBlendMap, SubComponent );
 
         TerrainBlendMap::TerrainBlendMap()
         {

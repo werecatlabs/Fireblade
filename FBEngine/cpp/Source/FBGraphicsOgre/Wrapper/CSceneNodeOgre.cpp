@@ -2,7 +2,7 @@
 #include <FBGraphicsOgre/Wrapper/CSceneNodeOgre.h>
 #include <FBGraphicsOgre/Wrapper/CCameraOgre.h>
 #include <FBGraphicsOgre/Wrapper/CGraphicsSceneOgre.h>
-#include <FBGraphicsOgre/OgreUtil.h>
+#include <FBGraphicsOgre/Ogre/OgreUtil.h>
 #include <FBCore/FBCore.h>
 #include <Ogre.h>
 

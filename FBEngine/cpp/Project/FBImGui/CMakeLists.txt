@@ -248,10 +248,10 @@ elseif (FB_GRAPHICS_SYSTEM_OGRE)
         include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/OgreMain/include )
         include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/Components/Overlay/include )
     else ()
-        include_directories( ${FB_ROOT}/FBEngine/cpp/Include/FBGraphicsOgre/Ogre/OgreMain/include )
-        include_directories( ${FB_ROOT}/FBEngine/cpp/Source/FBGraphicsOgre/Ogre/OgreMain/src )
+        include_directories( ${FB_ROOT}/FBEngine/cpp/Include/FBGraphicsOgre/OgreLibrary/OgreMain/include )
+        include_directories( ${FB_ROOT}/FBEngine/cpp/Source/FBGraphicsOgre/OgreLibrary/OgreMain/src )
 
-        include_directories( ${FB_ROOT}/FBEngine/cpp/Include/FBGraphicsOgre/Ogre/Components/Overlay/include )
+        include_directories( ${FB_ROOT}/FBEngine/cpp/Include/FBGraphicsOgre/OgreLibrary/Components/Overlay/include )
     endif ()
 endif()
 

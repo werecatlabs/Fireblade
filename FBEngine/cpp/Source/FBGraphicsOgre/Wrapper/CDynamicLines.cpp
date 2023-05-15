@@ -1,7 +1,7 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
 #include <FBGraphicsOgre/Wrapper/CDynamicLines.h>
 #include <FBGraphicsOgre/Wrapper/CGraphicsSceneOgre.h>
-#include <FBGraphicsOgre/DynamicLines.h>
+#include <FBGraphicsOgre/Ogre/DynamicLines.h>
 #include <FBCore/FBCore.h>
 #include <Ogre.h>
 

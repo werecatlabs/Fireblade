@@ -2,13 +2,13 @@
 #define TerrainSystem_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Component.h>
 
 namespace fb
 {
     namespace scene
     {
-        class TerrainSystem : public BaseComponent
+        class TerrainSystem : public Component
         {
         public:
             /** Creates a TerrainSystem object. */

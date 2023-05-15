@@ -9,7 +9,7 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, UIComponent, BaseComponent );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, UIComponent, Component );
 
         UIComponent::UIComponent()
         {
@@ -29,7 +29,7 @@ namespace fb
 
         void UIComponent::load( SmartPtr<ISharedObject> data )
         {
-            BaseComponent::load( data );
+            Component::load( data );
         }
 
         void UIComponent::unload( SmartPtr<ISharedObject> data )
@@ -57,7 +57,7 @@ namespace fb
                 setElement( nullptr );
                 setCanvas( nullptr );
 
-                BaseComponent::unload( data );
+                Component::unload( data );
             }
             catch( std::exception &e )
             {
@@ -129,7 +129,7 @@ namespace fb
 
         Array<SmartPtr<ISharedObject>> UIComponent::getChildObjects() const
         {
-            auto objects = BaseComponent::getChildObjects();
+            auto objects = Component::getChildObjects();
 
             objects.push_back( m_element );
             objects.push_back( m_canvas );
@@ -138,7 +138,7 @@ namespace fb
 
         SmartPtr<Properties> UIComponent::getProperties() const
         {
-            if( auto properties = BaseComponent::getProperties() )
+            if( auto properties = Component::getProperties() )
             {
                 properties->setProperty( "order", m_zOrder );
                 properties->setProperty( "handleInputEvents", m_cascadeInput );
@@ -340,7 +340,7 @@ namespace fb
 
         IFSM::ReturnType UIComponent::handleComponentEvent( u32 state, IFSM::Event eventType )
         {
-            BaseComponent::handleComponentEvent( state, eventType );
+            Component::handleComponentEvent( state, eventType );
 
             switch( eventType )
             {

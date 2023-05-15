@@ -1,7 +1,7 @@
 #ifndef __Renderer_h__
 #define __Renderer_h__
 
-#include <FBCore/Scene/Components/BaseComponent.h>
+#include <FBCore/Scene/Components/Component.h>
 
 namespace fb
 {
@@ -10,7 +10,7 @@ namespace fb
         /** @class Renderer
          *  @brief A component responsible for rendering objects in the scene
          */
-        class Renderer : public BaseComponent
+        class Renderer : public Component
         {
         public:
             /** @enum CastShadows

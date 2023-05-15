@@ -1,7 +1,7 @@
 #ifndef CommandManagerStandard_H
 #define CommandManagerStandard_H
 
-#include <FBApplication/FBApplicationPrerequisites.h>
+#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/ICommandManager.h>
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Base/Array.h>

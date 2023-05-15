@@ -9,14 +9,12 @@ namespace fb
 {
     namespace ui
     {
-        //--------------------------------------------
+        
         class CUIElementBar : public CUIElement<IUIBar>
         {
         public:
             CUIElementBar();
             ~CUIElementBar() override;
-
-            void initialise( SmartPtr<IUIElement> &parent, const TiXmlNode *pNode );
 
             void onToggleVisibility() override;
 

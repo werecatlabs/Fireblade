@@ -19,7 +19,7 @@ namespace fb
         {
             const TiXmlElement *element = pNode->ToElement();
             {
-                const String id = XMLUtil::getString( element->Attribute( "id" ) );
+                const String id = XmlUtil::getString( element->Attribute( "id" ) );
                 if(id.length() > 0)
                 {
                     setName( id );
