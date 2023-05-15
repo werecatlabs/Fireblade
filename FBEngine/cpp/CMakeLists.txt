@@ -100,7 +100,7 @@ add_subdirectory(Project/FBOISInput)
 #add_subdirectory(Project/FBTest)
 
 if (FB_USE_HOUDINI)
-	add_subdirectory(Project/FBHoudini)
+	#add_subdirectory(Project/FBHoudini)
 endif()
 
 if (FB_BUILD_WXWIDGETS)
