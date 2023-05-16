@@ -46,6 +46,8 @@ namespace fb
 
             void setActive( bool active );
 
+            void updateActiveState( bool active );
+
             void setupCamera();
 
             void updateTransform() override;

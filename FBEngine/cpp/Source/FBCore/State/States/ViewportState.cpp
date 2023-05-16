@@ -1,6 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/State/States/ViewportState.h>
 #include <FBCore/Interface/Graphics/ICamera.h>
+#include <FBCore/Interface/Graphics/ITexture.h>
 #include <FBCore/Interface/System/IStateContext.h>
 
 namespace fb
@@ -133,4 +134,85 @@ namespace fb
         }
     }
 
+    u32 ViewportState::getPriority() const
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+        return m_priority;
+    }
+
+    void ViewportState::setPriority( u32 priority )
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
+
+        if( m_priority != priority )
+        {
+            m_priority = priority;
+            setDirty( true );
+        }
+    }
+
+    void ViewportState::setAutoUpdated( bool autoUpdated )
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
+        m_autoUpdated = autoUpdated;
+        setDirty( true );
+    }
+
+    bool ViewportState::isAutoUpdated() const
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+        return m_autoUpdated;
+    }
+
+    SmartPtr<render::ITexture> ViewportState::getTexture() const
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+        return m_texture;
+    }
+
+    void ViewportState::setTexture( SmartPtr<render::ITexture> texture )
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
+        m_texture = texture;
+        setDirty( true );
+    }
+
+    SmartPtr<render::ITexture> ViewportState::getBackgroundTexture() const
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+        return m_backgroundTexture;
+    }
+
+    void ViewportState::setBackgroundTexture( SmartPtr<render::ITexture> backgroundTexture )
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
+        m_backgroundTexture = backgroundTexture;
+        setDirty( true );
+    }
+
+    bool ViewportState::getShadowsEnabled() const
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+        return m_shadowsEnabled;
+    }
+
+    void ViewportState::setShadowsEnabled( bool shadowsEnabled )
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
+        m_shadowsEnabled = shadowsEnabled;
+        setDirty( true );
+    }
+
+    bool ViewportState::getEnableUI() const
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+        return m_enableUI;
+    }
+
+    void ViewportState::setEnableUI( bool enableUI )
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
+        m_enableUI = enableUI;
+        setDirty( true );
+    }
 }  // namespace fb

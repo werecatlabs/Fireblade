@@ -13,7 +13,6 @@ namespace fb
 {
     namespace render
     {
-
         /**
          * Interface for a viewport that represents a region on a render target. A viewport is essentially a
          * camera view into the 3D world, and a region on the screen where the rendered scene is displayed.
@@ -23,7 +22,7 @@ namespace fb
         {
         public:
             /** Virtual destructor. */
-            virtual ~IViewport() override = default;
+            ~IViewport() override = default;
 
             /**
              * Sets the camera to use for rendering to this viewport.
@@ -157,7 +156,7 @@ namespace fb
              * @param buffers Which buffers to clear (colour, depth, stencil).
              */
             virtual void setClearEveryFrame( bool clear, u32 buffers = IGraphicsScene::FBT_COLOUR |
-                                                                       IGraphicsScene::FBT_DEPTH ) = 0;
+                                                 IGraphicsScene::FBT_DEPTH ) = 0;
 
             /**
              * Determines if the viewport is cleared before every frame.
@@ -222,10 +221,10 @@ namespace fb
             virtual bool getOverlaysEnabled() const = 0;
 
             /** Sets if ui objects should be rendered. */
-            virtual void setUiEnabled( bool enabled ) = 0;
+            virtual void setEnableUI( bool enabled ) = 0;
 
             /** Gets if ui objects should be rendered. */
-            virtual bool getUiEnabled() const = 0;
+            virtual bool getEnableUI() const = 0;
 
             /** Tells this viewport whether it should display skies. */
             virtual void setSkiesEnabled( bool enabled ) = 0;
@@ -295,7 +294,7 @@ namespace fb
 
             FB_CLASS_REGISTER_DECL;
         };
-    }  // end namespace render
-}  // end namespace fb
+    } // end namespace render
+}     // end namespace fb
 
 #endif

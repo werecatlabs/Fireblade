@@ -475,6 +475,7 @@
 #include <FBCore/Scene/Components/UI/CanvasTransform.h>
 
 #include <FBCore/Scene/CActor.h>
+#include <FBCore/Scene/CameraManager.h>
 #include <FBCore/Scene/CSceneManager.h>
 #include <FBCore/Scene/CScene.h>
 
@@ -557,6 +558,8 @@
 #include <FBCore/System/CommandManagerMT.h>
 #include <FBCore/System/CSelectionManager.h>
 #include <FBCore/System/DebugUtil.h>
+#include <FBCore/System/FactoryManager.h>
+#include <FBCore/System/FrameStatistics.h>
 #include <FBCore/System/Job.h>
 #include <FBCore/System/JobQueue.h>
 #include <FBCore/System/JobQueueTBB.h>
@@ -582,5 +585,6 @@
 #include <FBCore/System/TimerMT.h>
 #include <FBCore/System/TimerWin32.h>
 #include <FBCore/System/WorkerThread.h>
+#include <FBCore/System/WindowMessageData.h>
 
 #endif  // FBCoreHeaders_h__

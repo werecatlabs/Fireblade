@@ -35,7 +35,7 @@ namespace fb
 
     void GraphicsObjectState::setVisible( bool visible )
     {
-        //if( m_visible != visible )
+        if( m_visible != visible )
         {
             m_visible = visible;
             setDirty( true );

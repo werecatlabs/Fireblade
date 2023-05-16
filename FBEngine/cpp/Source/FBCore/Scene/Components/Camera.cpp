@@ -188,6 +188,9 @@ namespace fb
                 {
                     createViewport();
                 }
+
+                auto active = isActive();
+                updateActiveState( active );
             }
 
             m_camera->setTargetTexture( targetTexture );
@@ -236,6 +239,9 @@ namespace fb
                 {
                     createViewport();
                 }
+
+                auto active = isActive();
+                updateActiveState( active );
             }
 
             if( m_camera )
@@ -273,65 +279,7 @@ namespace fb
         {
             m_isActive = active;
 
-#if 1
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            if( applicationManager->isEditorCamera() )
-            {
-                auto actor = getActor();
-                if( !actor->getFlag( scene::IActor::ActorFlagIsEditor ) )
-                {
-                    m_camera->setRenderUI( false );
-
-                    if( m_viewport )
-                    {
-                        m_viewport->setUiEnabled( false );
-                        m_viewport->setActive( false );
-                    }
-
-                    if( m_camera )
-                    {
-                        m_camera->setVisible( false );
-                    }
-                }
-                else
-                {
-                    m_camera->setRenderUI( false );
-
-                    if( m_viewport )
-                    {
-                        m_viewport->setUiEnabled( false );
-                        m_viewport->setActive( active );
-                    }
-
-                    if( m_camera )
-                    {
-                        m_camera->setVisible( active );
-                    }
-                }
-            }
-            else
-            {
-                m_camera->setRenderUI( false );
-
-                if( m_viewport )
-                {
-                    m_viewport->setUiEnabled( false );
-                    m_viewport->setActive( active );
-                }
-
-                if( m_camera )
-                {
-                    m_camera->setVisible( active );
-                }
-            }
-#else
-            if( m_viewport )
-            {
-                m_viewport->setActive( active );
-            }
-#endif
+            updateActiveState( active );
         }
 
         void Camera::setupCamera()
@@ -436,7 +384,7 @@ namespace fb
             {
                 if( actor->getFlag( IActor::ActorFlagIsEditor ) )
                 {
-                    setZOrder( 10 + m_zorderExt++ );
+                    setZOrder( 0 );
                     return;
                 }
             }
@@ -447,24 +395,31 @@ namespace fb
             auto sceneManager = applicationManager->getSceneManager();
             auto scene = sceneManager->getCurrentScene();
 
-            auto count = 100;
+            auto zorder = 1;
 
-            //auto actors = scene->getActors();
-            //for( auto actor : actors )
-            //{
-            //    auto camera = actor->getComponentAndInChildren<CameraComponent>();
-            //    if( camera )
-            //    {
-            //        if( camera == this )
-            //        {
-            //            break;
-            //        }
-            //    }
+            auto cameras = Array<SmartPtr<Camera>>();
+            cameras.reserve( 12 );
 
-            //    ++count;
-            //}
+            auto actors = scene->getActors();
+            for( auto actor : actors )
+            {
+                auto cameras = actor->getComponentsAndInChildren<Camera>();
+                for( auto camera : cameras )
+                {
+                    cameras.push_back( camera );
+                }
+            }
 
-            auto zorder = count + m_zorderExt++;
+            for( auto camera : cameras )
+            {
+                if( camera == this )
+                {
+                    break;
+                }
+
+                ++zorder;
+            }
+
             setZOrder( zorder );
         }
 
@@ -506,23 +461,28 @@ namespace fb
 
         void Camera::createViewport()
         {
-            if( auto renderTarget = getRenderTarget() )
+            if( !m_viewport )
             {
-                updateOrder();
-                auto zOrder = getZOrder();
-                auto vp = renderTarget->addViewport( 0, m_camera, zOrder );
-                FB_ASSERT( vp );
+                if( auto renderTarget = getRenderTarget() )
+                {
+                    updateOrder();
 
-                auto viewportColour = ColourF::Blue * 0.5f;
-                vp->setBackgroundColour( viewportColour );
+                    auto zOrder = getZOrder();
+                    auto vp = renderTarget->addViewport( 0, m_camera, zOrder );
+                    FB_ASSERT( vp );
 
-                vp->setUiEnabled( false );
-                vp->setClearEveryFrame( true );
-                vp->setOverlaysEnabled( true );
-                vp->setAutoUpdated( true );
-                m_viewport = vp;
+                    auto viewportColour = ColourF::Blue * 0.5f;
+                    vp->setBackgroundColour( viewportColour );
 
-                vp->setActive( false );
+                    vp->setEnableUI( false );
+                    vp->setClearEveryFrame( true );
+                    vp->setOverlaysEnabled( true );
+                    vp->setAutoUpdated( true );
+
+                    vp->setActive( false );
+
+                    m_viewport = vp;
+                }
             }
         }
 
@@ -600,6 +560,9 @@ namespace fb
 
                     updateOrder();
                     createViewport();
+
+                    auto active = isActive();
+                    updateActiveState( active );
                 }
                 break;
                 case State::Play:
@@ -612,6 +575,9 @@ namespace fb
 
                     updateOrder();
                     createViewport();
+
+                    auto active = isActive();
+                    updateActiveState( active );
                 }
                 break;
                 default:
@@ -639,6 +605,9 @@ namespace fb
                     {
                         smgr->setActiveCamera( nullptr );
                     }
+
+                    auto active = isActive();
+                    updateActiveState( active );
                 }
                 break;
                 default:
@@ -663,5 +632,69 @@ namespace fb
 
             return IFSM::ReturnType::Ok;
         }
+
+        void Camera::updateActiveState( bool active )
+        {
+#if 1
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            if( applicationManager->isEditorCamera() )
+            {
+                auto actor = getActor();
+                if( !actor->getFlag( scene::IActor::ActorFlagIsEditor ) )
+                {
+                    m_camera->setRenderUI( false );
+
+                    if( m_viewport )
+                    {
+                        m_viewport->setEnableUI( false );
+                        m_viewport->setActive( false );
+                    }
+
+                    if( m_camera )
+                    {
+                        m_camera->setVisible( false );
+                    }
+                }
+                else
+                {
+                    m_camera->setRenderUI( false );
+
+                    if( m_viewport )
+                    {
+                        m_viewport->setEnableUI( false );
+                        m_viewport->setActive( active );
+                    }
+
+                    if( m_camera )
+                    {
+                        m_camera->setVisible( active );
+                    }
+                }
+            }
+            else
+            {
+                m_camera->setRenderUI( false );
+
+                if( m_viewport )
+                {
+                    m_viewport->setEnableUI( false );
+                    m_viewport->setActive( active );
+                }
+
+                if( m_camera )
+                {
+                    m_camera->setVisible( active );
+                }
+            }
+#else
+            if( m_viewport )
+            {
+                m_viewport->setActive( active );
+            }
+#endif
+        }
+
     }  // namespace scene
 }  // end namespace fb
