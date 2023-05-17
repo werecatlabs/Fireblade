@@ -108,6 +108,16 @@ namespace fb
          */
         virtual void setUserData( hash32 id, void *userData ) = 0;
 
+        /**
+         * @brief Check if the current object is derived from a specified type.
+         *
+         * This function checks if the current object is derived from the specified type.
+         * It uses the TypeManager to retrieve the type information of the current object
+         * and then calls the TypeManager's isDerived() function to perform the derivation check.
+         *
+         * @param type The type ID to check against.
+         * @return True if the current object is derived from the specified type, false otherwise.
+         */
         virtual bool derived( u32 type ) const
         {
             auto typeManager = TypeManager::instance();
@@ -116,6 +126,16 @@ namespace fb
             return typeManager->isDerived( typeInfo, type );
         }
 
+        /**
+         * @brief Check if the current object is of exactly the specified type.
+         *
+         * This function checks if the current object is of exactly the specified type.
+         * It uses the TypeManager to retrieve the type information of the current object
+         * and then calls the TypeManager's isExactly() function to perform the type check.
+         *
+         * @param type The type ID to check against.
+         * @return True if the current object is of exactly the specified type, false otherwise.
+         */
         virtual bool exactly( u32 type ) const
         {
             auto typeManager = TypeManager::instance();

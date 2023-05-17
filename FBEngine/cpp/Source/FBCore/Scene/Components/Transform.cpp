@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/Transform.h>
-#include <FBCore/Scene/CSceneManager.h>
+#include <FBCore/Scene/SceneManager.h>
 #include <FBCore/FBCore.h>
 #include <rttr/registration>
 
@@ -208,7 +208,7 @@ namespace fb
                     FB_ASSERT( applicationManager );
 
                     auto sceneManager =
-                        fb::static_pointer_cast<CSceneManager>( applicationManager->getSceneManager() );
+                        fb::static_pointer_cast<SceneManager>( applicationManager->getSceneManager() );
 
                     auto transform = getSharedFromThis<ITransform>();
                     sceneManager->addDirtyTransform( transform );
@@ -256,7 +256,7 @@ namespace fb
                     FB_ASSERT( applicationManager );
 
                     auto sceneManager =
-                        fb::static_pointer_cast<CSceneManager>( applicationManager->getSceneManager() );
+                        fb::static_pointer_cast<SceneManager>( applicationManager->getSceneManager() );
 
                     auto transform = getSharedFromThis<ITransform>();
                     sceneManager->addDirtyTransform( transform );

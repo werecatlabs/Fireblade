@@ -18,11 +18,11 @@ namespace fb
     {
 
         /** Scene implementation. */
-        class CScene : public CSharedObject<IScene>
+        class Scene : public CSharedObject<IScene>
         {
         public:
-            CScene();
-            ~CScene() override;
+            Scene();
+            ~Scene() override;
 
             /** @copydoc IScene::loadScene */
             void loadScene( const String &path ) override;

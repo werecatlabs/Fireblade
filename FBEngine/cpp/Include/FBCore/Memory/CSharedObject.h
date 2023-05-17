@@ -154,10 +154,10 @@ namespace fb
         virtual String toString() const;
 
         /** @copydoc ISharedObject::toData */
-        virtual SmartPtr<IData> toData() const;
+        virtual SmartPtr<ISharedObject> toData() const;
 
         /** @copydoc ISharedObject::fromData */
-        virtual void fromData( SmartPtr<IData> data );
+        virtual void fromData( SmartPtr<ISharedObject> data );
 
         /** @copydoc ISharedObject::getChildObjects */
         virtual Array<SmartPtr<ISharedObject>> getChildObjects() const override;

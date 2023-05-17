@@ -11,14 +11,14 @@ namespace fb
     namespace scene
     {
         /** Director implementation. */
-        class CDirector : public CResource<IDirector>
+        class Director : public CResource<IDirector>
         {
         public:
             /** Constructor. */
-            CDirector();
+            Director();
 
             /** Destructor. */
-            ~CDirector() override;
+            ~Director() override;
 
             /** @copydoc IDirector::load */
             void load( SmartPtr<ISharedObject> data ) override;
@@ -27,10 +27,10 @@ namespace fb
             void unload( SmartPtr<ISharedObject> data ) override;
 
             /** @copydoc IDirector::toData */
-            SmartPtr<IData> toData() const;
+            SmartPtr<ISharedObject> toData() const;
 
             /** @copydoc IDirector::fromData */
-            void fromData( SmartPtr<IData> data ) override;
+            void fromData( SmartPtr<ISharedObject> data ) override;
 
             /** @copydoc IDirector::getProperties */
             SmartPtr<Properties> getProperties() const override;

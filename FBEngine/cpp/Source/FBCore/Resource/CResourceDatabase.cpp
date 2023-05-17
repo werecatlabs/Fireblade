@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Resource/CResourceDatabase.h>
 #include <FBCore/Database/AssetDatabaseManager.h>
-#include <FBCore/Scene/CDirector.h>
+#include <FBCore/Scene/Director.h>
 #include <FBCore/FBCore.h>
 
 namespace fb

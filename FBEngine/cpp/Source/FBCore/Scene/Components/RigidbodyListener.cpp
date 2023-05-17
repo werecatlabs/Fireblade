@@ -3,7 +3,7 @@
 #include <FBCore/Scene/Components/Rigidbody.h>
 #include <FBCore/FBCore.h>
 
-#include "FBCore/Scene/CSceneManager.h"
+#include "FBCore/Scene/SceneManager.h"
 
 namespace fb
 {
@@ -23,7 +23,7 @@ namespace fb
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
 
 #if _DEBUG
@@ -79,7 +79,7 @@ namespace fb
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
 
             FB_ASSERT( m_owner );

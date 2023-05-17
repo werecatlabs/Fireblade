@@ -2,7 +2,7 @@
 #include <FBCore/Scene/Components/UI/UIComponent.h>
 #include <FBCore/Scene/Components/UI/Layout.h>
 #include <FBCore/Scene/Components/UI/CanvasTransform.h>
-#include <FBCore/Scene/CSceneManager.h>
+#include <FBCore/Scene/SceneManager.h>
 #include <FBCore/FBCore.h>
 
 namespace fb
@@ -166,7 +166,7 @@ namespace fb
                     FB_ASSERT( applicationManager );
 
                     auto sceneManager =
-                        fb::static_pointer_cast<CSceneManager>( applicationManager->getSceneManager() );
+                        fb::static_pointer_cast<SceneManager>( applicationManager->getSceneManager() );
                     FB_ASSERT( sceneManager );
 
                     auto actor = getActor();

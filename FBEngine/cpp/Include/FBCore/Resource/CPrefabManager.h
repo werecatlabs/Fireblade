@@ -28,7 +28,7 @@ namespace fb
             SmartPtr<scene::IActor> createInstance( SmartPtr<scene::IActor> prefab ) override;
 
             /** @copydoc IResourceManager::loadActor */
-            SmartPtr<scene::IActor> loadActor( SmartPtr<IData> data,
+            SmartPtr<scene::IActor> loadActor( SmartPtr<Properties> data,
                                                SmartPtr<scene::IActor> parent ) override;
 
             /** @copydoc IResourceManager::loadActor */

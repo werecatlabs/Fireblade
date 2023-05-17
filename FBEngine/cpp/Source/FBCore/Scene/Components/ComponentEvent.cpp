@@ -54,12 +54,12 @@ namespace fb
             m_label = label;
         }
 
-        SmartPtr<IData> ComponentEvent::toData() const
+        SmartPtr<ISharedObject> ComponentEvent::toData() const
         {
             return nullptr;
         }
 
-        void ComponentEvent::fromData( SmartPtr<IData> data )
+        void ComponentEvent::fromData( SmartPtr<ISharedObject> data )
         {
         }
 

@@ -70,6 +70,21 @@ namespace fb
         bool getEnableUI() const;
         void setEnableUI( bool enableUI );
 
+        void setMaterialScheme( const String &schemeName );
+        String getMaterialScheme() const;
+
+        bool getClear() const;
+
+        void setClear( bool clear );
+
+        u32 getBuffers() const;
+
+        void setBuffers( u32 buffers );
+
+        bool getEnableSceneRender() const;
+
+        void setEnableSceneRender( bool enableSceneRender );
+
         FB_CLASS_REGISTER_DECL;
 
     protected:
@@ -89,6 +104,11 @@ namespace fb
         bool m_shadowsEnabled = true;
         bool m_autoUpdated = true;
         bool m_enableUI = false;
+        bool m_clear = true;
+        bool m_enableSceneRender = true;
+        u32 m_buffers = 0;
+
+        String m_materialScheme;
     };
 }  // end namespace fb
 

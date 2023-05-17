@@ -5,7 +5,7 @@
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Base/LogManager.h>
 #include <FBCore/Memory/RawPtr.h>
-#include <FBCore/Scene/CActor.h>
+#include <FBCore/Scene/Actor.h>
 #include <tinyxml.h>
 #include <cJSON.h>
 #include <vector>
@@ -15,62 +15,99 @@
 #include <rttr/registration_friend>
 #include <boost/json.hpp>
 
-        //using namespace rttr;
-
-//// Parse the JSON string into a JSON object
-//auto jsonData = boost::json::parse(jsonDataStr);
-
-//// Get the type of the T
-//auto classType = type::get<T>();
-
-//// Iterate over the properties of the T
-//for( const auto &property : classType.get_properties() )
-//{
-//    // Get the property name
-//    auto propertyName = property.get_name().to_string();
-
-//    // Check if the JSON object contains the property
-//    auto jsonDataObject = jsonData.as_object();
-//    if( jsonDataObject.contains( propertyName ) )
-//    {
-//        // Get the value from the JSON object
-//        auto jsonValue = jsonDataObject.at(propertyName);
-
-//        // Set the value of the property in the class object
-//        //property.set_value( *ptr, jsonValue.as_object().as_float() );
-//    }
-//}
-
-#define FB_DECLARE_DATA_CLASS(T) \
+#define FB_DECLARE_DATA_CLASS( T ) \
     template <> \
     String DataUtil::toString( T *ptr, bool formatted ) \
     { \
         return objectToJsonStr( *ptr ); \
     } \
- \
+\
     template <> \
     void DataUtil::parse( const String &jsonDataStr, T *ptr ) \
     { \
     }
 
-//template <typename T, typename U>
-//void setName(T* t, U u)
-//{
-//    t->setName(u);
-//}
-
 using namespace fb;
 
-FB_DECLARE_DATA_CLASS(Vector2F)
-FB_DECLARE_DATA_CLASS(Vector2D)
-FB_DECLARE_DATA_CLASS(Vector3F)
-FB_DECLARE_DATA_CLASS(Vector3D)
-FB_DECLARE_DATA_CLASS(Property)
-FB_DECLARE_DATA_CLASS(Properties)
+FB_DECLARE_DATA_CLASS( Vector2F )
+FB_DECLARE_DATA_CLASS( Vector2D )
+FB_DECLARE_DATA_CLASS( Vector3F )
+FB_DECLARE_DATA_CLASS( Vector3D )
+FB_DECLARE_DATA_CLASS( Property )
+FB_DECLARE_DATA_CLASS( Properties )
+
+SmartPtr<Properties> fromObject( const boost::json::object &obj )
+{
+    auto properties = fb::make_ptr<Properties>();
+
+    for( const auto &member : obj )
+    {
+        std::string key = member.key();
+        const boost::json::value &value = member.value();
+
+        if( value.is_string() )
+        {
+            std::string val = value.as_string().c_str();
+            properties->setProperty( key, val );
+        }
+        else if( value.is_int64() )
+        {
+            auto val = value.as_int64();
+            properties->setProperty( key, (s32)val );
+        }
+        else if( value.is_double() )
+        {
+            double val = value.as_double();
+            properties->setProperty( key, val );
+        }
+        else if( value.is_bool() )
+        {
+            bool val = value.as_bool();
+            properties->setProperty( key, val );
+        }
+        else if( value.is_object() )
+        {
+            auto val = value.as_object();
+            auto child = fromObject( val );
+
+            child->setName( key );
+            properties->addChild( child );
+        }
+        else if( value.is_array() )
+        {
+            boost::json::array jsonArray = value.as_array();
+            for( const auto &element : jsonArray )
+            {
+                if( element.is_object() )
+                {
+                    const auto &childObj = element.as_object();
+                    auto child = fromObject( childObj );
+
+                    child->setName( key );
+                    properties->addChild( child );
+                }
+            }
+        }
+    }
+
+    return properties;
+}
+
+SmartPtr<Properties> DataUtil::parse( const String &jsonDataStr )
+{
+    auto jsonData = boost::json::parse( jsonDataStr );
+
+    if( jsonData.is_object() )
+    {
+        const boost::json::object &obj = jsonData.as_object();
+        return fromObject( obj );
+    }
+
+    return nullptr;
+}
 
 RTTR_REGISTRATION
 {
-    
     using namespace rttr;
 
     registration::class_<Vector2<int>>( "Vector2Int" )
@@ -88,12 +125,9 @@ RTTR_REGISTRATION
         .property( "x", &Vector2<double>::x )
         .property( "y", &Vector2<double>::y );
 
-    scene::CActor::registerClass();
+    scene::Actor::registerClass();
     Property::registerClass();
     Properties::registerClass();
-    //registration::class_<Properties>( "Properties" )
-       //.property( "name", &Properties::getName );
-    //.property( "properties", &Properties::getPropertiesAsArray, &Properties::setPropertiesAsArray );
 }
 
 namespace fb
@@ -218,9 +252,6 @@ namespace fb
 
     String DataUtil::objectToJsonStr( const rttr::instance &instance )
     {
-        auto p = (ISharedObject*)0;
-        auto ins = rttr::instance(*p);
-
         auto j = objectToJson( instance );
         return boost::json::serialize( j );
     }

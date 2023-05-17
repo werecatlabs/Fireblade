@@ -4,6 +4,10 @@
 #include <FBCore/Base/StringUtil.h>
 #include <iostream>
 
+#ifdef FB_PLATFORM_WIN32
+#include <windows.h>
+#endif
+
 namespace fb
 {
     RegistrySettings::RegistrySettings()

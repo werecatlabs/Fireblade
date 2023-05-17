@@ -56,6 +56,9 @@ namespace fb
              */
             virtual Vector2F getPosition() const = 0;
 
+            /** Gets the actual position of the viewport */
+            virtual Vector2F getActualPosition() const = 0;
+
             /**
              * Sets the position of the viewport, which is expressed as a value between 0.0 and 1.0.
              * @param position The position to set.
@@ -68,73 +71,15 @@ namespace fb
              */
             virtual Vector2F getSize() const = 0;
 
+            /** Gets the actual size of the viewport */
+            virtual Vector2F getActualSize() const = 0;
+
             /**
              * Sets the size of the viewport, which is expressed as a value between 0.0 and 1.0.
              * @param size The size to set.
              */
             virtual void setSize( const Vector2F &size ) = 0;
-
-            /**
-             * Gets one of the relative dimensions of the viewport, which is expressed as a value between 0.0 and 1.0.
-             * @return The left value of the viewport.
-             */
-            virtual f32 getLeft() const = 0;
-
-            /**
-             * Gets one of the relative dimensions of the viewport, which is expressed as a value between 0.0 and 1.0.
-             * @return The top value of the viewport.
-             */
-            virtual f32 getTop() const = 0;
-
-            /**
-             * Gets one of the relative dimensions of the viewport, which is expressed as a value between 0.0 and 1.0.
-             * @return The width value of the viewport.
-             */
-            virtual f32 getWidth() const = 0;
-
-            /** Gets one of the relative dimensions of the viewport, a value
-            between 0.0 and 1.0. */
-            virtual f32 getHeight() const = 0;
-
-            /**
-             * Gets the actual pixel value of the left-most position of the viewport on the render target.
-             *
-             * @return An integer representing the actual pixel value of the left-most position of the viewport.
-             */
-            virtual s32 getActualLeft() const = 0;
-
-            /**
-             * Gets the actual pixel value of the top-most position of the viewport on the render target.
-             *
-             * @return An integer representing the actual pixel value of the top-most position of the viewport.
-             */
-            virtual s32 getActualTop() const = 0;
-
-            /**
-             * Gets the actual pixel value of the width of the viewport.
-             *
-             * @return An integer representing the actual pixel value of the width of the viewport.
-             */
-            virtual s32 getActualWidth() const = 0;
-
-            /**
-             * Gets the actual pixel value of the height of the viewport.
-             *
-             * @return An integer representing the actual pixel value of the height of the viewport.
-             */
-            virtual s32 getActualHeight() const = 0;
-
-            /**
-             * Sets the dimensions of the viewport after its creation. The new dimensions are specified using
-             * a left offset, top offset, width and height.
-             *
-             * @param left The left-most offset of the viewport on the render target in normalized device coordinates.
-             * @param top The top-most offset of the viewport on the render target in normalized device coordinates.
-             * @param width The width of the viewport in normalized device coordinates.
-             * @param height The height of the viewport in normalized device coordinates.
-             */
-            virtual void setDimensions( f32 left, f32 top, f32 width, f32 height ) = 0;
-
+            
             /**
              * Sets the initial background colour of the viewport (before rendering).
              *
@@ -182,37 +127,11 @@ namespace fb
              */
             virtual String getMaterialScheme() const = 0;
 
-            /** Access to actual dimensions (based on target size).
-             *  @param left Output parameter to store the left coordinate of the viewport.
-             *  @param top Output parameter to store the top coordinate of the viewport.
-             *  @param width Output parameter to store the width of the viewport.
-             *  @param height Output parameter to store the height of the viewport.
-             */
-            virtual void getActualDimensions( s32 &left, s32 &top, s32 &width, s32 &height ) const = 0;
-
-            /** To know if the viewport is updated.
-             *  @return True if the viewport has been updated, false otherwise.
-             */
-            virtual bool _isUpdated() const = 0;
-
-            /** Clears the updated flag. */
-            virtual void _clearUpdatedFlag() = 0;
-
-            /** Gets the number of rendered faces in the last update.
-             *  @return The number of faces rendered in the last update.
-             */
-            virtual u32 _getNumRenderedFaces() const = 0;
-
-            /** Gets the number of rendered batches in the last update.
-             *  @return The number of batches rendered in the last update.
-             */
-            virtual u32 _getNumRenderedBatches() const = 0;
-
             /** Sets if the scene should be rendered. */
-            virtual void setRenderSceneEnabled( bool enabled ) = 0;
+            virtual void setEnableSceneRender( bool enabled ) = 0;
 
             /** Gets if the scene should be rendered. */
-            virtual bool getRenderSceneEnabled() const = 0;
+            virtual bool getEnableSceneRender() const = 0;
 
             /** To know if overlay objects should be rendered. */
             virtual void setOverlaysEnabled( bool enabled ) = 0;

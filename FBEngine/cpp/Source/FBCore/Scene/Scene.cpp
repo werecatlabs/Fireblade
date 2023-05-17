@@ -1,5 +1,5 @@
 #include <FBCore/FBCorePCH.h>
-#include <FBCore/Scene/CScene.h>
+#include <FBCore/Scene/Scene.h>
 #include <FBCore/Interface/IO/IFileSystem.h>
 #include <FBCore/Interface/IO/IStream.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
@@ -14,35 +14,36 @@
 #include <FBCore/Base/DataUtil.h>
 #include <FBCore/Base/DebugTrace.h>
 #include <FBCore/Memory/Data.h>
+#include <FBCore/Base/Path.h>
 
 namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, CScene, CSharedObject<IScene> );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, Scene, CSharedObject<IScene> );
 
-        CScene::CScene()
+        Scene::Scene()
         {
             constexpr auto size = 32768;  // todo move to scene manager
             m_actorFlags.resize( size );
         }
 
-        CScene::~CScene()
+        Scene::~Scene()
         {
             unload( nullptr );
         }
 
-        String CScene::getName() const
+        String Scene::getName() const
         {
             return m_name;
         }
 
-        void CScene::setName( const String &name )
+        void Scene::setName( const String &name )
         {
             m_name = name;
         }
 
-        void CScene::load( SmartPtr<ISharedObject> data )
+        void Scene::load( SmartPtr<ISharedObject> data )
         {
             try
             {
@@ -59,7 +60,7 @@ namespace fb
             }
         }
 
-        void CScene::loadScene( const String &path )
+        void Scene::loadScene( const String &path )
         {
             try
             {
@@ -117,7 +118,7 @@ namespace fb
             }
         }
 
-        void CScene::setupCache()
+        void Scene::setupCache()
         {
             auto actorsPtr = getActorsPtr();
             if( !actorsPtr )
@@ -137,17 +138,17 @@ namespace fb
             }
         }
 
-        SharedPtr<Array<SmartPtr<scene::IActor>>> CScene::getActorsPtr() const
+        SharedPtr<Array<SmartPtr<scene::IActor>>> Scene::getActorsPtr() const
         {
             return m_actors;
         }
 
-        void CScene::setActorsPtr( SharedPtr<Array<SmartPtr<scene::IActor>>> ptr )
+        void Scene::setActorsPtr( SharedPtr<Array<SmartPtr<scene::IActor>>> ptr )
         {
             m_actors = ptr;
         }
 
-        void CScene::saveScene( const String &path )
+        void Scene::saveScene( const String &path )
         {
             // FB_ASSERT( !Path::isPathAbsolute( path ) );
 
@@ -180,7 +181,7 @@ namespace fb
             //}
         }
 
-        void CScene::saveScene()
+        void Scene::saveScene()
         {
             auto filePath = getFilePath();
             FB_ASSERT( StringUtil::isNullOrEmpty( filePath ) == false );
@@ -188,7 +189,7 @@ namespace fb
             saveScene( filePath );
         }
 
-        void CScene::reload( SmartPtr<ISharedObject> data )
+        void Scene::reload( SmartPtr<ISharedObject> data )
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
@@ -205,7 +206,7 @@ namespace fb
             loadScene( tempScenePath );
         }
 
-        void CScene::unload( SmartPtr<ISharedObject> data )
+        void Scene::unload( SmartPtr<ISharedObject> data )
         {
             try
             {
@@ -244,12 +245,12 @@ namespace fb
             }
         }
 
-        void CScene::clearCache()
+        void Scene::clearCache()
         {
             m_actors = nullptr;
         }
 
-        void CScene::preUpdate()
+        void Scene::preUpdate()
         {
             FB_DEBUG_TRACE;
             FB_ASSERT( isValid() );
@@ -333,7 +334,7 @@ namespace fb
             }
         }
 
-        void CScene::update()
+        void Scene::update()
         {
             switch( auto task = Thread::getCurrentTask() )
             {
@@ -364,7 +365,7 @@ namespace fb
             }
         }
 
-        void CScene::postUpdate()
+        void Scene::postUpdate()
         {
             FB_DEBUG_TRACE;
             FB_ASSERT( isValid() );
@@ -396,7 +397,7 @@ namespace fb
             }
         }
 
-        void CScene::addActor( SmartPtr<scene::IActor> actor )
+        void Scene::addActor( SmartPtr<scene::IActor> actor )
         {
             try
             {
@@ -450,7 +451,7 @@ namespace fb
             }
         }
 
-        void CScene::removeActor( SmartPtr<scene::IActor> actor )
+        void Scene::removeActor( SmartPtr<scene::IActor> actor )
         {
             try
             {
@@ -491,11 +492,11 @@ namespace fb
             }
         }
 
-        void CScene::removeAllActors()
+        void Scene::removeAllActors()
         {
         }
 
-        SmartPtr<scene::IActor> CScene::findActorById( int id ) const
+        SmartPtr<scene::IActor> Scene::findActorById( int id ) const
         {
             FB_ASSERT( getLoadingState() == LoadingState::Loaded );
 
@@ -515,7 +516,7 @@ namespace fb
             return nullptr;
         }
 
-        Array<SmartPtr<scene::IActor>> CScene::getActors() const
+        Array<SmartPtr<scene::IActor>> Scene::getActors() const
         {
             FB_ASSERT( isValid() );
             FB_ASSERT( isLoaded() );
@@ -528,7 +529,7 @@ namespace fb
             return Array<SmartPtr<scene::IActor>>();
         }
 
-        void CScene::clear()
+        void Scene::clear()
         {
             FB_ASSERT( isValid() );
             FB_ASSERT( getLoadingState() == LoadingState::Loaded );
@@ -552,7 +553,7 @@ namespace fb
             m_actors = nullptr;
         }
 
-        void CScene::destroyOnLoad()
+        void Scene::destroyOnLoad()
         {
             FB_ASSERT( isValid() );
 
@@ -580,7 +581,7 @@ namespace fb
             }
         }
 
-        void CScene::registerAllUpdates( SmartPtr<scene::IActor> actor )
+        void Scene::registerAllUpdates( SmartPtr<scene::IActor> actor )
         {
             try
             {
@@ -602,14 +603,14 @@ namespace fb
             }
         }
 
-        void CScene::registerUpdates( Thread::Task taskId, SmartPtr<scene::IActor> actor )
+        void Scene::registerUpdates( Thread::Task taskId, SmartPtr<scene::IActor> actor )
         {
             registerUpdate( taskId, Thread::UpdateState::PreUpdate, actor );
             registerUpdate( taskId, Thread::UpdateState::Update, actor );
             registerUpdate( taskId, Thread::UpdateState::PostUpdate, actor );
         }
 
-        void CScene::registerUpdate( Thread::Task taskId, Thread::UpdateState updateType,
+        void Scene::registerUpdate( Thread::Task taskId, Thread::UpdateState updateType,
                                      SmartPtr<scene::IActor> object )
         {
             FB_ASSERT( isValid() );
@@ -626,7 +627,7 @@ namespace fb
             }
         }
 
-        void CScene::sortObjects()
+        void Scene::sortObjects()
         {
             FB_ASSERT( isValid() );
 
@@ -642,7 +643,7 @@ namespace fb
             // }
         }
 
-        void CScene::unregisterUpdate( Thread::Task taskId, Thread::UpdateState updateType,
+        void Scene::unregisterUpdate( Thread::Task taskId, Thread::UpdateState updateType,
                                        SmartPtr<scene::IActor> object )
         {
             FB_ASSERT( isValid() );
@@ -668,7 +669,7 @@ namespace fb
             }
         }
 
-        void CScene::unregisterAll( SmartPtr<scene::IActor> object )
+        void Scene::unregisterAll( SmartPtr<scene::IActor> object )
         {
             FB_ASSERT( isValid() );
 
@@ -718,7 +719,7 @@ namespace fb
             sortObjects();
         }
 
-        void CScene::refreshRegistration( SmartPtr<scene::IActor> object )
+        void Scene::refreshRegistration( SmartPtr<scene::IActor> object )
         {
             // FB_ASSERT(isValid());
 
@@ -742,7 +743,7 @@ namespace fb
             //}
         }
 
-        boost::shared_ptr<ConcurrentArray<SmartPtr<scene::IActor>>> CScene::getRegisteredObjects(
+        boost::shared_ptr<ConcurrentArray<SmartPtr<scene::IActor>>> Scene::getRegisteredObjects(
             Thread::UpdateState updateState, Thread::Task task ) const
         {
             FB_ASSERT( static_cast<size_t>( updateState ) < m_updateObjects.size() );
@@ -757,7 +758,7 @@ namespace fb
             return objects;
         }
 
-        void CScene::setRegisteredObjects(
+        void Scene::setRegisteredObjects(
             Thread::UpdateState updateState, Thread::Task task,
             boost::shared_ptr<ConcurrentArray<SmartPtr<scene::IActor>>> objects )
         {
@@ -770,7 +771,7 @@ namespace fb
             ptr = objects;
         }
 
-        bool CScene::isValid() const
+        bool Scene::isValid() const
         {
             auto updateObjects = m_updateObjects;
 
@@ -792,17 +793,17 @@ namespace fb
             return result;
         }
 
-        String CScene::getFilePath() const
+        String Scene::getFilePath() const
         {
             return m_filePath;
         }
 
-        void CScene::setFilePath( const String &val )
+        void Scene::setFilePath( const String &val )
         {
             m_filePath = val;
         }
 
-        void CScene::play()
+        void Scene::play()
         {
             if( auto pActors = getActorsPtr() )
             {
@@ -814,7 +815,7 @@ namespace fb
             }
         }
 
-        void CScene::edit()
+        void Scene::edit()
         {
             if( auto pActors = getActorsPtr() )
             {
@@ -826,25 +827,25 @@ namespace fb
             }
         }
 
-        void CScene::stop()
+        void Scene::stop()
         {
         }
 
-        void CScene::setState( State state )
+        void Scene::setState( State state )
         {
         }
 
-        IScene::State CScene::getState() const
+        IScene::State Scene::getState() const
         {
             return m_state;
         }
 
-        void CScene::setSceneLoadingState( SceneLoadingState state )
+        void Scene::setSceneLoadingState( SceneLoadingState state )
         {
             m_sceneLoadingState = state;
         }
 
-        IScene::SceneLoadingState CScene::getSceneLoadingState() const
+        IScene::SceneLoadingState Scene::getSceneLoadingState() const
         {
             return m_sceneLoadingState;
         }

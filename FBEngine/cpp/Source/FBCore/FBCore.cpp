@@ -1,6 +1,5 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/FBCore.h>
-#include <FBCore/System/EventJob.h>
 
 namespace fb
 {
@@ -20,9 +19,16 @@ namespace fb
         FactoryUtil::addFactory<StateManagerStandard>();
         FactoryUtil::addFactory<WorkerThread>();
 
+        FactoryUtil::addFactory<scene::Actor>();
+        FactoryUtil::addFactory<scene::Scene>();
+        FactoryUtil::addFactory<scene::SceneManager>();
+        FactoryUtil::addFactory<scene::Transform>();
+
         FactoryUtil::addFactory<SceneNodeState>();
         FactoryUtil::addFactory<RigidbodyState>();
         FactoryUtil::addFactory<TextureState>();
+
+        factoryManager->setPoolSizeByType<scene::Actor>( 32 );
 
         factoryManager->setPoolSizeByType<EventJob>( 32 );
         factoryManager->setPoolSizeByType<Properties>( 32 );

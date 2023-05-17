@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Resource/CPrefabManager.h>
 #include <FBCore/Resource/CPrefab.h>
-#include <FBCore/Scene/CActor.h>
+#include <FBCore/Scene/Actor.h>
 #include <FBCore/Scene/Components/Mesh.h>
 #include <FBCore/Scene/Components/MeshRenderer.h>
 #include <FBCore/Scene/Components/Material.h>
@@ -64,11 +64,31 @@ namespace fb
         }
         */
 
-        SmartPtr<IActor> CPrefabManager::loadActor( SmartPtr<IData> data,
+        SmartPtr<IActor> CPrefabManager::loadActor( SmartPtr<Properties> data,
                                                     SmartPtr<IActor> parent )
         {
-            //auto pData = data->getDataAsType<data::actor_data>();
-            //return loadActor( *pData, parent );
+            try
+            {
+                auto applicationManager = core::IApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto sceneManager = applicationManager->getSceneManager();
+                FB_ASSERT( sceneManager );
+
+                auto factoryManager = applicationManager->getFactoryManager();
+                FB_ASSERT( factoryManager );
+
+                auto actor = sceneManager->createActor();
+                FB_ASSERT( actor );
+
+                actor->setProperties( data );
+
+                return actor;
+            }
+            catch( std::exception &e )
+            {
+                FB_LOG_EXCEPTION( e );
+            }
 
             return nullptr;
         }
@@ -125,12 +145,11 @@ namespace fb
             }
             else if(ext == ".prefab")
             {
-                //auto jsonStr = fileSystem->readAllText( filePath );
+                auto jsonStr = fileSystem->readAllText( filePath );
 
-                //data::actor_data data;
-                //DataUtil::parse( jsonStr, &data );
+                auto data = DataUtil::parse( jsonStr );
 
-                //auto actor = loadActor( data, nullptr );
+                auto actor = loadActor( data, nullptr );
                 //actor->updateTransform();
 
                 //prefab->setActor( actor );

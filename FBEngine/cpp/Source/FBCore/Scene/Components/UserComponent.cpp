@@ -1,9 +1,13 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/UserComponent.h>
-#include "FBCore/Scene/CSceneManager.h"
+#include <FBCore/Scene/SceneManager.h>
 #include <FBCore/Script/ScriptInvoker.h>
 #include <FBCore/Script/ScriptEvent.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Scene/ITransform.h>
+#include <FBCore/Interface/Script/IScriptManager.h>
+#include <FBCore/Interface/Script/IScriptClass.h>
+#include <FBCore/Interface/Script/IScriptData.h>
+#include <FBCore/Base/LogManager.h>
 
 namespace fb
 {
@@ -51,7 +55,7 @@ namespace fb
                 FB_ASSERT( applicationManager );
 
                 auto pSceneManager = applicationManager->getSceneManager();
-                auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+                auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
 
                 /*
                 if( auto actor = getActor() )
@@ -95,7 +99,7 @@ namespace fb
                 setReceiver( nullptr );
 
                 auto pSceneManager = applicationManager->getSceneManager();
-                auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+                auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
 
                 /*
                 if( auto actor = getActor() )
@@ -132,7 +136,7 @@ namespace fb
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
 
             /*
             auto registry = sceneManager->getRegistry();
@@ -247,7 +251,6 @@ namespace fb
                 case State::Play:
                 {
                     createScriptData();
-
                 }
                 break;
                 default:

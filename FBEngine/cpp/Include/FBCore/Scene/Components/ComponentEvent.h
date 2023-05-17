@@ -29,10 +29,10 @@ namespace fb
             void setLabel( const String &label ) override;
 
             /** @copydoc IObject::toData */
-            SmartPtr<IData> toData() const override;
+            SmartPtr<ISharedObject> toData() const override;
 
             /** @copydoc IObject::fromData */
-            void fromData( SmartPtr<IData> data ) override;
+            void fromData( SmartPtr<ISharedObject> data ) override;
 
             /** @copydoc IComponent::getProperties */
             SmartPtr<Properties> getProperties() const;

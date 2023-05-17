@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/Rigidbody.h>
 #include <FBCore/Scene/Components/RigidbodyListener.h>
-#include <FBCore/Scene/CSceneManager.h>
+#include <FBCore/Scene/SceneManager.h>
 #include <FBCore/Scene/Components/Collision.h>
 #include <FBCore/Scene/Components/CollisionPlane.h>
 #include <FBCore/Scene/Components/CollisionMesh.h>
@@ -37,7 +37,7 @@ namespace fb
                 FB_ASSERT( applicationManager );
 
                 auto pSceneManager = applicationManager->getSceneManager();
-                auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+                auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
 
                 /*
                 if( auto actor = getActor() )
@@ -351,7 +351,7 @@ namespace fb
                 m_scene = nullptr;
 
                 auto pSceneManager = applicationManager->getSceneManager();
-                auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+                auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
 
                 /*
                 if( auto actor = getActor() )
@@ -531,7 +531,7 @@ namespace fb
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
 
             /*/
             auto registry = sceneManager->getRegistry();

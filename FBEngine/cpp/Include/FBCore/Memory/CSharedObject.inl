@@ -405,13 +405,13 @@ namespace fb
     }
 
     template <class T>
-    SmartPtr<IData> CSharedObject<T>::toData() const
+    SmartPtr<ISharedObject> CSharedObject<T>::toData() const
     {
         return nullptr;
     }
 
     template <class T>
-    void CSharedObject<T>::fromData( SmartPtr<IData> data )
+    void CSharedObject<T>::fromData( SmartPtr<ISharedObject> data )
     {
     }
 

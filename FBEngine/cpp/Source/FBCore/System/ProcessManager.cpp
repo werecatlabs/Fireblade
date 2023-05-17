@@ -3,6 +3,8 @@
 #include <FBCore/Base/StringUtil.h>
 
 #if defined FB_PLATFORM_WIN32
+#    include <processthreadsapi.h>
+#    include <windef.h>
 #    include <shellapi.h>
 #    include <io.h>
 #    include <windows.h>
@@ -32,16 +34,16 @@ namespace fb
         ZeroMemory( &pi, sizeof( pi ) );
 
         // start the program up
-        CreateProcessA( applicationName.c_str(), // the path
-                        nullptr,                 // Command line
-                        nullptr,                 // Process handle not inheritable
-                        nullptr,                 // Thread handle not inheritable
-                        FALSE,                   // Set handle inheritance to FALSE
-                        0,                       // No creation flags
-                        nullptr,                 // Use parent's environment block
-                        nullptr,                 // Use parent's starting directory
-                        &si,                     // Pointer to STARTUPINFO structure
-                        &pi );                   // Pointer to PROCESS_INFORMATION structure
+        CreateProcessA( applicationName.c_str(),  // the path
+                        nullptr,                  // Command line
+                        nullptr,                  // Process handle not inheritable
+                        nullptr,                  // Thread handle not inheritable
+                        FALSE,                    // Set handle inheritance to FALSE
+                        0,                        // No creation flags
+                        nullptr,                  // Use parent's environment block
+                        nullptr,                  // Use parent's starting directory
+                        &si,                      // Pointer to STARTUPINFO structure
+                        &pi );                    // Pointer to PROCESS_INFORMATION structure
 
         // Close process and thread handles.
         // CloseHandle(pi.hProcess);
@@ -64,16 +66,16 @@ namespace fb
         ZeroMemory( &pi, sizeof( pi ) );
 
         // start the program up
-        CreateProcessW( applicationName.c_str(), // the path
-                        nullptr,                 // Command line
-                        nullptr,                 // Process handle not inheritable
-                        nullptr,                 // Thread handle not inheritable
-                        FALSE,                   // Set handle inheritance to FALSE
-                        0,                       // No creation flags
-                        nullptr,                 // Use parent's environment block
-                        nullptr,                 // Use parent's starting directory
-                        &si,                     // Pointer to STARTUPINFO structure
-                        &pi );                   // Pointer to PROCESS_INFORMATION structure
+        CreateProcessW( applicationName.c_str(),  // the path
+                        nullptr,                  // Command line
+                        nullptr,                  // Process handle not inheritable
+                        nullptr,                  // Thread handle not inheritable
+                        FALSE,                    // Set handle inheritance to FALSE
+                        0,                        // No creation flags
+                        nullptr,                  // Use parent's environment block
+                        nullptr,                  // Use parent's starting directory
+                        &si,                      // Pointer to STARTUPINFO structure
+                        &pi );                    // Pointer to PROCESS_INFORMATION structure
 
         // Close process and thread handles.
         // CloseHandle(pi.hProcess);
@@ -90,14 +92,14 @@ namespace fb
         shExInfo.cbSize = sizeof( shExInfo );
         shExInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
         shExInfo.hwnd = nullptr;
-        shExInfo.lpVerb = "runas";                 // Operation to perform
-        shExInfo.lpFile = applicationName.c_str(); // Application to start
-        shExInfo.lpParameters = "";                // Additional parameters
+        shExInfo.lpVerb = "runas";                  // Operation to perform
+        shExInfo.lpFile = applicationName.c_str();  // Application to start
+        shExInfo.lpParameters = "";                 // Additional parameters
         shExInfo.lpDirectory = nullptr;
         shExInfo.nShow = SW_SHOW;
         shExInfo.hInstApp = nullptr;
 
-        if(ShellExecuteExA( &shExInfo ))
+        if( ShellExecuteExA( &shExInfo ) )
         {
             WaitForSingleObject( shExInfo.hProcess, INFINITE );
             CloseHandle( shExInfo.hProcess );
@@ -112,7 +114,7 @@ namespace fb
 #ifdef FB_PLATFORM_WIN32
         StringW argStr;
 
-        for(size_t i = 0; i < args.size(); ++i)
+        for( size_t i = 0; i < args.size(); ++i )
         {
             argStr += args[i] + L" ";
         }
@@ -121,14 +123,14 @@ namespace fb
         shExInfo.cbSize = sizeof( shExInfo );
         shExInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
         shExInfo.hwnd = nullptr;
-        shExInfo.lpVerb = L"runas";                // Operation to perform
-        shExInfo.lpFile = applicationName.c_str(); // Application to start
-        shExInfo.lpParameters = argStr.c_str();    // Additional parameters
+        shExInfo.lpVerb = L"runas";                 // Operation to perform
+        shExInfo.lpFile = applicationName.c_str();  // Application to start
+        shExInfo.lpParameters = argStr.c_str();     // Additional parameters
         shExInfo.lpDirectory = nullptr;
         shExInfo.nShow = SW_SHOW;
         shExInfo.hInstApp = nullptr;
 
-        if(ShellExecuteExW( &shExInfo ))
+        if( ShellExecuteExW( &shExInfo ) )
         {
             // WaitForSingleObject(shExInfo.hProcess, INFINITE);
             CloseHandle( shExInfo.hProcess );
@@ -144,7 +146,7 @@ namespace fb
 #ifdef FB_PLATFORM_WIN32
         StringW argStr;
 
-        for(size_t i = 0; i < args.size(); ++i)
+        for( size_t i = 0; i < args.size(); ++i )
         {
             argStr += args[i] + L" ";
         }
@@ -153,14 +155,14 @@ namespace fb
         shExInfo.cbSize = sizeof( shExInfo );
         shExInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
         shExInfo.hwnd = nullptr;
-        shExInfo.lpVerb = L"runas";                // Operation to perform
-        shExInfo.lpFile = applicationName.c_str(); // Application to start
-        shExInfo.lpParameters = argStr.c_str();    // Additional parameters
+        shExInfo.lpVerb = L"runas";                 // Operation to perform
+        shExInfo.lpFile = applicationName.c_str();  // Application to start
+        shExInfo.lpParameters = argStr.c_str();     // Additional parameters
         shExInfo.lpDirectory = directory.c_str();
         shExInfo.nShow = SW_SHOW;
         shExInfo.hInstApp = nullptr;
 
-        if(ShellExecuteExW( &shExInfo ))
+        if( ShellExecuteExW( &shExInfo ) )
         {
             // WaitForSingleObject(shExInfo.hProcess, INFINITE);
             CloseHandle( shExInfo.hProcess );
@@ -184,11 +186,11 @@ namespace fb
 
         HANDLE snapshot = CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, NULL );
 
-        if(Process32FirstW( snapshot, &entry ))
+        if( Process32FirstW( snapshot, &entry ) )
         {
-            while(Process32NextW( snapshot, &entry ))
+            while( Process32NextW( snapshot, &entry ) )
             {
-                if(StringW( entry.szExeFile ) == processName)
+                if( StringW( entry.szExeFile ) == processName )
                 {
                     exists = true;
                 }
@@ -216,11 +218,11 @@ namespace fb
 
         HANDLE snapshot = CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, NULL );
 
-        if(Process32FirstW( snapshot, &entry ))
+        if( Process32FirstW( snapshot, &entry ) )
         {
-            while(Process32NextW( snapshot, &entry ))
+            while( Process32NextW( snapshot, &entry ) )
             {
-                if(StringW( entry.szExeFile ) != processName)
+                if( StringW( entry.szExeFile ) != processName )
                 {
                     internalTerminateProcess( entry.th32ProcessID, 0 );
                     exists = true;
@@ -241,7 +243,7 @@ namespace fb
         DWORD dwDesiredAccess = PROCESS_TERMINATE;
         BOOL bInheritHandle = FALSE;
         HANDLE hProcess = OpenProcess( dwDesiredAccess, bInheritHandle, dwProcessId );
-        if(hProcess == nullptr)
+        if( hProcess == nullptr )
             return false;
 
         BOOL result = TerminateProcess( hProcess, uExitCode );
@@ -253,4 +255,4 @@ namespace fb
         return false;
 #endif
     }
-} // end namespace fb
+}  // end namespace fb

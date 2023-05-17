@@ -215,4 +215,57 @@ namespace fb
         m_enableUI = enableUI;
         setDirty( true );
     }
+
+    void ViewportState::setMaterialScheme( const String &schemeName )
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
+        m_materialScheme = schemeName;
+        setDirty( true );
+    }
+
+    String ViewportState::getMaterialScheme() const
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+        return m_materialScheme;
+    }
+
+    bool ViewportState::getClear() const
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+        return m_clear;
+    }
+
+    void ViewportState::setClear( bool clear )
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
+        m_clear = clear;
+        setDirty( true );
+    }
+
+    u32 ViewportState::getBuffers() const
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+        return m_buffers;
+    }
+
+    void ViewportState::setBuffers( u32 buffers )
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
+        m_buffers = buffers;
+        setDirty( true );
+    }
+
+    bool ViewportState::getEnableSceneRender() const
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+        return m_enableSceneRender;
+    }
+
+    void ViewportState::setEnableSceneRender( bool enableSceneRender )
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
+        m_enableSceneRender = enableSceneRender;
+        setDirty( true );
+    }
+
 }  // namespace fb

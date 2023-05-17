@@ -474,10 +474,10 @@
 #include <FBCore/Scene/Components/UI/Layout.h>
 #include <FBCore/Scene/Components/UI/CanvasTransform.h>
 
-#include <FBCore/Scene/CActor.h>
+#include <FBCore/Scene/Actor.h>
 #include <FBCore/Scene/CameraManager.h>
-#include <FBCore/Scene/CSceneManager.h>
-#include <FBCore/Scene/CScene.h>
+#include <FBCore/Scene/SceneManager.h>
+#include <FBCore/Scene/Scene.h>
 
 #include <FBCore/Script/ScriptEvent.h>
 #include <FBCore/Script/ScriptClass.h>
@@ -558,6 +558,7 @@
 #include <FBCore/System/CommandManagerMT.h>
 #include <FBCore/System/CSelectionManager.h>
 #include <FBCore/System/DebugUtil.h>
+#include <FBCore/System/EventJob.h>
 #include <FBCore/System/FactoryManager.h>
 #include <FBCore/System/FrameStatistics.h>
 #include <FBCore/System/Job.h>

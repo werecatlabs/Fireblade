@@ -21,7 +21,7 @@ namespace fb
         @author	Zane Desir
         @version 1.0
         */
-        class CActor : public CResource<IActor>
+        class Actor : public CResource<IActor>
         {
         public:
             class ActorFsmListener : public FSMListener
@@ -32,11 +32,11 @@ namespace fb
 
                 IFSM::ReturnType handleEvent( u32 state, IFSM::Event eventType ) override;
 
-                CActor *getOwner() const;
-                void setOwner( CActor *owner );
+                Actor *getOwner() const;
+                void setOwner( Actor *owner );
 
             private:
-                CActor *m_owner = nullptr;
+                Actor *m_owner = nullptr;
             };
 
             class ActorGameFsmListener : public FSMListener
@@ -47,15 +47,15 @@ namespace fb
 
                 IFSM::ReturnType handleEvent( u32 state, IFSM::Event eventType ) override;
 
-                CActor *getOwner() const;
-                void setOwner( CActor *owner );
+                Actor *getOwner() const;
+                void setOwner( Actor *owner );
 
             private:
-                CActor *m_owner = nullptr;
+                Actor *m_owner = nullptr;
             };
 
-            CActor();
-            ~CActor() override;
+            Actor();
+            ~Actor() override;
 
             /** @copydoc IActor::getName */
             String getName() const override;
@@ -291,6 +291,10 @@ namespace fb
             /** @copydoc IActor::getAllChildren */
             Array<SmartPtr<IActor>> getAllChildren( SmartPtr<IActor> parent ) const;
 
+            SmartPtr<ISharedObject> toData() const;
+
+            void fromData( SmartPtr<ISharedObject> data );
+
             /** @copydoc IActor::getProperties */
             SmartPtr<Properties> getProperties() const override;
 
@@ -443,56 +447,6 @@ namespace fb
 
             static u32 m_idExt;
         };
-
-        template <class T>
-        SmartPtr<T> CActor::removeComponent()
-        {
-            // auto typeinfo = T::typeInfo();
-            // FB_ASSERT(typeinfo);
-
-            // auto iClassType = typeinfo->getHash();
-            // auto it = m_componentsByType.find(iClassType);
-            // if (it != m_componentsByType.end())
-            //{
-            //	auto& components = it->second;
-            //	if (!components.empty())
-            //	{
-            //		auto componentIt = components.begin();
-            //		auto component = (*componentIt);
-            //		components.erase(componentIt);
-            //		rebuildComponentCache();
-            //		return component;
-            //	}
-            // }
-
-            return nullptr;
-        }
-
-        template <class T>
-        SmartPtr<T> CActor::removeComponents()
-        {
-            // int iClassType = Object::getClassType<scalar_num>();
-            // std::unordered_map<int, Array<SmartPtr<IComponent>>>::iterator it =
-            // m_componentsByType.find(iClassType); if (it != m_componentsByType.end())
-            //{
-            //	Array<SmartPtr<IComponent>>& components = it->second;
-            //	if (!components.empty())
-            //	{
-            //		Array<SmartPtr<IComponent>>::iterator componentIt = components.begin();
-            //		SmartPtr<scalar_num> component = (*componentIt);
-            //		components.erase(componentIt);
-            //		rebuildComponentCache();
-            //		return component;
-            //	}
-            // }
-
-            return nullptr;
-        }
-
-        inline SharedPtr<ConcurrentArray<SmartPtr<IComponent>>> CActor::getComponentsPtr() const
-        {
-            return m_components;
-        }
     }  // namespace scene
 }  // namespace fb
 

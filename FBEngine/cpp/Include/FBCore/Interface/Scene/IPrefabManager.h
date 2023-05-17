@@ -33,7 +33,7 @@ namespace fb
              * @param parent A smart pointer to the parent Actor of the loaded Actor.
              * @return A smart pointer to the loaded Actor object.
              */
-            virtual SmartPtr<IActor> loadActor( SmartPtr<IData> data, SmartPtr<IActor> parent ) = 0;
+            virtual SmartPtr<IActor> loadActor( SmartPtr<Properties> data, SmartPtr<IActor> parent ) = 0;
 
             /**
              * Loads a prefab from a file path.

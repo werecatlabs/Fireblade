@@ -9,11 +9,11 @@ namespace fb
 {
     namespace scene
     {
-        class CActorProxy : public CResource<IActorProxy>
+        class ActorProxy : public CResource<IActorProxy>
         {
         public:
-            CActorProxy();
-            ~CActorProxy() override;
+            ActorProxy();
+            ~ActorProxy() override;
 
             SmartPtr<IDirector> getDirector() const override;
 

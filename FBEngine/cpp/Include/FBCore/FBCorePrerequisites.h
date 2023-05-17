@@ -13,6 +13,19 @@ class TiXmlDocument;
 class TiXmlHandle;
 struct cJSON;
 
+namespace boost
+{
+    namespace json
+    {
+        class object;
+    }  // namespace json
+}  // namespace boost
+
+namespace rttr
+{
+    class instance;
+}  // namespace rttr
+
 namespace fb
 {
 

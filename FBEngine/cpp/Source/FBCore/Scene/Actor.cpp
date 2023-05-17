@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
-#include <FBCore/Scene/CActor.h>
-#include <FBCore/Scene/CSceneManager.h>
+#include <FBCore/Scene/Actor.h>
+#include <FBCore/Scene/SceneManager.h>
 #include <FBCore/Scene/Components/Transform.h>
 #include <FBCore/Scene/Components/Component.h>
 #include <FBCore/Math/Core/MathUtil.h>
@@ -13,10 +13,10 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb, CActor, CResource<IActor> );
-        u32 CActor::m_idExt = 0;
+        FB_CLASS_REGISTER_DERIVED( fb, Actor, CResource<IActor> );
+        u32 Actor::m_idExt = 0;
 
-        CActor::CActor()
+        Actor::Actor()
         {
             setResourceType( ResourceType::Actor );
 
@@ -24,12 +24,12 @@ namespace fb
             m_components = fb::make_shared<ConcurrentArray<SmartPtr<IComponent>>>();
         }
 
-        CActor::~CActor()
+        Actor::~Actor()
         {
             unload( nullptr );
         }
 
-        String CActor::getName() const
+        String Actor::getName() const
         {
             auto handle = getHandle();
             FB_ASSERT( handle );
@@ -37,7 +37,7 @@ namespace fb
             return handle->getName();
         }
 
-        void CActor::setName( const String &name )
+        void Actor::setName( const String &name )
         {
             auto handle = getHandle();
             FB_ASSERT( handle );
@@ -45,7 +45,7 @@ namespace fb
             handle->setName( name );
         }
 
-        Transform3<real_Num> CActor::getWorldTransform( time_interval t ) const
+        Transform3<real_Num> Actor::getWorldTransform( time_interval t ) const
         {
             if( auto transform = getTransform() )
             {
@@ -55,7 +55,7 @@ namespace fb
             return Transform3<real_Num>();
         }
 
-        Transform3<real_Num> CActor::getWorldTransform() const
+        Transform3<real_Num> Actor::getWorldTransform() const
         {
             if( auto transform = getTransform() )
             {
@@ -65,7 +65,7 @@ namespace fb
             return Transform3<real_Num>();
         }
 
-        Transform3<real_Num> CActor::getLocalTransform( time_interval t ) const
+        Transform3<real_Num> Actor::getLocalTransform( time_interval t ) const
         {
             if( auto transform = getTransform() )
             {
@@ -75,7 +75,7 @@ namespace fb
             return Transform3<real_Num>();
         }
 
-        Transform3<real_Num> CActor::getLocalTransform() const
+        Transform3<real_Num> Actor::getLocalTransform() const
         {
             if( auto transform = getTransform() )
             {
@@ -85,7 +85,7 @@ namespace fb
             return Transform3<real_Num>();
         }
 
-        Vector3<real_Num> CActor::getLocalPosition() const
+        Vector3<real_Num> Actor::getLocalPosition() const
         {
             if( auto transform = getTransform() )
             {
@@ -95,7 +95,7 @@ namespace fb
             return Vector3<real_Num>::zero();
         }
 
-        void CActor::setLocalPosition( const Vector3<real_Num> &localPosition )
+        void Actor::setLocalPosition( const Vector3<real_Num> &localPosition )
         {
             if( auto transform = getTransform() )
             {
@@ -103,7 +103,7 @@ namespace fb
             }
         }
 
-        Vector3<real_Num> CActor::getLocalScale() const
+        Vector3<real_Num> Actor::getLocalScale() const
         {
             auto transform = getTransform();
             if( transform )
@@ -114,7 +114,7 @@ namespace fb
             return Vector3<real_Num>::zero();
         }
 
-        void CActor::setLocalScale( const Vector3<real_Num> &localScale )
+        void Actor::setLocalScale( const Vector3<real_Num> &localScale )
         {
             auto transform = getTransform();
             if( transform )
@@ -123,7 +123,7 @@ namespace fb
             }
         }
 
-        Quaternion<real_Num> CActor::getLocalOrientation() const
+        Quaternion<real_Num> Actor::getLocalOrientation() const
         {
             auto transform = getTransform();
             if( transform )
@@ -134,7 +134,7 @@ namespace fb
             return Quaternion<real_Num>::identity();
         }
 
-        void CActor::setLocalOrientation( const Quaternion<real_Num> &localOrientation )
+        void Actor::setLocalOrientation( const Quaternion<real_Num> &localOrientation )
         {
             auto transform = getTransform();
             if( transform )
@@ -143,7 +143,7 @@ namespace fb
             }
         }
 
-        Vector3<real_Num> CActor::getPosition() const
+        Vector3<real_Num> Actor::getPosition() const
         {
             auto transform = getTransform();
             if( transform )
@@ -154,14 +154,14 @@ namespace fb
             return Vector3<real_Num>::zero();
         }
 
-        void CActor::lookAt( const Vector3<real_Num> &position )
+        void Actor::lookAt( const Vector3<real_Num> &position )
         {
             auto vec = position - getPosition();
             auto rot = MathUtil<real_Num>::getRotationTo( -Vector3<real_Num>::unitZ(), vec );
             setOrientation( rot );
         }
 
-        void CActor::lookAt( const Vector3<real_Num> &position, const Vector3<real_Num> &yawAxis )
+        void Actor::lookAt( const Vector3<real_Num> &position, const Vector3<real_Num> &yawAxis )
         {
             auto vec = position - getPosition();
             auto rot = MathUtil<real_Num>::getOrientationFromDirection( vec, -Vector3<real_Num>::unitZ(),
@@ -169,7 +169,7 @@ namespace fb
             setOrientation( rot );
         }
 
-        void CActor::setPosition( const Vector3<real_Num> &position )
+        void Actor::setPosition( const Vector3<real_Num> &position )
         {
             auto transform = getTransform();
             if( transform )
@@ -178,7 +178,7 @@ namespace fb
             }
         }
 
-        Vector3<real_Num> CActor::getScale() const
+        Vector3<real_Num> Actor::getScale() const
         {
             auto transform = getTransform();
             if( transform )
@@ -189,7 +189,7 @@ namespace fb
             return Vector3<real_Num>::zero();
         }
 
-        void CActor::setScale( const Vector3<real_Num> &scale )
+        void Actor::setScale( const Vector3<real_Num> &scale )
         {
             auto transform = getTransform();
             if( transform )
@@ -198,7 +198,7 @@ namespace fb
             }
         }
 
-        Quaternion<real_Num> CActor::getOrientation() const
+        Quaternion<real_Num> Actor::getOrientation() const
         {
             auto transform = getTransform();
             if( transform )
@@ -209,7 +209,7 @@ namespace fb
             return Quaternion<real_Num>::identity();
         }
 
-        void CActor::setOrientation( const Quaternion<real_Num> &orientation )
+        void Actor::setOrientation( const Quaternion<real_Num> &orientation )
         {
             auto transform = getTransform();
             if( transform )
@@ -218,7 +218,7 @@ namespace fb
             }
         }
 
-        void CActor::awake()
+        void Actor::awake()
         {
             try
             {
@@ -247,7 +247,7 @@ namespace fb
             }
         }
 
-        void CActor::play()
+        void Actor::play()
         {
             try
             {
@@ -286,7 +286,7 @@ namespace fb
             }
         }
 
-        void CActor::edit()
+        void Actor::edit()
         {
             try
             {
@@ -325,7 +325,7 @@ namespace fb
             }
         }
 
-        void CActor::levelWasLoaded( SmartPtr<IScene> scene )
+        void Actor::levelWasLoaded( SmartPtr<IScene> scene )
         {
             try
             {
@@ -354,7 +354,7 @@ namespace fb
             }
         }
 
-        void CActor::reset()
+        void Actor::reset()
         {
             try
             {
@@ -383,7 +383,7 @@ namespace fb
             }
         }
 
-        void CActor::hierarchyChanged()
+        void Actor::hierarchyChanged()
         {
             try
             {
@@ -412,7 +412,7 @@ namespace fb
             }
         }
 
-        void CActor::childAdded( SmartPtr<IActor> child )
+        void Actor::childAdded( SmartPtr<IActor> child )
         {
             try
             {
@@ -441,7 +441,7 @@ namespace fb
             }
         }
 
-        void CActor::childRemoved( SmartPtr<IActor> child )
+        void Actor::childRemoved( SmartPtr<IActor> child )
         {
             try
             {
@@ -470,7 +470,28 @@ namespace fb
             }
         }
 
-        void CActor::preUpdate()
+        template <class T>
+        fb::SmartPtr<T> Actor::removeComponents()
+        {
+            // int iClassType = Object::getClassType<scalar_num>();
+            // std::unordered_map<int, Array<SmartPtr<IComponent>>>::iterator it =
+            // m_componentsByType.find(iClassType); if (it != m_componentsByType.end())
+            //{
+            //	Array<SmartPtr<IComponent>>& components = it->second;
+            //	if (!components.empty())
+            //	{
+            //		Array<SmartPtr<IComponent>>::iterator componentIt = components.begin();
+            //		SmartPtr<scalar_num> component = (*componentIt);
+            //		components.erase(componentIt);
+            //		rebuildComponentCache();
+            //		return component;
+            //	}
+            // }
+
+            return nullptr;
+        }
+
+        void Actor::preUpdate()
         {
             preUpdateDirtyComponents();
 
@@ -496,7 +517,13 @@ namespace fb
             }
         }
 
-        void CActor::updateDirty( u32 flags, u32 oldFlags )
+        fb::SharedPtr<fb::ConcurrentArray<fb::SmartPtr<fb::scene::IComponent>>>
+        Actor::getComponentsPtr() const
+        {
+            return m_components;
+        }
+
+        void Actor::updateDirty( u32 flags, u32 oldFlags )
         {
             auto components = getComponents();
             for( auto &component : components )
@@ -520,7 +547,7 @@ namespace fb
             }
         }
 
-        void CActor::update()
+        void Actor::update()
         {
             updateDirtyComponents();
 
@@ -534,7 +561,7 @@ namespace fb
             }
         }
 
-        void CActor::postUpdate()
+        void Actor::postUpdate()
         {
             postUpdateDirtyComponents();
 
@@ -548,7 +575,7 @@ namespace fb
             }
         }
 
-        void CActor::addComponentInstance( SmartPtr<IComponent> component )
+        void Actor::addComponentInstance( SmartPtr<IComponent> component )
         {
             try
             {
@@ -589,7 +616,7 @@ namespace fb
             }
         }
 
-        void CActor::removeComponentInstance( SmartPtr<IComponent> component )
+        void Actor::removeComponentInstance( SmartPtr<IComponent> component )
         {
             FB_ASSERT( component );
 
@@ -614,7 +641,7 @@ namespace fb
             sceneManager->removeComponent( component );
         }
 
-        bool CActor::hasComponent( int handle )
+        bool Actor::hasComponent( int handle )
         {
             auto components = getComponents();
             for( auto component : components )
@@ -631,7 +658,7 @@ namespace fb
             return false;
         }
 
-        SmartPtr<IComponent> CActor::getComponent( int handle ) const
+        SmartPtr<IComponent> Actor::getComponent( int handle ) const
         {
             // for (auto component : m_components)
             //{
@@ -647,13 +674,13 @@ namespace fb
             return nullptr;
         }
 
-        bool CActor::isMine() const
+        bool Actor::isMine() const
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
 
             auto handle = getHandle();
@@ -666,18 +693,18 @@ namespace fb
             return BitUtil::getFlagValue( flags, ActorFlagMine );
         }
 
-        void CActor::setMine( bool val )
+        void Actor::setMine( bool val )
         {
             // m_isMine = val;
         }
 
-        bool CActor::isStatic() const
+        bool Actor::isStatic() const
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
 
             auto handle = getHandle();
@@ -690,13 +717,13 @@ namespace fb
             return BitUtil::getFlagValue( flags, ActorFlagStatic );
         }
 
-        void CActor::setStatic( bool isstatic )
+        void Actor::setStatic( bool isstatic )
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
             FB_ASSERT( sceneManager->isValid() );
             FB_ASSERT( sceneManager->isLoaded() );
@@ -726,7 +753,7 @@ namespace fb
             }
         }
 
-        bool CActor::isEnabledInScene() const
+        bool Actor::isEnabledInScene() const
         {
             auto enabledInScene = isEnabled();
             if( enabledInScene )
@@ -746,13 +773,13 @@ namespace fb
             return enabledInScene;
         }
 
-        bool CActor::isEnabled() const
+        bool Actor::isEnabled() const
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
 
             auto handle = getHandle();
@@ -765,13 +792,13 @@ namespace fb
             return BitUtil::getFlagValue( flags, ActorFlagEnabled );
         }
 
-        void CActor::setEnabled( bool enabled )
+        void Actor::setEnabled( bool enabled )
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
             FB_ASSERT( sceneManager->isValid() );
             FB_ASSERT( sceneManager->isLoaded() );
@@ -801,13 +828,13 @@ namespace fb
             updateVisibility();
         }
 
-        bool CActor::isVisible() const
+        bool Actor::isVisible() const
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
 
             auto handle = getHandle();
@@ -820,13 +847,13 @@ namespace fb
             return BitUtil::getFlagValue( flags, ActorFlagVisible );
         }
 
-        void CActor::setVisible( bool visible, bool cacade )
+        void Actor::setVisible( bool visible, bool cacade )
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
             FB_ASSERT( sceneManager->isValid() );
             FB_ASSERT( sceneManager->isLoaded() );
@@ -857,13 +884,13 @@ namespace fb
             }
         }
 
-        bool CActor::isDirty() const
+        bool Actor::isDirty() const
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
 
             auto handle = getHandle();
@@ -876,13 +903,13 @@ namespace fb
             return BitUtil::getFlagValue( flags, ActorFlagDirty );
         }
 
-        void CActor::setDirty( bool dirty )
+        void Actor::setDirty( bool dirty )
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
             FB_ASSERT( sceneManager->isValid() );
             FB_ASSERT( sceneManager->isLoaded() );
@@ -898,12 +925,12 @@ namespace fb
             sceneManager->setNewFlags( id, newFlags );
         }
 
-        bool CActor::isValid() const
+        bool Actor::isValid() const
         {
             return true;
         }
 
-        void CActor::updateTransform()
+        void Actor::updateTransform()
         {
             if( auto transform = getTransform() )
             {
@@ -926,7 +953,7 @@ namespace fb
             }
         }
 
-        Array<SmartPtr<IComponent>> CActor::getComponents() const
+        Array<SmartPtr<IComponent>> Actor::getComponents() const
         {
             if( auto p = getComponentsPtr() )
             {
@@ -937,7 +964,7 @@ namespace fb
             return Array<SmartPtr<IComponent>>();
         }
 
-        void CActor::updateComponents()
+        void Actor::updateComponents()
         {
             // for (auto component : m_components)
             //{
@@ -945,7 +972,7 @@ namespace fb
             // }
         }
 
-        void CActor::rebuildComponentCache()
+        void Actor::rebuildComponentCache()
         {
             // auto applicationManager = core::IApplicationManager::instance();
             // auto factoryManager = applicationManager->getFactoryManager();
@@ -966,7 +993,7 @@ namespace fb
             // componentCache.end()); m_componentCache = p;
         }
 
-        void CActor::preUpdateDirtyComponent( SmartPtr<IComponent> &component )
+        void Actor::preUpdateDirtyComponent( SmartPtr<IComponent> &component )
         {
             if( component )
             {
@@ -984,7 +1011,7 @@ namespace fb
             }
         }
 
-        void CActor::updateDirtyComponent( SmartPtr<IComponent> &component )
+        void Actor::updateDirtyComponent( SmartPtr<IComponent> &component )
         {
             if( component )
             {
@@ -1002,7 +1029,7 @@ namespace fb
             }
         }
 
-        void CActor::postUpdateDirtyComponent( SmartPtr<IComponent> &component )
+        void Actor::postUpdateDirtyComponent( SmartPtr<IComponent> &component )
         {
             if( component )
             {
@@ -1020,7 +1047,7 @@ namespace fb
             }
         }
 
-        IFSM::ReturnType CActor::handleActorEvent( u32 state, IFSM::Event eventType )
+        IFSM::ReturnType Actor::handleActorEvent( u32 state, IFSM::Event eventType )
         {
             switch( eventType )
             {
@@ -1108,7 +1135,7 @@ namespace fb
             return IFSM::ReturnType::Ok;
         }
 
-        IFSM::ReturnType CActor::handleActorGameEvent( u32 state, IFSM::Event eventType )
+        IFSM::ReturnType Actor::handleActorGameEvent( u32 state, IFSM::Event eventType )
         {
             switch( eventType )
             {
@@ -1133,7 +1160,7 @@ namespace fb
             return IFSM::ReturnType::Ok;
         }
 
-        void CActor::preUpdateDirtyComponents()
+        void Actor::preUpdateDirtyComponents()
         {
             // auto applicationManager = core::IApplicationManager::instance();
             // FB_ASSERT(applicationManager);
@@ -1152,7 +1179,7 @@ namespace fb
             // nullptr;
         }
 
-        void CActor::updateDirtyComponents()
+        void Actor::updateDirtyComponents()
         {
             // auto applicationManager = core::IApplicationManager::instance();
             // FB_ASSERT(applicationManager);
@@ -1170,7 +1197,7 @@ namespace fb
             // lastDirtyComponent = nullptr;
         }
 
-        void CActor::postUpdateDirtyComponents()
+        void Actor::postUpdateDirtyComponents()
         {
             // auto applicationManager = core::IApplicationManager::instance();
             // FB_ASSERT(applicationManager);
@@ -1189,7 +1216,7 @@ namespace fb
             // nullptr;
         }
 
-        bool CActor::compareTag( const String &tag ) const
+        bool Actor::compareTag( const String &tag ) const
         {
             // auto it = std::find(m_tags.begin(), m_tags.end(), tag);
             // if (it != m_tags.end())
@@ -1200,7 +1227,7 @@ namespace fb
             return false;
         }
 
-        SmartPtr<IActor> CActor::getSceneRoot() const
+        SmartPtr<IActor> Actor::getSceneRoot() const
         {
             auto parent = getParent();
             while( parent )
@@ -1217,7 +1244,7 @@ namespace fb
             return nullptr;
         }
 
-        u32 CActor::getSceneLevel() const
+        u32 Actor::getSceneLevel() const
         {
             auto sceneLevel = 0;
             auto parent = getParent();
@@ -1236,18 +1263,18 @@ namespace fb
             return sceneLevel;
         }
 
-        SmartPtr<ITransform> CActor::getTransform() const
+        SmartPtr<ITransform> Actor::getTransform() const
         {
             auto p = m_transform.load();
             return p.lock();
         }
 
-        void CActor::setTransform( SmartPtr<ITransform> transform )
+        void Actor::setTransform( SmartPtr<ITransform> transform )
         {
             m_transform = transform;
         }
 
-        void CActor::load( SmartPtr<ISharedObject> data )
+        void Actor::load( SmartPtr<ISharedObject> data )
         {
             try
             {
@@ -1260,7 +1287,7 @@ namespace fb
                     FB_ASSERT( applicationManager );
 
                     auto pSceneManager = applicationManager->getSceneManager();
-                    auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+                    auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
                     if( sceneManager )
                     {
                         FB_ASSERT( sceneManager->isLoaded() );
@@ -1286,11 +1313,11 @@ namespace fb
             }
         }
 
-        void CActor::reload( SmartPtr<ISharedObject> data )
+        void Actor::reload( SmartPtr<ISharedObject> data )
         {
         }
 
-        void CActor::unload( SmartPtr<ISharedObject> data )
+        void Actor::unload( SmartPtr<ISharedObject> data )
         {
             try
             {
@@ -1306,7 +1333,7 @@ namespace fb
                         FB_ASSERT( applicationManager );
 
                         auto pSceneManager = applicationManager->getSceneManager();
-                        auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+                        auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
 
                         if( auto transform = getTransform() )
                         {
@@ -1363,7 +1390,7 @@ namespace fb
 
                         if( auto scene = getScene() )
                         {
-                            auto pThis = getSharedFromThis<CActor>();
+                            auto pThis = getSharedFromThis<Actor>();
                             scene->unregisterAll( pThis );
                         }
 
@@ -1467,44 +1494,44 @@ namespace fb
         //	return componentData;
         //}
 
-        bool CActor::getPerpetual() const
+        bool Actor::getPerpetual() const
         {
             return m_destroyOnLoad;
         }
 
-        void CActor::setPerpetual( bool destroyOnLoad )
+        void Actor::setPerpetual( bool destroyOnLoad )
         {
             m_destroyOnLoad = destroyOnLoad;
         }
 
-        bool CActor::getAutoUpdateComponents() const
+        bool Actor::getAutoUpdateComponents() const
         {
             return m_autoUpdateComponents;
         }
 
-        void CActor::setAutoUpdateComponents( bool autoUpdateComponents )
+        void Actor::setAutoUpdateComponents( bool autoUpdateComponents )
         {
             m_autoUpdateComponents = autoUpdateComponents;
         }
 
-        SmartPtr<IScene> CActor::getScene() const
+        SmartPtr<IScene> Actor::getScene() const
         {
             auto p = m_scene.load();
             return p.lock();
         }
 
-        void CActor::setScene( SmartPtr<IScene> scene )
+        void Actor::setScene( SmartPtr<IScene> scene )
         {
             m_scene = scene;
         }
 
-        bool CActor::isRegistered( Thread::Task taskId, Thread::UpdateState updateType ) const
+        bool Actor::isRegistered( Thread::Task taskId, Thread::UpdateState updateType ) const
         {
             // return m_updateObjects[(int)updateType][(int)taskId] ? true : false;
             return false;
         }
 
-        void CActor::registerUpdate( Thread::Task taskId, Thread::UpdateState updateType )
+        void Actor::registerUpdate( Thread::Task taskId, Thread::UpdateState updateType )
         {
             // m_updateObjects[(int)updateType][(int)taskId] = true;
 
@@ -1515,7 +1542,7 @@ namespace fb
             // }
         }
 
-        void CActor::unregisterUpdate( Thread::Task taskId, Thread::UpdateState updateType )
+        void Actor::unregisterUpdate( Thread::Task taskId, Thread::UpdateState updateType )
         {
             // m_updateObjects[(int)updateType][(int)taskId] = false;
 
@@ -1526,7 +1553,7 @@ namespace fb
             // }
         }
 
-        void CActor::unregisterAll()
+        void Actor::unregisterAll()
         {
             // for (u32 x = 0; x < int(Thread::UpdateState::Count); ++x)
             //{
@@ -1543,7 +1570,7 @@ namespace fb
             // }
         }
 
-        void CActor::registerComponentUpdate( Thread::Task taskId, Thread::UpdateState updateType,
+        void Actor::registerComponentUpdate( Thread::Task taskId, Thread::UpdateState updateType,
                                               SmartPtr<IComponent> object )
         {
             auto p = getRegisteredComponents( updateType, taskId );
@@ -1571,7 +1598,7 @@ namespace fb
             // }
         }
 
-        void CActor::unregisterComponentUpdate( Thread::Task taskId, Thread::UpdateState updateType,
+        void Actor::unregisterComponentUpdate( Thread::Task taskId, Thread::UpdateState updateType,
                                                 SmartPtr<IComponent> object )
         {
             auto p = getRegisteredComponents( updateType, taskId );
@@ -1594,7 +1621,7 @@ namespace fb
             }
         }
 
-        void CActor::unregisterAllComponent( SmartPtr<IComponent> object )
+        void Actor::unregisterAllComponent( SmartPtr<IComponent> object )
         {
             try
             {
@@ -1659,16 +1686,16 @@ namespace fb
             }
         }
 
-        void CActor::handleEvent( const String &data )
+        void Actor::handleEvent( const String &data )
         {
         }
 
-        String CActor::getGraphicsDataAsJSON() const
+        String Actor::getGraphicsDataAsJSON() const
         {
             return "";
         }
 
-        void CActor::triggerEnter( SmartPtr<IComponent> collision )
+        void Actor::triggerEnter( SmartPtr<IComponent> collision )
         {
             // boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> p =
             // m_componentCache; ConcurrentArray<SmartPtr<IComponent>>& componentCache =
@@ -1680,7 +1707,7 @@ namespace fb
             // }
         }
 
-        void CActor::triggerLeave( SmartPtr<IComponent> collision )
+        void Actor::triggerLeave( SmartPtr<IComponent> collision )
         {
             // boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> p =
             // m_componentCache; ConcurrentArray<SmartPtr<IComponent>>& componentCache =
@@ -1692,7 +1719,7 @@ namespace fb
             // }
         }
 
-        void CActor::componentLoaded( SmartPtr<IComponent> component )
+        void Actor::componentLoaded( SmartPtr<IComponent> component )
         {
             // boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> p =
             // m_componentCache; ConcurrentArray<SmartPtr<IComponent>>& componentCache =
@@ -1704,7 +1731,7 @@ namespace fb
             // }
         }
 
-        SmartPtr<IActor> CActor::getChildByIndex( u32 index ) const
+        SmartPtr<IActor> Actor::getChildByIndex( u32 index ) const
         {
             if( auto p = getChildrenPtr() )
             {
@@ -1715,7 +1742,7 @@ namespace fb
             return nullptr;
         }
 
-        u32 CActor::getNumChildren() const
+        u32 Actor::getNumChildren() const
         {
             if( auto p = getChildrenPtr() )
             {
@@ -1726,7 +1753,7 @@ namespace fb
             return 0;
         }
 
-        s32 CActor::getSiblingIndex() const
+        s32 Actor::getSiblingIndex() const
         {
             auto parentTransform = getParent();
             if( parentTransform == nullptr )
@@ -1746,7 +1773,7 @@ namespace fb
             return -1;
         }
 
-        void CActor::addDirtyComponent( Thread::Task taskId, Thread::UpdateState updateType,
+        void Actor::addDirtyComponent( Thread::Task taskId, Thread::UpdateState updateType,
                                         SmartPtr<IComponent> component )
         {
             // auto dirtyComponent = m_lastDirtyComponent[(int)updateType][(int)taskId];
@@ -1765,7 +1792,7 @@ namespace fb
             // }
         }
 
-        bool CActor::isComponentSiblingDirty( SmartPtr<IComponent> sibling, Thread::Task taskId,
+        bool Actor::isComponentSiblingDirty( SmartPtr<IComponent> sibling, Thread::Task taskId,
                                               Thread::UpdateState updateType,
                                               SmartPtr<IComponent> component )
         {
@@ -1786,7 +1813,7 @@ namespace fb
             return false;
         }
 
-        bool CActor::isComponentDirty( Thread::Task taskId, Thread::UpdateState updateType,
+        bool Actor::isComponentDirty( Thread::Task taskId, Thread::UpdateState updateType,
                                        SmartPtr<IComponent> component )
         {
             // auto dirtyComponent = m_dirtyComponent[(int)updateType][(int)taskId];
@@ -1807,14 +1834,14 @@ namespace fb
             return false;
         }
 
-        boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> CActor::getRegisteredComponents(
+        boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> Actor::getRegisteredComponents(
             Thread::UpdateState updateState, Thread::Task task ) const
         {
             // return m_updateComponents[(int)updateState][(int)task];
             return nullptr;
         }
 
-        void CActor::setRegisteredComponents(
+        void Actor::setRegisteredComponents(
             Thread::UpdateState updateState, Thread::Task task,
             boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> p )
         {
@@ -1826,7 +1853,7 @@ namespace fb
             // components = p;
         }
 
-        void CActor::addChild( SmartPtr<IActor> child )
+        void Actor::addChild( SmartPtr<IActor> child )
         {
             FB_ASSERT( child );
 
@@ -1871,7 +1898,7 @@ namespace fb
             }
         }
 
-        void CActor::removeChild( SmartPtr<IActor> child )
+        void Actor::removeChild( SmartPtr<IActor> child )
         {
             if( auto p = getChildrenPtr() )
             {
@@ -1908,7 +1935,7 @@ namespace fb
             }
         }
 
-        void CActor::childAddedInHierarchy( SmartPtr<IActor> child )
+        void Actor::childAddedInHierarchy( SmartPtr<IActor> child )
         {
             if( auto p = getComponentsPtr() )
             {
@@ -1929,7 +1956,7 @@ namespace fb
             }
         }
 
-        void CActor::childRemovedInHierarchy( SmartPtr<IActor> child )
+        void Actor::childRemovedInHierarchy( SmartPtr<IActor> child )
         {
             if( auto p = getComponentsPtr() )
             {
@@ -1950,20 +1977,20 @@ namespace fb
             }
         }
 
-        void CActor::removeChildren()
+        void Actor::removeChildren()
         {
             if( auto p = getChildrenPtr() )
             {
                 auto &children = *p;
                 for( auto &child : children )
                 {
-                    auto pChild = fb::static_pointer_cast<CActor>( child );
+                    auto pChild = fb::static_pointer_cast<Actor>( child );
                     pChild->setParent( nullptr );
                 }
             }
         }
 
-        SmartPtr<IActor> CActor::findChild( const String &name )
+        SmartPtr<IActor> Actor::findChild( const String &name )
         {
             if( auto p = getChildrenPtr() )
             {
@@ -1980,12 +2007,12 @@ namespace fb
             return nullptr;
         }
 
-        SharedPtr<ConcurrentArray<SmartPtr<IActor>>> CActor::getChildrenPtr() const
+        SharedPtr<ConcurrentArray<SmartPtr<IActor>>> Actor::getChildrenPtr() const
         {
             return m_children;
         }
 
-        Array<SmartPtr<IActor>> CActor::getAllChildren( SmartPtr<IActor> parent ) const
+        Array<SmartPtr<IActor>> Actor::getAllChildren( SmartPtr<IActor> parent ) const
         {
             Array<SmartPtr<IActor>> children;
             children.reserve( 128 );
@@ -2006,21 +2033,116 @@ namespace fb
             return children;
         }
 
-        Array<SmartPtr<IActor>> CActor::getAllChildren() const
+        Array<SmartPtr<IActor>> Actor::getAllChildren() const
         {
             auto thisActor = getSharedFromThis<IActor>();
             return getAllChildren( thisActor );
         }
 
-        SmartPtr<IActor> CActor::getParent() const
+        fb::SmartPtr<fb::ISharedObject> Actor::toData() const
+        {
+            return nullptr;
+
+            // FB_ASSERT(getLoadingState() == LoadingState::Unloaded);
+            // FB_ASSERT(getHandle()->getInstanceId() != std::numeric_limits<u32>::max());
+
+            /*
+            auto pActorData = fb::make_ptr<Data<data::actor_data>>();
+            auto actorData = pActorData->getDataAsType<data::actor_data>();
+
+            actorData->label = getName();
+            actorData->isStatic = isStatic();
+            actorData->isVisible = isVisible();
+            actorData->isEnabled = isEnabled();
+
+            auto handle = getHandle();
+            if( handle )
+            {
+                auto uuid = handle->getUUID();
+                if( StringUtil::isNullOrEmpty( uuid ) )
+                {
+                    uuid = StringUtil::getUUID();
+                }
+
+                actorData->uuid = uuid;
+            }
+
+            auto transform = getTransform();
+            if( transform )
+            {
+                auto localTransform = transform->getLocalTransform();
+                auto worldTransform = transform->getWorldTransform();
+
+                auto localTransformData = localTransform.toData();
+                actorData->localTransform = *localTransformData->getDataAsType<data::transform_data>();
+
+                auto worldTransformData = worldTransform.toData();
+                actorData->worldTransform = *worldTransformData->getDataAsType<data::transform_data>();
+            }
+
+            if( auto p = getChildren() )
+            {
+                auto &children = *p;
+                for( auto child : children )
+                {
+                    if( child )
+                    {
+                        FB_ASSERT( child->getHandle()->getInstanceId() !=
+                                   std::numeric_limits<u32>::max() );
+
+                        auto pChildActorData = child->toData();
+                        auto childActorData = pChildActorData->getDataAsType<data::actor_data>();
+
+                        actorData->children.push_back( *childActorData );
+                    }
+                }
+            }
+
+#if defined _DEBUG
+            auto pActorDataType = pActorData->getDataAsType<data::actor_data>();
+            auto numDataChildren = pActorDataType->children.size();
+
+            auto actorChildren = getChildren();
+            //auto numActorChildren = actorChildren.size();
+
+            //FB_ASSERT( numDataChildren == numActorChildren );
+#endif
+
+            auto components = getComponents();
+            for( auto component : components )
+            {
+                auto pComponentData = component->toData();
+                if( pComponentData )
+                {
+                    auto componentData = pComponentData->getDataAsType<data::component_data>();
+                    if( componentData )
+                    {
+                        auto typeinfo = component->getTypeInfo();
+                        FB_ASSERT( typeinfo );
+
+                        auto typeManager = TypeManager::instance();
+                        FB_ASSERT( typeManager );
+
+                        auto className = typeManager->getName( typeinfo );
+                        componentData->componentType = StringUtil::replaceAll( className, "class ", "" );
+                        actorData->components.push_back( *componentData );
+                    }
+                }
+            }
+
+            return pActorData;
+            */
+        }
+
+        SmartPtr<IActor> Actor::getParent() const
         {
             auto p = m_parent.load();
             return p.lock();
         }
 
-        void CActor::setParent( SmartPtr<IActor> parent )
+        void Actor::setParent( SmartPtr<IActor> parent )
         {
-            auto pParent = fb::static_pointer_cast<CActor>( parent );
+            auto pParent = fb::static_pointer_cast<Actor>( parent );
 
             auto p = getParent();
             if( p != parent )
@@ -2047,7 +2169,164 @@ namespace fb
             }
         }
 
-        SmartPtr<Properties> CActor::getProperties() const
+        void Actor::fromData( SmartPtr<ISharedObject> data )
+        {
+            /*
+            try
+            {
+                FB_ASSERT( data );
+
+                if( !data )
+                {
+                    FB_LOG_ERROR( "CActor::fromData data null." );
+                    return;
+                }
+
+                auto applicationManager = core::IApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto factoryManager = applicationManager->getFactoryManager();
+                FB_ASSERT( factoryManager );
+
+                auto sceneManager = applicationManager->getSceneManager();
+                FB_ASSERT( sceneManager );
+
+                auto actorData = data->getDataAsType<data::actor_data>();
+                setName( actorData->label );
+
+                auto enabled = actorData->isEnabled;
+                auto visible = actorData->isVisible;
+                auto isstatic = actorData->isStatic;
+
+                setEnabled( enabled );
+                setVisible( visible );
+                setStatic( isstatic );
+
+                auto handle = getHandle();
+                if( handle )
+                {
+                    auto uuid = actorData->uuid;
+                    if( StringUtil::isNullOrEmpty( uuid ) )
+                    {
+                        uuid = StringUtil::getUUID();
+                    }
+
+                    handle->setUUID( uuid );
+                }
+
+                auto transform = getTransform();
+                if( transform )
+                {
+                    auto localTransform = transform->getLocalTransform();
+
+                    auto localTransformData = factoryManager->make_ptr<Data<data::transform_data>>();
+                    localTransformData->setData( &actorData->localTransform );
+
+                    localTransform.fromData( localTransformData );
+
+                    auto worldTransform = transform->getWorldTransform();
+
+                    auto transformData = factoryManager->make_ptr<Data<data::transform_data>>();
+                    transformData->setData( &actorData->worldTransform );
+
+                    worldTransform.fromData( transformData );
+
+                    transform->setLocalTransform( localTransform );
+                    transform->setWorldTransform( worldTransform );
+                }
+
+                auto components = Array<SmartPtr<IComponent>>();
+                components.reserve( actorData->components.size() );
+
+                for( auto &component : actorData->components )
+                {
+                    auto pComponent =
+                        factoryManager->createObjectFromType<BaseComponent>( component.componentType );
+                    if( !pComponent )
+                    {
+                        auto componentType =
+                            StringUtil::replaceAll( component.componentType, "fb::", "" );
+                        pComponent = factoryManager->createObjectFromType<IComponent>( componentType );
+                    }
+
+                    if( !pComponent )
+                    {
+                        auto componentType =
+                            ApplicationUtil::getComponentFactoryType( component.componentType );
+                        pComponent = factoryManager->createObjectFromType<IComponent>( componentType );
+                    }
+
+                    if( pComponent )
+                    {
+                        components.push_back( pComponent );
+                    }
+                }
+
+                for( size_t i = 0; i < components.size(); ++i )
+                {
+                    try
+                    {
+                        auto &pComponent = components[i];
+                        addComponentInstance( pComponent );
+                    }
+                    catch( std::exception &e )
+                    {
+                        FB_LOG_EXCEPTION( e );
+                    }
+                }
+
+                for( size_t i = 0; i < components.size(); ++i )
+                {
+                    try
+                    {
+                        auto &pComponent = components[i];
+                        auto &pComponentData = actorData->components[i];
+                        // FB_ASSERT(pComponent);
+
+                        if( pComponent )
+                        {
+                            pComponent->setActor( this );
+
+                            auto componentData = factoryManager->make_ptr<Data<data::component_data>>();
+                            componentData->setData( &pComponentData );
+
+                            pComponent->fromData( componentData );
+
+                            pComponent->load( nullptr );
+                            componentLoaded( pComponent );
+                        }
+                    }
+                    catch( std::exception &e )
+                    {
+                        FB_LOG_EXCEPTION( e );
+                    }
+                }
+
+                for( auto &child : actorData->children )
+                {
+                    auto childActor = sceneManager->createActor();
+                    FB_ASSERT( childActor );
+
+                    auto pData = fb::make_ptr<Data<data::actor_data>>();
+                    pData->setData( &child );
+                    childActor->fromData( pData );
+                    addChild( childActor );
+
+                    FB_ASSERT( childActor->getChildren()->size() == child.children.size() );
+                    // FB_ASSERT(childActor->getComponents<IComponent>().size() ==
+                    // child.components.size());
+                }
+
+                updateTransform();
+            }
+            catch( std::exception &e )
+            {
+                FB_LOG_EXCEPTION( e );
+            }
+            */
+        }
+
+        SmartPtr<Properties> Actor::getProperties() const
         {
             auto properties = CResource<IActor>::getProperties();
 
@@ -2062,7 +2341,7 @@ namespace fb
             return properties;
         }
 
-        void CActor::setProperties( SmartPtr<Properties> properties )
+        void Actor::setProperties( SmartPtr<Properties> properties )
         {
             auto name = String( "" );
             properties->getPropertyValue( "name", name );
@@ -2077,23 +2356,23 @@ namespace fb
             setEnabled( enabled );
         }
 
-        SmartPtr<IStateContext> CActor::getStateObject() const
+        SmartPtr<IStateContext> Actor::getStateObject() const
         {
             return m_stateObject;
         }
 
-        void CActor::setStateObject( SmartPtr<IStateContext> stateObject )
+        void Actor::setStateObject( SmartPtr<IStateContext> stateObject )
         {
             m_stateObject = stateObject;
         }
 
-        void CActor::setState( State state )
+        void Actor::setState( State state )
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
 
             auto handle = getHandle();
@@ -2114,13 +2393,13 @@ namespace fb
             }
         }
 
-        IActor::State CActor::getState() const
+        IActor::State Actor::getState() const
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
 
             auto handle = getHandle();
@@ -2134,13 +2413,13 @@ namespace fb
             return static_cast<State>( 0 );
         }
 
-        void CActor::setGameState( GameState state )
+        void Actor::setGameState( GameState state )
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
 
             auto handle = getHandle();
@@ -2161,13 +2440,13 @@ namespace fb
             }
         }
 
-        IActor::GameState CActor::getGameState() const
+        IActor::GameState Actor::getGameState() const
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
 
             auto handle = getHandle();
@@ -2181,13 +2460,13 @@ namespace fb
             return static_cast<GameState>( 0 );
         }
 
-        u32 CActor::getFlags() const
+        u32 Actor::getFlags() const
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
 
             auto handle = getHandle();
             auto id = handle->getInstanceId();
@@ -2202,13 +2481,13 @@ namespace fb
             return 0;
         }
 
-        void CActor::setFlags( u32 flags )
+        void Actor::setFlags( u32 flags )
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
 
             auto handle = getHandle();
@@ -2216,12 +2495,12 @@ namespace fb
             sceneManager->setFlags( id, flags );
         }
 
-        bool CActor::getFlag( u32 flag ) const
+        bool Actor::getFlag( u32 flag ) const
         {
             return ( getFlags() & flag ) != 0;
         }
 
-        void CActor::setFlag( u32 flag, bool value )
+        void Actor::setFlag( u32 flag, bool value )
         {
             auto flags = getFlags();
             if( value )
@@ -2236,13 +2515,13 @@ namespace fb
             setFlags( flags );
         }
 
-        u32 CActor::getNewFlags() const
+        u32 Actor::getNewFlags() const
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
 
             auto handle = getHandle();
@@ -2255,7 +2534,7 @@ namespace fb
             return 0;
         }
 
-        void CActor::setNewFlags( u32 flags )
+        void Actor::setNewFlags( u32 flags )
         {
             if( getNewFlags() != flags )
             {
@@ -2263,7 +2542,7 @@ namespace fb
                 FB_ASSERT( applicationManager );
 
                 auto pSceneManager = applicationManager->getSceneManager();
-                auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+                auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
                 FB_ASSERT( sceneManager );
 
                 auto handle = getHandle();
@@ -2274,12 +2553,12 @@ namespace fb
             }
         }
 
-        bool CActor::getNewFlag( u32 flag ) const
+        bool Actor::getNewFlag( u32 flag ) const
         {
             return ( getNewFlags() & flag ) != 0;
         }
 
-        void CActor::setNewFlag( u32 flag, bool value )
+        void Actor::setNewFlag( u32 flag, bool value )
         {
             auto flags = getNewFlags();
             if( value )
@@ -2294,13 +2573,13 @@ namespace fb
             setNewFlags( flags );
         }
 
-        void CActor::updateVisibility()
+        void Actor::updateVisibility()
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
             FB_ASSERT( sceneManager );
             FB_ASSERT( sceneManager->isValid() );
             FB_ASSERT( sceneManager->isLoaded() );
@@ -2331,55 +2610,78 @@ namespace fb
             }
         }
 
-        u32 CActor::getEntity() const
+        u32 Actor::getEntity() const
         {
             return m_entity;
         }
 
-        void CActor::setEntity( u32 entity )
+        void Actor::setEntity( u32 entity )
         {
             m_entity = entity;
         }
 
-        IFSM::ReturnType CActor::ActorFsmListener::handleEvent( u32 state, IFSM::Event eventType )
+        IFSM::ReturnType Actor::ActorFsmListener::handleEvent( u32 state, IFSM::Event eventType )
         {
             FB_ASSERT( m_owner );
             return m_owner->handleActorEvent( state, eventType );
         }
 
-        CActor *CActor::ActorFsmListener::getOwner() const
+        Actor *Actor::ActorFsmListener::getOwner() const
         {
             return m_owner;
         }
 
-        void CActor::ActorFsmListener::setOwner( CActor *owner )
+        void Actor::ActorFsmListener::setOwner( Actor *owner )
         {
             m_owner = owner;
         }
 
-        IFSM::ReturnType CActor::ActorGameFsmListener::handleEvent( u32 state, IFSM::Event eventType )
+        IFSM::ReturnType Actor::ActorGameFsmListener::handleEvent( u32 state, IFSM::Event eventType )
         {
             FB_ASSERT( m_owner );
             return m_owner->handleActorGameEvent( state, eventType );
         }
 
-        CActor *CActor::ActorGameFsmListener::getOwner() const
+        Actor *Actor::ActorGameFsmListener::getOwner() const
         {
             return m_owner;
         }
 
-        void CActor::ActorGameFsmListener::setOwner( CActor *owner )
+        void Actor::ActorGameFsmListener::setOwner( Actor *owner )
         {
             m_owner = owner;
         }
 
-        void CActor::registerClass()
+        void Actor::registerClass()
         {
             using namespace fb;
             using namespace rttr;
 
-            registration::class_<CActor>( "Actor" )
-                .property( "transform", &CActor::m_transform );
+            registration::class_<Actor>( "Actor" ).property( "transform", &Actor::m_transform );
+        }
+
+        template <class T>
+        fb::SmartPtr<T> Actor::removeComponent()
+        {
+            // auto typeinfo = T::typeInfo();
+            // FB_ASSERT(typeinfo);
+
+            // auto iClassType = typeinfo->getHash();
+            // auto it = m_componentsByType.find(iClassType);
+            // if (it != m_componentsByType.end())
+            //{
+            //	auto& components = it->second;
+            //	if (!components.empty())
+            //	{
+            //		auto componentIt = components.begin();
+            //		auto component = (*componentIt);
+            //		components.erase(componentIt);
+            //		rebuildComponentCache();
+            //		return component;
+            //	}
+            // }
+
+            return nullptr;
         }
 
     }  // namespace scene

@@ -83,12 +83,12 @@ namespace fb
             m_function = function;
         }
 
-        SmartPtr<IData> ComponentEventListener::toData() const
+        SmartPtr<ISharedObject> ComponentEventListener::toData() const
         {
             return nullptr;
         }
 
-        void ComponentEventListener::fromData( SmartPtr<IData> data )
+        void ComponentEventListener::fromData( SmartPtr<ISharedObject> data )
         {
         }
 

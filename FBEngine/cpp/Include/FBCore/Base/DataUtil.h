@@ -8,21 +8,6 @@
 #include <FBCore/Memory/SmartPtr.h>
 #include <FBCore/Base/StringTypes.h>
 #include <FBCore/Base/Properties.h>
-//#include <FBCore/Extern/rttr/registration.h>
-//#include <boost/json.hpp>
-
-namespace boost
-{
-    namespace json
-    {
-        class object;
-    }  // namespace json
-}  // namespace boost
-
-namespace rttr
-{
-	class instance;
-}  // namespace rttr
 
 namespace fb
 {
@@ -40,10 +25,11 @@ namespace fb
         template <class T>
         static void parseXML( const String &xmlData, T *ptr );
 
-        static String objectToJsonStr(const rttr::instance &instance);
+        static SmartPtr<Properties> parse( const String &jsonDataStr );
+
+    private:
+        static String objectToJsonStr( const rttr::instance &instance );
     };
-
-
 
 }  // end namespace fb
 

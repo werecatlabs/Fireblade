@@ -4,7 +4,7 @@
 #include <FBCore/Scene/Components/UI/UIComponentUtil.h>
 #include <FBCore/Scene/Components/UI/Layout.h>
 #include <FBCore/Scene/Components/Transform.h>
-#include <FBCore/Scene/CSceneManager.h>
+#include <FBCore/Scene/SceneManager.h>
 #include <FBCore/Scene/Components/UI/Text.h>
 #include <FBCore/Interface/Scene/IActor.h>
 #include <FBCore/Base/LogManager.h>
@@ -212,7 +212,7 @@ namespace fb
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
 
             /*
             if( auto actor = getActor() )
@@ -238,7 +238,7 @@ namespace fb
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<CSceneManager>( pSceneManager );
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
 
             /*
             if( auto actor = getActor() )

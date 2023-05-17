@@ -13,16 +13,15 @@ namespace fb
 {
     namespace scene
     {
-
         /** SceneManager implementation.
         @author	Zane Desir
         @version 1.0
         */
-        class CSceneManager final : public CSharedObject<ISceneManager>
+        class SceneManager : public CSharedObject<ISceneManager>
         {
         public:
-            CSceneManager();
-            ~CSceneManager() override;
+            SceneManager();
+            ~SceneManager() override;
 
             /** @copydoc ISceneManager::load */
             void load( SmartPtr<ISharedObject> data ) override;
@@ -39,7 +38,7 @@ namespace fb
             /** @copydoc ISceneManager::postUpdate */
             void postUpdate() override;
 
-            void loadScene( const String &filePath );
+            void loadScene( const String &filePath ) override;
 
             /** @copydoc ISceneManager::getFsmManager */
             SmartPtr<IFSMManager> getFsmManager() const override;
@@ -54,15 +53,15 @@ namespace fb
             void setCurrentScene( SmartPtr<IScene> scene ) override;
 
             /** @copydoc ISceneManager::getActors */
-            Array<SmartPtr<scene::IActor>> getActors() const;
+            Array<SmartPtr<IActor>> getActors() const override;
 
             /** @copydoc ISceneManager::createActor */
-            SmartPtr<scene::IActor> createActor() override;
+            SmartPtr<IActor> createActor() override;
 
-            SmartPtr<scene::IActor> createDummyActor();
+            SmartPtr<IActor> createDummyActor();
 
             /** @copydoc ISceneManager::destroyActor */
-            void destroyActor( SmartPtr<scene::IActor> actor ) override;
+            void destroyActor( SmartPtr<IActor> actor ) override;
 
             void destroyActors() override;
 
@@ -75,10 +74,10 @@ namespace fb
             u32 addComponent( SmartPtr<IComponent> component ) override;
             u32 removeComponent( SmartPtr<IComponent> component ) override;
 
-            SmartPtr<scene::IActor> getActor( u32 id ) const override;
-            SmartPtr<IActor> getActorByName( const String &name ) const;
+            SmartPtr<IActor> getActor( u32 id ) const override;
+            SmartPtr<IActor> getActorByName( const String &name ) const override;
 
-            SmartPtr<scene::IComponent> getComponent( u32 id ) const override;
+            SmartPtr<IComponent> getComponent( u32 id ) const override;
             SmartPtr<IFSM> getFSM( u32 id ) const;
 
             SmartPtr<ITransform> createTransformComponent();
@@ -99,10 +98,10 @@ namespace fb
             u32 getFlags( u32 id ) const;
             void setFlags( u32 id, u32 flags );
 
-            void addDirty( SmartPtr<scene::IActor> actor );
-            void removeDirty( SmartPtr<scene::IActor> actor );
+            void addDirty( SmartPtr<IActor> actor );
+            void removeDirty( SmartPtr<IActor> actor );
 
-            void addDirtyTransform( SmartPtr<scene::IActor> actor );
+            void addDirtyTransform( SmartPtr<IActor> actor );
             void addDirtyTransform( SmartPtr<ITransform> transform );
 
             void addDirtyComponent( SmartPtr<IComponent> component );
@@ -117,8 +116,12 @@ namespace fb
             /** The current task used for scene. */
             Thread::Task getSceneTask() const override;
 
-            Array<SmartPtr<scene::IComponent>> getComponents() const;
-            Array<SmartPtr<IComponent>> getComponents( u32 type ) const;
+            Array<SmartPtr<IComponent>> getComponents() const override;
+            Array<SmartPtr<IComponent>> getComponents( u32 type ) const override;
+
+            Array<SmartPtr<ITransform>>& getTransforms();
+            const Array<SmartPtr<ITransform>>& getTransforms() const;
+            void setTransforms( Array<SmartPtr<ITransform>> transforms );
 
             FB_CLASS_REGISTER_DECL;
 
@@ -127,19 +130,19 @@ namespace fb
 
             SmartPtr<IFSMManager> m_fsmManager;
 
-            SmartPtr<scene::IScene> m_scene;
+            SmartPtr<IScene> m_scene;
 
             ConcurrentQueue<Pair<SmartPtr<ISharedObject>, SmartPtr<Properties>>> m_queueProperties;
 
-            ConcurrentQueue<SmartPtr<scene::IActor>> m_dirtyActors;
-            ConcurrentQueue<SmartPtr<scene::IComponent>> m_dirtyComponents;
-            ConcurrentQueue<SmartPtr<scene::IComponent>> m_dirtyComponentTransforms;
-            ConcurrentQueue<SmartPtr<scene::IActor>> m_dirtyTransforms;
+            ConcurrentQueue<SmartPtr<IActor>> m_dirtyActors;
+            ConcurrentQueue<SmartPtr<IComponent>> m_dirtyComponents;
+            ConcurrentQueue<SmartPtr<IComponent>> m_dirtyComponentTransforms;
+            ConcurrentQueue<SmartPtr<IActor>> m_dirtyTransforms;
             ConcurrentQueue<SmartPtr<ITransform>> m_dirtyActorTransforms;
 
-            UnorderedMap<u32, Array<SmartPtr<scene::IComponent>>> m_components;
+            UnorderedMap<u32, Array<SmartPtr<IComponent>>> m_components;
 
-            Array<SmartPtr<Transform>> m_transforms;
+            Array<SmartPtr<ITransform>> m_transforms;
 
             Array<SmartPtr<IActor>> m_actors;
             Array<LoadingState> m_actorLoadingStates;
@@ -165,8 +168,7 @@ namespace fb
 
             atomic_u32 m_numActors = 0;
         };
-
-    }  // namespace scene
-}  // end namespace fb
+    } // namespace scene
+}     // end namespace fb
 
 #endif  // CSceneManager_h__
