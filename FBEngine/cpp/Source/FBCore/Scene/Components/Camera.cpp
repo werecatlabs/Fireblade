@@ -38,7 +38,7 @@ namespace fb
                 auto window = graphicsSystem->getDefaultWindow();
                 FB_ASSERT( window );
 
-                auto smgr = graphicsSystem->getSceneManager();
+                auto smgr = graphicsSystem->getGraphicsScene();
                 FB_ASSERT( smgr );
 
                 auto cameraName = String( "CameraComponent" ) + StringUtil::toString( m_nameExt++ );
@@ -105,7 +105,7 @@ namespace fb
                         auto window = graphicsSystem->getDefaultWindow();
                         FB_ASSERT( window );
 
-                        auto smgr = graphicsSystem->getSceneManager();
+                        auto smgr = graphicsSystem->getGraphicsScene();
                         FB_ASSERT( smgr );
 
                         m_editorTexture = nullptr;
@@ -302,7 +302,7 @@ namespace fb
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             FB_ASSERT( graphicsSystem );
 
-            auto smgr = graphicsSystem->getSceneManager();
+            auto smgr = graphicsSystem->getGraphicsScene();
             FB_ASSERT( smgr );
 
             if( active )
@@ -362,7 +362,7 @@ namespace fb
                     auto graphicsSystem = applicationManager->getGraphicsSystem();
                     FB_ASSERT( graphicsSystem );
 
-                    auto smgr = graphicsSystem->getSceneManager();
+                    auto smgr = graphicsSystem->getGraphicsScene();
                     FB_ASSERT( smgr );
 
                     // auto activeCamera = smgr->getActiveCamera();
@@ -508,7 +508,7 @@ namespace fb
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             FB_ASSERT( graphicsSystem );
 
-            auto smgr = graphicsSystem->getSceneManager();
+            auto smgr = graphicsSystem->getGraphicsScene();
             FB_ASSERT( smgr );
 
             auto cameraManager = applicationManager->getCameraManager();
@@ -534,7 +534,7 @@ namespace fb
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             FB_ASSERT( graphicsSystem );
 
-            auto smgr = graphicsSystem->getSceneManager();
+            auto smgr = graphicsSystem->getGraphicsScene();
             FB_ASSERT( smgr );
 
             auto cameraManager = applicationManager->getCameraManager();

@@ -9,6 +9,8 @@
 #include <FBCore/Base/CoreUtil.h>
 #include <rttr/registration>
 
+#include "FBApplication/ApplicationUtil.h"
+
 namespace fb
 {
     namespace scene
@@ -517,8 +519,8 @@ namespace fb
             }
         }
 
-        fb::SharedPtr<fb::ConcurrentArray<fb::SmartPtr<fb::scene::IComponent>>>
-        Actor::getComponentsPtr() const
+        fb::SharedPtr<fb::ConcurrentArray<fb::SmartPtr<fb::scene::IComponent>>> Actor::getComponentsPtr()
+            const
         {
             return m_components;
         }
@@ -1571,7 +1573,7 @@ namespace fb
         }
 
         void Actor::registerComponentUpdate( Thread::Task taskId, Thread::UpdateState updateType,
-                                              SmartPtr<IComponent> object )
+                                             SmartPtr<IComponent> object )
         {
             auto p = getRegisteredComponents( updateType, taskId );
             if( p )
@@ -1599,7 +1601,7 @@ namespace fb
         }
 
         void Actor::unregisterComponentUpdate( Thread::Task taskId, Thread::UpdateState updateType,
-                                                SmartPtr<IComponent> object )
+                                               SmartPtr<IComponent> object )
         {
             auto p = getRegisteredComponents( updateType, taskId );
             if( p )
@@ -1774,7 +1776,7 @@ namespace fb
         }
 
         void Actor::addDirtyComponent( Thread::Task taskId, Thread::UpdateState updateType,
-                                        SmartPtr<IComponent> component )
+                                       SmartPtr<IComponent> component )
         {
             // auto dirtyComponent = m_lastDirtyComponent[(int)updateType][(int)taskId];
             // if (!dirtyComponent)
@@ -1793,8 +1795,8 @@ namespace fb
         }
 
         bool Actor::isComponentSiblingDirty( SmartPtr<IComponent> sibling, Thread::Task taskId,
-                                              Thread::UpdateState updateType,
-                                              SmartPtr<IComponent> component )
+                                             Thread::UpdateState updateType,
+                                             SmartPtr<IComponent> component )
         {
             // if (sibling == component)
             //{
@@ -1814,7 +1816,7 @@ namespace fb
         }
 
         bool Actor::isComponentDirty( Thread::Task taskId, Thread::UpdateState updateType,
-                                       SmartPtr<IComponent> component )
+                                      SmartPtr<IComponent> component )
         {
             // auto dirtyComponent = m_dirtyComponent[(int)updateType][(int)taskId];
             // if (dirtyComponent == component)
@@ -1841,9 +1843,8 @@ namespace fb
             return nullptr;
         }
 
-        void Actor::setRegisteredComponents(
-            Thread::UpdateState updateState, Thread::Task task,
-            boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> p )
+        void Actor::setRegisteredComponents( Thread::UpdateState updateState, Thread::Task task,
+                                             boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> p )
         {
             // FB_ASSERT((size_t)updateState < m_updateComponents.size());
             // FB_ASSERT((size_t)task < m_updateComponents[(int)updateState].size());
@@ -2343,8 +2344,14 @@ namespace fb
 
         void Actor::setProperties( SmartPtr<Properties> properties )
         {
-            auto name = String( "" );
-            properties->getPropertyValue( "name", name );
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto factoryManager = applicationManager->getFactoryManager();
+            auto sceneManager = applicationManager->getSceneManager();
+
+            auto name = String();
+            properties->getPropertyValue( "label", name );
             setName( name );
 
             bool bIsStatic = false;
@@ -2354,16 +2361,117 @@ namespace fb
             auto enabled = isEnabled();
             properties->getPropertyValue( "isEnabled", enabled );
             setEnabled( enabled );
-        }
 
-        SmartPtr<IStateContext> Actor::getStateObject() const
-        {
-            return m_stateObject;
-        }
+            if( auto handle = getHandle() )
+            {
+                auto uuid = String();
+                if( properties->getPropertyValue( "uuid", uuid ) )
+                {
+                    if( StringUtil::isNullOrEmpty( uuid ) )
+                    {
+                        uuid = StringUtil::getUUID();
+                    }
 
-        void Actor::setStateObject( SmartPtr<IStateContext> stateObject )
-        {
-            m_stateObject = stateObject;
+                    handle->setUUID( uuid );
+                }
+            }
+
+            if( auto transform = getTransform() )
+            {
+                auto localTransformChild = properties->getChild( "localTransform" );
+                auto localTransform = transform->getLocalTransform();
+                localTransform.setProperties( localTransformChild );
+
+                auto worldTransformChild = properties->getChild( "worldTransform" );
+                auto worldTransform = transform->getWorldTransform();
+                worldTransform.setProperties( properties );
+
+                transform->setLocalTransform( localTransform );
+                transform->setWorldTransform( worldTransform );
+            }
+
+            auto componentsData = properties->getChildrenByName( "components" );
+
+            auto components = Array<SmartPtr<IComponent>>();
+            components.reserve( componentsData.size() );
+
+            for( auto componentData : componentsData )
+            {
+                auto componentType = String();
+                componentData->getPropertyValue( "componentType", componentType );
+
+                auto pComponent = factoryManager->createObjectFromType<Component>( componentType );
+                if( !pComponent )
+                {
+                    componentType = StringUtil::replaceAll( componentType, "fb::", "" );
+                    pComponent = factoryManager->createObjectFromType<IComponent>( componentType );
+                }
+
+                if( !pComponent )
+                {
+                    componentType = ApplicationUtil::getComponentFactoryType( componentType );
+                    pComponent = factoryManager->createObjectFromType<IComponent>( componentType );
+                }
+
+                if( pComponent )
+                {
+                    components.push_back( pComponent );
+                }
+            }
+
+            for( size_t i = 0; i < components.size(); ++i )
+            {
+                try
+                {
+                    auto &pComponent = components[i];
+                    addComponentInstance( pComponent );
+                }
+                catch( std::exception &e )
+                {
+                    FB_LOG_EXCEPTION( e );
+                }
+            }
+
+            //FB_ASSERT( components.size() == componentsData.size() );
+
+            for( size_t i = 0; i < components.size(); ++i )
+            {
+                try
+                {
+                    auto &pComponent = components[i];
+                    auto &componentData = componentsData[i];
+
+                    if( pComponent )
+                    {
+                        pComponent->setActor( this );
+
+                        pComponent->fromData( componentData );
+
+                        pComponent->load( nullptr );
+                        componentLoaded( pComponent );
+                    }
+                }
+                catch( std::exception &e )
+                {
+                    FB_LOG_EXCEPTION( e );
+                }
+            }
+
+            auto childrenData = properties->getChildrenByName( "children" );
+            for( auto &childData : childrenData )
+            {
+                auto childActor = sceneManager->createActor();
+                FB_ASSERT( childActor );
+
+                childActor->setProperties( childData );
+                addChild( childActor );
+
+                //FB_ASSERT( childActor->getChildren()->size() == childrenData.size() );
+                // FB_ASSERT(childActor->getComponents<IComponent>().size() ==
+                // child.components.size());
+            }
+
+            updateTransform();
         }
 
         void Actor::setState( State state )

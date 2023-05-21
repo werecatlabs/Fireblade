@@ -25,7 +25,22 @@ namespace fb
         template <class T>
         static void parseXML( const String &xmlData, T *ptr );
 
-        static SmartPtr<Properties> parse( const String &jsonDataStr );
+        /** Parses a JSON string into a Properties object. */
+        static SmartPtr<Properties> parseJson( const String &jsonDataStr );
+
+        /** Parses a JSON string into a Properties object. Expects the JSON string to for a properties object.
+         */
+        static SmartPtr<Properties> parsePropertiesFromJson( const String &jsonDataStr );
+
+        static void parse( SmartPtr<Properties> properties, Vector2F &value );
+
+        static void parse( SmartPtr<Properties> properties, Vector3F &value );
+
+        static void parse( SmartPtr<Properties> properties, Vector4F &value );
+
+        static void parse( SmartPtr<Properties> properties, QuaternionF &value );
+
+        static void parse( SmartPtr<Properties> properties, ColourF &value );
 
     private:
         static String objectToJsonStr( const rttr::instance &instance );

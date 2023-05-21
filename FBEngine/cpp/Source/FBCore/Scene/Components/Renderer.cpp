@@ -64,7 +64,7 @@ namespace fb
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
                 if( graphicsSystem )
                 {
-                    auto smgr = graphicsSystem->getSceneManager();
+                    auto smgr = graphicsSystem->getGraphicsScene();
                     FB_ASSERT( smgr );
 
                     auto rootNode = smgr->getRootSceneNode();
@@ -205,7 +205,7 @@ namespace fb
                     auto graphicsSystem = applicationManager->getGraphicsSystem();
                     if( graphicsSystem )
                     {
-                        auto smgr = graphicsSystem->getSceneManager();
+                        auto smgr = graphicsSystem->getGraphicsScene();
                         FB_ASSERT( smgr );
 
                         auto graphicsNode = getGraphicsNode();

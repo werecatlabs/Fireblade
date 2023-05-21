@@ -75,7 +75,7 @@ namespace fb
              * @param name The name of the scene manager to create.
              * @return A pointer to the newly created scene manager.
              */
-            virtual SmartPtr<IGraphicsScene> addSceneManager( const String &type,
+            virtual SmartPtr<IGraphicsScene> addGraphicsScene( const String &type,
                                                              const String &name ) = 0;
 
             /**
@@ -83,7 +83,7 @@ namespace fb
              *
              * @return A pointer to the default scene manager.
              */
-            virtual SmartPtr<IGraphicsScene> getSceneManager() const = 0;
+            virtual SmartPtr<IGraphicsScene> getGraphicsScene() const = 0;
 
             /**
              * Gets a scene manager by name.
@@ -91,7 +91,7 @@ namespace fb
              * @param name The name of the scene manager to retrieve.
              * @return A pointer to the specified scene manager, or nullptr if not found.
              */
-            virtual SmartPtr<IGraphicsScene> getSceneManager( const String &name ) const = 0;
+            virtual SmartPtr<IGraphicsScene> getGraphicsScene( const String &name ) const = 0;
 
             /**
              * Gets a scene manager by ID.
@@ -99,7 +99,7 @@ namespace fb
              * @param id The ID of the scene manager to retrieve.
              * @return A pointer to the specified scene manager, or nullptr if not found.
              */
-            virtual SmartPtr<IGraphicsScene> getSceneManagerById( hash32 id ) const = 0;
+            virtual SmartPtr<IGraphicsScene> getGraphicsSceneById( hash32 id ) const = 0;
 
             /**
              * Gets the overlay manager.

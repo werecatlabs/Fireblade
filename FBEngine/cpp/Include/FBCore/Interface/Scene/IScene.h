@@ -207,7 +207,7 @@ namespace fb
         {
             FB_ASSERT( isValid() );
 
-            auto actors = getActors();
+            const auto actors = getActors();
             for( auto actor : actors )
             {
                 if( actor )
@@ -230,7 +230,7 @@ namespace fb
             Array<SmartPtr<T>> components;
             components.reserve( 10 );
 
-            auto actors = getActors();
+            const auto actors = getActors();
             for( auto actor : actors )
             {
                 if( actor )

@@ -161,25 +161,25 @@ namespace fb
                                                                       const String &name )
         {
             auto graphicsSystem = getGraphicsSystem();
-            return graphicsSystem->addSceneManager( type, name );
+            return graphicsSystem->addGraphicsScene( type, name );
         }
 
         SmartPtr<IGraphicsScene> GraphicsSystemState::getSceneManager() const
         {
             auto graphicsSystem = getGraphicsSystem();
-            return graphicsSystem->getSceneManager();
+            return graphicsSystem->getGraphicsScene();
         }
 
         SmartPtr<IGraphicsScene> GraphicsSystemState::getSceneManager( const String &name ) const
         {
             auto graphicsSystem = getGraphicsSystem();
-            return graphicsSystem->getSceneManager( name );
+            return graphicsSystem->getGraphicsScene( name );
         }
 
         SmartPtr<IGraphicsScene> GraphicsSystemState::getSceneManagerById( hash32 id ) const
         {
             auto graphicsSystem = getGraphicsSystem();
-            return graphicsSystem->getSceneManagerById( id );
+            return graphicsSystem->getGraphicsSceneById( id );
         }
 
         SmartPtr<IResourceGroupManager> GraphicsSystemState::getResourceGroupManager() const

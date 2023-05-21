@@ -40,10 +40,70 @@ SmartPtr<Properties> fromObject( const boost::json::object &obj )
 {
     auto properties = fb::make_ptr<Properties>();
 
+    bool isPropertyName = false;
+    bool isPropertyValue = false;
+
+    Property property;
+
     for( const auto &member : obj )
     {
         std::string key = member.key();
         const boost::json::value &value = member.value();
+
+        /*
+        if( key == "name" )
+        {
+            isPropertyName = true;
+
+            if( value.is_string() )
+            {
+                std::string val = value.as_string().c_str();
+                property.setName( val );
+            }
+        }
+        else if( key == "value" )
+        {
+            isPropertyValue = true;
+
+            if( value.is_string() )
+            {
+                std::string val = value.as_string().c_str();
+                //properties->setProperty( key, val );
+                property.setValue( val );
+                property.setType( "string" );
+            }
+            else if( value.is_int64() )
+            {
+                auto val = value.as_int64();
+                //properties->setProperty( key, (s32)val );
+
+                auto valueStr = StringUtil::toString( val );
+                property.setValue( valueStr );
+                property.setType( "int" );
+            }
+            else if( value.is_double() )
+            {
+                double val = value.as_double();
+                //properties->setProperty( key, val );
+
+                auto valueStr = StringUtil::toString( val );
+                property.setValue( valueStr );
+                property.setType( "double" );
+            }
+            else if( value.is_bool() )
+            {
+                bool val = value.as_bool();
+                //properties->setProperty( key, val );
+
+                auto valueStr = StringUtil::toString( val );
+                property.setValue( valueStr );
+                property.setType( "bool" );
+            }
+        }
+        else if( key == "attribute" )
+        {
+        }
+        */
 
         if( value.is_string() )
         {
@@ -90,10 +150,134 @@ SmartPtr<Properties> fromObject( const boost::json::object &obj )
         }
     }
 
+    if( isPropertyName && isPropertyValue )
+    {
+        properties->addProperty( property );
+    }
+
     return properties;
 }
 
-SmartPtr<Properties> DataUtil::parse( const String &jsonDataStr )
+SmartPtr<Properties> propertiesFromObject( const boost::json::object &obj )
+{
+    auto properties = fb::make_ptr<Properties>();
+
+    bool isPropertyName = false;
+    bool isPropertyValue = false;
+
+    Property property;
+
+    for( const auto &member : obj )
+    {
+        std::string key = member.key();
+        const boost::json::value &value = member.value();
+
+        if( key == "name" )
+        {
+            isPropertyName = true;
+
+            if( value.is_string() )
+            {
+                std::string val = value.as_string().c_str();
+                property.setName( val );
+            }
+        }
+        else if( key == "value" )
+        {
+            isPropertyValue = true;
+
+            if( value.is_string() )
+            {
+                std::string val = value.as_string().c_str();
+                //properties->setProperty( key, val );
+                property.setValue( val );
+                property.setType( "string" );
+            }
+            else if( value.is_int64() )
+            {
+                auto val = value.as_int64();
+                //properties->setProperty( key, (s32)val );
+
+                auto valueStr = StringUtil::toString( val );
+                property.setValue( valueStr );
+                property.setType( "int" );
+            }
+            else if( value.is_double() )
+            {
+                double val = value.as_double();
+                //properties->setProperty( key, val );
+
+                auto valueStr = StringUtil::toString( val );
+                property.setValue( valueStr );
+                property.setType( "double" );
+            }
+            else if( value.is_bool() )
+            {
+                bool val = value.as_bool();
+                //properties->setProperty( key, val );
+
+                auto valueStr = StringUtil::toString( val );
+                property.setValue( valueStr );
+                property.setType( "bool" );
+            }
+        }
+        else if( key == "attribute" )
+        {
+        }
+        else if( value.is_string() )
+        {
+            std::string val = value.as_string().c_str();
+            properties->setProperty( key, val );
+        }
+        else if( value.is_int64() )
+        {
+            auto val = value.as_int64();
+            properties->setProperty( key, (s32)val );
+        }
+        else if( value.is_double() )
+        {
+            double val = value.as_double();
+            properties->setProperty( key, val );
+        }
+        else if( value.is_bool() )
+        {
+            bool val = value.as_bool();
+            properties->setProperty( key, val );
+        }
+        else if( value.is_object() )
+        {
+            auto val = value.as_object();
+            auto child = propertiesFromObject( val );
+
+            child->setName( key );
+            properties->addChild( child );
+        }
+        else if( value.is_array() )
+        {
+            boost::json::array jsonArray = value.as_array();
+            for( const auto &element : jsonArray )
+            {
+                if( element.is_object() )
+                {
+                    const auto &childObj = element.as_object();
+                    auto child = propertiesFromObject( childObj );
+
+                    child->setName( key );
+                    properties->addChild( child );
+                }
+            }
+        }
+    }
+
+    if( isPropertyName && isPropertyValue )
+    {
+        properties->addProperty( property );
+    }
+
+    return properties;
+}
+
+SmartPtr<Properties> DataUtil::parseJson( const String &jsonDataStr )
 {
     auto jsonData = boost::json::parse( jsonDataStr );
 
@@ -101,6 +285,19 @@ SmartPtr<Properties> DataUtil::parse( const String &jsonDataStr )
     {
         const boost::json::object &obj = jsonData.as_object();
         return fromObject( obj );
+    }
+
+    return nullptr;
+}
+
+SmartPtr<Properties> DataUtil::parsePropertiesFromJson( const String &jsonDataStr )
+{
+    auto jsonData = boost::json::parse( jsonDataStr );
+
+    if( jsonData.is_object() )
+    {
+        const boost::json::object &obj = jsonData.as_object();
+        return propertiesFromObject( obj );
     }
 
     return nullptr;
@@ -248,6 +445,43 @@ namespace fb
         //} );
 
         return j;
+    }
+
+    void DataUtil::parse( SmartPtr<Properties> properties, ColourF &value )
+    {
+        value.r = properties->getPropertyAsFloat( "r" );
+        value.g = properties->getPropertyAsFloat( "g" );
+        value.b = properties->getPropertyAsFloat( "b" );
+        value.a = properties->getPropertyAsFloat( "a" );
+    }
+
+    void DataUtil::parse( SmartPtr<Properties> properties, QuaternionF &value )
+    {
+        value.x = properties->getPropertyAsFloat( "x" );
+        value.y = properties->getPropertyAsFloat( "y" );
+        value.z = properties->getPropertyAsFloat( "z" );
+        value.w = properties->getPropertyAsFloat( "w" );
+    }
+
+    void DataUtil::parse( SmartPtr<Properties> properties, Vector4F &value )
+    {
+        value.x = properties->getPropertyAsFloat( "x" );
+        value.y = properties->getPropertyAsFloat( "y" );
+        value.z = properties->getPropertyAsFloat( "z" );
+        value.w = properties->getPropertyAsFloat( "w" );
+    }
+
+    void DataUtil::parse( SmartPtr<Properties> properties, Vector3F &value )
+    {
+        value.x = properties->getPropertyAsFloat( "x" );
+        value.y = properties->getPropertyAsFloat( "y" );
+        value.z = properties->getPropertyAsFloat( "z" );
+    }
+
+    void DataUtil::parse( SmartPtr<Properties> properties, Vector2F &value )
+    {
+        value.x = properties->getPropertyAsFloat( "x" );
+        value.y = properties->getPropertyAsFloat( "y" );
     }
 
     String DataUtil::objectToJsonStr( const rttr::instance &instance )

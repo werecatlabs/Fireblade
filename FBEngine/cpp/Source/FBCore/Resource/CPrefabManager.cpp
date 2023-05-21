@@ -147,7 +147,7 @@ namespace fb
             {
                 auto jsonStr = fileSystem->readAllText( filePath );
 
-                auto data = DataUtil::parse( jsonStr );
+                auto data = DataUtil::parseJson( jsonStr );
 
                 auto actor = loadActor( data, nullptr );
                 //actor->updateTransform();

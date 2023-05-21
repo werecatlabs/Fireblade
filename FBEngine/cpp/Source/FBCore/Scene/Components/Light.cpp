@@ -34,7 +34,7 @@ namespace fb
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
                 if( graphicsSystem )
                 {
-                    auto smgr = graphicsSystem->getSceneManager();
+                    auto smgr = graphicsSystem->getGraphicsScene();
                     FB_ASSERT( smgr );
 
                     auto name = String( "Light" ) + StringUtil::toString( m_nameExt++ );
@@ -78,7 +78,7 @@ namespace fb
                     auto graphicsSystem = applicationManager->getGraphicsSystem();
                     if( graphicsSystem )
                     {
-                        auto smgr = graphicsSystem->getSceneManager();
+                        auto smgr = graphicsSystem->getGraphicsScene();
                         FB_ASSERT( smgr );
 
                         if( auto light = getLight() )
@@ -119,7 +119,7 @@ namespace fb
 
                 if( auto graphicsSystem = applicationManager->getGraphicsSystem() )
                 {
-                    auto smgr = graphicsSystem->getSceneManager();
+                    auto smgr = graphicsSystem->getGraphicsScene();
                     FB_ASSERT( smgr );
 
                     auto rootNode = smgr->getRootSceneNode();

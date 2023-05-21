@@ -88,14 +88,42 @@ namespace fb
     template <class T>
     void Transform3<T>::setProperties( SmartPtr<Properties> properties )
     {
-        properties->getPropertyValue( "Position", m_position );
+        if( auto child = properties->getChild( "position" ) )
+        {
+            child->getPropertyValue( "x", m_position.x );
+            child->getPropertyValue( "y", m_position.y );
+            child->getPropertyValue( "z", m_position.z );
+        }
+        else
+        {
+            properties->getPropertyValue( "Position", m_position );
+        }
 
         Vector3<T> rotation;
-        properties->getPropertyValue( "Rotation", rotation );
+
+        if( auto child = properties->getChild( "rotation" ) )
+        {
+            child->getPropertyValue( "x", rotation.x );
+            child->getPropertyValue( "y", rotation.y );
+            child->getPropertyValue( "z", rotation.z );
+        }
+        else
+        {
+            properties->getPropertyValue( "Rotation", rotation );
+        }
 
         m_orientation.fromDegrees( rotation );
 
-        properties->getPropertyValue( "Scale", m_scale );
+        if( auto child = properties->getChild( "scale" ) )
+        {
+            child->getPropertyValue( "x", m_scale.x );
+            child->getPropertyValue( "y", m_scale.y );
+            child->getPropertyValue( "z", m_scale.z );
+        }
+        else
+        {
+            properties->getPropertyValue( "Scale", m_scale );
+        }
     }
 
     template <class T>

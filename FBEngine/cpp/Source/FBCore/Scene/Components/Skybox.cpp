@@ -41,7 +41,7 @@ namespace fb
                 {
                     if(auto actor = getActor())
                     {
-                        auto smgr = graphicsSystem->getSceneManager();
+                        auto smgr = graphicsSystem->getGraphicsScene();
                         FB_ASSERT( smgr );
 
                         auto visible = actor->isEnabledInScene();
@@ -76,7 +76,7 @@ namespace fb
                     {
                         if(auto actor = getActor())
                         {
-                            auto smgr = graphicsSystem->getSceneManager();
+                            auto smgr = graphicsSystem->getGraphicsScene();
                             FB_ASSERT( smgr );
 
                             auto distance = getDistance();
@@ -119,7 +119,7 @@ namespace fb
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
                 if(graphicsSystem)
                 {
-                    auto smgr = graphicsSystem->getSceneManager();
+                    auto smgr = graphicsSystem->getGraphicsScene();
                     FB_ASSERT( smgr );
 
                     auto rootNode = smgr->getRootSceneNode();
@@ -136,7 +136,7 @@ namespace fb
 
                             if(graphicsSystem)
                             {
-                                auto smgr = graphicsSystem->getSceneManager();
+                                auto smgr = graphicsSystem->getGraphicsScene();
                                 FB_ASSERT( smgr );
 
                                 auto distance = getDistance();
@@ -166,7 +166,7 @@ namespace fb
 
                             if(graphicsSystem)
                             {
-                                auto smgr = graphicsSystem->getSceneManager();
+                                auto smgr = graphicsSystem->getGraphicsScene();
                                 FB_ASSERT( smgr );
 
                                 auto distance = getDistance();
@@ -196,7 +196,7 @@ namespace fb
 
                             if(graphicsSystem)
                             {
-                                auto smgr = graphicsSystem->getSceneManager();
+                                auto smgr = graphicsSystem->getGraphicsScene();
                                 FB_ASSERT( smgr );
 
                                 auto distance = getDistance();
@@ -295,7 +295,7 @@ namespace fb
                     auto graphicsSystem = applicationManager->getGraphicsSystem();
                     if(graphicsSystem)
                     {
-                        auto smgr = graphicsSystem->getSceneManager();
+                        auto smgr = graphicsSystem->getGraphicsScene();
                         FB_ASSERT( smgr );
 
                         auto distance = getDistance();
@@ -323,7 +323,7 @@ namespace fb
 
                     auto graphicsSystem = applicationManager->getGraphicsSystem();
 
-                    auto smgr = graphicsSystem->getSceneManager();
+                    auto smgr = graphicsSystem->getGraphicsScene();
                     FB_ASSERT( smgr );
 
                     auto visible = actor->isVisible();
@@ -375,7 +375,7 @@ namespace fb
                         auto graphicsSystem = applicationManager->getGraphicsSystem();
                         if(graphicsSystem)
                         {
-                            auto smgr = graphicsSystem->getSceneManager();
+                            auto smgr = graphicsSystem->getGraphicsScene();
                             FB_ASSERT( smgr );
 
                             auto visible = actor->isEnabledInScene();
@@ -397,7 +397,7 @@ namespace fb
                     auto graphicsSystem = applicationManager->getGraphicsSystem();
                     if(graphicsSystem)
                     {
-                        auto smgr = graphicsSystem->getSceneManager();
+                        auto smgr = graphicsSystem->getGraphicsScene();
                         FB_ASSERT( smgr );
 
                         auto distance = getDistance();

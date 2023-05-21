@@ -11,6 +11,7 @@
 #include <FBCore/Interface/System/ITaskManager.h>
 #include <FBCore/Interface/System/IThreadPool.h>
 #include <FBCore/Base/Path.h>
+#include <FBCore/Base/LogManager.h>
 
 #include <FBCore/Scene/Components/CollisionBox.h>
 #include <FBCore/Scene/Components/Mesh.h>

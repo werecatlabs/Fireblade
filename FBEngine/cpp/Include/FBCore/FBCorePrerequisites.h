@@ -593,7 +593,12 @@ namespace fb
     class BoxShapeState;
     class GraphicsMeshState;
     class GraphicsObjectState;
-    class GraphicsSystemState;
+
+    namespace render
+    {
+        class GraphicsSystemState;
+    }
+
     class LightState;
     class MaterialPassState;
     class MeshShapeState;

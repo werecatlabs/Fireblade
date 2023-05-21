@@ -5,7 +5,6 @@
 #include <FBCore/Interface/Scene/IScene.h>
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Interface/Scene/IActor.h>
-#include <FBCore/Base/LogManager.h>
 #include <FBCore/Base/Array.h>
 #include <FBCore/Base/ConcurrentArray.h>
 #include <FBCore/Base/ConcurrentQueue.h>
@@ -16,12 +15,14 @@ namespace fb
 {
     namespace scene
     {
-
         /** Scene implementation. */
         class Scene : public CSharedObject<IScene>
         {
         public:
+            /** Constructor. */
             Scene();
+
+            /** Destructor. */
             ~Scene() override;
 
             /** @copydoc IScene::loadScene */
@@ -48,8 +49,6 @@ namespace fb
             /** @copydoc IScene::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            void clearCache();
-
             /** @copydoc IScene::preUpdate */
             void preUpdate() override;
 
@@ -59,47 +58,48 @@ namespace fb
             /** @copydoc IScene::postUpdate */
             void postUpdate() override;
 
-            ConcurrentArray<SmartPtr<scene::IActor>> getUpdateArray( Thread::UpdateState updateState,
-                                                                     int task );
+            SharedPtr<ConcurrentArray<SmartPtr<IActor>>> getUpdateArray( Thread::UpdateState updateState,
+                s32 task );
 
-            void addActor( SmartPtr<scene::IActor> actor ) override;
-            void removeActor( SmartPtr<scene::IActor> actor ) override;
+            void addActor( SmartPtr<IActor> actor ) override;
+            void removeActor( SmartPtr<IActor> actor ) override;
             void removeAllActors() override;
 
-            SmartPtr<scene::IActor> findActorById( int id ) const override;
-            Array<SmartPtr<scene::IActor>> getActors() const override;
+            SmartPtr<IActor> findActorById( int id ) const override;
+            Array<SmartPtr<IActor>> getActors() const override;
 
             void clear() override;
 
-            void destroyOnLoad();
+            void registerAllUpdates( SmartPtr<IActor> actor ) override;
 
-            void registerAllUpdates( SmartPtr<scene::IActor> actor ) override;
-
-            void registerUpdates( Thread::Task taskId, SmartPtr<scene::IActor> actor ) override;
+            void registerUpdates( Thread::Task taskId, SmartPtr<IActor> actor ) override;
             void registerUpdate( Thread::Task taskId, Thread::UpdateState updateType,
-                                 SmartPtr<scene::IActor> object ) override;
+                                 SmartPtr<IActor> object ) override;
+
+            void unregisterUpdate( Thread::Task taskId, Thread::UpdateState updateType,
+                                   SmartPtr<IActor> object ) override;
+            void unregisterAll( SmartPtr<IActor> object ) override;
+            void refreshRegistration( SmartPtr<IActor> object );
+
+            SharedPtr<ConcurrentArray<SmartPtr<IActor>>> getRegisteredObjects(
+                Thread::UpdateState updateState, Thread::Task task ) const;
+            void setRegisteredObjects( Thread::UpdateState updateState, Thread::Task task,
+                                       SharedPtr<ConcurrentArray<SmartPtr<IActor>>> objects );
 
             void sortObjects();
 
-            void unregisterUpdate( Thread::Task taskId, Thread::UpdateState updateType,
-                                   SmartPtr<scene::IActor> object ) override;
-            void unregisterAll( SmartPtr<scene::IActor> object ) override;
-            void refreshRegistration( SmartPtr<scene::IActor> object );
-
-            boost::shared_ptr<ConcurrentArray<SmartPtr<scene::IActor>>> getRegisteredObjects(
-                Thread::UpdateState updateState, Thread::Task task ) const;
-            void setRegisteredObjects(
-                Thread::UpdateState updateState, Thread::Task task,
-                boost::shared_ptr<ConcurrentArray<SmartPtr<scene::IActor>>> objects );
-
             bool isValid() const override;
 
-            String getFilePath() const override;
-            void setFilePath( const String &val ) override;
+            SmartPtr<ISharedObject> toData() const override;
 
-            void play();
-            void edit();
-            void stop();
+            void fromData( SmartPtr<ISharedObject> data ) override;
+
+            String getFilePath() const override;
+            void setFilePath( const String &filePath ) override;
+
+            void play() override;
+            void edit() override;
+            void stop() override;
 
             /** Sets the component state. */
             void setState( State state ) override;
@@ -116,11 +116,14 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
+            void destroyOnLoad();
+
+            void clearCache();
             void setupCache();
 
-            SharedPtr<Array<SmartPtr<scene::IActor>>> getActorsPtr() const;
+            SharedPtr<Array<SmartPtr<IActor>>> getActorsPtr() const;
 
-            void setActorsPtr( SharedPtr<Array<SmartPtr<scene::IActor>>> ptr );
+            void setActorsPtr( SharedPtr<Array<SmartPtr<IActor>>> ptr );
 
             State m_state;
             SceneLoadingState m_sceneLoadingState;
@@ -130,17 +133,16 @@ namespace fb
             String m_filePath;
             String m_name;
 
-            ConcurrentQueue<SmartPtr<scene::IActor>> m_playQueue;
-            ConcurrentQueue<SmartPtr<scene::IActor>> m_editQueue;
+            ConcurrentQueue<SmartPtr<IActor>> m_playQueue;
+            ConcurrentQueue<SmartPtr<IActor>> m_editQueue;
 
-            AtomicSharedPtr<Array<SmartPtr<scene::IActor>>> m_actors;
-            FixedArray<FixedArray<SharedPtr<ConcurrentArray<SmartPtr<scene::IActor>>>,
-                                  static_cast<int>( Thread::Task::Count )>,
-                       static_cast<int>( Thread::UpdateState::Count )>
-                m_updateObjects;
+            AtomicSharedPtr<Array<SmartPtr<IActor>>> m_actors;
+            FixedArray<FixedArray<SharedPtr<ConcurrentArray<SmartPtr<IActor>>>,
+                                  static_cast<s32>(Thread::Task::Count)>,
+                       static_cast<s32>(Thread::UpdateState::Count)>
+            m_updateObjects;
         };
-
-    }  // namespace scene
-}  // namespace fb
+    } // namespace scene
+}     // namespace fb
 
 #endif  // Scene_h__

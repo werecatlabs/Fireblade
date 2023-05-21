@@ -384,7 +384,7 @@ namespace fb
             {
                 if( graphicsSystem )
                 {
-                    auto smgr = graphicsSystem->getSceneManager();
+                    auto smgr = graphicsSystem->getGraphicsScene();
                     FB_ASSERT( graphicsSystem );
 
                     auto materialManager = graphicsSystem->getMaterialManager();

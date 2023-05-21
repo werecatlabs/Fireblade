@@ -289,6 +289,23 @@ namespace fb
         return nullptr;
     }
 
+    Array<SmartPtr<Properties>> Properties::getChildrenByName( const String &name ) const
+    {
+        Array<SmartPtr<Properties>> children;
+        children.reserve( m_children.size() );
+
+        for( auto &child : m_children )
+        {
+            const auto childName = child->getName();
+            if( name == childName )
+            {
+                children.push_back( child );
+            }
+        }
+
+        return children;
+    }
+
     bool Properties::hasChild( const String &name ) const
     {
         for( u32 i = 0; i < m_children.size(); ++i )
@@ -676,6 +693,14 @@ namespace fb
             const auto &property = getPropertyObject( name );
             value = property.getValue();
             return true;
+        }
+
+        for( auto &child : m_children )
+        {
+            if( child->getPropertyValue( name, value ) )
+            {
+                return true;
+            }
         }
 
         return false;

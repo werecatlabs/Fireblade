@@ -370,12 +370,6 @@ namespace fb
             /** @copydoc IActor::setTransform */
             void setTransform( SmartPtr<ITransform> transform ) override;
 
-            /** @copydoc IActor::getStateObject */
-            SmartPtr<IStateContext> getStateObject() const override;
-
-            /** @copydoc IActor::setStateObject */
-            void setStateObject( SmartPtr<IStateContext> stateObject ) override;
-
             /** @copydoc IActor::setState */
             void setState( State state ) override;
 
@@ -435,8 +429,6 @@ namespace fb
             SharedPtr<ConcurrentArray<SmartPtr<IComponent>>> m_components;
 
             SharedPtr<ConcurrentArray<SmartPtr<IActor>>> m_children;
-
-            AtomicSmartPtr<IStateContext> m_stateObject;
 
             AtomicWeakPtr<IFactoryManager> m_factoryManager;
 

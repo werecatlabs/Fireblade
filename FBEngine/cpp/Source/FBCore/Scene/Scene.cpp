@@ -3,6 +3,7 @@
 #include <FBCore/Interface/IO/IFileSystem.h>
 #include <FBCore/Interface/IO/IStream.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
+#include <FBCore/Interface/Graphics/IGraphicsScene.h>
 #include <FBCore/Interface/Scene/IActor.h>
 #include <FBCore/Interface/Scene/IPrefabManager.h>
 #include <FBCore/Interface/Scene/ISceneManager.h>
@@ -15,6 +16,7 @@
 #include <FBCore/Base/DebugTrace.h>
 #include <FBCore/Memory/Data.h>
 #include <FBCore/Base/Path.h>
+#include <FBCore/Base/LogManager.h>
 
 namespace fb
 {
@@ -88,23 +90,23 @@ namespace fb
                 //auto data = fb::make_ptr<Data<data::fb_scene>>();
                 //auto sceneData = data->getDataAsType<data::fb_scene>();
 
-                //auto scenePath = StringUtil::cleanupPath( path );
-                //auto stream = fileSystem->open( scenePath, true, false, false, false, false );
-                //if( !stream )
-                //{
-                //    stream = fileSystem->open( scenePath, true, false, false, true, true );
-                //}
+                auto scenePath = StringUtil::cleanupPath( path );
+                auto stream = fileSystem->open( scenePath, true, false, false, false, false );
+                if( !stream )
+                {
+                    stream = fileSystem->open( scenePath, true, false, false, true, true );
+                }
 
-                //if( stream )
-                //{
-                //    auto name = Path::getFileNameWithoutExtension( path );
-                //    setName( name );
+                if( stream )
+                {
+                    auto name = Path::getFileNameWithoutExtension( path );
+                    setName( name );
 
-                //    auto dataStr = stream->getAsString();
-                //    DataUtil::parse( dataStr, sceneData );
+                    auto dataStr = stream->getAsString();
+                    auto sceneData = DataUtil::parseJson( dataStr );
 
-                //    fromData( data );
-                //}
+                    fromData( sceneData );
+                }
 
                 //auto cameraManagerResetJob = fb::make_ptr<CameraManagerReset>();
                 //jobQueue->queueJob( cameraManagerResetJob );
@@ -123,14 +125,14 @@ namespace fb
             auto actorsPtr = getActorsPtr();
             if( !actorsPtr )
             {
-                auto pActors = fb::make_shared<Array<SmartPtr<scene::IActor>>>();
+                auto pActors = fb::make_shared<Array<SmartPtr<IActor>>>();
                 setActorsPtr( pActors );
 
                 for( u32 x = 0; x < static_cast<int>( Thread::UpdateState::Count ); ++x )
                 {
                     for( u32 y = 0; y < static_cast<int>( Thread::Task::Count ); ++y )
                     {
-                        auto actors = fb::make_shared<ConcurrentArray<SmartPtr<scene::IActor>>>();
+                        auto actors = fb::make_shared<ConcurrentArray<SmartPtr<IActor>>>();
                         setRegisteredObjects( static_cast<Thread::UpdateState>( x ),
                                               static_cast<Thread::Task>( y ), actors );
                     }
@@ -138,12 +140,12 @@ namespace fb
             }
         }
 
-        SharedPtr<Array<SmartPtr<scene::IActor>>> Scene::getActorsPtr() const
+        SharedPtr<Array<SmartPtr<IActor>>> Scene::getActorsPtr() const
         {
             return m_actors;
         }
 
-        void Scene::setActorsPtr( SharedPtr<Array<SmartPtr<scene::IActor>>> ptr )
+        void Scene::setActorsPtr( SharedPtr<Array<SmartPtr<IActor>>> ptr )
         {
             m_actors = ptr;
         }
@@ -267,10 +269,10 @@ namespace fb
             {
                 if( !m_editQueue.empty() )
                 {
-                    Array<SmartPtr<scene::IActor>> actors;
+                    Array<SmartPtr<IActor>> actors;
                     actors.reserve( 32 );
 
-                    SmartPtr<scene::IActor> actor;
+                    SmartPtr<IActor> actor;
                     while( m_editQueue.try_pop( actor ) )
                     {
                         actors.push_back( actor );
@@ -284,10 +286,10 @@ namespace fb
 
                 if( !m_playQueue.empty() )
                 {
-                    Array<SmartPtr<scene::IActor>> actors;
+                    Array<SmartPtr<IActor>> actors;
                     actors.reserve( 32 );
 
-                    SmartPtr<scene::IActor> actor;
+                    SmartPtr<IActor> actor;
                     while( m_playQueue.try_pop( actor ) )
                     {
                         actors.push_back( actor );
@@ -397,7 +399,14 @@ namespace fb
             }
         }
 
-        void Scene::addActor( SmartPtr<scene::IActor> actor )
+        SharedPtr<ConcurrentArray<SmartPtr<IActor>>> Scene::getUpdateArray(
+            Thread::UpdateState updateState, s32 task )
+        {
+            auto &updateObjects = m_updateObjects;
+            return updateObjects[static_cast<u32>( updateState )][static_cast<u32>( task )];
+        }
+
+        void Scene::addActor( SmartPtr<IActor> actor )
         {
             try
             {
@@ -417,7 +426,7 @@ namespace fb
 
                     FB_ASSERT( StringUtil::isNullOrEmpty( handle->getUUID() ) == false );
 
-                    auto actors = Array<SmartPtr<scene::IActor>>();
+                    auto actors = Array<SmartPtr<IActor>>();
                     auto pActors = getActorsPtr();
                     if( pActors )
                     {
@@ -429,7 +438,7 @@ namespace fb
 
                     FB_ASSERT( std::unique( actors.begin(), actors.end() ) == actors.end() );
 
-                    auto pNewActors = factoryManager->make_shared<Array<SmartPtr<scene::IActor>>>(
+                    auto pNewActors = factoryManager->make_shared<Array<SmartPtr<IActor>>>(
                         actors.begin(), actors.end() );
                     setActorsPtr( pNewActors );
 
@@ -451,7 +460,7 @@ namespace fb
             }
         }
 
-        void Scene::removeActor( SmartPtr<scene::IActor> actor )
+        void Scene::removeActor( SmartPtr<IActor> actor )
         {
             try
             {
@@ -474,8 +483,8 @@ namespace fb
                     {
                         actors.erase( it );
 
-                        auto pNewActors = factoryManager->make_shared<Array<SmartPtr<scene::IActor>>>();
-                        *pNewActors = Array<SmartPtr<scene::IActor>>( actors.begin(), actors.end() );
+                        auto pNewActors = factoryManager->make_shared<Array<SmartPtr<IActor>>>();
+                        *pNewActors = Array<SmartPtr<IActor>>( actors.begin(), actors.end() );
                         setActorsPtr( pNewActors );
                     }
 
@@ -496,7 +505,7 @@ namespace fb
         {
         }
 
-        SmartPtr<scene::IActor> Scene::findActorById( int id ) const
+        SmartPtr<IActor> Scene::findActorById( int id ) const
         {
             FB_ASSERT( getLoadingState() == LoadingState::Loaded );
 
@@ -516,7 +525,7 @@ namespace fb
             return nullptr;
         }
 
-        Array<SmartPtr<scene::IActor>> Scene::getActors() const
+        Array<SmartPtr<IActor>> Scene::getActors() const
         {
             FB_ASSERT( isValid() );
             FB_ASSERT( isLoaded() );
@@ -526,7 +535,7 @@ namespace fb
                 return *p;
             }
 
-            return Array<SmartPtr<scene::IActor>>();
+            return Array<SmartPtr<IActor>>();
         }
 
         void Scene::clear()
@@ -557,7 +566,7 @@ namespace fb
         {
             FB_ASSERT( isValid() );
 
-            ConcurrentQueue<SmartPtr<scene::IActor>> removeQueue;
+            ConcurrentQueue<SmartPtr<IActor>> removeQueue;
 
             auto actors = getActors();
             for( auto actor : actors )
@@ -572,7 +581,7 @@ namespace fb
                 }
             }
 
-            SmartPtr<scene::IActor> actor;
+            SmartPtr<IActor> actor;
             while( removeQueue.try_pop( actor ) )
             {
                 auto handle = actor->getHandle();
@@ -581,7 +590,7 @@ namespace fb
             }
         }
 
-        void Scene::registerAllUpdates( SmartPtr<scene::IActor> actor )
+        void Scene::registerAllUpdates( SmartPtr<IActor> actor )
         {
             try
             {
@@ -603,7 +612,7 @@ namespace fb
             }
         }
 
-        void Scene::registerUpdates( Thread::Task taskId, SmartPtr<scene::IActor> actor )
+        void Scene::registerUpdates( Thread::Task taskId, SmartPtr<IActor> actor )
         {
             registerUpdate( taskId, Thread::UpdateState::PreUpdate, actor );
             registerUpdate( taskId, Thread::UpdateState::Update, actor );
@@ -611,7 +620,7 @@ namespace fb
         }
 
         void Scene::registerUpdate( Thread::Task taskId, Thread::UpdateState updateType,
-                                     SmartPtr<scene::IActor> object )
+                                    SmartPtr<IActor> object )
         {
             FB_ASSERT( isValid() );
             FB_ASSERT( getLoadingState() == LoadingState::Loaded );
@@ -644,24 +653,24 @@ namespace fb
         }
 
         void Scene::unregisterUpdate( Thread::Task taskId, Thread::UpdateState updateType,
-                                       SmartPtr<scene::IActor> object )
+                                      SmartPtr<IActor> object )
         {
             FB_ASSERT( isValid() );
 
-            boost::shared_ptr<ConcurrentArray<SmartPtr<scene::IActor>>> p =
+            boost::shared_ptr<ConcurrentArray<SmartPtr<IActor>>> p =
                 getRegisteredObjects( updateType, taskId );
             if( p )
             {
-                ConcurrentArray<SmartPtr<scene::IActor>> &updateObjects = *p;
+                ConcurrentArray<SmartPtr<IActor>> &updateObjects = *p;
 
-                Array<SmartPtr<scene::IActor>> objects( updateObjects.begin(), updateObjects.end() );
+                Array<SmartPtr<IActor>> objects( updateObjects.begin(), updateObjects.end() );
                 auto it = std::find( objects.begin(), objects.end(), object );
                 if( it != objects.end() )
                 {
                     objects.erase( it );
 
-                    auto pNew = new ConcurrentArray<SmartPtr<scene::IActor>>();
-                    boost::shared_ptr<ConcurrentArray<SmartPtr<scene::IActor>>> ptr( pNew );
+                    auto pNew = new ConcurrentArray<SmartPtr<IActor>>();
+                    boost::shared_ptr<ConcurrentArray<SmartPtr<IActor>>> ptr( pNew );
                     setRegisteredObjects( updateType, taskId, ptr );
                 }
 
@@ -669,7 +678,7 @@ namespace fb
             }
         }
 
-        void Scene::unregisterAll( SmartPtr<scene::IActor> object )
+        void Scene::unregisterAll( SmartPtr<IActor> object )
         {
             FB_ASSERT( isValid() );
 
@@ -677,11 +686,11 @@ namespace fb
             {
                 for( u32 y = 0; y < static_cast<int>( Thread::Task::Count ); ++y )
                 {
-                    boost::shared_ptr<ConcurrentArray<SmartPtr<scene::IActor>>> p = getRegisteredObjects(
+                    boost::shared_ptr<ConcurrentArray<SmartPtr<IActor>>> p = getRegisteredObjects(
                         static_cast<Thread::UpdateState>( x ), static_cast<Thread::Task>( y ) );
                     if( p )
                     {
-                        ConcurrentArray<SmartPtr<scene::IActor>> &updateObjects = *p;
+                        ConcurrentArray<SmartPtr<IActor>> &updateObjects = *p;
 
                         bool hasElement = false;
                         auto it = updateObjects.begin();
@@ -696,7 +705,7 @@ namespace fb
 
                         if( hasElement )
                         {
-                            ConcurrentArray<SmartPtr<scene::IActor>> newArray;
+                            ConcurrentArray<SmartPtr<IActor>> newArray;
                             for( unsigned int i = 0; i < updateObjects.size(); ++i )
                             {
                                 if( object != updateObjects[i] )
@@ -705,9 +714,9 @@ namespace fb
                                 }
                             }
 
-                            auto pNew = new ConcurrentArray<SmartPtr<scene::IActor>>( newArray.begin(),
-                                                                                      newArray.end() );
-                            boost::shared_ptr<ConcurrentArray<SmartPtr<scene::IActor>>> ptr( pNew );
+                            auto pNew = new ConcurrentArray<SmartPtr<IActor>>( newArray.begin(),
+                                                                               newArray.end() );
+                            boost::shared_ptr<ConcurrentArray<SmartPtr<IActor>>> ptr( pNew );
                             setRegisteredObjects( static_cast<Thread::UpdateState>( x ),
                                                   static_cast<Thread::Task>( y ), ptr );
                             updateObjects = newArray;
@@ -719,7 +728,7 @@ namespace fb
             sortObjects();
         }
 
-        void Scene::refreshRegistration( SmartPtr<scene::IActor> object )
+        void Scene::refreshRegistration( SmartPtr<IActor> object )
         {
             // FB_ASSERT(isValid());
 
@@ -743,7 +752,7 @@ namespace fb
             //}
         }
 
-        boost::shared_ptr<ConcurrentArray<SmartPtr<scene::IActor>>> Scene::getRegisteredObjects(
+        boost::shared_ptr<ConcurrentArray<SmartPtr<IActor>>> Scene::getRegisteredObjects(
             Thread::UpdateState updateState, Thread::Task task ) const
         {
             FB_ASSERT( static_cast<size_t>( updateState ) < m_updateObjects.size() );
@@ -758,9 +767,8 @@ namespace fb
             return objects;
         }
 
-        void Scene::setRegisteredObjects(
-            Thread::UpdateState updateState, Thread::Task task,
-            boost::shared_ptr<ConcurrentArray<SmartPtr<scene::IActor>>> objects )
+        void Scene::setRegisteredObjects( Thread::UpdateState updateState, Thread::Task task,
+                                          boost::shared_ptr<ConcurrentArray<SmartPtr<IActor>>> objects )
         {
             FB_ASSERT( static_cast<s32>( updateState ) < static_cast<s32>( m_updateObjects.size() ) );
             FB_ASSERT( static_cast<s32>( task ) <
@@ -793,14 +801,93 @@ namespace fb
             return result;
         }
 
+        SmartPtr<ISharedObject> Scene::toData() const
+        {
+            //auto pSceneData = fb::make_ptr<Data<data::fb_scene>>();
+            //auto sceneData = pSceneData->getDataAsType<data::fb_scene>();
+
+            //auto actors = getActors();
+            //for( auto actor : actors )
+            //{
+            //    if( actor )
+            //    {
+            //        auto pActorData = actor->toData();
+            //        auto actorData = pActorData->getDataAsType<data::actor_data>();
+
+            //        sceneData->actors.push_back( *actorData );
+            //    }
+            //}
+
+            //return pSceneData;
+
+            return nullptr;
+        }
+
+        void Scene::fromData( SmartPtr<ISharedObject> data )
+        {
+            auto properties = fb::static_pointer_cast<Properties>( data );
+
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            FB_ASSERT( graphicsSystem );
+
+            auto prefabManager = applicationManager->getPrefabManager();
+            FB_ASSERT( prefabManager );
+
+            auto graphicsScene = graphicsSystem->getGraphicsScene();
+            FB_ASSERT( graphicsScene );
+
+            //graphicsSceneManager->setAmbientLight( ColourF::White * 0.5f );
+            //graphicsSceneManager->setEnableShadows( true );
+
+            setupCache();
+
+            auto actorsData = properties->getChildrenByName( "actors" );
+            for( auto actorData : actorsData )
+            {
+                auto actor = prefabManager->loadActor( actorData, nullptr );
+                addActor( actor );
+            }
+
+            //auto sceneData = data->getDataAsType<data::fb_scene>();
+            //for( auto &actorData : sceneData->actors )
+            //{
+            //    auto data = fb::make_ptr<Data<data::actor_data>>();
+            //    data->setData( &actorData );
+
+            //    auto actor = prefabManager->loadActor( data, nullptr );
+            //    addActor( actor );
+
+            //    // registerAllUpdates(actor);
+
+            //    // if( applicationManager->isEditor() )
+            //    //{
+            //    //    if( applicationManager->isPlaying() )
+            //    //    {
+            //    //        m_playQueue.push( actor );
+            //    //    }
+            //    //    else
+            //    //    {
+            //    //        m_editQueue.push( actor );
+            //    //    }
+            //    //}
+            //    // else
+            //    //{
+            //    //    m_playQueue.push( actor );
+            //    //}
+            //}
+        }
+
         String Scene::getFilePath() const
         {
             return m_filePath;
         }
 
-        void Scene::setFilePath( const String &val )
+        void Scene::setFilePath( const String &filePath )
         {
-            m_filePath = val;
+            m_filePath = filePath;
         }
 
         void Scene::play()
@@ -849,6 +936,5 @@ namespace fb
         {
             return m_sceneLoadingState;
         }
-
     }  // end namespace scene
 }  // end namespace fb

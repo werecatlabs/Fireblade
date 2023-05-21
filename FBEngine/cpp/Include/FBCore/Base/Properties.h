@@ -114,6 +114,9 @@ namespace fb
         is not found. Use has child to check that the property group has this child. */
         SmartPtr<Properties> getChild( const String &name ) const;
 
+        /** Gets the children with the name provided. */
+        Array<SmartPtr<Properties>> getChildrenByName( const String &name ) const;
+
         /** Sets the a property value.
         @param name The name of the property.
         @param value A reference to the value.

@@ -49,7 +49,7 @@ namespace fb
 
                     if( auto graphicsSystem = applicationManager->getGraphicsSystem() )
                     {
-                        auto smgr = graphicsSystem->getSceneManager();
+                        auto smgr = graphicsSystem->getGraphicsScene();
                         FB_ASSERT( smgr );
 
                         if( m_terrain )
@@ -87,7 +87,7 @@ namespace fb
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
                 if( graphicsSystem )
                 {
-                    auto smgr = graphicsSystem->getSceneManager();
+                    auto smgr = graphicsSystem->getGraphicsScene();
                     FB_ASSERT( smgr );
 
                     auto rootNode = smgr->getRootSceneNode();
@@ -103,7 +103,7 @@ namespace fb
                         auto graphicsSystem = applicationManager->getGraphicsSystem();
                         if( graphicsSystem )
                         {
-                            auto smgr = graphicsSystem->getSceneManager();
+                            auto smgr = graphicsSystem->getGraphicsScene();
                             FB_ASSERT( smgr );
 
                             if( m_terrain )
@@ -123,7 +123,7 @@ namespace fb
                         auto graphicsSystem = applicationManager->getGraphicsSystem();
                         if( graphicsSystem )
                         {
-                            auto smgr = graphicsSystem->getSceneManager();
+                            auto smgr = graphicsSystem->getGraphicsScene();
                             FB_ASSERT( smgr );
 
                             if( m_terrain )
@@ -230,7 +230,7 @@ namespace fb
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             FB_ASSERT( graphicsSystem );
 
-            auto smgr = graphicsSystem->getSceneManager();
+            auto smgr = graphicsSystem->getGraphicsScene();
             FB_ASSERT( smgr );
 
             m_terrain = smgr->createTerrain();

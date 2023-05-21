@@ -83,7 +83,6 @@ namespace fb
         /** Gets the type of the property. */
         String getType() const;
 
-	
         /** Sets the property to read only. */
         void setReadOnly( bool readOnly );
 
