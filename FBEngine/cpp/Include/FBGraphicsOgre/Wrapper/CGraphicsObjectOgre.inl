@@ -70,16 +70,21 @@ namespace fb
         template <class T>
         void CGraphicsObjectOgre<T>::StateListener::handleStateChanged( SmartPtr<IState> &state )
         {
-            auto graphicsObjectState = fb::static_pointer_cast<GraphicsObjectState>( state );
-            auto visible = graphicsObjectState->isVisible();
-
             if( auto owner = getOwner() )
             {
-                if( auto movable = owner->getMovable() )
+                if( owner->isLoaded() )
                 {
-                    auto mask = graphicsObjectState->getVisibilityMask();
-                    movable->setVisibilityFlags( mask );
-                    movable->setVisible( visible );
+                    if( auto movable = owner->getMovable() )
+                    {
+                        auto graphicsObjectState = fb::static_pointer_cast<GraphicsObjectState>( state );
+                        auto visible = graphicsObjectState->isVisible();
+
+                        auto mask = graphicsObjectState->getVisibilityMask();
+                        movable->setVisibilityFlags( mask );
+                        movable->setVisible( visible );
+
+                        state->setDirty( false );
+                    }
                 }
             }
         }

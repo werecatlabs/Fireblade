@@ -9,7 +9,7 @@ namespace fb
     namespace scene
     {
 
-        const hash32 Transform::TRANSFORMATION_POSITION_HASH =
+        const hash_type Transform::TRANSFORMATION_POSITION_HASH =
             StringUtil::getHash( "TransformationPosition" );
         FB_CLASS_REGISTER_DERIVED( fb, Transform, ITransform );
 

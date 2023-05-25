@@ -215,7 +215,7 @@ namespace fb
             if( auto text = getTextObject() )
             {
                 text->setText( m_text );
-                text->setTextSize( m_size );
+                text->setTextSize( (f32)m_size );
                 text->setColour( m_colour );
             }
         }

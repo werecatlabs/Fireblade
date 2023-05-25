@@ -2,6 +2,7 @@
 #define WindowWin32_h__
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
+#include <windef.h>
 
 namespace fb
 {
@@ -21,7 +22,7 @@ namespace fb
 
             DWORD getWindowStyle( bool fullScreen ) const;
 
-	        void switchMode( u32 width, u32 height, u32 frequency );
+            void switchMode( u32 width, u32 height, u32 frequency );
 
             SmartPtr<IWindow> getRenderWindow() const;
             void setRenderWindow( SmartPtr<IWindow> window );
@@ -48,11 +49,11 @@ namespace fb
             char *mDeviceName = nullptr;
             bool mOwnsGLContext = false;
             bool mSizing = false;
-            int mDisplayFrequency = 0; // fullscreen only, to restore display
+            int mDisplayFrequency = 0;  // fullscreen only, to restore display
             u32 mColourDepth = 0;
-            DWORD mWindowedWinStyle = 0;   // Windowed mode window style flags.
+            DWORD mWindowedWinStyle = 0;    // Windowed mode window style flags.
             DWORD mFullscreenWinStyle = 0;  // Fullscreen mode window style flags.
-        
+
             SmartPtr<render::IWindow> m_renderWindow;
         };
 

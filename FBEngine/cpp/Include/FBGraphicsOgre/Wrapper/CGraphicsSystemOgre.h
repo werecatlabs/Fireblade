@@ -2,6 +2,7 @@
 #define _CGraphicsSystem_H
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
+#include <FBGraphics/Wrapper/CGraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Memory/CSharedObject.h>
 #include <OgreWindowEventUtilities.h>
@@ -61,8 +62,9 @@ namespace fb
 {
     namespace render
     {
+
         /** Implements the graphics system interface to use the ogre rendering engine. */
-        class CGraphicsSystemOgre : public CSharedObject<IGraphicsSystem>
+        class CGraphicsSystemOgre : public CGraphicsSystem
         {
         public:
             static const String rsDX12Name;
@@ -76,9 +78,6 @@ namespace fb
 
             CGraphicsSystemOgre();
             ~CGraphicsSystemOgre() override;
-
-            void lock();
-            void unlock();
 
             /** @copydoc  */
             virtual void handleStateChanged( const SmartPtr<IStateMessage> &message );
@@ -99,18 +98,18 @@ namespace fb
             bool configure( SmartPtr<IGraphicsSettings> config ) override;
 
             /** @copydoc IGraphicsSystem::addSceneManager */
-            SmartPtr<IGraphicsScene> addSceneManager( const String &type, const String &name ) override;
+            SmartPtr<IGraphicsScene> addGraphicsScene( const String &type, const String &name ) override;
 
             /** @copydoc IGraphicsSystem::getSceneManager */
-            SmartPtr<IGraphicsScene> getSceneManager() const override;
+            SmartPtr<IGraphicsScene> getGraphicsScene() const override;
 
-            void setSceneManager(SmartPtr<IGraphicsScene> smgr);
+            void setGraphicsScene( SmartPtr<IGraphicsScene> smgr );
 
             /** @copydoc IGraphicsSystem::getSceneManager */
-            SmartPtr<IGraphicsScene> getSceneManager( const String &name ) const override;
+            SmartPtr<IGraphicsScene> getGraphicsScene( const String &name ) const override;
 
             /** @copydoc IGraphicsSystem::getSceneManagerById */
-            SmartPtr<IGraphicsScene> getSceneManagerById( hash32 id ) const override;
+            SmartPtr<IGraphicsScene> getGraphicsSceneById( hash32 id ) const override;
 
             /** @copydoc IGraphicsSystem::getOverlayManager */
             SmartPtr<IOverlayManager> getOverlayManager() const override;
@@ -176,7 +175,7 @@ namespace fb
 
             SmartPtr<IMeshManager> getMeshManager() const;
 
-            void setMeshManager(SmartPtr<IMeshManager> meshManager);
+            void setMeshManager( SmartPtr<IMeshManager> meshManager );
 
             /** @copydoc IGraphicsSystem::configure */
             SmartPtr<IWindow> getDefaultWindow() const override;
@@ -243,15 +242,6 @@ namespace fb
 
             bool getUseRTSS() const;
             void setUseRTSS( bool useRTSS );
-
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-            //! Internal winProc (RenderWindow's use this when creating the Win32 Window)
-            static LRESULT CALLBACK _WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
-#elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE && !defined __OBJC__ && !defined( __LP64__ )
-            //! Internal UPP Window Handler (RenderWindow's use this when creating the OS X Carbon Window
-            static OSStatus _CarbonWindowHandler( EventHandlerCallRef nextHandler, EventRef event,
-                                                  void *wnd );
-#endif
 
         protected:
             class AppFrameListener : public Ogre::FrameListener
@@ -394,9 +384,6 @@ namespace fb
             Ogitors::OgitorsRoot *m_ogitorsRoot = nullptr;
 
             ///
-            Array<SmartPtr<IWindow>> m_windows;
-
-            ///
             Array<SmartPtr<IDeferredShadingSystem>> m_deferredShadingSystems;
 
             ///
@@ -404,8 +391,6 @@ namespace fb
 
             bool m_useRTSS = false;
             atomic_bool m_isUpdating = false;
-
-            mutable RecursiveMutex m_mutex;
 
 #ifdef OGRE_BUILD_COMPONENT_RTSHADERSYSTEM
             Ogre::RTShader::ShaderGenerator *m_shaderGenerator =

@@ -16,12 +16,12 @@ namespace fb
     {
     }
 
-    hash32 ScriptEvent::getEventType() const
+    hash_type ScriptEvent::getEventType() const
     {
         return m_hashType;
     }
 
-    void ScriptEvent::setEventType( hash32 type )
+    void ScriptEvent::setEventType( hash_type type )
     {
         m_hashType = type;
     }

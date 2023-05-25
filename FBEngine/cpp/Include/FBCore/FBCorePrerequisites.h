@@ -240,7 +240,15 @@ namespace fb
     class IIKJoint;
     class IIKManager;
 
+    // math
+    template <class T>
+    class Vector2;
 
+    template <class T>
+    class Vector3;
+
+    template <class T>
+    class Transform3;
 
     // mesh
     class IIndexBuffer;

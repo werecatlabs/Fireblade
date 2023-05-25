@@ -370,6 +370,175 @@ namespace fb
         {
         }
 
+        SmartPtr<ISharedObject> Component::toData() const
+        {
+            auto componentData = getProperties();
+
+            if( auto handle = getHandle() )
+            {
+                auto uuid = handle->getUUID();
+                if( StringUtil::isNullOrEmpty( uuid ) )
+                {
+                    uuid = StringUtil::getUUID();
+                }
+
+                componentData->setProperty( "uuid", uuid );
+            }
+
+            auto subComponents = getSubComponents();
+            for( auto &subComponent : subComponents )
+            {
+                auto subComponentData = fb::static_pointer_cast<Properties>( subComponent->toData() );
+                subComponentData->setName( "subComponent" );
+                componentData->addChild( subComponentData );
+            }
+
+            auto events = getEvents();
+            for( auto &event : events )
+            {
+                auto eventData = fb::make_ptr<Properties>();
+
+                auto listeners = event->getListeners();
+                for( auto &listener : listeners )
+                {
+                    if( auto properties = listener->getProperties() )
+                    {
+                        properties->setName( "listener" );
+                        eventData->addChild( properties );
+                    }
+                }
+
+                eventData->setName( "event" );
+                componentData->addChild( eventData );
+            }
+
+            return componentData;
+        }
+
+        void Component::fromData( SmartPtr<ISharedObject> data )
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto factoryManager = applicationManager->getFactoryManager();
+            FB_ASSERT( factoryManager );
+
+            auto sceneManager = applicationManager->getSceneManager();
+            FB_ASSERT( sceneManager );
+
+            auto componentData = fb::static_pointer_cast<Properties>( data );
+
+            auto name = String();
+            componentData->getPropertyValue( "name", name );
+
+            if( auto handle = getHandle() )
+            {
+                auto uuid = String();
+                componentData->getPropertyValue( "uuid", uuid );
+
+                if( StringUtil::isNullOrEmpty( uuid ) )
+                {
+                    uuid = StringUtil::getUUID();
+                }
+
+                handle->setUUID( uuid );
+            }
+
+            sceneManager->queueProperties( this, componentData );
+            //setProperties( pProperties );
+
+            //auto& subComponentData = componentData->subComponentData;
+            //for(auto &rSubComponentData : subComponentData)
+            //{
+            //    rSubComponentData.componentType
+            //}
+
+            auto subComponentData = componentData->getChildrenByName( "subComponent" );
+
+            auto components = Array<SmartPtr<ISubComponent>>();
+            components.reserve( subComponentData.size() );
+
+            for( auto &component : subComponentData )
+            {
+                auto componentType = String();
+                component->getPropertyValue( "componentType", componentType );
+
+                auto pComponent = factoryManager->createObjectFromType<ISubComponent>( componentType );
+                if( !pComponent )
+                {
+                    auto componentTypeClean = StringUtil::replaceAll( componentType, "fb::", "" );
+                    pComponent =
+                        factoryManager->createObjectFromType<ISubComponent>( componentTypeClean );
+                }
+
+                if( pComponent )
+                {
+                    components.push_back( pComponent );
+                }
+            }
+
+            for( size_t i = 0; i < components.size(); ++i )
+            {
+                try
+                {
+                    auto &pComponent = components[i];
+                    addSubComponent( pComponent );
+                }
+                catch( std::exception &e )
+                {
+                    FB_LOG_EXCEPTION( e );
+                }
+            }
+
+            for( size_t i = 0; i < components.size(); ++i )
+            {
+                try
+                {
+                    auto &pComponent = components[i];
+                    auto &pComponentData = subComponentData[i];
+                    // FB_ASSERT(pComponent);
+
+                    if( pComponent )
+                    {
+                        pComponent->setParent( this );
+
+                        pComponent->fromData( componentData );
+
+                        pComponent->load( nullptr );
+                    }
+                }
+                catch( std::exception &e )
+                {
+                    FB_LOG_EXCEPTION( e );
+                }
+            }
+
+            auto eventsData = componentData->getChildrenByName( "event" );
+            auto events = getEvents();
+
+            auto count = 0;
+            for( auto &rEvent : eventsData )
+            {
+                auto event = events[count];
+                event->removeListeners();
+
+                auto listenerData = rEvent->getChildrenByName( "listener" );
+
+                for( auto &rListener : listenerData )
+                {
+                    auto eventListener = fb::make_ptr<ComponentEventListener>();
+                    eventListener->setEvent( event );
+
+                    sceneManager->queueProperties( eventListener, rListener );
+                    //eventListener->setProperties( pProperties );
+
+                    event->addListener( eventListener );
+                }
+
+                count++;
+            }
+        }
+
         Array<SmartPtr<ISharedObject>> Component::getChildObjects() const
         {
             Array<SmartPtr<ISharedObject>> childObjects;
@@ -475,16 +644,6 @@ namespace fb
             return State::Count;
         }
 
-        u32 Component::getEntity() const
-        {
-            return m_entity;
-        }
-
-        void Component::setEntity( u32 entity )
-        {
-            m_entity = entity;
-        }
-
         void *Component::getDataPtr() const
         {
             return m_dataPtr;
@@ -579,7 +738,7 @@ namespace fb
         {
             if( auto p = getSubComponentsPtr() )
             {
-                return p->size();
+                return (u32)p->size();
             }
 
             return 0;

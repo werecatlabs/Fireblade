@@ -9,8 +9,8 @@ namespace fb
     {
         FB_CLASS_REGISTER_DERIVED( fb::scene, Constraint, Component );
         const String Constraint::constraints[4] = { "6dof", "6dofSpring", " ", " " };
-        const int Constraint::STIFFNESS = StringUtil::getHash( "stiffness" );
-        const u32 Constraint::SET_BREAK_FORCE_HASH = StringUtil::getHash( "SET_BREAK_FORCE_HASH" );
+        const hash_type Constraint::STIFFNESS = StringUtil::getHash( "stiffness" );
+        const hash_type Constraint::SET_BREAK_FORCE_HASH = StringUtil::getHash( "SET_BREAK_FORCE_HASH" );
 
         Constraint::~Constraint()
         {

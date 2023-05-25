@@ -16,7 +16,7 @@ namespace fb
         class CCameraOgre : public CGraphicsObjectOgre<ICamera>
         {
         public:
-            CCameraOgre() = default;
+            CCameraOgre();
             ~CCameraOgre() override;
 
             void load( SmartPtr<ISharedObject> data ) override;

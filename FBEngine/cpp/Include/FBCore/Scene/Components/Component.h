@@ -10,7 +10,6 @@
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Base/DataUtil.h>
 #include <FBCore/Base/Properties.h>
-#include <FBCore/Base/PropertiesUtil.h>
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Memory/Data.h>
 #include <FBCore/Resource/CResource.h>
@@ -189,6 +188,12 @@ namespace fb
             /** @copydoc IComponent::setDirty */
             virtual void setDirty( bool dirty );
 
+            /** @copydoc IComponent::toData */
+            SmartPtr<ISharedObject> toData() const override;
+
+            /** @copydoc IComponent::fromData */
+            void fromData( SmartPtr<ISharedObject> data ) override;
+
             /** @copydoc IComponent::getChildObjects */
             Array<SmartPtr<ISharedObject>> getChildObjects() const override;
 
@@ -221,18 +226,6 @@ namespace fb
              * @return The state of the component.
              */
             State getState() const override;
-
-            /**
-             * Gets the entity ID associated with the component.
-             * @return The entity ID.
-             */
-            u32 getEntity() const override;
-
-            /**
-             * Sets the entity ID associated with the component.
-             * @param entity The entity ID to set.
-             */
-            void setEntity( u32 entity ) override;
 
             /**
              * Gets a pointer to the data for the component.
@@ -423,11 +416,6 @@ namespace fb
              * The flags of the component.
              */
             atomic_u32 m_componentFlags = 0;
-
-            /**
-             * The entity ID of the component.
-             */
-            u32 m_entity = 0;
 
             /**
              * Whether the component is enabled or not.

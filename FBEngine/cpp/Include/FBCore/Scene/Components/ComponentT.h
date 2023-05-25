@@ -11,7 +11,6 @@
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Base/DataUtil.h>
 #include <FBCore/Base/Properties.h>
-#include <FBCore/Base/PropertiesUtil.h>
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Memory/Data.h>
 #include <FBCore/Resource/CResource.h>

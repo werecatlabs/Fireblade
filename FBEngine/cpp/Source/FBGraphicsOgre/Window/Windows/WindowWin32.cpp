@@ -1,6 +1,5 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
 #include <FBGraphicsOgre/Window/Windows/WindowWin32.h>
-#include <FBApplication/System/WindowMessageData.h>
 #include <FBCore/FBCore.h>
 
 namespace fb

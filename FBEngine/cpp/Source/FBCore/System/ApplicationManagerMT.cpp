@@ -87,7 +87,7 @@ namespace fb
                 setSettingsCachePath( settingsCachePath );
 #elif defined FB_PLATFORM_APPLE
                 auto path = Path::getAbsolutePath( Path::macBundlePath(), "../" );
-                Path::setWorkingDirectory(path);
+                Path::setWorkingDirectory( path );
 
                 setProjectPath( path );
 
@@ -1078,7 +1078,8 @@ namespace fb
             FB_DEBUG_TRACE;
 
             RecursiveMutex::ScopedLock lock( m_mutex );
-            m_plugins.erase( std::remove( m_plugins.begin(), m_plugins.end(), plugin ), m_plugins.end() );
+            m_plugins.erase( std::remove( m_plugins.begin(), m_plugins.end(), plugin ),
+                             m_plugins.end() );
         }
 
         SmartPtr<IStateContext> ApplicationManagerMT::getStateObject() const
@@ -1111,6 +1112,18 @@ namespace fb
             m_sceneRenderWindow = sceneRenderWindow;
         }
 
+        fb::Array<fb::String> ApplicationManagerMT::getComponentFactoryIgnoreList() const
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            return m_componentFactoryIgnoreList;
+        }
+
+        Map<String, String> ApplicationManagerMT::getComponentFactoryMap() const
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            return m_componentFactoryMap;
+        }
+
         SmartPtr<scene::IComponent> ApplicationManagerMT::getComponentByType( u32 typeId ) const
         {
             const auto &typeManager = TypeManager::instance();
@@ -1131,11 +1144,11 @@ namespace fb
             return nullptr;
         }
 
-        fb::Parameter ApplicationManagerMT::triggerEvent( IEvent::Type eventType, hash_type eventValue,
-                                                          const Array<Parameter> &arguments,
-                                                          SmartPtr<ISharedObject> sender,
-                                                          SmartPtr<ISharedObject> object,
-                                                          SmartPtr<IEvent> event )
+        Parameter ApplicationManagerMT::triggerEvent( IEvent::Type eventType, hash_type eventValue,
+                                                      const Array<Parameter> &arguments,
+                                                      SmartPtr<ISharedObject> sender,
+                                                      SmartPtr<ISharedObject> object,
+                                                      SmartPtr<IEvent> event )
         {
             if( auto stateContext = getStateObject() )
             {
@@ -1144,6 +1157,37 @@ namespace fb
             }
 
             return Parameter();
+        }
+
+        void ApplicationManagerMT::setComponentFactoryMap( const Map<String, String> &map )
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            m_componentFactoryMap = map;
+        }
+
+        String ApplicationManagerMT::getComponentFactoryType( const String &type ) const
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+
+            if( std::find( m_componentFactoryIgnoreList.begin(), m_componentFactoryIgnoreList.end(),
+                           type ) != m_componentFactoryIgnoreList.end() )
+            {
+                return String( "" );
+            }
+
+            auto it = m_componentFactoryMap.find( type );
+            if( it != m_componentFactoryMap.end() )
+            {
+                return it->second;
+            }
+
+            return "";
+        }
+
+        void ApplicationManagerMT::setComponentFactoryIgnoreList( const Array<String> &ignoreList )
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            m_componentFactoryIgnoreList = ignoreList;
         }
 
     }  // namespace core

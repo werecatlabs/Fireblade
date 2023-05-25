@@ -136,31 +136,10 @@ namespace fb
                 {
                     m_renderTarget->_beginUpdate();
 
-#if 1
                     for( auto vp : m_viewports )
                     {
                         vp->update();
                     }
-#else
-                    auto swapBuffers = getSwapBuffers();
-                    auto size = m_renderTarget->getNumViewports();
-                    for( size_t i = 0; i < size; ++i )
-                    {
-                        auto vp = m_renderTarget->getViewport( i );
-                        FB_ASSERT( vp );
-
-                        auto actualWidth = vp->getActualWidth();
-                        auto actualHeight = vp->getActualHeight();
-
-                        if( actualWidth > 0 && actualHeight > 0 )
-                        {
-                            if( vp->isAutoUpdated() )
-                            {
-                                m_renderTarget->_updateViewport( vp );
-                            }
-                        }
-                    }
-#endif
 
                     m_renderTarget->_endUpdate();
                 }
@@ -219,42 +198,36 @@ namespace fb
         {
             try
             {
-                FB_ASSERT( m_renderTarget );
-
-                if( m_renderTarget )
+                if( ZOrder == -1 )
                 {
-                    if( ZOrder == -1 )
-                    {
-                        ZOrder = m_ext++;
-                    }
-
-                    auto viewport = fb::make_ptr<CViewportOgre>();
-
-                    auto handle = viewport->getHandle();
-                    if( handle )
-                    {
-                        handle->setId( id );
-                    }
-
-                    viewport->setRenderTarget( this );
-                    viewport->setZOrder( ZOrder );
-                    viewport->setPosition( Vector2F( left, top ) );
-                    viewport->setSize( Vector2F( width, height ) );
-
-                    viewport->setCamera( camera );
-                    m_viewports.push_back( viewport );
-
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto graphicsSystem = applicationManager->getGraphicsSystem();
-                    FB_ASSERT( graphicsSystem );
-
-                    graphicsSystem->loadObject( viewport );
-
-                    return viewport;
+                    ZOrder = m_ext++;
                 }
-                FB_LOG_ERROR( "CRenderTarget<T>::update renderTarget null" );
+
+                auto viewport = fb::make_ptr<CViewportOgre>();
+
+                auto handle = viewport->getHandle();
+                if( handle )
+                {
+                    handle->setId( id );
+                }
+
+                viewport->setRenderTarget( this );
+                viewport->setZOrder( ZOrder );
+                viewport->setPosition( Vector2F( left, top ) );
+                viewport->setSize( Vector2F( width, height ) );
+
+                viewport->setCamera( camera );
+                m_viewports.push_back( viewport );
+
+                auto applicationManager = core::IApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto graphicsSystem = applicationManager->getGraphicsSystem();
+                FB_ASSERT( graphicsSystem );
+
+                graphicsSystem->loadObject( viewport );
+
+                return viewport;
             }
             catch( std::exception &e )
             {

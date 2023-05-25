@@ -558,6 +558,32 @@ namespace fb
         setProperty( name, valueStr, type, readOnly );
     }
 
+    void Properties::setProperty( const String &name, const Transform3F &value, bool readOnly )
+    {
+        auto p = value.getPosition();
+        auto r = value.getRotation();
+        auto s = value.getScale();
+
+        auto valueStr = StringUtil::toString( p ) + ";" + StringUtil::toString( r ) + ";" +
+                        StringUtil::toString( s );
+
+        auto type = String( "transform" );
+        setProperty( name, valueStr, type, readOnly );
+    }
+
+    void Properties::setProperty( const String &name, const Transform3D &value, bool readOnly )
+    {
+        auto p = value.getPosition();
+        auto r = value.getRotation();
+        auto s = value.getScale();
+
+        auto valueStr = StringUtil::toString( p ) + ";" + StringUtil::toString( r ) + ";" +
+                        StringUtil::toString( s );
+
+        auto type = String( "transformd" );
+        setProperty( name, valueStr, type, readOnly );
+    }
+
     void Properties::setProperty( const String &name, const ColourI &value, bool readOnly )
     {
         auto valueStr = StringUtil::toString( value );
@@ -825,6 +851,56 @@ namespace fb
             const auto &property = getPropertyObject( name );
             auto str = property.getValue();
             value = StringUtil::parseVector3<f64>( str );
+            return true;
+        }
+
+        return false;
+    }
+
+    bool Properties::getPropertyValue( const String &name, Transform3F &value )
+    {
+        if( hasProperty( name ) )
+        {
+            const auto &property = getPropertyObject( name );
+            auto str = property.getValue();
+            auto splitStr = StringUtil::split( str, ";", 3, false );
+
+            if( splitStr.size() >= 3 )
+            {
+                auto p = StringUtil::parseVector3<f32>( splitStr[0] );
+                auto r = StringUtil::parseVector3<f32>( splitStr[1] );
+                auto s = StringUtil::parseVector3<f32>( splitStr[2] );
+
+                value.setPosition( p );
+                value.setRotation( r );
+                value.setScale( s );
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool Properties::getPropertyValue( const String &name, Transform3D &value )
+    {
+        if( hasProperty( name ) )
+        {
+            const auto &property = getPropertyObject( name );
+            auto str = property.getValue();
+            auto splitStr = StringUtil::split( str, ";", 3, false );
+
+            if( splitStr.size() >= 3 )
+            {
+                auto p = StringUtil::parseVector3<f64>( splitStr[0] );
+                auto r = StringUtil::parseVector3<f64>( splitStr[1] );
+                auto s = StringUtil::parseVector3<f64>( splitStr[2] );
+
+                value.setPosition( p );
+                value.setRotation( r );
+                value.setScale( s );
+            }
+
             return true;
         }
 

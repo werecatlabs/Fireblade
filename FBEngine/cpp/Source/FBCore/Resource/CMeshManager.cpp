@@ -358,13 +358,10 @@ namespace fb
 
                 if( fileSystem->isExistingFile( fileDataPath ) )
                 {
-                    /*
                     auto dataStr = fileSystem->readAllText( fileDataPath );
 
-                    auto data = fb::make_ptr<Data<data::mesh_importer_data>>();
-                    auto meshData = data->getDataAsType<data::mesh_importer_data>();
-                    // auto pData = meshData.get();
-                    DataUtil::parse( dataStr, meshData );
+                    auto meshData = fb::make_ptr<Properties>();
+                    DataUtil::parse( dataStr, meshData.get() );
 
                     FileInfo fileInfo;
                     if( fileSystem->findFileInfo( fileDataPath, fileInfo ) )
@@ -372,20 +369,18 @@ namespace fb
                         auto meshResource = fb::make_ptr<CMeshResource>();
                         meshResource->setFileSystemId( fileId );
                         meshResource->setSettingsFileSystemId( fileInfo.fileId );
-                        meshResource->fromData( data );
+                        meshResource->setProperties( meshData );
                         meshResource->setMeshPath( sFilePath );
                         meshResource->load( nullptr );
 
                         m_meshResources.push_back( meshResource );
                         return meshResource;
                     }
-                    */
                 }
                 else
                 {
-                    /*
-                    data::mesh_importer_data meshData;
-                    auto dataStr = DataUtil::toString( &meshData, true );
+                    auto meshData = fb::make_ptr<Properties>();
+                    auto dataStr = DataUtil::toString( meshData.get(), true );
                     fileSystem->writeAllText( fileDataPath, dataStr );
 
                     auto path = Path::getFilePath( fileDataPath );
@@ -411,7 +406,6 @@ namespace fb
 
                     m_meshResources.push_back( meshResource );
                     return meshResource;
-                    */
                 }
             }
         }

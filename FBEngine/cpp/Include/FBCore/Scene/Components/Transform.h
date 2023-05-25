@@ -13,7 +13,7 @@ namespace fb
         class Transform : public CSharedObject<ITransform>
         {
         public:
-            static const hash32 TRANSFORMATION_POSITION_HASH;
+            static const hash_type TRANSFORMATION_POSITION_HASH;
 
             Transform();
             Transform( const Transform &other ) = delete;

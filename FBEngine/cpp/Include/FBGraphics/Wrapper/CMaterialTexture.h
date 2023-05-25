@@ -53,6 +53,12 @@ namespace fb
             /** @copydoc IMaterialTexture::_getObject */
             void _getObject( void **ppObject ) override;
 
+            /** @copydoc IMaterialTexture::toData */
+            SmartPtr<ISharedObject> toData() const override;
+
+            /** @copydoc IMaterialTexture::fromData */
+            void fromData( SmartPtr<ISharedObject> data ) override;
+
             /** @copydoc IResource::getProperties */
             SmartPtr<Properties> getProperties() const override;
 

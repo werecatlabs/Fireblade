@@ -190,7 +190,7 @@ namespace fb
 
             if( auto text = fb::static_pointer_cast<ui::IUIText>( getElement() ) )
             {
-                text->setTextSize( m_textSize );
+                text->setTextSize( (f32)m_textSize );
             }
         }
 
@@ -200,7 +200,7 @@ namespace fb
 
             if( auto text = fb::dynamic_pointer_cast<ui::IUIButton>( getElement() ) )
             {
-                text->setTextSize( m_textSize );
+                text->setTextSize( (f32)m_textSize );
             }
         }
 

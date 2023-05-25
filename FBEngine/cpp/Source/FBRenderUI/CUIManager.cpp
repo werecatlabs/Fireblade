@@ -24,14 +24,13 @@
 #include <FBRenderUI/CUIScrollingTextElement.h>
 #include <FBRenderUI/CUIVector.h>
 #include <FBCore/FBCore.h>
-#include <tinyxml.h>
-#include <Ogre.h>
 
 namespace fb
 {
     namespace ui
     {
-        CUIManager::CUIManager() : m_itemInFocus( nullptr )
+        CUIManager::CUIManager() :
+            m_itemInFocus( nullptr )
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
@@ -55,7 +54,7 @@ namespace fb
             m_inputListener = factoryManager->make_ptr<InputListener>( this );
 
             auto inputMgr = applicationManager->getInputDeviceManager();
-            if( inputMgr )
+            if(inputMgr)
             {
                 inputMgr->addListener( m_inputListener );
             }
@@ -82,51 +81,9 @@ namespace fb
                 auto factoryManager = applicationManager->getFactoryManager();
                 FB_ASSERT( factoryManager );
 
-                auto root = Ogre::Root::getSingletonPtr();
-
-                Ogre::RenderWindow *renderWindow = nullptr;
-
-                if( auto window = applicationManager->getWindow() )
-                {
-                    window->_getObject( (void **)&renderWindow );
-                }
-
-                Ogre::SceneManager *smgr = nullptr;
-
-                if( auto sceneManager = graphicsSystem->getSceneManager() )
-                {
-                    sceneManager->_getObject( (void **)&smgr );
-                }
-
-                //MyGUI::OgrePlatform *platform = new MyGUI::OgrePlatform();
-                //auto platform = new UIPlatform();
-                //platform->initialise( renderWindow, smgr );
-
-                //MyGUI::Gui *gui = new MyGUI::Gui();
-                //gui->initialise();
-
-                //MyGUI::Button *button = gui->createWidget<MyGUI::Button>(
-                //    "Button", 0, 0, 400, 300, MyGUI::Align::Default, "Main" );
-
-                //// Set the button's caption
-                //button->setCaption( "test" );
-
-                //auto textBox = gui->createWidget<MyGUI::TextBox>( "TextBox", 0, 0, 100, 100,
-                //                                                  MyGUI::Align::Default, "Main" );
-
-                ////// Set the text
-                //textBox->setCaption( "Hello world!" );
-
-                //////textBox->attachToWidget( button );
-                ////button->attachToWidget( textBox );
-
-                //MyGUI::LayoutManager::getInstance().loadLayout( "Wallpaper.layout" );
-
-                //const MyGUI::IntSize &view = MyGUI::RenderManager::getInstance().getViewSize();
-
                 setLoadingState( LoadingState::Loaded );
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 auto message = String( e.what() );
                 FB_LOG_ERROR( message );
@@ -139,7 +96,7 @@ namespace fb
             {
                 setLoadingState( LoadingState::Unloading );
 
-                if( auto root = getRoot() )
+                if(auto root = getRoot())
                 {
                     root->removeAllChildren();
                     root = nullptr;
@@ -152,7 +109,7 @@ namespace fb
 
                 setLoadingState( LoadingState::Unloaded );
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -173,31 +130,32 @@ namespace fb
             FB_ASSERT( applicationManager );
 
             auto elements = getElements();
-            for( auto element : elements )
+            for(auto element : elements)
             {
-                if( element )
+                if(element)
                 {
                     element->handleEvent( event );
                 }
             }
 
-            if( event->getEventType() == IInputEvent::EventType::Mouse )
+            if(event->getEventType() == IInputEvent::EventType::Mouse)
             {
-                if( auto mouseState = event->getMouseState() )
+                if(auto mouseState = event->getMouseState())
                 {
                     auto absolutePosition = mouseState->getAbsolutePosition();
-                    auto x = (s32)absolutePosition.X();
-                    auto y = (s32)absolutePosition.Y();
+                    auto x = static_cast<s32>(absolutePosition.X());
+                    auto y = static_cast<s32>(absolutePosition.Y());
                     auto z = 0;
 
                     auto relativePosition = mouseState->getRelativePosition();
 
-                    if( auto uiWindow = applicationManager->getSceneRenderWindow() )
+                    if(auto uiWindow = applicationManager->getSceneRenderWindow())
                     {
-                        if( auto mainWindow = applicationManager->getWindow() )
+                        if(auto mainWindow = applicationManager->getWindow())
                         {
                             auto mainWindowSize = mainWindow->getSize();
-                            auto mainWindowSizeF = Vector2F( (f32)mainWindowSize.x, (f32)mainWindowSize.y );
+                            auto mainWindowSizeF = Vector2F( static_cast<f32>(mainWindowSize.x),
+                                                             static_cast<f32>(mainWindowSize.y) );
 
                             auto sceneWindowPosition = uiWindow->getPosition();
                             auto sceneWindowSize = uiWindow->getSize();
@@ -206,12 +164,12 @@ namespace fb
                             auto size = sceneWindowSize / mainWindowSizeF;
 
                             auto aabb = AABB2F( pos, size, true );
-                            if( aabb.isInside( relativePosition ) )
+                            if(aabb.isInside( relativePosition ))
                             {
-                                x = (s32)( ( absolutePosition.X() - sceneWindowPosition.X() ) /
-                                           size.X() );
-                                y = (s32)( ( absolutePosition.Y() - sceneWindowPosition.Y() ) /
-                                           size.Y() );
+                                x = static_cast<s32>(( absolutePosition.X() - sceneWindowPosition.X() ) /
+                                                     size.X());
+                                y = static_cast<s32>(( absolutePosition.Y() - sceneWindowPosition.Y() ) /
+                                                     size.Y());
 
                                 //if( auto input = MyGUI::InputManager::getInstancePtr() )
                                 //{
@@ -263,7 +221,7 @@ namespace fb
 
         void CUIManager::update()
         {
-            IUIManager::ScopedLock lock( this );
+            ScopedLock lock( this );
 
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
@@ -273,20 +231,11 @@ namespace fb
             auto factoryManager = applicationManager->getFactoryManager();
             FB_ASSERT( factoryManager );
 
-            auto root = Ogre::Root::getSingletonPtr();
-
-            Ogre::RenderWindow *renderWindow = nullptr;
-
-            if( auto window = applicationManager->getWindow() )
+            if(applicationManager->isEditor())
             {
-                window->_getObject( (void **)&renderWindow );
-            }
-
-            if( applicationManager->isEditor() )
-            {
-                if( auto uiWindow = applicationManager->getSceneRenderWindow() )
+                if(auto uiWindow = applicationManager->getSceneRenderWindow())
                 {
-                    if( auto mainWindow = applicationManager->getWindow() )
+                    if(auto mainWindow = applicationManager->getWindow())
                     {
                         //auto mainWindowSize = mainWindow->getSize();
 
@@ -313,7 +262,7 @@ namespace fb
             }
             else
             {
-                if( auto mainWindow = applicationManager->getWindow() )
+                if(auto mainWindow = applicationManager->getWindow())
                 {
                     //auto mainWindowSize = mainWindow->getSize();
 
@@ -338,9 +287,8 @@ namespace fb
             }
 
             auto task = Thread::getCurrentTask();
-            if( task != Thread::Task::Application )
+            if(task != Thread::Task::Application)
             {
-                return;
             }
 
             // const Array<IGUIElement*>& children = m_root->getChildren();
@@ -351,7 +299,7 @@ namespace fb
             // }
         }
 
-        fb::SmartPtr<fb::ui::IUIApplication> CUIManager::addApplication()
+        SmartPtr<IUIApplication> CUIManager::addApplication()
         {
             return nullptr;
         }
@@ -375,42 +323,42 @@ namespace fb
             auto TEXT_TYPEINFO = IUIText::typeInfo();
             auto TERRAIN_TYPEINFO = IUITerrainEditor::typeInfo();
 
-            if( type == BUTTON_TYPEINFO )
+            if(type == BUTTON_TYPEINFO)
             {
                 auto element = fb::make_ptr<CUIButton>();
                 graphicsSystem->loadObject( element );
                 addElementPtr( element );
                 return element;
             }
-            if( type == LAYOUT_TYPEINFO )
+            if(type == LAYOUT_TYPEINFO)
             {
                 auto element = fb::make_ptr<CUILayout>();
                 graphicsSystem->loadObject( element );
                 addElementPtr( element );
                 return element;
             }
-            if( type == CONTAINER_TYPEINFO )
+            if(type == CONTAINER_TYPEINFO)
             {
                 auto element = fb::make_ptr<CUIContainer>();
                 graphicsSystem->loadObject( element );
                 addElementPtr( element );
                 return element;
             }
-            if( type == IMAGE_TYPEINFO )
+            if(type == IMAGE_TYPEINFO)
             {
                 auto element = fb::make_ptr<CUIImage>();
                 graphicsSystem->loadObject( element );
                 addElementPtr( element );
                 return element;
             }
-            if( type == TEXT_TYPEINFO )
+            if(type == TEXT_TYPEINFO)
             {
                 auto element = fb::make_ptr<CUIText>();
                 graphicsSystem->loadObject( element );
                 addElementPtr( element );
                 return element;
             }
-            if( type == TERRAIN_TYPEINFO )
+            if(type == TERRAIN_TYPEINFO)
             {
                 //auto element = fb::make_ptr<CUITerrainEditor>();
                 //graphicsSystem->loadObject( element );
@@ -497,16 +445,16 @@ namespace fb
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             FB_ASSERT( graphicsSystem );
 
-            if( element )
+            if(element)
             {
                 graphicsSystem->unloadObject( element );
 
                 auto pElements = getElementsPtr();
-                if( pElements )
+                if(pElements)
                 {
                     auto &elements = *pElements;
                     auto it = std::find( elements.begin(), elements.end(), element );
-                    if( it != elements.end() )
+                    if(it != elements.end())
                     {
                         elements.erase( it );
                     }
@@ -516,7 +464,7 @@ namespace fb
 
         void CUIManager::clear()
         {
-            if( auto root = getRoot() )
+            if(auto root = getRoot())
             {
                 root->removeAllChildren();
             }
@@ -542,13 +490,13 @@ namespace fb
         void CUIManager::addElementPtr( SmartPtr<IUIElement> element )
         {
             auto pElements = getElementsPtr();
-            if( !pElements )
+            if(!pElements)
             {
                 pElements = fb::make_shared<Array<SmartPtr<IUIElement>>>();
                 setElementsPtr( pElements );
             }
 
-            if( pElements )
+            if(pElements)
             {
                 auto &elements = *pElements;
                 elements.push_back( element );
@@ -665,10 +613,10 @@ namespace fb
 
         SmartPtr<IUIElement> CUIManager::findElement( const String &id ) const
         {
-            if( auto root = getRoot() )
+            if(auto root = getRoot())
             {
                 SmartPtr<IUIElement> item = root->findChildById( id );
-                if( !item )
+                if(!item)
                 {
                     String message = String( "Could not find gui item: " ) + id;
                     FB_LOG_MESSAGE( "GUI", message.c_str() );
@@ -785,12 +733,12 @@ namespace fb
             return 0;
         }
 
-        fb::SmartPtr<fb::ui::IUIWindow> CUIManager::getMainWindow() const
+        SmartPtr<IUIWindow> CUIManager::getMainWindow() const
         {
             return m_uiWindow;
         }
 
-        void CUIManager::setMainWindow( SmartPtr<ui::IUIWindow> uiWindow )
+        void CUIManager::setMainWindow( SmartPtr<IUIWindow> uiWindow )
         {
             m_uiWindow = uiWindow;
         }
@@ -1080,7 +1028,7 @@ namespace fb
 
         Array<SmartPtr<IUIElement>> CUIManager::getElements() const
         {
-            if( auto p = getElementsPtr() )
+            if(auto p = getElementsPtr())
             {
                 auto &elements = *p;
                 return Array<SmartPtr<IUIElement>>( elements.begin(), elements.end() );
@@ -1089,7 +1037,8 @@ namespace fb
             return Array<SmartPtr<IUIElement>>();
         }
 
-        CUIManager::InputListener::InputListener( CUIManager *mgr ) : m_mgr( mgr )
+        CUIManager::InputListener::InputListener( CUIManager *mgr ) :
+            m_mgr( mgr )
         {
         }
 
@@ -1099,13 +1048,12 @@ namespace fb
                                                           SmartPtr<ISharedObject> object,
                                                           SmartPtr<IEvent> event )
         {
-            if( eventValue == IEvent::inputEvent )
+            if(eventValue == IEvent::inputEvent)
             {
                 m_mgr->OnEvent( event );
             }
 
             return Parameter();
         }
-
-    }  // end namespace ui
-}  // end namespace fb
+    } // end namespace ui
+}     // end namespace fb

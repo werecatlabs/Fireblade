@@ -3,6 +3,7 @@
 #include <FBGraphicsOgre/Wrapper/CTextureOgre.h>
 #include <FBGraphicsOgre/Wrapper/CVideoTextureOgre.h>
 #include <FBGraphicsOgre/Wrapper/CCubemap.h>
+#include <FBGraphicsOgre/Wrapper/CRenderTexture.h>
 #include <FBCore/FBCore.h>
 #include <OgreTextureManager.h>
 
@@ -401,11 +402,19 @@ namespace fb
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
+            auto factoryManager = applicationManager->getFactoryManager();
+
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             FB_ASSERT( graphicsSystem );
 
-            auto texture = fb::make_ptr<CTextureOgre>();
+            auto texture = factoryManager->make_ptr<CTextureOgre>();
             texture->setUsageFlags( ITexture::TU_RENDERTARGET );
+
+            auto renderTarget = factoryManager->make_ptr<CRenderTexture>();
+            renderTarget->setTexture( texture );
+            renderTarget->load( nullptr );
+            texture->setRenderTarget( renderTarget );
+
             graphicsSystem->loadObject( texture );
 
             addTexture( texture );

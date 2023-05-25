@@ -263,7 +263,7 @@ namespace fb
                 String meshFileNameNgp = meshFileNameWithoutExt + ".ngp";
 
                 auto graphicsSystem = engine->getGraphicsSystem();
-                SmartPtr<IGraphicsScene> smgr = graphicsSystem->getSceneManager( "Default" );
+                SmartPtr<IGraphicsScene> smgr = graphicsSystem->getGraphicsScene( "Default" );
                 if( !smgr )
                     return;
 
@@ -435,7 +435,7 @@ namespace fb
 
             auto engine = core::IApplicationManager::instance();
             auto graphicsSystem = engine->getGraphicsSystem();
-            SmartPtr<IGraphicsScene> smgr = graphicsSystem->getSceneManager( "Default" );
+            SmartPtr<IGraphicsScene> smgr = graphicsSystem->getGraphicsScene( "Default" );
             if( !smgr )
             {
                 FB_EXCEPTION( "" );

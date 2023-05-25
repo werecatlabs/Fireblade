@@ -5,6 +5,7 @@
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Base/Array.h>
+#include <FBCore/Base/Map.h>
 #include <FBCore/Base/Parameter.h>
 #include <FBCore/Interface/System/IEvent.h>
 #include <FBCore/Thread/ThreadTypes.h>
@@ -777,6 +778,21 @@ namespace fb
              */
             virtual void setSceneRenderWindow( SmartPtr<ui::IUIWindow> sceneRenderWindow ) = 0;
 
+            /** Gets the list of types to ignore. */
+            virtual Array<String> getComponentFactoryIgnoreList() const = 0;
+
+            /** Sets the list of types to ignore. */
+            virtual void setComponentFactoryIgnoreList( const Array<String> &ignoreList ) = 0;
+
+            /** Gets the component factory to map components to a factory. */
+            virtual Map<String, String> getComponentFactoryMap() const = 0;
+
+            /** Sets the component factory to map components to a factory. */
+            virtual void setComponentFactoryMap(const Map<String, String>& map) = 0;
+
+            /** Gets a factory to build a component. */
+            virtual String getComponentFactoryType( const String &type ) const = 0;
+
             /** Gets a component by type. */
             virtual SmartPtr<scene::IComponent> getComponentByType( u32 typeId ) const = 0;
 
@@ -796,11 +812,7 @@ namespace fb
              * @return A SmartPtr to the component, or a nullptr if the component is not found.
              */
             template <class T>
-            SmartPtr<T> getComponent() const
-            {
-                auto typeInfo = T::typeInfo();
-                return fb::static_pointer_cast<T>( getComponentByType( typeInfo ) );
-            }
+            SmartPtr<T> getComponent() const;
 
             /**
              * Gets the application manager instance.
@@ -821,6 +833,15 @@ namespace fb
              */
             static AtomicSmartPtr<IApplicationManager> m_instance;
         };
+
+        template <class T>
+        SmartPtr<T> IApplicationManager::getComponent() const
+        {
+            auto typeInfo = T::typeInfo();
+            auto component = getComponentByType( typeInfo );
+            return fb::static_pointer_cast<T>( component );
+        }
+
     }  // namespace core
 }  // end namespace fb
 

@@ -291,8 +291,10 @@ namespace fb
             /** @copydoc IActor::getAllChildren */
             Array<SmartPtr<IActor>> getAllChildren( SmartPtr<IActor> parent ) const;
 
+            /** @copydoc IActor::toData */
             SmartPtr<ISharedObject> toData() const;
 
+            /** @copydoc IActor::fromData */
             void fromData( SmartPtr<ISharedObject> data );
 
             /** @copydoc IActor::getProperties */
@@ -400,10 +402,6 @@ namespace fb
 
             void updateVisibility() override;
 
-            u32 getEntity() const override;
-
-            void setEntity( u32 entity ) override;
-
             static void registerClass();
 
             FB_CLASS_REGISTER_DECL;
@@ -434,8 +432,6 @@ namespace fb
 
             atomic_bool m_autoUpdateComponents = true;
             atomic_bool m_destroyOnLoad = false;
-
-            u32 m_entity = static_cast<u32>( 0 );
 
             static u32 m_idExt;
         };

@@ -88,8 +88,8 @@ namespace fb
                 SmartPtr<Constraint> m_constraint = nullptr;
             };
 
-            static const int STIFFNESS;
-            static const u32 SET_BREAK_FORCE_HASH;
+            static const hash_type STIFFNESS;
+            static const hash_type SET_BREAK_FORCE_HASH;
 
             Constraint() = default;
             ~Constraint() override;

@@ -162,6 +162,61 @@ namespace fb
             *ppObject = nullptr;
         }
 
+        SmartPtr<ISharedObject> CMaterialTexture::toData() const
+        {
+            try
+            {
+                auto properties = fb::make_ptr<Properties>();
+
+                if( m_texture )
+                {
+                    auto handle = m_texture->getHandle();
+                    properties->setProperty( "texturePath", handle->getUUID() );
+                }
+
+                return properties;
+            }
+            catch( std::exception &e )
+            {
+                FB_LOG_EXCEPTION( e );
+            }
+
+            return nullptr;
+        }
+
+        void CMaterialTexture::fromData( SmartPtr<ISharedObject> data )
+        {
+            try
+            {
+                auto properties = fb::static_pointer_cast<Properties>( data );
+
+                auto applicationManager = core::IApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto resourceDatabase = applicationManager->getResourceDatabase();
+                if( !resourceDatabase )
+                {
+                    FB_LOG( "Resource database null." );
+                }
+
+                if( resourceDatabase )
+                {
+                    auto texturePath = properties->getProperty( "texturePath" );
+                    if( !StringUtil::isNullOrEmpty( texturePath ) )
+                    {
+                        SmartPtr<ITexture> texture = resourceDatabase->loadResourceById( texturePath );
+                        setTexture( texture );
+                    }
+                }
+            }
+            catch( std::exception &e )
+            {
+                FB_LOG_EXCEPTION( e );
+            }
+
+            
+        }
+
         SmartPtr<Properties> CMaterialTexture::getProperties() const
         {
             try

@@ -79,15 +79,12 @@ namespace fb
 
             /** @copydoc IMaterial::isDirty */
             bool isDirty() const;
-
-            /** @copydoc IObject::toJson */
-            String toJson() const;
-
+            
             /** @copydoc IObject::toData */
-            SmartPtr<IData> toData() const;
+            SmartPtr<ISharedObject> toData() const;
 
             /** @copydoc IObject::fromData */
-            void fromData( SmartPtr<IData> data ) override;
+            void fromData( SmartPtr<ISharedObject> data ) override;
 
             /** @copydoc IResource::getProperties */
             SmartPtr<Properties> getProperties() const override;

@@ -34,7 +34,7 @@ namespace fb
                 ////printf("VisualForceVector: initialise()\n");
                 auto applicationManager = core::IApplicationManager::instance();
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
-                auto smgr = graphicsSystem->getSceneManager();
+                auto smgr = graphicsSystem->getGraphicsScene();
 
                 Ogre::SceneManager *sceneManager = nullptr;
                 smgr->_getObject( (void **)&sceneManager );

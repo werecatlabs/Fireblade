@@ -201,7 +201,7 @@ namespace fb
         s32 TerrainSystem::calculateNumLayers() const
         {
             auto terrainLayers = getSubComponentsByType<TerrainLayer>();
-            return terrainLayers.size();
+            return (s32)terrainLayers.size();
         }
 
         s32 TerrainSystem::getNumLayers() const

@@ -356,6 +356,11 @@ namespace fb
         {
         }
 
+        SmartPtr<IFactoryManager> ApplicationManager::getFactoryManager() const
+        {
+            return m_factoryManager;
+        }
+
         void ApplicationManager::setLogManager( SmartPtr<ILogManager> logManager )
         {
             m_logManager = logManager;
@@ -1024,6 +1029,21 @@ namespace fb
             m_sceneRenderWindow = sceneRenderWindow;
         }
 
+        fb::Array<fb::String> ApplicationManager::getComponentFactoryIgnoreList() const
+        {
+            return m_componentFactoryIgnoreList;
+        }
+
+        void ApplicationManager::setComponentFactoryIgnoreList( const Array<String> &ignoreList )
+        {
+            m_componentFactoryIgnoreList = ignoreList;
+        }
+
+        Map<String, String> ApplicationManager::getComponentFactoryMap() const
+        {
+            return Map<String, String>();
+        }
+
         bool ApplicationManager::isValid() const
         {
             auto taskManager = getTaskManager();
@@ -1075,6 +1095,15 @@ namespace fb
             return m_sceneRenderWindow;
         }
 
+        void ApplicationManager::setComponentFactoryMap( const Map<String, String> &map )
+        {
+        }
+
+        String ApplicationManager::getComponentFactoryType( const String &type ) const
+        {
+            return "";
+        }
+
         SmartPtr<scene::IComponent> ApplicationManager::getComponentByType( u32 typeId ) const
         {
             const auto &typeManager = TypeManager::instance();
@@ -1095,18 +1124,24 @@ namespace fb
             return nullptr;
         }
 
-        fb::Parameter ApplicationManager::triggerEvent( IEvent::Type eventType, hash_type eventValue,
+        Parameter ApplicationManager::triggerEvent( IEvent::Type eventType, hash_type eventValue,
                                                     const Array<Parameter> &arguments,
-                                                    SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object,
+                                                    SmartPtr<ISharedObject> sender,
+                                                    SmartPtr<ISharedObject> object,
                                                     SmartPtr<IEvent> event )
         {
             if( auto stateContext = getStateObject() )
             {
-                return stateContext->triggerEvent( eventType, eventValue, arguments, sender, object, event );
+                return stateContext->triggerEvent( eventType, eventValue, arguments, sender, object,
+                                                   event );
             }
 
             return Parameter();
         }
 
+        SmartPtr<ILogManager> ApplicationManager::getLogManager() const
+        {
+            return m_logManager;
+        }
     }  // namespace core
 }  // namespace fb

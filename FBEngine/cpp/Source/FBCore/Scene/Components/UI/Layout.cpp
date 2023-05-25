@@ -393,7 +393,7 @@ namespace fb
                 auto it = std::find( elements.begin(), elements.end(), component );
                 if( it != elements.end() )
                 {
-                    return std::distance( elements.begin(), it );
+                    return (u32)std::distance( elements.begin(), it );
                 }
             }
 
@@ -408,7 +408,7 @@ namespace fb
                 auto it = std::find( elements.begin(), elements.end(), component );
                 if( it != elements.end() )
                 {
-                    return elements.size() - std::distance( elements.begin(), it );
+                    return (u32)(elements.size() - std::distance( elements.begin(), it ));
                 }
             }
 

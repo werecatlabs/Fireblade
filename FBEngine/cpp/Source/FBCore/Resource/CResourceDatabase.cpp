@@ -605,8 +605,8 @@ namespace fb
 
                     for( size_t i = 0; i < numFields; ++i )
                     {
-                        auto fieldName = query->getFieldName( i );
-                        auto fieldValue = query->getFieldValue( i );
+                        auto fieldName = query->getFieldName( (u32)i );
+                        auto fieldValue = query->getFieldValue( (u32)i );
 
                         directorProperties->setProperty( fieldName, fieldValue );
                     }
@@ -856,6 +856,8 @@ namespace fb
             auto textureResult = textureManager->createOrRetrieve( uuid, path, type );
             return textureResult.first;
         }
+
+        return nullptr;
     }
 
     SmartPtr<IDatabaseManager> CResourceDatabase::getDatabaseManager() const
@@ -889,11 +891,11 @@ namespace fb
             static const auto materialType = render::IMaterial::typeInfo();
 
             auto typeManager = TypeManager::instance();
-            if( typeManager->isDerived( type, fontType ) )
+            if( typeManager->isDerived( (u32)type, fontType ) )
             {
                 return fontManager->createOrRetrieve( path );
             }
-            else if( typeManager->isDerived( type, materialType ) )
+            else if( typeManager->isDerived( (u32)type, materialType ) )
             {
                 return materialManager->createOrRetrieve( path );
             }
@@ -911,6 +913,11 @@ namespace fb
     {
         try
         {
+            if( StringUtil::isNullOrEmpty( path ) )
+            {
+                return Pair<SmartPtr<IResource>, bool>();
+            }
+
             FB_ASSERT( type != 0 );
             FB_ASSERT( !StringUtil::isNullOrEmpty( path ) );
 
@@ -942,7 +949,7 @@ namespace fb
                 auto typeManager = TypeManager::instance();
                 FB_ASSERT( typeManager );
 
-                if( typeManager->isDerived( type, materialType ) )
+                if( typeManager->isDerived( (u32)type, materialType ) )
                 {
                     if( materialManager )
                     {
@@ -950,7 +957,7 @@ namespace fb
                     }
                 }
 
-                if( typeManager->isDerived( type, meshResourceType ) )
+                if( typeManager->isDerived( (u32)type, meshResourceType ) )
                 {
                     if( meshManager )
                     {

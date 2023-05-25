@@ -55,10 +55,17 @@ namespace fb
         void unlock();
 
     protected:
-        std::mutex m_mutex;                  /**< The underlying mutex. */
-        std::condition_variable m_condition; /**< The condition variable used for waiting. */
-        std::thread::id m_owner_thread = std::thread::id(); /**< The thread ID of the owner thread. */
-        s32 m_count = 0;                                    /**< The recursion count for the mutex. */
+        /**< The underlying mutex. */
+        std::mutex m_mutex;                  
+
+        /**< The condition variable used for waiting. */
+        std::condition_variable m_condition; 
+
+        /**< The thread ID of the owner thread. */
+        std::thread::id m_owner_thread = std::thread::id(); 
+
+        /**< The recursion count for the mutex. */
+        s32 m_count = 0;                                    
     };
 
 }  // namespace fb

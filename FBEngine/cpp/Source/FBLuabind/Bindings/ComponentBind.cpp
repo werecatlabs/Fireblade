@@ -103,8 +103,6 @@ namespace fb
                         //.def("makeDirty", &IComponent::makeDirty)
                         .def( "getActor", &IComponent::getActor )
                         .def( "setActor", &IComponent::setActor )
-                        .def( "getEntity", &IComponent::getEntity )
-                        .def( "setEntity", &IComponent::setEntity )
                         .def( "getStateObject", &IComponent::getStateObject )
                         .def( "setStateObject", &IComponent::setStateObject )
                         .def( "setupUpdateRegistration", &IComponent::setupUpdateRegistration )
@@ -145,10 +143,10 @@ namespace fb
                         .def( "setDirector", &IComponent::setDirector )
                         .scope[def( "typeInfo", IComponent::typeInfo )]];
 
-        module( L )[class_<BaseComponent, IComponent, SmartPtr<BaseComponent>>( "BaseComponent" )
-                        .scope[def( "typeInfo", BaseComponent::typeInfo )]];
+        module( L )[class_<Component, IComponent, SmartPtr<Component>>( "BaseComponent" )
+                        .scope[def( "typeInfo", Component::typeInfo )]];
 
-        module( L )[class_<UserComponent, BaseComponent, SmartPtr<IComponent>>( "UserComponent" )
+        module( L )[class_<UserComponent, Component, SmartPtr<IComponent>>( "UserComponent" )
                         .def( constructor<>() )
                         .def( "getUpdateInEditMode", &UserComponent::getUpdateInEditMode )
                         .def( "setUpdateInEditMode", &UserComponent::setUpdateInEditMode )

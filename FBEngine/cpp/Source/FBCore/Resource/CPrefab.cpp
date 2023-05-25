@@ -26,21 +26,18 @@ namespace fb
 
             if( actor )
             {
-                //if( m_actor )
-                //{
-                //    auto data = getData();
-                //    if( !data )
-                //    {
-                //        data = m_actor->toData();
-                //    }
+                if( m_actor )
+                {
+                    auto data = getData();
+                    if( !data )
+                    {
+                        data = m_actor->toData();
+                    }
 
-                //    FB_ASSERT( data->getDataAsType<data::actor_data>()->children.size() ==
-                //               m_actor->getChildrenPtr()->size() );
+                    actor->fromData( data );
 
-                //    actor->fromData( data );
-
-                //    FB_ASSERT( actor->getChildrenPtr()->size() == m_actor->getChildrenPtr()->size() );
-                //}
+                    FB_ASSERT( actor->getChildrenPtr()->size() == m_actor->getChildrenPtr()->size() );
+                }
 
                 return actor;
             }
@@ -116,12 +113,12 @@ namespace fb
             *ppObject = nullptr;
         }
 
-        SmartPtr<IData> CPrefab::getData() const
+        SmartPtr<ISharedObject> CPrefab::getData() const
         {
             return m_data;
         }
 
-        void CPrefab::setData( SmartPtr<IData> data )
+        void CPrefab::setData( SmartPtr<ISharedObject> data )
         {
             m_data = data;
         }

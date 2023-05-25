@@ -44,15 +44,15 @@ namespace fb
 
             void _getObject( void **ppObject ) const override;
 
-            SmartPtr<IData> getData() const;
-            void setData( SmartPtr<IData> data );
+            SmartPtr<ISharedObject> getData() const;
+            void setData( SmartPtr<ISharedObject> data );
 
             FB_CLASS_REGISTER_DECL;
 
         protected:
             hash64 m_fileId = 0;
             WeakPtr<IActor> m_actor;
-            SmartPtr<IData> m_data;
+            SmartPtr<ISharedObject> m_data;
             SmartPtr<IStateContext> m_stateObject;
         };
 

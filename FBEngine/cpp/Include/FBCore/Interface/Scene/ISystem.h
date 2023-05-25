@@ -9,7 +9,7 @@ namespace fb
 {
     namespace scene
     {
-        /** System base class for the entity component system. */
+        /** System abstract interface for the entity component system. */
         class ISystem : public ISharedObject
         {
         public:

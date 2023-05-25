@@ -12,8 +12,6 @@ namespace fb
         class CInstancedObject : public CGraphicsObjectOgre<IInstancedObject>
         {
         public:
-
-
             CInstancedObject( SmartPtr<IGraphicsScene> smgr, const String &materialName,
                               const String &instanceManagerName );
             ~CInstancedObject() override;

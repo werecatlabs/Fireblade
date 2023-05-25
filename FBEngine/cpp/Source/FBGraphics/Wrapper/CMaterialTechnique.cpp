@@ -209,6 +209,56 @@ namespace fb
             m_passes = ptr;
         }
 
+        
+        SmartPtr<ISharedObject> CMaterialTechnique::toData() const
+        {
+            /*
+            auto data = fb::make_ptr<Data<data::material_scheme>>();
+            auto materialSchemeData = data->getDataAsType<data::material_scheme>();
+
+            auto passes = getPasses();
+            for( auto pass : passes )
+            {
+                auto pPassData = pass->toData();
+                auto passData = pPassData->getDataAsType<data::material_pass>();
+                materialSchemeData->passes.push_back( *passData );
+            }
+
+            return data;
+            */
+
+            return nullptr;
+        }
+
+        void CMaterialTechnique::fromData( SmartPtr<ISharedObject> data )
+        {
+            auto properties = fb::static_pointer_cast<Properties>( data );
+
+            auto count = 0;
+
+            auto currentPasses = getPasses();
+
+            auto passes = properties->getChildrenByName( "passes" );
+            for( auto &pass : passes )
+            {
+                auto pPass = SmartPtr<IMaterialPass>();
+
+                
+                if( count < currentPasses.size() )
+                {
+                    pPass = currentPasses[count];
+                }
+                else
+                {
+                    pPass = createPass();
+                }
+
+                pPass->fromData( pass );
+
+                count++;
+            }
+        }
+
         SmartPtr<Properties> CMaterialTechnique::getProperties() const
         {
             auto properties = CMaterialNode<IMaterialTechnique>::getProperties();

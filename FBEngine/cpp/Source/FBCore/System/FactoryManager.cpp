@@ -249,13 +249,13 @@ namespace fb
         auto typeManager = TypeManager::instance();
         FB_ASSERT( typeManager );
 
-        auto typeHash = typeManager->getHash( typeId );
+        auto typeHash = typeManager->getHash( (u32)typeId );
         FB_ASSERT( typeHash != 0 );
 
         auto factory = getFactoryById( typeHash );
         if( !factory )
         {
-            auto typeName = typeManager->getName( typeId );
+            auto typeName = typeManager->getName( (u32)typeId );
             FB_ASSERT( !typeName.empty() );
 
             factory = getFactoryByName( typeName );
@@ -263,8 +263,8 @@ namespace fb
 
         if( !factory )
         {
-            auto derivedTypes = typeManager->getDerivedTypes( typeId );
-            ///std::sort(derivedTypes.begin(), derivedTypes.end());
+            auto derivedTypes = typeManager->getDerivedTypes( (u32)typeId );
+
             for( auto derivedType : derivedTypes )
             {
                 auto factoryHash = typeManager->getHash( derivedType );

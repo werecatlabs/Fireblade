@@ -136,11 +136,6 @@ namespace fb
             unload( nullptr );
         }
 
-        void CGraphicsSystemOgre::lock()
-        {
-            m_mutex.lock();
-        }
-
         bool CGraphicsSystemOgre::initialiseRTShaderSystem()
         {
             using namespace Ogre;
@@ -196,11 +191,6 @@ namespace fb
             }
 #endif
             return false;
-        }
-
-        void CGraphicsSystemOgre::unlock()
-        {
-            m_mutex.unlock();
         }
 
         void CGraphicsSystemOgre::handleStateChanged( const SmartPtr<IStateMessage> &message )
@@ -462,10 +452,10 @@ namespace fb
 
                     m_sceneManagers.clear();
 
-                    if( auto defaultSceneManager = getSceneManager() )
+                    if( auto defaultSceneManager = getGraphicsScene() )
                     {
                         defaultSceneManager->unload( nullptr );
-                        setSceneManager( nullptr );
+                        setGraphicsScene( nullptr );
                     }
 
                     if( auto materialManager = getMaterialManager() )
@@ -872,8 +862,8 @@ namespace fb
             return false;
         }
 
-        SmartPtr<IGraphicsScene> CGraphicsSystemOgre::addSceneManager( const String &type,
-                                                                              const String &name )
+        SmartPtr<IGraphicsScene> CGraphicsSystemOgre::addGraphicsScene( const String &type,
+                                                                       const String &name )
         {
             FB_ASSERT( !StringUtil::isNullOrEmpty( type ) );
             FB_ASSERT( !StringUtil::isNullOrEmpty( name ) );
@@ -882,7 +872,7 @@ namespace fb
             sceneManager->setType( type );
             sceneManager->setName( name );
 
-            auto defaultSceneManager = getSceneManager();
+            auto defaultSceneManager = getGraphicsScene();
             if( !defaultSceneManager )
             {
                 m_defaultSceneManager = sceneManager;
@@ -894,7 +884,7 @@ namespace fb
             return sceneManager;
         }
 
-        SmartPtr<IGraphicsScene> CGraphicsSystemOgre::getSceneManager( const String &name ) const
+        SmartPtr<IGraphicsScene> CGraphicsSystemOgre::getGraphicsScene( const String &name ) const
         {
             for( auto sceneManager : m_sceneManagers )
             {
@@ -907,17 +897,17 @@ namespace fb
             return nullptr;
         }
 
-        SmartPtr<IGraphicsScene> CGraphicsSystemOgre::getSceneManager() const
+        SmartPtr<IGraphicsScene> CGraphicsSystemOgre::getGraphicsScene() const
         {
             return m_defaultSceneManager;
         }
 
-        void CGraphicsSystemOgre::setSceneManager( SmartPtr<IGraphicsScene> smgr )
+        void CGraphicsSystemOgre::setGraphicsScene( SmartPtr<IGraphicsScene> smgr )
         {
             m_defaultSceneManager = smgr;
         }
 
-        SmartPtr<IGraphicsScene> CGraphicsSystemOgre::getSceneManagerById( hash32 id ) const
+        SmartPtr<IGraphicsScene> CGraphicsSystemOgre::getGraphicsSceneById( hash32 id ) const
         {
             for( auto sceneManager : m_sceneManagers )
             {
@@ -1812,567 +1802,5 @@ namespace fb
         {
         }
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-
-        LRESULT CALLBACK CGraphicsSystemOgre::_WndProc( HWND hWnd, UINT uMsg, WPARAM wParam,
-                                                        LPARAM lParam )
-        {
-            using namespace Ogre;
-
-            auto applicationManager = core::IApplicationManager::instance();
-            auto ui = applicationManager->getUI();
-
-            auto data = fb::make_ptr<WindowMessageData>();
-            data->setWindowHandle( hWnd );
-            data->setMessage( uMsg );
-            data->setWParam( wParam );
-            data->setLParam( lParam );
-
-            if( ui )
-            {
-                ui->messagePump( data );
-            }
-
-            if( uMsg == WM_CREATE )
-            {
-                // Store pointer to Win32Window in user data area
-                SetWindowLongPtr( hWnd, GWLP_USERDATA,
-                                  (LONG_PTR)( ( (LPCREATESTRUCT)lParam )->lpCreateParams ) );
-                return 0;
-            }
-
-            // look up window instance
-            // note: it is possible to get a WM_SIZE before WM_CREATE
-            auto win = (Window *)GetWindowLongPtr( hWnd, GWLP_USERDATA );
-            if( !win )
-            {
-                return DefWindowProc( hWnd, uMsg, wParam, lParam );
-            }
-
-            // LogManager* log = LogManager::getSingletonPtr();
-            // Iterator of all listeners registered to this Window
-            //auto listeners = WindowEventUtilities::_msListeners;
-
-            //std::multimap<Window *, Ogre::WindowEventListener *>::type::iterator index;
-
-            //auto start = listeners.lower_bound( win );
-            //auto end = listeners.upper_bound( win );
-
-            //switch( uMsg )
-            //{
-            //case WM_ACTIVATE:
-            //{
-            //    bool active = ( LOWORD( wParam ) != WA_INACTIVE );
-            //    win->setFocused( active );
-
-            //    for( ; start != end; ++start )
-            //    {
-            //        ( start->second )->windowFocusChange( win );
-            //    }
-            //}
-            //break;
-            //case WM_PAINT:
-            //{
-            //    PAINTSTRUCT ps;
-            //    HDC hdc = BeginPaint( hWnd, &ps );
-            //    win->_setVisible( !IsRectEmpty( &ps.rcPaint ) );
-            //    EndPaint( hWnd, &ps );
-            //}
-            //break;
-            //case WM_SYSKEYDOWN:
-            //{
-            //    switch( wParam )
-            //    {
-            //    case VK_CONTROL:
-            //    case VK_SHIFT:
-            //    case VK_MENU:  // ALT
-            //        // return zero to bypass defProc and signal we processed the message
-            //        return 0;
-            //    }
-            //}
-            //break;
-            //case WM_SYSKEYUP:
-            //{
-            //    switch( wParam )
-            //    {
-            //    case VK_CONTROL:
-            //    case VK_SHIFT:
-            //    case VK_MENU:  // ALT
-            //    case VK_F10:
-            //        // return zero to bypass defProc and signal we processed the message
-            //        return 0;
-            //    }
-            //}
-            //break;
-            //case WM_SYSCHAR:
-            //{
-            //    // return zero to bypass defProc and signal we processed the message, unless it's an
-            //    // ALT-space
-            //    if( wParam != VK_SPACE )
-            //        return 0;
-            //}
-            //break;
-            //case WM_ENTERSIZEMOVE:
-            //    // log->logMessage("WM_ENTERSIZEMOVE");
-            //    break;
-            //case WM_EXITSIZEMOVE:
-            //    // log->logMessage("WM_EXITSIZEMOVE");
-            //    break;
-            //case WM_MOVE:
-            //{
-            //    // log->logMessage("WM_MOVE");
-            //    win->windowMovedOrResized();
-
-            //    for( auto listener : listeners )
-            //    {
-            //        ( listener.second )->windowMoved( win );
-            //    }
-            //}
-            //break;
-            //case WM_DISPLAYCHANGE:
-            //{
-            //    win->windowMovedOrResized();
-
-            //    for( auto listener : listeners )
-            //    {
-            //        ( listener.second )->windowResized( win );
-            //    }
-            //}
-            //break;
-            //case WM_SIZE:
-            //{
-            //    // log->logMessage("WM_SIZE");
-            //    win->windowMovedOrResized();
-
-            //    for( auto listener : listeners )
-            //    {
-            //        ( listener.second )->windowResized( win );
-            //    }
-            //}
-            //break;
-            //case WM_GETMINMAXINFO:
-            //{
-            //    // Prevent the window from going smaller than some minimu size
-            //    ( (MINMAXINFO *)lParam )->ptMinTrackSize.x = 100;
-            //    ( (MINMAXINFO *)lParam )->ptMinTrackSize.y = 100;
-            //}
-            //break;
-            //case WM_CLOSE:
-            //{
-            //    // log->logMessage("WM_CLOSE");
-            //    bool close = true;
-
-            //    for( auto listener : listeners )
-            //    {
-            //        if( !( listener.second )->windowClosing( win ) )
-            //        {
-            //            close = false;
-            //        }
-            //    }
-
-            //    if( !close )
-            //    {
-            //        return 0;
-            //    }
-
-            //    for( index = listeners.lower_bound( win ); index != end; ++index )
-            //    {
-            //        ( index->second )->windowClosed( win );
-            //    }
-
-            //    win->destroy();
-            //    return 0;
-            //}
-            //}
-
-            return DefWindowProc( hWnd, uMsg, wParam, lParam );
-        }
-#elif OGRE_PLATFORM == OGRE_PLATFORM_LINUX || OGRE_PLATFORM == OGRE_PLATFORM_FREEBSD
-        //
-        void GLXProc( Ogre::Window *win, const XEvent &event )
-        {
-            /*
-            // An iterator for the window listeners
-            Ogre::WindowEventUtilities::WindowEventListeners::iterator index,
-                start = Ogre::WindowEventUtilities::_msListeners.lower_bound( win ),
-                end = Ogre::WindowEventUtilities::_msListeners.upper_bound( win );
-
-            switch( event.type )
-            {
-            case ClientMessage:
-            {
-                ::Atom atom;
-                win->getCustomAttribute( "ATOM", &atom );
-                if( event.xclient.format == 32 && event.xclient.data.l[0] == (long)atom )
-                {  // Window closed by window manager
-                    // Send message first, to allow app chance to unregister things that need done before
-                    // window is shutdown
-                    bool close = true;
-                    for( index = start; index != end; ++index )
-                    {
-                        if( !( index->second )->windowClosing( win ) )
-                            close = false;
-                    }
-                    if( !close )
-                        return;
-
-                    for( index = start; index != end; ++index )
-                        ( index->second )->windowClosed( win );
-                    win->destroy();
-                }
-                break;
-            }
-            case DestroyNotify:
-            {
-                if( !win->isClosed() )
-                {
-                    // Window closed without window manager warning.
-                    for( index = start; index != end; ++index )
-                        ( index->second )->windowClosed( win );
-                    win->destroy();
-                }
-                break;
-            }
-            case ConfigureNotify:
-            {
-                // This could be slightly more efficient if windowMovedOrResized took arguments:
-                Ogre::uint32 oldWidth, oldHeight;
-                Ogre::int32 oldLeft, oldTop;
-                win->getMetrics( oldWidth, oldHeight, oldLeft, oldTop );
-                win->windowMovedOrResized();
-
-                Ogre::uint32 newWidth, newHeight;
-                Ogre::int32 newLeft, newTop;
-                win->getMetrics( newWidth, newHeight, newLeft, newTop );
-
-                if( newLeft != oldLeft || newTop != oldTop )
-                {
-                    for( index = start; index != end; ++index )
-                        ( index->second )->windowMoved( win );
-                }
-
-                if( newWidth != oldWidth || newHeight != oldHeight )
-                {
-                    for( index = start; index != end; ++index )
-                        ( index->second )->windowResized( win );
-                }
-                break;
-            }
-            case FocusIn:   // Gained keyboard focus
-            case FocusOut:  // Lost keyboard focus
-                win->setFocused( event.type == FocusIn );
-                for( index = start; index != end; ++index )
-                    ( index->second )->windowFocusChange( win );
-                break;
-            case MapNotify:  // Restored
-                win->setFocused( true );
-                for( index = start; index != end; ++index )
-                    ( index->second )->windowFocusChange( win );
-                break;
-            case UnmapNotify:  // Minimised
-                win->setFocused( false );
-                win->_setVisible( false );
-                for( index = start; index != end; ++index )
-                    ( index->second )->windowFocusChange( win );
-                break;
-            case VisibilityNotify:
-                switch( event.xvisibility.state )
-                {
-                case VisibilityUnobscured:
-                    win->setFocused( true );
-                    win->_setVisible( true );
-                    break;
-                case VisibilityPartiallyObscured:
-                    win->setFocused( true );
-                    win->_setVisible( true );
-                    break;
-                case VisibilityFullyObscured:
-                    win->setFocused( false );
-                    win->_setVisible( false );
-                    break;
-                }
-                for( index = start; index != end; ++index )
-                    ( index->second )->windowFocusChange( win );
-                break;
-            default:
-                break;
-            }  // End switch event.type
-            */
-        }
-        //
-        void XcbProc( xcb_connection_t *xcbConnection, xcb_generic_event_t *e )
-        {
-            /*
-            XcbWindowMap::const_iterator itWindow;
-            Ogre::WindowEventUtilities::WindowEventListeners::iterator index, start, end;
-
-            const Ogre::uint8 responseType = e->response_type & ~0x80;
-            switch( responseType )
-            {
-            case XCB_CLIENT_MESSAGE:
-            {
-                xcb_client_message_event_t *event = reinterpret_cast<xcb_client_message_event_t *>( e );
-                itWindow = gXcbWindowToOgre.find( event->window );
-                if( itWindow != gXcbWindowToOgre.end() )
-                {
-                    Ogre::Window *win = itWindow->second;
-                    if( event->format == 32u )
-                    {
-                        xcb_atom_t wmProtocols;
-                        xcb_atom_t wmDeleteWindow;
-                        win->getCustomAttribute( "mWmProtocols", &wmProtocols );
-                        win->getCustomAttribute( "mWmDeleteWindow", &wmDeleteWindow );
-
-                        if( event->type == wmProtocols && event->data.data32[0] == wmDeleteWindow )
-                        {
-                            start = Ogre::WindowEventUtilities::_msListeners.lower_bound( win );
-                            end = Ogre::WindowEventUtilities::_msListeners.upper_bound( win );
-
-                            // Window closed by window manager
-                            // Send message first, to allow app chance to unregister things that need
-                            // done before window is shutdown
-                            bool close = true;
-                            for( index = start; index != end; ++index )
-                            {
-                                if( !( index->second )->windowClosing( win ) )
-                                    close = false;
-                            }
-                            if( !close )
-                                return;
-
-                            for( index = start; index != end; ++index )
-                                ( index->second )->windowClosed( win );
-                            win->destroy();
-                        }
-                    }
-                }
-            }
-            break;
-            case XCB_FOCUS_IN:   // Gained keyboard focus
-            case XCB_FOCUS_OUT:  // Lost keyboard focus
-            {
-                xcb_focus_in_event_t *event = reinterpret_cast<xcb_focus_in_event_t *>( e );
-                itWindow = gXcbWindowToOgre.find( event->event );
-                if( itWindow != gXcbWindowToOgre.end() )
-                {
-                    Ogre::Window *win = itWindow->second;
-                    win->setFocused( responseType == XCB_FOCUS_IN );
-
-                    start = Ogre::WindowEventUtilities::_msListeners.lower_bound( win );
-                    end = Ogre::WindowEventUtilities::_msListeners.upper_bound( win );
-                    for( index = start; index != end; ++index )
-                        ( index->second )->windowFocusChange( win );
-                }
-            }
-            break;
-            case XCB_MAP_NOTIFY:  // Restored
-            {
-                xcb_map_notify_event_t *event = reinterpret_cast<xcb_map_notify_event_t *>( e );
-                itWindow = gXcbWindowToOgre.find( event->window );
-                if( itWindow != gXcbWindowToOgre.end() )
-                {
-                    Ogre::Window *win = itWindow->second;
-                    win->setFocused( true );
-
-                    start = Ogre::WindowEventUtilities::_msListeners.lower_bound( win );
-                    end = Ogre::WindowEventUtilities::_msListeners.upper_bound( win );
-                    for( index = start; index != end; ++index )
-                        ( index->second )->windowFocusChange( win );
-                }
-            }
-            break;
-            case XCB_UNMAP_NOTIFY:  // Minimized
-            {
-                xcb_unmap_notify_event_t *event = reinterpret_cast<xcb_unmap_notify_event_t *>( e );
-                itWindow = gXcbWindowToOgre.find( event->window );
-                if( itWindow != gXcbWindowToOgre.end() )
-                {
-                    Ogre::Window *win = itWindow->second;
-                    win->setFocused( false );
-                    win->_setVisible( false );
-
-                    start = Ogre::WindowEventUtilities::_msListeners.lower_bound( win );
-                    end = Ogre::WindowEventUtilities::_msListeners.upper_bound( win );
-                    for( index = start; index != end; ++index )
-                        ( index->second )->windowFocusChange( win );
-                }
-            }
-            break;
-            case XCB_VISIBILITY_NOTIFY:
-            {
-                xcb_visibility_notify_event_t *event =
-                    reinterpret_cast<xcb_visibility_notify_event_t *>( e );
-                itWindow = gXcbWindowToOgre.find( event->window );
-                if( itWindow != gXcbWindowToOgre.end() )
-                {
-                    Ogre::Window *win = itWindow->second;
-                    xcb_visibility_t visibility = static_cast<xcb_visibility_t>( event->state );
-                    switch( visibility )
-                    {
-                    case XCB_VISIBILITY_UNOBSCURED:
-                    case XCB_VISIBILITY_PARTIALLY_OBSCURED:
-                        win->setFocused( true );
-                        win->_setVisible( true );
-                        break;
-                    case XCB_VISIBILITY_FULLY_OBSCURED:
-                        win->setFocused( false );
-                        win->_setVisible( false );
-                        break;
-                    }
-
-                    start = Ogre::WindowEventUtilities::_msListeners.lower_bound( win );
-                    end = Ogre::WindowEventUtilities::_msListeners.upper_bound( win );
-                    for( index = start; index != end; ++index )
-                        ( index->second )->windowFocusChange( win );
-                }
-            }
-            break;
-            case XCB_CONFIGURE_NOTIFY:
-            {
-                xcb_configure_notify_event_t *event =
-                    reinterpret_cast<xcb_configure_notify_event_t *>( e );
-
-                itWindow = gXcbWindowToOgre.find( event->window );
-                if( itWindow != gXcbWindowToOgre.end() )
-                {
-                    Ogre::Window *win = itWindow->second;
-
-                    // This could be slightly more efficient if windowMovedOrResized took arguments:
-                    Ogre::uint32 oldWidth, oldHeight;
-                    Ogre::int32 oldLeft, oldTop;
-                    win->getMetrics( oldWidth, oldHeight, oldLeft, oldTop );
-                    win->windowMovedOrResized();
-
-                    Ogre::uint32 newWidth, newHeight;
-                    Ogre::int32 newLeft, newTop;
-                    win->getMetrics( newWidth, newHeight, newLeft, newTop );
-
-                    start = Ogre::WindowEventUtilities::_msListeners.lower_bound( win );
-                    end = Ogre::WindowEventUtilities::_msListeners.upper_bound( win );
-
-                    if( newLeft != oldLeft || newTop != oldTop )
-                    {
-                        for( index = start; index != end; ++index )
-                            ( index->second )->windowMoved( win );
-                    }
-
-                    if( newWidth != oldWidth || newHeight != oldHeight )
-                    {
-                        for( index = start; index != end; ++index )
-                            ( index->second )->windowResized( win );
-                    }
-                }
-            }
-            break;
-            case XCB_DESTROY_NOTIFY:
-            {
-                xcb_visibility_notify_event_t *event =
-                    reinterpret_cast<xcb_visibility_notify_event_t *>( e );
-                itWindow = gXcbWindowToOgre.find( event->window );
-                if( itWindow != gXcbWindowToOgre.end() )
-                {
-                    Ogre::Window *win = itWindow->second;
-                    if( !win->isClosed() )
-                    {
-                        start = Ogre::WindowEventUtilities::_msListeners.lower_bound( win );
-                        end = Ogre::WindowEventUtilities::_msListeners.upper_bound( win );
-                        for( index = start; index != end; ++index )
-                            ( index->second )->windowClosed( win );
-                        win->destroy();
-                    }
-                }
-            }
-            break;
-            }
-             */
-        }
-#elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE && !defined __OBJC__ && !defined __LP64__
-        //
-        namespace Ogre
-        {
-            OSStatus WindowEventUtilities::_CarbonWindowHandler( EventHandlerCallRef nextHandler,
-                                                                 EventRef event, void *wnd )
-            {
-                OSStatus status = noErr;
-
-                // Only events from our window should make it here
-                // This ensures that our user data is our WindowRef
-                Window *curWindow = (Window *)wnd;
-                if( !curWindow )
-                    return eventNotHandledErr;
-
-                // Iterator of all listeners registered to this Window
-                WindowEventListeners::iterator index, start = _msListeners.lower_bound( curWindow ),
-                                                      end = _msListeners.upper_bound( curWindow );
-
-                // We only get called if a window event happens
-                UInt32 eventKind = GetEventKind( event );
-
-                switch( eventKind )
-                {
-                case kEventWindowActivated:
-                    curWindow->setFocused( true );
-                    for( ; start != end; ++start )
-                        ( start->second )->windowFocusChange( curWindow );
-                    break;
-                case kEventWindowDeactivated:
-                    curWindow->setFocused( false );
-
-                    for( ; start != end; ++start )
-                        ( start->second )->windowFocusChange( curWindow );
-
-                    break;
-                case kEventWindowShown:
-                case kEventWindowExpanded:
-                    curWindow->setFocused( true );
-                    curWindow->setVisible( true );
-                    for( ; start != end; ++start )
-                        ( start->second )->windowFocusChange( curWindow );
-                    break;
-                case kEventWindowHidden:
-                case kEventWindowCollapsed:
-                    curWindow->setFocused( false );
-                    curWindow->setVisible( false );
-                    for( ; start != end; ++start )
-                        ( start->second )->windowFocusChange( curWindow );
-                    break;
-                case kEventWindowDragCompleted:
-                    curWindow->windowMovedOrResized();
-                    for( ; start != end; ++start )
-                        ( start->second )->windowMoved( curWindow );
-                    break;
-                case kEventWindowBoundsChanged:
-                    curWindow->windowMovedOrResized();
-                    for( ; start != end; ++start )
-                        ( start->second )->windowResized( curWindow );
-                    break;
-                case kEventWindowClose:
-                {
-                    bool close = true;
-                    for( ; start != end; ++start )
-                    {
-                        if( !( start->second )->windowClosing( curWindow ) )
-                            close = false;
-                    }
-                    if( close )
-                        // This will cause event handling to continue on to the standard handler, which
-                        // calls DisposeWindow(), which leads to the 'kEventWindowClosed' event
-                        status = eventNotHandledErr;
-                    break;
-                }
-                case kEventWindowClosed:
-                    curWindow->destroy();
-                    for( ; start != end; ++start )
-                        ( start->second )->windowClosed( curWindow );
-                    break;
-                default:
-                    status = eventNotHandledErr;
-                    break;
-                }
-
-                return status;
-            }
-        }  // namespace Ogre
-#endif
     }  // end namespace render
 }  // end namespace fb

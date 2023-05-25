@@ -37,6 +37,12 @@ namespace fb
 
             void setPassesPtr( SharedPtr<Array<SmartPtr<IMaterialPass>>> ptr );
 
+            /** @copydoc IObject::toData */
+            SmartPtr<ISharedObject> toData() const override;
+
+            /** @copydoc IObject::fromData */
+            void fromData( SmartPtr<ISharedObject> data ) override;
+
             /** @copydoc IResource::getProperties */
             SmartPtr<Properties> getProperties() const override;
 
@@ -59,7 +65,7 @@ namespace fb
                 void handleStateChanged( SmartPtr<IState> &state ) override;
                 void handleQuery( SmartPtr<IStateQuery> &query ) override;
             };
-            
+
             hash32 m_scheme = 0;
             SharedPtr<Array<SmartPtr<IMaterialPass>>> m_passes;
         };

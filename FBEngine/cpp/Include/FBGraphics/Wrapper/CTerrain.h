@@ -27,6 +27,14 @@ namespace fb
              */
             ~CTerrain() override;
 
+            Transform3<real_Num> getWorldTransform() const;
+
+            /** Sets the world transform of the terrain.
+             * @param worldTransform The new world transform of the terrain.
+             */
+            void setWorldTransform( const Transform3<real_Num> &worldTransform );
+
+
             Vector3<real_Num> getPosition() const override;
 
             void setPosition( const Vector3<real_Num> &position ) override;

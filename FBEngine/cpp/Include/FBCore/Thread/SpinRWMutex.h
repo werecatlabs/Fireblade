@@ -67,9 +67,14 @@ namespace fb
         void unlock_write();
 
     protected:
-        std::atomic<s32> readers;         ///< The number of readers currently holding a shared lock.
-        std::atomic<s32> writers;         ///< The number of writers currently holding an exclusive lock.
-        std::atomic<bool> write_request;  ///< True if there are pending write lock requests.
+        ///< The number of readers currently holding a shared lock.
+        std::atomic<s32> readers;         
+
+        ///< The number of writers currently holding an exclusive lock.
+        std::atomic<s32> writers;         
+
+        ///< True if there are pending write lock requests.
+        std::atomic<bool> write_request;  
     };
 
 }  // end namespace fb

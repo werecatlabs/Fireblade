@@ -7,7 +7,7 @@ namespace fb
 
     Vector2I ViewportHelper::_getActualSize( IViewport *vp )
     {
-        return Vector2I( vp->getActualWidth(), vp->getActualHeight() );
+        return Vector2I::zero();// Vector2I( vp->getActualWidth(), vp->getActualHeight() );
     }
 
     void ViewportHelper::_setClearEveryFrame( IViewport *vp, bool clear )

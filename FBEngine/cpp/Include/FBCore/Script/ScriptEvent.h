@@ -17,9 +17,9 @@ namespace fb
         ~ScriptEvent() override;
 
         /** Gets the type of event. */
-        hash32 getEventType() const;
+        hash_type getEventType() const;
 
-        void setEventType( hash32 type );
+        void setEventType( hash_type type );
 
         /** Gets the class name. */
         String &getClassName() override;

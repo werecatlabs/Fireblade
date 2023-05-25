@@ -33,9 +33,9 @@ namespace fb
 
             void update() override;
 
-            SmartPtr<IUIApplication> addApplication();
+            SmartPtr<IUIApplication> addApplication() override;
 
-            void removeApplication( SmartPtr<IUIApplication> application );
+            void removeApplication( SmartPtr<IUIApplication> application ) override;
 
             /** @copydoc IUIManager::addElement */
             SmartPtr<IUIElement> addElement( hash64 type ) override;
@@ -66,14 +66,14 @@ namespace fb
             SmartPtr<IUIApplication> getApplication() const override;
             void setApplication( SmartPtr<IUIApplication> application ) override;
 
-            Array<SmartPtr<IUIWindow>> getWindows() const ;
-            void setWindows( Array<SmartPtr<IUIWindow>> val ) ;
+            Array<SmartPtr<IUIWindow>> getWindows() const;
+            void setWindows( Array<SmartPtr<IUIWindow>> val );
 
-            Array<SmartPtr<IUIRenderWindow>> getRenderWindows() const ;
-            void setRenderWindows( Array<SmartPtr<IUIRenderWindow>> val ) ;
+            Array<SmartPtr<IUIRenderWindow>> getRenderWindows() const;
+            void setRenderWindows( Array<SmartPtr<IUIRenderWindow>> val );
 
-            Array<SmartPtr<IUIFileBrowser>> getFileBrowsers() const ;
-            void setFileBrowsers( Array<SmartPtr<IUIFileBrowser>> val ) ;
+            Array<SmartPtr<IUIFileBrowser>> getFileBrowsers() const;
+            void setFileBrowsers( Array<SmartPtr<IUIFileBrowser>> val );
 
             bool isDragging() const override;
 
@@ -92,13 +92,13 @@ namespace fb
             virtual s32 callFunction( u32 hash, const Parameters &params, Parameters &results );
             virtual s32 callFunction( u32 hash, SmartPtr<ISharedObject> object, Parameters &results );
 
-            virtual SmartPtr<ui::IUIWindow> getMainWindow() const;
+            SmartPtr<IUIWindow> getMainWindow() const override;
 
-            virtual void setMainWindow( SmartPtr<ui::IUIWindow> uiWindow );
+            void setMainWindow( SmartPtr<IUIWindow> uiWindow ) override;
 
-            void lock();
+            void lock() override;
 
-            void unlock();
+            void unlock() override;
 
         private:
             class InputListener : public CSharedObject<IEventListener>
@@ -108,7 +108,7 @@ namespace fb
 
                 Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
                                        const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
-                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
                 CUIManager *m_mgr;
             };
@@ -130,7 +130,7 @@ namespace fb
 
             AtomicSharedPtr<Array<SmartPtr<IUIElement>>> m_elements;
 
-            SmartPtr<ui::IUIWindow> m_uiWindow;
+            SmartPtr<IUIWindow> m_uiWindow;
 
             AtomicSmartPtr<IUIElement> m_root;
 
@@ -139,7 +139,7 @@ namespace fb
             SmartPtr<IEventListener> m_inputListener;
 
             using SoundMap = std::map<String, SmartPtr<ISound2>>;
-            SoundMap m_sounds;  // sounds
+            SoundMap m_sounds; // sounds
 
             using LayoutFileMap = std::map<String, String>;
             LayoutFileMap m_layoutFileMap;
@@ -152,7 +152,7 @@ namespace fb
 
             bool m_dragging = false;
         };
-    }  // end namespace ui
-}  // end namespace fb
+    } // end namespace ui
+}     // end namespace fb
 
 #endif

@@ -138,6 +138,12 @@ namespace fb
             /** @copydoc IMaterialPass::toJson */
             void setRoughness( f32 roughness );
 
+            /** @copydoc IObject::toData */
+            SmartPtr<ISharedObject> toData() const override;
+
+            /** @copydoc IObject::fromData */
+            void fromData( SmartPtr<ISharedObject> data ) override;
+
             /** @copydoc IResource::getProperties */
             SmartPtr<Properties> getProperties() const override;
 
@@ -164,11 +170,11 @@ namespace fb
             virtual void createTextureSlots();
             virtual void setupMaterial();
 
-            void setTextureUnits(Array<SmartPtr<IMaterialTexture>> textures);
+            void setTextureUnits( Array<SmartPtr<IMaterialTexture>> textures );
 
             SharedPtr<ConcurrentArray<SmartPtr<IMaterialTexture>>> getTexturesPtr() const;
 
-            void setTexturesPtr(SharedPtr<ConcurrentArray<SmartPtr<IMaterialTexture>>> p);
+            void setTexturesPtr( SharedPtr<ConcurrentArray<SmartPtr<IMaterialTexture>>> p );
 
             ColourF m_tint = ColourF::White;
             ColourF m_ambient = ColourF::White;

@@ -1,7 +1,7 @@
 #ifndef _CSceneNode_H
 #define _CSceneNode_H
 
-#include <FBGraphicsOgreNext/FBGraphicsOgreNextPrequisites.h>
+#include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/ISceneNode.h>
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Interface/Script/IScriptReceiver.h>

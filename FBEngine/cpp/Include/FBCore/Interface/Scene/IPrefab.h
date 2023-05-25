@@ -46,14 +46,14 @@ namespace fb
              *
              * @return The data.
              */
-            virtual SmartPtr<IData> getData() const = 0;
+            virtual SmartPtr<ISharedObject> getData() const = 0;
 
             /**
              * Sets the data associated with this prefab.
              *
              * @param data The data to set.
              */
-            virtual void setData( SmartPtr<IData> data ) = 0;
+            virtual void setData( SmartPtr<ISharedObject> data ) = 0;
 
             FB_CLASS_REGISTER_DECL;
         };

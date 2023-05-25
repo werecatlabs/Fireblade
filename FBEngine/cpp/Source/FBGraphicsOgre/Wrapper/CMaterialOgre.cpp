@@ -719,7 +719,7 @@ namespace fb
         //	return technique;
         //}
 
-        SmartPtr<IData> CMaterialOgre::toData() const
+        SmartPtr<ISharedObject> CMaterialOgre::toData() const
         {
             //try
             //{
@@ -752,7 +752,7 @@ namespace fb
             return nullptr;
         }
 
-        void CMaterialOgre::fromData( SmartPtr<IData> data )
+        void CMaterialOgre::fromData( SmartPtr<ISharedObject> data )
         {
             //try
             //{

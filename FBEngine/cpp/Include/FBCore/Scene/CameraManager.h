@@ -1,7 +1,7 @@
 #ifndef _CameraManager_H
 #define _CameraManager_H
 
-#include <FBApplication/FBApplicationPrerequisites.h>
+#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/ICameraManager.h>
 #include <FBCore/Base/Array.h>
 #include <FBCore/Memory/CSharedObject.h>

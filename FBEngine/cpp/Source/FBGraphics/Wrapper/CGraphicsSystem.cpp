@@ -14,5 +14,21 @@ namespace fb
         {
         }
 
+
+void CGraphicsSystem::lock()
+        {
+            m_mutex.lock();
+        }
+
+        void CGraphicsSystem::unlock()
+        {
+            m_mutex.unlock();
+        }
+
+        Array<SmartPtr<IWindow>> CGraphicsSystem::getWindows() const
+        {
+            return m_windows;
+        }
+
     }  // namespace render
 }  // namespace fb

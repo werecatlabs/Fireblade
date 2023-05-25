@@ -30,7 +30,7 @@ namespace fb
 
                     //.def( "addSceneManager", GraphicsSystemHelper::addSceneManager )
                     //.def( "getSceneManager", GraphicsSystemHelper::getSceneManager )
-                    .def( "getSceneManagerById", &IGraphicsSystem::getSceneManagerById )
+                    .def( "getGraphicsSceneById", &IGraphicsSystem::getGraphicsSceneById )
                     .def( "getOverlayManager", &IGraphicsSystem::getOverlayManager )
                     //.def( "getCompositorManager", &IGraphicsSystem::getCompositorManager )
 
@@ -68,8 +68,8 @@ namespace fb
                         .def( "setClearEveryFrame", ViewportHelper::_setClearEveryFrame )
                         .def( "setClearEveryFrame", ViewportHelper::_setClearEveryFrameFlags )
                         .def( "getClearEveryFrame", &IViewport::getClearEveryFrame )
-                        .def( "getActualWidth", &IViewport::getActualWidth )
-                        .def( "getActualHeight", &IViewport::getActualHeight )
+                        //.def( "getActualWidth", &IViewport::getActualWidth )
+                        //.def( "getActualHeight", &IViewport::getActualHeight )
                         .def( "getOverlaysEnabled", &IViewport::getOverlaysEnabled )
                         .def( "setOverlaysEnabled", &IViewport::setOverlaysEnabled )
                         .def( "getSkiesEnabled", &IViewport::getSkiesEnabled )

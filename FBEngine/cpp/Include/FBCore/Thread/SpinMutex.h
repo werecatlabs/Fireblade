@@ -46,8 +46,8 @@ namespace fb
         void unlock();
 
     private:
-        std::atomic_flag locked =
-            ATOMIC_FLAG_INIT; /**< The atomic flag used to synchronize access to the SpinMutex. */
+        /**< The atomic flag used to synchronize access to the SpinMutex. */
+        std::atomic_flag locked = ATOMIC_FLAG_INIT;
     };
 
 }  // namespace fb

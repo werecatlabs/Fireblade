@@ -75,18 +75,6 @@ namespace fb
             virtual void setActor( SmartPtr<IActor> actor ) = 0;
 
             /**
-             * Gets the ID of the underlying entity.
-             * @return The ID of the underlying entity.
-             */
-            virtual u32 getEntity() const = 0;
-
-            /**
-             * Sets the ID of the underlying entity.
-             * @param entity The ID of the underlying entity.
-             */
-            virtual void setEntity( u32 entity ) = 0;
-
-            /**
              * Gets the component's state object.
              * @return The state object associated with this component, or null if no state object has been set.
              */
@@ -283,19 +271,7 @@ namespace fb
              * @return A SmartPtr to the new component.
              */
             template <class T>
-            SmartPtr<T> addSubComponentByType()
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto factoryManager = applicationManager->getFactoryManager();
-                FB_ASSERT( factoryManager );
-
-                auto component = factoryManager->make_ptr<T>();
-                addSubComponent( component );
-                component->load( nullptr );
-                return component;
-            }
+            SmartPtr<T> addSubComponentByType();
 
             /**
              * Removes a sub component component.
@@ -303,15 +279,7 @@ namespace fb
              * @tparam T The type of component to remove.
              */
             template <class T>
-            void removeSubComponentByType()
-            {
-                auto subComponents = getSubComponentsByType<T>();
-                if( !subComponents.empty() )
-                {
-                    auto subComponent = subComponents.front();
-                    removeSubComponent( subComponent );
-                }
-            }
+            void removeSubComponentByType();
 
             /**
              * Returns an array of all child components that are derived from the specified type.
@@ -319,29 +287,7 @@ namespace fb
              * @return An array of SmartPtrs to child components of type T.
              */
             template <class T>
-            Array<SmartPtr<T>> getSubComponentsByType() const
-            {
-                // Get all child components of this component.
-                auto children = getSubComponents();
-
-                // Create an array for storing child components of the specified type.
-                Array<SmartPtr<T>> childrenByType;
-                childrenByType.reserve( children.size() );
-
-                // Loop over all child components.
-                for( auto &child : children )
-                {
-                    // Check if the child component is derived from the specified type.
-                    if( child->isDerived<T>() )
-                    {
-                        // If the child is of the specified type, add it to the array of components of that type.
-                        childrenByType.push_back( child );
-                    }
-                }
-
-                // Return the array of child components that are of the specified type.
-                return childrenByType;
-            }
+            Array<SmartPtr<T>> getSubComponentsByType() const;
 
             /**
             @brief Creates a component of the given type using a director and properties.
@@ -349,24 +295,79 @@ namespace fb
             @returns The newly created component.
             */
             template <class T>
-            static void create( SmartPtr<IDirector> director )
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto factoryManager = applicationManager->getFactoryManager();
-                FB_ASSERT( factoryManager );
-
-                auto component = factoryManager->make_shared<T>();
-                FB_ASSERT( component );
-
-                auto properties = director->getProperties();
-                component->setProperties( properties );
-                return component;
-            }
+            static void create( SmartPtr<IDirector> director );
 
             FB_CLASS_REGISTER_DECL;
         };
+
+        template <class T>
+        SmartPtr<T> IComponent::addSubComponentByType()
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto factoryManager = applicationManager->getFactoryManager();
+            FB_ASSERT( factoryManager );
+
+            auto component = factoryManager->make_ptr<T>();
+            addSubComponent( component );
+            component->load( nullptr );
+            return component;
+        }
+
+        template <class T>
+        void IComponent::removeSubComponentByType()
+        {
+            auto subComponents = getSubComponentsByType<T>();
+            if( !subComponents.empty() )
+            {
+                auto subComponent = subComponents.front();
+                removeSubComponent( subComponent );
+            }
+        }
+
+        template <class T>
+        Array<SmartPtr<T>> IComponent::getSubComponentsByType() const
+        {
+            // Get all child components of this component.
+            auto children = getSubComponents();
+
+            // Create an array for storing child components of the specified type.
+            Array<SmartPtr<T>> childrenByType;
+            childrenByType.reserve( children.size() );
+
+            // Loop over all child components.
+            for( auto &child : children )
+            {
+                // Check if the child component is derived from the specified type.
+                if( child->isDerived<T>() )
+                {
+                    // If the child is of the specified type, add it to the array of components of that type.
+                    childrenByType.push_back( child );
+                }
+            }
+
+            // Return the array of child components that are of the specified type.
+            return childrenByType;
+        }
+
+        template <class T>
+        void IComponent::create( SmartPtr<IDirector> director )
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto factoryManager = applicationManager->getFactoryManager();
+            FB_ASSERT( factoryManager );
+
+            auto component = factoryManager->make_shared<T>();
+            FB_ASSERT( component );
+
+            auto properties = director->getProperties();
+            component->setProperties( properties );
+            return component;
+        }
+
     }  // namespace scene
 }  // end namespace fb
 

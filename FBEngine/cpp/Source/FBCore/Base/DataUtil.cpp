@@ -15,6 +15,74 @@
 #include <rttr/registration_friend>
 #include <boost/json.hpp>
 
+using namespace fb;
+
+namespace boost
+{
+    namespace json
+    {
+
+        template <>
+        rttr::variant value_to<rttr::variant>( const boost::json::value &val )
+        {
+            if( val.is_string() )
+            {
+                auto str = val.as_string();
+                std::string s( str.data(), str.size() );
+                return rttr::variant( s );
+            }
+            else if( val.is_double() )
+            {
+                double v = val.as_double();
+                return rttr::variant( v );
+            }
+            else if( val.is_int64() )
+            {
+                s64 v = val.as_int64();
+                return rttr::variant( v );
+            }
+            else if( val.is_bool() )
+            {
+                bool v = val.as_bool();
+                return rttr::variant( v );
+            }
+            else if( val.is_object() )
+            {
+                const boost::json::object &obj = val.as_object();
+                //rttr::variant var = rttr::variant::create( obj );
+                return rttr::variant();
+            }
+            else if( val.is_array() )
+            {
+                const boost::json::array &arr = val.as_array();
+                //rttr::variant var = rttr::variant::create( arr );
+                return rttr::variant();
+            }
+            else
+            {
+                return rttr::variant();
+            }
+        }
+
+    }  // namespace json
+}  // namespace boost
+
+template <class T>
+void jsonToObject( const boost::json::object &json, T *ptr )
+{
+    rttr::type personType = rttr::type::get<T>();
+    for( const auto &member : json )
+    {
+        std::string propertyName = member.key();
+        rttr::property prop = personType.get_property( propertyName );
+        if( prop.is_valid() )
+        {
+            rttr::variant value = boost::json::value_to<rttr::variant>( member.value() );
+            prop.set_value( *ptr, value );
+        }
+    }
+}
+
 #define FB_DECLARE_DATA_CLASS( T ) \
     template <> \
     String DataUtil::toString( T *ptr, bool formatted ) \
@@ -25,14 +93,23 @@
     template <> \
     void DataUtil::parse( const String &jsonDataStr, T *ptr ) \
     { \
+        auto jsonData = boost::json::parse( jsonDataStr ); \
+\
+        if( jsonData.is_object() ) \
+        { \
+            const boost::json::object &obj = jsonData.as_object(); \
+            DataUtil::parseJson( &obj, ptr ); \
+        } \
     }
-
-using namespace fb;
 
 FB_DECLARE_DATA_CLASS( Vector2F )
 FB_DECLARE_DATA_CLASS( Vector2D )
 FB_DECLARE_DATA_CLASS( Vector3F )
 FB_DECLARE_DATA_CLASS( Vector3D )
+
+FB_DECLARE_DATA_CLASS( Transform3F )
+FB_DECLARE_DATA_CLASS( Transform3D )
+
 FB_DECLARE_DATA_CLASS( Property )
 FB_DECLARE_DATA_CLASS( Properties )
 
@@ -449,39 +526,216 @@ namespace fb
 
     void DataUtil::parse( SmartPtr<Properties> properties, ColourF &value )
     {
-        value.r = properties->getPropertyAsFloat( "r" );
-        value.g = properties->getPropertyAsFloat( "g" );
-        value.b = properties->getPropertyAsFloat( "b" );
-        value.a = properties->getPropertyAsFloat( "a" );
+        if( properties )
+        {
+            value.r = properties->getPropertyAsFloat( "x" );
+            value.g = properties->getPropertyAsFloat( "y" );
+            value.b = properties->getPropertyAsFloat( "z" );
+            value.a = properties->getPropertyAsFloat( "w" );
+        }
     }
 
     void DataUtil::parse( SmartPtr<Properties> properties, QuaternionF &value )
     {
-        value.x = properties->getPropertyAsFloat( "x" );
-        value.y = properties->getPropertyAsFloat( "y" );
-        value.z = properties->getPropertyAsFloat( "z" );
-        value.w = properties->getPropertyAsFloat( "w" );
+        if( properties )
+        {
+            value.x = properties->getPropertyAsFloat( "x" );
+            value.y = properties->getPropertyAsFloat( "y" );
+            value.z = properties->getPropertyAsFloat( "z" );
+            value.w = properties->getPropertyAsFloat( "w" );
+        }
     }
 
     void DataUtil::parse( SmartPtr<Properties> properties, Vector4F &value )
     {
-        value.x = properties->getPropertyAsFloat( "x" );
-        value.y = properties->getPropertyAsFloat( "y" );
-        value.z = properties->getPropertyAsFloat( "z" );
-        value.w = properties->getPropertyAsFloat( "w" );
+        if( properties )
+        {
+            value.x = properties->getPropertyAsFloat( "x" );
+            value.y = properties->getPropertyAsFloat( "y" );
+            value.z = properties->getPropertyAsFloat( "z" );
+            value.w = properties->getPropertyAsFloat( "w" );
+        }
     }
 
     void DataUtil::parse( SmartPtr<Properties> properties, Vector3F &value )
     {
-        value.x = properties->getPropertyAsFloat( "x" );
-        value.y = properties->getPropertyAsFloat( "y" );
-        value.z = properties->getPropertyAsFloat( "z" );
+        if( properties )
+        {
+            value.x = properties->getPropertyAsFloat( "x" );
+            value.y = properties->getPropertyAsFloat( "y" );
+            value.z = properties->getPropertyAsFloat( "z" );
+        }
     }
 
     void DataUtil::parse( SmartPtr<Properties> properties, Vector2F &value )
     {
-        value.x = properties->getPropertyAsFloat( "x" );
-        value.y = properties->getPropertyAsFloat( "y" );
+        if( properties )
+        {
+            value.x = properties->getPropertyAsFloat( "x" );
+            value.y = properties->getPropertyAsFloat( "y" );
+        }
+    }
+
+    template <class T>
+    void parseVector2( const boost::json::object *obj, Vector2<T> *value )
+    {
+        auto &jsonValue = *obj;
+        auto structType = rttr::type::get<Vector2<T>>();
+        if( structType )
+        {
+            for( const auto &property : *obj )
+            {
+                std::string propertyName = property.key();
+                rttr::property prop = structType.get_property( propertyName );
+
+                if( jsonValue.contains( propertyName ) )
+                {
+                    rttr::variant propertyValue =
+                        boost::json::value_to<rttr::variant>( property.value() );
+                    prop.set_value( value, propertyValue );
+                }
+            }
+        }
+    }
+
+    void DataUtil::parseJson( const boost::json::object *obj, Vector2I *value )
+    {
+        parseVector2( obj, value );
+    }
+
+    void DataUtil::parseJson( const boost::json::object *obj, Vector2F *value )
+    {
+        parseVector2( obj, value );
+    }
+
+    void DataUtil::parseJson( const boost::json::object *obj, Vector2D *value )
+    {
+        parseVector2( obj, value );
+    }
+
+    template <class T>
+    void parseVector3( const boost::json::object *obj, Vector3<T> *value )
+    {
+        auto &jsonValue = *obj;
+        auto structType = rttr::type::get<Vector3<T>>();
+        if( structType )
+        {
+            for( const auto &property : *obj )
+            {
+                std::string propertyName = property.key();
+                rttr::property prop = structType.get_property( propertyName );
+
+                if( jsonValue.contains( propertyName ) )
+                {
+                    rttr::variant propertyValue =
+                        boost::json::value_to<rttr::variant>( property.value() );
+                    prop.set_value( value, propertyValue );
+                }
+            }
+        }
+    }
+
+    void DataUtil::parseJson( const boost::json::object *obj, Vector3I *value )
+    {
+        parseVector3( obj, value );
+    }
+
+    void DataUtil::parseJson( const boost::json::object *obj, Vector3F *value )
+    {
+        parseVector3( obj, value );
+    }
+
+    void DataUtil::parseJson( const boost::json::object *obj, Vector3D *value )
+    {
+        parseVector3( obj, value );
+    }
+
+    void DataUtil::parseJson( const boost::json::object *val, Transform3F *ptr )
+    {
+    }
+
+    void DataUtil::parseJson( const boost::json::object *val, Transform3D *ptr )
+    {
+    }
+
+    void DataUtil::parseJson( const boost::json::object *val, Properties *ptr )
+    {
+        const boost::json::object &obj = *val;
+        rttr::type personType = rttr::type::get<Properties>();
+        for( const auto &member : obj )
+        {
+            std::string propertyName = member.key();
+            rttr::property prop = personType.get_property( propertyName );
+            if( prop.is_valid() )
+            {
+                auto &val = member.value();
+
+                if( propertyName == "properties" )
+                {
+                    if( val.is_array() )
+                    {
+                        boost::json::array jsonArray = val.as_array();
+                        for( const auto &element : jsonArray )
+                        {
+                            if( element.is_object() )
+                            {
+                                const auto &childObj = element.as_object();
+
+                                Property newProp;
+                                DataUtil::parseJson( &childObj, &newProp );
+
+                                ptr->addProperty( newProp );
+                            }
+                        }
+                    }
+                }
+                else if( propertyName == "children" )
+                {
+                    if( val.is_array() )
+                    {
+                        boost::json::array jsonArray = val.as_array();
+                        for( const auto &element : jsonArray )
+                        {
+                            if( element.is_object() )
+                            {
+                                const auto &childObj = element.as_object();
+
+                                auto properties = fb::make_ptr<Properties>();
+                                DataUtil::parseJson( &childObj, properties.get() );
+
+                                ptr->addChild( properties );
+                            }
+                        }
+                    }
+                }
+                else if( val.is_string() )
+                {
+                    rttr::variant value = boost::json::value_to<rttr::variant>( member.value() );
+                    prop.set_value( ptr, value );
+                }
+            }
+        }
+    }
+
+    void DataUtil::parseJson( const boost::json::object *obj, Property *ptr )
+    {
+        auto &jsonValue = *obj;
+        auto structType = rttr::type::get<Property>();
+        if( structType )
+        {
+            for( const auto &property : *obj )
+            {
+                std::string propertyName = property.key();
+                rttr::property prop = structType.get_property( propertyName );
+
+                if( jsonValue.contains( propertyName ) )
+                {
+                    rttr::variant propertyValue =
+                        boost::json::value_to<rttr::variant>( property.value() );
+                    prop.set_value( ptr, propertyValue );
+                }
+            }
+        }
     }
 
     String DataUtil::objectToJsonStr( const rttr::instance &instance )

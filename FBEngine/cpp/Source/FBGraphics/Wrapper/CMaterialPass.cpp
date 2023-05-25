@@ -1057,6 +1057,73 @@ namespace fb
             }
         }
 
+        SmartPtr<ISharedObject> CMaterialPass::toData() const
+        {
+            /*
+            auto data = fb::make_ptr<Data<data::material_pass>>();
+            auto passData = data->getDataAsType<data::material_pass>();
+
+            auto d = getDiffuse();
+            auto e = getEmissive();
+
+            passData->diffuse = data::vec4( d.r, d.g, d.b, d.a );
+            passData->emissive = data::vec4( e.r, e.g, e.b, e.a );
+
+            passData->metalness = getMetalness();
+            passData->roughness = getRoughness();
+
+            auto textureUnits = getTextureUnits();
+            for( auto textureUnit : textureUnits )
+            {
+                auto pTextureData = textureUnit->toData();
+                auto textureData = pTextureData->getDataAsType<data::material_texture>();
+                passData->textures.push_back( *textureData );
+            }
+
+            return data;
+            */
+
+            return nullptr;
+        }
+
+        void CMaterialPass::fromData( SmartPtr<ISharedObject> data )
+        {
+            auto properties = fb::static_pointer_cast<Properties>( data );
+
+            auto diffuse = ColourF::White;
+            auto diffuseProperties = properties->getChild( "diffuse" );
+            DataUtil::parse( diffuseProperties, diffuse );
+            setDiffuse( diffuse );
+
+            auto emissive = ColourF::White;
+            auto emissiveProperties = properties->getChild( "emissive" );
+            DataUtil::parse( emissiveProperties, emissive );
+            setEmissive( emissive );
+
+            auto metalness = properties->getPropertyAsFloat( "metalness" );
+            setMetalness( metalness );
+
+            auto roughness = properties->getPropertyAsFloat( "roughness" );
+            setRoughness( roughness );
+
+            createTextureSlots();
+
+            auto textureIndex = 0;
+            auto textures = properties->getChildrenByName( "textures" );
+            for( auto &texture : textures )
+            {
+                auto textureUnits = getTextureUnits();
+                if( textureIndex < textureUnits.size() )
+                {
+                    auto pTexture = textureUnits[textureIndex];
+
+                    pTexture->fromData( texture );
+                }
+
+                textureIndex++;
+            }
+        }
+
         SmartPtr<Properties> CMaterialPass::getProperties() const
         {
             auto properties = CMaterialNode<IMaterialPass>::getProperties();

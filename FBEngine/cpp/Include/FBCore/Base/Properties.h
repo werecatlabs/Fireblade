@@ -5,6 +5,7 @@
 #include <FBCore/Base/Property.h>
 #include <FBCore/Base/Array.h>
 #include <FBCore/Base/StringUtil.h>
+#include <FBCore/Math/Transform3.h>
 
 namespace fb
 {
@@ -84,7 +85,7 @@ namespace fb
                                         Vector3D defaultValue = Vector3D::zero() ) const;
 
         /** Sets an array of the properties. */
-        void setPropertiesAsArray(const Array<Property>& array);
+        void setPropertiesAsArray( const Array<Property> &array );
 
         /** Gets an array of the properties. */
         Array<Property> getPropertiesAsArray() const;
@@ -282,6 +283,9 @@ namespace fb
         */
         void setProperty( const String &name, const QuaternionD &value, bool readOnly = false );
 
+        void setProperty( const String &name, const Transform3F &value, bool readOnly = false );
+        void setProperty( const String &name, const Transform3D &value, bool readOnly = false );
+
         /** Sets the a property value.
         @param name The name of the property.
         @param value A reference to the value.
@@ -386,6 +390,9 @@ namespace fb
         @return Returns true if the property was found. Returns false if the property was not found.
         */
         bool getPropertyValue( const String &name, Vector3D &value ) const;
+
+        bool getPropertyValue( const String &name, Transform3F &value );
+        bool getPropertyValue( const String &name, Transform3D &value );
 
         /** Gets a property value. Returns true if the property was found.
         @param name The name of the property.

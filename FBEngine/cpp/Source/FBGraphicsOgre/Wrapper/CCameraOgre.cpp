@@ -12,9 +12,15 @@ namespace fb
 {
     namespace render
     {
+
         FB_CLASS_REGISTER_DERIVED( fb, CCameraOgre, ICamera );
 
         u32 CCameraOgre::m_nameExt = 0;
+
+        CCameraOgre::CCameraOgre()
+        {
+            setupStateObject();
+        }
 
         CCameraOgre::~CCameraOgre()
         {
@@ -26,8 +32,6 @@ namespace fb
             try
             {
                 setLoadingState( LoadingState::Loading );
-
-                setupStateObject();
 
                 Ogre::SceneManager *ogreSmgr = nullptr;
                 if( m_creator )
@@ -61,7 +65,7 @@ namespace fb
         {
             try
             {
-                if( const auto &loadingState = getLoadingState(); loadingState == LoadingState::Loaded )
+                if( isLoaded() )
                 {
                     setLoadingState( LoadingState::Unloading );
 
@@ -70,7 +74,7 @@ namespace fb
                     auto applicationManager = core::IApplicationManager::instance();
                     auto graphicsSystem = applicationManager->getGraphicsSystem();
 
-                    ISharedObject::ScopedLock lock(graphicsSystem );
+                    ISharedObject::ScopedLock lock( graphicsSystem );
 
                     SmartPtr<CGraphicsSceneOgre> smgr = getCreator();
                     if( smgr )
@@ -99,7 +103,7 @@ namespace fb
 
                     registerForUpdates( false );
 
-                    CGraphicsObjectOgre<ICamera>::unload(data);
+                    CGraphicsObjectOgre<ICamera>::unload( data );
 
                     setLoadingState( LoadingState::Unloaded );
                 }
@@ -122,7 +126,7 @@ namespace fb
 
         void CCameraOgre::_update()
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
 
             // Ogre::Matrix4 mat = (m_camera->getProjectionMatrix() *
             // m_camera->getViewMatrix(true)).inverse();
@@ -157,7 +161,7 @@ namespace fb
 
         void CCameraOgre::registerForUpdates( bool registerObject )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
 
             // if(registerObject)
             //{
@@ -220,19 +224,19 @@ namespace fb
 
         void CCameraOgre::setRenderQueueGroup( u8 renderQueue )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             m_camera->setRenderQueueGroup( renderQueue );
         }
 
         void CCameraOgre::setVisibilityFlags( u32 flags )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             m_camera->setVisibilityFlags( flags );
         }
 
         u32 CCameraOgre::getVisibilityFlags() const
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             return m_camera->getVisibilityFlags();
         }
 
@@ -287,7 +291,8 @@ namespace fb
         {
             if( m_camera )
             {
-                ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+                ISharedObject::ScopedLock lock(
+                    core::IApplicationManager::instance()->getGraphicsSystem() );
                 m_camera->setAspectRatio( ratio );
                 m_aspectRatio = ratio;
             }
@@ -295,7 +300,7 @@ namespace fb
 
         bool CCameraOgre::isVisible( const AABB3F &box ) const
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
 
             Ogre::AxisAlignedBox ogreBox;
             // ogreBox.setMinimum(Ogre::Vector3(box.Min));
@@ -320,14 +325,14 @@ namespace fb
 
         void CCameraOgre::setPosition( const Vector3F &position )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             m_position = position;
             // m_camera->setPosition(Ogre::Vector3(mPosition.X(), mPosition.Y(), mPosition.Z()));
         }
 
         Vector3F CCameraOgre::getPosition() const
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             Ogre::Vector3 position;  // = m_camera->getPosition();
             m_position = Vector3F( position.ptr() );
             return m_position;
@@ -335,7 +340,7 @@ namespace fb
 
         void CCameraOgre::setDirection( const Vector3F &vec )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             // m_camera->setPosition(Ogre::Vector3(vec));
         }
 
@@ -390,55 +395,55 @@ namespace fb
 
         Vector3F CCameraOgre::getUp() const
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             return m_owner->getOrientation() * Vector3F::unitY();
         }
 
         Vector3F CCameraOgre::getRight() const
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             return m_owner->getOrientation() * Vector3F::unitX();
         }
 
         void CCameraOgre::lookAt( const Vector3F &targetPoint )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             // m_camera->lookAt(Ogre::Vector3(targetPoint));
         }
 
         void CCameraOgre::roll( const f32 &angle )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             // m_camera->roll(Ogre::Radian(angle));
         }
 
         void CCameraOgre::yaw( const f32 &angle )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             // m_camera->yaw(Ogre::Radian(angle));
         }
 
         void CCameraOgre::pitch( const f32 &angle )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             // m_camera->pitch(Ogre::Radian(angle));
         }
 
         void CCameraOgre::rotate( const Vector3F &axis, const f32 &angle )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             // m_camera->rotate(Ogre::Vector3(axis), Ogre::Radian(angle));
         }
 
         void CCameraOgre::rotate( const QuaternionF &q )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             // m_camera->rotate(q);
         }
 
         void CCameraOgre::setFixedYawAxis( bool useFixed, const Vector3F &fixedAxis )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             // m_camera->setFixedYawAxis(useFixed, Ogre::Vector3(fixedAxis));
         }
 
@@ -459,19 +464,19 @@ namespace fb
 
         Vector3F CCameraOgre::getDerivedDirection() const
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             return Vector3F( m_camera->getDerivedDirection().ptr() );
         }
 
         Vector3F CCameraOgre::getDerivedUp() const
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             return Vector3F( m_camera->getDerivedUp().ptr() );
         }
 
         Vector3F CCameraOgre::getDerivedRight() const
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             return Vector3F( m_camera->getDerivedRight().ptr() );
         }
 
@@ -507,13 +512,13 @@ namespace fb
 
         void CCameraOgre::setLodBias( f32 factor )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             m_camera->setLodBias( factor );
         }
 
         f32 CCameraOgre::getLodBias() const
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             return m_camera->getLodBias();
         }
 
@@ -526,7 +531,7 @@ namespace fb
 
         void CCameraOgre::getRay( f32 screenX, f32 screenY, Ray3F &outRay ) const
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
 
             Ogre::Ray ray = m_camera->getCameraToViewportRay( screenX, screenY );
 
@@ -539,7 +544,7 @@ namespace fb
 
         Vector2F CCameraOgre::getScreenPosition( const Vector3F &position )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
 
             Ogre::Vector3 vPosition;  // (position);
             Ogre::Vector4 vTPosition( vPosition.x, vPosition.y, vPosition.z, 1.0f );
@@ -563,19 +568,19 @@ namespace fb
 
         void CCameraOgre::setWindow( f32 left, f32 top, f32 right, f32 bottom )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             m_camera->setWindow( left, top, right, bottom );
         }
 
         void CCameraOgre::resetWindow()
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             m_camera->resetWindow();
         }
 
         bool CCameraOgre::isWindowSet() const
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             return m_camera->isWindowSet();
         }
 
@@ -589,7 +594,7 @@ namespace fb
 
         bool CCameraOgre::getAutoAspectRatio() const
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             return m_camera->getAutoAspectRatio();
         }
 
@@ -675,6 +680,12 @@ namespace fb
             CGraphicsObjectOgre<ICamera>::setupStateObject();
 
             auto stateObject = getStateObject();
+            setStateObject( stateObject );
+
+            auto state = factoryManager->make_ptr<CameraState>();
+            setGraphicsObjectState( state );
+
+            stateObject->setState( state );
 
             auto stateListener = factoryManager->make_ptr<CCameraStateListener>();
             stateListener->setOwner( this );
@@ -687,6 +698,7 @@ namespace fb
 
         void CCameraOgre::CCameraStateListener::handleStateChanged( SmartPtr<IState> &state )
         {
+            StateListener::handleStateChanged( state );
         }
 
         void CCameraOgre::CCameraStateListener::handleStateChanged(
@@ -700,6 +712,8 @@ namespace fb
                 auto visible = visibleMessage->isVisible();
                 m_owner->setVisible( visible );
             }
+
+            StateListener::handleStateChanged( message );
         }
 
         void CCameraOgre::CCameraStateListener::handleQuery( SmartPtr<IStateQuery> &query )

@@ -265,12 +265,6 @@ namespace fb
             /** Removes a component from the actor. */
             virtual void removeComponentInstance( SmartPtr<IComponent> component ) = 0;
 
-            /** Gets the id of the underlying entity. */
-            virtual u32 getEntity() const = 0;
-
-            /** Sets the id of the underlying entity. */
-            virtual void setEntity( u32 entity ) = 0;
-
             /**
              * Adds a component.
              *
