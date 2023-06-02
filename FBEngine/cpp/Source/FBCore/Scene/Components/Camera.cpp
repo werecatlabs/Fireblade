@@ -1,6 +1,16 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/Camera.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Graphics/ICamera.h>
+#include <FBCore/Interface/Graphics/IGraphicsSystem.h>
+#include <FBCore/Interface/Graphics/IGraphicsScene.h>
+#include <FBCore/Interface/Graphics/ISceneNode.h>
+#include <FBCore/Interface/Graphics/IWindow.h>
+#include <FBCore/Interface/Graphics/ITexture.h>
+#include <FBCore/Interface/Graphics/IViewport.h>
+#include <FBCore/Interface/Scene/ICameraManager.h>
+#include <FBCore/Interface/Scene/ISceneManager.h>
+#include <FBCore/Core/BitUtil.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {

@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Memory/IObject.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {

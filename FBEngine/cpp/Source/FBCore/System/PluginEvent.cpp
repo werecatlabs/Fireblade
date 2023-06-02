@@ -2,7 +2,7 @@
 #include <FBCore/System/PluginEvent.h>
 #include <FBCore/Memory/Data.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Base/DataUtil.h>
+#include <FBCore/Core/DataUtil.h>
 
 namespace fb
 {

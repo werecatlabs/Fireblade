@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/FBCoreConfig.h>
 #include <FBCore/Memory/MemoryTracker.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 #include <iostream>
 #include <assert.h>
 #include <sstream>

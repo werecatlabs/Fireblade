@@ -3,8 +3,8 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/StringUtil.h>
 #include <FBCore/Math/Ray3.h>
 #include <FBCore/Interface/Graphics/IGraphicsObject.h>
 

@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/Physics/IPhysicsBody2D.h>
 
-#include <FBCore/Rtti/RttiClassDefinition.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {

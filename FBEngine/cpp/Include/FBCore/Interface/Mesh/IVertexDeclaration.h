@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 #include <FBCore/Interface/Mesh/IVertexElement.h>
 
 namespace fb

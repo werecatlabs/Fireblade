@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/Vehicle/IVehiclePowerUnit.h>
-#include <FBCore/Rtti/RttiClassDefinition.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {

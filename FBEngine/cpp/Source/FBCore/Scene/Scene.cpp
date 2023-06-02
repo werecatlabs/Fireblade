@@ -12,11 +12,11 @@
 #include <FBCore/Interface/System/ITaskLock.h>
 #include <FBCore/Interface/System/ITaskManager.h>
 #include <FBCore/Interface/System/ITimer.h>
-#include <FBCore/Base/DataUtil.h>
-#include <FBCore/Base/DebugTrace.h>
+#include <FBCore/Core/DataUtil.h>
+#include <FBCore/Core/DebugTrace.h>
 #include <FBCore/Memory/Data.h>
-#include <FBCore/Base/Path.h>
-#include <FBCore/Base/LogManager.h>
+#include <FBCore/Core/Path.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {
@@ -803,24 +803,20 @@ namespace fb
 
         SmartPtr<ISharedObject> Scene::toData() const
         {
-            //auto pSceneData = fb::make_ptr<Data<data::fb_scene>>();
-            //auto sceneData = pSceneData->getDataAsType<data::fb_scene>();
+            auto properties = fb::make_ptr<Properties>();
 
-            //auto actors = getActors();
-            //for( auto actor : actors )
-            //{
-            //    if( actor )
-            //    {
-            //        auto pActorData = actor->toData();
-            //        auto actorData = pActorData->getDataAsType<data::actor_data>();
+            auto actors = getActors();
+            for( auto actor : actors )
+            {
+                if( actor )
+                {
+                    auto pActorData = fb::static_pointer_cast<Properties>( actor->toData() );
+                    pActorData->setName( "actors" );
+                    properties->addChild( pActorData );
+                }
+            }
 
-            //        sceneData->actors.push_back( *actorData );
-            //    }
-            //}
-
-            //return pSceneData;
-
-            return nullptr;
+            return properties;
         }
 
         void Scene::fromData( SmartPtr<ISharedObject> data )
@@ -850,34 +846,6 @@ namespace fb
                 auto actor = prefabManager->loadActor( actorData, nullptr );
                 addActor( actor );
             }
-
-            //auto sceneData = data->getDataAsType<data::fb_scene>();
-            //for( auto &actorData : sceneData->actors )
-            //{
-            //    auto data = fb::make_ptr<Data<data::actor_data>>();
-            //    data->setData( &actorData );
-
-            //    auto actor = prefabManager->loadActor( data, nullptr );
-            //    addActor( actor );
-
-            //    // registerAllUpdates(actor);
-
-            //    // if( applicationManager->isEditor() )
-            //    //{
-            //    //    if( applicationManager->isPlaying() )
-            //    //    {
-            //    //        m_playQueue.push( actor );
-            //    //    }
-            //    //    else
-            //    //    {
-            //    //        m_editQueue.push( actor );
-            //    //    }
-            //    //}
-            //    // else
-            //    //{
-            //    //    m_playQueue.push( actor );
-            //    //}
-            //}
         }
 
         String Scene::getFilePath() const

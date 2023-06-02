@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/State/Messages/StatePhysicsDynamicState2.h>
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/Core/StringUtil.h>
 
 namespace fb
 {

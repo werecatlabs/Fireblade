@@ -2,7 +2,7 @@
 #define IGearBox_h__
 
 #include <FBCore/Interface/Vehicle/IVehicleComponent.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {

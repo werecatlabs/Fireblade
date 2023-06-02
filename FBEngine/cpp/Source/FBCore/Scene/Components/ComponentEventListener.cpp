@@ -1,7 +1,11 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/ComponentEventListener.h>
 #include <FBCore/Scene/Components/UserComponent.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Scene/IComponent.h>
+#include <FBCore/Interface/Scene/IComponentEvent.h>
+#include <FBCore/Interface/Scene/IComponentEventListener.h>
+#include <FBCore/Interface/Script/IScriptInvoker.h>
+#include <FBCore/Interface/System/IEvent.h>
 
 namespace fb
 {
@@ -21,9 +25,9 @@ namespace fb
                                                        SmartPtr<ISharedObject> object,
                                                        SmartPtr<IEvent> event )
         {
-            if(auto event = getEvent())
+            if( auto event = getEvent() )
             {
-                if(eventValue == event->getEventHash())
+                if( eventValue == event->getEventHash() )
                 {
                     ////todo hack
                     //auto applicationManager = core::IApplicationManager::instance();
@@ -31,16 +35,16 @@ namespace fb
 
                     //applicationManager->getSceneManager()->loadScene( "Workshop.fbscene" );
 
-                    if(auto component = getComponent())
+                    if( auto component = getComponent() )
                     {
-                        if(component->isDerived<UserComponent>())
+                        if( component->isDerived<UserComponent>() )
                         {
                             auto userComponent = fb::static_pointer_cast<UserComponent>( component );
-                            if(userComponent->getState() == IComponent::State::Edit)
+                            if( userComponent->getState() == IComponent::State::Edit )
                             {
-                                if(userComponent->getUpdateInEditMode())
+                                if( userComponent->getUpdateInEditMode() )
                                 {
-                                    if(auto invoker = userComponent->getInvoker())
+                                    if( auto invoker = userComponent->getInvoker() )
                                     {
                                         const auto functionName = getFunction();
                                         invoker->callObjectMember( functionName );
@@ -49,7 +53,7 @@ namespace fb
                             }
                             else
                             {
-                                if(auto invoker = userComponent->getInvoker())
+                                if( auto invoker = userComponent->getInvoker() )
                                 {
                                     const auto functionName = getFunction();
                                     invoker->callObjectMember( functionName );
@@ -127,5 +131,5 @@ namespace fb
         {
             m_event = event;
         }
-    } // namespace scene
-}     // namespace fb
+    }  // namespace scene
+}  // namespace fb

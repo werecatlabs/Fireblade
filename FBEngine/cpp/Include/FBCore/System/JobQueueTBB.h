@@ -33,9 +33,6 @@ namespace fb
         f32 getRate() const override;
         void setRate( f32 val ) override;
 
-        void addListener( SmartPtr<IJobQueueListener> listener ) override;
-        void removeListener( SmartPtr<IJobQueueListener> listener ) override;
-
         bool getUseAffinity() const override;
         void setUseAffinity( bool val ) override;
         bool isProcessing( s32 id ) const;

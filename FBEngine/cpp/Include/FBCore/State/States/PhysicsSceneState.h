@@ -3,7 +3,7 @@
 
 #include <FBCore/State/States/BaseState.h>
 #include <FBCore/Math/Transform3.h>
-#include <FBCore/Base/FixedArray.h>
+#include <FBCore/Core/FixedArray.h>
 #include <FBCore/State/States/RigidbodyState.h>
 
 namespace fb

@@ -6,15 +6,21 @@
 #include <FBCore/Scene/Components/CollisionPlane.h>
 #include <FBCore/Scene/Components/CollisionMesh.h>
 #include <FBCore/Scene/Components/Transform.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Physics/IPhysicsManager.h>
+#include <FBCore/Interface/Physics/IPhysicsScene3.h>
+#include <FBCore/Interface/Physics/IPhysicsBody3.h>
+#include <FBCore/Interface/Physics/IPhysicsMaterial3.h>
+#include <FBCore/Interface/Physics/IPhysicsShape3.h>
+#include <FBCore/Interface/Physics/IRigidDynamic3.h>
+#include <FBCore/Interface/Physics/IRigidStatic3.h>
+#include <FBCore/Core/BitUtil.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {
     namespace scene
     {
         FB_CLASS_REGISTER_DERIVED( fb::scene, Rigidbody, Component );
-        //FB_CLASS_REGISTER_DERIVED( fb::component, Rigidbody::RigidbodyListener,
-        //                           physics::IPhysicsBodyListener3 );
 
         Rigidbody::Rigidbody()
         {
@@ -530,19 +536,14 @@ namespace fb
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
+            auto sceneManager = applicationManager->getSceneManager();
 
-            /*/
-            auto registry = sceneManager->getRegistry();
-
-            auto view = registry->view<rigidbody_data>();
-
-            view.each( []( const auto entity, auto &t ) {
-                auto &transform = static_cast<rigidbody_data &>( t );
-                transform.owner->preUpdate();
-            } );
-            */
+            auto typeInfo = Rigidbody::typeInfo();
+            auto components = sceneManager->getComponentsByType<Rigidbody>( typeInfo );
+            for( auto &component : components )
+            {
+                component->preUpdate();
+            }
         }
 
         void Rigidbody::preUpdate()

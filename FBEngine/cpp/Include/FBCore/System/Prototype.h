@@ -5,7 +5,7 @@
 #include <FBCore/Interface/IPrototype.h>
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
-#include <FBCore/Base/Properties.h>
+#include <FBCore/Core/Properties.h>
 
 namespace fb
 {

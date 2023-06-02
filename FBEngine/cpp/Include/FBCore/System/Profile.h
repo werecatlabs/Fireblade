@@ -4,7 +4,7 @@
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Thread/Threading.h>
 #include <FBCore/Interface/System/IProfile.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {

@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/Physics/IPhysicsShape3.h>
-#include <FBCore/Rtti/RttiClassDefinition.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 
 namespace fb

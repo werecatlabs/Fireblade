@@ -23,12 +23,16 @@ namespace fb
             /** Virtual destructor. */
             ~IComponentEventListener() override = default;
 
+            /** Gets the component. */
             virtual SmartPtr<IComponent> getComponent() const = 0;
 
+            /** Sets the component. */
             virtual void setComponent( SmartPtr<IComponent> component ) = 0;
 
+            /** Gets the function. */
             virtual String getFunction() const = 0;
 
+            /** Sets the function. */
             virtual void setFunction( const String &function ) = 0;
 
             /** Gets the data as a properties object.

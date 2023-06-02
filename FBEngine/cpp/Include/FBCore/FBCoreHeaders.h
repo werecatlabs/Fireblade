@@ -1,20 +1,20 @@
 #ifndef FBCoreHeaders_h__
 #define FBCoreHeaders_h__
 
-#include <FBCore/Base/BitUtil.h>
-#include <FBCore/Base/ColourF.h>
-#include <FBCore/Base/CoreUtil.h>
-#include <FBCore/Base/DataUtil.h>
-#include <FBCore/Base/DebugTrace.h>
-#include <FBCore/Base/Handle.h>
-#include <FBCore/Base/LogManager.h>
-#include <FBCore/Base/Node.h>
-#include <FBCore/Base/Path.h>
-#include <FBCore/Base/PluginMacros.h>
-#include <FBCore/Base/Properties.h>
-#include <FBCore/Base/VectorUtil.h>
-#include <FBCore/Base/SingletonPool.h>
-#include <FBCore/Base/XmlUtil.h>
+#include <FBCore/Core/BitUtil.h>
+#include <FBCore/Core/ColourF.h>
+#include <FBCore/Core/Util.h>
+#include <FBCore/Core/DataUtil.h>
+#include <FBCore/Core/DebugTrace.h>
+#include <FBCore/Core/Handle.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Core/Node.h>
+#include <FBCore/Core/Path.h>
+#include <FBCore/Core/PluginMacros.h>
+#include <FBCore/Core/Properties.h>
+#include <FBCore/Core/VectorUtil.h>
+#include <FBCore/Core/SingletonPool.h>
+#include <FBCore/Core/XmlUtil.h>
 
 #include <FBCore/Database/DatabaseManager.h>
 #include <FBCore/Database/AssetDatabaseManager.h>
@@ -91,8 +91,8 @@
 #include <FBCore/Interface/FSM/IFSM.h>
 #include <FBCore/Interface/FSM/IFSMManager.h>
 #include <FBCore/Interface/FSM/IFSMListener.h>
-#include <FBCore/FSM/FSMListener.h>
-#include <FBCore/FSM/FSMManager.h>
+#include <FBCore/Core/FSMListener.h>
+#include <FBCore/Core/FSMManager.h>
 
 // graphics
 #include <FBCore/Interface/Graphics/IAnimationController.h>
@@ -331,7 +331,6 @@
 
 // resource
 #include <FBCore/Interface/Resource/IResource.h>
-#include <FBCore/Interface/Resource/IResourceListener.h>
 #include <FBCore/Interface/Resource/IResourceDatabase.h>
 #include <FBCore/Interface/Resource/IMeshManager.h>
 
@@ -369,7 +368,6 @@
 #include <FBCore/Interface/System/IJob.h>
 #include <FBCore/Interface/System/IJobGroup.h>
 #include <FBCore/Interface/System/IJobQueue.h>
-#include <FBCore/Interface/System/IJobListener.h>
 #include <FBCore/Interface/System/IOutputManager.h>
 #include <FBCore/Interface/System/ITask.h>
 #include <FBCore/Interface/System/ITaskManager.h>
@@ -420,18 +418,36 @@
 #include <FBCore/Interface/System/IPluginInterface.h>
 
 // math
-#include <FBCore/Math/Core/MathUtil.h>
-#include <FBCore/Math/Spline/LinearSpline1.h>
-#include <FBCore/Math/Spline/LinearSpline2.h>
-#include <FBCore/Math/Spline/LinearSpline3.h>
-#include <FBCore/Math/Spline/LinearSpline4.h>
-#include <FBCore/Math/Spline/RotationalSpline3.h>
+#include <FBCore/Math/MathUtil.h>
+#include <FBCore/Math/LinearSpline1.h>
+#include <FBCore/Math/LinearSpline2.h>
+#include <FBCore/Math/LinearSpline3.h>
+#include <FBCore/Math/LinearSpline4.h>
+#include <FBCore/Math/RotationalSpline3.h>
 #include <FBCore/Math/Euler.h>
 #include <FBCore/Math/Polygon2.h>
 #include <FBCore/Math/Polygon3.h>
 #include <FBCore/Math/Vector2.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Vector4.h>
+
+#include "FBCore/Mesh/CMesh.h"
+#include "FBCore/Mesh/CVertexBuffer.h"
+#include "FBCore/Mesh/CIndexBuffer.h"
+#include "FBCore/Mesh/CSubMesh.h"
+#include <FBCore/Mesh/CVertexDeclaration.h>
+
+#include "FBCore/Mesh/CMeshResource.h"
+#include "FBCore/Mesh/CIndexBuffer.h"
+#include "FBCore/Mesh/CVertexBuffer.h"
+#include "FBCore/Mesh/CSubMesh.h"
+#include "FBCore/Mesh/CMesh.h"
+#include "FBCore/Mesh/MeshUtil.h"
+#include "FBCore/Mesh/MeshSerializer.h"
+#include "FBCore/Mesh/MeshGenerator.h"
+#include "FBCore/Mesh/CollisionMesh.h"
+#include "FBCore/Mesh/CollisionSubMesh.h"
+#include "FBCore/Mesh/CVertexDeclaration.h"
 
 #include <FBCore/Memory/Data.h>
 #include <FBCore/Memory/FactoryRegistration.h>
@@ -442,12 +458,12 @@
 #include <FBCore/Resource/CPrefabManager.h>
 #include <FBCore/Resource/CResourceDatabase.h>
 
-#include <FBCore/Rtti/RttiClassDefinition.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 #include <FBCore/Scene/Components/Component.h>
 #include <FBCore/Scene/Components/Camera.h>
-#include <FBCore/Scene/Components/ComponentT.h>
 #include <FBCore/Scene/Components/Constraint.h>
+#include <FBCore/Scene/Components/Cubemap.h>
 #include <FBCore/Scene/Components/Collision.h>
 #include <FBCore/Scene/Components/CollisionBox.h>
 #include <FBCore/Scene/Components/CollisionMesh.h>
@@ -472,7 +488,7 @@
 #include <FBCore/Scene/Components/UI/InputField.h>
 #include <FBCore/Scene/Components/UI/Text.h>
 #include <FBCore/Scene/Components/UI/Layout.h>
-#include <FBCore/Scene/Components/UI/CanvasTransform.h>
+#include <FBCore/Scene/Components/UI/LayoutTransform.h>
 
 #include <FBCore/Scene/Actor.h>
 #include <FBCore/Scene/CameraManager.h>

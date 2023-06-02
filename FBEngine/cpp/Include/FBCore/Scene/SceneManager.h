@@ -4,15 +4,16 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/ISceneManager.h>
 #include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/UnorderedMap.h>
-#include <FBCore/Base/UtilityTypes.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/UnorderedMap.h>
+#include <FBCore/Core/UtilityTypes.h>
 #include <FBCore/State/States/TransformState.h>
 
 namespace fb
 {
     namespace scene
     {
+
         /** SceneManager implementation.
         @author	Zane Desir
         @version 1.0
@@ -76,6 +77,7 @@ namespace fb
 
             SmartPtr<IActor> getActor( u32 id ) const override;
             SmartPtr<IActor> getActorByName( const String &name ) const override;
+            SmartPtr<IActor> getActorByFileId( const String &id ) const override;
 
             SmartPtr<IComponent> getComponent( u32 id ) const override;
             SmartPtr<IFSM> getFSM( u32 id ) const;
@@ -119,9 +121,19 @@ namespace fb
             Array<SmartPtr<IComponent>> getComponents() const override;
             Array<SmartPtr<IComponent>> getComponents( u32 type ) const override;
 
-            Array<SmartPtr<ITransform>>& getTransforms();
-            const Array<SmartPtr<ITransform>>& getTransforms() const;
+            Array<SmartPtr<ITransform>> &getTransforms();
+            const Array<SmartPtr<ITransform>> &getTransforms() const;
             void setTransforms( Array<SmartPtr<ITransform>> transforms );
+
+            Array<String> getComponentFactoryIgnoreList() const;
+
+            void setComponentFactoryIgnoreList( const Array<String> &ignoreList );
+
+            Map<String, String> getComponentFactoryMap() const;
+
+            void setComponentFactoryMap( const Map<String, String> &map );
+
+            String getComponentFactoryType( const String &type ) const;
 
             FB_CLASS_REGISTER_DECL;
 
@@ -141,6 +153,7 @@ namespace fb
             ConcurrentQueue<SmartPtr<ITransform>> m_dirtyActorTransforms;
 
             UnorderedMap<u32, Array<SmartPtr<IComponent>>> m_components;
+            UnorderedMap<u32, Array<SmartPtr<ISystem>>> m_systems;
 
             Array<SmartPtr<ITransform>> m_transforms;
 
@@ -167,8 +180,13 @@ namespace fb
             Array<u32> m_actorNewFlags;
 
             atomic_u32 m_numActors = 0;
+
+            Array<String> m_componentFactoryIgnoreList;
+            Map<String, String> m_componentFactoryMap;
+
+            mutable RecursiveMutex m_mutex;
         };
-    } // namespace scene
-}     // end namespace fb
+    }  // namespace scene
+}  // end namespace fb
 
 #endif  // CSceneManager_h__

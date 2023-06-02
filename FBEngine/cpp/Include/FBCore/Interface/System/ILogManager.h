@@ -1,7 +1,7 @@
 #ifndef ILogManager_h__
 #define ILogManager_h__
 
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb

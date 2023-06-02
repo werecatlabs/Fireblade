@@ -4,10 +4,10 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IStateManager.h>
 #include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/ConcurrentArray.h>
-#include <FBCore/Base/ConcurrentQueue.h>
-#include <FBCore/Base/HashTable.h>
-#include <FBCore/Base/HashMap.h>
+#include <FBCore/Core/ConcurrentArray.h>
+#include <FBCore/Core/ConcurrentQueue.h>
+#include <FBCore/Core/HashTable.h>
+#include <FBCore/Core/HashMap.h>
 
 namespace fb
 {

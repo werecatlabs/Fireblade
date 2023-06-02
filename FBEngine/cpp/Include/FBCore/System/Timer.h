@@ -5,7 +5,7 @@
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Atomics/AtomicFloat.h>
 #include <FBCore/Atomics/Atomics.h>
-#include <FBCore/Base/FixedArray.h>
+#include <FBCore/Core/FixedArray.h>
 
 namespace fb
 {

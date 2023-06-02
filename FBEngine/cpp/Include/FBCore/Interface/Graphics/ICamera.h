@@ -2,7 +2,7 @@
 #define _ICamera_H
 
 #include <FBCore/Interface/Graphics/IFrustum.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Quaternion.h>
 #include <FBCore/Math/Ray3.h>

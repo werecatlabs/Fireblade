@@ -2,8 +2,8 @@
 #define IUIColourPicker_h__
 
 #include <FBCore/Interface/UI/IUIElement.h>
-#include <FBCore/Base/ColourF.h>
-#include <FBCore/Base/UtilityTypes.h>
+#include <FBCore/Core/ColourF.h>
+#include <FBCore/Core/UtilityTypes.h>
 
 namespace fb
 {

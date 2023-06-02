@@ -31,7 +31,7 @@ THE SOFTWARE.
 
 #include <FBCore/FBCoreConfig.h>
 #include <FBCore/Thread/Threading.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 #include <unordered_map>
 
 namespace fb

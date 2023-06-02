@@ -2,7 +2,7 @@
 #define __IPhysicsVehicle__H
 
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 #include "FBCore/Math/AABB3.h"
 #include <FBCore/Math/Vector3.h>
 #include "FBCore/Math/Quaternion.h"

@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Base/Parameter.h>
+#include <FBCore/Core/Parameter.h>
 
 namespace fb
 {

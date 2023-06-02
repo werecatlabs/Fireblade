@@ -2,7 +2,7 @@
 #define IMaterialNode_h__
 
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {

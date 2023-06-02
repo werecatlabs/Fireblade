@@ -284,6 +284,6 @@ namespace fb
             bool m_cascadeInput = true;
         };
     }  // namespace scene
-}  // end namespace fb
+}  // namespace fb
 
 #endif  // UIComponent_h__

@@ -9,7 +9,7 @@
 #include <FBCore/System/Prototype.h>
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Base/Properties.h>
+#include <FBCore/Core/Properties.h>
 
 namespace fb
 {

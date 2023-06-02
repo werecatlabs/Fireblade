@@ -1,6 +1,5 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/UI/UIComponentUtil.h>
-#include <FBCore/FBCore.h>
 
 namespace fb
 {
@@ -8,15 +7,15 @@ namespace fb
     {
 
         String UIComponentUtil::getHorizontalAlignmentString(
-            CanvasTransform::HorizontalAlignment horizontalAlignment )
+            LayoutTransform::HorizontalAlignment horizontalAlignment )
         {
             switch( horizontalAlignment )
             {
-            case CanvasTransform::HorizontalAlignment::LEFT:
+            case LayoutTransform::HorizontalAlignment::LEFT:
                 return String( "Left" );
-            case CanvasTransform::HorizontalAlignment::CENTER:
+            case LayoutTransform::HorizontalAlignment::CENTER:
                 return String( "Center" );
-            case CanvasTransform::HorizontalAlignment::RIGHT:
+            case LayoutTransform::HorizontalAlignment::RIGHT:
                 return String( "Right" );
             default:
                 break;
@@ -25,31 +24,31 @@ namespace fb
             return String( "" );
         }
 
-        CanvasTransform::HorizontalAlignment UIComponentUtil::getHorizontalAlignment( const String &str )
+        LayoutTransform::HorizontalAlignment UIComponentUtil::getHorizontalAlignment( const String &str )
         {
             if( str == String( "Left" ) )
             {
-                return CanvasTransform::HorizontalAlignment::LEFT;
+                return LayoutTransform::HorizontalAlignment::LEFT;
             }
             if( str == String( "Center" ) )
             {
-                return CanvasTransform::HorizontalAlignment::CENTER;
+                return LayoutTransform::HorizontalAlignment::CENTER;
             }
             if( str == String( "Right" ) )
             {
-                return CanvasTransform::HorizontalAlignment::RIGHT;
+                return LayoutTransform::HorizontalAlignment::RIGHT;
             }
 
-            return CanvasTransform::HorizontalAlignment::LEFT;
+            return LayoutTransform::HorizontalAlignment::LEFT;
         }
 
         String UIComponentUtil::getHorizontalAlignmentTypesString()
         {
             auto enumValues = String( "" );
-            for( size_t i = 0; i < static_cast<size_t>( CanvasTransform::HorizontalAlignment::COUNT );
+            for( size_t i = 0; i < static_cast<size_t>( LayoutTransform::HorizontalAlignment::COUNT );
                  ++i )
             {
-                auto eMaterialType = static_cast<CanvasTransform::HorizontalAlignment>( i );
+                auto eMaterialType = static_cast<LayoutTransform::HorizontalAlignment>( i );
                 auto eMaterialTypeStr = getHorizontalAlignmentString( eMaterialType );
                 enumValues += eMaterialTypeStr + ";";
             }
@@ -58,15 +57,15 @@ namespace fb
         }
 
         String UIComponentUtil::getVerticalAlignmentString(
-            CanvasTransform::VerticalAlignment verticalAlignment )
+            LayoutTransform::VerticalAlignment verticalAlignment )
         {
             switch( verticalAlignment )
             {
-            case CanvasTransform::VerticalAlignment::TOP:
+            case LayoutTransform::VerticalAlignment::TOP:
                 return String( "Top" );
-            case CanvasTransform::VerticalAlignment::CENTER:
+            case LayoutTransform::VerticalAlignment::CENTER:
                 return String( "Center" );
-            case CanvasTransform::VerticalAlignment::BOTTOM:
+            case LayoutTransform::VerticalAlignment::BOTTOM:
                 return String( "Bottom" );
             default:
                 break;
@@ -75,31 +74,31 @@ namespace fb
             return String( "" );
         }
 
-        CanvasTransform::VerticalAlignment UIComponentUtil::getVerticalAlignment( const String &str )
+        LayoutTransform::VerticalAlignment UIComponentUtil::getVerticalAlignment( const String &str )
         {
             if( str == String( "Top" ) )
             {
-                return CanvasTransform::VerticalAlignment::TOP;
+                return LayoutTransform::VerticalAlignment::TOP;
             }
             if( str == String( "Center" ) )
             {
-                return CanvasTransform::VerticalAlignment::CENTER;
+                return LayoutTransform::VerticalAlignment::CENTER;
             }
             if( str == String( "Bottom" ) )
             {
-                return CanvasTransform::VerticalAlignment::BOTTOM;
+                return LayoutTransform::VerticalAlignment::BOTTOM;
             }
 
-            return CanvasTransform::VerticalAlignment::TOP;
+            return LayoutTransform::VerticalAlignment::TOP;
         }
 
         String UIComponentUtil::getVerticalAlignmentTypesString()
         {
             auto enumValues = String( "" );
-            for( size_t i = 0; i < static_cast<size_t>( CanvasTransform::VerticalAlignment::COUNT );
+            for( size_t i = 0; i < static_cast<size_t>( LayoutTransform::VerticalAlignment::COUNT );
                  ++i )
             {
-                auto eMaterialType = static_cast<CanvasTransform::VerticalAlignment>( i );
+                auto eMaterialType = static_cast<LayoutTransform::VerticalAlignment>( i );
                 auto eMaterialTypeStr = getVerticalAlignmentString( eMaterialType );
                 enumValues += eMaterialTypeStr + ";";
             }

@@ -2,7 +2,7 @@
 #define _ITextureManager_H
 
 #include <FBCore/Interface/Resource/IResourceManager.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 
 namespace fb
 {

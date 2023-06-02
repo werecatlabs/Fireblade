@@ -5,7 +5,7 @@
 #include <FBCore/Interface/System/IJob.h>
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Memory/CObjectYield.h>
-#include <FBCore/Base/ConcurrentArray.h>
+#include <FBCore/Core/ConcurrentArray.h>
 
 namespace fb
 {
@@ -67,18 +67,6 @@ namespace fb
         /** @copydoc IJob::coroutine_execute_step */
         void coroutine_execute_step( SmartPtr<IObjectYield> &rYield ) override;
 
-        /** @copydoc IJob::hasListeners */
-        bool hasListeners() const override;
-
-        /** @copydoc IJob::getListeners */
-        Array<SmartPtr<IJobListener>> getListeners() const override;
-
-        /** @copydoc IJob::setListeners */
-        void setListeners( const Array<SmartPtr<IJobListener>> &listeners ) override;
-
-        /** @copydoc IJob::addListener */
-        void addListener( SmartPtr<IJobListener> listener ) override;
-
         /** @copydoc IJob::isCoroutine */
         bool isCoroutine() const override;
 
@@ -97,8 +85,6 @@ namespace fb
         atomic_bool m_isCoroutine = false;
 
         SmartPtr<IObjectYield> m_yieldObject;
-
-        ConcurrentArray<SmartPtr<IJobListener>> m_listeners;
     };
 }  // end namespace fb
 

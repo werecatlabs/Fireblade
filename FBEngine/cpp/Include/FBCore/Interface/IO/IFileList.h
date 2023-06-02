@@ -2,10 +2,10 @@
 #define IFileList_h__
 
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/ConcurrentArray.h>
-#include <FBCore/Base/FileInfo.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/ConcurrentArray.h>
+#include <FBCore/Core/FileInfo.h>
+#include <FBCore/Core/StringTypes.h>
 
 namespace fb
 {

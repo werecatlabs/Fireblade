@@ -176,6 +176,11 @@ namespace fb
         }
     }
 
+    void CResourceDatabaseMT::refresh() 
+        {
+    
+    }
+
     void CResourceDatabaseMT::importFolder( SmartPtr<IFolderExplorer> folderListing )
     {
         try
@@ -550,64 +555,53 @@ namespace fb
         return nullptr;
     }
 
+    void CResourceDatabaseMT::getSceneObjects( SmartPtr<scene::IActor> actor,
+                                               Array<SmartPtr<ISharedObject>> &objects ) const
+    {
+        objects.push_back( actor );
+
+        if( auto transform = actor->getTransform() )
+        {
+            objects.push_back( transform );
+        }
+
+        auto components = actor->getComponents();
+        for( auto component : components )
+        {
+            objects.push_back( component );
+        }
+
+        auto children = actor->getAllChildren();
+        for( auto child : children )
+        {
+            if( child )
+            {
+                getSceneObjects( child, objects );
+            }
+        }
+    }
+
     Array<SmartPtr<ISharedObject>> CResourceDatabaseMT::getSceneObjects() const
     {
         auto applicationManager = core::IApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
-        auto projectPath = applicationManager->getProjectPath();
-        if( StringUtil::isNullOrEmpty( projectPath ) )
-        {
-            projectPath = Path::getWorkingDirectory();
-        }
-
         auto sceneManager = applicationManager->getSceneManager();
         auto scene = sceneManager->getCurrentScene();
 
         Array<SmartPtr<ISharedObject>> objects;
+        objects.reserve( 1024 );
 
         auto actors = scene->getActors();
         for( auto actor : actors )
         {
-            objects.push_back( actor );
-
-            auto components = actor->getComponents();
-            for( auto component : components )
+            if( actor )
             {
-                objects.push_back( component );
-            }
-
-            auto children = actor->getAllChildren();
-            for( auto child : children )
-            {
-                if( child )
-                {
-                    objects.push_back( child );
-
-                    auto childComponents = child->getComponents();
-                    for( auto childComponent : childComponents )
-                    {
-                        objects.push_back( childComponent );
-                    }
-                }
+                getSceneObjects( actor, objects );
             }
         }
 
         return objects;
-    }
-
-    void CResourceDatabaseMT::addResourceListener( SmartPtr<IResourceListener> resourceListener )
-    {
-    }
-
-    void CResourceDatabaseMT::setResourceListeners(
-        const Array<SmartPtr<IResourceListener>> &resourceListener )
-    {
-    }
-
-    Array<SmartPtr<IResourceListener>> CResourceDatabaseMT::getResourceListeners() const
-    {
-        return Array<SmartPtr<IResourceListener>>();
     }
 
     void CResourceDatabaseMT::BuildResourceDatabaseJob::execute()

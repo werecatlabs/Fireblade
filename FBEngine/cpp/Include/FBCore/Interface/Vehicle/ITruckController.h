@@ -2,7 +2,7 @@
 #define ITruckController_h__
 
 #include <FBCore/Interface/Vehicle/IVehicleController.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {

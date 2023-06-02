@@ -3,7 +3,7 @@
 
 #include <FBCore/State/Messages/StateMessage.h>
 #include <FBCore/Math/Vector2.h>
-#include <FBCore/Rtti/RttiClassDefinition.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {

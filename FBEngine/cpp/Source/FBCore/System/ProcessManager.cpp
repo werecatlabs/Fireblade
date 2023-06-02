@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/ProcessManager.h>
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/Core/StringUtil.h>
 
 #if defined FB_PLATFORM_WIN32
 #    include <processthreadsapi.h>

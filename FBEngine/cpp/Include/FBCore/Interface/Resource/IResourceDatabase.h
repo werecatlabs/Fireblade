@@ -3,9 +3,9 @@
 
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/StringTypes.h>
-#include <FBCore/Base/UtilityTypes.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/StringTypes.h>
+#include <FBCore/Core/UtilityTypes.h>
 #include <FBCore/Interface/Resource/IResource.h>
 
 namespace fb
@@ -26,6 +26,9 @@ namespace fb
 
         /** Builds the resource database. */
         virtual void build() = 0;
+
+        /** Refreshes the resource database. */
+        virtual void refresh() = 0;
 
         /**
          * @brief Checks if the resource database contains the specified resource.
@@ -132,15 +135,12 @@ namespace fb
         /** Gets an object using an id. */
         virtual SmartPtr<ISharedObject> getObject( const String &uuid ) = 0;
 
-        /** Adds a resource listener. */
-        virtual void addResourceListener( SmartPtr<IResourceListener> resourceListener ) = 0;
+        /** Gets an object by it's file id. */
+        virtual SmartPtr<ISharedObject> getObjectByFileId( const String &fileId ) const = 0;
 
-        /** Sets an array resource listener. */
-        virtual void setResourceListeners(
-            const Array<SmartPtr<IResourceListener>> &resourceListener ) = 0;
-
-        /** Gets an array of the resource listeners. */
-        virtual Array<SmartPtr<IResourceListener>> getResourceListeners() const = 0;
+        /** Gets an object by it's file id. */
+        template <class T>
+        SmartPtr<T> getObjectTypeByFileId( const String &fileId ) const;
 
         /** Finds a resource. */
         template <class T>
@@ -175,6 +175,13 @@ namespace fb
 
         FB_CLASS_REGISTER_DECL;
     };
+
+    template <class T>
+    SmartPtr<T> IResourceDatabase::getObjectTypeByFileId( const String &fileId ) const
+    {
+        auto obj = getObjectByFileId( fileId );
+        return fb::dynamic_pointer_cast<T>( obj );
+    }
 
     template <class T>
     SmartPtr<T> IResourceDatabase::findResourceByType( const String &path )

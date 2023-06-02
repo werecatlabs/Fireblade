@@ -2,7 +2,7 @@
 #define _IBillboardSet_H
 
 #include <FBCore/Interface/Graphics/IGraphicsObject.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 #include <FBCore/Math/AABB3.h>
 
 namespace fb

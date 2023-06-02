@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/ThreadDebug.h>
-#include <FBCore/Base/LogManager.h>
+#include <FBCore/Core/LogManager.h>
 #include <FBCore/Thread/Threading.h>
 #include <iostream>
 #include <sstream>

@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/Profile.h>
-#include <FBCore/Base/CoreUtil.h>
+#include <FBCore/Core/Util.h>
 #include <chrono>
 
 namespace fb
@@ -55,7 +55,7 @@ namespace fb
 
         if( m_averageTimeTaken.size() > 0.0f )
         {
-            return CoreUtil::average( m_averageTimeTaken );
+            return Util::average( m_averageTimeTaken );
         }
 
         return 0.0f;

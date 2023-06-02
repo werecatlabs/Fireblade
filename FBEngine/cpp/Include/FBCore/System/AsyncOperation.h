@@ -4,7 +4,7 @@
 #include <FBCore/Interface/System/IAsyncOperation.h>
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Memory/CObjectYield.h>
-#include <FBCore/Base/ConcurrentArray.h>
+#include <FBCore/Core/ConcurrentArray.h>
 
 namespace fb
 {

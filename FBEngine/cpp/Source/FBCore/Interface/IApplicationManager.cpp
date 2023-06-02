@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/IApplicationManager.h>
-#include <FBCore/Rtti/RttiClassDefinition.h>
-#include <FBCore/Base/DebugTrace.h>
+#include <FBCore/System/RttiClassDefinition.h>
+#include <FBCore/Core/DebugTrace.h>
 #include <FBCore/Memory/CSharedObject.h>
 
 namespace fb

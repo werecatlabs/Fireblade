@@ -6,8 +6,8 @@
 #include <FBCore/Interface/System/IStateManager.h>
 #include <FBCore/Interface/System/ITimer.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Base/Properties.h>
-#include <FBCore/Base/LogManager.h>
+#include <FBCore/Core/Properties.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {

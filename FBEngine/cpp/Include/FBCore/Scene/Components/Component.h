@@ -4,12 +4,12 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/IComponent.h>
 #include <FBCore/Interface/Scene/IActor.h>
-#include <FBCore/FSM/FSMListener.h>
+#include <FBCore/Core/FSMListener.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/Atomics/Atomics.h>
-#include <FBCore/Base/DataUtil.h>
-#include <FBCore/Base/Properties.h>
+#include <FBCore/Core/DataUtil.h>
+#include <FBCore/Core/Properties.h>
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Memory/Data.h>
 #include <FBCore/Resource/CResource.h>

@@ -4,7 +4,7 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IFrameStatistics.h>
 #include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/FixedArray.h>
+#include <FBCore/Core/FixedArray.h>
 #include <FBCore/Atomics/AtomicFloat.h>
 #include <FBCore/Thread/Threading.h>
 

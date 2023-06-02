@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/State/States/BoxShapeState.h>
 #include <FBCore/Interface/System/IStateContext.h>
-#include <FBCore/Math/Core/MathUtil.h>
+#include <FBCore/Math/MathUtil.h>
 
 namespace fb
 {

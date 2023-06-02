@@ -5,7 +5,7 @@
 #include <FBCore/Interface/Resource/IResourceGroupManager.h>
 #include <FBCore/Interface/Scene/IPrefabManager.h>
 #include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 
 namespace fb
 {

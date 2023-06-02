@@ -6,7 +6,7 @@
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Quaternion.h>
 #include <FBCore/Math/Ray3.h>
-#include <FBCore/Base/FixedArray.h>
+#include <FBCore/Core/FixedArray.h>
 
 namespace fb
 {

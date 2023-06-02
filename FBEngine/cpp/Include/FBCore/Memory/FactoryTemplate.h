@@ -8,9 +8,9 @@
 #include <FBCore/Memory/RawPtr.h>
 #include <FBCore/Memory/PoolAllocator.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Base/ConcurrentArray.h>
-#include <FBCore/Base/InstancePool.h>
-#include <FBCore/Base/Pool.h>
+#include <FBCore/Core/ConcurrentArray.h>
+#include <FBCore/Core/InstancePool.h>
+#include <FBCore/Core/Pool.h>
 
 #ifdef _DEBUG
 #    include <FBCore/Thread/RecursiveMutex.h>

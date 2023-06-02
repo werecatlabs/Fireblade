@@ -3,7 +3,7 @@
 
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Math/Vector3.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 
 namespace fb
 {

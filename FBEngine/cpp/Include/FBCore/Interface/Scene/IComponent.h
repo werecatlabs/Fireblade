@@ -3,8 +3,8 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Base/ConcurrentArray.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/ConcurrentArray.h>
+#include <FBCore/Core/StringTypes.h>
 #include <FBCore/Thread/ThreadTypes.h>
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
@@ -149,6 +149,12 @@ namespace fb
 
             /** Called when the component is destroyed. */
             virtual void destroy() = 0;
+
+            /** Called when entering play mode. */
+            virtual void play() = 0;
+
+            /** Called when entering edit mode. */
+            virtual void edit() = 0;
 
             /** Called when the level was loaded.
             @param level An id of the level loaded.

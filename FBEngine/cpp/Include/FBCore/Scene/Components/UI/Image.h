@@ -7,11 +7,21 @@ namespace fb
 {
     namespace scene
     {
-
+        /** Image component.
+         *
+         *  This component is used to display an image on the screen.
+         *
+         *  @note This component is not yet implemented.
+         *
+         *  @see UIComponent
+         */
         class Image : public UIComponent
         {
         public:
+            /** Constructor. */
             Image();
+
+            /** Destructor. */
             ~Image() override;
 
             /** @copydoc IObject::load */
@@ -24,22 +34,22 @@ namespace fb
             void updateDirty( u32 flags, u32 oldFlags ) override;
 
             /** @copydoc IComponent::parentChanged */
-            void parentChanged( SmartPtr<scene::IActor> newParent,
-                                SmartPtr<scene::IActor> oldParent ) override;
+            void parentChanged( SmartPtr<IActor> newParent,
+                                SmartPtr<IActor> oldParent ) override;
 
             /** @copydoc IComponent::hierarchyChanged */
             void hierarchyChanged() override;
 
             /** @copydoc IComponent::childAdded */
-            void childAdded( SmartPtr<scene::IActor> child ) override;
+            void childAdded( SmartPtr<IActor> child ) override;
 
             /** @copydoc IComponent::childRemoved */
-            void childRemoved( SmartPtr<scene::IActor> child ) override;
+            void childRemoved( SmartPtr<IActor> child ) override;
 
-            SmartPtr<ui::IUIImage> getImage() const;
-            void setImage( SmartPtr<ui::IUIImage> val );
-
+            /** @copydoc UIComponent::updateDimensions */
             void updateDimensions() override;
+
+            /** @copydoc UIComponent::updateMaterials */
             void updateMaterials() override;
 
             /** @copydoc IComponent::getProperties */
@@ -51,7 +61,11 @@ namespace fb
             /** @copydoc IObject::isValid */
             bool isValid() const override;
 
-            Array<SmartPtr<ISharedObject>> getChildObjects() const;
+            /** @copydoc IObject::getChildObjects */
+            Array<SmartPtr<ISharedObject>> getChildObjects() const override;
+
+            SmartPtr<ui::IUIImage> getImage() const;
+            void setImage( SmartPtr<ui::IUIImage> image );
 
             SmartPtr<render::ITexture> getTexture() const;
             void setTexture( SmartPtr<render::ITexture> texture );
@@ -62,17 +76,20 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
+            /** @copydoc UIComponent::handleComponentEvent */
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType ) override;
 
+            /** Creates the image. */
             void createImage();
 
+            /** Sets up the material. */
             void setupMaterial();
 
             SmartPtr<ui::IUIImage> m_image;
             SmartPtr<render::ITexture> m_texture;
             SmartPtr<render::IMaterial> m_material;
         };
-    }  // namespace scene
-}  // end namespace fb
+    } // namespace scene
+}     // end namespace fb
 
 #endif  // ImageComponent_h__

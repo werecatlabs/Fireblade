@@ -24,6 +24,11 @@ namespace fb
         FactoryUtil::addFactory<scene::SceneManager>();
         FactoryUtil::addFactory<scene::Transform>();
 
+        FactoryUtil::addFactory<scene::LayoutTransform>();
+        FactoryUtil::addFactory<scene::Layout>();
+        FactoryUtil::addFactory<scene::Image>();
+        FactoryUtil::addFactory<scene::Text>();
+
         FactoryUtil::addFactory<SceneNodeState>();
         FactoryUtil::addFactory<RigidbodyState>();
         FactoryUtil::addFactory<TextureState>();

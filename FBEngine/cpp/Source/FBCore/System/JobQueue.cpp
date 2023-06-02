@@ -3,7 +3,6 @@
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/System/IJob.h>
 #include <FBCore/Interface/System/IJobQueue.h>
-#include <FBCore/Interface/System/IJobQueueListener.h>
 #include <FBCore/Interface/System/ITaskManager.h>
 #include <FBCore/Interface/System/ITask.h>
 #include <FBCore/Interface/System/IThreadPool.h>
@@ -153,20 +152,6 @@ namespace fb
     void JobQueue::setRate( f32 rate )
     {
         m_rate = rate;
-    }
-
-    void JobQueue::addListener( SmartPtr<IJobQueueListener> listener )
-    {
-        m_listeners.push_back( listener );
-    }
-
-    void JobQueue::removeListener( SmartPtr<IJobQueueListener> listener )
-    {
-        auto it = std::find( m_listeners.begin(), m_listeners.end(), listener );
-        if( it != m_listeners.end() )
-        {
-            m_listeners.erase( it );
-        }
     }
 
     bool JobQueue::getUseAffinity() const

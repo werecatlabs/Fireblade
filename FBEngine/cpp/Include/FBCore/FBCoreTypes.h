@@ -510,6 +510,17 @@ namespace fb
 
         Count
     };
+
+    /// Define the types of point ordering
+    enum PolygonPointOrdering
+    {
+        /// clockwise ordering
+        PPO_CLOCKWISE,
+
+        /// counter clockwise (anti-clockwise) ordering
+        PPO_COUNTER_CLOCKWISE
+    };
+
 }  // namespace fb
 
 #endif  // FBTypes_h__

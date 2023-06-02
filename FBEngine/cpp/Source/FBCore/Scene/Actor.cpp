@@ -3,11 +3,11 @@
 #include <FBCore/Scene/SceneManager.h>
 #include <FBCore/Scene/Components/Transform.h>
 #include <FBCore/Scene/Components/Component.h>
-#include <FBCore/Math/Core/MathUtil.h>
-#include <FBCore/Base/LogManager.h>
-#include <FBCore/Base/BitUtil.h>
-#include <FBCore/Base/CoreUtil.h>
-#include <FBCore/Base/Properties.h>
+#include <FBCore/Math/MathUtil.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Core/BitUtil.h>
+#include <FBCore/Core/Util.h>
+#include <FBCore/Core/Properties.h>
 #include <rttr/registration>
 
 namespace fb
@@ -291,23 +291,15 @@ namespace fb
         {
             try
             {
-                auto components = getComponents();
-
-                //std::sort(
-                //    components.begin(), components.end(),
-                //    []( const SmartPtr<ISharedObject> &a, const SmartPtr<ISharedObject> &b ) -> bool {
-                //        auto aPriority = ApplicationUtil::getEventPriority( a );
-                //        auto bPriority = ApplicationUtil::getEventPriority( b );
-
-                //        return aPriority > bPriority;
-                //    } );
-
-                for( auto component : components )
+                if( auto p = getComponentsPtr() )
                 {
-                    if( component )
+                    auto &components = *p;
+                    for( auto component : components )
                     {
-                        auto c = fb::static_pointer_cast<Component>( component );
-                        c->edit();
+                        if( component )
+                        {
+                            component->edit();
+                        }
                     }
                 }
 
@@ -316,7 +308,10 @@ namespace fb
                     auto &children = *p;
                     for( auto &child : children )
                     {
-                        child->edit();
+                        if( child )
+                        {
+                            child->edit();
+                        }
                     }
                 }
             }
@@ -1869,7 +1864,7 @@ namespace fb
                 auto &children = *p;
                 children.push_back( child );
 
-                FB_ASSERT( CoreUtil::hasDuplicates( children ) == false );
+                //FB_ASSERT( CoreUtil::hasDuplicates( children ) == false );
             }
 
             auto pThis = getSharedFromThis<IActor>();
@@ -2185,8 +2180,7 @@ namespace fb
                 setVisible( visible );
                 setStatic( bStatic );
 
-                auto handle = getHandle();
-                if( handle )
+                if( auto handle = getHandle() )
                 {
                     auto uuid = String();
                     actorData->getPropertyValue( "uuid", uuid );
@@ -2199,8 +2193,7 @@ namespace fb
                     handle->setUUID( uuid );
                 }
 
-                auto transform = getTransform();
-                if( transform )
+                if( auto transform = getTransform() )
                 {
                     auto localTransform = transform->getLocalTransform();
                     auto worldTransform = transform->getWorldTransform();
@@ -2232,8 +2225,7 @@ namespace fb
 
                     if( !pComponent )
                     {
-                        auto componentTypeClean =
-                            applicationManager->getComponentFactoryType( componentType );
+                        auto componentTypeClean = sceneManager->getComponentFactoryType( componentType );
                         pComponent =
                             factoryManager->createObjectFromType<IComponent>( componentTypeClean );
                     }
@@ -2363,7 +2355,7 @@ namespace fb
                 worldTransform.setProperties( properties );
 
                 transform->setLocalTransform( localTransform );
-                transform->setWorldTransform( worldTransform );
+                //transform->setWorldTransform( worldTransform );
             }
 
             auto componentsData = properties->getChildrenByName( "components" );
@@ -2385,7 +2377,7 @@ namespace fb
 
                 if( !pComponent )
                 {
-                    componentType = applicationManager->getComponentFactoryType( componentType );
+                    componentType = sceneManager->getComponentFactoryType( componentType );
                     pComponent = factoryManager->createObjectFromType<IComponent>( componentType );
                 }
 

@@ -1,9 +1,9 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Math/Transform3.h>
-#include <FBCore/Base/DataUtil.h>
+#include <FBCore/Core/DataUtil.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Memory/Data.h>
-#include <FBCore/Rtti/RttiClassDefinition.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
@@ -88,41 +88,55 @@ namespace fb
     template <class T>
     void Transform3<T>::setProperties( SmartPtr<Properties> properties )
     {
-        if( auto child = properties->getChild( "position" ) )
+        if( properties )
         {
-            child->getPropertyValue( "x", m_position.x );
-            child->getPropertyValue( "y", m_position.y );
-            child->getPropertyValue( "z", m_position.z );
-        }
-        else
-        {
-            properties->getPropertyValue( "Position", m_position );
-        }
+            if( auto child = properties->getChild( "position" ) )
+            {
+                child->getPropertyValue( "x", m_position.x );
+                child->getPropertyValue( "y", m_position.y );
+                child->getPropertyValue( "z", m_position.z );
+            }
+            else
+            {
+                properties->getPropertyValue( "Position", m_position );
+            }
 
-        Vector3<T> rotation;
+            Vector3<T> rotation;
 
-        if( auto child = properties->getChild( "rotation" ) )
-        {
-            child->getPropertyValue( "x", rotation.x );
-            child->getPropertyValue( "y", rotation.y );
-            child->getPropertyValue( "z", rotation.z );
-        }
-        else
-        {
-            properties->getPropertyValue( "Rotation", rotation );
-        }
+            if( auto child = properties->getChild( "rotation" ) )
+            {
+                child->getPropertyValue( "x", rotation.x );
+                child->getPropertyValue( "y", rotation.y );
+                child->getPropertyValue( "z", rotation.z );
 
-        m_orientation.fromDegrees( rotation );
+                setRotation( rotation );
+            }
+            else
+            {
+                if( properties->getPropertyValue( "Rotation", rotation ) )
+                {
+                    setRotation( rotation );
+                }
+            }
 
-        if( auto child = properties->getChild( "scale" ) )
-        {
-            child->getPropertyValue( "x", m_scale.x );
-            child->getPropertyValue( "y", m_scale.y );
-            child->getPropertyValue( "z", m_scale.z );
-        }
-        else
-        {
-            properties->getPropertyValue( "Scale", m_scale );
+            if( auto child = properties->getChild( "orientation" ) )
+            {
+                child->getPropertyValue( "x", m_orientation.x );
+                child->getPropertyValue( "y", m_orientation.y );
+                child->getPropertyValue( "z", m_orientation.z );
+                child->getPropertyValue( "w", m_orientation.w );
+            }
+
+            if( auto child = properties->getChild( "scale" ) )
+            {
+                child->getPropertyValue( "x", m_scale.x );
+                child->getPropertyValue( "y", m_scale.y );
+                child->getPropertyValue( "z", m_scale.z );
+            }
+            else
+            {
+                properties->getPropertyValue( "Scale", m_scale );
+            }
         }
     }
 

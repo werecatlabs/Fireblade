@@ -1,7 +1,12 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/Transform.h>
 #include <FBCore/Scene/SceneManager.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/System/IStateManager.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Core/Properties.h>
+#include <FBCore/Core/StringUtil.h>
+#include <FBCore/Math/MathUtil.h>
+#include <FBCore/Math/Euler.h>
 #include <rttr/registration>
 
 namespace fb

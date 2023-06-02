@@ -4,7 +4,7 @@
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Interface/IApplicationClient.h>
-#include <FBCore/Base/ConcurrentQueue.h>
+#include <FBCore/Core/ConcurrentQueue.h>
 
 namespace fb
 {
@@ -264,16 +264,6 @@ namespace fb
             /** @copydoc IApplicationManager::setSceneRenderWindow */
             void setSceneRenderWindow( SmartPtr<ui::IUIWindow> sceneRenderWindow );
 
-            Array<String> getComponentFactoryIgnoreList() const;
-
-            void setComponentFactoryIgnoreList( const Array<String> &ignoreList );
-
-            Map<String, String> getComponentFactoryMap() const;
-
-            void setComponentFactoryMap( const Map<String, String> &map );
-
-            String getComponentFactoryType( const String &type ) const;
-
             /** @copydoc IApplicationManager::getComponentByType */
             SmartPtr<scene::IComponent> getComponentByType( u32 typeId ) const;
 
@@ -379,9 +369,6 @@ namespace fb
 
             /** To know if the application is in the process of shutting down. */
             atomic_bool m_quit = false;
-
-            Array<String> m_componentFactoryIgnoreList;
-            Map<String, String> m_componentFactoryMap;
 
             mutable RecursiveMutex m_mutex;
         };

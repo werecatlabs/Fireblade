@@ -7,11 +7,11 @@
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Quaternion.h>
-#include <FBCore/Base/FixedArray.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/ConcurrentArray.h>
+#include <FBCore/Core/FixedArray.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Interface/IApplicationManager.h>
-#include <FBCore/FSM/FSMListener.h>
+#include <FBCore/Core/FSMListener.h>
 
 namespace fb
 {

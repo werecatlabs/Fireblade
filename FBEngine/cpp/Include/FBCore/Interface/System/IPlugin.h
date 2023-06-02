@@ -2,7 +2,7 @@
 #define __FBPlugin_H__
 
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 
 namespace fb
 {

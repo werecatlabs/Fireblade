@@ -4,7 +4,7 @@
 #include <FBCore/FBCoreTypes.h>
 #include <FBCore/Math/Math.h>
 #include <FBCore/Memory/Memory.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 #include <FBCore/Memory/SmartPtr.h>
 
 namespace fb

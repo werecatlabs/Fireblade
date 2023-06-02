@@ -4,10 +4,10 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
 #include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/ConcurrentArray.h>
-#include <FBCore/Base/StringTypes.h>
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/ConcurrentArray.h>
+#include <FBCore/Core/StringTypes.h>
+#include <FBCore/Core/StringUtil.h>
 #include <FBCore/Interface/System/IFactory.h>
 #include <FBCore/Thread/RecursiveMutex.h>
 #include <FBCore/Memory/PointerUtil.h>

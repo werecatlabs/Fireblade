@@ -2,8 +2,8 @@
 #include <FBCore/Memory/ObjectTracker.h>
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Thread/Threading.h>
-#include <FBCore/Base/LogManager.h>
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Core/StringUtil.h>
 #include <sstream>
 #include <fstream>
 

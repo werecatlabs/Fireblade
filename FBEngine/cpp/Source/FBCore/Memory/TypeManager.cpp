@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Memory/TypeManager.h>
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/Core/StringUtil.h>
 
 #include <FBCore/Interface/IApplicationClient.h>
 #include <FBCore/Interface/IApplicationManager.h>

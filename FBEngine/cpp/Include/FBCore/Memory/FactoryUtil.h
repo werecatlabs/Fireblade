@@ -6,7 +6,7 @@
 #include <FBCore/Memory/FactoryTemplate.h>
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/Core/StringUtil.h>
 
 namespace fb
 {

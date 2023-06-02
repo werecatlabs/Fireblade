@@ -5,7 +5,7 @@
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Triangle3.h>
 #include <FBCore/Math/Polygon2.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {

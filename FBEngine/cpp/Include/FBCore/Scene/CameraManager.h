@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/ICameraManager.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Thread/RecursiveMutex.h>
 

@@ -3,9 +3,9 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/StringTypes.h>
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/StringTypes.h>
+#include <FBCore/Core/StringUtil.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Quaternion.h>
 #include <FBCore/Math/AABB3.h>

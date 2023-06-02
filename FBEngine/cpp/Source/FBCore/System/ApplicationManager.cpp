@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/ApplicationManager.h>
-#include <FBCore/Base/LogManager.h>
+#include <FBCore/Core/LogManager.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Interface/Scene/IActor.h>
 #include <FBCore/Interface/Scene/ICameraManager.h>
@@ -1029,21 +1029,6 @@ namespace fb
             m_sceneRenderWindow = sceneRenderWindow;
         }
 
-        fb::Array<fb::String> ApplicationManager::getComponentFactoryIgnoreList() const
-        {
-            return m_componentFactoryIgnoreList;
-        }
-
-        void ApplicationManager::setComponentFactoryIgnoreList( const Array<String> &ignoreList )
-        {
-            m_componentFactoryIgnoreList = ignoreList;
-        }
-
-        Map<String, String> ApplicationManager::getComponentFactoryMap() const
-        {
-            return Map<String, String>();
-        }
-
         bool ApplicationManager::isValid() const
         {
             auto taskManager = getTaskManager();
@@ -1093,35 +1078,6 @@ namespace fb
         SmartPtr<ui::IUIWindow> ApplicationManager::getSceneRenderWindow() const
         {
             return m_sceneRenderWindow;
-        }
-
-        void ApplicationManager::setComponentFactoryMap( const Map<String, String> &map )
-        {
-        }
-
-        String ApplicationManager::getComponentFactoryType( const String &type ) const
-        {
-            return "";
-        }
-
-        SmartPtr<scene::IComponent> ApplicationManager::getComponentByType( u32 typeId ) const
-        {
-            const auto &typeManager = TypeManager::instance();
-
-            auto actors = getActors();
-            for( auto &actor : actors )
-            {
-                auto components = actor->getComponents();
-                for( auto &component : components )
-                {
-                    if( typeManager->isDerived( typeId, component->getTypeInfo() ) )
-                    {
-                        return component;
-                    }
-                }
-            }
-
-            return nullptr;
         }
 
         Parameter ApplicationManager::triggerEvent( IEvent::Type eventType, hash_type eventValue,

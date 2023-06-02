@@ -15,6 +15,7 @@ namespace fb
         void unload( SmartPtr<ISharedObject> data ) override;
 
         void build() override;
+        void refresh() override;
 
         void importFolder( SmartPtr<IFolderExplorer> folderListing );
         void importFile( const String &filePath ) override;
@@ -39,11 +40,7 @@ namespace fb
 
         Array<SmartPtr<ISharedObject>> getSceneObjects() const;
 
-        void addResourceListener( SmartPtr<IResourceListener> resourceListener ) override;
-
-        void setResourceListeners( const Array<SmartPtr<IResourceListener>> &resourceListener ) override;
-
-        Array<SmartPtr<IResourceListener>> getResourceListeners() const override;
+        SmartPtr<ISharedObject> getObjectByFileId( const String &fileId ) const;
 
     protected:
         class BuildResourceDatabaseJob : public Job
@@ -60,6 +57,8 @@ namespace fb
         private:
             SmartPtr<CResourceDatabaseMT> m_owner;
         };
+
+        void getSceneObjects( SmartPtr<scene::IActor> actor, Array<SmartPtr<ISharedObject>> &objects ) const;
 
         Array<SmartPtr<ISharedObject>> m_objects;
 

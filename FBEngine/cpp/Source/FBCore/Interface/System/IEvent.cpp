@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/System/IEvent.h>
-#include <FBCore/Rtti/RttiClassDefinition.h>
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/System/RttiClassDefinition.h>
+#include <FBCore/Core/StringUtil.h>
 
 namespace fb
 {
@@ -68,5 +68,14 @@ namespace fb
     const hash_type IEvent::noContact = StringUtil::getHash( "noContact" );
     const hash_type IEvent::contact = StringUtil::getHash( "contact" );
     const hash_type IEvent::contactProcess = StringUtil::getHash( "contactProcess" );
+
+    const hash_type IEvent::queued = StringUtil::getHash( "queued" );
+    const hash_type IEvent::execute = StringUtil::getHash( "execute" );
+    const hash_type IEvent::completed = StringUtil::getHash( "completed" );
+
+    const hash_type IEvent::stateChanged = StringUtil::getHash( "stateChanged" );
+    const hash_type IEvent::stateMessage = StringUtil::getHash( "stateMessage" );
+
+    const hash_type IEvent::transform = StringUtil::getHash( "transform" );
 
 }  // end namespace fb

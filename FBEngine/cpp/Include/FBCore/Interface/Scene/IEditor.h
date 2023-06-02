@@ -2,7 +2,7 @@
 #define IEditor_h__
 
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Base/Parameter.h>
+#include <FBCore/Core/Parameter.h>
 #include <FBCore/Interface/System/IEvent.h>
 
 namespace fb

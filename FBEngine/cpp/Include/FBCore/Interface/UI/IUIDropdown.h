@@ -2,8 +2,8 @@
 #define IUIDropdown_h__
 
 #include <FBCore/Interface/UI/IUIElement.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/StringTypes.h>
 
 namespace fb
 {

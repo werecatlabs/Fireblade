@@ -1,9 +1,17 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/UI/Image.h>
 #include <FBCore/Scene/Components/UI/Layout.h>
-#include <FBCore/Scene/Components/UI/CanvasTransform.h>
+#include <FBCore/Scene/Components/UI/LayoutTransform.h>
 #include <FBCore/Scene/Components/Material.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Graphics/IMaterial.h>
+#include <FBCore/Interface/Graphics/IGraphicsSystem.h>
+#include <FBCore/Interface/Graphics/ITexture.h>
+#include <FBCore/Interface/UI/IUILayout.h>
+#include <FBCore/Interface/UI/IUIManager.h>
+#include <FBCore/Interface/UI/IUIImage.h>
+#include <FBCore/Interface/Resource/IResourceDatabase.h>
+#include <FBCore/Core/BitUtil.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {
@@ -61,29 +69,6 @@ namespace fb
                 }
                 break;
                 case State::Edit:
-                {
-                    setupCanvas();
-
-                    auto image = getImage();
-                    if( !image )
-                    {
-                        createImage();
-                    }
-
-                    setupMaterial();
-
-                    //if( auto canvas = fb::static_pointer_cast<scene::CanvasComponent>( getCanvas() ) )
-                    //{
-                    //    if( auto layout = canvas->getLayout() )
-                    //    {
-                    //        layout->addChild( image );
-                    //    }
-                    //}
-                    updateOrder();
-                    updateTransform();
-                    updateVisibility();
-                }
-                break;
                 case State::Play:
                 {
                     setupCanvas();
@@ -95,15 +80,6 @@ namespace fb
                     }
 
                     setupMaterial();
-
-                    //if( auto canvas = fb::static_pointer_cast<scene::CanvasComponent>( getCanvas() ) )
-                    //{
-                    //    if( auto layout = canvas->getLayout() )
-                    //    {
-                    //        layout->addChild( image );
-                    //    }
-                    //}
-
                     updateOrder();
                     updateTransform();
                     updateVisibility();
@@ -318,16 +294,6 @@ namespace fb
                         createImage();
                     }
 
-                    //if( m_parentContainer )
-                    //{
-                    //    m_parentContainer->setVisible( visible );
-                    //}
-
-                    //if( m_container )
-                    //{
-                    //    m_container->setVisible( visible );
-                    //}
-
                     if( image )
                     {
                         image->setVisible( visible );
@@ -347,16 +313,6 @@ namespace fb
                     {
                         createImage();
                     }
-
-                    //if( m_parentContainer )
-                    //{
-                    //    m_parentContainer->setVisible( visible );
-                    //}
-
-                    //if( m_container )
-                    //{
-                    //    m_container->setVisible( visible );
-                    //}
 
                     if( image )
                     {
@@ -401,9 +357,9 @@ namespace fb
             return m_image;
         }
 
-        void Image::setImage( SmartPtr<ui::IUIImage> val )
+        void Image::setImage( SmartPtr<ui::IUIImage> image )
         {
-            m_image = val;
+            m_image = image;
         }
 
         void Image::updateDimensions()

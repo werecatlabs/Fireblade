@@ -2,8 +2,8 @@
 #define INode_h__
 
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/Handle.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/Handle.h>
 
 namespace fb
 {

@@ -3,7 +3,7 @@
 
 #include <FBCore/Interface/Physics/IPhysicsBody3.h>
 #include <FBCore/Interface/Physics/FBPhysicsTypes.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {

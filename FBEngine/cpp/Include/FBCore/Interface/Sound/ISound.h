@@ -2,8 +2,8 @@
 #define _FB_ISound_H
 
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Base/StringTypes.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/StringTypes.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {

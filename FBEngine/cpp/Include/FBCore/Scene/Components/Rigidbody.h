@@ -169,12 +169,6 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            struct rigidbody_data
-            {
-                bool dirty = false;
-                Rigidbody *owner = nullptr;
-            };
-
             void createRigidbodyObject();
             void destroyRigidbodyObject();
 

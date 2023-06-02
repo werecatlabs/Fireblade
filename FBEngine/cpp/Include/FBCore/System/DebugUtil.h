@@ -2,7 +2,7 @@
 #define DebugUtil_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 
 namespace fb
 {

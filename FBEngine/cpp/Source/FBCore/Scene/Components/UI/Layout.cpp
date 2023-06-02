@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/UI/Layout.h>
-#include <FBCore/Scene/Components/UI/CanvasTransform.h>
+#include <FBCore/Scene/Components/UI/LayoutTransform.h>
 #include <FBCore/FBCore.h>
 
 namespace fb
@@ -181,7 +181,7 @@ namespace fb
                         layout->setVisible( visible );
                     }
 
-                    auto canvasTransforms = actor->getComponentsAndInChildren<CanvasTransform>();
+                    auto canvasTransforms = actor->getComponentsAndInChildren<LayoutTransform>();
                     for( auto canvasTransform : canvasTransforms )
                     {
                         canvasTransform->updateTransform();
@@ -197,7 +197,7 @@ namespace fb
                         layout->setVisible( visible );
                     }
 
-                    auto canvasTransforms = actor->getComponentsAndInChildren<CanvasTransform>();
+                    auto canvasTransforms = actor->getComponentsAndInChildren<LayoutTransform>();
                     for( auto canvasTransform : canvasTransforms )
                     {
                         canvasTransform->updateTransform();
@@ -213,7 +213,7 @@ namespace fb
                         layout->setVisible( visible );
                     }
 
-                    auto canvasTransforms = actor->getComponentsAndInChildren<CanvasTransform>();
+                    auto canvasTransforms = actor->getComponentsAndInChildren<LayoutTransform>();
                     for( auto canvasTransform : canvasTransforms )
                     {
                         canvasTransform->updateTransform();
@@ -290,7 +290,7 @@ namespace fb
                 {
                     if( auto actor = getActor() )
                     {
-                        auto canvasTransforms = actor->getComponentsAndInChildren<CanvasTransform>();
+                        auto canvasTransforms = actor->getComponentsAndInChildren<LayoutTransform>();
                         for( auto canvasTransform : canvasTransforms )
                         {
                             canvasTransform->updateTransform();

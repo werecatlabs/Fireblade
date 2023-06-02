@@ -1,14 +1,17 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Resource/CMeshManager.h>
-#include <FBCore/Base/LogManager.h>
+#include <FBCore/Core/LogManager.h>
 #include <FBCore/Interface/Graphics/ISceneNode.h>
 #include <FBCore/Interface/IO/IFileSystem.h>
 #include <FBCore/Interface/IO/IStream.h>
 #include <FBCore/Interface/Mesh/IMeshLoader.h>
-#include <FBCore/Base/DataUtil.h>
-#include <FBCore/Base/Path.h>
+#include <FBCore/Interface/Mesh/IMeshResource.h>
+#include <FBCore/Core/DataUtil.h>
+#include <FBCore/Core/Path.h>
 #include <FBCore/Memory/Data.h>
-#include <FBMesh/FBMesh.h> // todo remove
+#include <FBCore/Mesh/CMesh.h> 
+#include <FBCore/Mesh/CMeshResource.h> 
+#include <FBCore/Mesh/MeshSerializer.h> 
 
 namespace fb
 {
@@ -106,99 +109,6 @@ namespace fb
 
     void CMeshManager::saveMeshToFile( SmartPtr<IMesh> mesh, const String &filePath )
     {
-        // const char* header_str =	"<?xml version=\"1.0\"?><FBMesh></FBMesh>";
-        // TiXmlDocument* doc = new TiXmlDocument( filePath.c_str() );		//create a tiny xml document
-        // doc->Parse(header_str);
-
-        // TiXmlElement* root = doc->RootElement();
-
-        ////create sub meshes node
-        // TiXmlElement* subMeshesNode = new TiXmlElement("SubMeshes");
-        // root->LinkEndChild(subMeshesNode);
-
-        // const FBSubMeshList& subMeshes = mesh->getSubMeshes();
-        // for(u32 i=0; i<subMeshes.size(); ++i)
-        //{
-        //	FBSubMeshPtr subMesh = subMeshes[i];
-        //	FBIndexBufferPtr indexBuffer = subMesh->getIndexBuffer();
-        //	FBVertexBufferPtr vertexBuffer = subMesh->getVertexBuffer();
-
-        //	//create sub mesh node
-        //	TiXmlElement* subMeshNode = new TiXmlElement("SubMesh");
-        //	subMeshesNode->LinkEndChild(subMeshNode);
-
-        //	//create material name node
-        //	subMeshNode->SetAttribute("MaterialName", subMesh->getMaterialName().c_str());
-
-        //	//create indicies node
-        //	TiXmlElement* indiciesNode = new TiXmlElement("Indices");
-        //	subMeshNode->LinkEndChild(indiciesNode);
-
-        //	// fill indices
-        //	switch(indexBuffer->getIndexType())
-        //	{
-        //	case fb::IT_16BIT:
-        //		{
-        //			const u16* indexData = reinterpret_cast<u16*>(indexBuffer->getIndexData());
-        //			const u32 indexCount = indexBuffer->getNumIndices();
-        //			for(u32 j=0;j<indexCount;j++)
-        //			{
-        //				u32 index = (u32)indexData[j];
-        //			}
-        //		}
-        //		break;
-        //	case fb::IT_32BIT:
-        //		{
-        //			const u32* indexData = reinterpret_cast<u32*>(indexBuffer->getIndexData());
-        //			const u32 indexCount = indexBuffer->getNumIndices();
-        //			for(u32 j=0;j<indexCount;j++)
-        //			{
-        //				u32 index = indexData[j];
-        //			}
-        //		}
-        //		break;
-        //	default:
-        //		{
-        //			_FB_DEBUG_BREAK_IF(true);
-        //		}
-        //	};
-
-        //	//create vertices node
-        //	TiXmlElement* verticesNode = new TiXmlElement("Vertices");
-        //	subMeshNode->LinkEndChild(verticesNode);
-
-        //	const FBVertexElement* posElem =
-        // vertexBuffer->getVertexDeclaration()->findElementBySemantic(VES_POSITION); 	u32 numVerticies
-        // = vertexBuffer->getNumVerticies(); 	u32 vertexSize =
-        // vertexBuffer->getVertexDeclaration()->getSize(); 	u8* vertexDataPtr =
-        //(u8*)vertexBuffer->getVertexData(); 	f32* elementData = 0;
-
-        //	for(u32 j=0; j<numVerticies; ++j, vertexDataPtr += vertexSize)
-        //	{
-        //		posElem->getElementData(vertexDataPtr, &elementData);
-
-        //		Vector3F position;
-        //		position.X() = *elementData++;
-        //		position.Y() = *elementData++;
-        //		position.Z() = *elementData++;
-
-        //		//create vertex node
-        //		TiXmlElement* vertexNode = new TiXmlElement("Vertex");
-        //		verticesNode->LinkEndChild(vertexNode);
-
-        //		//create position node
-        //		TiXmlElement* positionNode = new TiXmlElement("Position");
-        //		vertexNode->LinkEndChild(positionNode);
-
-        //		positionNode->SetAttribute("X", StringUtil::toString(position.X()).c_str());
-        //		positionNode->SetAttribute("Y", StringUtil::toString(position.Y()).c_str());
-        //		positionNode->SetAttribute("Z", StringUtil::toString(position.Z()).c_str());
-        //	}
-        //}
-
-        // doc->SaveFile();
-
-        // delete doc;
     }
 
     SmartPtr<render::ISceneNode> CMeshManager::loadMeshes( const String &fileName )

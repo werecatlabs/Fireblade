@@ -1,19 +1,28 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/RigidbodyListener.h>
 #include <FBCore/Scene/Components/Rigidbody.h>
-#include <FBCore/FBCore.h>
-
-#include "FBCore/Scene/SceneManager.h"
+#include <FBCore/Scene/SceneManager.h>
+#include <FBCore/Interface/Scene/ITransform.h>
 
 namespace fb
 {
     namespace scene
     {
 
+        FB_CLASS_REGISTER_DERIVED( fb::scene, RigidbodyListener, CSharedObject<IEventListener> );
+
         Parameter RigidbodyListener::handleEvent( IEvent::Type eventType, hash_type eventValue,
-                               const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
-                               SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
+                                                  const Array<Parameter> &arguments,
+                                                  SmartPtr<ISharedObject> sender,
+                                                  SmartPtr<ISharedObject> object,
+                                                  SmartPtr<IEvent> event )
         {
+            if( eventValue == IEvent::transform )
+            {
+                auto t = Transform3<real_Num>( arguments[0].getVector3(), arguments[1].getQuaternion() );
+                handleTransform( t );
+            }
+
             return Parameter();
         }
 
@@ -120,9 +129,9 @@ namespace fb
             return m_owner;
         }
 
-        void RigidbodyListener::setOwner( Rigidbody *val )
+        void RigidbodyListener::setOwner( Rigidbody *owner )
         {
-            m_owner = val;
+            m_owner = owner;
         }
 
     }  // namespace scene

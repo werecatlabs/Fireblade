@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/UI/IUIFileBrowser.h>
-#include <FBCore/Base/StringUtil.h>
-#include <FBCore/Rtti/RttiClassDefinition.h>
+#include <FBCore/Core/StringUtil.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {

@@ -4,8 +4,8 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/FBCoreTypes.h>
 #include <FBCore/Atomics/Atomics.h>
-#include <FBCore/Base/StringTypes.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/StringTypes.h>
+#include <FBCore/Core/Array.h>
 #include <FBCore/Thread/SpinRWMutex.h>
 
 namespace fb

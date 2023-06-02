@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Math/Vector2.h>
-#include <FBCore/Base/DataUtil.h>
+#include <FBCore/Core/DataUtil.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Memory/Data.h>
 

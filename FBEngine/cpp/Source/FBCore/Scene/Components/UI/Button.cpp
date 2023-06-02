@@ -2,7 +2,15 @@
 #include <FBCore/Scene/Components/UI/Button.h>
 #include <FBCore/Scene/Components/ComponentEvent.h>
 #include <FBCore/Scene/Components/ComponentEventListener.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Graphics/IMaterial.h>
+#include <FBCore/Interface/Graphics/IGraphicsSystem.h>
+#include <FBCore/Interface/Graphics/ITexture.h>
+#include <FBCore/Interface/UI/IUIManager.h>
+#include <FBCore/Interface/UI/IUIText.h>
+#include <FBCore/Interface/UI/IUIButton.h>
+#include <FBCore/Interface/Resource/IResourceDatabase.h>
+#include <FBCore/Core/BitUtil.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {

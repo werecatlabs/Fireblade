@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Vehicle/IVehicleComponent.h>
-#include <FBCore/Math/Spline/LinearSpline1.h>
+#include <FBCore/Math/LinearSpline1.h>
 
 namespace fb
 {

@@ -2,7 +2,15 @@
 #include <FBCore/Scene/Components/CollisionMesh.h>
 #include <FBCore/Scene/Components/Mesh.h>
 #include <FBCore/Scene/Components/Rigidbody.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Core/Exception.h>
+#include <FBCore/Core/Path.h>
+#include <FBCore/Interface/Physics/IPhysicsManager.h>
+#include <FBCore/Interface/Physics/IPhysicsMaterial3.h>
+#include <FBCore/Interface/Physics/IPhysicsShape3.h>
+#include <FBCore/Interface/Physics/IMeshShape.h>
+#include <FBCore/Interface/Mesh/IMeshResource.h>
+#include <FBCore/Interface/Resource/IMeshManager.h>
 
 namespace fb
 {

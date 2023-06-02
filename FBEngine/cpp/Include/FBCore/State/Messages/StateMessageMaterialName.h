@@ -2,7 +2,7 @@
 #define StateMessageMaterialName_h__
 
 #include <FBCore/State/Messages/StateMessage.h>
-#include "FBCore/Base/StringTypes.h"
+#include "FBCore/Core/StringTypes.h"
 
 namespace fb
 {

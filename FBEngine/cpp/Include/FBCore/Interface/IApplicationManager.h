@@ -4,9 +4,9 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/Map.h>
-#include <FBCore/Base/Parameter.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/Map.h>
+#include <FBCore/Core/Parameter.h>
 #include <FBCore/Interface/System/IEvent.h>
 #include <FBCore/Thread/ThreadTypes.h>
 
@@ -778,21 +778,6 @@ namespace fb
              */
             virtual void setSceneRenderWindow( SmartPtr<ui::IUIWindow> sceneRenderWindow ) = 0;
 
-            /** Gets the list of types to ignore. */
-            virtual Array<String> getComponentFactoryIgnoreList() const = 0;
-
-            /** Sets the list of types to ignore. */
-            virtual void setComponentFactoryIgnoreList( const Array<String> &ignoreList ) = 0;
-
-            /** Gets the component factory to map components to a factory. */
-            virtual Map<String, String> getComponentFactoryMap() const = 0;
-
-            /** Sets the component factory to map components to a factory. */
-            virtual void setComponentFactoryMap(const Map<String, String>& map) = 0;
-
-            /** Gets a factory to build a component. */
-            virtual String getComponentFactoryType( const String &type ) const = 0;
-
             /** Gets a component by type. */
             virtual SmartPtr<scene::IComponent> getComponentByType( u32 typeId ) const = 0;
 
@@ -804,7 +789,8 @@ namespace fb
             @return Contains a return parameter. */
             virtual Parameter triggerEvent( IEvent::Type eventType, hash_type eventValue,
                                             const Array<Parameter> &arguments,
-                                            SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) = 0;
+                                            SmartPtr<ISharedObject> sender,
+                                            SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) = 0;
 
             /**
              * Gets a component by the template type.

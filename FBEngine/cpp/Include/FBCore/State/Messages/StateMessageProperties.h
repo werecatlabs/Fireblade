@@ -2,7 +2,7 @@
 #define StateMessageProperties_h__
 
 #include <FBCore/State/Messages/StateMessage.h>
-#include "FBCore/Base/Properties.h"
+#include "FBCore/Core/Properties.h"
 
 namespace fb
 {

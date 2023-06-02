@@ -1,7 +1,13 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/CollisionBox.h>
 #include <FBCore/Scene/Components/Rigidbody.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Scene/Components/Rigidbody.h>
+#include <FBCore/Interface/Physics/IPhysicsManager.h>
+#include <FBCore/Interface/Physics/IPhysicsMaterial3.h>
+#include <FBCore/Interface/Physics/IBoxShape3.h>
+#include <FBCore/Core/Exception.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Math/MathUtil.h>
 
 namespace fb
 {
@@ -34,7 +40,7 @@ namespace fb
 
                 if( auto physicsManager = applicationManager->getPhysicsManager() )
                 {
-                    auto shape = physicsManager->createCollisionShape<physics::IBoxShape3>();
+                    auto shape = physicsManager->createCollisionShape<physics::IBoxShape3>(nullptr);
                     FB_ASSERT( shape );
 
                     setShape( shape );

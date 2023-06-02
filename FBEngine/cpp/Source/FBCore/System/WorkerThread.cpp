@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/WorkerThread.h>
-#include <FBCore/Base/LogManager.h>
+#include <FBCore/Core/LogManager.h>
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/System/IJobQueue.h>
 #include <FBCore/Interface/System/ISystemManager.h>

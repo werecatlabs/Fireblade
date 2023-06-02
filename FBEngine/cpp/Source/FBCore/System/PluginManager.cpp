@@ -2,7 +2,7 @@
 #include <FBCore/System/PluginManager.h>
 #include <FBCore/System/Plugin.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/Core/StringUtil.h>
 
 namespace fb
 {

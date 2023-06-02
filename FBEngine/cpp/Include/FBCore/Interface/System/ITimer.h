@@ -2,7 +2,7 @@
 #define __ITimer_h__
 
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 #include <FBCore/Thread/ThreadTypes.h>
 
 namespace fb

@@ -1,8 +1,8 @@
 #ifndef IDatabaseManager_h__
 #define IDatabaseManager_h__
 
-#include <FBCore/Interface/Scene/IComponent.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
+#include <FBCore/Core/StringTypes.h>
 
 namespace fb
 {
@@ -10,7 +10,7 @@ namespace fb
     /**
      * Interface for a database manager.
      */
-    class IDatabaseManager : public scene::IComponent
+    class IDatabaseManager : public ISharedObject
     {
     public:
         /** Virtual destructor. */

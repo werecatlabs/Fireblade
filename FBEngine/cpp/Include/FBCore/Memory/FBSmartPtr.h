@@ -2,7 +2,7 @@
 #define __FBSmartPtr_h__
 
 #include <FBCore/FBCoreTypes.h>
-#include <FBCore/Base/Exception.h>
+#include <FBCore/Core/Exception.h>
 #include <FBCore/Memory/RawPtr.h>
 #include <type_traits>
 

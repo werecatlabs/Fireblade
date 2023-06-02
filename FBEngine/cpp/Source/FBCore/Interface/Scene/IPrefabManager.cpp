@@ -5,7 +5,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/Scene/IPrefabManager.h>
 
-#include <FBCore/Rtti/RttiClassDefinition.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {

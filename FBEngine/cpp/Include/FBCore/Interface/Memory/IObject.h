@@ -2,8 +2,8 @@
 #define __FB_IObject_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Base/StringTypes.h>
-#include <FBCore/Rtti/RttiClass.h>
+#include <FBCore/Core/StringTypes.h>
+#include <FBCore/System/RttiClass.h>
 #include <FBCore/Memory/TypeManager.h>
 
 namespace fb

@@ -1,8 +1,8 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/Graphics/IFrustum.h>
-#include <FBCore/Rtti/RttiClassDefinition.h>
+#include <FBCore/System/RttiClassDefinition.h>
 #include <FBCore/Memory/TypeManager.h>
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/Core/StringUtil.h>
 
 namespace fb
 {

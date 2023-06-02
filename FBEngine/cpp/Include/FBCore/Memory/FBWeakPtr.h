@@ -1,7 +1,7 @@
 #ifndef _FB_WeakPtr_H_
 #define _FB_WeakPtr_H_
 
-#include <FBCore/Base/Exception.h>
+#include <FBCore/Core/Exception.h>
 #include <FBCore/Memory/SmartPtr.h>
 #include <type_traits>
 

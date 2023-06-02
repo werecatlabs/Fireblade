@@ -1,15 +1,15 @@
 #ifndef __DatabaseManager_h__
 #define __DatabaseManager_h__
 
-#include <FBCore/Scene/Components/ComponentT.h>
 #include <FBCore/Interface/Database/IDatabaseManager.h>
+#include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Thread/Threading.h>
 #include <FBCore/System/Job.h>
 
 namespace fb
 {
 
-    class DatabaseManager : public scene::ComponentT<IDatabaseManager>
+    class DatabaseManager : public CSharedObject<IDatabaseManager>
     {
     public:
         DatabaseManager();

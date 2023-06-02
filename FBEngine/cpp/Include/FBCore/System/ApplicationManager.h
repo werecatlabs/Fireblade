@@ -241,18 +241,6 @@ namespace fb
 
             void setSceneRenderWindow( SmartPtr<ui::IUIWindow> sceneRenderWindow );
 
-                        Array<String> getComponentFactoryIgnoreList() const;
-
-            void setComponentFactoryIgnoreList( const Array<String> &ignoreList );
-
-            Map<String, String> getComponentFactoryMap() const;
-
-            void setComponentFactoryMap( const Map<String, String>& map );
-
-            String getComponentFactoryType( const String &type ) const;
-
-            SmartPtr<scene::IComponent> getComponentByType( u32 typeId ) const;
-
             Parameter triggerEvent( IEvent::Type eventType, hash_type eventValue,
                                     const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
                                     SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
@@ -355,9 +343,6 @@ namespace fb
 
             ///
             atomic_bool m_quit = false;
-            
-            Array<String> m_componentFactoryIgnoreList;
-            Map<String, String> m_componentFactoryMap;
         };
 
     }  // namespace core

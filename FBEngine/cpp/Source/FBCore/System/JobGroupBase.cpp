@@ -1,6 +1,5 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/JobGroupBase.h>
-#include <FBCore/Interface/System/IJobListener.h>
 
 namespace fb
 {
@@ -111,24 +110,6 @@ namespace fb
     }
 
     void JobGroupBase::coroutine_execute_step( [[maybe_unused]] SmartPtr<IObjectYield> &rYield )
-    {
-    }
-
-    bool JobGroupBase::hasListeners() const
-    {
-        return false;
-    }
-
-    Array<SmartPtr<IJobListener>> JobGroupBase::getListeners() const
-    {
-        return Array<SmartPtr<IJobListener>>();
-    }
-
-    void JobGroupBase::setListeners( [[maybe_unused]] const Array<SmartPtr<IJobListener>> &val )
-    {
-    }
-
-    void JobGroupBase::addListener( SmartPtr<IJobListener> val )
     {
     }
 

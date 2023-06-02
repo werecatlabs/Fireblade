@@ -2,7 +2,7 @@
 #define IDirector_h__
 
 #include <FBCore/Interface/Resource/IResource.h>
-#include <FBCore/Base/ConcurrentArray.h>
+#include <FBCore/Core/ConcurrentArray.h>
 
 namespace fb
 {

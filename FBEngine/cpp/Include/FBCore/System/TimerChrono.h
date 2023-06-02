@@ -2,7 +2,7 @@
 #define TimerChrono_h__
 
 #include <FBCore/System/Timer.h>
-#include <FBCore/Math/General/Smooth.h>
+#include <FBCore/Math/Smooth.h>
 
 namespace fb
 {

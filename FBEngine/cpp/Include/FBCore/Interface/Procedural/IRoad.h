@@ -4,7 +4,7 @@
 #include <FBCore/Interface/Procedural/IProceduralObject.h>
 #include <FBCore/Interface/Procedural/IRoadHitPoint.h>
 #include <FBCore/Math/Transform3.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {

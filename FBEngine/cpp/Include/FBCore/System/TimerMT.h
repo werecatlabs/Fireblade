@@ -3,8 +3,8 @@
 
 #include <FBCore/System/Timer.h>
 #include <FBCore/Atomics/AtomicFloat.h>
-#include <FBCore/Base/Deque.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Deque.h>
+#include <FBCore/Core/Array.h>
 #include <chrono>
 
 namespace fb

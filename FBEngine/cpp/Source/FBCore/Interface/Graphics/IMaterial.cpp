@@ -2,8 +2,8 @@
 #include <FBCore/Interface/Graphics/IMaterial.h>
 #include <FBCore/Interface/Graphics/IMaterialNode.h>
 #include <FBCore/Interface/Graphics/IMaterialPass.h>
-#include <FBCore/Rtti/RttiClassDefinition.h>
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/System/RttiClassDefinition.h>
+#include <FBCore/Core/StringUtil.h>
 
 namespace fb
 {

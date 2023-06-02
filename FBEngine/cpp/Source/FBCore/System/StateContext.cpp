@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/StateContext.h>
-#include <FBCore/Base/Properties.h>
+#include <FBCore/Core/Properties.h>
 #include <FBCore/Interface/System/IAsyncOperation.h>
 #include <FBCore/Interface/System/IEvent.h>
 #include <FBCore/Interface/System/IEventListener.h>

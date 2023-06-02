@@ -2,7 +2,7 @@
 #define SceneManagerState_h__
 
 #include <FBCore/State/States/BaseState.h>
-#include <FBCore/Base/ColourF.h>
+#include <FBCore/Core/ColourF.h>
 
 namespace fb
 {

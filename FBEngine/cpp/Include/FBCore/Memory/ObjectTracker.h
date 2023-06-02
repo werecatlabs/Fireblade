@@ -4,9 +4,9 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Thread/Threading.h>
-#include <FBCore/Base/StringTypes.h>
-#include <FBCore/Base/List.h>
-#include <FBCore/Base/Map.h>
+#include <FBCore/Core/StringTypes.h>
+#include <FBCore/Core/List.h>
+#include <FBCore/Core/Map.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Thread/RecursiveMutex.h>
 #include <thread>

@@ -2,8 +2,8 @@
 #define __IStateNode_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/StringTypes.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Quaternion.h>
 #include <FBCore/Math/AABB3.h>

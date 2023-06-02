@@ -2,7 +2,7 @@
 #define ICityGenerator_h__
 
 #include <FBCore/Interface/Procedural/IProceduralGenerator.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {

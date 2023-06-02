@@ -4,7 +4,7 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Math/Vector3.h>
-#include <FBCore/Base/ColourF.h>
+#include <FBCore/Core/ColourF.h>
 
 namespace fb
 {

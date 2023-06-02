@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/TimerMT.h>
-#include <FBCore/Math/Core/MathUtil.h>
+#include <FBCore/Math/MathUtil.h>
 
 namespace fb
 {

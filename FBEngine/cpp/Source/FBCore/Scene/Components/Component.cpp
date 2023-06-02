@@ -2,7 +2,7 @@
 #include <FBCore/Scene/Components/Component.h>
 #include <FBCore/Scene/Components/ComponentEventListener.h>
 #include <FBCore/Scene/Components/SubComponent.h>
-#include <FBCore/Base/LogManager.h>
+#include <FBCore/Core/LogManager.h>
 #include <FBCore/Interface/FSM/IFSMManager.h>
 #include <FBCore/Interface/Scene/IComponentEvent.h>
 #include <FBCore/Interface/Scene/ISceneManager.h>
@@ -299,10 +299,12 @@ namespace fb
 
         void Component::play()
         {
+            setState( IComponent::State::Play );
         }
 
         void Component::edit()
         {
+            setState( IComponent::State::Edit );
         }
 
         void Component::levelWasLoaded( s32 level )
@@ -444,14 +446,29 @@ namespace fb
                 handle->setUUID( uuid );
             }
 
-            sceneManager->queueProperties( this, componentData );
-            //setProperties( pProperties );
+            auto properties = componentData->getChild( "properties" );
+            if( !properties )
+            {
+                properties = factoryManager->make_ptr<Properties>();
 
-            //auto& subComponentData = componentData->subComponentData;
-            //for(auto &rSubComponentData : subComponentData)
-            //{
-            //    rSubComponentData.componentType
-            //}
+                if( auto oldStyleProperties = componentData->getChild( "properties_" ) )
+                {
+                    auto childProperties = oldStyleProperties->getChildrenByName( "properties_" );
+                    for( auto child : childProperties )
+                    {
+                        Property property;
+                        property.setName( child->getProperty( "name" ) );
+                        property.setValue( child->getProperty( "value" ) );
+                        properties->addProperty( property );
+                    }
+                }
+            }
+
+            if( properties )
+            {
+                sceneManager->queueProperties( this, properties );
+                //setProperties( pProperties );
+            }
 
             auto subComponentData = componentData->getChildrenByName( "subComponent" );
 
@@ -490,19 +507,25 @@ namespace fb
                 }
             }
 
-            for( size_t i = 0; i < components.size(); ++i )
+            auto count = 0;
+            for( auto pComponent : components )
             {
                 try
                 {
-                    auto &pComponent = components[i];
-                    auto &pComponentData = subComponentData[i];
-                    // FB_ASSERT(pComponent);
-
                     if( pComponent )
                     {
                         pComponent->setParent( this );
 
-                        pComponent->fromData( componentData );
+                        if( count < subComponentData.size() )
+                        {
+                            auto &pComponentData = subComponentData[count];
+                            if( pComponentData )
+                            {
+                                pComponent->fromData( componentData );
+                            }
+                        }
+
+                        count++;
 
                         pComponent->load( nullptr );
                     }
@@ -516,7 +539,7 @@ namespace fb
             auto eventsData = componentData->getChildrenByName( "event" );
             auto events = getEvents();
 
-            auto count = 0;
+            count = 0;
             for( auto &rEvent : eventsData )
             {
                 auto event = events[count];
@@ -526,7 +549,7 @@ namespace fb
 
                 for( auto &rListener : listenerData )
                 {
-                    auto eventListener = fb::make_ptr<ComponentEventListener>();
+                    auto eventListener = factoryManager->make_ptr<ComponentEventListener>();
                     eventListener->setEvent( event );
 
                     sceneManager->queueProperties( eventListener, rListener );

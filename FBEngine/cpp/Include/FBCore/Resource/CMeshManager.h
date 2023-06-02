@@ -5,7 +5,7 @@
 #include <FBCore/Interface/Resource/IMeshManager.h>
 #include <FBCore/Interface/Mesh/IMesh.h>
 #include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {

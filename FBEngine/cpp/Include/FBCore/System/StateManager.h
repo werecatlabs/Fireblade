@@ -4,7 +4,7 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IStateManager.h>
 #include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/ConcurrentArray.h>
+#include <FBCore/Core/ConcurrentArray.h>
 
 namespace fb
 {

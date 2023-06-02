@@ -4,8 +4,8 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IWorkerThread.h>
 #include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/ConcurrentArray.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Atomics/AtomicFloat.h>
 

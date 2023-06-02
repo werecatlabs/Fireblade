@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 #include <FBCore/Math/Vector3.h>
 
 namespace fb
@@ -109,13 +109,13 @@ namespace fb
              * @brief Add an excluded object.
              * @param object A smart pointer to the excluded object.
              */
-            virtual void addExludedObject( SmartPtr<IGraphicsObject> object ) = 0;
+            virtual void addExcludedObject( SmartPtr<IGraphicsObject> object ) = 0;
 
             /**
              * @brief Get the excluded objects.
              * @return An array of smart pointers to the excluded objects.
              */
-            virtual Array<SmartPtr<IGraphicsObject>> getExludedObjects() const = 0;
+            virtual Array<SmartPtr<IGraphicsObject>> getExcludedObjects() const = 0;
 
             FB_CLASS_REGISTER_DECL;
         };

@@ -26,6 +26,18 @@ namespace rttr
     class instance;
 }  // namespace rttr
 
+namespace Opcode
+{
+    class RayCollider;
+    class Model;
+    class MeshInterface;
+}  // namespace Opcode
+
+namespace IceMaths
+{
+    class Point;
+}
+
 namespace fb
 {
 
@@ -146,8 +158,6 @@ namespace fb
     class IFSM;
     class IFSMListener;
     class IFSMManager;
-
-    
 
     // graphics
     namespace render
@@ -445,6 +455,15 @@ namespace fb
     class IFolderExplorerW;
     class INativeFileDialog;
 
+    // mesh
+    class CMesh;
+    class CSubMesh;
+    class CVertexBuffer;
+    class CVertexDeclaration;
+    class CIndexBuffer;
+    class CollisionMesh;
+    class CollisionSubMesh;
+
     // net
     class INetworkListener;
     class INetworkManager;
@@ -456,7 +475,6 @@ namespace fb
     // resource
     class IMeshManager;
     class IResource;
-    class IResourceListener;
     class IResourceManager;
     class IResourceDatabase;
     class IResourceGroupManager;
@@ -510,8 +528,6 @@ namespace fb
     class IJob;
     class IJobGroup;
     class IJobQueue;
-    class IJobListener;
-    class IJobQueueListener;
     class ILibrary;
     class IOutputManager;
     class IPlugin;
@@ -626,7 +642,6 @@ namespace fb
     class TransformStateData;
 }  // end namespace fb
 
-
 namespace fb
 {
     namespace scene
@@ -637,7 +652,7 @@ namespace fb
         class Camera;
 
         class FiniteStateMachine;
-        
+
         class MeshRenderer;
         class Mesh;
 
@@ -670,10 +685,12 @@ namespace fb
         class Toggle;
         class Sprite;
         class Layout;
-        class CanvasTransform;
+        class LayoutTransform;
         class Image;
         class Text;
         class UIComponent;
+
+        class ISystem;
 
     }  // namespace scene
 }  // namespace fb

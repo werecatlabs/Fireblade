@@ -2,7 +2,7 @@
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Interface/Physics/IPhysicsManager.h>
 
-#include <FBCore/Rtti/RttiClassDefinition.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {

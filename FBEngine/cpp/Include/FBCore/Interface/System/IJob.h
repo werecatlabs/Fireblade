@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {
@@ -76,34 +76,6 @@ namespace fb
          * @param rYield A reference to the IObjectYield smart pointer for managing coroutine execution.
          */
         virtual void coroutine_execute_step( SmartPtr<IObjectYield> &rYield ) = 0;
-
-        /**
-         * @brief Check if the job has listeners.
-         *
-         * @return bool True if the job has listeners, false otherwise.
-         */
-        virtual bool hasListeners() const = 0;
-
-        /**
-         * @brief Get the job listeners as an array.
-         *
-         * @return Array<SmartPtr<IJobListener>> An array of the job listeners.
-         */
-        virtual Array<SmartPtr<IJobListener>> getListeners() const = 0;
-
-        /**
-         * @brief Set the job listeners.
-         *
-         * @param listeners An array of the job listeners.
-         */
-        virtual void setListeners( const Array<SmartPtr<IJobListener>> &listeners ) = 0;
-
-        /**
-         * @brief Add a listener to the job.
-         *
-         * @param listener A smart pointer to the IJobListener to be added.
-         */
-        virtual void addListener( SmartPtr<IJobListener> listener ) = 0;
 
         /**
          * @brief Get the current state of the job.

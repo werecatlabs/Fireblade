@@ -3,10 +3,10 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IJobQueue.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Atomics/AtomicFloat.h>
-#include <FBCore/Base/ConcurrentQueue.h>
+#include <FBCore/Core/ConcurrentQueue.h>
 
 namespace fb
 {
@@ -33,10 +33,6 @@ namespace fb
 
         void setRate( f32 rate ) override;
 
-        void addListener( SmartPtr<IJobQueueListener> listener ) override;
-
-        void removeListener( SmartPtr<IJobQueueListener> listener ) override;
-
         bool getUseAffinity() const override;
 
         void setUseAffinity( bool affinity ) override;
@@ -46,7 +42,6 @@ namespace fb
     protected:
         ConcurrentQueue<SmartPtr<IJob>> m_primaryJobs;
         ConcurrentQueue<SmartPtr<IJob>> m_jobs;
-        Array<SmartPtr<IJobQueueListener>> m_listeners;
         atomic_f32 m_rate = 1.0f / 15.0f;
         atomic_bool m_useAffinity = false;
         atomic_bool m_isProcessing = false;

@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCoreTypes.h>
 #include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 #include <FBCore/Memory/SmartPtr.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Matrix4.h>
@@ -371,12 +371,12 @@ namespace fb
     }
 
     template <class T>
-    void Transform3<T>::setRotation( const Vector3<T> &val )
+    void Transform3<T>::setRotation( const Vector3<T> &rotation )
     {
         FB_ASSERT( isSane() );
-        m_orientation = Quaternion<T>::angleAxis( val.Y(), Vector3<T>::UNIT_Y ) *
-                        Quaternion<T>::angleAxis( val.X(), Vector3<T>::UNIT_X ) *
-                        Quaternion<T>::angleAxis( val.Z(), Vector3<T>::UNIT_Z );
+        m_orientation = Quaternion<T>::angleAxis( rotation.Y(), Vector3<T>::UNIT_Y ) *
+                        Quaternion<T>::angleAxis( rotation.X(), Vector3<T>::UNIT_X ) *
+                        Quaternion<T>::angleAxis( rotation.Z(), Vector3<T>::UNIT_Z );
     }
 
     template <class T>

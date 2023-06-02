@@ -2,22 +2,25 @@
 #include <FBCore/Scene/SceneManager.h>
 #include <FBCore/Scene/Actor.h>
 #include <FBCore/Scene/Scene.h>
-#include <FBCore/FSM/FSMManager.h>
+#include <FBCore/Core/FSMManager.h>
 #include <FBCore/Interface/Scene/IComponentEvent.h>
 #include <FBCore/Interface/Scene/IComponentEventListener.h>
+#include <FBCore/Interface/Scene/ISystem.h>
 #include <FBCore/Interface/Scene/ITransform.h>
 #include <FBCore/Interface/System/ITask.h>
 #include <FBCore/Interface/System/ITaskLock.h>
 #include <FBCore/Interface/System/ITaskManager.h>
 #include <FBCore/Interface/System/IThreadPool.h>
-#include <FBCore/Base/Path.h>
-#include <FBCore/Base/LogManager.h>
+#include <FBCore/Core/Path.h>
+#include <FBCore/Core/LogManager.h>
 
 #include <FBCore/Scene/Components/CollisionBox.h>
 #include <FBCore/Scene/Components/Mesh.h>
 #include <FBCore/Scene/Components/MeshRenderer.h>
 #include <FBCore/Scene/Components/Transform.h>
 #include <FBCore/Scene/Components/Rigidbody.h>
+#include <FBCore/Scene/Components/UserComponent.h>
+#include <FBCore/Scene/Components/UI/LayoutTransform.h>
 
 namespace fb
 {
@@ -268,19 +271,6 @@ namespace fb
                         fsmManager->update();
                     }
                 }
-
-                //// todo temp code
-                //for( auto it : m_components )
-                //{
-                //    auto &components = it.second;
-                //    for( auto &component : components )
-                //    {
-                //        if( component )
-                //        {
-                //            component->preUpdate();
-                //        }
-                //    }
-                //}
             }
             catch( std::exception &e )
             {
@@ -312,33 +302,17 @@ namespace fb
                 m_scene->update();
             }
 
-            //auto sceneTask = getStateTask();
-            //auto task = Thread::getCurrentTask();
-            //if( task == sceneTask )
-            //{
-            //    TruckController::updateComponents();
-            //    StemComponent::updateComponents();
-            //    LSystem::updateComponents();
-            //    UserComponent::updateComponents();
-            //    Rigidbody::updateComponents();
-            //    CanvasTransform::updateComponents();
-            //}
-
-            //// todo temp code
-            //if( task == sceneTask )
-            //{
-            //    for( auto it : m_components )
-            //    {
-            //        auto &components = it.second;
-            //        for( auto &component : components )
-            //        {
-            //            if( component )
-            //            {
-            //                component->update();
-            //            }
-            //        }
-            //    }
-            //}
+            auto sceneTask = getStateTask();
+            auto task = Thread::getCurrentTask();
+            if( task == sceneTask )
+            {
+                //TruckController::updateComponents();
+                //StemComponent::updateComponents();
+                //LSystem::updateComponents();
+                UserComponent::updateComponents();
+                Rigidbody::updateComponents();
+                LayoutTransform::updateComponents();
+            }
         }
 
         void SceneManager::postUpdate()
@@ -350,19 +324,6 @@ namespace fb
             {
                 m_scene->postUpdate();
             }
-
-            //// todo temp code
-            //for( auto it : m_components )
-            //{
-            //    auto &components = it.second;
-            //    for( auto &component : components )
-            //    {
-            //        if( component )
-            //        {
-            //            component->postUpdate();
-            //        }
-            //    }
-            //}
         }
 
         void SceneManager::loadScene( const String &filePath )
@@ -753,6 +714,35 @@ namespace fb
 
         SmartPtr<IActor> SceneManager::getActorByName( const String &name ) const
         {
+            auto actors = getActors();
+            for( auto actor : actors )
+            {
+                if( auto handle = actor->getHandle() )
+                {
+                    if( handle->getName() == name )
+                    {
+                        return actor;
+                    }
+                }
+            }
+
+            return nullptr;
+        }
+
+        SmartPtr<IActor> SceneManager::getActorByFileId( const String &id ) const
+        {
+            auto actors = getActors();
+            for( auto actor : actors )
+            {
+                if( auto handle = actor->getHandle() )
+                {
+                    if( handle->getFileId() == id )
+                    {
+                        return actor;
+                    }
+                }
+            }
+
             return nullptr;
         }
 
@@ -1008,12 +998,12 @@ namespace fb
             return Array<SmartPtr<IComponent>>();
         }
 
-        Array<SmartPtr<ITransform>>& SceneManager::getTransforms()
+        Array<SmartPtr<ITransform>> &SceneManager::getTransforms()
         {
             return m_transforms;
         }
 
-        const Array<SmartPtr<ITransform>>& SceneManager::getTransforms() const
+        const Array<SmartPtr<ITransform>> &SceneManager::getTransforms() const
         {
             return m_transforms;
         }
@@ -1022,5 +1012,49 @@ namespace fb
         {
             m_transforms = transforms;
         }
+
+        Array<String> SceneManager::getComponentFactoryIgnoreList() const
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            return m_componentFactoryIgnoreList;
+        }
+
+        Map<String, String> SceneManager::getComponentFactoryMap() const
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            return m_componentFactoryMap;
+        }
+
+        void SceneManager::setComponentFactoryMap( const Map<String, String> &map )
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            m_componentFactoryMap = map;
+        }
+
+        String SceneManager::getComponentFactoryType( const String &type ) const
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+
+            if( std::find( m_componentFactoryIgnoreList.begin(), m_componentFactoryIgnoreList.end(),
+                           type ) != m_componentFactoryIgnoreList.end() )
+            {
+                return String( "" );
+            }
+
+            auto it = m_componentFactoryMap.find( type );
+            if( it != m_componentFactoryMap.end() )
+            {
+                return it->second;
+            }
+
+            return "";
+        }
+
+        void SceneManager::setComponentFactoryIgnoreList( const Array<String> &ignoreList )
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            m_componentFactoryIgnoreList = ignoreList;
+        }
+
     }  // namespace scene
 }  // end namespace fb

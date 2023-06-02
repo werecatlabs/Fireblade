@@ -3,9 +3,9 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Math/Core/RaycastHit.h>
+#include <FBCore/Math/RaycastHit.h>
 #include <FBCore/Math/Ray3.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {

@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/Plugin.h>
-#include <FBCore/Base/LogManager.h>
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Core/StringUtil.h>
 
 #if defined FB_PLATFORM_WIN32
 #    include <windows.h>

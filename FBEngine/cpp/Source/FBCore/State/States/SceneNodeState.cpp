@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/State/States/SceneNodeState.h>
-#include <FBCore/Math/Core/MathUtil.h>
-#include <FBCore/Base/Properties.h>
+#include <FBCore/Math/MathUtil.h>
+#include <FBCore/Core/Properties.h>
 #include <FBCore/Interface/System/IStateContext.h>
 
 namespace fb

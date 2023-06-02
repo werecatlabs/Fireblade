@@ -4,10 +4,10 @@
 #include <FBCore/Interface/Memory/ISharedObjectListener.h>
 #include <FBCore/Memory/TypeManager.h>
 #include <FBCore/Memory/Memory.h>
-#include <FBCore/Base/CoreUtil.h>
+#include <FBCore/Core/Util.h>
 
 #if _DEBUG
-#    include <FBCore/Base/LogManager.h>
+#    include <FBCore/Core/LogManager.h>
 #endif
 
 namespace fb

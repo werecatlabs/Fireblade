@@ -1,9 +1,18 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/UI/UIComponent.h>
 #include <FBCore/Scene/Components/UI/Layout.h>
-#include <FBCore/Scene/Components/UI/CanvasTransform.h>
+#include <FBCore/Scene/Components/UI/LayoutTransform.h>
 #include <FBCore/Scene/SceneManager.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Graphics/IMaterial.h>
+#include <FBCore/Interface/Graphics/IGraphicsSystem.h>
+#include <FBCore/Interface/Graphics/ITexture.h>
+#include <FBCore/Interface/Scene/ITransform.h>
+#include <FBCore/Interface/UI/IUILayout.h>
+#include <FBCore/Interface/UI/IUIManager.h>
+#include <FBCore/Interface/UI/IUIImage.h>
+#include <FBCore/Interface/Resource/IResourceDatabase.h>
+#include <FBCore/Core/BitUtil.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {
@@ -250,7 +259,7 @@ namespace fb
                     updateElementState();
                     updateOrder();
                 }
-                };
+                }
             }
         }
 
@@ -272,7 +281,7 @@ namespace fb
                         referenceSize = canvas->getReferenceSize();
                     }
 
-                    auto canvasTransform = actor->getComponent<CanvasTransform>();
+                    auto canvasTransform = actor->getComponent<LayoutTransform>();
                     if( canvasTransform )
                     {
                         //auto element = getElement();
@@ -318,7 +327,7 @@ namespace fb
             {
                 if( eventValue == IEvent::loadingStateChanged )
                 {
-                    auto newState = (LoadingState)arguments[1].getS32();
+                    auto newState = static_cast<LoadingState>( arguments[1].getS32() );
                     if( newState == LoadingState::Loaded )
                     {
                         auto eState = getState();
@@ -328,7 +337,7 @@ namespace fb
                         case State::Play:
                         {
                         }
-                        };
+                        }
                     }
                 }
             }
@@ -420,7 +429,7 @@ namespace fb
             {
             }
             break;
-            };
+            }
 
             return IFSM::ReturnType::Ok;
         }
@@ -505,7 +514,7 @@ namespace fb
         {
         }
 
-        fb::Parameter UIComponent::UIElementListener::handleEvent(
+        Parameter UIComponent::UIElementListener::handleEvent(
             IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
             SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
         {
@@ -535,4 +544,4 @@ namespace fb
             m_owner = owner;
         }
     }  // namespace scene
-}  // end namespace fb
+}  // namespace fb

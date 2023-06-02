@@ -2,7 +2,7 @@
 #define UIComponentUtil_h__
 
 #include <FBCore/Scene/Components/Component.h>
-#include <FBCore/Scene/Components/UI/CanvasTransform.h>
+#include <FBCore/Scene/Components/UI/LayoutTransform.h>
 
 namespace fb
 {
@@ -13,13 +13,13 @@ namespace fb
         {
         public:
             static String getHorizontalAlignmentString(
-                CanvasTransform::HorizontalAlignment horizontalAlignment );
-            static CanvasTransform::HorizontalAlignment getHorizontalAlignment( const String &str );
+                LayoutTransform::HorizontalAlignment horizontalAlignment );
+            static LayoutTransform::HorizontalAlignment getHorizontalAlignment( const String &str );
             static String getHorizontalAlignmentTypesString();
 
             static String getVerticalAlignmentString(
-                CanvasTransform::VerticalAlignment verticalAlignment );
-            static CanvasTransform::VerticalAlignment getVerticalAlignment( const String &str );
+                LayoutTransform::VerticalAlignment verticalAlignment );
+            static LayoutTransform::VerticalAlignment getVerticalAlignment( const String &str );
             static String getVerticalAlignmentTypesString();
         };
     }  // namespace scene

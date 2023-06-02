@@ -1,7 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/Job.h>
 #include <FBCore/System/JobYield.h>
-#include <FBCore/Interface/System/IJobListener.h>
 
 namespace fb
 {
@@ -105,26 +104,6 @@ namespace fb
     void Job::coroutine_execute_step( SmartPtr<IObjectYield> &rYield )
     {
         setState( JobState::Finish );
-    }
-
-    bool Job::hasListeners() const
-    {
-        return m_listeners.empty() == false;
-    }
-
-    Array<SmartPtr<IJobListener>> Job::getListeners() const
-    {
-        return Array<SmartPtr<IJobListener>>( m_listeners.begin(), m_listeners.end() );
-    }
-
-    void Job::setListeners( const Array<SmartPtr<IJobListener>> &listeners )
-    {
-        m_listeners = ConcurrentArray<SmartPtr<IJobListener>>( listeners.begin(), listeners.end() );
-    }
-
-    void Job::addListener( SmartPtr<IJobListener> listener )
-    {
-        m_listeners.push_back( listener );
     }
 
     bool Job::isCoroutine() const

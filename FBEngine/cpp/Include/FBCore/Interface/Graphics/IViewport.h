@@ -4,9 +4,9 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Interface/Graphics/IGraphicsScene.h>
-#include <FBCore/Base/StringTypes.h>
-#include <FBCore/Base/ColourUtil.h>
-#include <FBCore/Base/ColourF.h>
+#include <FBCore/Core/StringTypes.h>
+#include <FBCore/Core/ColourUtil.h>
+#include <FBCore/Core/ColourF.h>
 #include <FBCore/Math/Vector2.h>
 
 namespace fb

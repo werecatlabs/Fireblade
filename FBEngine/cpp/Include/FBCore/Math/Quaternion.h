@@ -5,7 +5,7 @@
 #include <FBCore/FBCoreTypes.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Matrix3.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 #include <FBCore/Memory/SmartPtr.h>
 
 namespace fb

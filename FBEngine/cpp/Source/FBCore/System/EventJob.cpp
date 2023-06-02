@@ -1,6 +1,5 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/EventJob.h>
-#include <FBCore/Interface/System/IJobListener.h>
 
 namespace fb
 {

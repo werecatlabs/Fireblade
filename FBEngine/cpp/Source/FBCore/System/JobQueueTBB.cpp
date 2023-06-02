@@ -1,10 +1,9 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/JobQueueTBB.h>
-#include <FBCore/Interface/System/IJobQueueListener.h>
 #include <FBCore/Interface/System/IJob.h>
 #include <FBCore/Interface/System/ITaskManager.h>
 #include <FBCore/Interface/System/ITask.h>
-#include <FBCore/Base/LogManager.h>
+#include <FBCore/Core/LogManager.h>
 
 #if FB_USE_TBB
 
@@ -147,14 +146,6 @@ namespace fb
     }
 
     void JobQueueTBB::setRate( f32 val )
-    {
-    }
-
-    void JobQueueTBB::addListener( SmartPtr<IJobQueueListener> listener )
-    {
-    }
-
-    void JobQueueTBB::removeListener( SmartPtr<IJobQueueListener> listener )
     {
     }
 

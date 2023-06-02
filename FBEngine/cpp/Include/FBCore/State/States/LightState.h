@@ -2,7 +2,7 @@
 #define LightState_h__
 
 #include <FBCore/State/States/GraphicsObjectState.h>
-#include <FBCore/Base/ColourF.h>
+#include <FBCore/Core/ColourF.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Vector4.h>
 #include <FBCore/Atomics/Atomics.h>

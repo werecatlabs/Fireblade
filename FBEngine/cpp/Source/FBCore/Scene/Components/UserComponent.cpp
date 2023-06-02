@@ -7,7 +7,7 @@
 #include <FBCore/Interface/Script/IScriptManager.h>
 #include <FBCore/Interface/Script/IScriptClass.h>
 #include <FBCore/Interface/Script/IScriptData.h>
-#include <FBCore/Base/LogManager.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {

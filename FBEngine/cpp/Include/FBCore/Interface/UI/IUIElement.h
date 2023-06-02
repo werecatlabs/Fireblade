@@ -3,9 +3,9 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/ColourF.h>
-#include <FBCore/Base/ConcurrentArray.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/ColourF.h>
+#include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Math/Vector2.h>
 #include <FBCore/Interface/IPrototype.h>
 

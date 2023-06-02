@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/StateManagerStandard.h>
-#include <FBCore/Base/LogManager.h>
-#include <FBCore/Base/Set.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Core/Set.h>
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
 #include <FBCore/Interface/System/IState.h>

@@ -1,7 +1,12 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/CollisionTerrain.h>
 #include <FBCore/Scene/Components/Rigidbody.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Physics/ITerrainShape.h>
+#include <FBCore/Interface/Physics/IPhysicsManager.h>
+#include <FBCore/Interface/Physics/IPhysicsMaterial3.h>
+#include <FBCore/Interface/Physics/IPhysicsShape3.h>
+#include <FBCore/Core/Exception.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {
@@ -32,7 +37,7 @@ namespace fb
                 auto physicsManager = applicationManager->getPhysicsManager();
                 FB_ASSERT( physicsManager );
 
-                auto shape = physicsManager->createCollisionShape<physics::ITerrainShape>();
+                auto shape = physicsManager->createCollisionShape<physics::ITerrainShape>(nullptr);
                 FB_ASSERT( shape );
 
                 setShape( shape );

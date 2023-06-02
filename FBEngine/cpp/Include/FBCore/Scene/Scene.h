@@ -5,11 +5,11 @@
 #include <FBCore/Interface/Scene/IScene.h>
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Interface/Scene/IActor.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/ConcurrentArray.h>
-#include <FBCore/Base/ConcurrentQueue.h>
-#include <FBCore/Base/ConcurrentHashMap.h>
-#include <FBCore/Base/FixedArray.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/ConcurrentArray.h>
+#include <FBCore/Core/ConcurrentQueue.h>
+#include <FBCore/Core/ConcurrentHashMap.h>
+#include <FBCore/Core/FixedArray.h>
 
 namespace fb
 {

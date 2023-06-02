@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/MessageBox.h>
-#include <FBCore/Base/LogManager.h>
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Core/StringUtil.h>
 
 #if defined FB_PLATFORM_WIN32
 #    ifdef _MSC_VER

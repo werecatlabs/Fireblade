@@ -3,9 +3,9 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/StringUtil.h>
-#include <FBCore/Base/FileInfo.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/StringUtil.h>
+#include <FBCore/Core/FileInfo.h>
 
 namespace fb
 {

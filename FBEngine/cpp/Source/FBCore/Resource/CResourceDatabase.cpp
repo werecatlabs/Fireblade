@@ -202,6 +202,42 @@ namespace fb
         }
     }
 
+    void CResourceDatabase::refresh()
+    {
+        auto applicationManager = core::IApplicationManager::instance();
+
+        auto databaseManager = getDatabaseManager();
+        FB_ASSERT( databaseManager );
+
+        auto assetDatabaseManager = fb::static_pointer_cast<AssetDatabaseManager>( databaseManager );
+        FB_ASSERT( assetDatabaseManager );
+
+        auto cachePath = applicationManager->getCachePath();
+
+        auto databasePath = cachePath + "/" + "asset.db";
+        databasePath = StringUtil::cleanupPath( databasePath );
+
+        assetDatabaseManager->loadFromFile( databasePath );
+
+        auto sceneManager = applicationManager->getSceneManager();
+        if( sceneManager )
+        {
+            auto scene = sceneManager->getCurrentScene();
+            FB_ASSERT( scene );
+
+            auto objects = getSceneObjects();
+            for( auto object : objects )
+            {
+                if( !assetDatabaseManager->hasResourceEntry( object ) )
+                {
+                    assetDatabaseManager->addResourceEntry( object );
+                }
+            }
+
+            m_objects = objects;
+        }
+    }
+
     bool CResourceDatabase::hasResource( SmartPtr<IResource> resource )
     {
         auto databaseManager = getDatabaseManager();
@@ -283,12 +319,24 @@ namespace fb
 
         auto renderLock = taskManager->lockTask( Thread::Task::Render );
 
-        auto clonedMaterial = materialManager->cloneMaterial( resource, path );
-        FB_ASSERT( clonedMaterial );
+        const auto MATERIAL_TYPE = render::IMaterial::typeInfo();
+        const auto TEXTURE_TYPE = render::ITexture::typeInfo();
 
-        //getInstancesPtr()->push_back( clonedMaterial );
+        if( type == MATERIAL_TYPE )
+        {
+            if( materialManager )
+            {
+                auto clonedMaterial = materialManager->cloneMaterial( resource, path );
+                FB_ASSERT( clonedMaterial );
 
-        return clonedMaterial;
+                return clonedMaterial;
+            }
+        }
+        else if( type == TEXTURE_TYPE )
+        {
+        }
+
+        return nullptr;
     }
 
     void CResourceDatabase::importFolder( SmartPtr<IFolderExplorer> folderListing )
@@ -547,6 +595,12 @@ namespace fb
                 if( auto handle = resourceDirector->getHandle() )
                 {
                     handle->setName( path );
+
+                    if( StringUtil::isNullOrEmpty( uuid ) )
+                    {
+                        uuid = StringUtil::getUUID();
+                    }
+
                     handle->setUUID( uuid );
                 }
 
@@ -1048,18 +1102,42 @@ namespace fb
         return nullptr;
     }
 
+    void CResourceDatabase::getSceneObjects( SmartPtr<scene::IActor> actor,
+                                             Array<SmartPtr<ISharedObject>> &objects ) const
+    {
+        objects.push_back( actor );
+
+        if( auto transform = actor->getTransform() )
+        {
+            objects.push_back( transform );
+        }
+
+        if( auto p = actor->getComponentsPtr() )
+        {
+            auto &components = *p;
+            objects.insert( objects.end(), components.begin(), components.end() );
+        }
+
+        if( auto p = actor->getChildrenPtr() )
+        {
+            auto &children = *p;
+            for( auto &child : children )
+            {
+                if( child )
+                {
+                    getSceneObjects( child, objects );
+                }
+            }
+        }
+    }
+
     Array<SmartPtr<ISharedObject>> CResourceDatabase::getSceneObjects() const
     {
         auto applicationManager = core::IApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
-        auto projectPath = applicationManager->getProjectPath();
-        if( StringUtil::isNullOrEmpty( projectPath ) )
-        {
-            projectPath = Path::getWorkingDirectory();
-        }
-
         Array<SmartPtr<ISharedObject>> objects;
+        objects.reserve( 4096 * 8 );
 
         if( auto sceneManager = applicationManager->getSceneManager() )
         {
@@ -1068,31 +1146,9 @@ namespace fb
                 auto actors = scene->getActors();
                 for( auto actor : actors )
                 {
-                    objects.push_back( actor );
-
-                    auto components = actor->getComponents();
-                    for( auto component : components )
+                    if( actor )
                     {
-                        objects.push_back( component );
-                    }
-
-                    if( auto p = actor->getChildrenPtr() )
-                    {
-                        auto &children = *p;
-                        for( auto child : children )
-                        {
-                            if( child )
-                            {
-                                objects.push_back( child );
-
-                                auto childComponents =
-                                    child->getComponentsAndInChildren<scene::IComponent>();
-                                for( auto childComponent : childComponents )
-                                {
-                                    objects.push_back( childComponent );
-                                }
-                            }
-                        }
+                        getSceneObjects( actor, objects );
                     }
                 }
             }
@@ -1101,18 +1157,20 @@ namespace fb
         return objects;
     }
 
-    void CResourceDatabase::addResourceListener( SmartPtr<IResourceListener> resourceListener )
+    SmartPtr<ISharedObject> CResourceDatabase::getObjectByFileId( const String &fileId ) const
     {
-    }
+        for( auto &object : m_objects )
+        {
+            if( auto handle = object->getHandle() )
+            {
+                if( handle->getFileId() == fileId )
+                {
+                    return object;
+                }
+            }
+        }
 
-    void CResourceDatabase::setResourceListeners(
-        const Array<SmartPtr<IResourceListener>> &resourceListener )
-    {
-    }
-
-    Array<SmartPtr<IResourceListener>> CResourceDatabase::getResourceListeners() const
-    {
-        return Array<SmartPtr<IResourceListener>>();
+        return nullptr;
     }
 
     SharedPtr<Array<SmartPtr<IResource>>> CResourceDatabase::getInstancesPtr() const
@@ -1125,17 +1183,4 @@ namespace fb
         m_instances = instances;
     }
 
-    void CResourceDatabase::BuildResourceDatabaseJob::execute()
-    {
-    }
-
-    SmartPtr<CResourceDatabase> CResourceDatabase::BuildResourceDatabaseJob::getOwner() const
-    {
-        return m_owner;
-    }
-
-    void CResourceDatabase::BuildResourceDatabaseJob::setOwner( SmartPtr<CResourceDatabase> owner )
-    {
-        m_owner = owner;
-    }
 }  // end namespace fb

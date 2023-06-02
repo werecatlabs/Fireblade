@@ -3,12 +3,12 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Atomics/Atomics.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/FixedArray.h>
-#include <FBCore/Base/Handle.h>
-#include <FBCore/Base/ConcurrentArray.h>
-#include <FBCore/Base/ConcurrentQueue.h>
-#include <FBCore/Base/UtilityTypes.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/FixedArray.h>
+#include <FBCore/Core/Handle.h>
+#include <FBCore/Core/ConcurrentArray.h>
+#include <FBCore/Core/ConcurrentQueue.h>
+#include <FBCore/Core/UtilityTypes.h>
 #include <FBCore/Thread/RecursiveMutex.h>
 #include <FBCore/Memory/GarbageCollectorData.h>
 

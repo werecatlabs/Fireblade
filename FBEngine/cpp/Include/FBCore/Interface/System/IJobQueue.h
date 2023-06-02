@@ -52,16 +52,6 @@ namespace fb
         */
         virtual void setRate( f32 rate ) = 0;
 
-        /** Adds a listener to the job queue.
-        @param listener The listener to add.
-        */
-        virtual void addListener( SmartPtr<IJobQueueListener> listener ) = 0;
-
-        /** Removes a listener from the job queue.
-        @param listener The listener to remove.
-        */
-        virtual void removeListener( SmartPtr<IJobQueueListener> listener ) = 0;
-
         /** Gets if thread affinity should be used. */
         virtual bool getUseAffinity() const = 0;
 

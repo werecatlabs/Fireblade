@@ -5,7 +5,7 @@
 #include "FBCore/Math/AABB3.h"
 #include <FBCore/Math/Vector3.h>
 #include "FBCore/Math/Quaternion.h"
-#include "FBCore/Base/StringTypes.h"
+#include "FBCore/Core/StringTypes.h"
 
 namespace fb
 {

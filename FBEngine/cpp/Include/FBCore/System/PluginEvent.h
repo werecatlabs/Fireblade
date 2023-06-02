@@ -3,8 +3,8 @@
 
 #include <FBCore/Interface/System/IPluginEvent.h>
 #include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/FixedArray.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/FixedArray.h>
+#include <FBCore/Core/StringTypes.h>
 
 namespace fb
 {

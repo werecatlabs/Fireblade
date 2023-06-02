@@ -3,7 +3,7 @@
 
 #include <FBCore/Interface/Memory/IObject.h>
 #include <FBCore/Memory/SmartPtr.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 
 #if FB_TRACK_REFERENCES
 #    include <FBCore/Memory/ObjectTracker.h>

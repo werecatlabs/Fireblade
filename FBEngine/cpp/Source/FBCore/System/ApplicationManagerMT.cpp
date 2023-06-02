@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/ApplicationManagerMT.h>
-#include <FBCore/Base/Path.h>
-#include <FBCore/Base/LogManager.h>
+#include <FBCore/Core/Path.h>
+#include <FBCore/Core/LogManager.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Interface/Scene/IActor.h>
 #include <FBCore/Interface/Scene/ICameraManager.h>
@@ -54,7 +54,7 @@
 #include <algorithm>
 #include <cstdio>
 
-#include "FBCore/Base/DebugTrace.h"
+#include "FBCore/Core/DebugTrace.h"
 
 namespace fb
 {
@@ -1112,18 +1112,6 @@ namespace fb
             m_sceneRenderWindow = sceneRenderWindow;
         }
 
-        fb::Array<fb::String> ApplicationManagerMT::getComponentFactoryIgnoreList() const
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-            return m_componentFactoryIgnoreList;
-        }
-
-        Map<String, String> ApplicationManagerMT::getComponentFactoryMap() const
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-            return m_componentFactoryMap;
-        }
-
         SmartPtr<scene::IComponent> ApplicationManagerMT::getComponentByType( u32 typeId ) const
         {
             const auto &typeManager = TypeManager::instance();
@@ -1157,37 +1145,6 @@ namespace fb
             }
 
             return Parameter();
-        }
-
-        void ApplicationManagerMT::setComponentFactoryMap( const Map<String, String> &map )
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-            m_componentFactoryMap = map;
-        }
-
-        String ApplicationManagerMT::getComponentFactoryType( const String &type ) const
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-
-            if( std::find( m_componentFactoryIgnoreList.begin(), m_componentFactoryIgnoreList.end(),
-                           type ) != m_componentFactoryIgnoreList.end() )
-            {
-                return String( "" );
-            }
-
-            auto it = m_componentFactoryMap.find( type );
-            if( it != m_componentFactoryMap.end() )
-            {
-                return it->second;
-            }
-
-            return "";
-        }
-
-        void ApplicationManagerMT::setComponentFactoryIgnoreList( const Array<String> &ignoreList )
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-            m_componentFactoryIgnoreList = ignoreList;
         }
 
     }  // namespace core

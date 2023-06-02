@@ -2,8 +2,8 @@
 #include <FBCore/Script/ScriptInvoker.h>
 #include <FBCore/Interface/Script/IScriptManager.h>
 #include <FBCore/Interface/Script/IScriptEvent.h>
-#include <FBCore/Base/LogManager.h>
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Core/StringUtil.h>
 
 namespace fb
 {

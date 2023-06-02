@@ -6,7 +6,7 @@
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/System/StateQueueStandard.h>
 #include <FBCore/System/Job.h>
-#include <FBCore/Base/ConcurrentArray.h>
+#include <FBCore/Core/ConcurrentArray.h>
 
 namespace fb
 {

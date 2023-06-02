@@ -1,7 +1,17 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/Constraint.h>
 #include <FBCore/Scene/Components/Rigidbody.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Physics/IConstraintD6.h>
+#include <FBCore/Interface/Physics/IConstraintFixed3.h>
+#include <FBCore/Interface/Physics/IConstraintLinearLimit.h>
+#include <FBCore/Interface/Physics/IPhysicsManager.h>
+#include <FBCore/Interface/Physics/IPhysicsScene3.h>
+#include <FBCore/Interface/Physics/IRigidDynamic3.h>
+#include <FBCore/Interface/System/ITaskManager.h>
+#include <FBCore/Interface/System/ITransformNode.h>
+#include <FBCore/Interface/System/ITimer.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Math/MathUtil.h>
 
 namespace fb
 {
@@ -17,24 +27,6 @@ namespace fb
             Constraint::unload( nullptr );
         }
 
-        Vector3<real_Num> Constraint::getRelativeAngles()
-        {
-            /*
-            btTransform b1 = m_body1->getWorldTransform();
-            btQuaternion b1r = b1.getRotation();
-            btTransform b2 = m_body2->getWorldTransform();
-            btQuaternion b2r = b2.getRotation();
-
-
-            btQuaternion bDelta = b2r - b1r;
-
-
-            btVector3 result = quatRotate( bDelta, btVector3(0.0f,100.0f,0.0f));
-            */
-
-            return Vector3<real_Num>::zero();
-        }
-
         void Constraint::reset( const Vector3<real_Num> &loc )
         {
             try
@@ -43,8 +35,7 @@ namespace fb
 
                 if( isMotor() )
                 {
-                    auto d6joint = getD6Joint();
-                    if( d6joint )
+                    if( auto d6joint = getD6Joint() )
                     {
                         auto pose = Transform3<real_Num>();
                         d6joint->setDrivePosition( pose );
@@ -59,1019 +50,379 @@ namespace fb
 
         void Constraint::restore()
         {
-            auto d6joint = getD6Joint();
-            if( d6joint )
+            if( auto d6joint = getD6Joint() )
             {
-                auto scene = getScene();
-
-                String constraintType = getConstraintType();
+                auto constraintType = getConstraintType();
                 setConstraintType( constraintType, tLimits, aLimits );
 
                 restoreFlags();
             }
         }
 
-        void Constraint::initialise( const String &objectID )
-        {
-            // FB_LOG("Constraint: " + objectID);
-            // FB_ASSERT(!StringUtil::isNullOrEmpty(objectID));
-
-            // setLoadingState(Object::LoadingState::Loading);
-
-            // auto applicationManager = core::IApplicationManager::instance();
-            // auto systemSettings =
-            // fb::static_pointer_cast<SystemSettings>(applicationManager->getSystemSettings());
-
-            // auto physicsManager = applicationManager->getPhysicsManager();
-            // auto physics = physicsManager->getPhysics();
-            // auto database = applicationManager->getDatabase();
-
-            // auto factoryManager = applicationManager->getFactoryManager();
-            // auto taskManager = applicationManager->getTaskManager();
-
-            // Task::Lock physicsLock(taskManager->getTask(Thread::Task::Physics));
-            // Task::Lock controlsLock(taskManager->getTask(Thread::Task::Controls));
-
-            ////m_makeBreakable = factoryManager->make_ptr<MakeBreakable,
-            /// SmartPtr<Constraint>>(this); /m_makeUnbreakable =
-            /// factoryManager->make_ptr<MakeUnbreakable, SmartPtr<Constraint>>(this);
-
-            // s32 iObjectId = StringUtil::parseInt(objectID);
-            // FB_ASSERT(iObjectId > 0);
-            // FB_ASSERT(iObjectId < std::numeric_limits<s32>::max());
-            // setObjectID(iObjectId);
-
-            // SmartPtr<Model> model = getModel();
-            // if (model)
-            //{
-            //	if (!model->getEnablePhysics())
-            //	{
-            //		return;
-            //	}
-            // }
-
-            ////#if FB_FINAL
-            ////		String actor0;
-            ////		String actor1;
-            ////		String anchor0;
-            ////		String anchor1;
-            ////		String anchor1_id;
-            ////#endif
-
-            // SmartPtr<Rigidbody> rigidBody;
-            // m_localFrame0 = Transform3<real_Num>();
-            // m_localFrame1 = Transform3<real_Num>();
-            // setChannel(-1);
-            // f32 drive_force = 0.0f;
-            // f32 drive_damping = 0.0f;
-            // String drive_axis;
-            // m_servo = "none";
-            // m_isMotor = false;
-            // m_linear = false;
-            // m_rotorName = "MainRotor";
-
-            // auto maxBreakForce = std::numeric_limits<f32>::max();
-            // setOriginalBreakForce(maxBreakForce);
-            // setOriginalBreakTorque(maxBreakForce);
-
-            // m_clf_scenenode = "";
-            ////PxTolerancesScale tolerancesScale;
-
-            // try
-            //{
-            //	auto modelConfiguration = m_model->getModelConfiguration();
-            //	String projectionSql =
-            //		"select * from refdb.attribs where title = 'ConstraintProjection' and model_id = " +
-            //		modelConfiguration->getRefModelID();
-            //	auto projectionResult = database->executeQuery(projectionSql);
-            //	if (!projectionResult->eof())
-            //	{
-            //		bool bProjectEnabled =
-            // StringUtil::parseBool(projectionResult->getFieldValue("value"));
-            //		setEnableProjection(bProjectEnabled);
-            //	}
-
-            //	if (objectID != "")
-            //	{
-            //		auto resultSet = database->executeQuery(
-            //			"select * from refdb.object_attributes where object_id = " + objectID);
-            //		/*
-            //		String scenenode;
-            //		Vector3<real_Num> aLimits;
-            //		Vector3<real_Num> tLimits;
-            //		String actor0;
-            //		String actor1;
-            //		String anchor0;
-            //		String anchor1;
-            //		String anchor1_id;
-            //		SmartPtr<Rigidbody> rigidBody;
-            //		Transform3<real_Num> localFrame0;
-            //		Transform3<real_Num> localFrame1;
-            //		m_channel = -1;
-            //		*/
-            //		while (!resultSet->eof())
-            //		{
-            //			String name = resultSet->getFieldValue("name");
-            //			String value = resultSet->getFieldValue("value");
-
-            //			if (!name.compare("scenenode"))
-            //			{
-            //				sceneNodeName = resultSet->getFieldValue("value");
-            //			}
-            //			else if (!name.compare("ctype"))
-            //			{
-            //				m_constraintType = resultSet->getFieldValue("value");
-            //			}
-            //			else if (!name.compare("actor0"))
-            //			{
-            //				actor0 = resultSet->getFieldValue("value");
-            //			}
-            //			else if (!name.compare("actor1"))
-            //			{
-            //				actor1 = resultSet->getFieldValue("value");
-            //			}
-            //			else if (!name.compare("anchor0"))
-            //			{
-            //				anchor0 = resultSet->getFieldValue("value");
-            //			}
-            //			else if (!name.compare("anchor1"))
-            //			{
-            //				anchor1 = resultSet->getFieldValue("value");
-            //				anchor1_id = resultSet->getFieldValue("id");
-            //			}
-
-            //			else if (!name.compare("drive_force"))
-            //			{
-            //				drive_force = StringUtil::parseFloat(resultSet->getFieldValue("value"));
-            //			}
-            //			else if (!name.compare("drive_damping"))
-            //			{
-            //				float driveDamping = StringUtil::parseFloat(value);
-            //				drive_damping = driveDamping;
-            //			}
-            //			else if (!name.compare("drive_axis"))
-            //			{
-            //				drive_axis = resultSet->getFieldValue("value");
-            //			}
-            //			else if (!name.compare("channel"))
-            //			{
-            //				int iChannel = StringUtil::parseInt(resultSet->getFieldValue("value"));
-            //				if (iChannel > 0)
-            //				{
-            //					setChannel(iChannel - 1);
-            //					m_motorDirection = 0.83f;
-            //				}
-            //				else
-            //				{
-            //					setChannel(-iChannel - 1);
-            //					m_motorDirection = -0.83f;
-            //				}
-
-            //				setMotor(true);
-            //			}
-            //			else if (!name.compare("alimits"))
-            //			{
-            //				String m = resultSet->getFieldValue("value");
-            //				String buf; // Have a buffer String
-            //				std::stringstream ss(m); // Insert the String into a stream
-
-            //				Array<String> tokens; // Create vector to hold our words
-
-            //				while (ss >> buf)
-            //					tokens.push_back(buf);
-            //				aLimits = Vector3<real_Num>(StringUtil::parseFloat(tokens[0]),
-            //					StringUtil::parseFloat(tokens[1]),
-            //					StringUtil::parseFloat(tokens[2]));
-            //			}
-            //			else if (!name.compare("tlimits"))
-            //			{
-            //				String m = resultSet->getFieldValue("value");
-            //				String buf; // Have a buffer String
-            //				std::stringstream ss(m); // Insert the String into a stream
-
-            //				Array<String> tokens; // Create vector to hold our words
-
-            //				while (ss >> buf)
-            //					tokens.push_back(buf);
-            //				tLimits = Vector3<real_Num>(StringUtil::parseFloat(tokens[0]),
-            //					StringUtil::parseFloat(tokens[1]),
-            //					StringUtil::parseFloat(tokens[2]));
-            //			}
-            //			else if (!name.compare("break_force"))
-            //			{
-            //				f32 fBreakForce = StringUtil::parseFloat(resultSet->getFieldValue("value"));
-            //				setOriginalBreakForce(fBreakForce);
-            //			}
-            //			else if (!name.compare("break_torque"))
-            //			{
-            //				f32 fBreakTorque = StringUtil::parseFloat(resultSet->getFieldValue("value"));
-            //				setOriginalBreakTorque(fBreakTorque);
-            //			}
-            //			else if (!name.compare("servo"))
-            //			{
-            //				m_servo = resultSet->getFieldValue("value");
-            //				setServoHash(StringUtil::getHash(m_servo));
-            //				m_bServoIsNone = getServo().compare("none");
-            //			}
-            //			else if (!name.compare("linear"))
-            //			{
-            //				m_linear = resultSet->getFieldValue("value").compare("true") ? false : true;
-            //			}
-            //			else if (!name.compare("update_on_break"))
-            //			{
-            //				m_componentUpdateOnBreak = model->getModelComponent(
-            //					StringUtil::getHash(resultSet->getFieldValue("value")));
-            //			}
-            //			else if (!name.compare("effect_name"))
-            //			{
-            //				m_effectNameHash = StringUtil::getHash(resultSet->getFieldValue("value"));
-            //				m_effectNameNightHash = StringUtil::getHash(resultSet->getFieldValue("value")
-            //+
-            //"_night");
-            //			}
-            //			else if (!name.compare("clf_scenenode"))
-            //			{
-            //				String clf_scenenode = resultSet->getFieldValue("value");
-            //				m_clf_scenenode = m_model->getSceneNodeName(clf_scenenode);
-            //			}
-            //			else if (!name.compare("rotor_name"))
-            //			{
-            //				m_rotorName = resultSet->getFieldValue("value");
-            //			}
-
-            //			resultSet->nextRow();
-            //		}
-
-            //		//if (anchor0.find("D6.035") != String::npos)
-            //		//{
-            //		//	int stop = 0;
-            //		//	stop = 0;
-            //		//}
-
-            //		Vector3<real_Num> mPos = m_model->getPosition();
-
-            //		SmartPtr<IStateNode> sceneNode = m_model->getSceneNode(sceneNodeName);
-            //		if (!sceneNode)
-            //		{
-            //			String messageStr = String("SceneNode not found: ") + sceneNodeName;
-            //			FB_LOG(messageStr);
-            //			return;
-            //		}
-
-            //		SmartPtr<IStateNode> cdnode = m_model->getSceneNode(sceneNodeName);
-            //		String cdname = m_model->getSceneNodeName(cdnode->getName());
-            //		Vector3<real_Num> location = cdnode->getPosition();
-            //		SmartPtr<IStateNode> p = cdnode->getParent();
-            //		while (p)
-            //		{
-            //			p->_update(true, false);
-
-            //			location += p->getPosition();
-            //			p = p->getParent();
-            //		}
-
-            //		//Vector3<real_Num> snPos = sceneNode->getPosition();
-            //		Vector3<real_Num> snPos = location;
-            //		Quaternion<real_Num> snQuat = sceneNode->getOrientation();
-
-            //		if (actor0.compare("null"))
-            //		{
-            //			rigidBody =
-            // m_model->getModelComponentByType<Rigidbody>(StringUtil::getHash(actor0));
-
-            //			//int retries = 0;
-            //			//while (!rigidBody && retries++ < 30)
-            //			//{
-            //			//	Thread::sleep(1.0);
-            //			//	rigidBody = m_model->getModelComponent(StringUtil::getHash(actor0));
-            //			//}
-
-            //			if (!rigidBody)
-            //			{
-            //				throw Exception("rigid body not found: " + actor0);
-            //			}
-
-            //			rigidBody->checkLoaded(true);
-
-            //			rigidBody->setOriginals();
-            //			rigidBody->addConstraint(this);
-            //			setBodyA(rigidBody);
-
-            //			m_actor0 = rigidBody->getPhysxRigidbody();
-
-            //			SmartPtr<IStateNode> snActor0 = m_model->getSceneNode(actor0);
-            //			if (!snActor0)
-            //			{
-            //				return;
-            //			}
-
-            //			/////////////
-            //			Vector3<real_Num> location = snActor0->getPosition();
-
-            //			SmartPtr<IStateNode> p = snActor0->getParent();
-            //			while (p)
-            //			{
-            //				p->_update(true, false);
-
-            //				location += p->getPosition();
-            //				p = p->getParent();
-            //			}
-
-            //			////////
-            //			//Vector3<real_Num> posActor0 = snActor0->getPosition();
-            //			Vector3<real_Num> posActor0 = location;
-            //			//Vector3<real_Num> posActor0 =
-            // Vector3<real_Num>(m_actor0->getGlobalPose().p.X(), m_actor0->getGlobalPose().p.Y(),
-            // m_actor0->getGlobalPose().p.Z());
-
-            //			m_anchor0 = m_model->getSceneNode(anchor0);
-            //			if (!m_anchor0)
-            //			{
-            //				FB_LOG_ERROR("Error: node not found. Name: " + anchor0);
-            //				return;
-            //			}
-
-            //			Vector3<real_Num> posAnchor0 = m_anchor0->getPosition() + mPos;
-
-            //			Vector3<real_Num> temp = posAnchor0 - posActor0;
-
-            //			Vector3<real_Num> localPosAnchor0 = snActor0->getOrientation().inverse() * temp;
-
-            //			Quaternion<real_Num> quatA0 = m_anchor0->getOrientation().inverse();
-            //			m_localFrame0 = Transform3<real_Num>(
-            //				Vector3<real_Num>(localPosAnchor0.X(), localPosAnchor0.Y(),
-            // localPosAnchor0.Z()), 				Quaternion<real_Num>(quatA0.X(), quatA0.Y(),
-            // quatA0.Z(), quatA0.W()));
-            //		}
-            //		else
-            //		{
-            //			// null = world constraint so anchor has to be world frame and ancor = NULL
-            //			m_actor0 = NULL;
-            //			SmartPtr<IStateNode> snNodeA0 = m_model->getSceneNode(anchor0);
-            //			if (snNodeA0)
-            //			{
-            //				snNodeA0->_update(true, false);
-
-            //				Vector3<real_Num> posA0 = snNodeA0->_getDerivedPosition();
-            //				Quaternion<real_Num> quatA0 = snNodeA0->_getDerivedOrientation();
-            //				m_localFrame0 = Transform3<real_Num>(
-            //					Vector3<real_Num>(posA0.X(), posA0.Y(), posA0.Z()),
-            //					Quaternion<real_Num>(quatA0.X(), quatA0.Y(), quatA0.Z(), quatA0.W()));
-            //			}
-            //		}
-
-            //		/*
-            //		render::ISceneNode* snNodeA1 = m_model->getSceneNode(anchor1);
-            //		Vector3<real_Num> posA1 = snNodeA1->getPosition() - snPos;
-            //		Quaternion<real_Num> quatA1 = snNodeA1->getOrientation();
-            //		localFrame1 = Transform3<real_Num>(Vector3<real_Num>(posA1.X(), posA1.Y(),
-            // posA1.Z()), Quaternion<real_Num>(quatA1.X(),quatA1.Y(),quatA1.Z(),quatA1.W()));
-            //		*/
-            //		rigidBody = m_model->getModelComponentByType<Rigidbody>(StringUtil::getHash(actor1));
-            //		if (!rigidBody)
-            //		{
-            //			FB_LOG_ERROR("rigid body not found: " + actor1);
-            //			return;
-            //		}
-
-            //		if (rigidBody)
-            //		{
-            //			rigidBody->checkLoaded(true);
-            //		}
-
-            //		rigidBody->setOriginals();
-            //		//rigidBody->addConstraint(this);
-            //		setBodyB(rigidBody);
-
-            //		//render::ISceneNode* m_sceneNode = rigidBody->getSceneNode();
-            //		//Ogre::UserObjectBindings& userObject = m_sceneNode->getUserObjectBindings();
-            //		//userObject.setUserAny("JOINT_" + anchor1_id  , Ogre::Any(this));
-
-            //		m_actor1 = rigidBody->getPhysxRigidbody();
-            //		//FB_ASSERT(m_actor1);
-            //		if (!m_actor1)
-            //		{
-            //			FB_LOG_ERROR("Error: cannot initialise.");
-            //			return;
-            //		}
-
-            //		Vector3<real_Num> a1Pos = m_actor1->getTransform().getPosition();
-
-            //		SmartPtr<IStateNode> snActor1 = m_model->getSceneNode(actor1);
-            //		/////////////
-            //		location = snActor1->getPosition();
-            //		p = snActor1->getParent();
-            //		while (p)
-            //		{
-            //			p->_update(true, false);
-
-            //			location += p->getPosition();
-            //			p = p->getParent();
-            //		}
-
-            //		////////
-            //		//Vector3<real_Num> posActor1 = snActor1->getPosition();
-            //		Vector3<real_Num> posActor1 = location;
-            //		//Vector3<real_Num> posActor1 = Vector3<real_Num>(m_actor1->getGlobalPose().p.X(),
-            // m_actor1->getGlobalPose().p.Y(), m_actor1->getGlobalPose().p.Z());
-
-            //		setAnchor1(m_model->getSceneNode(anchor1));
-            //		if (getAnchor1())
-            //		{
-            //			Vector3<real_Num> posAnchor1 = getAnchor1()->getPosition() + mPos;
-
-            //			Vector3<real_Num> temp = posAnchor1 - posActor1;
-
-            //			Vector3<real_Num> localPosAnchor1 = snActor1->getOrientation().inverse() * temp;
-
-            //			Quaternion<real_Num> quatA1 = getAnchor1()->getOrientation();
-
-            //			m_localFrame1 = Transform3<real_Num>(
-            //				Vector3<real_Num>(localPosAnchor1.X(), localPosAnchor1.Y(),
-            // localPosAnchor1.Z()), 				Quaternion<real_Num>(quatA1.X(), quatA1.Y(),
-            // quatA1.Z(), quatA1.W()));
-            //		}
-
-            //		SmartPtr<physics::IPhysicsScene3> scene = getScene();
-            //
-
-            //		if (!isControlComponent())
-            //		{
-            //			auto name = getName();
-            //			if (name.find("Skid") == String::npos)
-            //			{
-            //				m_d6joint = physics->d6JointCreate(m_actor0, m_localFrame0, m_actor1,
-            // m_localFrame1);
-
-            //				if (m_d6joint)
-            //				{
-            //					m_d6joint->setUserData(this);
-            //				}
-            //			}
-            //			else
-            //			{
-            //				auto l0 = Transform3<real_Num>();
-            //				auto l1 = Transform3<real_Num>();
-
-            //				if (getAnchor0())
-            //				{
-            //					SmartPtr<IStateNode> snActor0 = m_model->getSceneNode(actor0);
-
-            //					Vector3<real_Num> posAnchor0 = m_anchor0->_getDerivedPosition() + mPos;
-
-            //					Vector3<real_Num> temp = posAnchor0 - snActor0->_getDerivedPosition();
-
-            //					Vector3<real_Num> localPosAnchor0 =
-            // snActor0->_getDerivedOrientation().inverse()
-            //* temp;
-
-            //					Quaternion<real_Num> quatA0 = Quaternion<real_Num>::identity();//
-            // m_anchor0->_getDerivedOrientation().inverse();
-
-            //					m_localFrame0 = Transform3<real_Num>(
-            //						Vector3<real_Num>(localPosAnchor0.X(), localPosAnchor0.Y(),
-            // localPosAnchor0.Z()), 						Quaternion<real_Num>(quatA0.X(), quatA0.Y(),
-            // quatA0.Z(), quatA0.W()));
-            //				}
-
-            //				if (getAnchor1())
-            //				{
-            //					Vector3<real_Num> posAnchor1 = getAnchor1()->_getDerivedPosition() +
-            // mPos;
-
-            //					Vector3<real_Num> temp = posAnchor1 - posActor1;
-
-            //					Vector3<real_Num> localPosAnchor1 =
-            // snActor1->_getDerivedOrientation().inverse()
-            //* temp;
-
-            //					Quaternion<real_Num> quatA1 = m_bodyB->getOrientation();
-
-            //					m_localFrame1 = Transform3<real_Num>(
-            //						Vector3<real_Num>(localPosAnchor1.X(), localPosAnchor1.Y(),
-            // localPosAnchor1.Z()), 						Quaternion<real_Num>(quatA1.X(), quatA1.Y(),
-            // quatA1.Z(), quatA1.W()));
-            //				}
-
-            //				m_fixedJoint = physics->fixedJointCreate(m_actor0, m_localFrame0, m_actor1,
-            // m_localFrame1); 				m_fixedJoint->setUserData(this);
-            //			}
-            //		}
-            //		else
-            //		{
-            //			m_d6joint = physics->d6JointCreate(m_actor0, m_localFrame0, m_actor1,
-            // m_localFrame1);
-
-            //			if (m_d6joint)
-            //			{
-            //				m_d6joint->setUserData(this);
-            //			}
-            //		}
-
-            //		//PxConstraint* userBuffer[5];
-            //		//for (int i = 0; i < 5; i++)
-            //		//{
-            //		//	userBuffer[i] = nullptr;
-            //		//}
-
-            //		//u32 bufferSize = 5;
-            //		//m_actor1->getConstraints(userBuffer, bufferSize);
-
-            //		auto constraintType = getConstraintType();
-            //		setConstraintType(constraintType, tLimits, aLimits);
-
-            //		if (m_fixedJoint)
-            //		{
-            //			m_localPose0 = m_fixedJoint->getLocalPose(physics::PxJointActorIndex::eACTOR0);
-            //			m_localPose1 = m_fixedJoint->getLocalPose(physics::PxJointActorIndex::eACTOR1);
-            //			m_fixedJoint->setBreakForce(m_breakForce, m_breakTorque);
-            //		}
-
-            //		if (m_d6joint)
-            //		{
-            //			m_d6joint->setConstraintFlag(physics::PxConstraintFlag::ePROJECTION, false);
-
-            //			//m_d6joint->setProjectionLinearTolerance(0.0001f);
-            //			m_d6joint->setProjectionLinearTolerance(0.1f);
-            //			m_d6joint->setProjectionAngularTolerance(0.1f);
-
-            //			Transform3<real_Num> position;
-            //			if (drive_force != 0.0)
-            //			{
-            //				auto drive = physics->createConstraintDrive();
-            //				drive->setStiffness(drive_force);
-            //				drive->setDamping(drive_damping);
-            //				drive->setForceLimit(std::numeric_limits<f32>::max());
-            //				drive->setIsAcceleration(false);
-
-            //				if (!drive_axis.compare("x"))
-            //				{
-            //					m_d6joint->setDrive(physics::PxD6Drive::eX, drive);
-            //				}
-            //				else if (!drive_axis.compare("y"))
-            //				{
-            //					m_d6joint->setDrive(physics::PxD6Drive::eY, drive);
-            //				}
-            //				else if (!drive_axis.compare("z"))
-            //				{
-            //					m_d6joint->setDrive(physics::PxD6Drive::eZ, drive);
-            //				}
-            //			}
-
-            //			m_d6joint->setBreakForce(m_breakForce, m_breakTorque);
-            //			position = m_d6joint->getDrivePosition();
-
-            //			if (m_isMotor)
-            //			{
-            //				auto drive = physics->createConstraintDrive();
-            //				drive->setStiffness(22250.0f);
-            //				drive->setDamping(0.0f);
-            //				drive->setForceLimit(std::numeric_limits<f32>::max());
-            //				drive->setIsAcceleration(false);
-
-            //				if (!m_linear)
-            //				{
-            //					m_d6joint->setDrive(physics::PxD6Drive::eTWIST, drive);
-            //				}
-            //				else
-            //				{
-            //					m_d6joint->setDrive(physics::PxD6Drive::eX, drive);
-            //				}
-            //			}
-
-            //			if (!anchor1.compare("X_lft") || !anchor1.compare("X_rght"))
-            //			{
-            //				m_d6joint->setConstraintFlag(physics::PxConstraintFlag::eREPORTING, true);
-            //				m_reportForce = true;
-            //			}
-
-            //			m_d6joint->setConstraintFlag(physics::PxConstraintFlag::eVISUALIZATION, true);
-            //			setFlag(true);
-
-            //			m_localPose0 = m_d6joint->getLocalPose(physics::PxJointActorIndex::eACTOR0);
-            //			m_localPose1 = m_d6joint->getLocalPose(physics::PxJointActorIndex::eACTOR1);
-            //		}
-            //	}
-
-            //	auto modelType = m_model->getModelType();
-            //	if (modelType == Model::E_MODEL_TYPE_HELICOPTER)
-            //	{
-            //		setupRotor();
-            //	}
-
-            //	setLoadingState(Object::LoadingState::Loaded);
-            //}
-            // catch (std::exception& e)
-            //{
-            //	FB_LOG_EXCEPTION(e);
-            //}
-        }
-
-        void Constraint::setupRotor()
-        {
-            // if (!getRotor())
-            //{
-            //	String rotorName = getRotorName();
-            //	if (!StringUtil::isNullOrEmpty(rotorName))
-            //	{
-            //		const int rotorHash = StringUtil::getHash(rotorName);
-            //		SmartPtr<Rotor> rotor = m_model->getModelComponentByType<Rotor>(rotorHash);
-            //		if (rotor)
-            //		{
-            //			setRotor(rotor);
-            //		}
-            //		else
-            //		{
-            //			FB_LOG_ERROR("Rotor not found: " + rotorName);
-            //		}
-            //	}
-
-            //	if (getChannel() == 99)
-            //	{
-            //		SmartPtr<Rotor> rotor = getRotor();
-            //		if (rotor)
-            //		{
-            //			//rotor->setRotatingGraphicsName(sceneNodeName);
-            //		}
-            //	}
-            //}
-        }
-
         void Constraint::setConstraintType( const String &constraintType, Vector3<real_Num> &tLimits,
                                             Vector3<real_Num> &aLimits )
         {
-            // using namespace physics;
+            auto applicationManager = core::IApplicationManager::instance();
+            auto physicsManager = applicationManager->getPhysicsManager();
 
-            // FB_ASSERT(!StringUtil::isNullOrEmpty(constraintType));
-            // FB_ASSERT(MathUtil<real_Num>::isFinite(tLimits));
-            // FB_ASSERT(MathUtil<real_Num>::isFinite(aLimits));
+            FB_ASSERT( !StringUtil::isNullOrEmpty( constraintType ) );
+            FB_ASSERT( MathUtil<real_Num>::isFinite( tLimits ) );
+            FB_ASSERT( MathUtil<real_Num>::isFinite( aLimits ) );
 
-            // auto d6joint = getD6Joint();
-            // if (d6joint)
-            //{
-            //	//	PxTolerancesScale tolerancesScale;
+            if( auto d6joint = getD6Joint() )
+            {
+                FB_ASSERT( constraintType.size() >= 6 );
 
-            //	char transX = constraintType[0];
-            //	char transY = constraintType[1];
-            //	char transZ = constraintType[2];
+                auto transX = constraintType[0];
+                auto transY = constraintType[1];
+                auto transZ = constraintType[2];
 
-            //	char rotX = constraintType[3];
-            //	char rotY = constraintType[4];
-            //	char rotZ = constraintType[5];
+                auto rotX = constraintType[3];
+                auto rotY = constraintType[4];
+                auto rotZ = constraintType[5];
 
-            //	--
-            //	switch (constraintType[0])
-            //	{
-            //	case 'L':
-            //		d6joint->setMotion(physics::PxD6Axis::eX, PxD6Motion::eLOCKED);
-            //		break;
-            //	case 'F':
-            //		d6joint->setMotion(PxD6Axis::eX, PxD6Motion::eFREE);
-            //		break;
-            //	case 'R':
-            //	{
-            //		d6joint->setMotion(PxD6Axis::eX, PxD6Motion::eLIMITED);
-            //		//d6joint->setLinearLimit(PxJointLinearLimit(tolerancesScale, tLimits.x, tLimits.y));
-            //	}
-            //	break;
-            //	}
+                switch( transX )
+                {
+                case 'L':
+                    d6joint->setMotion( physics::PxD6Axis::eX, physics::PxD6Motion::eLOCKED );
+                    break;
+                case 'F':
+                    d6joint->setMotion( physics::PxD6Axis::eX, physics::PxD6Motion::eFREE );
+                    break;
+                case 'R':
+                {
+                    d6joint->setMotion( physics::PxD6Axis::eX, physics::PxD6Motion::eLIMITED );
+                    d6joint->setLinearLimit(
+                        physicsManager->createConstraintLinearLimit( tLimits.x, tLimits.y ) );
+                }
+                break;
+                }
 
-            //	//	--
-            //	//	switch (constraintType[1])
-            //	//	{
-            //	//	case 'L':
-            //	//		d6joint->setMotion(PxD6Axis::eY, PxD6Motion::eLOCKED);
-            //	//		break;
-            //	//	case 'F':
-            //	//		d6joint->setMotion(PxD6Axis::eY, PxD6Motion::eFREE);
-            //	//		break;
-            //	//	case 'R':
-            //	//		d6joint->setMotion(PxD6Axis::eY, PxD6Motion::eLIMITED);
-            //	//		d6joint->setLinearLimit(PxJointLinearLimit(tolerancesScale, tLimits.x,
-            // tLimits.y));
-            //	//		break;
-            //	//	}
-            //	//	--
-            //	//	switch (constraintType[2])
-            //	//	{
-            //	//	case 'L':
-            //	//		d6joint->setMotion(PxD6Axis::eZ, PxD6Motion::eLOCKED);
-            //	//		break;
-            //	//	case 'F':
-            //	//		d6joint->setMotion(PxD6Axis::eZ, PxD6Motion::eFREE);
-            //	//		break;
-            //	//	case 'R':
-            //	//		d6joint->setMotion(PxD6Axis::eZ, PxD6Motion::eLIMITED);
-            //	//		d6joint->setLinearLimit(PxJointLinearLimit(tolerancesScale, tLimits.x,
-            // tLimits.y));
-            //	//		break;
-            //	//	}
+                switch( transY )
+                {
+                case 'L':
+                    d6joint->setMotion( physics::PxD6Axis::eY, physics::PxD6Motion::eLOCKED );
+                    break;
+                case 'F':
+                    d6joint->setMotion( physics::PxD6Axis::eY, physics::PxD6Motion::eFREE );
+                    break;
+                case 'R':
+                    d6joint->setMotion( physics::PxD6Axis::eY, physics::PxD6Motion::eLIMITED );
+                    d6joint->setLinearLimit(
+                        physicsManager->createConstraintLinearLimit( tLimits.x, tLimits.y ) );
+                    break;
+                }
 
-            //	//	--
-            //	//	--
+                switch( transZ )
+                {
+                case 'L':
+                    d6joint->setMotion( physics::PxD6Axis::eZ, physics::PxD6Motion::eLOCKED );
+                    break;
+                case 'F':
+                    d6joint->setMotion( physics::PxD6Axis::eZ, physics::PxD6Motion::eFREE );
+                    break;
+                case 'R':
+                    d6joint->setMotion( physics::PxD6Axis::eZ, physics::PxD6Motion::eLIMITED );
+                    d6joint->setLinearLimit(
+                        physicsManager->createConstraintLinearLimit( tLimits.x, tLimits.y ) );
+                    break;
+                }
 
-            //	//	switch (constraintType[3])
-            //	//	{
-            //	//	case 'L':
-            //	//		d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
-            //	//		break;
-            //	//	case 'F':
-            //	//		d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
-            //	//		break;
-            //	//	case 'R':
-            //	//	{
-            //	//		PxJointAngularLimitPair twist_limit(aLimits.x, aLimits.y, aLimits.z);
-            //	//		if (twist_limit.isValid())
-            //	//		{
-            //	//			d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLIMITED);
-            //	//			d6joint->setTwistLimit(twist_limit);
-            //	//		}
-            //	//		else
-            //	//		{
-            //	//			d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
-            //	//			FB_LOG_ERROR(getName() + ": Twist limits not valid. Model: " +
-            // m_model->getName());
-            //	//		}
-            //	//	}
-            //	//	break;
-            //	//	}
+                switch( constraintType[3] )
+                {
+                case 'L':
+                    d6joint->setMotion( physics::PxD6Axis::eTWIST, physics::PxD6Motion::eLOCKED );
+                    break;
+                case 'F':
+                    d6joint->setMotion( physics::PxD6Axis::eTWIST, physics::PxD6Motion::eFREE );
+                    break;
+                case 'R':
+                {
+                    //PxJointAngularLimitPair twist_limit( aLimits.x, aLimits.y, aLimits.z );
+                    //if( twist_limit.isValid() )
+                    //{
+                    //    d6joint->setMotion( physics::PxD6Axis::eTWIST, physics::PxD6Motion::eLIMITED );
+                    //    d6joint->setTwistLimit( twist_limit );
+                    //}
+                    //else
+                    //{
+                    //    d6joint->setMotion( physics::PxD6Axis::eTWIST, physics::PxD6Motion::eFREE );
+                    //    FB_LOG_ERROR( "Twist limits not valid." );
+                    //}
+                }
+                break;
+                }
 
-            //	//	switch (constraintType[4])
-            //	//	{
-            //	//	case 'L':
-            //	//		d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
-            //	//		break;
-            //	//	case 'F':
-            //	//		d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
-            //	//		break;
-            //	//	case 'R':
-            //	//	{
-            //	//		if (aLimits.x < 0.00001f)
-            //	//			aLimits.x = 0.00001f;
+                //	switch (constraintType[4])
+                //	{
+                //	case 'L':
+                //		d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
+                //		break;
+                //	case 'F':
+                //		d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+                //		break;
+                //	case 'R':
+                //	{
+                //		if (aLimits.x < 0.00001f)
+                //			aLimits.x = 0.00001f;
 
-            //	//		if (aLimits.y < 0.00001f)
-            //	//			aLimits.y = 0.00001f;
+                //		if (aLimits.y < 0.00001f)
+                //			aLimits.y = 0.00001f;
 
-            //	//		if (aLimits.z < 0.00001f)
-            //	//			aLimits.z = 0.00001f;
+                //		if (aLimits.z < 0.00001f)
+                //			aLimits.z = 0.00001f;
 
-            //	//		PxJointLimitCone swing_limit(aLimits.x, aLimits.y, aLimits.z);
-            //	//		if (swing_limit.isValid())
-            //	//		{
-            //	//			d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLIMITED);
-            //	//			d6joint->setSwingLimit(swing_limit);
-            //	//		}
-            //	//		else
-            //	//		{
-            //	//			d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
-            //	//			FB_LOG_ERROR(getName() + ": SWING1 limits not valid. Model: " +
-            // m_model->getName());
-            //	//		}
-            //	//	}
-            //	//	break;
-            //	//	}
-            //	//	switch (constraintType[5])
-            //	//	{
-            //	//	case 'L':
-            //	//		d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
-            //	//		break;
-            //	//	case 'F':
-            //	//		d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
-            //	//		break;
-            //	//	case 'R':
-            //	//	{
-            //	//		if (aLimits.x < 0.00001f)
-            //	//			aLimits.x = 0.00001f;
+                //		PxJointLimitCone swing_limit(aLimits.x, aLimits.y, aLimits.z);
+                //		if (swing_limit.isValid())
+                //		{
+                //			d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLIMITED);
+                //			d6joint->setSwingLimit(swing_limit);
+                //		}
+                //		else
+                //		{
+                //			d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+                //			FB_LOG_ERROR(getName() + ": SWING1 limits not valid. Model: " +
+                //m_model->getName());
+                //		}
+                //	}
+                //	break;
+                //	}
+                //	switch (constraintType[5])
+                //	{
+                //	case 'L':
+                //		d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
+                //		break;
+                //	case 'F':
+                //		d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+                //		break;
+                //	case 'R':
+                //	{
+                //		if (aLimits.x < 0.00001f)
+                //			aLimits.x = 0.00001f;
 
-            //	//		if (aLimits.y < 0.00001f)
-            //	//			aLimits.y = 0.00001f;
+                //		if (aLimits.y < 0.00001f)
+                //			aLimits.y = 0.00001f;
 
-            //	//		if (aLimits.z < 0.00001f)
-            //	//			aLimits.z = 0.00001f;
+                //		if (aLimits.z < 0.00001f)
+                //			aLimits.z = 0.00001f;
 
-            //	//		PxJointLimitCone swing_limit(aLimits.x, aLimits.y, aLimits.z);
-            //	//		if (swing_limit.isValid())
-            //	//		{
-            //	//			d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLIMITED);
-            //	//			d6joint->setSwingLimit(swing_limit);
-            //	//		}
-            //	//		else
-            //	//		{
-            //	//			d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
-            //	//			FB_LOG_ERROR(getName() + ": SWING2 limits not valid. Model: " +
-            // m_model->getName());
-            //	//		}
-            //	//	}
-            //	//	break;
-            //	//	}
+                //		PxJointLimitCone swing_limit(aLimits.x, aLimits.y, aLimits.z);
+                //		if (swing_limit.isValid())
+                //		{
+                //			d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLIMITED);
+                //			d6joint->setSwingLimit(swing_limit);
+                //		}
+                //		else
+                //		{
+                //			d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+                //			FB_LOG_ERROR(getName() + ": SWING2 limits not valid. Model: " +
+                //         m_model->getName());
+                //        }
+                //    }
+                //    break;
+                //}
 
-            //	//	/////////////////////////////////////////////////////////
+                /*
+                if(!m_constraintType.compare("LLLFLL"))
+                {
+                d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
+                }
+                --
+                else if(!m_constraintType.compare("LLLRLL"))  //
+                {
+                d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLIMITED);
+                d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
 
-            //	//	--
-            //	//	/*
-            //	//	if(!m_constraintType.compare("LLLFLL"))
-            //	//	{
-            //	//	d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
-            //	//	}
-            //	//	--
-            //	//	else if(!m_constraintType.compare("LLLRLL"))  //
-            //	//	{
-            //	//	d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLIMITED);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
+                PxJointLimitPair twist_limit(-1.0, 1.0, 1.0);
+                d6joint->setTwistLimit(twist_limit);
 
-            //	//	PxJointLimitPair twist_limit(-1.0, 1.0, 1.0);
-            //	//	d6joint->setTwistLimit(twist_limit);
+                }
+                --
+                else if(!m_constraintType.compare("LLLFFF"))
+                {
+                d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+                }
+                --
+                else if(!m_constraintType.compare("FLLLFF"))
+                {
+                d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
 
-            //	//	}
-            //	//	--
-            //	//	else if(!m_constraintType.compare("LLLFFF"))
-            //	//	{
-            //	//	d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
-            //	//	}
-            //	//	--
-            //	//	else if(!m_constraintType.compare("FLLLFF"))
-            //	//	{
-            //	//	d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+                }
+                --
+                else if(!m_constraintType.compare("LLLLLL"))
+                {
+                d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
 
-            //	//	}
-            //	//	--
-            //	//	else if(!m_constraintType.compare("LLLLLL"))
-            //	//	{
-            //	//	d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
+                }
+                --
+                else if(!m_constraintType.compare("FLLFLL"))
+                {
+                d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
+                }
 
-            //	//	}
-            //	//	--
-            //	//	else if(!m_constraintType.compare("FLLFLL"))
-            //	//	{
-            //	//	d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
-            //	//	}
+                else if(!m_constraintType.compare("RLLLRR")) // not used on trex
+                {
+                d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLIMITED);
+                d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLIMITED);
+                d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLIMITED);
+                d6joint->setLinearLimit(PxJointLimit(0.01f, 0.01f));
+                PxJointLimitCone swing_limit(0.25, 0.25, 0.02);
+                d6joint->setSwingLimit(swing_limit);
 
-            //	//	else if(!m_constraintType.compare("RLLLRR")) // not used on trex
-            //	//	{
-            //	//	d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLIMITED);
-            //	//	d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLIMITED);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLIMITED);
-            //	//	d6joint->setLinearLimit(PxJointLimit(0.01f, 0.01f));
-            //	//	PxJointLimitCone swing_limit(0.25, 0.25, 0.02);
-            //	//	d6joint->setSwingLimit(swing_limit);
+                }
+                --
+                else if(!m_constraintType.compare("FLLFFF"))
+                {
+                d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
 
-            //	//	}
-            //	//	--
-            //	//	else if(!m_constraintType.compare("FLLFFF"))
-            //	//	{
-            //	//	d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+                }
+                --
+                else if(!m_constraintType.compare("LLLFRR")) //
+                {
+                d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLIMITED);
+                d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLIMITED);
 
-            //	//	}
-            //	//	--
-            //	//	else if(!m_constraintType.compare("LLLFRR")) //
-            //	//	{
-            //	//	d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLIMITED);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLIMITED);
+                PxJointLimitCone swing_limit(0.15, 0.15, 0.02);
+                d6joint->setSwingLimit(swing_limit);
+                }
 
-            //	//	PxJointLimitCone swing_limit(0.15, 0.15, 0.02);
-            //	//	d6joint->setSwingLimit(swing_limit);
-            //	//	}
+                --
+                else if(!m_constraintType.compare("LFLLLL"))
+                {
+                d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
+                }
+                --
+                else if(!m_constraintType.compare("LFLFLL"))
+                {
+                d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
+                }
 
-            //	//	--
-            //	//	else if(!m_constraintType.compare("LFLLLL"))
-            //	//	{
-            //	//	d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
-            //	//	}
-            //	//	--
-            //	//	else if(!m_constraintType.compare("LFLFLL"))
-            //	//	{
-            //	//	d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
-            //	//	}
+                --
+                else if(!m_constraintType.compare("LRLLLL")) //
+                {
+                d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLIMITED);
+                d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
+                d6joint->setLinearLimit(PxJointLimit(0.0075f, 0.0075f));
+                }
+                --
+                else if(!m_constraintType.compare("FRLFFF"))  //
+                {
+                d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLIMITED);
+                d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+                d6joint->setLinearLimit(PxJointLimit(0.001f, 0.001f));
+                }
+                --
+                else if(!m_constraintType.compare("FLFFFF"))
+                {
+                d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+                }
 
-            //	//	--
-            //	//	else if(!m_constraintType.compare("LRLLLL")) //
-            //	//	{
-            //	//	d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLIMITED);
-            //	//	d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLOCKED);
-            //	//	d6joint->setLinearLimit(PxJointLimit(0.0075f, 0.0075f));
-            //	//	}
-            //	//	--
-            //	//	else if(!m_constraintType.compare("FRLFFF"))  //
-            //	//	{
-            //	//	d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLIMITED);
-            //	//	d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
-            //	//	d6joint->setLinearLimit(PxJointLimit(0.001f, 0.001f));
-            //	//	}
-            //	//	--
-            //	//	else if(!m_constraintType.compare("FLFFFF"))
-            //	//	{
-            //	//	d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
-            //	//	}
+                else if(!m_constraintType.compare("LLLRFF"))
+                {
+                d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLIMITED);
+                d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+                PxJointLimitPair twist_limit(-0.5, 0.5, 0.5);
+                d6joint->setTwistLimit(twist_limit);
 
-            //	//	else if(!m_constraintType.compare("LLLRFF"))
-            //	//	{
-            //	//	d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLIMITED);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
-            //	//	PxJointLimitPair twist_limit(-0.5, 0.5, 0.5);
-            //	//	d6joint->setTwistLimit(twist_limit);
+                }
+                else if(!m_constraintType.compare("LLLLFF"))
+                {
+                d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
+                d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+                d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
 
-            //	//	}
-            //	//	else if(!m_constraintType.compare("LLLLFF"))
-            //	//	{
-            //	//	d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+                }
 
-            //	//	}
-
-            //	//	else if(!m_constraintType.compare("FFLFFF"))
-            //	//	{
-            //	//	d6joint->setMotion(PxD6Axis::eX,     PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eY,     PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eZ,     PxD6Motion::eLOCKED);
-            //	//	d6joint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
-            //	//	d6joint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
-
-            //	//	}
-            //	//	*/
-            //}
+            else if( !m_constraintType.compare( "FFLFFF" ) )
+            {
+             d6joint->setMotion( PxD6Axis::eX, PxD6Motion::eFREE );
+             d6joint->setMotion( PxD6Axis::eY, PxD6Motion::eFREE );
+             d6joint->setMotion( PxD6Axis::eZ, PxD6Motion::eLOCKED );
+             d6joint->setMotion( PxD6Axis::eTWIST, PxD6Motion::eFREE );
+             d6joint->setMotion( PxD6Axis::eSWING1, PxD6Motion::eFREE );
+             d6joint->setMotion( PxD6Axis::eSWING2, PxD6Motion::eFREE );
+            }
+            */
+            }
         }
 
         void Constraint::forceBreak()
         {
-            // SmartPtr<IConstraintD6> d6joint = getD6Joint();
-            // if (d6joint)
-            //{
-            //	d6joint->release();
-            //	d6joint = nullptr;
-            // }
+            if( auto d6joint = getD6Joint() )
+            {
+                d6joint->unload( nullptr );
+            }
         }
 
         void Constraint::resetPositions()
@@ -1321,17 +672,15 @@ namespace fb
             return m_type;
         }
 
-        void Constraint::setType( Type val )
+        void Constraint::setType( Type type )
         {
-            m_type = val;
+            m_type = type;
         }
 
         void Constraint::create( SmartPtr<Rigidbody> bodyA, SmartPtr<Rigidbody> bodyB,
                                  const Transform3<real_Num> &transformA,
                                  const Transform3<real_Num> &transformB )
         {
-            return;
-
             auto applicationManager = core::IApplicationManager::instance();
             auto physics = applicationManager->getPhysicsManager();
 
@@ -1432,7 +781,7 @@ namespace fb
             // getFSM()->setNewState(Modelscene::MODEL_COMPONENT_STATE_READY);
         }
 
-        void Constraint::initialise( SmartPtr<Rigidbody> bodyA, SmartPtr<Rigidbody> bodyB )
+        void Constraint::setupConstraint( SmartPtr<Rigidbody> bodyA, SmartPtr<Rigidbody> bodyB )
         {
             // auto applicationManager = core::IApplicationManager::instance();
 
@@ -1751,132 +1100,6 @@ namespace fb
             //}
         }
 
-        void Constraint::enterFlightState()
-        {
-            try
-            {
-                auto actor = getActor();
-                if( actor )
-                {
-                    // actor->unregisterAllComponent(this);
-
-                    if( !isControlComponent() )
-                    {
-                        // if (isMotor())
-                        {
-                            // actor->registerComponentUpdate(Thread::Task::Physics,
-                            // Thread::UpdateState::PreUpdate, this);
-                            // actor->registerComponentUpdate(Tasks::TaskIds::TASK_ID_PHYSICS,
-                            //	Thread::UpdateState::Update, this);
-                            // actor->registerComponentUpdate(Tasks::TaskIds::TASK_ID_PHYSICS,
-                            // Thread::UpdateState::PostUpdate, this);
-                        }
-                    }
-                    else
-                    {
-                        if( isMotor() )
-                        {
-                            // actor->registerComponentUpdate(Thread::Task::Physics,
-                            // Thread::UpdateState::PreUpdate, this);
-                            // actor->registerComponentUpdate(Tasks::TaskIds::TASK_ID_PHYSICS,
-                            //	Thread::UpdateState::Update, this);
-                            // actor->registerComponentUpdate(Tasks::TaskIds::TASK_ID_PHYSICS,
-                            // Thread::UpdateState::PostUpdate, this);
-
-                            // actor->registerComponentUpdate(Thread::Task::Controls,
-                            // Thread::UpdateState::PreUpdate, this);
-                            // actor->registerComponentUpdate(Tasks::TaskIds::TASK_ID_CONTROLS,
-                            //	Thread::UpdateState::Update, this);
-                            // actor->registerComponentUpdate(Tasks::TaskIds::TASK_ID_CONTROLS,
-                            // Thread::UpdateState::PostUpdate, this);
-                        }
-                    }
-                }
-
-                // auto applicationManager = core::IApplicationManager::instance();
-                // auto& jobQueue = applicationManager->getJobQueue();
-                // auto& taskManager = applicationManager->getTaskManager();
-                // auto factoryManager = applicationManager->getFactoryManager();
-                // auto& physicsTask = taskManager->getTask(Thread::Task::Physics);
-                // auto& controlsTask = taskManager->getTask(Thread::Task::Controls);
-
-                // Task::Lock physicsLock(physicsTask);
-                // Task::Lock controlsLock(controlsTask);
-
-                // if (!m_servoCached)
-                //{
-                //	s32 iServoHash = getServoHash();
-                //	if (iServoHash != 0)
-                //	{
-                //		m_servoCached = m_model->getModelComponentByType<Servo>(iServoHash);
-                //		if (m_servoCached)
-                //		{
-                //			//m_servoCached->setConstraint(this);
-                //		}
-                //	}
-                // }
-
-                resetPositions();
-                makeUnbreakable( true );
-                setBrokenState( false );
-
-                String servoName = getServo();
-                m_servoNoneCompare = servoName.compare( "none" );
-
-                // if (getEnableProjection())
-                //{
-                //	SmartPtr<FlagSetJob> flagSetJob = factoryManager->make_ptr<FlagSetJob>();
-                //	//flagSetJob->setConstraint(this);
-                //	flagSetJob->setFlag(physics::PxConstraintFlag::ePROJECTION);
-                //	flagSetJob->setFlagValue(true);
-                //	flagSetJob->setCoroutine(true);
-
-                //	if (isControlComponent())
-                //	{
-                //		controlsTask->queueJob(flagSetJob);
-                //	}
-                //	else
-                //	{
-                //		physicsTask->queueJob(flagSetJob);
-                //	}
-                //}
-
-                // if (!isControlComponent())
-                //{
-                //	SmartPtr<PxD6Joint> d6joint = getD6Joint();
-                //	if (d6joint)
-                //	{
-                //		setLocalPose(PxJointActorIndex::eACTOR0, m_localFrame0);
-                //		setLocalPose(PxJointActorIndex::eACTOR1, m_localFrame1);
-                //	}
-                // }
-
-                // SmartPtr<IStateNode> rotatingGraphicsNode = getRotatingGraphicsNode();
-                // if (rotatingGraphicsNode)
-                //{
-                //	SmartPtr<Rigidbody> body = rotatingGraphicsNode->getRigidBody();
-                //	if (body)
-                //	{
-                //		body->setHasRenderTransform(false);
-                //	}
-                // }
-
-                // if (m_bodyA)
-                //{
-                //	m_bodyA->wakeUp(1.0);
-                // }
-
-                // if (m_bodyB)
-                //{
-                //	m_bodyB->wakeUp(1.0);
-                // }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
         void Constraint::makeBroken()
         {
             setBrokenState( true );
@@ -2070,49 +1293,6 @@ namespace fb
 
         void Constraint::leaveCrashState()
         {
-        }
-
-        void Constraint::updateFlightState()
-        {
-        }
-
-        void Constraint::leaveFlightState()
-        {
-            // try
-            //{
-            //	SmartPtr<IFSM> fsm = getFSM();
-            //	Modelscene::ModelComponentStates state =
-            //(Modelscene::ModelComponentStates)fsm->getCurrentState(); 	if (state !=
-            // Modelscene::MODEL_COMPONENT_STATE_CRASH)
-            //	{
-            //		auto applicationManager = core::IApplicationManager::instance();
-            //		auto taskManager = applicationManager->getTaskManager();
-
-            //		makeUnbreakable(false);
-
-            //		SmartPtr<IStateNode> rotatingGraphicsNode = getRotatingGraphicsNode();
-            //		if (rotatingGraphicsNode)
-            //		{
-            //			Quaternion<real_Num> q = Quaternion<real_Num>::identity();
-            //			rotatingGraphicsNode->setOrientation(q);
-            //		}
-
-            //		SmartPtr<Rotor> rotor = getRotor();
-            //		if (rotor)
-            //		{
-            //			SmartPtr<IStateNode> rotatingGraphicsNode = rotor->getRotatingGraphicsNode();
-            //			if (rotatingGraphicsNode)
-            //			{
-            //				Quaternion<real_Num> mastOrietation = Quaternion<real_Num>::identity();
-            //				rotatingGraphicsNode->setOrientation(mastOrietation);
-            //			}
-            //		}
-            //	}
-            //}
-            // catch (std::exception& e)
-            //{
-            //	FB_LOG_EXCEPTION(e);
-            //}
         }
 
         void Constraint::enterWorkbenchState()
@@ -2630,26 +1810,6 @@ namespace fb
         {
         }
 
-        u32 Constraint::getEffectNameHash()
-        {
-            // auto applicationManager = core::IApplicationManager::instance();
-            // auto systemSettings =
-            // fb::static_pointer_cast<SystemSettings>(applicationManager->getSystemSettings());
-            // FB_ASSERT(applicationManager);
-            // FB_ASSERT(systemSettings);
-
-            // if (!systemSettings->getNightMode())
-            //{
-            //	return m_effectNameHash;
-            // }
-            // else
-            //{
-            //	return m_effectNameNightHash;
-            // }
-
-            return 0;
-        }
-
         SmartPtr<physics::IConstraintD6> Constraint::getD6Joint()
         {
             return m_d6joint;
@@ -2749,7 +1909,6 @@ namespace fb
             // }
         }
 
-        
         // void Constraint::setDrive(PxD6Drive::Enum index, const SmartPtr<IPhysicsConstraint3> drive)
         //{
         //	//if (m_d6joint)
@@ -2883,9 +2042,9 @@ namespace fb
             return m_isMotor;
         }
 
-        void Constraint::setMotor( bool val )
+        void Constraint::setMotor( bool motor )
         {
-            m_isMotor = val;
+            m_isMotor = motor;
         }
 
         SmartPtr<ITransformNode> Constraint::getAnchor0() const
@@ -3337,22 +2496,12 @@ namespace fb
             // JOB_END()
         }
 
-        SmartPtr<Rigidbody> &Constraint::getBodyA()
+        SmartPtr<Rigidbody> Constraint::getBodyA() const
         {
             return m_bodyA;
         }
 
-        const SmartPtr<Rigidbody> &Constraint::getBodyA() const
-        {
-            return m_bodyA;
-        }
-
-        SmartPtr<Rigidbody> &Constraint::getBodyB()
-        {
-            return m_bodyB;
-        }
-
-        const SmartPtr<Rigidbody> &Constraint::getBodyB() const
+        SmartPtr<Rigidbody> Constraint::getBodyB() const
         {
             return m_bodyB;
         }
@@ -3376,5 +2525,6 @@ namespace fb
         {
             return m_channel;
         }
+
     }  // namespace scene
 }  // end namespace fb

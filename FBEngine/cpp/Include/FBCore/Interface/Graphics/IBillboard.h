@@ -6,7 +6,7 @@
 #include <FBCore/Math/Vector2.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Quaternion.h>
-#include <FBCore/Base/ColourF.h>
+#include <FBCore/Core/ColourF.h>
 
 namespace fb
 {

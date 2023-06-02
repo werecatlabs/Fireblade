@@ -231,7 +231,7 @@ namespace fb
             FB_ASSERT( handle );
 
             auto uuid = handle->getUUID();
-            if( StringUtil::isNullOrEmpty( handle->getUUID() ) )
+            if( StringUtil::isNullOrEmpty( uuid ) )
             {
                 uuid = StringUtil::getUUID();
                 handle->setUUID( uuid );

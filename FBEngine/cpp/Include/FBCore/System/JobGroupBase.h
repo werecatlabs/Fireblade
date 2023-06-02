@@ -46,11 +46,6 @@ namespace fb
         void coroutine_execute() override;
         void coroutine_execute_step( SmartPtr<IObjectYield> &rYield ) override;
 
-        bool hasListeners() const override;
-        Array<SmartPtr<IJobListener>> getListeners() const override;
-        void setListeners( const Array<SmartPtr<IJobListener>> &val ) override;
-        void addListener( SmartPtr<IJobListener> val ) override;
-
         bool isCoroutine() const override;
         void setCoroutine( bool val ) override;
 

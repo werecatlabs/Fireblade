@@ -24,9 +24,9 @@ namespace fb
             void handleTransform( const Transform3<real_Num> &t );
 
             Rigidbody *getOwner() const;
-            void setOwner( Rigidbody *val );
+            void setOwner( Rigidbody *owner );
 
-            //FB_CLASS_REGISTER_DECL;
+            FB_CLASS_REGISTER_DECL;
 
         protected:
             Rigidbody *m_owner = nullptr;

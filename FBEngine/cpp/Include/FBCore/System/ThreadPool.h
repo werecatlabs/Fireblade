@@ -3,9 +3,9 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IThreadPool.h>
-#include <FBCore/FSM/FSMListener.h>
+#include <FBCore/Core/FSMListener.h>
 #include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/FixedArray.h>
+#include <FBCore/Core/FixedArray.h>
 #include <FBCore/System/WorkerThread.h>
 
 namespace fb

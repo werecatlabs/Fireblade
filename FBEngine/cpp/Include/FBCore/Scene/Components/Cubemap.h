@@ -27,8 +27,8 @@ namespace fb
 
         protected:
             SmartPtr<render::ICubemap> m_cubemapGenerator;
-            f32 m_cameraDistance;
-            f32 m_distanceTheshold;
+            f32 m_cameraDistance = 0.0f;
+            f32 m_distanceTheshold = 0.0f;
         };
     }  // namespace scene
 }  // end namespace fb

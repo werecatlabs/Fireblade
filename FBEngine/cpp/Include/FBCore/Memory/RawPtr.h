@@ -2,7 +2,7 @@
 #define __FB_RawPointer_h__
 
 #include <FBCore/FBCoreConfig.h>
-#include <FBCore/Base/Exception.h>
+#include <FBCore/Core/Exception.h>
 #include <type_traits>
 
 namespace fb

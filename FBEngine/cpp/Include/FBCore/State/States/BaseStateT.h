@@ -5,7 +5,7 @@
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Base/Properties.h>
+#include <FBCore/Core/Properties.h>
 
 namespace fb
 {

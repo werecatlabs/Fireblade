@@ -48,57 +48,18 @@ namespace fb
             /** Creates a collision from the type provided.
             @remarks Creates a collision shape from the type specified with default properties.
             @param type The of collision to be created.
-            @return An instance of a collision shape.
-            */
-            virtual SmartPtr<IPhysicsShape3> createCollisionShapeByType( hash64 type ) = 0;
-
-            /** Creates a collision from the type provided.
-            @remarks Creates a collision shape from the type specified with default properties.
-            @param type The of collision to be created.
+            @param data The data used to create the shape.
             @return An instance of a collision shape.
             */
             virtual SmartPtr<IPhysicsShape3> createCollisionShapeByType(
                 hash64 type, SmartPtr<ISharedObject> data ) = 0;
 
             /** Creates a collision shape from the template type provided.
+            @param data The data used to create the shape.
             @return An instance of a collision shape.
             */
             template <class T>
-            SmartPtr<T> createCollisionShape()
-            {
-                auto typeInfo = T::typeInfo();
-                FB_ASSERT( typeInfo != 0 );
-
-                auto typeManager = TypeManager::instance();
-                FB_ASSERT( typeManager );
-
-                auto typeHash = typeManager->getHash( typeInfo );
-                FB_ASSERT( typeHash != 0 );
-
-                auto shape = createCollisionShapeByType( typeHash );
-                FB_ASSERT( fb::dynamic_pointer_cast<T>( shape ) );
-                return fb::static_pointer_cast<T>( shape );
-            }
-
-            /** Creates a collision shape from the template type provided.
-            @return An instance of a collision shape.
-            */
-            template <class T>
-            SmartPtr<T> createCollisionShape( SmartPtr<ISharedObject> data )
-            {
-                auto typeInfo = T::typeInfo();
-                FB_ASSERT( typeInfo != 0 );
-
-                auto typeManager = TypeManager::instance();
-                FB_ASSERT( typeManager );
-
-                auto typeHash = typeManager->getHash( typeInfo );
-                FB_ASSERT( typeHash != 0 );
-
-                auto shape = createCollisionShapeByType( typeHash, data );
-                FB_ASSERT( fb::dynamic_pointer_cast<T>( shape ) );
-                return fb::static_pointer_cast<T>( shape );
-            }
+            SmartPtr<T> createCollisionShape( SmartPtr<ISharedObject> data );
 
             /** Destroys a collision shape. */
             virtual bool destroyCollisionShape( SmartPtr<IPhysicsShape3> collisionShape ) = 0;
@@ -177,7 +138,7 @@ namespace fb
             virtual SmartPtr<IConstraintDrive> createConstraintDrive() = 0;
 
             /** Creates a constraint linear limit. */
-            virtual SmartPtr<IConstraintLinearLimit> createConstraintLinearLimit() = 0;
+            virtual SmartPtr<IConstraintLinearLimit> createConstraintLinearLimit(real_Num extent, real_Num contactDist = real_Num(-1.0)) = 0;
 
             /** Creates raycast hit data. */
             virtual SmartPtr<IRaycastHit> createRaycastHitData() = 0;
@@ -202,6 +163,24 @@ namespace fb
 
             FB_CLASS_REGISTER_DECL;
         };
+
+        template <class T>
+        SmartPtr<T> IPhysicsManager::createCollisionShape( SmartPtr<ISharedObject> data )
+        {
+            auto typeInfo = T::typeInfo();
+            FB_ASSERT( typeInfo != 0 );
+
+            auto typeManager = TypeManager::instance();
+            FB_ASSERT( typeManager );
+
+            auto typeHash = typeManager->getHash( typeInfo );
+            FB_ASSERT( typeHash != 0 );
+
+            auto shape = createCollisionShapeByType( typeHash, data );
+            FB_ASSERT( fb::dynamic_pointer_cast<T>( shape ) );
+            return fb::static_pointer_cast<T>( shape );
+        }
+
     }  // end namespace physics
 }  // end namespace fb
 

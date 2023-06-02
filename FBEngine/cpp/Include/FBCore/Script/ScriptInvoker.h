@@ -4,7 +4,7 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Interface/Script/IScriptInvoker.h>
-#include <FBCore/Base/HashMap.h>
+#include <FBCore/Core/HashMap.h>
 #include <FBCore/System/ThreadDebug.h>
 
 namespace fb

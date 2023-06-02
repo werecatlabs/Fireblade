@@ -1,8 +1,14 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/UI/Text.h>
 #include <FBCore/Scene/Components/UI/Layout.h>
-#include <FBCore/Scene/Components/UI/CanvasTransform.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Scene/Components/UI/LayoutTransform.h>
+#include <FBCore/Interface/Graphics/IMaterial.h>
+#include <FBCore/Interface/Graphics/IGraphicsSystem.h>
+#include <FBCore/Interface/UI/IUIManager.h>
+#include <FBCore/Interface/UI/IUIText.h>
+#include <FBCore/Interface/Resource/IResourceDatabase.h>
+#include <FBCore/Core/BitUtil.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {
@@ -100,22 +106,6 @@ namespace fb
             catch( std::exception &e )
             {
                 FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void Text::play()
-        {
-            if( !m_textObject )
-            {
-                createUI();
-            }
-        }
-
-        void Text::edit()
-        {
-            if( !m_textObject )
-            {
-                createUI();
             }
         }
 

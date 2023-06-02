@@ -1,6 +1,11 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/Mesh.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Mesh/IMesh.h>
+#include <FBCore/Interface/Mesh/IMeshResource.h>
+#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/Interface/Resource/IResourceDatabase.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Core/Path.h>
 
 namespace fb
 {
@@ -130,9 +135,12 @@ namespace fb
 
             if( !meshResource )
             {
-                auto meshResourceResult =
-                    resourceDatabase->createOrRetrieveByType<IMeshResource>( meshPath );
-                meshResource = meshResourceResult.first;
+                if( !StringUtil::isNullOrEmpty( meshPath ) )
+                {
+                    auto meshResourceResult =
+                        resourceDatabase->createOrRetrieveByType<IMeshResource>( meshPath );
+                    meshResource = meshResourceResult.first;
+                }
             }
 
             setMeshResource( meshResource );

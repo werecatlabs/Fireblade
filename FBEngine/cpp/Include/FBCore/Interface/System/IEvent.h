@@ -81,6 +81,15 @@ namespace fb
         static const hash_type contact;
         static const hash_type contactProcess;
 
+        static const hash_type queued;
+        static const hash_type execute;
+        static const hash_type completed;
+
+        static const hash_type stateChanged;
+        static const hash_type stateMessage;
+
+        static const hash_type transform;
+
         /** Virtual destructor. */
         ~IEvent() override = default;
 

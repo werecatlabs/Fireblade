@@ -5,7 +5,7 @@
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Interface/System/IProfiler.h>
 #include <FBCore/Thread/Threading.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 
 #if ENABLE_PROFILER
 #    define FB_PROFILE_START( profile ) profile->start();

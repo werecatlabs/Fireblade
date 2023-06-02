@@ -1,8 +1,8 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/TaskManager.h>
-#include <FBCore/Base/BitUtil.h>
-#include <FBCore/Base/DebugTrace.h>
-#include <FBCore/Base/LogManager.h>
+#include <FBCore/Core/BitUtil.h>
+#include <FBCore/Core/DebugTrace.h>
+#include <FBCore/Core/LogManager.h>
 #include <FBCore/Math/Math.h>
 #include <FBCore/Interface/System/IJob.h>
 #include <FBCore/Interface/System/IProfile.h>

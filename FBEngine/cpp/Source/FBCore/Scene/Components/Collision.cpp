@@ -4,9 +4,9 @@
 #include <FBCore/Interface/Physics/IPhysicsManager.h>
 #include <FBCore/Interface/Physics/IPhysicsMaterial3.h>
 #include <FBCore/Interface/Physics/IPhysicsShape3.h>
-#include <FBCore/Base/Exception.h>
-#include <FBCore/Base/LogManager.h>
-#include <FBCore/Math/Core/MathUtil.h>
+#include <FBCore/Core/Exception.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Math/MathUtil.h>
 
 namespace fb
 {

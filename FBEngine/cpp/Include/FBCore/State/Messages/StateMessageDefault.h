@@ -2,8 +2,8 @@
 #define StateMessageDefault_h__
 
 #include <FBCore/State/Messages/StateMessage.h>
-#include "FBCore/Base/Parameter.h"
-#include <FBCore/Base/HashMap.h>
+#include "FBCore/Core/Parameter.h"
+#include <FBCore/Core/HashMap.h>
 
 namespace fb
 {

@@ -1,6 +1,5 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Memory/FactoryUtil.h>
-#include <FBCore/Interface/System/IJobListener.h>
 #include <FBCore/System/Job.h>
 #include <FBCore/System/JobQueue.h>
 #include <FBCore/System/ProcessManager.h>

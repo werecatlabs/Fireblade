@@ -6,8 +6,8 @@
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Triangle3.h>
 #include <FBCore/Math/Matrix4.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/StringTypes.h>
 
 namespace fb
 {

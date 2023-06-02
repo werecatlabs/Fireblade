@@ -5,7 +5,7 @@
 #include <FBCore/Interface/System/ITaskManager.h>
 #include <FBCore/Memory/CSharedObject.h>
 #include <FBCore/Atomics/Atomics.h>
-#include <FBCore/Base/FixedArray.h>
+#include <FBCore/Core/FixedArray.h>
 #include <FBCore/System/Task.h>
 
 namespace fb

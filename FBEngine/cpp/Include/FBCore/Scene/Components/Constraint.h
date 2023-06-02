@@ -94,10 +94,6 @@ namespace fb
             Constraint() = default;
             ~Constraint() override;
 
-            void initialise( const String &objectID );
-            void initialise( SmartPtr<Rigidbody> bodyA, SmartPtr<Rigidbody> bodyB );
-            void setupSuspension( SmartPtr<Rigidbody> bodyA, SmartPtr<Rigidbody> bodyB );
-
             void preUpdate() override;
 
             void load( SmartPtr<ISharedObject> data ) override;
@@ -112,17 +108,13 @@ namespace fb
 
             void resetPositions();
 
-            Vector3<real_Num> getRelativeAngles();
-
             void reset( const Vector3<real_Num> &position );
             void restore();
 
-            SmartPtr<Rigidbody> &getBodyA();
-            const SmartPtr<Rigidbody> &getBodyA() const;
+            SmartPtr<Rigidbody> getBodyA() const;
             void setBodyA( SmartPtr<Rigidbody> val );
 
-            SmartPtr<Rigidbody> &getBodyB();
-            const SmartPtr<Rigidbody> &getBodyB() const;
+            SmartPtr<Rigidbody> getBodyB() const;
             void setBodyB( SmartPtr<Rigidbody> val );
 
             SmartPtr<physics::IConstraintD6> getD6Joint();
@@ -135,29 +127,7 @@ namespace fb
 
             void setBrokenState( bool bBroken );
 
-            void enterFlightState();
-            void enterCrashState();
-            void leaveCrashState();
-
-            void updateFlightState();
-            void leaveFlightState();
-
-            void enterWorkbenchState();
-            void updateWorkbenchState();
-            void leaveWorkbenchState();
-
-            void enterDestroyedState();
-            void updateDestroyedState();
-            void leaveDestroyedState();
-
-            void enterResetState();
-            void updateResetState();
-            void leaveResetState();
-
             void setBreakState( bool state );
-
-            // particle effect to fire if this join breaks
-            u32 getEffectNameHash();
 
             float getOriginalBreakForce() const;
             float getOriginalBreakTorque() const;
@@ -191,7 +161,7 @@ namespace fb
             void setFixedJoint( SmartPtr<physics::IConstraintFixed3> val );
 
             bool isMotor() const;
-            void setMotor( bool val );
+            void setMotor( bool motor );
 
             SmartPtr<ITransformNode> getAnchor0() const;
             void setAnchor0( SmartPtr<ITransformNode> val );
@@ -236,15 +206,31 @@ namespace fb
             Array<SmartPtr<ISharedObject>> getChildObjects() const override;
 
             Type getType() const;
-            void setType( Type val );
+            void setType( Type type );
+
+            void setupConstraint( SmartPtr<Rigidbody> bodyA, SmartPtr<Rigidbody> bodyB );
+            void setupSuspension( SmartPtr<Rigidbody> bodyA, SmartPtr<Rigidbody> bodyB );
 
             FB_CLASS_REGISTER_DECL;
 
         protected:
+            void enterCrashState();
+            void leaveCrashState();
+
+            void enterWorkbenchState();
+            void updateWorkbenchState();
+            void leaveWorkbenchState();
+
+            void enterDestroyedState();
+            void updateDestroyedState();
+            void leaveDestroyedState();
+
+            void enterResetState();
+            void updateResetState();
+            void leaveResetState();
+
             void setConstraintType( const String &constraintType, Vector3<real_Num> &tLimits,
                                     Vector3<real_Num> &aLimits );
-
-            void setupRotor();
 
             int lookup( String shape );
 

@@ -2,12 +2,12 @@
 #define StateMessageFragmentParam_h__
 
 #include <FBCore/State/Messages/StateMessage.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 #include <FBCore/Math/Vector2.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Vector4.h>
-#include <FBCore/Base/ColourF.h>
-#include <FBCore/Base/ColourUtil.h>
+#include <FBCore/Core/ColourF.h>
+#include <FBCore/Core/ColourUtil.h>
 
 namespace fb
 {

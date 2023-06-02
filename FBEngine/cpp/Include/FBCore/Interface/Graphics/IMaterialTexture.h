@@ -2,8 +2,8 @@
 #define IMaterialNodeTexture_h__
 
 #include <FBCore/Interface/Graphics/IMaterialNode.h>
-#include <FBCore/Base/StringTypes.h>
-#include <FBCore/Base/ColourF.h>
+#include <FBCore/Core/StringTypes.h>
+#include <FBCore/Core/ColourF.h>
 #include <FBCore/Math/Vector3.h>
 
 namespace fb

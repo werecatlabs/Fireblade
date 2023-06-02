@@ -125,6 +125,8 @@ namespace fb
              */
             virtual SmartPtr<IActor> getActorByName( const String &name ) const = 0;
 
+            virtual SmartPtr<IActor> getActorByFileId( const String &id ) const = 0;
+
             /**
              * Gets the component with the specified ID.
              * @param id The ID of the component to retrieve.
@@ -158,6 +160,21 @@ namespace fb
              * @return An array of SmartPtrs to components of the specified type.
              */
             virtual Array<SmartPtr<IComponent>> getComponents( u32 type ) const = 0;
+                        
+            /** Gets the list of types to ignore. */
+            virtual Array<String> getComponentFactoryIgnoreList() const = 0;
+
+            /** Sets the list of types to ignore. */
+            virtual void setComponentFactoryIgnoreList( const Array<String> &ignoreList ) = 0;
+
+            /** Gets the component factory to map components to a factory. */
+            virtual Map<String, String> getComponentFactoryMap() const = 0;
+
+            /** Sets the component factory to map components to a factory. */
+            virtual void setComponentFactoryMap( const Map<String, String> &map ) = 0;
+
+            /** Gets a factory to build a component. */
+            virtual String getComponentFactoryType( const String &type ) const = 0;
 
             /**
              * Returns an array of all components of the specified type attached to the actors in the current scene.
