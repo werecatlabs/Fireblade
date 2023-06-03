@@ -14,6 +14,8 @@
 #include <FBCore/Math/Cylinder3.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/Deque.h>
+#include <FBCore/Core/Set.h>
+#include <FBCore/Core/StringUtil.h>
 
 namespace fb
 {

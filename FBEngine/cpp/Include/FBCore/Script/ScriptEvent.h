@@ -2,14 +2,14 @@
 #define ScriptEvent_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/Script/IScriptEvent.h>
 
 namespace fb
 {
     
     /** A class used to store info for a scripted event. */
-    class ScriptEvent : public CSharedObject<IScriptEvent>
+    class ScriptEvent : public SharedObject<IScriptEvent>
     {
     public:
         ScriptEvent();

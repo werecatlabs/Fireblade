@@ -26,7 +26,7 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, SceneManager, CSharedObject<fb::scene::ISceneManager> );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, SceneManager, SharedObject<fb::scene::ISceneManager> );
         constexpr auto size = 32768;
 
         SceneManager::SceneManager()

@@ -11,7 +11,7 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb, Component, CResource<IComponent> );
+        FB_CLASS_REGISTER_DERIVED( fb, Component, Resource<IComponent> );
         u32 Component::m_idExt = 0;
 
         Component::Component()
@@ -106,7 +106,7 @@ namespace fb
                     m_actor = nullptr;
                     m_owner = nullptr;
 
-                    CResource<IComponent>::unload( nullptr );
+                    Resource<IComponent>::unload( nullptr );
                 }
             }
             catch( std::exception &e )
@@ -594,7 +594,7 @@ namespace fb
             auto factoryManager = applicationManager->getFactoryManager();
             FB_ASSERT( factoryManager );
 
-            auto properties = CResource<IComponent>::getProperties();
+            auto properties = Resource<IComponent>::getProperties();
 
             const auto enabled = isEnabled();
             properties->setProperty( "Enabled", enabled );

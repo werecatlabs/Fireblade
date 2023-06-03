@@ -1,13 +1,13 @@
 #ifndef LookupTable_h__
 #define LookupTable_h__
 
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/FBCoreTypes.h>
 #include <vector>
 
 namespace fb
 {
-    class LookupTable : public CSharedObject<ISharedObject>
+    class LookupTable : public SharedObject<ISharedObject>
     {
     public:
         LookupTable();

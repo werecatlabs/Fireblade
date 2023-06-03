@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/ISceneManager.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/UnorderedMap.h>
 #include <FBCore/Core/UtilityTypes.h>
@@ -18,7 +18,7 @@ namespace fb
         @author	Zane Desir
         @version 1.0
         */
-        class SceneManager : public CSharedObject<ISceneManager>
+        class SceneManager : public SharedObject<ISceneManager>
         {
         public:
             SceneManager();

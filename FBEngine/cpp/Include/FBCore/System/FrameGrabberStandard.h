@@ -3,12 +3,12 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IFrameGrabber.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     
-    class FrameGrabberStandard : public CSharedObject<IFrameGrabber>
+    class FrameGrabberStandard : public SharedObject<IFrameGrabber>
     {
     public:
         FrameGrabberStandard();

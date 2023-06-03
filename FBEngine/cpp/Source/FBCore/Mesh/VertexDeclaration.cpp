@@ -1,21 +1,21 @@
 #include <FBCore/FBCorePCH.h>
-#include <FBCore/Mesh/CVertexDeclaration.h>
+#include <FBCore/Mesh/VertexDeclaration.h>
 #include <FBCore/FBCore.h>
-#include <FBCore/Mesh/CVertexElement.h>
+#include <FBCore/Mesh/VertexElement.h>
 
 namespace fb
 {
-    CVertexDeclaration::CVertexDeclaration()
+    VertexDeclaration::VertexDeclaration()
     {
         m_elements.reserve( 4 );
     }
 
-    CVertexDeclaration::~CVertexDeclaration()
+    VertexDeclaration::~VertexDeclaration()
     {
         unload( nullptr );
     }
 
-    void CVertexDeclaration::unload( SmartPtr<ISharedObject> data )
+    void VertexDeclaration::unload( SmartPtr<ISharedObject> data )
     {
         try
         {
@@ -35,7 +35,7 @@ namespace fb
         }
     }
 
-    SmartPtr<IVertexElement> CVertexDeclaration::addElement(
+    SmartPtr<IVertexElement> VertexDeclaration::addElement(
         u16 source, u32 offset, VertexElementSemantic elementSemantic,
         IVertexElement::VertexElementType elementType, u32 index /*= 0*/ )
     {
@@ -103,7 +103,7 @@ namespace fb
         auto factoryManager = applicationManager->getFactoryManager();
         FB_ASSERT( factoryManager );
 
-        auto element = factoryManager->make_ptr<CVertexElement>();
+        auto element = factoryManager->make_ptr<VertexElement>();
         element->setSource( source );
         element->setSize( size );
         element->setOffset( offset );
@@ -115,7 +115,7 @@ namespace fb
         return element;
     }
 
-    u32 CVertexDeclaration::getSize( u16 source ) const
+    u32 VertexDeclaration::getSize( u16 source ) const
     {
         u32 sz = 0;
 
@@ -130,7 +130,7 @@ namespace fb
         return sz;
     }
 
-    SmartPtr<IVertexElement> CVertexDeclaration::findElementBySemantic(
+    SmartPtr<IVertexElement> VertexDeclaration::findElementBySemantic(
         VertexElementSemantic elementSemantic, u32 index )
     {
         for( auto &element : m_elements )
@@ -145,7 +145,7 @@ namespace fb
         return nullptr;
     }
 
-    Array<SmartPtr<IVertexElement>> CVertexDeclaration::findElementsBySource( u16 source ) const
+    Array<SmartPtr<IVertexElement>> VertexDeclaration::findElementsBySource( u16 source ) const
     {
         Array<SmartPtr<IVertexElement>> retList;
         retList.reserve( m_elements.size() );
@@ -160,7 +160,7 @@ namespace fb
         return retList;
     }
 
-    SmartPtr<IVertexDeclaration> CVertexDeclaration::clone() const
+    SmartPtr<IVertexDeclaration> VertexDeclaration::clone() const
     {
         auto applicationManager = core::IApplicationManager::instance();
         FB_ASSERT( applicationManager );
@@ -168,23 +168,23 @@ namespace fb
         auto factoryManager = applicationManager->getFactoryManager();
         FB_ASSERT( factoryManager );
 
-        auto vertexDec = factoryManager->make_ptr<CVertexDeclaration>();
+        auto vertexDec = factoryManager->make_ptr<VertexDeclaration>();
         vertexDec->m_elements = m_elements;
 
         return vertexDec;
     }
 
-    const Array<SmartPtr<IVertexElement>> &CVertexDeclaration::getElements() const
+    const Array<SmartPtr<IVertexElement>> &VertexDeclaration::getElements() const
     {
         return m_elements;
     }
 
-    Array<SmartPtr<IVertexElement>> &CVertexDeclaration::getElements()
+    Array<SmartPtr<IVertexElement>> &VertexDeclaration::getElements()
     {
         return m_elements;
     }
 
-    bool CVertexDeclaration::compare( SmartPtr<IVertexDeclaration> other ) const
+    bool VertexDeclaration::compare( SmartPtr<IVertexDeclaration> other ) const
     {
         auto otherElements = other->getElements();
         if( m_elements.size() != otherElements.size() )

@@ -2,23 +2,23 @@
 #define VertexElement_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/Mesh/IVertexElement.h>
 #include <FBCore/Interface/Mesh/IVertexDeclaration.h>
 
 namespace fb
 {
     //---------------------------------------------
-    class CVertexElement : public CSharedObject<IVertexElement>
+    class VertexElement : public SharedObject<IVertexElement>
     {
     public:
-        CVertexElement();
+        VertexElement();
 
-        CVertexElement( u16 source, u32 size, u32 offset,
+        VertexElement( u16 source, u32 size, u32 offset,
                         IVertexDeclaration::VertexElementSemantic semantic,
                         VertexElementType type, u8 index = 0 );
 
-        ~CVertexElement() override;
+        ~VertexElement() override;
 
         void getElementData( void *vertexData, void **elementData ) const override;
         void getElementData( void *vertexData, f32 **elementData ) const override;
@@ -37,7 +37,7 @@ namespace fb
         void setType( VertexElementType type ) override;
         void setIndex( u8 index ) override;
 
-        bool operator==( const CVertexElement &rhs ) const;
+        bool operator==( const VertexElement &rhs ) const;
 
         bool compare( SmartPtr<IVertexElement> other ) const override;
 

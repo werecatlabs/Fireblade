@@ -4,9 +4,9 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, FactoryManager, CSharedObject<IFactoryManager> );
+    FB_CLASS_REGISTER_DERIVED( fb, FactoryManager, SharedObject<IFactoryManager> );
 
-    FactoryManager::FactoryManager() : CSharedObject<IFactoryManager>()
+    FactoryManager::FactoryManager() : SharedObject<IFactoryManager>()
     {
         auto factories = fb::make_shared<ConcurrentArray<SmartPtr<IFactory>>>();
         factories->reserve( 1024 );

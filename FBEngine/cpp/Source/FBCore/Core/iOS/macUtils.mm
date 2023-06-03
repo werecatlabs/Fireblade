@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <Foundation/Foundation.h>
-#include "FBCore/Base/iOS/macUtils.h"
+#include "FBCore/Core/iOS/macUtils.h"
 
 namespace fb {
 

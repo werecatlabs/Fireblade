@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/ITaskManager.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Core/FixedArray.h>
 #include <FBCore/System/Task.h>
@@ -12,11 +12,11 @@ namespace fb
 {
 
     /** Default task manager implementation.  */
-    class TaskManager : public CSharedObject<ITaskManager>
+    class TaskManager : public SharedObject<ITaskManager>
     {
     public:
         /* Used to lock all the tasks. */
-        class Lock : public CSharedObject<ISharedObject>
+        class Lock : public SharedObject<ISharedObject>
         {
         public:
             Lock();

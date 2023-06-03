@@ -3,16 +3,16 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Mesh/ISubMesh.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
-    //---------------------------------------------
-    class CSubMesh : public CSharedObject<ISubMesh>
+    
+    class SubMesh : public SharedObject<ISubMesh>
     {
     public:
-        CSubMesh();
-        ~CSubMesh() override;
+        SubMesh();
+        ~SubMesh() override;
 
         /** @copydoc IObject::unload */
         void unload( SmartPtr<ISharedObject> data ) override;

@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    class FBCore : public CSharedObject<ISharedObject>
+    class FBCore : public SharedObject<ISharedObject>
     {
     public:
         FBCore() = default;

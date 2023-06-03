@@ -3,14 +3,14 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IFrameStatistics.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/FixedArray.h>
 #include <FBCore/Atomics/AtomicFloat.h>
 #include <FBCore/Thread/Threading.h>
 
 namespace fb
 {
-    class FrameStatistics : public CSharedObject<IFrameStatistics>
+    class FrameStatistics : public SharedObject<IFrameStatistics>
     {
     public:
         FrameStatistics();

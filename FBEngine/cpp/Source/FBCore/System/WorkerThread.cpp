@@ -12,7 +12,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, WorkerThread, CSharedObject<IWorkerThread> );
+    FB_CLASS_REGISTER_DERIVED( fb, WorkerThread, SharedObject<IWorkerThread> );
 
     s32 WorkerThread::m_threadIdExt = static_cast<s32>( Thread::ThreadId::WorkerThread );
 

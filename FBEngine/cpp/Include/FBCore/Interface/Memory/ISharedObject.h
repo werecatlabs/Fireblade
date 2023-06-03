@@ -4,6 +4,7 @@
 #include <FBCore/Interface/Memory/IObject.h>
 #include <FBCore/Memory/SmartPtr.h>
 #include <FBCore/Core/Array.h>
+#include <FBCore/Memory/GarbageCollector.h>
 
 #if FB_TRACK_REFERENCES
 #    include <FBCore/Memory/ObjectTracker.h>
@@ -128,31 +129,31 @@ namespace fb
          * @param func The name of the function where the reference is being added.
          * @returns The new reference count.
          */
-        virtual s32 addReference( void *address, const c8 *file, u32 line, const c8 *func ) = 0;
+        s32 addReference( void *address, const c8 *file, u32 line, const c8 *func );
 
         /**
          * Adds a reference to the object and increments the reference counter.
          *
          * @return The new reference count.
          */
-        virtual s32 addReference() = 0;
+        s32 addReference();
 
         /** Removes a reference to the object and decrements the reference counter.
         @returns
             Returns true if the object was deleted.
         */
-        virtual bool removeReference( void *address, const c8 *file = "??", u32 line = 0,
-                                      const c8 *func = "??" ) = 0;
+        bool removeReference( void *address, const c8 *file = "??", u32 line = 0,
+                                      const c8 *func = "??" );
 
         /** Removes a reference to the object and decrements the reference counter.
         @return Returns true if the object was deleted.
         */
-        virtual bool removeReference() = 0;
+        bool removeReference();
 
         /** Gets the reference count.
         @return The number of references.
         */
-        virtual s32 getReferences() const = 0;
+        s32 getReferences() const;
 
         /** Gets the reference count.
         @return The number of references.
@@ -328,10 +329,7 @@ namespace fb
          * @return The shared object instance.
          */
         template <class B>
-        const SmartPtr<B> getSharedFromThis() const
-        {
-            return SmartPtr<B>( (B *)this );
-        }
+        const SmartPtr<B> getSharedFromThis() const;
 
         /**
          * Gets the shared object of type B from this instance.
@@ -340,13 +338,123 @@ namespace fb
          * @return A SmartPtr<B> pointing to the same object as the 'this' pointer.
          */
         template <class B>
-        SmartPtr<B> getSharedFromThis()
-        {
-            return SmartPtr<B>( (B *)this );
-        }
+        SmartPtr<B> getSharedFromThis();
 
         FB_CLASS_REGISTER_DECL;
+
+    protected:
+        atomic_u32 m_objectId = std::numeric_limits<u32>::max();
+        atomic_s32 *m_references = nullptr;
+        atomic_u8 *m_flags = nullptr;
+        Handle *m_handle = nullptr;
+        Atomic<LoadingState> *m_loadingState = nullptr;
     };
+
+    inline s32 ISharedObject::addReference( void *address, const c8 *file, const u32 line, const c8 *func )
+    {
+#if FB_TRACK_REFERENCES
+        auto references = ++( *m_references );
+
+        // FB_ASSERT( isGarbageCollected() && references > 0 );
+        FB_ASSERT( references < 1e10 );
+
+#    if FB_TRACK_STRONG_REFERENCES
+        auto &objectTracker = ObjectTracker::instance();
+        objectTracker.addRef( this, address, file, line, func );
+#    endif
+
+        return references;
+#else
+        return ++( *m_references );
+#endif
+    }
+
+    inline s32 ISharedObject::addReference()
+    {
+#if FB_TRACK_REFERENCES
+#    if FB_TRACK_STRONG_REFERENCES
+        auto &gc = GarbageCollector::instance();
+        auto references = gc.addReference( SharedObject<T>::typeInfo(), m_objectId );
+
+        // FB_ASSERT( isGarbageCollected() && references > 0 );
+        FB_ASSERT( references < 1e10 );
+
+        auto address = (void *)this;
+        const c8 *file = __FILE__;
+        const u32 line = __LINE__;
+        const c8 *func = __FUNCTION__;
+
+        auto &objectTracker = ObjectTracker::instance();
+        objectTracker.addRef( this, address, file, line, func );
+
+        return references;
+#    else
+        auto &gc = GarbageCollector::instance();
+        return gc.addReference( SharedObject<T>::typeInfo(), m_objectId );
+#    endif
+#else
+        return ++( *m_references );
+#endif
+    }
+
+    inline bool ISharedObject::removeReference( void *address, const c8 *file, const u32 line, const c8 *func )
+    {
+#if FB_TRACK_REFERENCES
+        auto &objectTracker = ObjectTracker::instance();
+        objectTracker.removeRef( this, address, file, line, func );
+#endif
+
+        if( --( *m_references ) == 0 )
+        {
+            auto &gc = GarbageCollector::instance();
+            gc.destroyObject( getTypeInfo(), m_objectId );
+        }
+
+        return *m_references == 0;
+    }
+
+    inline bool ISharedObject::removeReference()
+    {
+#if FB_TRACK_REFERENCES
+#    if FB_TRACK_STRONG_REFERENCES
+        auto address = (void *)this;
+        const c8 *file = __FILE__;
+        const u32 line = __LINE__;
+        const c8 *func = __FUNCTION__;
+
+        auto &objectTracker = ObjectTracker::instance();
+        objectTracker.removeRef( this, address, file, line, func );
+#    endif
+#endif
+
+        if( --( *m_references ) == 0 )
+        {
+            auto &gc = GarbageCollector::instance();
+            gc.destroyObject( getTypeInfo(), m_objectId );
+            return true;
+        }
+
+        return false;
+    }
+
+    inline s32 ISharedObject::getReferences() const
+    {
+        FB_ASSERT( m_references );
+        return *m_references;
+    }
+
+    template <class B>
+    const SmartPtr<B> ISharedObject::getSharedFromThis() const
+    {
+        return SmartPtr<B>( (B *)this );
+    }
+
+    template <class B>
+    SmartPtr<B> ISharedObject::getSharedFromThis()
+    {
+        return SmartPtr<B>( (B *)this );
+    }
+
 }  // end namespace fb
 
 #endif  // ISharedObject_h__

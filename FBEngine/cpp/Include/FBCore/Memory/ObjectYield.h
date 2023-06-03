@@ -2,18 +2,18 @@
 #define CObjectYield_h__
 
 #include <FBCore/Interface/Memory/IObjectYield.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Memory/RawPtr.h>
 
 namespace fb
 {
 
-    class CObjectYield : public CSharedObject<IObjectYield>
+    class ObjectYield : public SharedObject<IObjectYield>
     {
     public:
-        CObjectYield();
-        CObjectYield( RawPtr<IObject> pObject );
-        ~CObjectYield() override;
+        ObjectYield();
+        ObjectYield( RawPtr<IObject> pObject );
+        ~ObjectYield() override;
 
         void operator()();
 

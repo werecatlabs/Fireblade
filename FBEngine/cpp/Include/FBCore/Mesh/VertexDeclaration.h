@@ -3,17 +3,17 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/FBCoreTypes.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/Mesh/IVertexDeclaration.h>
 
 namespace fb
 {
-    //---------------------------------------------
-    class CVertexDeclaration : public CSharedObject<IVertexDeclaration>
+    
+    class VertexDeclaration : public SharedObject<IVertexDeclaration>
     {
     public:
-        CVertexDeclaration();
-        ~CVertexDeclaration() override;
+        VertexDeclaration();
+        ~VertexDeclaration() override;
 
         void unload( SmartPtr<ISharedObject> data ) override;
 

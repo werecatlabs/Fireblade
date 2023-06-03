@@ -1,7 +1,7 @@
 #ifndef FB_POOL_H
 #define FB_POOL_H
 
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Core/ConcurrentQueue.h>
 #include <FBCore/Memory/PoolAllocatorAligned.h>
@@ -11,7 +11,7 @@ namespace fb
 {
     /** Pool class to allocate memory. */
     template <class T, class A = std::allocator<T>>
-    class Pool : public CSharedObject<ISharedObject>
+    class Pool : public SharedObject<ISharedObject>
     {
     public:
         /** Default constructor. */

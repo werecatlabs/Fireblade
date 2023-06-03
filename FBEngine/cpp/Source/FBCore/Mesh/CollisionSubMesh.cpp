@@ -1,9 +1,9 @@
 #include <FBCore/FBCorePCH.h>
 #include "FBCore/Mesh/CollisionSubMesh.h"
 #include <FBCore/Core/Exception.h>
-#include "FBCore/Mesh/CSubMesh.h"
-#include "FBCore/Mesh/CMesh.h"
-#include "FBCore/Mesh/CVertexDeclaration.h"
+#include "FBCore/Mesh/SubMesh.h"
+#include "FBCore/Mesh/Mesh.h"
+#include "FBCore/Mesh/VertexDeclaration.h"
 
 #if FB_USE_OPCODE_LIB
 #    include <opcode/Opcode.h>
@@ -62,7 +62,7 @@ namespace fb
             // fill indices
             switch( indexBuffer->getIndexType() )
             {
-            case CIndexBuffer::Type::IT_16BIT:
+            case IndexBuffer::Type::IT_16BIT:
             {
                 const u16 *indexData = static_cast<u16 *>( indexBuffer->getIndexData() );
                 const u32 indexCount = indexBuffer->getNumIndices();
@@ -74,7 +74,7 @@ namespace fb
                 }
             }
             break;
-            case CIndexBuffer::Type::IT_32BIT:
+            case IndexBuffer::Type::IT_32BIT:
             {
                 const u32 *indexData = static_cast<u32 *>( indexBuffer->getIndexData() );
                 const u32 indexCount = indexBuffer->getNumIndices();
@@ -94,9 +94,9 @@ namespace fb
 
             // fill vertices
             {
-                const CVertexElement *posElem =
+                const VertexElement *posElem =
                     vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                        CVertexDeclaration::VertexElementSemantic::VES_POSITION, 0 );
+                        VertexDeclaration::VertexElementSemantic::VES_POSITION, 0 );
 
                 u32 numVerticies = vertexBuffer->getNumVerticies();
                 u32 vertexSize = vertexBuffer->getVertexDeclaration()->getSize();

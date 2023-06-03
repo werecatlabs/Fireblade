@@ -35,7 +35,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class MaterialSharedListener : public CSharedObject<IEventListener>
+            class MaterialSharedListener : public SharedObject<IEventListener>
             {
             public:
                 MaterialSharedListener() = default;

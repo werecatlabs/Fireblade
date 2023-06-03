@@ -22,7 +22,7 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, Scene, CSharedObject<IScene> );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, Scene, SharedObject<IScene> );
 
         Scene::Scene()
         {

@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IJobQueue.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 #if FB_USE_TBB
 
@@ -13,7 +13,7 @@
 namespace fb
 {
     
-    class JobQueueTBB : public CSharedObject<IJobQueue>
+    class JobQueueTBB : public SharedObject<IJobQueue>
     {
     public:
         JobQueueTBB();

@@ -53,7 +53,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class MaterialStateListener : public CSharedObject<IStateListener>
+            class MaterialStateListener : public SharedObject<IStateListener>
             {
             public:
                 MaterialStateListener() = default;

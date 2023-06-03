@@ -2,7 +2,7 @@
 #define InputState_h__
 
 #include <FBCore/State/States/BaseState.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {

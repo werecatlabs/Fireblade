@@ -3,13 +3,13 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IStateQueue.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <deque>
 
 namespace fb
 {
 
-    class StateQueue : public CSharedObject<IStateQueue>
+    class StateQueue : public SharedObject<IStateQueue>
     {
     public:
         StateQueue();

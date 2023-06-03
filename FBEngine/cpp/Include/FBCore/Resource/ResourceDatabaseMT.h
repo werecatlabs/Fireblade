@@ -1,15 +1,15 @@
 #ifndef CResourceDatabaseMT_h__
 #define CResourceDatabaseMT_h__
 
-#include <FBCore/Resource/CResourceDatabase.h>
+#include <FBCore/Resource/ResourceDatabase.h>
 
 namespace fb
 {
-    class CResourceDatabaseMT : public CResourceDatabase
+    class ResourceDatabaseMT : public ResourceDatabase
     {
     public:
-        CResourceDatabaseMT();
-        ~CResourceDatabaseMT() override;
+        ResourceDatabaseMT();
+        ~ResourceDatabaseMT() override;
 
         void load( SmartPtr<ISharedObject> data ) override;
         void unload( SmartPtr<ISharedObject> data ) override;
@@ -51,11 +51,11 @@ namespace fb
 
             void execute() override;
 
-            SmartPtr<CResourceDatabaseMT> getOwner() const;
-            void setOwner( SmartPtr<CResourceDatabaseMT> owner );
+            SmartPtr<ResourceDatabaseMT> getOwner() const;
+            void setOwner( SmartPtr<ResourceDatabaseMT> owner );
 
         private:
-            SmartPtr<CResourceDatabaseMT> m_owner;
+            SmartPtr<ResourceDatabaseMT> m_owner;
         };
 
         void getSceneObjects( SmartPtr<scene::IActor> actor, Array<SmartPtr<ISharedObject>> &objects ) const;

@@ -2,12 +2,12 @@
 #define CProcessManager_h__
 
 #include <FBCore/Interface/System/IProcessManager.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     
-    class ProcessManager : public CSharedObject<IProcessManager>
+    class ProcessManager : public SharedObject<IProcessManager>
     {
     public:
         ProcessManager();

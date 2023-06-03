@@ -17,7 +17,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, Properties, CSharedObject<ISharedObject> );
+    FB_CLASS_REGISTER_DERIVED( fb, Properties, SharedObject<ISharedObject> );
 
     static u32 NumPropertyGroups = 0;
 

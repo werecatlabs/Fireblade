@@ -2,7 +2,7 @@
 #define ScriptInvokerStandard_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/Script/IScriptInvoker.h>
 #include <FBCore/Core/HashMap.h>
 #include <FBCore/System/ThreadDebug.h>
@@ -10,7 +10,7 @@
 namespace fb
 {
     /** Implementation of IScriptInvoker the interface. */
-    class ScriptInvoker : public CSharedObject<IScriptInvoker>
+    class ScriptInvoker : public SharedObject<IScriptInvoker>
     {
     public:
         ScriptInvoker();

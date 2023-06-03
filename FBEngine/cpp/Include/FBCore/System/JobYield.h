@@ -1,14 +1,14 @@
 #ifndef JobYield_h__
 #define JobYield_h__
 
-#include <FBCore/Memory/CObjectYield.h>
+#include <FBCore/Memory/ObjectYield.h>
 
 namespace fb
 {
     namespace core
     {
 
-        class JobYield : public CSharedObject<CObjectYield>
+        class JobYield : public SharedObject<ObjectYield>
         {
         public:
             JobYield() = default;

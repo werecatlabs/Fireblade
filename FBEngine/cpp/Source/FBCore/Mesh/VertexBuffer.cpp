@@ -1,21 +1,21 @@
 #include <FBCore/FBCorePCH.h>
-#include <FBCore/Mesh/CVertexBuffer.h>
+#include <FBCore/Mesh/VertexBuffer.h>
 #include <FBCore/FBCore.h>
 
 namespace fb
 {
-    CVertexBuffer::CVertexBuffer() :
+    VertexBuffer::VertexBuffer() :
         m_vertexData( 0 ),
         m_numVerticies( 0 )
     {
     }
 
-    CVertexBuffer::~CVertexBuffer()
+    VertexBuffer::~VertexBuffer()
     {
         unload( nullptr );
     }
 
-    void CVertexBuffer::unload( SmartPtr<ISharedObject> data )
+    void VertexBuffer::unload( SmartPtr<ISharedObject> data )
     {
         for(u32 i = 0; i < m_vertexData.size(); ++i)
         {
@@ -36,27 +36,27 @@ namespace fb
         }
     }
 
-    void CVertexBuffer::setVertexDeclaration( SmartPtr<IVertexDeclaration> vertexDeclaration )
+    void VertexBuffer::setVertexDeclaration( SmartPtr<IVertexDeclaration> vertexDeclaration )
     {
         m_vertexDeclaration = vertexDeclaration;
     }
 
-    SmartPtr<IVertexDeclaration> CVertexBuffer::getVertexDeclaration() const
+    SmartPtr<IVertexDeclaration> VertexBuffer::getVertexDeclaration() const
     {
         return m_vertexDeclaration;
     }
 
-    void CVertexBuffer::setNumVerticies( u32 numVerticies )
+    void VertexBuffer::setNumVerticies( u32 numVerticies )
     {
         m_numVerticies = numVerticies;
     }
 
-    u32 CVertexBuffer::getNumVerticies() const
+    u32 VertexBuffer::getNumVerticies() const
     {
         return m_numVerticies;
     }
 
-    void *CVertexBuffer::createVertexData( s32 index )
+    void *VertexBuffer::createVertexData( s32 index )
     {
         if(m_vertexDeclaration)
         {
@@ -81,19 +81,19 @@ namespace fb
         return nullptr;
     }
 
-    void *CVertexBuffer::getVertexData( int index ) const
+    void *VertexBuffer::getVertexData( int index ) const
     {
         return m_vertexData[index];
     }
 
-    Array<u8 *> CVertexBuffer::getDataArray() const
+    Array<u8 *> VertexBuffer::getDataArray() const
     {
         return m_vertexData;
     }
 
-    SmartPtr<IVertexBuffer> CVertexBuffer::clone() const
+    SmartPtr<IVertexBuffer> VertexBuffer::clone() const
     {
-        auto newVertexBuffer = fb::make_ptr<CVertexBuffer>();
+        auto newVertexBuffer = fb::make_ptr<VertexBuffer>();
 
         newVertexBuffer->setVertexDeclaration( m_vertexDeclaration->clone() );
         newVertexBuffer->setNumVerticies( m_numVerticies );
@@ -105,7 +105,7 @@ namespace fb
         return newVertexBuffer;
     }
 
-    bool CVertexBuffer::compare( SmartPtr<IVertexBuffer> other ) const
+    bool VertexBuffer::compare( SmartPtr<IVertexBuffer> other ) const
     {
         if(m_numVerticies != other->getNumVerticies())
         {

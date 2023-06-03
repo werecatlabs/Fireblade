@@ -3,7 +3,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, WindowMessageData, CSharedObject<ISharedObject> );
+    FB_CLASS_REGISTER_DERIVED( fb, WindowMessageData, SharedObject<ISharedObject> );
 
     void *WindowMessageData::getWindowHandle() const
     {

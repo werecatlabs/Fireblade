@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/IActor.h>
-#include <FBCore/Resource/CResource.h>
+#include <FBCore/Resource/Resource.h>
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Quaternion.h>
@@ -21,7 +21,7 @@ namespace fb
         @author	Zane Desir
         @version 1.0
         */
-        class Actor : public CResource<IActor>
+        class Actor : public Resource<IActor>
         {
         public:
             class ActorFsmListener : public FSMListener

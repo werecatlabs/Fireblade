@@ -2,7 +2,7 @@
 #define PluginEvent_h__
 
 #include <FBCore/Interface/System/IPluginEvent.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/FixedArray.h>
 #include <FBCore/Core/StringTypes.h>
 
@@ -11,7 +11,7 @@ namespace fb
     namespace core
     {
         
-        class PluginEvent : public CSharedObject<IPluginEvent>
+        class PluginEvent : public SharedObject<IPluginEvent>
         {
         public:
             PluginEvent() = default;

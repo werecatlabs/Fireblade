@@ -15,7 +15,7 @@
 #    include <io.h>      // for _access
 #    include <windows.h>
 #elif defined FB_PLATFORM_APPLE
-#    include <FBCore/Base/OSX/macUtils.h>
+#    include <FBCore/Core/OSX/macUtils.h>
 #endif
 
 #if FB_USE_BOOST

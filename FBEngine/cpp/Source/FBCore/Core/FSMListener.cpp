@@ -3,7 +3,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, FSMListener, CSharedObject<IFSMListener> );
+    FB_CLASS_REGISTER_DERIVED( fb, FSMListener, SharedObject<IFSMListener> );
 
     FSMListener::~FSMListener()
     {

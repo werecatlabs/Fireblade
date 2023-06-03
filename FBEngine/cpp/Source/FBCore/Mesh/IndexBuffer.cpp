@@ -1,10 +1,10 @@
 #include <FBCore/FBCorePCH.h>
-#include <FBCore/Mesh/CIndexBuffer.h>
+#include <FBCore/Mesh/IndexBuffer.h>
 #include <FBCore/FBCore.h>
 
 namespace fb
 {
-    CIndexBuffer::CIndexBuffer() :
+    IndexBuffer::IndexBuffer() :
         m_indexType( Type::IT_32BIT ),
         m_numIndexes( 0 ),
         m_indexSize( 0 ),
@@ -13,12 +13,12 @@ namespace fb
         m_indexSize = sizeof( u32 );
     }
 
-    CIndexBuffer::~CIndexBuffer()
+    IndexBuffer::~IndexBuffer()
     {
         unload( nullptr );
     }
 
-    void CIndexBuffer::unload( SmartPtr<ISharedObject> data )
+    void IndexBuffer::unload( SmartPtr<ISharedObject> data )
     {
         if( m_indexData )
         {
@@ -27,7 +27,7 @@ namespace fb
         }
     }
 
-    void CIndexBuffer::setIndexType( Type indexType )
+    void IndexBuffer::setIndexType( Type indexType )
     {
         m_indexType = indexType;
 
@@ -45,27 +45,27 @@ namespace fb
         }
     }
 
-    IIndexBuffer::Type CIndexBuffer::getIndexType() const
+    IIndexBuffer::Type IndexBuffer::getIndexType() const
     {
         return m_indexType;
     }
 
-    void CIndexBuffer::setNumIndices( u32 numIndices )
+    void IndexBuffer::setNumIndices( u32 numIndices )
     {
         m_numIndexes = numIndices;
     }
 
-    u32 CIndexBuffer::getNumIndices() const
+    u32 IndexBuffer::getNumIndices() const
     {
         return m_numIndexes;
     }
 
-    u32 CIndexBuffer::getIndexSize() const
+    u32 IndexBuffer::getIndexSize() const
     {
         return m_indexSize;
     }
 
-    void *CIndexBuffer::createIndexData()
+    void *IndexBuffer::createIndexData()
     {
         auto indexType = getIndexType();
         switch( indexType )
@@ -88,17 +88,17 @@ namespace fb
         return m_indexData;
     }
 
-    void *CIndexBuffer::getIndexData() const
+    void *IndexBuffer::getIndexData() const
     {
         return m_indexData;
     }
 
-    SmartPtr<IIndexBuffer> CIndexBuffer::clone() const
+    SmartPtr<IIndexBuffer> IndexBuffer::clone() const
     {
         auto applicationManager = core::IApplicationManager::instance();
         auto factoryManager = applicationManager->getFactoryManager();
 
-        auto indexBuffer = factoryManager->make_ptr<CIndexBuffer>();
+        auto indexBuffer = factoryManager->make_ptr<IndexBuffer>();
 
         indexBuffer->setIndexType( m_indexType );
         indexBuffer->setNumIndices( m_numIndexes );
@@ -136,12 +136,12 @@ namespace fb
         return indexBuffer;
     }
 
-    void CIndexBuffer::setIndexSize( u32 size )
+    void IndexBuffer::setIndexSize( u32 size )
     {
         m_indexSize = size;
     }
 
-    bool CIndexBuffer::compare( SmartPtr<IIndexBuffer> other ) const
+    bool IndexBuffer::compare( SmartPtr<IIndexBuffer> other ) const
     {
         return false;
     }

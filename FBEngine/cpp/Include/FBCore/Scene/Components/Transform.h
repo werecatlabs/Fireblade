@@ -2,7 +2,7 @@
 #define __FB_Transformation_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/Scene/ITransform.h>
 
 namespace fb
@@ -10,7 +10,7 @@ namespace fb
     namespace scene
     {
 
-        class Transform : public CSharedObject<ITransform>
+        class Transform : public SharedObject<ITransform>
         {
         public:
             static const hash_type TRANSFORMATION_POSITION_HASH;

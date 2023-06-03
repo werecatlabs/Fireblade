@@ -33,7 +33,7 @@ THE SOFTWARE.
 #include "FBCore/Core/StringTypes.h"
 #include "FBCore/Mesh/Serializer.h"
 #include "FBCore/Mesh/VertexBoneAssignment.h"
-#include "FBCore/Mesh/CVertexElement.h"
+#include "FBCore/Mesh/VertexElement.h"
 
 namespace fb
 {
@@ -70,7 +70,7 @@ namespace fb
         @param stream The destination stream
         @param endianMode The endian mode for the written file
         */
-        void exportMesh( const CMesh *pMesh, SmartPtr<IStream> stream, u32 endianMode = ENDIAN_NATIVE );
+        void exportMesh( const Mesh *pMesh, SmartPtr<IStream> stream, u32 endianMode = ENDIAN_NATIVE );
 
         /** Imports Mesh and (optionally) Material data from a .mesh file DataStream.
         @remarks
@@ -80,99 +80,99 @@ namespace fb
         buffer).
         @param pDest Pointer to the Mesh object which will receive the data. Should be blank already.
         */
-        void importMesh( SmartPtr<IStream> &stream, CMesh *pDest, MeshSerializerListener *listener );
+        void importMesh( SmartPtr<IStream> &stream, Mesh *pDest, MeshSerializerListener *listener );
 
     protected:
         // Internal methods
-        virtual void writeSubMeshNameTable( const CMesh *pMesh );
-        virtual void writeMesh( const CMesh *pMesh );
-        virtual void writeSubMesh( const CSubMesh *s );
-        virtual void writeSubMeshOperation( const CSubMesh *s );
-        virtual void writeSubMeshTextureAliases( const CSubMesh *s );
-        virtual void writeGeometry( const CVertexBuffer *pGeom );
+        virtual void writeSubMeshNameTable( const Mesh *pMesh );
+        virtual void writeMesh( const Mesh *pMesh );
+        virtual void writeSubMesh( const SubMesh *s );
+        virtual void writeSubMeshOperation( const SubMesh *s );
+        virtual void writeSubMeshTextureAliases( const SubMesh *s );
+        virtual void writeGeometry( const VertexBuffer *pGeom );
         virtual void writeSkeletonLink( const String &skelName );
         virtual void writeMeshBoneAssignment( const VertexBoneAssignment &assign );
         virtual void writeSubMeshBoneAssignment( const VertexBoneAssignment &assign );
-        virtual void writeLodInfo( const CMesh *pMesh );
+        virtual void writeLodInfo( const Mesh *pMesh );
         virtual void writeLodSummary( unsigned short numLevels, bool manual,
                                       const LodStrategy *strategy );
         // virtual void writeLodUsageManual(const MeshLodUsage& usage);
         // virtual void writeLodUsageGenerated(const Mesh* pMesh, const MeshLodUsage& usage, unsigned
         // short lodNum);
-        virtual void writeBoundsInfo( const CMesh *pMesh );
-        virtual void writeEdgeList( const CMesh *pMesh );
-        virtual void writeAnimations( const CMesh *pMesh );
+        virtual void writeBoundsInfo( const Mesh *pMesh );
+        virtual void writeEdgeList( const Mesh *pMesh );
+        virtual void writeAnimations( const Mesh *pMesh );
         // virtual void writeAnimation(const Animation* anim);
-        virtual void writePoses( const CMesh *pMesh );
+        virtual void writePoses( const Mesh *pMesh );
         // virtual void writePose(const Pose* pose);
         // virtual void writeAnimationTrack(const VertexAnimationTrack* track);
         // virtual void writeMorphKeyframe(const VertexMorphKeyFrame* kf, u32 vertexCount);
         // virtual void writePoseKeyframe(const VertexPoseKeyFrame* kf);
         // virtual void writePoseKeyframePoseRef(const VertexPoseKeyFrame::PoseRef& poseRef);
-        virtual void writeExtremes( const CMesh *pMesh );
-        virtual void writeSubMeshExtremes( unsigned short idx, const CSubMesh *s );
+        virtual void writeExtremes( const Mesh *pMesh );
+        virtual void writeSubMeshExtremes( unsigned short idx, const SubMesh *s );
 
-        virtual u32 calcMeshSize( const CMesh *pMesh );
-        virtual u32 calcSubMeshSize( const CSubMesh *pSub );
-        virtual u32 calcGeometrySize( const CVertexBuffer *pGeom );
+        virtual u32 calcMeshSize( const Mesh *pMesh );
+        virtual u32 calcSubMeshSize( const SubMesh *pSub );
+        virtual u32 calcGeometrySize( const VertexBuffer *pGeom );
         virtual u32 calcSkeletonLinkSize( const String &skelName );
         virtual u32 calcBoneAssignmentSize( void );
-        virtual u32 calcSubMeshOperationSize( const CSubMesh *pSub );
-        virtual u32 calcSubMeshNameTableSize( const CMesh *pMesh );
-        virtual u32 calcEdgeListSize( const CMesh *pMesh );
+        virtual u32 calcSubMeshOperationSize( const SubMesh *pSub );
+        virtual u32 calcSubMeshNameTableSize( const Mesh *pMesh );
+        virtual u32 calcEdgeListSize( const Mesh *pMesh );
         // virtual u32 calcEdgeListLodSize(const EdgeData* data, bool isManual);
         // virtual u32 calcEdgeGroupSize(const EdgeData::EdgeGroup& group);
-        virtual u32 calcPosesSize( const CMesh *pMesh );
+        virtual u32 calcPosesSize( const Mesh *pMesh );
         // virtual u32 calcPoseSize(const Pose* pose);
-        virtual u32 calcAnimationsSize( const CMesh *pMesh );
+        virtual u32 calcAnimationsSize( const Mesh *pMesh );
         ////virtual u32 calcAnimationSize(const Animation* anim);
         /// virtual u32 calcAnimationTrackSize(const VertexAnimationTrack* track);
         // virtual u32 calcMorphKeyframeSize(const VertexMorphKeyFrame* kf, u32 vertexCount);
         // virtual u32 calcPoseKeyframeSize(const VertexPoseKeyFrame* kf);
         virtual u32 calcPoseKeyframePoseRefSize( void );
         // virtual u32 calcPoseVertexSize(const Pose* pose);
-        virtual u32 calcSubMeshTextureAliasesSize( const CSubMesh *pSub );
+        virtual u32 calcSubMeshTextureAliasesSize( const SubMesh *pSub );
 
-        virtual void readTextureLayer( SmartPtr<IStream> &stream, CMesh *pMesh,
+        virtual void readTextureLayer( SmartPtr<IStream> &stream, Mesh *pMesh,
                                        SmartPtr<render::IMaterial> pMat );
-        virtual void readSubMeshNameTable( SmartPtr<IStream> &stream, CMesh *pMesh );
-        virtual void readMesh( SmartPtr<IStream> &stream, CMesh *pMesh,
+        virtual void readSubMeshNameTable( SmartPtr<IStream> &stream, Mesh *pMesh );
+        virtual void readMesh( SmartPtr<IStream> &stream, Mesh *pMesh,
                                MeshSerializerListener *listener );
-        virtual void readSubMesh( SmartPtr<IStream> &stream, CMesh *pMesh,
+        virtual void readSubMesh( SmartPtr<IStream> &stream, Mesh *pMesh,
                                   MeshSerializerListener *listener );
-        virtual void readSubMeshOperation( SmartPtr<IStream> &stream, CMesh *pMesh, CSubMesh *sub );
-        virtual void readSubMeshTextureAlias( SmartPtr<IStream> &stream, CMesh *pMesh, CSubMesh *sub );
-        virtual void readGeometry( SmartPtr<IStream> &stream, CMesh *pMesh, CVertexBuffer *dest );
-        virtual void readGeometryVertexDeclaration( SmartPtr<IStream> &stream, CMesh *pMesh,
-                                                    CVertexBuffer *dest );
-        virtual void readGeometryVertexElement( SmartPtr<IStream> &stream, CMesh *pMesh,
-                                                CVertexBuffer *dest );
-        virtual void readGeometryVertexBuffer( SmartPtr<IStream> &stream, CMesh *pMesh,
-                                               CVertexBuffer *dest );
+        virtual void readSubMeshOperation( SmartPtr<IStream> &stream, Mesh *pMesh, SubMesh *sub );
+        virtual void readSubMeshTextureAlias( SmartPtr<IStream> &stream, Mesh *pMesh, SubMesh *sub );
+        virtual void readGeometry( SmartPtr<IStream> &stream, Mesh *pMesh, VertexBuffer *dest );
+        virtual void readGeometryVertexDeclaration( SmartPtr<IStream> &stream, Mesh *pMesh,
+                                                    VertexBuffer *dest );
+        virtual void readGeometryVertexElement( SmartPtr<IStream> &stream, Mesh *pMesh,
+                                                VertexBuffer *dest );
+        virtual void readGeometryVertexBuffer( SmartPtr<IStream> &stream, Mesh *pMesh,
+                                               VertexBuffer *dest );
 
-        virtual void readSkeletonLink( SmartPtr<IStream> &stream, CMesh *pMesh,
+        virtual void readSkeletonLink( SmartPtr<IStream> &stream, Mesh *pMesh,
                                        MeshSerializerListener *listener );
-        virtual void readMeshBoneAssignment( SmartPtr<IStream> &stream, CMesh *pMesh );
-        virtual void readSubMeshBoneAssignment( SmartPtr<IStream> &stream, CMesh *pMesh, CSubMesh *sub );
-        virtual void readMeshLodInfo( SmartPtr<IStream> &stream, CMesh *pMesh );
+        virtual void readMeshBoneAssignment( SmartPtr<IStream> &stream, Mesh *pMesh );
+        virtual void readSubMeshBoneAssignment( SmartPtr<IStream> &stream, Mesh *pMesh, SubMesh *sub );
+        virtual void readMeshLodInfo( SmartPtr<IStream> &stream, Mesh *pMesh );
         // virtual void readMeshLodUsageManual(SmartPtr<IStream>& stream, Mesh* pMesh,
         //    unsigned short lodNum, MeshLodUsage& usage);
         // virtual void readMeshLodUsageGenerated(SmartPtr<IStream>& stream, Mesh* pMesh,
         //    unsigned short lodNum, MeshLodUsage& usage);
-        virtual void readBoundsInfo( SmartPtr<IStream> &stream, CMesh *pMesh );
-        virtual void readEdgeList( SmartPtr<IStream> &stream, CMesh *pMesh );
+        virtual void readBoundsInfo( SmartPtr<IStream> &stream, Mesh *pMesh );
+        virtual void readEdgeList( SmartPtr<IStream> &stream, Mesh *pMesh );
         // virtual void readEdgeListLodInfo(SmartPtr<IStream>& stream, EdgeData* edgeData);
-        virtual void readPoses( SmartPtr<IStream> &stream, CMesh *pMesh );
-        virtual void readPose( SmartPtr<IStream> &stream, CMesh *pMesh );
-        virtual void readAnimations( SmartPtr<IStream> &stream, CMesh *pMesh );
-        virtual void readAnimation( SmartPtr<IStream> &stream, CMesh *pMesh );
+        virtual void readPoses( SmartPtr<IStream> &stream, Mesh *pMesh );
+        virtual void readPose( SmartPtr<IStream> &stream, Mesh *pMesh );
+        virtual void readAnimations( SmartPtr<IStream> &stream, Mesh *pMesh );
+        virtual void readAnimation( SmartPtr<IStream> &stream, Mesh *pMesh );
         virtual void readAnimationTrack( SmartPtr<IStream> &stream, SmartPtr<IAnimation> anim,
-                                         CMesh *pMesh );
+                                         Mesh *pMesh );
         virtual void readMorphKeyFrame( SmartPtr<IStream> &stream,
                                         SmartPtr<IAnimationVertexTrack> track );
         virtual void readPoseKeyFrame( SmartPtr<IStream> &stream,
                                        SmartPtr<IAnimationVertexTrack> track );
-        virtual void readExtremes( SmartPtr<IStream> &stream, CMesh *pMesh );
+        virtual void readExtremes( SmartPtr<IStream> &stream, Mesh *pMesh );
 
         /// Flip an entire vertex buffer from little endian
         virtual void flipFromLittleEndian( void *pData, u32 vertexCount, u32 vertexSize,
@@ -219,7 +219,7 @@ namespace fb
         // *strategy); virtual void writeLodUsageManual(const MeshLodUsage& usage); virtual void
         // writeLodUsageGenerated(const Mesh* pMesh, const MeshLodUsage& usage, 							unsigned short lodNum);
 
-        void readMeshLodInfo( SmartPtr<IStream> &stream, CMesh *pMesh ) override;
+        void readMeshLodInfo( SmartPtr<IStream> &stream, Mesh *pMesh ) override;
     };
 
     /** Class for providing backwards-compatibility for loading version 1.3 of the .mesh format.
@@ -250,17 +250,17 @@ namespace fb
         ~MeshSerializerImpl_v1_2() override;
 
     protected:
-        void readMesh( SmartPtr<IStream> &stream, CMesh *pMesh,
+        void readMesh( SmartPtr<IStream> &stream, Mesh *pMesh,
                        MeshSerializerListener *listener ) override;
-        void readGeometry( SmartPtr<IStream> &stream, CMesh *pMesh, CVertexBuffer *dest ) override;
+        void readGeometry( SmartPtr<IStream> &stream, Mesh *pMesh, VertexBuffer *dest ) override;
         virtual void readGeometryPositions( unsigned short bindIdx, SmartPtr<IStream> &stream,
-                                            CMesh *pMesh, CVertexBuffer *dest );
+                                            Mesh *pMesh, VertexBuffer *dest );
         virtual void readGeometryNormals( unsigned short bindIdx, SmartPtr<IStream> &stream,
-                                          CMesh *pMesh, CVertexBuffer *dest );
+                                          Mesh *pMesh, VertexBuffer *dest );
         virtual void readGeometryColours( unsigned short bindIdx, SmartPtr<IStream> &stream,
-                                          CMesh *pMesh, CVertexBuffer *dest );
+                                          Mesh *pMesh, VertexBuffer *dest );
         virtual void readGeometryTexCoords( unsigned short bindIdx, SmartPtr<IStream> &stream,
-                                            CMesh *pMesh, CVertexBuffer *dest, unsigned short set );
+                                            Mesh *pMesh, VertexBuffer *dest, unsigned short set );
     };
 
     /** Class for providing backwards-compatibility for loading version 1.1 of the .mesh format.
@@ -273,8 +273,8 @@ namespace fb
         ~MeshSerializerImpl_v1_1() override;
 
     protected:
-        void readGeometryTexCoords( unsigned short bindIdx, SmartPtr<IStream> &stream, CMesh *pMesh,
-                                    CVertexBuffer *dest, unsigned short set ) override;
+        void readGeometryTexCoords( unsigned short bindIdx, SmartPtr<IStream> &stream, Mesh *pMesh,
+                                    VertexBuffer *dest, unsigned short set ) override;
     };
 
     /** @} */

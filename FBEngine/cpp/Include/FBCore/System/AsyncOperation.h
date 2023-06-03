@@ -2,13 +2,13 @@
 #define __AsyncOperation_h__
 
 #include <FBCore/Interface/System/IAsyncOperation.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Memory/CObjectYield.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Memory/ObjectYield.h>
 #include <FBCore/Core/ConcurrentArray.h>
 
 namespace fb
 {
-    class AsyncOperation : public CSharedObject<IAsyncOperation>
+    class AsyncOperation : public SharedObject<IAsyncOperation>
     {
     public:
         AsyncOperation() = default;

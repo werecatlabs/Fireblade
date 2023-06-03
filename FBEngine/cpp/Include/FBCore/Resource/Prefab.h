@@ -3,19 +3,19 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/IPrefab.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Resource/CResource.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Resource/Resource.h>
 
 namespace fb
 {
     namespace scene
     {
 
-        class CPrefab : public CResource<IPrefab>
+        class Prefab : public Resource<IPrefab>
         {
         public:
-            CPrefab() = default;
-            ~CPrefab() override;
+            Prefab() = default;
+            ~Prefab() override;
 
             /** @copydoc IObject::load */
             void load( SmartPtr<ISharedObject> data ) override;

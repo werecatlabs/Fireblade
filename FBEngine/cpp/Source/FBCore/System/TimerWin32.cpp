@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, TimerWin32, CSharedObject<Timer> );
+    FB_CLASS_REGISTER_DERIVED( fb, TimerWin32, SharedObject<Timer> );
 
     TimerWin32::TimerWin32() : HighPerformanceTimerSupport( FALSE ), MultiCore( FALSE )
     {

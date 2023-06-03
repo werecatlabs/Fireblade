@@ -151,7 +151,7 @@ namespace fb
              * and its owner (a UIComponent). The class provides methods to set and get the owner, as well as
              * handling events.
              */
-            class UIElementListener : public CSharedObject<IEventListener>
+            class UIElementListener : public SharedObject<IEventListener>
             {
             public:
                 /**

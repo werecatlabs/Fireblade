@@ -4,7 +4,7 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Resource/IResourceGroupManager.h>
 #include <FBCore/Interface/Scene/IPrefabManager.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/StringTypes.h>
 
 namespace fb
@@ -12,11 +12,11 @@ namespace fb
     namespace scene
     {
         /** Prefab manager implementation. */
-        class CPrefabManager : public CSharedObject<IPrefabManager>
+        class PrefabManager : public SharedObject<IPrefabManager>
         {
         public:
-            CPrefabManager() = default;
-            ~CPrefabManager() override = default;
+            PrefabManager() = default;
+            ~PrefabManager() override = default;
 
             /** @copydoc IObject::load */
             void load( SmartPtr<ISharedObject> data ) override;

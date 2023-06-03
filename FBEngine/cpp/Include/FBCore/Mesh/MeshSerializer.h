@@ -99,7 +99,7 @@ namespace fb
         @param filename The destination filename
         @param endianMode The endian mode of the written file
         */
-        void exportMesh( const CMesh *pMesh, const String &filename, u32 endianMode = ENDIAN_NATIVE );
+        void exportMesh( const Mesh *pMesh, const String &filename, u32 endianMode = ENDIAN_NATIVE );
 
         /** Exports a mesh to the file specified, in a specific version format.
          @remarks
@@ -112,7 +112,7 @@ namespace fb
          @param version Mesh version to write
          @param endianMode The endian mode of the written file
          */
-        void exportMesh( const CMesh *pMesh, const String &filename, MeshVersion version,
+        void exportMesh( const Mesh *pMesh, const String &filename, MeshVersion version,
                          u32 endianMode = ENDIAN_NATIVE );
 
         /** Exports a mesh to the stream specified, in the latest format.
@@ -123,7 +123,7 @@ namespace fb
         @param stream Writeable stream
         @param endianMode The endian mode of the written file
         */
-        void exportMesh( const CMesh *pMesh, SmartPtr<IStream> stream, u32 endianMode = ENDIAN_NATIVE );
+        void exportMesh( const Mesh *pMesh, SmartPtr<IStream> stream, u32 endianMode = ENDIAN_NATIVE );
 
         /** Exports a mesh to the stream specified, in a specific version format.
          @remarks
@@ -136,7 +136,7 @@ namespace fb
          @param version Mesh version to write
          @param endianMode The endian mode of the written file
          */
-        void exportMesh( const CMesh *pMesh, SmartPtr<IStream> stream, MeshVersion version,
+        void exportMesh( const Mesh *pMesh, SmartPtr<IStream> stream, MeshVersion version,
                          u32 endianMode = ENDIAN_NATIVE );
 
         /** Imports Mesh and (optionally) Material data from a .mesh file DataStream.
@@ -147,7 +147,7 @@ namespace fb
         buffer).
         @param pDest Pointer to the Mesh object which will receive the data. Should be blank already.
         */
-        void importMesh( SmartPtr<IStream> &stream, CMesh *pDest );
+        void importMesh( SmartPtr<IStream> &stream, Mesh *pDest );
 
         SmartPtr<IMesh> loadMesh( SmartPtr<IStream> &stream );
 
@@ -198,9 +198,9 @@ namespace fb
         }
 
         /// Called to override the loading of the given named material
-        virtual void processMaterialName( CMesh *mesh, String *name ) = 0;
+        virtual void processMaterialName( Mesh *mesh, String *name ) = 0;
         /// Called to override the reference to a skeleton
-        virtual void processSkeletonName( CMesh *mesh, String *name ) = 0;
+        virtual void processSkeletonName( Mesh *mesh, String *name ) = 0;
     };
 
     /** @} */

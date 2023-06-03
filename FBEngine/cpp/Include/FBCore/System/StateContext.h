@@ -3,11 +3,11 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IStateContext.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
-    class StateContext : public CSharedObject<IStateContext>
+    class StateContext : public SharedObject<IStateContext>
     {
     public:
         StateContext();

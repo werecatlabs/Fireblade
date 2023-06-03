@@ -1,11 +1,11 @@
 #ifndef DetailPrototype_h__
 #define DetailPrototype_h__
 
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
-    class DetailPrototype : public CSharedObject<ISharedObject>
+    class DetailPrototype : public SharedObject<ISharedObject>
     {
     public:
         DetailPrototype();

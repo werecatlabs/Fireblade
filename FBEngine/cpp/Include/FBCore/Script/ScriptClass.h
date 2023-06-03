@@ -2,13 +2,13 @@
 #define ScriptClass_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/Script/IScriptClass.h>
 #include <FBCore/Core/Array.h>
 
 namespace fb
 {
-    class ScriptClass : public CSharedObject<IScriptClass>
+    class ScriptClass : public SharedObject<IScriptClass>
     {
     public:
         ScriptClass();

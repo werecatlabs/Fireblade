@@ -6,9 +6,9 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, StateQueue, CSharedObject<IStateQueue> );
+    FB_CLASS_REGISTER_DERIVED( fb, StateQueue, SharedObject<IStateQueue> );
 
-    StateQueue::StateQueue() : CSharedObject<IStateQueue>()
+    StateQueue::StateQueue() : SharedObject<IStateQueue>()
     {
     }
 

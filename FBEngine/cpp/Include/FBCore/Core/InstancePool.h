@@ -2,7 +2,7 @@
 #define InstancePool_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Core/ConcurrentQueue.h>
 #include <FBCore/Core/ConcurrentArray.h>
@@ -14,7 +14,7 @@ namespace fb
 {
     /** A pool class to manage object instances. */
     template <class T>
-    class InstancePool : public CSharedObject<ISharedObject>
+    class InstancePool : public SharedObject<ISharedObject>
     {
     public:
         /** Class to handle object destruction. */

@@ -2,13 +2,13 @@
 #define ComponentEventListener_h__
 
 #include <FBCore/Interface/Scene/IComponentEventListener.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     namespace scene
     {
-        class ComponentEventListener : public CSharedObject<IComponentEventListener>
+        class ComponentEventListener : public SharedObject<IComponentEventListener>
         {
         public:
             ComponentEventListener();

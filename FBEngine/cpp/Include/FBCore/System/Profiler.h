@@ -2,7 +2,7 @@
 #define Profiler_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/System/IProfiler.h>
 #include <FBCore/Thread/Threading.h>
 #include <FBCore/Core/Array.h>
@@ -24,7 +24,7 @@ namespace fb
      * This class provides profiling capabilities for measuring the performance of code execution.
      * It allows adding and removing profiles, getting individual profiles and all profiles, and logging results.
      */
-    class Profiler : public CSharedObject<IProfiler>
+    class Profiler : public SharedObject<IProfiler>
     {
     public:
         /**

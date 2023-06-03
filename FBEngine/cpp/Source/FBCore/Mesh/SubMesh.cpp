@@ -1,5 +1,5 @@
 #include <FBCore/FBCorePCH.h>
-#include "FBCore/Mesh/CSubMesh.h"
+#include "FBCore/Mesh/SubMesh.h"
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Interface/Mesh/IVertexBuffer.h>
 #include <FBCore/Interface/Mesh/IIndexBuffer.h>
@@ -8,15 +8,15 @@
 
 namespace fb
 {
-    CSubMesh::CSubMesh()
+    SubMesh::SubMesh()
     {
     }
 
-    CSubMesh::~CSubMesh()
+    SubMesh::~SubMesh()
     {
     }
 
-    void CSubMesh::unload( SmartPtr<ISharedObject> data )
+    void SubMesh::unload( SmartPtr<ISharedObject> data )
     {
         if( m_vertexBuffer )
         {
@@ -31,37 +31,37 @@ namespace fb
         }
     }
 
-    void CSubMesh::setMaterialName( const String &materialName )
+    void SubMesh::setMaterialName( const String &materialName )
     {
         m_materialName = materialName;
     }
 
-    String CSubMesh::getMaterialName() const
+    String SubMesh::getMaterialName() const
     {
         return m_materialName;
     }
 
-    void CSubMesh::setVertexBuffer( SmartPtr<IVertexBuffer> vertexBuffer )
+    void SubMesh::setVertexBuffer( SmartPtr<IVertexBuffer> vertexBuffer )
     {
         m_vertexBuffer = vertexBuffer;
     }
 
-    SmartPtr<IVertexBuffer> CSubMesh::getVertexBuffer() const
+    SmartPtr<IVertexBuffer> SubMesh::getVertexBuffer() const
     {
         return m_vertexBuffer;
     }
 
-    void CSubMesh::setIndexBuffer( SmartPtr<IIndexBuffer> indexBuffer )
+    void SubMesh::setIndexBuffer( SmartPtr<IIndexBuffer> indexBuffer )
     {
         m_indexBuffer = indexBuffer;
     }
 
-    SmartPtr<IIndexBuffer> CSubMesh::getIndexBuffer() const
+    SmartPtr<IIndexBuffer> SubMesh::getIndexBuffer() const
     {
         return m_indexBuffer;
     }
 
-    void CSubMesh::updateAABB()
+    void SubMesh::updateAABB()
     {
         auto vertexBuffer = getVertexBuffer();
         auto vertexData = static_cast<u8 *>( vertexBuffer->getVertexData() );
@@ -91,14 +91,14 @@ namespace fb
         }
     }
 
-    AABB3F CSubMesh::getAABB() const
+    AABB3F SubMesh::getAABB() const
     {
         return m_aabb;
     }
 
-    SmartPtr<ISubMesh> CSubMesh::clone() const
+    SmartPtr<ISubMesh> SubMesh::clone() const
     {
-        auto subMesh = fb::make_ptr<CSubMesh>();
+        auto subMesh = fb::make_ptr<SubMesh>();
 
         subMesh->setMaterialName( m_materialName );
         subMesh->setVertexBuffer( m_vertexBuffer->clone() );
@@ -108,23 +108,23 @@ namespace fb
         return subMesh;
     }
 
-    bool CSubMesh::getUseSharedVertices() const
+    bool SubMesh::getUseSharedVertices() const
     {
         return m_useSharedVertices;
     }
 
-    void CSubMesh::setUseSharedVertices( bool useSharedVertices )
+    void SubMesh::setUseSharedVertices( bool useSharedVertices )
     {
         m_useSharedVertices = useSharedVertices;
     }
 
-    bool CSubMesh::compare( SmartPtr<ISubMesh> other ) const
+    bool SubMesh::compare( SmartPtr<ISubMesh> other ) const
     {
         return m_vertexBuffer->compare( other->getVertexBuffer() ) &&
                m_indexBuffer->compare( other->getIndexBuffer() );
     }
 
-    void CSubMesh::setAABB( const AABB3F &aabb )
+    void SubMesh::setAABB( const AABB3F &aabb )
     {
         m_aabb = aabb;
     }

@@ -13,7 +13,7 @@
 namespace fb
 {
 
-    FB_CLASS_REGISTER_DERIVED( fb::render, TaskManager, CSharedObject<ITaskManager> );
+    FB_CLASS_REGISTER_DERIVED( fb::render, TaskManager, SharedObject<ITaskManager> );
     u32 TaskManager::m_idExt = 0;
 
     TaskManager::TaskManager()

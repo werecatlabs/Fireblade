@@ -1,12 +1,12 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Mesh/MeshUtil.h>
-#include <FBCore/Mesh/CVertexElement.h>
+#include <FBCore/Mesh/VertexElement.h>
 #include <FBCore/Mesh/Vertex.h>
-#include <FBCore/Mesh/CMesh.h>
-#include <FBCore/Mesh/CSubMesh.h>
-#include <FBCore/Mesh/CVertexDeclaration.h>
-#include <FBCore/Mesh/CVertexBuffer.h>
-#include <FBCore/Mesh/CIndexBuffer.h>
+#include <FBCore/Mesh/Mesh.h>
+#include <FBCore/Mesh/SubMesh.h>
+#include <FBCore/Mesh/VertexDeclaration.h>
+#include <FBCore/Mesh/VertexBuffer.h>
+#include <FBCore/Mesh/IndexBuffer.h>
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/Core/Map.h>
 #include <FBCore/Math/Math.h>
@@ -21,7 +21,7 @@ namespace fb
         FB_ASSERT( weldTolerance >= static_cast<real_Num>( 0.0 ) );
         FB_ASSERT( Math<real_Num>::isFinite( weldTolerance ) );
 
-        auto cleanMesh = fb::make_ptr<CMesh>();
+        auto cleanMesh = fb::make_ptr<Mesh>();
 
         auto subMeshes = mesh->getSubMeshes();
         for(auto subMesh : subMeshes)
@@ -41,7 +41,7 @@ namespace fb
         FB_ASSERT( submesh );
         FB_ASSERT( submesh->isValid() );
 
-        auto cleanSubMesh = fb::make_ptr<CSubMesh>();
+        auto cleanSubMesh = fb::make_ptr<SubMesh>();
 
         auto vertexBuffer = submesh->getVertexBuffer();
         auto indexBuffer = submesh->getIndexBuffer();
@@ -341,28 +341,28 @@ namespace fb
     SmartPtr<IMesh> MeshUtil::buildMesh( const Array<Vector3F> &positions, const Array<Vector2F> &uvs,
                                          const Array<Vector2F> &uvs2 )
     {
-        SmartPtr<IMesh> mesh( new CMesh );
-        SmartPtr<ISubMesh> subMesh( new CSubMesh );
+        SmartPtr<IMesh> mesh( new Mesh );
+        SmartPtr<ISubMesh> subMesh( new SubMesh );
         mesh->addSubMesh( subMesh );
 
         auto numVertices = positions.size();
 
         // create sub mesh data
-        SmartPtr<IVertexDeclaration> vertexDeclaration = fb::make_ptr<CVertexDeclaration>();
+        SmartPtr<IVertexDeclaration> vertexDeclaration = fb::make_ptr<VertexDeclaration>();
         vertexDeclaration->addElement( 0, sizeof( Vector3F ),
-                                       CVertexDeclaration::VertexElementSemantic::VES_POSITION,
+                                       VertexDeclaration::VertexElementSemantic::VES_POSITION,
                                        IVertexElement::VertexElementType::VET_FLOAT3 );
         vertexDeclaration->addElement( 0, sizeof( Vector3F ),
-                                       CVertexDeclaration::VertexElementSemantic::VES_NORMAL,
+                                       VertexDeclaration::VertexElementSemantic::VES_NORMAL,
                                        IVertexElement::VertexElementType::VET_FLOAT3 );
         vertexDeclaration->addElement(
-            0, sizeof( Vector2F ), CVertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
+            0, sizeof( Vector2F ), VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
             IVertexElement::VertexElementType::VET_FLOAT2, 0 );
         vertexDeclaration->addElement(
-            0, sizeof( Vector2F ), CVertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
+            0, sizeof( Vector2F ), VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
             IVertexElement::VertexElementType::VET_FLOAT2, 1 );
 
-        SmartPtr<IVertexBuffer> vertexBuffer( new CVertexBuffer );
+        SmartPtr<IVertexBuffer> vertexBuffer( new VertexBuffer );
         vertexBuffer->setVertexDeclaration( vertexDeclaration );
 
         vertexBuffer->setNumVerticies( static_cast<u32>(numVertices) );
@@ -391,7 +391,7 @@ namespace fb
         }
 
         auto numIndices = positions.size();
-        SmartPtr<IIndexBuffer> indexBuffer( new CIndexBuffer );
+        SmartPtr<IIndexBuffer> indexBuffer( new IndexBuffer );
         indexBuffer->setNumIndices( static_cast<u32>(numIndices) );
         auto indexDataPtr = static_cast<u32 *>(indexBuffer->createIndexData());
 
@@ -408,26 +408,26 @@ namespace fb
     SmartPtr<ISubMesh> MeshUtil::buildSubMesh( const Array<Vector3F> &positions,
                                                const Array<Vector2F> &uvs, const Array<Vector2F> &uvs2 )
     {
-        SmartPtr<ISubMesh> subMesh( new CSubMesh );
+        SmartPtr<ISubMesh> subMesh( new SubMesh );
 
         auto numVertices = positions.size();
 
         // create sub mesh data
-        SmartPtr<IVertexDeclaration> vertexDeclaration = fb::make_ptr<CVertexDeclaration>();
+        SmartPtr<IVertexDeclaration> vertexDeclaration = fb::make_ptr<VertexDeclaration>();
         vertexDeclaration->addElement( 0, sizeof( Vector3F ),
-                                       CVertexDeclaration::VertexElementSemantic::VES_POSITION,
+                                       VertexDeclaration::VertexElementSemantic::VES_POSITION,
                                        IVertexElement::VertexElementType::VET_FLOAT3 );
         vertexDeclaration->addElement( 0, sizeof( Vector3F ),
-                                       CVertexDeclaration::VertexElementSemantic::VES_NORMAL,
+                                       VertexDeclaration::VertexElementSemantic::VES_NORMAL,
                                        IVertexElement::VertexElementType::VET_FLOAT3 );
         vertexDeclaration->addElement(
-            0, sizeof( Vector2F ), CVertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
+            0, sizeof( Vector2F ), VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
             IVertexElement::VertexElementType::VET_FLOAT2, 0 );
         vertexDeclaration->addElement(
-            0, sizeof( Vector2F ), CVertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
+            0, sizeof( Vector2F ), VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
             IVertexElement::VertexElementType::VET_FLOAT2, 1 );
 
-        SmartPtr<IVertexBuffer> vertexBuffer( new CVertexBuffer );
+        SmartPtr<IVertexBuffer> vertexBuffer( new VertexBuffer );
         vertexBuffer->setVertexDeclaration( vertexDeclaration );
 
         vertexBuffer->setNumVerticies( static_cast<u32>(numVertices) );
@@ -456,7 +456,7 @@ namespace fb
         }
 
         auto numIndices = positions.size();
-        SmartPtr<IIndexBuffer> indexBuffer( new CIndexBuffer );
+        SmartPtr<IIndexBuffer> indexBuffer( new IndexBuffer );
         indexBuffer->setNumIndices( static_cast<u32>(numIndices) );
         auto indexDataPtr = static_cast<u32 *>(indexBuffer->createIndexData());
 
@@ -472,7 +472,7 @@ namespace fb
 
     SmartPtr<IMesh> MeshUtil::mergeMeshes( const Array<MeshTransformData> &meshTransformData )
     {
-        SmartPtr<IMesh> newMesh( new CMesh );
+        SmartPtr<IMesh> newMesh( new Mesh );
 
         for(u32 meshIdx = 0; meshIdx < meshTransformData.size(); ++meshIdx)
         {
@@ -495,16 +495,16 @@ namespace fb
 
                 const SmartPtr<IVertexElement> posElem =
                     vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                        CVertexDeclaration::VertexElementSemantic::VES_POSITION );
+                        VertexDeclaration::VertexElementSemantic::VES_POSITION );
                 const SmartPtr<IVertexElement> normalElem =
                     vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                        CVertexDeclaration::VertexElementSemantic::VES_NORMAL );
+                        VertexDeclaration::VertexElementSemantic::VES_NORMAL );
                 const SmartPtr<IVertexElement> texCoordElem0 =
                     vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                        CVertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES, 0 );
+                        VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES, 0 );
                 const SmartPtr<IVertexElement> texCoordElem1 =
                     vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                        CVertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES, 1 );
+                        VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES, 1 );
 
                 u32 fbVertexSize = vertexBuffer->getVertexDeclaration()->getSize();
                 auto fbVertexDataPtr = static_cast<u8 *>(vertexBuffer->getVertexData());
@@ -571,7 +571,7 @@ namespace fb
 
     SmartPtr<IMesh> MeshUtil::mergeMeshes( const Array<SmartPtr<IMesh>> &meshes )
     {
-        SmartPtr<IMesh> newMesh( new CMesh );
+        SmartPtr<IMesh> newMesh( new Mesh );
 
         for(u32 meshIdx = 0; meshIdx < meshes.size(); ++meshIdx)
         {
@@ -593,10 +593,10 @@ namespace fb
 
                 const SmartPtr<IVertexElement> posElem =
                     vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                        CVertexDeclaration::VertexElementSemantic::VES_POSITION );
+                        VertexDeclaration::VertexElementSemantic::VES_POSITION );
                 const SmartPtr<IVertexElement> normalElem =
                     vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                        CVertexDeclaration::VertexElementSemantic::VES_NORMAL );
+                        VertexDeclaration::VertexElementSemantic::VES_NORMAL );
 
                 u32 fbVertexSize = vertexBuffer->getVertexDeclaration()->getSize();
                 auto fbVertexDataPtr = static_cast<u8 *>(vertexBuffer->getVertexData());
@@ -619,7 +619,7 @@ namespace fb
     SmartPtr<IMesh> MeshUtil::mergeMeshes( const Array<SmartPtr<IMesh>> &meshes,
                                            const Array<Matrix4F> &transformations )
     {
-        SmartPtr<IMesh> newMesh( new CMesh );
+        SmartPtr<IMesh> newMesh( new Mesh );
 
         if(meshes.size() != transformations.size())
         {
@@ -648,7 +648,7 @@ namespace fb
 
                 const SmartPtr<IVertexElement> posElem =
                     vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                        CVertexDeclaration::VertexElementSemantic::VES_POSITION );
+                        VertexDeclaration::VertexElementSemantic::VES_POSITION );
                 // const SmartPtr<IVertexElement> normalElem =
                 // vertexBuffer->getVertexDeclaration()->findElementBySemantic(fb::VertexDeclaration::VES_NORMAL);
 
@@ -687,7 +687,7 @@ namespace fb
             matMeshMap[materialName].push_back( subMesh );
         }
 
-        SmartPtr<IMesh> newMesh( new CMesh );
+        SmartPtr<IMesh> newMesh( new Mesh );
 
         auto it = matMeshMap.begin();
         for(; it != matMeshMap.end(); ++it)
@@ -707,13 +707,13 @@ namespace fb
             }
 
             // create sub mesh
-            SmartPtr<ISubMesh> subMesh( new CSubMesh );
+            SmartPtr<ISubMesh> subMesh( new SubMesh );
             newMesh->addSubMesh( subMesh );
 
             subMesh->setMaterialName( it->first );
 
             // create sub mesh vertex data
-            SmartPtr<IVertexDeclaration> vertexDeclaration = fb::make_ptr<CVertexDeclaration>();
+            SmartPtr<IVertexDeclaration> vertexDeclaration = fb::make_ptr<VertexDeclaration>();
             vertexDeclaration->addElement( 0, sizeof( Vector3F ),
                                            IVertexDeclaration::VertexElementSemantic::VES_POSITION,
                                            IVertexElement::VertexElementType::VET_FLOAT3 );
@@ -733,7 +733,7 @@ namespace fb
             f32 *newVertexDataPtr = nullptr;
 
             {
-                SmartPtr<IVertexBuffer> vertexBuffer( new CVertexBuffer );
+                SmartPtr<IVertexBuffer> vertexBuffer( new VertexBuffer );
                 subMesh->setVertexBuffer( vertexBuffer );
 
                 vertexBuffer->setVertexDeclaration( vertexDeclaration );
@@ -749,7 +749,7 @@ namespace fb
 
             {
                 // create sub mesh index data
-                SmartPtr<IIndexBuffer> indexBuffer( new CIndexBuffer );
+                SmartPtr<IIndexBuffer> indexBuffer( new IndexBuffer );
                 subMesh->setIndexBuffer( indexBuffer );
 
                 indexBuffer->setNumIndices( numTotalIndices );
@@ -811,16 +811,16 @@ namespace fb
 
             const SmartPtr<IVertexElement> posElem =
                 vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                    CVertexDeclaration::VertexElementSemantic::VES_POSITION );
+                    VertexDeclaration::VertexElementSemantic::VES_POSITION );
             const SmartPtr<IVertexElement> normalElem =
                 vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                    CVertexDeclaration::VertexElementSemantic::VES_NORMAL );
+                    VertexDeclaration::VertexElementSemantic::VES_NORMAL );
             const SmartPtr<IVertexElement> texCoordElem0 =
                 vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                    CVertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES, 0 );
+                    VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES, 0 );
             const SmartPtr<IVertexElement> texCoordElem1 =
                 vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                    CVertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES, 1 );
+                    VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES, 1 );
 
             u32 fbVertexSize = vertexBuffer->getVertexDeclaration()->getSize();
             auto fbVertexDataPtr = static_cast<u8 *>(vertexBuffer->getVertexData());
@@ -893,14 +893,14 @@ namespace fb
     SmartPtr<IMesh> MeshUtil::getMesh( const Array<f32> &heightData, f32 worldScale, f32 heightScale,
                                        u32 tileSize )
     {
-        SmartPtr<IMesh> mesh( new CMesh );
-        SmartPtr<ISubMesh> subMesh( new CSubMesh );
+        SmartPtr<IMesh> mesh( new Mesh );
+        SmartPtr<ISubMesh> subMesh( new SubMesh );
         mesh->addSubMesh( subMesh );
 
         // create sub mesh data
-        SmartPtr<IVertexDeclaration> vertexDeclaration( new CVertexDeclaration );
+        SmartPtr<IVertexDeclaration> vertexDeclaration( new VertexDeclaration );
         vertexDeclaration->addElement( 0, sizeof( Vector3F ),
-                                       CVertexDeclaration::VertexElementSemantic::VES_POSITION,
+                                       VertexDeclaration::VertexElementSemantic::VES_POSITION,
                                        IVertexElement::VertexElementType::VET_FLOAT3 );
         // vertexDeclaration->addElement(sizeof(Vector3F), VertexDeclaration::VES_NORMAL,
         // VertexDeclaration::VET_FLOAT3); vertexDeclaration->addElement(sizeof(Vector2F),
@@ -908,7 +908,7 @@ namespace fb
         // vertexDeclaration->addElement(sizeof(Vector2F), VertexDeclaration::VES_TEXTURE_COORDINATES,
         // VertexDeclaration::VET_FLOAT2, 1);
 
-        SmartPtr<IVertexBuffer> vertexBuffer( new CVertexBuffer );
+        SmartPtr<IVertexBuffer> vertexBuffer( new VertexBuffer );
         vertexBuffer->setVertexDeclaration( vertexDeclaration );
 
         u32 numVerticies = tileSize * tileSize;
@@ -963,9 +963,9 @@ namespace fb
         }
 
         u32 numIndices = tileSize * tileSize * 6;
-        SmartPtr<IIndexBuffer> indexBuffer( new CIndexBuffer );
+        SmartPtr<IIndexBuffer> indexBuffer( new IndexBuffer );
         indexBuffer->setNumIndices( numIndices );
-        indexBuffer->setIndexType( CIndexBuffer::Type::IT_32BIT );
+        indexBuffer->setIndexType( IndexBuffer::Type::IT_32BIT );
         auto indexDataPtr = static_cast<u32 *>(indexBuffer->createIndexData());
 
         u32 index11;

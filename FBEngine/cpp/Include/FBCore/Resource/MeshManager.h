@@ -4,17 +4,17 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Resource/IMeshManager.h>
 #include <FBCore/Interface/Mesh/IMesh.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/Array.h>
 
 namespace fb
 {
 
-    class CMeshManager : public CSharedObject<IMeshManager>
+    class MeshManager : public SharedObject<IMeshManager>
     {
     public:
-        CMeshManager();
-        ~CMeshManager() override;
+        MeshManager();
+        ~MeshManager() override;
 
         void unload( SmartPtr<ISharedObject> data ) override;
 

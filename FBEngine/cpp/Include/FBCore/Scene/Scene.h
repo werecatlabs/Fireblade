@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/IScene.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/Scene/IActor.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/ConcurrentArray.h>
@@ -16,7 +16,7 @@ namespace fb
     namespace scene
     {
         /** Scene implementation. */
-        class Scene : public CSharedObject<IScene>
+        class Scene : public SharedObject<IScene>
         {
         public:
             /** Constructor. */

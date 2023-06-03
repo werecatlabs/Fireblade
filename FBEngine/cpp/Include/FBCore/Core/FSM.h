@@ -2,14 +2,14 @@
 #define __FSM_h__
 
 #include <FBCore/Interface/FSM/IFSM.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     /**
      * Data oriented implementation.
      */
-    class FSM : public CSharedObject<IFSM>
+    class FSM : public SharedObject<IFSM>
     {
     public:
         FSM();

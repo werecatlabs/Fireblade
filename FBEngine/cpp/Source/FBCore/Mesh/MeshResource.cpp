@@ -1,45 +1,45 @@
 #include <FBCore/FBCorePCH.h>
-#include <FBCore/Mesh/CMeshResource.h>
+#include <FBCore/Mesh/MeshResource.h>
 #include <FBCore/FBCore.h>
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, CMeshResource, IMeshResource );
+    FB_CLASS_REGISTER_DERIVED( fb, MeshResource, IMeshResource );
 
-    CMeshResource::CMeshResource()
+    MeshResource::MeshResource()
     {
     }
 
-    CMeshResource::~CMeshResource()
+    MeshResource::~MeshResource()
     {
     }
 
-    bool CMeshResource::hasSkeleton() const
+    bool MeshResource::hasSkeleton() const
     {
         return false;
     }
 
-    String CMeshResource::getSkeletonName() const
+    String MeshResource::getSkeletonName() const
     {
         return "";
     }
 
-    u32 CMeshResource::getNumLodLevels() const
+    u32 MeshResource::getNumLodLevels() const
     {
         return 0;
     }
 
-    bool CMeshResource::isEdgeListBuilt() const
+    bool MeshResource::isEdgeListBuilt() const
     {
         return false;
     }
 
-    bool CMeshResource::hasVertexAnimation() const
+    bool MeshResource::hasVertexAnimation() const
     {
         return false;
     }
 
-    void CMeshResource::save()
+    void MeshResource::save()
     {
         try
         {
@@ -72,7 +72,7 @@ namespace fb
         }
     }
 
-    void CMeshResource::import()
+    void MeshResource::import()
     {
         try
         {
@@ -99,7 +99,7 @@ namespace fb
         }
     }
 
-    void CMeshResource::load( SmartPtr<ISharedObject> data )
+    void MeshResource::load( SmartPtr<ISharedObject> data )
     {
         try
         {
@@ -142,7 +142,7 @@ namespace fb
         }
     }
 
-    void CMeshResource::reload( SmartPtr<ISharedObject> data )
+    void MeshResource::reload( SmartPtr<ISharedObject> data )
     {
         try
         {
@@ -155,7 +155,7 @@ namespace fb
         }
     }
 
-    void CMeshResource::unload( SmartPtr<ISharedObject> data )
+    void MeshResource::unload( SmartPtr<ISharedObject> data )
     {
         try
         {
@@ -171,7 +171,7 @@ namespace fb
         }
     }
 
-    SmartPtr<Properties> CMeshResource::getProperties() const
+    SmartPtr<Properties> MeshResource::getProperties() const
     {
         auto properties = fb::make_ptr<Properties>();
         properties->setProperty( "scale", m_scale );
@@ -188,7 +188,7 @@ namespace fb
         return properties;
     }
 
-    void CMeshResource::setProperties( SmartPtr<Properties> properties )
+    void MeshResource::setProperties( SmartPtr<Properties> properties )
     {
         properties->getPropertyValue( "scale", m_scale );
         properties->getPropertyValue( "constraints", m_constraints );
@@ -218,117 +218,117 @@ namespace fb
         }
     }
 
-    SmartPtr<IStateContext> CMeshResource::getStateObject() const
+    SmartPtr<IStateContext> MeshResource::getStateObject() const
     {
         return m_stateObject;
     }
 
-    void CMeshResource::setStateObject( SmartPtr<IStateContext> stateObject )
+    void MeshResource::setStateObject( SmartPtr<IStateContext> stateObject )
     {
         m_stateObject = stateObject;
     }
 
-    void CMeshResource::_getObject( void **ppObject ) const
+    void MeshResource::_getObject( void **ppObject ) const
     {
         *ppObject = nullptr;
     }
 
-    f32 CMeshResource::getScale() const
+    f32 MeshResource::getScale() const
     {
         return m_scale;
     }
 
-    void CMeshResource::setScale( f32 val )
+    void MeshResource::setScale( f32 val )
     {
         m_scale = val;
     }
 
-    IMeshResource::MaterialNaming CMeshResource::getMaterialNaming() const
+    IMeshResource::MaterialNaming MeshResource::getMaterialNaming() const
     {
         return m_materialNaming;
     }
 
-    void CMeshResource::setMaterialNaming( MaterialNaming val )
+    void MeshResource::setMaterialNaming( MaterialNaming val )
     {
         m_materialNaming = val;
     }
 
-    bool CMeshResource::getConstraints() const
+    bool MeshResource::getConstraints() const
     {
         return m_constraints;
     }
 
-    void CMeshResource::setConstraints( bool val )
+    void MeshResource::setConstraints( bool val )
     {
         m_constraints = val;
     }
 
-    bool CMeshResource::getAnimation() const
+    bool MeshResource::getAnimation() const
     {
         return m_animation;
     }
 
-    void CMeshResource::setAnimation( bool val )
+    void MeshResource::setAnimation( bool val )
     {
         m_animation = val;
     }
 
-    bool CMeshResource::getVisibility() const
+    bool MeshResource::getVisibility() const
     {
         return m_visibility;
     }
 
-    void CMeshResource::setVisibility( bool val )
+    void MeshResource::setVisibility( bool val )
     {
         m_visibility = val;
     }
 
-    bool CMeshResource::getCameras() const
+    bool MeshResource::getCameras() const
     {
         return m_cameras;
     }
 
-    void CMeshResource::setCameras( bool val )
+    void MeshResource::setCameras( bool val )
     {
         m_cameras = val;
     }
 
-    bool CMeshResource::getLights() const
+    bool MeshResource::getLights() const
     {
         return m_lights;
     }
 
-    void CMeshResource::setLights( bool val )
+    void MeshResource::setLights( bool val )
     {
         m_lights = val;
     }
 
-    bool CMeshResource::getLightmapUVs() const
+    bool MeshResource::getLightmapUVs() const
     {
         return m_lightmapUVs;
     }
 
-    void CMeshResource::setLightmapUVs( bool val )
+    void MeshResource::setLightmapUVs( bool val )
     {
         m_lightmapUVs = val;
     }
 
-    SmartPtr<IMesh> CMeshResource::getMesh() const
+    SmartPtr<IMesh> MeshResource::getMesh() const
     {
         return m_mesh;
     }
 
-    void CMeshResource::setMesh( SmartPtr<IMesh> val )
+    void MeshResource::setMesh( SmartPtr<IMesh> val )
     {
         m_mesh = val;
     }
 
-    String CMeshResource::getMeshPath() const
+    String MeshResource::getMeshPath() const
     {
         return m_meshPath;
     }
 
-    void CMeshResource::setMeshPath( const String &val )
+    void MeshResource::setMeshPath( const String &val )
     {
         m_meshPath = StringUtil::cleanupPath( val );
     }

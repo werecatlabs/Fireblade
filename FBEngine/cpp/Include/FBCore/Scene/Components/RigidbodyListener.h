@@ -2,7 +2,7 @@
 #define RigidbodyListener_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Math/Transform3.h>
 
 namespace fb
@@ -10,7 +10,7 @@ namespace fb
     namespace scene
     {
 
-        class RigidbodyListener : public CSharedObject<IEventListener>
+        class RigidbodyListener : public SharedObject<IEventListener>
         {
         public:
             RigidbodyListener() = default;

@@ -11,7 +11,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, BaseState, CSharedObject<IState> );
+    FB_CLASS_REGISTER_DERIVED( fb, BaseState, SharedObject<IState> );
 
     BaseState::BaseState()
     {

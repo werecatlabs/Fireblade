@@ -1,18 +1,18 @@
 #include <FBCore/FBCorePCH.h>
-#include <FBCore/Mesh/CMesh.h>
+#include <FBCore/Mesh/Mesh.h>
 #include <FBCore/FBCore.h>
 
 namespace fb
 {
-    CMesh::CMesh()
+    Mesh::Mesh()
     {
     }
 
-    CMesh::~CMesh()
+    Mesh::~Mesh()
     {
     }
 
-    void CMesh::unload( SmartPtr<ISharedObject> data )
+    void Mesh::unload( SmartPtr<ISharedObject> data )
     {
         for(auto subMesh : m_subMeshes)
         {
@@ -28,12 +28,12 @@ namespace fb
         }
     }
 
-    void CMesh::addSubMesh( SmartPtr<ISubMesh> subMesh )
+    void Mesh::addSubMesh( SmartPtr<ISubMesh> subMesh )
     {
         m_subMeshes.push_back( subMesh );
     }
 
-    void CMesh::removeSubMesh( SmartPtr<ISubMesh> subMesh )
+    void Mesh::removeSubMesh( SmartPtr<ISubMesh> subMesh )
     {
         auto it = std::find( m_subMeshes.begin(), m_subMeshes.end(), subMesh );
         if(it != m_subMeshes.end())
@@ -42,17 +42,17 @@ namespace fb
         }
     }
 
-    void CMesh::removeAllSubMeshes()
+    void Mesh::removeAllSubMeshes()
     {
         m_subMeshes.clear();
     }
 
-    Array<SmartPtr<ISubMesh>> CMesh::getSubMeshes() const
+    Array<SmartPtr<ISubMesh>> Mesh::getSubMeshes() const
     {
         return m_subMeshes;
     }
 
-    void CMesh::setName( const String &name )
+    void Mesh::setName( const String &name )
     {
         if (auto handle = getHandle())
         {
@@ -60,7 +60,7 @@ namespace fb
         }
     }
 
-    String CMesh::getName() const
+    String Mesh::getName() const
     {
         if( auto handle = getHandle() )
         {
@@ -70,7 +70,7 @@ namespace fb
         return "";
     }
 
-    void CMesh::updateAABB( bool forceSubMeshUpdate )
+    void Mesh::updateAABB( bool forceSubMeshUpdate )
     {
         if(m_subMeshes.size() > 0)
         {
@@ -94,19 +94,19 @@ namespace fb
         }
     }
 
-    AABB3F CMesh::getAABB() const
+    AABB3F Mesh::getAABB() const
     {
         return m_aabb;
     }
 
-    void CMesh::setAABB( const AABB3F &aabb )
+    void Mesh::setAABB( const AABB3F &aabb )
     {
         m_aabb = aabb;
     }
 
-    SmartPtr<IMesh> CMesh::clone() const
+    SmartPtr<IMesh> Mesh::clone() const
     {
-        SmartPtr<IMesh> newMesh = fb::make_ptr<CMesh>();
+        SmartPtr<IMesh> newMesh = fb::make_ptr<Mesh>();
         Array<SmartPtr<ISubMesh>> subMeshes = getSubMeshes();
         for(auto &subMesh : subMeshes)
         {
@@ -124,52 +124,52 @@ namespace fb
         return newMesh;
     }
 
-    void CMesh::setAnimationInterface( SmartPtr<IAnimationInterface> animationInterface )
+    void Mesh::setAnimationInterface( SmartPtr<IAnimationInterface> animationInterface )
     {
         m_animationInterface = animationInterface;
     }
 
-    SmartPtr<IAnimationInterface> CMesh::getAnimationInterface() const
+    SmartPtr<IAnimationInterface> Mesh::getAnimationInterface() const
     {
         return m_animationInterface;
     }
 
-    void CMesh::setHasSharedVertexData( bool val )
+    void Mesh::setHasSharedVertexData( bool val )
     {
         m_hasSharedVertexData = val;
     }
 
-    bool CMesh::hasSkeleton() const
+    bool Mesh::hasSkeleton() const
     {
         return false;
     }
 
-    String CMesh::getSkeletonName() const
+    String Mesh::getSkeletonName() const
     {
         return "";
     }
 
-    u32 CMesh::getNumLodLevels() const
+    u32 Mesh::getNumLodLevels() const
     {
         return 0;
     }
 
-    bool CMesh::isEdgeListBuilt() const
+    bool Mesh::isEdgeListBuilt() const
     {
         return false;
     }
 
-    bool CMesh::hasVertexAnimation() const
+    bool Mesh::hasVertexAnimation() const
     {
         return false;
     }
 
-    bool CMesh::getHasSharedVertexData() const
+    bool Mesh::getHasSharedVertexData() const
     {
         return m_hasSharedVertexData;
     }
 
-    bool CMesh::compare( SmartPtr<IMesh> other ) const
+    bool Mesh::compare( SmartPtr<IMesh> other ) const
     {
         auto subMeshes = getSubMeshes();
         auto otherSubMeshes = other->getSubMeshes();

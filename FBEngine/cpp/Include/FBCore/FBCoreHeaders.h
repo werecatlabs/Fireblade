@@ -431,32 +431,32 @@
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Vector4.h>
 
-#include "FBCore/Mesh/CMesh.h"
-#include "FBCore/Mesh/CVertexBuffer.h"
-#include "FBCore/Mesh/CIndexBuffer.h"
-#include "FBCore/Mesh/CSubMesh.h"
-#include <FBCore/Mesh/CVertexDeclaration.h>
+#include "FBCore/Mesh/Mesh.h"
+#include "FBCore/Mesh/VertexBuffer.h"
+#include "FBCore/Mesh/IndexBuffer.h"
+#include "FBCore/Mesh/SubMesh.h"
+#include <FBCore/Mesh/VertexDeclaration.h>
 
-#include "FBCore/Mesh/CMeshResource.h"
-#include "FBCore/Mesh/CIndexBuffer.h"
-#include "FBCore/Mesh/CVertexBuffer.h"
-#include "FBCore/Mesh/CSubMesh.h"
-#include "FBCore/Mesh/CMesh.h"
+#include "FBCore/Mesh/MeshResource.h"
+#include "FBCore/Mesh/IndexBuffer.h"
+#include "FBCore/Mesh/VertexBuffer.h"
+#include "FBCore/Mesh/SubMesh.h"
+#include "FBCore/Mesh/Mesh.h"
 #include "FBCore/Mesh/MeshUtil.h"
 #include "FBCore/Mesh/MeshSerializer.h"
 #include "FBCore/Mesh/MeshGenerator.h"
 #include "FBCore/Mesh/CollisionMesh.h"
 #include "FBCore/Mesh/CollisionSubMesh.h"
-#include "FBCore/Mesh/CVertexDeclaration.h"
+#include "FBCore/Mesh/VertexDeclaration.h"
 
 #include <FBCore/Memory/Data.h>
 #include <FBCore/Memory/FactoryRegistration.h>
 #include <FBCore/Memory/FactoryTemplate.h>
 #include <FBCore/Memory/FactoryUtil.h>
 
-#include <FBCore/Resource/CMeshManager.h>
-#include <FBCore/Resource/CPrefabManager.h>
-#include <FBCore/Resource/CResourceDatabase.h>
+#include <FBCore/Resource/MeshManager.h>
+#include <FBCore/Resource/PrefabManager.h>
+#include <FBCore/Resource/ResourceDatabase.h>
 
 #include <FBCore/System/RttiClassDefinition.h>
 
@@ -572,7 +572,7 @@
 #include <FBCore/System/ApplicationManagerMT.h>
 #include <FBCore/System/CommandManager.h>
 #include <FBCore/System/CommandManagerMT.h>
-#include <FBCore/System/CSelectionManager.h>
+#include <FBCore/System/SelectionManager.h>
 #include <FBCore/System/DebugUtil.h>
 #include <FBCore/System/EventJob.h>
 #include <FBCore/System/FactoryManager.h>

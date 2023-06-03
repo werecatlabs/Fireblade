@@ -2,18 +2,18 @@
 #define __CSELECTIONMANAGER_H_INCLUDED__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Interface/System/ISelectionManager.h>
 
 namespace fb
 {
     
-    class CSelectionManager : public CSharedObject<ISelectionManager>
+    class SelectionManager : public SharedObject<ISelectionManager>
     {
     public:
-        CSelectionManager();
-        ~CSelectionManager() override;
+        SelectionManager();
+        ~SelectionManager() override;
 
         void unload( SmartPtr<ISharedObject> data ) override;
 

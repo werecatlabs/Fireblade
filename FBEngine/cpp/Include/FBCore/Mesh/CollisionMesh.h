@@ -2,14 +2,14 @@
 #define __FBMesh_CollisionMesh_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Math/Matrix4.h>
 #include <FBCore/Core/Array.h>
 
 namespace fb
 {
-    //--------------------------------------------
-    class CollisionMesh : public CSharedObject<ISharedObject>
+    
+    class CollisionMesh : public SharedObject<ISharedObject>
     {
     public:
         class HitData

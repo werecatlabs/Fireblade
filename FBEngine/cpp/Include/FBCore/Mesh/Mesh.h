@@ -3,18 +3,18 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Mesh/IMesh.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/Array.h>
 
 namespace fb
 {
     
     /// Implementation of a mesh.
-    class CMesh : public CSharedObject<IMesh>
+    class Mesh : public SharedObject<IMesh>
     {
     public:
-        CMesh();
-        ~CMesh() override;
+        Mesh();
+        ~Mesh() override;
 
         /** @copydoc ISharedObject::unload */
         void unload( SmartPtr<ISharedObject> data ) override;

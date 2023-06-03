@@ -2,8 +2,8 @@
 #include <FBCore/Mesh/CollisionMesh.h>
 #include <FBCore/Mesh/CollisionSubMesh.h>
 #include <FBCore/Core/Exception.h>
-#include <FBCore/Mesh/CSubMesh.h>
-#include <FBCore/Mesh/CMesh.h>
+#include <FBCore/Mesh/SubMesh.h>
+#include <FBCore/Mesh/Mesh.h>
 #include <FBCore/FBCore.h>
 
 namespace fb

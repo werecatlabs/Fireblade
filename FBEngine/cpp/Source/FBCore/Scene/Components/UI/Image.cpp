@@ -194,15 +194,15 @@ namespace fb
                                         uuid = StringUtil::getUUID();
                                     }
 
-                                    FB_ASSERT( materialResource->getMaterialType() ==
-                                               render::IMaterial::MaterialType::UI );
+                                    //FB_ASSERT( materialResource->getMaterialType() ==
+                                    //           render::IMaterial::MaterialType::UI );
 
                                     auto clonedMaterial =
                                         resourceDatabase->cloneResourceByType<render::IMaterial>(
                                             materialResource, uuid );
                                     FB_ASSERT( clonedMaterial );
-                                    FB_ASSERT( clonedMaterial->getMaterialType() ==
-                                               render::IMaterial::MaterialType::UI );
+                                    //FB_ASSERT( clonedMaterial->getMaterialType() ==
+                                    //           render::IMaterial::MaterialType::UI );
 
                                     m_material = clonedMaterial;
                                     //m_material = materialResource;

@@ -4,7 +4,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, FrameStatistics, CSharedObject<IFrameStatistics> );
+    FB_CLASS_REGISTER_DERIVED( fb, FrameStatistics, SharedObject<IFrameStatistics> );
 
     FrameStatistics::FrameStatistics()
     {

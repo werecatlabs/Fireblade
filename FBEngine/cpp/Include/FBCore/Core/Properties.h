@@ -1,7 +1,7 @@
 #ifndef _FBPropertyGroup_H
 #define _FBPropertyGroup_H
 
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/Property.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/StringUtil.h>
@@ -11,7 +11,7 @@ namespace fb
 {
 
     /** Stores and manages properties. */
-    class FBCore_API Properties : public CSharedObject<ISharedObject>
+    class FBCore_API Properties : public SharedObject<ISharedObject>
     {
     public:
         /** Default constructor. */

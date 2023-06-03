@@ -4,14 +4,14 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IJobQueue.h>
 #include <FBCore/Core/Array.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Atomics/AtomicFloat.h>
 #include <FBCore/Core/ConcurrentQueue.h>
 
 namespace fb
 {
     
-    class JobQueue : public CSharedObject<IJobQueue>
+    class JobQueue : public SharedObject<IJobQueue>
     {
     public:
         JobQueue();

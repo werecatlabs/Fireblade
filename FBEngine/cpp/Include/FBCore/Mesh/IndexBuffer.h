@@ -3,16 +3,16 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Mesh/IIndexBuffer.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
-    //---------------------------------------------
-    class CIndexBuffer : public CSharedObject<IIndexBuffer>
+    
+    class IndexBuffer : public SharedObject<IIndexBuffer>
     {
     public:
-        CIndexBuffer();
-        ~CIndexBuffer() override;
+        IndexBuffer();
+        ~IndexBuffer() override;
 
         /** @copydoc IObject::unload */
         void unload( SmartPtr<ISharedObject> data ) override;

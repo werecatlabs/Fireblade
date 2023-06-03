@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Core/StringTypes.h>
@@ -16,7 +16,7 @@ namespace fb
 {
     /** A factory to class to create objects.
      */
-    class FactoryManager : public CSharedObject<IFactoryManager>
+    class FactoryManager : public SharedObject<IFactoryManager>
     {
     public:
         /** Constructor.

@@ -2,7 +2,7 @@
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/System/RttiClassDefinition.h>
 #include <FBCore/Core/DebugTrace.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {

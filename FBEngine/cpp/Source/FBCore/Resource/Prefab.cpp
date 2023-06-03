@@ -1,19 +1,19 @@
 #include <FBCore/FBCorePCH.h>
-#include <FBCore/Resource/CPrefab.h>
+#include <FBCore/Resource/Prefab.h>
 #include <FBCore/FBCore.h>
 
 namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb, CPrefab, CResource<IPrefab> );
+        FB_CLASS_REGISTER_DERIVED( fb, Prefab, Resource<IPrefab> );
 
-        CPrefab::~CPrefab()
+        Prefab::~Prefab()
         {
             unload( nullptr );
         }
 
-        SmartPtr<IActor> CPrefab::createActor()
+        SmartPtr<IActor> Prefab::createActor()
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
@@ -45,25 +45,25 @@ namespace fb
             return nullptr;
         }
 
-        SmartPtr<IActor> CPrefab::getActor() const
+        SmartPtr<IActor> Prefab::getActor() const
         {
             return m_actor.lock();
         }
 
-        void CPrefab::setActor( SmartPtr<IActor> actor )
+        void Prefab::setActor( SmartPtr<IActor> actor )
         {
             m_actor = actor;
         }
 
-        void CPrefab::save()
+        void Prefab::save()
         {
         }
 
-        void CPrefab::load( SmartPtr<ISharedObject> data )
+        void Prefab::load( SmartPtr<ISharedObject> data )
         {
         }
 
-        void CPrefab::unload( SmartPtr<ISharedObject> data )
+        void Prefab::unload( SmartPtr<ISharedObject> data )
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
@@ -78,47 +78,47 @@ namespace fb
             }
         }
 
-        hash64 CPrefab::getFileSystemId() const
+        hash64 Prefab::getFileSystemId() const
         {
             return m_fileId;
         }
 
-        void CPrefab::setFileSystemId( hash64 id )
+        void Prefab::setFileSystemId( hash64 id )
         {
             m_fileId = id;
         }
 
-        SmartPtr<Properties> CPrefab::getProperties() const
+        SmartPtr<Properties> Prefab::getProperties() const
         {
-            auto properties = CResource<IPrefab>::getProperties();
+            auto properties = Resource<IPrefab>::getProperties();
             return properties;
         }
 
-        void CPrefab::setProperties( SmartPtr<Properties> properties )
+        void Prefab::setProperties( SmartPtr<Properties> properties )
         {
         }
 
-        SmartPtr<IStateContext> CPrefab::getStateObject() const
+        SmartPtr<IStateContext> Prefab::getStateObject() const
         {
             return m_stateObject;
         }
 
-        void CPrefab::setStateObject( SmartPtr<IStateContext> stateObject )
+        void Prefab::setStateObject( SmartPtr<IStateContext> stateObject )
         {
             m_stateObject = stateObject;
         }
 
-        void CPrefab::_getObject( void **ppObject ) const
+        void Prefab::_getObject( void **ppObject ) const
         {
             *ppObject = nullptr;
         }
 
-        SmartPtr<ISharedObject> CPrefab::getData() const
+        SmartPtr<ISharedObject> Prefab::getData() const
         {
             return m_data;
         }
 
-        void CPrefab::setData( SmartPtr<ISharedObject> data )
+        void Prefab::setData( SmartPtr<ISharedObject> data )
         {
             m_data = data;
         }

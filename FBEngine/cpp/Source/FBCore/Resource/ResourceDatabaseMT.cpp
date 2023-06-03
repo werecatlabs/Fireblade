@@ -1,21 +1,21 @@
 #include <FBCore/FBCorePCH.h>
-#include <FBCore/Resource/CResourceDatabaseMT.h>
+#include <FBCore/Resource/ResourceDatabaseMT.h>
 #include <FBCore/Database/AssetDatabaseManager.h>
 #include <FBCore/FBCore.h>
 
 namespace fb
 {
 
-    CResourceDatabaseMT::CResourceDatabaseMT()
+    ResourceDatabaseMT::ResourceDatabaseMT()
     {
     }
 
-    CResourceDatabaseMT::~CResourceDatabaseMT()
+    ResourceDatabaseMT::~ResourceDatabaseMT()
     {
         unload( nullptr );
     }
 
-    void CResourceDatabaseMT::load( SmartPtr<ISharedObject> data )
+    void ResourceDatabaseMT::load( SmartPtr<ISharedObject> data )
     {
         try
         {
@@ -32,7 +32,7 @@ namespace fb
         }
     }
 
-    void CResourceDatabaseMT::unload( SmartPtr<ISharedObject> data )
+    void ResourceDatabaseMT::unload( SmartPtr<ISharedObject> data )
     {
         try
         {
@@ -50,7 +50,7 @@ namespace fb
         }
     }
 
-    void CResourceDatabaseMT::build()
+    void ResourceDatabaseMT::build()
     {
         try
         {
@@ -176,12 +176,12 @@ namespace fb
         }
     }
 
-    void CResourceDatabaseMT::refresh() 
+    void ResourceDatabaseMT::refresh() 
         {
     
     }
 
-    void CResourceDatabaseMT::importFolder( SmartPtr<IFolderExplorer> folderListing )
+    void ResourceDatabaseMT::importFolder( SmartPtr<IFolderExplorer> folderListing )
     {
         try
         {
@@ -225,7 +225,7 @@ namespace fb
         }
     }
 
-    void CResourceDatabaseMT::importFile( const String &filePath )
+    void ResourceDatabaseMT::importFile( const String &filePath )
     {
         try
         {
@@ -307,7 +307,7 @@ namespace fb
         }
     }
 
-    void CResourceDatabaseMT::importAssets()
+    void ResourceDatabaseMT::importAssets()
     {
         try
         {
@@ -335,7 +335,7 @@ namespace fb
         }
     }
 
-    void CResourceDatabaseMT::reimportAssets()
+    void ResourceDatabaseMT::reimportAssets()
     {
         try
         {
@@ -379,7 +379,7 @@ namespace fb
         }
     }
 
-    Array<SmartPtr<IResource>> CResourceDatabaseMT::getResources() const
+    Array<SmartPtr<IResource>> ResourceDatabaseMT::getResources() const
     {
         Array<SmartPtr<IResource>> resources;
 
@@ -448,7 +448,7 @@ namespace fb
         return resources;
     }
 
-    SmartPtr<IResource> CResourceDatabaseMT::loadResource( const String &path )
+    SmartPtr<IResource> ResourceDatabaseMT::loadResource( const String &path )
     {
         auto applicationManager = core::IApplicationManager::instance();
         FB_ASSERT( applicationManager );
@@ -473,28 +473,28 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<IDatabaseManager> CResourceDatabaseMT::getDatabaseManager() const
+    SmartPtr<IDatabaseManager> ResourceDatabaseMT::getDatabaseManager() const
     {
         return m_databaseManager;
     }
 
-    void CResourceDatabaseMT::setDatabaseManager( SmartPtr<IDatabaseManager> databaseManager )
+    void ResourceDatabaseMT::setDatabaseManager( SmartPtr<IDatabaseManager> databaseManager )
     {
         m_databaseManager = databaseManager;
     }
 
-    Pair<SmartPtr<IResource>, bool> CResourceDatabaseMT::createOrRetrieve( hash_type type,
+    Pair<SmartPtr<IResource>, bool> ResourceDatabaseMT::createOrRetrieve( hash_type type,
                                                                            const String &path )
     {
         return Pair<SmartPtr<IResource>, bool>( nullptr, false );
     }
 
-    Pair<SmartPtr<IResource>, bool> CResourceDatabaseMT::createOrRetrieve( const String &path )
+    Pair<SmartPtr<IResource>, bool> ResourceDatabaseMT::createOrRetrieve( const String &path )
     {
         return Pair<SmartPtr<IResource>, bool>( nullptr, false );
     }
 
-    SmartPtr<ISharedObject> CResourceDatabaseMT::getObject( const String &uuid )
+    SmartPtr<ISharedObject> ResourceDatabaseMT::getObject( const String &uuid )
     {
         auto objects = getSceneObjects();
         for( auto object : objects )
@@ -555,7 +555,7 @@ namespace fb
         return nullptr;
     }
 
-    void CResourceDatabaseMT::getSceneObjects( SmartPtr<scene::IActor> actor,
+    void ResourceDatabaseMT::getSceneObjects( SmartPtr<scene::IActor> actor,
                                                Array<SmartPtr<ISharedObject>> &objects ) const
     {
         objects.push_back( actor );
@@ -581,7 +581,7 @@ namespace fb
         }
     }
 
-    Array<SmartPtr<ISharedObject>> CResourceDatabaseMT::getSceneObjects() const
+    Array<SmartPtr<ISharedObject>> ResourceDatabaseMT::getSceneObjects() const
     {
         auto applicationManager = core::IApplicationManager::instance();
         FB_ASSERT( applicationManager );
@@ -604,16 +604,16 @@ namespace fb
         return objects;
     }
 
-    void CResourceDatabaseMT::BuildResourceDatabaseJob::execute()
+    void ResourceDatabaseMT::BuildResourceDatabaseJob::execute()
     {
     }
 
-    SmartPtr<CResourceDatabaseMT> CResourceDatabaseMT::BuildResourceDatabaseJob::getOwner() const
+    SmartPtr<ResourceDatabaseMT> ResourceDatabaseMT::BuildResourceDatabaseJob::getOwner() const
     {
         return m_owner;
     }
 
-    void CResourceDatabaseMT::BuildResourceDatabaseJob::setOwner( SmartPtr<CResourceDatabaseMT> owner )
+    void ResourceDatabaseMT::BuildResourceDatabaseJob::setOwner( SmartPtr<ResourceDatabaseMT> owner )
     {
         m_owner = owner;
     }

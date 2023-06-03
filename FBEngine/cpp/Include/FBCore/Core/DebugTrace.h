@@ -1,7 +1,7 @@
 #ifndef __DebugCheck_h__
 #define __DebugCheck_h__
 
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Memory/RawPtr.h>
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Core/List.h>
@@ -12,7 +12,7 @@
 namespace fb
 {
     /** Used to check race conditions and heap corruption. */
-    class DebugTrace : public CSharedObject<ISharedObject>
+    class DebugTrace : public SharedObject<ISharedObject>
     {
     public:
         class DebugCheckFunction

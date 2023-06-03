@@ -3,15 +3,15 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/IDirector.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Resource/CResource.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Resource/Resource.h>
 
 namespace fb
 {
     namespace scene
     {
         /** Director implementation. */
-        class Director : public CResource<IDirector>
+        class Director : public Resource<IDirector>
         {
         public:
             /** Constructor. */

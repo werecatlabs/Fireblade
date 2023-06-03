@@ -3,14 +3,14 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IJob.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Memory/CObjectYield.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Memory/ObjectYield.h>
 #include <FBCore/Core/ConcurrentArray.h>
 
 namespace fb
 {
 
-    class Job : public CSharedObject<IJob>
+    class Job : public SharedObject<IJob>
     {
     public:
         Job() = default;

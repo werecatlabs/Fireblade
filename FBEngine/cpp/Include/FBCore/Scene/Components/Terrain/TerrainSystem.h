@@ -50,7 +50,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class TerrainSharedObjectListener : public CSharedObject<IEventListener>
+            class TerrainSharedObjectListener : public SharedObject<IEventListener>
             {
             public:
                 TerrainSharedObjectListener();

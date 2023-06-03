@@ -5,7 +5,7 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb, SubComponent, CResource<ISubComponent> );
+        FB_CLASS_REGISTER_DERIVED( fb, SubComponent, Resource<ISubComponent> );
 
         u32 SubComponent::m_idExt = 0;
 

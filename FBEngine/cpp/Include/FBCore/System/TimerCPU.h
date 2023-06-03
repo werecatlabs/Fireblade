@@ -2,7 +2,7 @@
 #define TimerCPU_h__
 
 #include <FBCore/Interface/System/ITimer.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <deque>
 
 #ifdef FB_USE_BOOST
@@ -12,7 +12,7 @@
 namespace fb
 {
     
-    class TimerCPU : public CSharedObject<ITimer>
+    class TimerCPU : public SharedObject<ITimer>
     {
     public:
         TimerCPU();

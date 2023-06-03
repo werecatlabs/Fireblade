@@ -10,16 +10,16 @@
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Core/DataUtil.h>
 #include <FBCore/Core/Properties.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Memory/Data.h>
-#include <FBCore/Resource/CResource.h>
+#include <FBCore/Resource/Resource.h>
 
 namespace fb
 {
     namespace scene
     {
         /** Base class for a component object. */
-        class Component : public CResource<IComponent>
+        class Component : public Resource<IComponent>
         {
         public:
             /** Listener class for finite state machine. */
@@ -305,7 +305,7 @@ namespace fb
              * BaseComponentStateListener is a class that serves as a base implementation for an IStateListener.
              * It provides functionality for handling state change messages and queries.
              */
-            class BaseComponentStateListener : public CSharedObject<IStateListener>
+            class BaseComponentStateListener : public SharedObject<IStateListener>
             {
             public:
                 /**

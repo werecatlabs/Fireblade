@@ -2,14 +2,14 @@
 #define __ApplicationManager_h__
 
 #include <FBCore/Interface/IApplicationManager.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     namespace core
     {
 
-        class ApplicationManager : public CSharedObject<IApplicationManager>
+        class ApplicationManager : public SharedObject<IApplicationManager>
         {
         public:
             ApplicationManager();

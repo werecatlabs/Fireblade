@@ -2,7 +2,7 @@
 #define Transformation3_h__
 
 #include <FBCore/FBCoreTypes.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Memory/SmartPtr.h>
 #include <FBCore/Math/Vector3.h>

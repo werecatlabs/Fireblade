@@ -2,14 +2,14 @@
 #define __PluginManager_h__
 
 #include <FBCore/Interface/System/IPluginManager.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     namespace core
     {
         
-        class PluginManager : public CSharedObject<IPluginManager>
+        class PluginManager : public SharedObject<IPluginManager>
         {
         public:
             PluginManager() = default;

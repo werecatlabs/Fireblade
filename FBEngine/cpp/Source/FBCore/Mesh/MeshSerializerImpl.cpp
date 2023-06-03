@@ -29,12 +29,12 @@ THE SOFTWARE.
 #include "FBCore/Mesh/MeshSerializerImpl.h"
 #include "FBCore/Mesh/MeshFileFormat.h"
 #include "FBCore/Mesh/MeshSerializer.h"
-#include <FBCore/Mesh/CVertexDeclaration.h>
+#include <FBCore/Mesh/VertexDeclaration.h>
 #include <FBCore/Mesh/MeshUtil.h>
-#include <FBCore/Mesh/CMesh.h>
-#include <FBCore/Mesh/CSubMesh.h>
-#include <FBCore/Mesh/CIndexBuffer.h>
-#include <FBCore/Mesh/CVertexBuffer.h>
+#include <FBCore/Mesh/Mesh.h>
+#include <FBCore/Mesh/SubMesh.h>
+#include <FBCore/Mesh/IndexBuffer.h>
+#include <FBCore/Mesh/VertexBuffer.h>
 #include "FBCore/Core/LogManager.h"
 #include <FBCore/Interface/IO/IStream.h>
 #include <FBCore/Interface/Animation/IAnimationInterface.h>
@@ -65,7 +65,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::exportMesh( const CMesh *pMesh, SmartPtr<IStream> stream, u32 endianMode )
+    void MeshSerializerImpl::exportMesh( const Mesh *pMesh, SmartPtr<IStream> stream, u32 endianMode )
     {
         FB_LOG( String( "MeshSerializer writing mesh data to stream " ) + stream->getFileName() +
                 String( "..." ) );
@@ -99,7 +99,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::importMesh( SmartPtr<IStream> &stream, CMesh *pMesh,
+    void MeshSerializerImpl::importMesh( SmartPtr<IStream> &stream, Mesh *pMesh,
                                          MeshSerializerListener *listener )
     {
         // Determine endianness (must be the first thing we do!)
@@ -136,7 +136,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::writeMesh( const CMesh *pMesh )
+    void MeshSerializerImpl::writeMesh( const Mesh *pMesh )
     {
         // Header
         writeChunkHeader( M_MESH, calcMeshSize( pMesh ) );
@@ -158,7 +158,7 @@ namespace fb
             FB_LOG( "Writing submesh..." );
 
             auto pSubMesh = subMeshes[i].get();
-            writeSubMesh( static_cast<CSubMesh *>( pSubMesh ) );
+            writeSubMesh( static_cast<SubMesh *>( pSubMesh ) );
 
             FB_LOG( "Submesh exported." );
         }
@@ -227,7 +227,7 @@ namespace fb
 
     //---------------------------------------------------------------------
     // Added by DrEvil
-    void MeshSerializerImpl::writeSubMeshNameTable( const CMesh *pMesh )
+    void MeshSerializerImpl::writeSubMeshNameTable( const Mesh *pMesh )
     {
         //// Header
         // writeChunkHeader(M_SUBMESH_NAME_TABLE, calcSubMeshNameTableSize(pMesh));
@@ -252,7 +252,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::writeSubMesh( const CSubMesh *s )
+    void MeshSerializerImpl::writeSubMesh( const SubMesh *s )
     {
         // Header
         writeChunkHeader( M_SUBMESH, calcSubMeshSize( s ) );
@@ -294,7 +294,7 @@ namespace fb
         if( !useSharedVertices )
         {
             auto vertexData = s->getVertexBuffer();
-            auto pVertexBuffer = static_cast<CVertexBuffer *>( vertexData.get() );
+            auto pVertexBuffer = static_cast<VertexBuffer *>( vertexData.get() );
             writeGeometry( pVertexBuffer );
         }
 
@@ -323,7 +323,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::writeExtremes( const CMesh *pMesh )
+    void MeshSerializerImpl::writeExtremes( const Mesh *pMesh )
     {
         bool has_extremes = false;
 
@@ -349,7 +349,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::writeSubMeshExtremes( unsigned short idx, const CSubMesh *s )
+    void MeshSerializerImpl::writeSubMeshExtremes( unsigned short idx, const SubMesh *s )
     {
         //      u32 chunkSize = MSTREAM_OVERHEAD_SIZE + sizeof (unsigned short) +
         //          s->extremityPoints.size () * sizeof (float) * 3;
@@ -374,7 +374,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::writeSubMeshTextureAliases( const CSubMesh *s )
+    void MeshSerializerImpl::writeSubMeshTextureAliases( const SubMesh *s )
     {
         //      u32 chunkSize;
         //      AliasTextureNamePairList::const_iterator i;
@@ -397,7 +397,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::writeSubMeshOperation( const CSubMesh *sm )
+    void MeshSerializerImpl::writeSubMeshOperation( const SubMesh *sm )
     {
         //// Header
         writeChunkHeader( M_SUBMESH_OPERATION, calcSubMeshOperationSize( sm ) );
@@ -408,7 +408,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcGeometrySize( const CVertexBuffer *vertexData )
+    u32 MeshSerializerImpl::calcGeometrySize( const VertexBuffer *vertexData )
     {
         auto vertexDeclaration = vertexData->getVertexDeclaration();
         // calc size
@@ -448,7 +448,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::writeGeometry( const CVertexBuffer *vertexData )
+    void MeshSerializerImpl::writeGeometry( const VertexBuffer *vertexData )
     {
         auto vertexDeclaration = vertexData->getVertexDeclaration();
         // calc size
@@ -471,7 +471,7 @@ namespace fb
 
         for( auto pElem : elemList )
         {
-            const auto &elem = *static_cast<CVertexElement *>( pElem.get() );
+            const auto &elem = *static_cast<VertexElement *>( pElem.get() );
 
             writeChunkHeader( M_GEOMETRY_VERTEX_ELEMENT, size );
 
@@ -541,7 +541,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcSubMeshNameTableSize( const CMesh *pMesh )
+    u32 MeshSerializerImpl::calcSubMeshNameTableSize( const Mesh *pMesh )
     {
         u32 size = MSTREAM_OVERHEAD_SIZE;
         // Figure out the size of the Name table.
@@ -562,7 +562,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcMeshSize( const CMesh *pMesh )
+    u32 MeshSerializerImpl::calcMeshSize( const Mesh *pMesh )
     {
         u32 size = MSTREAM_OVERHEAD_SIZE;
 
@@ -607,7 +607,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcSubMeshSize( const CSubMesh *pSub )
+    u32 MeshSerializerImpl::calcSubMeshSize( const SubMesh *pSub )
     {
         u32 size = MSTREAM_OVERHEAD_SIZE;
 
@@ -652,13 +652,13 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcSubMeshOperationSize( const CSubMesh *pSub )
+    u32 MeshSerializerImpl::calcSubMeshOperationSize( const SubMesh *pSub )
     {
         return MSTREAM_OVERHEAD_SIZE + sizeof( u16 );
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcSubMeshTextureAliasesSize( const CSubMesh *pSub )
+    u32 MeshSerializerImpl::calcSubMeshTextureAliasesSize( const SubMesh *pSub )
     {
         u32 chunkSize = 0;
         // AliasTextureNamePairList::const_iterator i;
@@ -698,7 +698,7 @@ namespace fb
     */
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readGeometry( SmartPtr<IStream> &stream, CMesh *pMesh, CVertexBuffer *dest )
+    void MeshSerializerImpl::readGeometry( SmartPtr<IStream> &stream, Mesh *pMesh, VertexBuffer *dest )
     {
         // dest->vertexStart = 0;
 
@@ -749,10 +749,10 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readGeometryVertexDeclaration( SmartPtr<IStream> &stream, CMesh *pMesh,
-                                                            CVertexBuffer *dest )
+    void MeshSerializerImpl::readGeometryVertexDeclaration( SmartPtr<IStream> &stream, Mesh *pMesh,
+                                                            VertexBuffer *dest )
     {
-        auto vertexDeclaration = fb::make_ptr<CVertexDeclaration>();
+        auto vertexDeclaration = fb::make_ptr<VertexDeclaration>();
         dest->setVertexDeclaration( vertexDeclaration );
 
         // Find optional geometry streams
@@ -792,8 +792,8 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readGeometryVertexElement( SmartPtr<IStream> &stream, CMesh *pMesh,
-                                                        CVertexBuffer *dest )
+    void MeshSerializerImpl::readGeometryVertexElement( SmartPtr<IStream> &stream, Mesh *pMesh,
+                                                        VertexBuffer *dest )
     {
         unsigned short source, offset, index, tmp;
         int vType;
@@ -825,8 +825,8 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readGeometryVertexBuffer( SmartPtr<IStream> &stream, CMesh *pMesh,
-                                                       CVertexBuffer *dest )
+    void MeshSerializerImpl::readGeometryVertexBuffer( SmartPtr<IStream> &stream, Mesh *pMesh,
+                                                       VertexBuffer *dest )
     {
         unsigned short bindIndex, vertexSize;
         // unsigned short bindIndex;	// Index to bind this buffer to
@@ -863,7 +863,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readSubMeshNameTable( SmartPtr<IStream> &stream, CMesh *pMesh )
+    void MeshSerializerImpl::readSubMeshNameTable( SmartPtr<IStream> &stream, Mesh *pMesh )
     {
         // The map for
         // map<unsigned short, String>::type subMeshNames;
@@ -913,7 +913,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readMesh( SmartPtr<IStream> &stream, CMesh *pMesh,
+    void MeshSerializerImpl::readMesh( SmartPtr<IStream> &stream, Mesh *pMesh,
                                        MeshSerializerListener *listener )
     {
         // Never automatically build edge lists for this version
@@ -1002,12 +1002,12 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readSubMesh( SmartPtr<IStream> &stream, CMesh *pMesh,
+    void MeshSerializerImpl::readSubMesh( SmartPtr<IStream> &stream, Mesh *pMesh,
                                           MeshSerializerListener *listener )
     {
         unsigned short streamID;
 
-        auto sm = fb::make_ptr<CSubMesh>();
+        auto sm = fb::make_ptr<SubMesh>();
         pMesh->addSubMesh( sm );
 
         // char* materialName
@@ -1023,7 +1023,7 @@ namespace fb
         readBools( stream, &useSharedVertices, 1 );
         sm->setUseSharedVertices( useSharedVertices );
 
-        auto indexBuffer = fb::make_ptr<CIndexBuffer>();
+        auto indexBuffer = fb::make_ptr<IndexBuffer>();
         sm->setIndexBuffer( indexBuffer );
 
         // sm->indexData->indexStart = 0;
@@ -1038,14 +1038,14 @@ namespace fb
         {
             if( idx32bit )
             {
-                indexBuffer->setIndexType( CIndexBuffer::Type::IT_32BIT );
+                indexBuffer->setIndexType( IndexBuffer::Type::IT_32BIT );
                 // unsigned int* faceVertexIndices
                 auto pIdx = static_cast<unsigned int *>( indexBuffer->createIndexData() );
                 readInts( stream, pIdx, indexBuffer->getNumIndices() );
             }
             else  // 16-bit
             {
-                indexBuffer->setIndexType( CIndexBuffer::Type::IT_16BIT );
+                indexBuffer->setIndexType( IndexBuffer::Type::IT_16BIT );
                 // unsigned int* faceVertexIndices
                 auto pIdx = static_cast<unsigned short *>( indexBuffer->createIndexData() );
                 readShorts( stream, pIdx, indexBuffer->getNumIndices() );
@@ -1061,10 +1061,10 @@ namespace fb
                 FB_EXCEPTION( "Missing geometry data in mesh file" );
             }
 
-            auto vertexBuffer = fb::make_ptr<CVertexBuffer>();
+            auto vertexBuffer = fb::make_ptr<VertexBuffer>();
             sm->setVertexBuffer( vertexBuffer );
 
-            readGeometry( stream, pMesh, static_cast<CVertexBuffer *>( vertexBuffer.get() ) );
+            readGeometry( stream, pMesh, static_cast<VertexBuffer *>( vertexBuffer.get() ) );
         }
 
         // Find all bone assignments, submesh operation, and texture aliases (if present)
@@ -1078,13 +1078,13 @@ namespace fb
                 switch( streamID )
                 {
                 case M_SUBMESH_OPERATION:
-                    readSubMeshOperation( stream, pMesh, static_cast<CSubMesh *>( sm.get() ) );
+                    readSubMeshOperation( stream, pMesh, static_cast<SubMesh *>( sm.get() ) );
                     break;
                 case M_SUBMESH_BONE_ASSIGNMENT:
-                    readSubMeshBoneAssignment( stream, pMesh, static_cast<CSubMesh *>( sm.get() ) );
+                    readSubMeshBoneAssignment( stream, pMesh, static_cast<SubMesh *>( sm.get() ) );
                     break;
                 case M_SUBMESH_TEXTURE_ALIAS:
-                    readSubMeshTextureAlias( stream, pMesh, static_cast<CSubMesh *>( sm.get() ) );
+                    readSubMeshTextureAlias( stream, pMesh, static_cast<SubMesh *>( sm.get() ) );
                     break;
                 }
 
@@ -1102,8 +1102,8 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readSubMeshOperation( SmartPtr<IStream> &stream, CMesh *pMesh,
-                                                   CSubMesh *sm )
+    void MeshSerializerImpl::readSubMeshOperation( SmartPtr<IStream> &stream, Mesh *pMesh,
+                                                   SubMesh *sm )
     {
         // unsigned short operationType;
         unsigned short opType;
@@ -1112,8 +1112,8 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readSubMeshTextureAlias( SmartPtr<IStream> &stream, CMesh *pMesh,
-                                                      CSubMesh *sub )
+    void MeshSerializerImpl::readSubMeshTextureAlias( SmartPtr<IStream> &stream, Mesh *pMesh,
+                                                      SubMesh *sub )
     {
         String aliasName = readString( stream );
         String textureName = readString( stream );
@@ -1129,7 +1129,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readSkeletonLink( SmartPtr<IStream> &stream, CMesh *pMesh,
+    void MeshSerializerImpl::readSkeletonLink( SmartPtr<IStream> &stream, Mesh *pMesh,
                                                MeshSerializerListener *listener )
     {
         String skelName = readString( stream );
@@ -1141,7 +1141,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readTextureLayer( SmartPtr<IStream> &stream, CMesh *pMesh,
+    void MeshSerializerImpl::readTextureLayer( SmartPtr<IStream> &stream, Mesh *pMesh,
                                                SmartPtr<render::IMaterial> pMat )
     {
         // Material definition section phased out of 1.1
@@ -1184,7 +1184,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readMeshBoneAssignment( SmartPtr<IStream> &stream, CMesh *pMesh )
+    void MeshSerializerImpl::readMeshBoneAssignment( SmartPtr<IStream> &stream, Mesh *pMesh )
     {
         VertexBoneAssignment assign;
 
@@ -1199,8 +1199,8 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readSubMeshBoneAssignment( SmartPtr<IStream> &stream, CMesh *pMesh,
-                                                        CSubMesh *sub )
+    void MeshSerializerImpl::readSubMeshBoneAssignment( SmartPtr<IStream> &stream, Mesh *pMesh,
+                                                        SubMesh *sub )
     {
         VertexBoneAssignment assign;
 
@@ -1230,7 +1230,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::writeLodInfo( const CMesh *pMesh )
+    void MeshSerializerImpl::writeLodInfo( const Mesh *pMesh )
     {
         //      const LodStrategy *strategy = pMesh->getLodStrategy();
         //      unsigned short numLods = pMesh->getNumLodLevels();
@@ -1390,7 +1390,7 @@ namespace fb
 
     //  }
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::writeBoundsInfo( const CMesh *pMesh )
+    void MeshSerializerImpl::writeBoundsInfo( const Mesh *pMesh )
     {
         // Usage Header
         unsigned long size = MSTREAM_OVERHEAD_SIZE;
@@ -1426,7 +1426,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readBoundsInfo( SmartPtr<IStream> &stream, CMesh *pMesh )
+    void MeshSerializerImpl::readBoundsInfo( SmartPtr<IStream> &stream, Mesh *pMesh )
     {
         f32 fMin[3];
         f32 fMax[3];
@@ -1450,7 +1450,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readMeshLodInfo( SmartPtr<IStream> &stream, CMesh *pMesh )
+    void MeshSerializerImpl::readMeshLodInfo( SmartPtr<IStream> &stream, Mesh *pMesh )
     {
         // unsigned short streamID, i;
 
@@ -1655,7 +1655,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcEdgeListSize( const CMesh *pMesh )
+    u32 MeshSerializerImpl::calcEdgeListSize( const Mesh *pMesh )
     {
         u32 size = MSTREAM_OVERHEAD_SIZE;
 
@@ -1738,7 +1738,7 @@ namespace fb
     //    return size;
     //}
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::writeEdgeList( const CMesh *pMesh )
+    void MeshSerializerImpl::writeEdgeList( const Mesh *pMesh )
     {
         // writeChunkHeader(M_EDGE_LISTS, calcEdgeListSize(pMesh));
 
@@ -1841,7 +1841,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readEdgeList( SmartPtr<IStream> &stream, CMesh *pMesh )
+    void MeshSerializerImpl::readEdgeList( SmartPtr<IStream> &stream, Mesh *pMesh )
     {
         // if (!stream->eof())
         //{
@@ -2003,7 +2003,7 @@ namespace fb
     //    }
     //}
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcAnimationsSize( const CMesh *pMesh )
+    u32 MeshSerializerImpl::calcAnimationsSize( const Mesh *pMesh )
     {
         u32 size = MSTREAM_OVERHEAD_SIZE;
 
@@ -2100,7 +2100,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcPosesSize( const CMesh *pMesh )
+    u32 MeshSerializerImpl::calcPosesSize( const Mesh *pMesh )
     {
         u32 size = MSTREAM_OVERHEAD_SIZE;
 
@@ -2145,7 +2145,7 @@ namespace fb
     //	return size;
     //}
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::writePoses( const CMesh *pMesh )
+    void MeshSerializerImpl::writePoses( const Mesh *pMesh )
     {
         // Mesh::ConstPoseIterator poseIterator = pMesh->getPoseIterator();
         // if (poseIterator.hasMoreElements())
@@ -2196,7 +2196,7 @@ namespace fb
 
     //}
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::writeAnimations( const CMesh *pMesh )
+    void MeshSerializerImpl::writeAnimations( const Mesh *pMesh )
     {
         writeChunkHeader( M_ANIMATIONS, calcAnimationsSize( pMesh ) );
 
@@ -2319,7 +2319,7 @@ namespace fb
     //	writeFloats(&(poseRef.influence), 1);
     // }
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readPoses( SmartPtr<IStream> &stream, CMesh *pMesh )
+    void MeshSerializerImpl::readPoses( SmartPtr<IStream> &stream, Mesh *pMesh )
     {
         // Find all substreams
         if( !stream->eof() )
@@ -2348,7 +2348,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readPose( SmartPtr<IStream> &stream, CMesh *pMesh )
+    void MeshSerializerImpl::readPose( SmartPtr<IStream> &stream, Mesh *pMesh )
     {
         //// char* name (may be blank)
         // String name = readString(stream);
@@ -2409,7 +2409,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readAnimations( SmartPtr<IStream> &stream, CMesh *pMesh )
+    void MeshSerializerImpl::readAnimations( SmartPtr<IStream> &stream, Mesh *pMesh )
     {
         // Find all substreams
         if( !stream->eof() )
@@ -2438,7 +2438,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readAnimation( SmartPtr<IStream> &stream, CMesh *pMesh )
+    void MeshSerializerImpl::readAnimation( SmartPtr<IStream> &stream, Mesh *pMesh )
     {
         // char* name
         String name = readString( stream );
@@ -2494,7 +2494,7 @@ namespace fb
 
     //---------------------------------------------------------------------
     void MeshSerializerImpl::readAnimationTrack( SmartPtr<IStream> &stream, SmartPtr<IAnimation> anim,
-                                                 CMesh *pMesh )
+                                                 Mesh *pMesh )
     {
         // ushort type
         u16 inAnimType;
@@ -2614,7 +2614,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readExtremes( SmartPtr<IStream> &stream, CMesh *pMesh )
+    void MeshSerializerImpl::readExtremes( SmartPtr<IStream> &stream, Mesh *pMesh )
     {
         // unsigned short idx;
         // readShorts(stream, &idx, 1);
@@ -2953,7 +2953,7 @@ namespace fb
     //
     //  }
     //---------------------------------------------------------------------
-    void MeshSerializerImpl_v1_4::readMeshLodInfo( SmartPtr<IStream> &stream, CMesh *pMesh )
+    void MeshSerializerImpl_v1_4::readMeshLodInfo( SmartPtr<IStream> &stream, Mesh *pMesh )
     {
         // unsigned short streamID, i;
 
@@ -3352,7 +3352,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl_v1_2::readMesh( SmartPtr<IStream> &stream, CMesh *pMesh,
+    void MeshSerializerImpl_v1_2::readMesh( SmartPtr<IStream> &stream, Mesh *pMesh,
                                             MeshSerializerListener *listener )
     {
         MeshSerializerImpl::readMesh( stream, pMesh, listener );
@@ -3361,8 +3361,8 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl_v1_2::readGeometry( SmartPtr<IStream> &stream, CMesh *pMesh,
-                                                CVertexBuffer *dest )
+    void MeshSerializerImpl_v1_2::readGeometry( SmartPtr<IStream> &stream, Mesh *pMesh,
+                                                VertexBuffer *dest )
     {
         // unsigned short bindIdx = 0;
 
@@ -3416,8 +3416,8 @@ namespace fb
 
     //---------------------------------------------------------------------
     void MeshSerializerImpl_v1_2::readGeometryPositions( unsigned short bindIdx,
-                                                         SmartPtr<IStream> &stream, CMesh *pMesh,
-                                                         CVertexBuffer *dest )
+                                                         SmartPtr<IStream> &stream, Mesh *pMesh,
+                                                         VertexBuffer *dest )
     {
         //     float *pFloat = 0;
         //     HardwareVertexBufferSharedPtr vbuf;
@@ -3438,7 +3438,7 @@ namespace fb
 
     //---------------------------------------------------------------------
     void MeshSerializerImpl_v1_2::readGeometryNormals( unsigned short bindIdx, SmartPtr<IStream> &stream,
-                                                       CMesh *pMesh, CVertexBuffer *dest )
+                                                       Mesh *pMesh, VertexBuffer *dest )
     {
         //     float *pFloat = 0;
         //     HardwareVertexBufferSharedPtr vbuf;
@@ -3459,7 +3459,7 @@ namespace fb
 
     //---------------------------------------------------------------------
     void MeshSerializerImpl_v1_2::readGeometryColours( unsigned short bindIdx, SmartPtr<IStream> &stream,
-                                                       CMesh *pMesh, CVertexBuffer *dest )
+                                                       Mesh *pMesh, VertexBuffer *dest )
     {
         //     RGBA* pRGBA = 0;
         //     HardwareVertexBufferSharedPtr vbuf;
@@ -3480,8 +3480,8 @@ namespace fb
 
     //---------------------------------------------------------------------
     void MeshSerializerImpl_v1_2::readGeometryTexCoords( unsigned short bindIdx,
-                                                         SmartPtr<IStream> &stream, CMesh *pMesh,
-                                                         CVertexBuffer *dest,
+                                                         SmartPtr<IStream> &stream, Mesh *pMesh,
+                                                         VertexBuffer *dest,
                                                          unsigned short texCoordSet )
     {
         //     float *pFloat = 0;
@@ -3524,8 +3524,8 @@ namespace fb
 
     //---------------------------------------------------------------------
     void MeshSerializerImpl_v1_1::readGeometryTexCoords( unsigned short bindIdx,
-                                                         SmartPtr<IStream> &stream, CMesh *pMesh,
-                                                         CVertexBuffer *dest,
+                                                         SmartPtr<IStream> &stream, Mesh *pMesh,
+                                                         VertexBuffer *dest,
                                                          unsigned short texCoordSet )
     {
         //     float *pFloat = 0;

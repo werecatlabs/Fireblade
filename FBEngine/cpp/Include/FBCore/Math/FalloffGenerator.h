@@ -1,14 +1,14 @@
 #ifndef FalloffGenerator_h__
 #define FalloffGenerator_h__
 
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/FBCoreTypes.h>
 #include <FBCore/Core/Array.h>
 
 namespace fb
 {
     template <class T>
-    class FalloffGenerator : public CSharedObject<ISharedObject>
+    class FalloffGenerator : public SharedObject<ISharedObject>
     {
     public:
         FalloffGenerator() = default;

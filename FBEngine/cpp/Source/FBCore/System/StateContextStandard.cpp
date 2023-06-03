@@ -19,12 +19,12 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, StateContextStandard, CSharedObject<IStateContext> );
+    FB_CLASS_REGISTER_DERIVED( fb, StateContextStandard, SharedObject<IStateContext> );
 
     u32 StateContextStandard::m_nextGeneratedNameExt = 1000;
 
     StateContextStandard::StateContextStandard() :
-        CSharedObject<IStateContext>(),
+        SharedObject<IStateContext>(),
         m_isAdded( false ),
         m_enableMessageQueues( true ),
         m_isDirty( false ),
@@ -34,7 +34,7 @@ namespace fb
     }
 
     StateContextStandard::StateContextStandard( u32 id ) :
-        CSharedObject<IStateContext>(),
+        SharedObject<IStateContext>(),
         m_id( id ),
         m_isAdded( false )
     {

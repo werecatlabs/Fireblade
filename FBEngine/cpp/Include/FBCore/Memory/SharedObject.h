@@ -35,22 +35,22 @@ namespace fb
     @version 1.0
     */
     template <typename T>
-    class CSharedObject : public T
+    class SharedObject : public T
     {
     public:
         typedef T type;
 
         /** Default constructor.
          */
-        CSharedObject();
+        SharedObject();
 
         /** Copy constructor.
          */
-        CSharedObject( CSharedObject<T> &other ) = delete;
+        SharedObject( SharedObject<T> &other ) = delete;
 
         /** Virtual destructor.
          */
-        virtual ~CSharedObject() override;
+        virtual ~SharedObject() override;
 
         /** @copydoc ISharedObject::preUpdate. */
         virtual void preUpdate() override;
@@ -76,22 +76,6 @@ namespace fb
         /** @copydoc ISharedObject::removeWeakReference. */
         bool removeWeakReference( void *address, const c8 *file = "??", u32 line = 0,
                                   const c8 *func = "??" ) override;
-
-        /** @copydoc ISharedObject::addReference */
-        s32 addReference( void *address, const c8 *file, u32 line, const c8 *func ) override;
-
-        /** @copydoc ISharedObject::addReference */
-        s32 addReference() override;
-
-        /** @copydoc ISharedObject::removeReference */
-        bool removeReference( void *address, const c8 *file = "??", u32 line = 0,
-                              const c8 *func = "??" ) override;
-
-        /** @copydoc ISharedObject::removeReference */
-        bool removeReference() override;
-
-        /** @copydoc ISharedObject::getReferences */
-        s32 getReferences() const override;
 
         /** @copydoc ISharedObject::getReferences */
         s32 getWeakReferences() const override;
@@ -190,20 +174,13 @@ namespace fb
         void removeObjectListener( SmartPtr<IEventListener> listener ) override;
 
         /** @copydoc ISharedObject::findElementListener */
-        SmartPtr<IEventListener> findObjectListener( const String &id ) const
-        {
-            return nullptr;
-        }
+        SmartPtr<IEventListener> findObjectListener( const String &id ) const;
 
-        ISharedObjectListener *getSharedObjectListener() const
-        {
-            return m_sharedObjectListener.load();
-        }
+        /** @copydoc ISharedObject::getSharedObjectListener */
+        ISharedObjectListener *getSharedObjectListener() const;
 
-        void setSharedObjectListener( ISharedObjectListener *listener )
-        {
-            m_sharedObjectListener = listener;
-        }
+        /** @copydoc ISharedObject::setSharedObjectListener */
+        void setSharedObjectListener( ISharedObjectListener *listener );
 
         /** @copydoc ISharedObject::getEnableReferenceTracking */
         bool getEnableReferenceTracking() const override;
@@ -248,7 +225,7 @@ namespace fb
                                 const char *func ) throw();
 #endif
 
-        FB_CLASS_REGISTER_TEMPLATE_DECL( CSharedObject, T );
+        FB_CLASS_REGISTER_TEMPLATE_DECL( SharedObject, T );
 
     protected:
         SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> getObjectListenersPtr() const;
@@ -256,22 +233,35 @@ namespace fb
         void setObjectListenersPtr( SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> p );
 
         SmartPtr<ISharedObject> m_scriptData;
-        atomic_u32 m_objectId = std::numeric_limits<u32>::max();
+        
         atomic_s32 m_weakReferences = 0;
 
         AtomicRawPtr<ISharedObjectListener> m_sharedObjectListener;
         SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> m_sharedEventListeners;
-
-        atomic_s32 *m_references = nullptr;
-        atomic_u8 *m_flags = nullptr;
-        Handle *m_handle = nullptr;
-        Atomic<LoadingState> *m_loadingState = nullptr;
     };
 
-    FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, CSharedObject, T, T );
+    FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, SharedObject, T, T );
 
     template <typename T>
-    void CSharedObject<T>::setupGarbageCollectorData()
+    SmartPtr<IEventListener> SharedObject<T>::findObjectListener( const String &id ) const
+    {
+        return nullptr;
+    }
+
+    template <typename T>
+    ISharedObjectListener *SharedObject<T>::getSharedObjectListener() const
+    {
+        return m_sharedObjectListener.load();
+    }
+
+    template <typename T>
+    void SharedObject<T>::setSharedObjectListener( ISharedObjectListener *listener )
+    {
+        m_sharedObjectListener = listener;
+    }
+
+    template <typename T>
+    void SharedObject<T>::setupGarbageCollectorData()
     {
         if( m_objectId != std::numeric_limits<u32>::max() )
         {
@@ -286,30 +276,29 @@ namespace fb
     }
 
     template <typename T>
-    void CSharedObject<T>::lock()
+    void SharedObject<T>::lock()
     {
     }
 
     template <typename T>
-    void CSharedObject<T>::unlock()
+    void SharedObject<T>::unlock()
     {
     }
 
     template <typename T>
-    SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> CSharedObject<T>::getObjectListenersPtr() const
+    SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> SharedObject<T>::getObjectListenersPtr() const
     {
         return m_sharedEventListeners;
     }
 
     template <typename T>
-    void CSharedObject<T>::setObjectListenersPtr(
-        SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> p )
+    void SharedObject<T>::setObjectListenersPtr( SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> p )
     {
         m_sharedEventListeners = p;
     }
 
 }  // end namespace fb
 
-#include <FBCore/Memory/CSharedObject.inl>
+#include <FBCore/Memory/SharedObject.inl>
 
 #endif  // __CSharedObject_H_

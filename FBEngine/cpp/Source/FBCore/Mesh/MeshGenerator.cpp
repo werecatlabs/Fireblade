@@ -1,11 +1,11 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Mesh/MeshGenerator.h>
-#include <FBCore/Mesh/CMesh.h>
-#include <FBCore/Mesh/CSubMesh.h>
-#include <FBCore/Mesh/CVertexDeclaration.h>
-#include <FBCore/Mesh/CVertexElement.h>
-#include <FBCore/Mesh/CVertexBuffer.h>
-#include <FBCore/Mesh/CIndexBuffer.h>
+#include <FBCore/Mesh/Mesh.h>
+#include <FBCore/Mesh/SubMesh.h>
+#include <FBCore/Mesh/VertexDeclaration.h>
+#include <FBCore/Mesh/VertexElement.h>
+#include <FBCore/Mesh/VertexBuffer.h>
+#include <FBCore/Mesh/IndexBuffer.h>
 #include <FBCore/FBCore.h>
 
 namespace fb
@@ -16,7 +16,7 @@ namespace fb
     {
         auto numVertices = positions.size();
 
-        auto vertexDeclaration = fb::make_ptr<CVertexDeclaration>();
+        auto vertexDeclaration = fb::make_ptr<VertexDeclaration>();
         u32 offset = 0;
 
         auto element = vertexDeclaration->addElement(
@@ -34,7 +34,7 @@ namespace fb
             IVertexElement::VertexElementType::VET_FLOAT2, 0 );
         offset += element->getSize();
 
-        auto vertexBuffer = fb::make_ptr<CVertexBuffer>();
+        auto vertexBuffer = fb::make_ptr<VertexBuffer>();
         vertexBuffer->setVertexDeclaration( vertexDeclaration );
         vertexBuffer->setNumVerticies( numVertices );
 
@@ -63,7 +63,7 @@ namespace fb
 
     SmartPtr<IVertexBuffer> MeshGenerator::createVertexBuffer( const Array<Vertex> &vertices )
     {
-        auto vertexDeclaration = fb::make_ptr<CVertexDeclaration>();
+        auto vertexDeclaration = fb::make_ptr<VertexDeclaration>();
         u32 offset = 0;
 
         auto element = vertexDeclaration->addElement(
@@ -81,7 +81,7 @@ namespace fb
             IVertexElement::VertexElementType::VET_FLOAT2, 0 );
         offset += element->getSize();
 
-        auto vertexBuffer = fb::make_ptr<CVertexBuffer>();
+        auto vertexBuffer = fb::make_ptr<VertexBuffer>();
         vertexBuffer->setVertexDeclaration( vertexDeclaration );
         vertexBuffer->setNumVerticies( 4 );
 
@@ -110,8 +110,8 @@ namespace fb
 
     SmartPtr<IIndexBuffer> MeshGenerator::createIndexBuffer( const Array<u32> &indices )
     {
-        auto indexBuffer = fb::make_ptr<CIndexBuffer>();
-        indexBuffer->setIndexType( CIndexBuffer::Type::IT_16BIT );
+        auto indexBuffer = fb::make_ptr<IndexBuffer>();
+        indexBuffer->setIndexType( IndexBuffer::Type::IT_16BIT );
         indexBuffer->setNumIndices( 6 );
 
         auto indexDataPtr = static_cast<u16 *>( indexBuffer->createIndexData() );
@@ -127,7 +127,7 @@ namespace fb
     SmartPtr<ISubMesh> MeshGenerator::createSubMesh( SmartPtr<IVertexBuffer> vertexBuffer,
                                                      SmartPtr<IIndexBuffer> indexBuffer )
     {
-        auto subMesh = fb::make_ptr<CSubMesh>();
+        auto subMesh = fb::make_ptr<SubMesh>();
         subMesh->setVertexBuffer( vertexBuffer );
         subMesh->setIndexBuffer( indexBuffer );
 
@@ -143,7 +143,7 @@ namespace fb
 
         auto subMesh = MeshGenerator::createSubMesh( vertexBuffer, indexBuffer );
 
-        auto mesh = fb::make_ptr<CMesh>();
+        auto mesh = fb::make_ptr<Mesh>();
         mesh->addSubMesh( subMesh );
         return mesh;
     }
@@ -196,13 +196,13 @@ namespace fb
         v[2].texCoord = Vector2F( 0, 1 ) * texCoordScale;
         v[3].texCoord = Vector2F( 1, 1 ) * texCoordScale;
 
-        auto planeMesh = fb::make_ptr<CMesh>();
+        auto planeMesh = fb::make_ptr<Mesh>();
 
-        auto subMesh = fb::make_ptr<CSubMesh>();
+        auto subMesh = fb::make_ptr<SubMesh>();
         planeMesh->addSubMesh( subMesh );
 
         // create sub mesh data
-        auto vertexDeclaration = fb::make_ptr<CVertexDeclaration>();
+        auto vertexDeclaration = fb::make_ptr<VertexDeclaration>();
         u32 offset = 0;
 
         offset = vertexDeclaration
@@ -219,7 +219,7 @@ namespace fb
                                     IVertexElement::VertexElementType::VET_FLOAT2, 0 )
                       ->getSize();
 
-        auto vertexBuffer = fb::make_ptr<CVertexBuffer>();
+        auto vertexBuffer = fb::make_ptr<VertexBuffer>();
         vertexBuffer->setVertexDeclaration( vertexDeclaration );
         vertexBuffer->setNumVerticies( 4 );
 
@@ -245,8 +245,8 @@ namespace fb
             *vertexDataPtr++ = uv.Y();
         }
 
-        auto indexBuffer = fb::make_ptr<CIndexBuffer>();
-        indexBuffer->setIndexType( CIndexBuffer::Type::IT_16BIT );
+        auto indexBuffer = fb::make_ptr<IndexBuffer>();
+        indexBuffer->setIndexType( IndexBuffer::Type::IT_16BIT );
         indexBuffer->setNumIndices( 6 );
 
         auto indexDataPtr = static_cast<u16 *>( indexBuffer->createIndexData() );

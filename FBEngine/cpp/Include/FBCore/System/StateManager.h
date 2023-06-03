@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IStateManager.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/ConcurrentArray.h>
 
 namespace fb
@@ -13,7 +13,7 @@ namespace fb
      *
      * The aim of this class is to keep it light weight with minimal dependencies.
      */
-    class StateManager : public CSharedObject<IStateManager>
+    class StateManager : public SharedObject<IStateManager>
     {
     public:
         /**

@@ -1,7 +1,7 @@
 #ifndef GraphNode_h__
 #define GraphNode_h__
 
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Core/List.h>
@@ -11,7 +11,7 @@ namespace fb
 {
 
     template <class T>
-    class GraphNode : public CSharedObject<T>
+    class GraphNode : public SharedObject<T>
     {
     public:
         GraphNode() = default;
@@ -63,7 +63,7 @@ namespace fb
         List<SmartPtr<GraphNode<T>>> m_neighbors;
     };
 
-    FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, GraphNode, T, CSharedObject<T> );
+    FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, GraphNode, T, SharedObject<T> );
 
 }  // namespace fb
 

@@ -4,7 +4,7 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/ICameraManager.h>
 #include <FBCore/Core/Array.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Thread/RecursiveMutex.h>
 
 namespace fb
@@ -12,7 +12,7 @@ namespace fb
     namespace scene
     {
 
-        class CameraManager : public CSharedObject<ICameraManager>
+        class CameraManager : public SharedObject<ICameraManager>
         {
         public:
             CameraManager() = default;

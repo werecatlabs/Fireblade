@@ -2,7 +2,7 @@
 #define Smooth_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <deque>
 
 namespace fb
@@ -19,7 +19,7 @@ namespace fb
     };
 
     template <class T>
-    class Smooth : public CSharedObject<ISharedObject>
+    class Smooth : public SharedObject<ISharedObject>
     {
     public:
         Smooth() : m_interval( static_cast<time_interval>( 1.0 ) )

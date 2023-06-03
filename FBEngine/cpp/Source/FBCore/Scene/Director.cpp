@@ -6,7 +6,7 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb, Director, CResource<IDirector> );
+        FB_CLASS_REGISTER_DERIVED( fb, Director, Resource<IDirector> );
 
         Director::Director()
         {

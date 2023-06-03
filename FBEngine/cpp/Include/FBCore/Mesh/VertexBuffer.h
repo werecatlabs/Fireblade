@@ -3,18 +3,18 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/FBCoreTypes.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Interface/Mesh/IVertexBuffer.h>
 
 namespace fb
 {
-    //---------------------------------------------
-    class CVertexBuffer : public CSharedObject<IVertexBuffer>
+
+    class VertexBuffer : public SharedObject<IVertexBuffer>
     {
     public:
-        CVertexBuffer();
-        ~CVertexBuffer() override;
+        VertexBuffer();
+        ~VertexBuffer() override;
 
         /** @copydoc IObject::unload */
         void unload( SmartPtr<ISharedObject> data ) override;

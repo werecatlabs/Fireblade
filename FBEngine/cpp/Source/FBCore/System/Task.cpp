@@ -11,7 +11,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, Task, CSharedObject<ITask> );
+    FB_CLASS_REGISTER_DERIVED( fb, Task, SharedObject<ITask> );
 
     void Task::load( SmartPtr<ISharedObject> data )
     {

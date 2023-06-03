@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include "FBCore/Mesh/MeshFileFormat.h"
 #include <FBFileSystem/FileDataStream.h>
 #include <FBCore/FBCore.h>
-#include <FBCore/Mesh/CMesh.h>
+#include <FBCore/Mesh/Mesh.h>
 #include <fstream>
 
 
@@ -75,7 +75,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializer::exportMesh( const CMesh *pMesh, const String &filename, u32 endianMode )
+    void MeshSerializer::exportMesh( const Mesh *pMesh, const String &filename, u32 endianMode )
     {
         auto f = new std::fstream;
         f->open( filename.c_str(), std::ios::binary | std::ios::out );
@@ -87,7 +87,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializer::exportMesh( const CMesh *pMesh, const String &filename, MeshVersion version,
+    void MeshSerializer::exportMesh( const Mesh *pMesh, const String &filename, MeshVersion version,
                                      u32 endianMode )
     {
         auto f = new std::fstream;
@@ -100,13 +100,13 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializer::exportMesh( const CMesh *pMesh, SmartPtr<IStream> stream, u32 endianMode )
+    void MeshSerializer::exportMesh( const Mesh *pMesh, SmartPtr<IStream> stream, u32 endianMode )
     {
         exportMesh( pMesh, stream, MESH_VERSION_LATEST, endianMode );
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializer::exportMesh( const CMesh *pMesh, SmartPtr<IStream> stream, MeshVersion version,
+    void MeshSerializer::exportMesh( const Mesh *pMesh, SmartPtr<IStream> stream, MeshVersion version,
                                      u32 endianMode )
     {
         if(version == MESH_VERSION_LEGACY)
@@ -140,7 +140,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializer::importMesh( SmartPtr<IStream> &stream, CMesh *pDest )
+    void MeshSerializer::importMesh( SmartPtr<IStream> &stream, Mesh *pDest )
     {
         determineEndianness( stream );
 
@@ -194,7 +194,7 @@ namespace fb
 
     SmartPtr<IMesh> MeshSerializer::loadMesh( SmartPtr<IStream> &stream )
     {
-        auto pDest = fb::make_ptr<CMesh>();
+        auto pDest = fb::make_ptr<Mesh>();
 
         // Read header and determine the version
         unsigned short headerID;
@@ -229,7 +229,7 @@ namespace fb
         }
 
         // Call implementation
-        impl->importMesh( stream, static_cast<CMesh *>(pDest.get()), mListener );
+        impl->importMesh( stream, static_cast<Mesh *>(pDest.get()), mListener );
         // Warn on old version of mesh
         if(ver != mVersionData[0]->versionString)
         {

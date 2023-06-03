@@ -4,7 +4,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, Job, CSharedObject<IJob> );
+    FB_CLASS_REGISTER_DERIVED( fb, Job, SharedObject<IJob> );
 
     IJob::JobState Job::getState() const
     {

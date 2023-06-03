@@ -14,7 +14,7 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb, Actor, CResource<IActor> );
+        FB_CLASS_REGISTER_DERIVED( fb, Actor, Resource<IActor> );
         u32 Actor::m_idExt = 0;
 
         Actor::Actor()
@@ -2297,7 +2297,7 @@ namespace fb
 
         SmartPtr<Properties> Actor::getProperties() const
         {
-            auto properties = CResource<IActor>::getProperties();
+            auto properties = Resource<IActor>::getProperties();
 
             properties->setProperty( "name", getName() );
 

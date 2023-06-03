@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Resource/IResourceDatabase.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/System/Job.h>
 #include <FBCore/Core/UtilityTypes.h>
 #include <FBCore/Core/Map.h>
@@ -12,11 +12,11 @@
 namespace fb
 {
 
-    class CResourceDatabase : public CSharedObject<IResourceDatabase>
+    class ResourceDatabase : public SharedObject<IResourceDatabase>
     {
     public:
-        CResourceDatabase();
-        ~CResourceDatabase() override;
+        ResourceDatabase();
+        ~ResourceDatabase() override;
 
         void load( SmartPtr<ISharedObject> data ) override;
         void unload( SmartPtr<ISharedObject> data ) override;

@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCoreTypes.h>
 #include <FBCore/Interface/System/IFactory.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Memory/Memory.h>
 #include <FBCore/Memory/RawPtr.h>
 #include <FBCore/Memory/PoolAllocator.h>
@@ -19,14 +19,14 @@
 namespace fb
 {
     template <class T>
-    class FactoryTemplate : public CSharedObject<IFactory>
+    class FactoryTemplate : public SharedObject<IFactory>
     {
     public:
         using type = T;
 
         /** Constructor
          */
-        FactoryTemplate() : CSharedObject<IFactory>(), m_listener( this )
+        FactoryTemplate() : SharedObject<IFactory>(), m_listener( this )
         {
         }
 

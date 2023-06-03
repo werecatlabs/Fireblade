@@ -7,15 +7,15 @@
 #include <FBCore/Core/Array.h>
 #include <FBCore/Atomics/AtomicFloat.h>
 #include <FBCore/Core/ConcurrentQueue.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     /** Default task implementation.  */
-    class Task : public CSharedObject<ITask>
+    class Task : public SharedObject<ITask>
     {
     public:
-        class Lock : public CSharedObject<ITaskLock>
+        class Lock : public SharedObject<ITaskLock>
         {
         public:
             Lock();

@@ -2,7 +2,7 @@
 #define __ApplicationManagerMT_h__
 
 #include <FBCore/Interface/IApplicationManager.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/IApplicationClient.h>
 #include <FBCore/Core/ConcurrentQueue.h>
 
@@ -12,7 +12,7 @@ namespace fb
     {
 
         /** Implementation of the IApplicationManager interface. */
-        class ApplicationManagerMT : public CSharedObject<IApplicationManager>
+        class ApplicationManagerMT : public SharedObject<IApplicationManager>
         {
         public:
             /** Constructor. */

@@ -2,7 +2,7 @@
 #define _FB_RotationalSpline3_H
 
 #include "FBCore/Math/Quaternion.h"
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <vector>
 
 namespace fb
@@ -11,7 +11,7 @@ namespace fb
     derivatives of quaternions.
     */
     template <class T>
-    class RotationalSpline3 : public CSharedObject<ISharedObject>
+    class RotationalSpline3 : public SharedObject<ISharedObject>
     {
     public:
         RotationalSpline3();

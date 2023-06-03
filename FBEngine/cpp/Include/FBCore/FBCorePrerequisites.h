@@ -456,11 +456,11 @@ namespace fb
     class INativeFileDialog;
 
     // mesh
-    class CMesh;
-    class CSubMesh;
-    class CVertexBuffer;
-    class CVertexDeclaration;
-    class CIndexBuffer;
+    class Mesh;
+    class SubMesh;
+    class VertexBuffer;
+    class VertexDeclaration;
+    class IndexBuffer;
     class CollisionMesh;
     class CollisionSubMesh;
 

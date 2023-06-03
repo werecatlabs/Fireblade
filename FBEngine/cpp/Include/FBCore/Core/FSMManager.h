@@ -2,13 +2,13 @@
 #define FSMManager_h__
 
 #include <FBCore/Interface/FSM/IFSMManager.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/Array.h>
 
 namespace fb
 {
 
-    class FSMManager : public CSharedObject<IFSMManager>
+    class FSMManager : public SharedObject<IFSMManager>
     {
     public:
         FSMManager();

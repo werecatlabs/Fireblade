@@ -3,17 +3,17 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Mesh/IMeshResource.h>
-#include <FBCore/Resource/CResource.h>
+#include <FBCore/Resource/Resource.h>
 
 namespace fb
 {
     
     /// Mesh resource implementation.
-    class CMeshResource : public CResource<IMeshResource>
+    class MeshResource : public Resource<IMeshResource>
     {
     public:
-        CMeshResource();
-        ~CMeshResource() override;
+        MeshResource();
+        ~MeshResource() override;
 
         /** @copydoc IResource::save */
         void save() override;

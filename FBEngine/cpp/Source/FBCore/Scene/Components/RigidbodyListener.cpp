@@ -9,7 +9,7 @@ namespace fb
     namespace scene
     {
 
-        FB_CLASS_REGISTER_DERIVED( fb::scene, RigidbodyListener, CSharedObject<IEventListener> );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, RigidbodyListener, SharedObject<IEventListener> );
 
         Parameter RigidbodyListener::handleEvent( IEvent::Type eventType, hash_type eventValue,
                                                   const Array<Parameter> &arguments,

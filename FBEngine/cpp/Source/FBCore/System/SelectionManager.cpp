@@ -1,28 +1,28 @@
 #include <FBCore/FBCorePCH.h>
-#include <FBCore/System/CSelectionManager.h>
+#include <FBCore/System/SelectionManager.h>
 #include <FBCore/FBCore.h>
 
 namespace fb
 {
     
-    CSelectionManager::CSelectionManager()
+    SelectionManager::SelectionManager()
     {
     }
 
     
-    CSelectionManager::~CSelectionManager()
+    SelectionManager::~SelectionManager()
     {
         unload( nullptr );
     }
 
     
-    void CSelectionManager::unload( SmartPtr<ISharedObject> data )
+    void SelectionManager::unload( SmartPtr<ISharedObject> data )
     {
         m_selection.clear();
     }
 
     
-    void CSelectionManager::addSelectedObject( SmartPtr<ISharedObject> object )
+    void SelectionManager::addSelectedObject( SmartPtr<ISharedObject> object )
     {
         m_selection.push_back( object );
 
@@ -33,7 +33,7 @@ namespace fb
     }
 
     
-    void CSelectionManager::removeSelectedObject( SmartPtr<ISharedObject> object )
+    void SelectionManager::removeSelectedObject( SmartPtr<ISharedObject> object )
     {
         auto it = std::find( m_selection.begin(), m_selection.end(), object );
         if( it != m_selection.end() )
@@ -48,7 +48,7 @@ namespace fb
     }
 
     
-    void CSelectionManager::clearSelection()
+    void SelectionManager::clearSelection()
     {
         m_selection.clear();
 
@@ -59,7 +59,7 @@ namespace fb
     }
 
     
-    Array<SmartPtr<ISharedObject>> CSelectionManager::getSelection() const
+    Array<SmartPtr<ISharedObject>> SelectionManager::getSelection() const
     {
         return m_selection;
     }

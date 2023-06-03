@@ -2,13 +2,13 @@
 #define WindowMessageData_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/Graphics/IWindowEvent.h>
 
 namespace fb
 {
     
-    class WindowMessageData : public CSharedObject<render::IWindowEvent>
+    class WindowMessageData : public SharedObject<render::IWindowEvent>
     {
     public:
         WindowMessageData() = default;

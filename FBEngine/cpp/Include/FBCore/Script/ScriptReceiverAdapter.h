@@ -2,12 +2,12 @@
 #define ScriptReceiverAdapter_h__
 
 #include <FBCore/Interface/Script/IScriptReceiver.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     template <class T>
-    class ScriptReceiverAdapter : public CSharedObject<IScriptReceiver>
+    class ScriptReceiverAdapter : public SharedObject<IScriptReceiver>
     {
     public:
         ScriptReceiverAdapter( T *listener ) : m_listener( listener )

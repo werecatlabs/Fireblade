@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
-#include <FBCore/Resource/CPrefabManager.h>
-#include <FBCore/Resource/CPrefab.h>
+#include <FBCore/Resource/PrefabManager.h>
+#include <FBCore/Resource/Prefab.h>
 #include <FBCore/Scene/Actor.h>
 #include <FBCore/Scene/Components/Mesh.h>
 #include <FBCore/Scene/Components/MeshRenderer.h>
@@ -11,7 +11,7 @@ namespace fb
 {
     namespace scene
     {
-        SmartPtr<IActor> CPrefabManager::createInstance( SmartPtr<IActor> prefab )
+        SmartPtr<IActor> PrefabManager::createInstance( SmartPtr<IActor> prefab )
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
@@ -64,8 +64,7 @@ namespace fb
         }
         */
 
-        SmartPtr<IActor> CPrefabManager::loadActor( SmartPtr<Properties> data,
-                                                    SmartPtr<IActor> parent )
+        SmartPtr<IActor> PrefabManager::loadActor( SmartPtr<Properties> data, SmartPtr<IActor> parent )
         {
             try
             {
@@ -93,7 +92,7 @@ namespace fb
             return nullptr;
         }
 
-        SmartPtr<IPrefab> CPrefabManager::loadPrefab( const String &filePath )
+        SmartPtr<IPrefab> PrefabManager::loadPrefab( const String &filePath )
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
@@ -110,29 +109,29 @@ namespace fb
             auto prefab = fb::static_pointer_cast<IPrefab>( prefabResource );
 
             auto ext = Path::getFileExtension( filePath );
-            if(ext == ".fbx" || ext == ".FBX")
+            if( ext == ".fbx" || ext == ".FBX" )
             {
                 auto meshLoader = applicationManager->getMeshLoader();
                 FB_ASSERT( meshLoader );
 
-                if(meshLoader)
+                if( meshLoader )
                 {
                     auto actor = meshLoader->loadActor( filePath );
-                    if(actor)
+                    if( actor )
                     {
                         prefab->setActor( actor );
                         return prefab;
                     }
                 }
             }
-            else if(ext == ".hda" || ext == ".HDA")
+            else if( ext == ".hda" || ext == ".HDA" )
             {
             }
-            else if(ext == ".fbmeshbin" || ext == ".FBMESHBIN")
+            else if( ext == ".fbmeshbin" || ext == ".FBMESHBIN" )
             {
                 auto actor = sceneManager->createActor();
                 auto meshComponent = actor->addComponent<Mesh>();
-                if(meshComponent)
+                if( meshComponent )
                 {
                     meshComponent->setMeshPath( filePath );
                 }
@@ -143,27 +142,26 @@ namespace fb
                 prefab->setActor( actor );
                 return prefab;
             }
-            else if(ext == ".prefab")
+            else if( ext == ".prefab" )
             {
                 auto jsonStr = fileSystem->readAllText( filePath );
 
-                auto data = DataUtil::parseJson( jsonStr );
+                auto data = fb::make_ptr<Properties>();
+                DataUtil::parse( jsonStr, data.get() );
 
                 auto actor = loadActor( data, nullptr );
-                //actor->updateTransform();
-
-                //prefab->setActor( actor );
-                //return prefab;
+                prefab->setActor( actor );
+                return prefab;
             }
 
             return nullptr;
         }
 
-        SmartPtr<IResource> CPrefabManager::create( const String &uuid )
+        SmartPtr<IResource> PrefabManager::create( const String &uuid )
         {
-            auto prefab = fb::make_ptr<CPrefab>();
+            auto prefab = fb::make_ptr<Prefab>();
 
-            if(auto handle = prefab->getHandle())
+            if( auto handle = prefab->getHandle() )
             {
                 handle->setUUID( uuid );
             }
@@ -172,11 +170,11 @@ namespace fb
             return prefab;
         }
 
-        SmartPtr<IResource> CPrefabManager::create( const String &uuid, const String &name )
+        SmartPtr<IResource> PrefabManager::create( const String &uuid, const String &name )
         {
-            auto prefab = fb::make_ptr<CPrefab>();
+            auto prefab = fb::make_ptr<Prefab>();
 
-            if(auto handle = prefab->getHandle())
+            if( auto handle = prefab->getHandle() )
             {
                 handle->setUUID( uuid );
                 handle->setName( name );
@@ -186,11 +184,11 @@ namespace fb
             return prefab;
         }
 
-        void CPrefabManager::saveToFile( const String &filePath, SmartPtr<IResource> resource )
+        void PrefabManager::saveToFile( const String &filePath, SmartPtr<IResource> resource )
         {
         }
 
-        SmartPtr<IResource> CPrefabManager::loadFromFile( const String &filePath )
+        SmartPtr<IResource> PrefabManager::loadFromFile( const String &filePath )
         {
             auto uuid = StringUtil::getUUID();
 
@@ -200,7 +198,7 @@ namespace fb
             return prefab;
         }
 
-        SmartPtr<IResource> CPrefabManager::load( const String &name )
+        SmartPtr<IResource> PrefabManager::load( const String &name )
         {
             try
             {
@@ -216,10 +214,10 @@ namespace fb
                 auto prefab = fb::static_pointer_cast<IPrefab>( prefabResource );
 
                 auto ext = Path::getFileExtension( name );
-                if(ext == ".fbx" || ext == ".FBX")
+                if( ext == ".fbx" || ext == ".FBX" )
                 {
                     auto meshLoader = applicationManager->getMeshLoader();
-                    if(meshLoader)
+                    if( meshLoader )
                     {
                         auto actor = meshLoader->loadActor( name );
 
@@ -227,17 +225,17 @@ namespace fb
                         return prefab;
                     }
                 }
-                else if(ext == ".hda" || ext == ".HDA")
+                else if( ext == ".hda" || ext == ".HDA" )
                 {
                 }
-                else if(ext == ".fbmeshbin" || ext == ".FBMESHBIN")
+                else if( ext == ".fbmeshbin" || ext == ".FBMESHBIN" )
                 {
                     auto sceneManager = applicationManager->getSceneManager();
                     auto scene = sceneManager->getCurrentScene();
 
                     auto actor = sceneManager->createActor();
                     auto meshComponent = actor->addComponent<Mesh>();
-                    if(meshComponent)
+                    if( meshComponent )
                     {
                         meshComponent->setMeshPath( name );
                     }
@@ -248,7 +246,7 @@ namespace fb
                     prefab->setActor( actor );
                     return prefab;
                 }
-                else if(ext == ".prefab")
+                else if( ext == ".prefab" )
                 {
                     //auto jsonStr = fileSystem->readAllText( name );
 
@@ -264,7 +262,7 @@ namespace fb
                     //return prefab;
                 }
             }
-            catch(std::exception &e)
+            catch( std::exception &e )
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -272,13 +270,13 @@ namespace fb
             return nullptr;
         }
 
-        void CPrefabManager::load( SmartPtr<ISharedObject> data )
+        void PrefabManager::load( SmartPtr<ISharedObject> data )
         {
         }
 
-        void CPrefabManager::unload( SmartPtr<ISharedObject> data )
+        void PrefabManager::unload( SmartPtr<ISharedObject> data )
         {
-            for(auto prefab : m_prefabs)
+            for( auto prefab : m_prefabs )
             {
                 prefab->unload( nullptr );
             }
@@ -286,33 +284,33 @@ namespace fb
             m_prefabs.clear();
         }
 
-        SmartPtr<IResource> CPrefabManager::getByName( const String &name )
+        SmartPtr<IResource> PrefabManager::getByName( const String &name )
         {
             return nullptr;
         }
 
-        SmartPtr<IResource> CPrefabManager::getById( const String &uuid )
+        SmartPtr<IResource> PrefabManager::getById( const String &uuid )
         {
             return nullptr;
         }
 
-        void CPrefabManager::_getObject( void **ppObject ) const
+        void PrefabManager::_getObject( void **ppObject ) const
         {
         }
 
-        Pair<SmartPtr<IResource>, bool> CPrefabManager::createOrRetrieve( const String &uuid,
-            const String &path,
-            const String &type )
-        {
-            return Pair<SmartPtr<IResource>, bool>();
-        }
-
-        Pair<SmartPtr<IResource>, bool> CPrefabManager::createOrRetrieve( const String &path )
+        Pair<SmartPtr<IResource>, bool> PrefabManager::createOrRetrieve( const String &uuid,
+                                                                          const String &path,
+                                                                          const String &type )
         {
             return Pair<SmartPtr<IResource>, bool>();
         }
 
-        void CPrefabManager::savePrefab( const String &filePath, SmartPtr<IActor> prefab )
+        Pair<SmartPtr<IResource>, bool> PrefabManager::createOrRetrieve( const String &path )
+        {
+            return Pair<SmartPtr<IResource>, bool>();
+        }
+
+        void PrefabManager::savePrefab( const String &filePath, SmartPtr<IActor> prefab )
         {
             FB_ASSERT( !StringUtil::isNullOrEmpty( filePath ) );
             FB_ASSERT( prefab );
@@ -328,5 +326,5 @@ namespace fb
 
             //fileSystem->writeAllText( filePath, data );
         }
-    } // namespace scene
-}     // end namespace fb
+    }  // namespace scene
+}  // end namespace fb

@@ -2,14 +2,14 @@
 #define CollisionSubMesh_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Math/Matrix4.h>
 #include <FBCore/Math/Vector3.h>
 
 namespace fb
 {
     //--------------------------------------------
-    class CollisionSubMesh : public CSharedObject<ISharedObject>
+    class CollisionSubMesh : public SharedObject<ISharedObject>
     {
     public:
         CollisionSubMesh();

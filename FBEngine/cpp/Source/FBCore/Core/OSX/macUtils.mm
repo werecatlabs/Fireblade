@@ -26,7 +26,7 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#import "FBCore/Base/OSX/macUtils.h"
+#import "FBCore/Core/OSX/macUtils.h"
 #import <Foundation/Foundation.h>
 #import <dlfcn.h>
 

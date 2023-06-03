@@ -67,7 +67,7 @@ namespace fb
                 UserComponent *owner = nullptr;
             };
 
-            class ScriptReceiver : public CSharedObject<IScriptReceiver>
+            class ScriptReceiver : public SharedObject<IScriptReceiver>
             {
             public:
                 ScriptReceiver();

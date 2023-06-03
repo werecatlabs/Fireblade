@@ -10,16 +10,16 @@
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Core/DataUtil.h>
 #include <FBCore/Core/Properties.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Memory/Data.h>
-#include <FBCore/Resource/CResource.h>
+#include <FBCore/Resource/Resource.h>
 
 namespace fb
 {
     namespace scene
     {
         /** Base class for a component object. */
-        class SubComponent : public CResource<ISubComponent>
+        class SubComponent : public Resource<ISubComponent>
         {
         public:
             /** Default constructor. */
