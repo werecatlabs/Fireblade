@@ -12,236 +12,26 @@
 #include <FBCore/Math/MathUtil.h>
 #include <FBCore/Scene/Systems/UI/CanvasTransformSystem.h>
 #include <FBCore/Scene/Components/UI/UIComponent.h>
+#include <FBCore/State/States/UITransformState.h>
 
 namespace fb
 {
     namespace scene
     {
-        using canvas_transform = CanvasTransformSystem::canvas_transform;
-
         FB_CLASS_REGISTER_DERIVED( fb::scene, LayoutTransform, IComponent );
 
         LayoutTransform::LayoutTransform()
         {
-            // todo fix hack
-            auto component = new canvas_transform;
-            component->owner = this;
-            setDataPtr( component );
         }
 
         LayoutTransform::~LayoutTransform()
         {
-        }
-
-        void LayoutTransform::updateComponents()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto sceneManager = applicationManager->getSceneManager();
-
-            auto typeInfo = LayoutTransform::typeInfo();
-            auto components = sceneManager->getComponentsByType<LayoutTransform>( typeInfo );
-            for( const auto &component : components )
-            {
-                if( !component->getDataPtr() )
-                {
-                    continue;
-                }
-
-                auto &transform = *(canvas_transform *)component->getDataPtr();
-                if( transform.dirty )
-                {
-                    auto referenceSize = Vector2I( 1920, 1080 );
-
-                    auto canvasTransform = transform.owner;
-                    if( canvasTransform )
-                    {
-                        if( auto actor = canvasTransform->getActor() )
-                        {
-                            //if( auto actorTransform = actor->getTransform() )
-                            //{
-                            //    auto pos = actorTransform->getPosition();
-                            //    transform.position = Vector2F( pos.X(), pos.Y() );
-                            //}
-
-                            auto parentAbsolutePos = Vector2F::zero();
-                            auto parentAbsoluteSize = Vector2F::zero();
-
-                            SmartPtr<LayoutTransform> parentCanvasTransform;
-
-                            if( auto parent = actor->getParent() )
-                            {
-                                parentCanvasTransform = parent->getComponent<LayoutTransform>();
-                                while( !parentCanvasTransform && parent )
-                                {
-                                    parent = parent->getParent();
-
-                                    if( parent )
-                                    {
-                                        parentCanvasTransform = parent->getComponent<LayoutTransform>();
-                                    }
-                                }
-
-                                if( parentCanvasTransform )
-                                {
-                                    parentAbsolutePos = parentCanvasTransform->getAbsolutePosition();
-                                    parentAbsoluteSize = parentCanvasTransform->getAbsoluteSize();
-                                }
-                            }
-
-                            auto uiComponents = actor->getComponentsByType<UIComponent>();
-                            for( auto uiComponent : uiComponents )
-                            {
-                                if( !parentCanvasTransform )
-                                {
-                                    auto canvas =
-                                        fb::static_pointer_cast<Layout>( uiComponent->getCanvas() );
-                                    auto referenceSize = Vector2I( 1920, 1080 );
-                                    if( canvas )
-                                    {
-                                        referenceSize = canvas->getReferenceSize();
-
-                                        parentAbsoluteSize =
-                                            Vector2F( referenceSize.X(), referenceSize.Y() );
-                                    }
-                                }
-
-                                auto useSize = uiComponent->getTypeInfo() != Text::typeInfo();
-                                auto screenPos = Vector2F::zero();
-                                auto &position = transform.position;
-                                auto &size = transform.size;
-
-                                auto &horizontalAlignment = transform.horizontalAlignment;
-
-                                switch( horizontalAlignment )
-                                {
-                                case HorizontalAlignment::LEFT:
-                                {
-                                    screenPos.X() = ( parentAbsoluteSize.X() * 0.0f ) + position.X();
-
-                                    if( useSize )
-                                        screenPos.X() -= size.X() * 0.0f;
-                                }
-                                break;
-                                case HorizontalAlignment::CENTER:
-                                {
-                                    screenPos.X() = ( parentAbsoluteSize.X() * 0.5f ) + position.X();
-
-                                    if( useSize )
-                                        screenPos.X() -= size.X() * 0.5f;
-                                }
-                                break;
-                                case HorizontalAlignment::RIGHT:
-                                {
-                                    screenPos.X() = ( parentAbsoluteSize.X() * 1.0f ) - position.X();
-
-                                    if( useSize )
-                                        screenPos.X() -= size.X() * 1.0f;
-                                }
-                                break;
-                                default:
-                                {
-                                }
-                                }
-
-                                auto &verticalAlignment = transform.verticalAlignment;
-                                switch( verticalAlignment )
-                                {
-                                case VerticalAlignment::TOP:
-                                {
-                                    screenPos.Y() = ( parentAbsoluteSize.Y() * 0.0f ) + position.Y();
-
-                                    if( useSize )
-                                        screenPos.Y() -= size.Y() * 0.0f;
-                                }
-                                break;
-                                case VerticalAlignment::CENTER:
-                                {
-                                    screenPos.Y() = ( parentAbsoluteSize.Y() * 0.5f ) + position.Y();
-
-                                    if( useSize )
-                                        screenPos.Y() -= size.Y() * 0.5f;
-                                }
-                                break;
-                                case VerticalAlignment::BOTTOM:
-                                {
-                                    screenPos.Y() = ( parentAbsoluteSize.Y() * 1.0f ) - position.Y();
-
-                                    if( useSize )
-                                        screenPos.Y() -= size.Y() * 1.0f;
-                                }
-                                break;
-                                default:
-                                {
-                                }
-                                }
-
-                                auto relativePos =
-                                    Vector2F( screenPos.X() / static_cast<f32>( referenceSize.X() ),
-                                              screenPos.Y() / static_cast<f32>( referenceSize.Y() ) );
-                                auto relativeSize =
-                                    Vector2F( size.X() / static_cast<f32>( referenceSize.X() ),
-                                              size.Y() / static_cast<f32>( referenceSize.Y() ) );
-
-                                if( uiComponent )
-                                {
-                                    if( auto element = uiComponent->getElement() )
-                                    {
-                                        auto parentRelativePos =
-                                            parentAbsolutePos /
-                                            Vector2F( referenceSize.X(), referenceSize.Y() );
-                                        auto relativePosition = parentRelativePos + relativePos;
-
-                                        transform.absolutePosition =
-                                            relativePosition *
-                                            Vector2F( referenceSize.X(), referenceSize.Y() );
-                                        transform.absoluteSize = size;
-
-                                        FB_ASSERT( relativePosition.isValid() );
-                                        FB_ASSERT( relativeSize.isValid() );
-
-                                        element->setPosition( relativePosition );
-                                        element->setSize( relativeSize );
-                                    }
-                                }
-                            }
-
-                            auto components = actor->getComponentsInChildren<LayoutTransform>();
-                            for( auto &component : components )
-                            {
-                                component->updateTransform();
-                            }
-                        }
-                    }
-
-                    transform.dirty = false;  // commented out as a workaround
-                }
-            }
+            unload( nullptr );
         }
 
         void LayoutTransform::load( SmartPtr<ISharedObject> data )
         {
             setLoadingState( LoadingState::Loading );
-
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-
-            /*
-            if( auto actor = getActor() )
-            {
-                auto entity = (entt::registry::entity_type)actor->getEntity();
-
-                auto registry = sceneManager->getRegistry();
-                auto &component = registry->emplace<canvas_transform>( entity );
-                component.owner = this;
-
-                setDataPtr( &component );
-            }
-            */
 
             setLoadingState( LoadingState::Loaded );
         }
@@ -250,12 +40,6 @@ namespace fb
         {
             setLoadingState( LoadingState::Unloading );
 
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-
             setDataPtr( nullptr );
 
             setLoadingState( LoadingState::Unloaded );
@@ -263,230 +47,62 @@ namespace fb
 
         void LayoutTransform::updateTransform()
         {
-            //if( auto actor = getActor() )
-            //{
-            //    if( auto actorTransform = actor->getTransform() )
-            //    {
-            //        auto pos = actorTransform->getPosition();
-
-            //        auto data = getDataPtrByType<canvas_transform>();
-            //        data->position = Vector2F( pos.X(), pos.Y() );
-            //    }
-            //}
-
-            if( auto data = getDataPtrByType<canvas_transform>() )
+            if(auto data = getComponentStateByType<UITransformState>())
             {
-                data->dirty = true;
+                data->setOwner( this );
+                data->setUIComponent( m_uiComponent.get() );
+                data->setDirty( true );
             }
 
-            if( auto actor = getActor() )
-            {
-                auto components = actor->getComponentsInChildren<LayoutTransform>();
-                for( auto component : components )
-                {
-                    component->updateTransform();
-                }
-            }
-
-            /*
             if(auto actor = getActor())
             {
-                if(auto transform = actor->getTransform())
-                {
-                    auto pos = transform->getPosition();
-                    setPosition( Vector2F( pos.X(), pos.Y() ) );
-                }
-
-                auto uiComponents = actor->getComponentsByType<UIComponent>();
-                for(auto uiComponent : uiComponents)
-                {
-                    auto canvas = fb::static_pointer_cast<CanvasComponent>( uiComponent->getCanvas() );
-                    auto referenceSize = Vector2I( 1920, 1080 );
-                    if(canvas)
-                    {
-                        referenceSize = canvas->getReferenceSize();
-                    }
-
-                    auto screenPos = Vector2F::zero();
-                    auto position = getPosition();
-                    auto size = getSize();
-
-                    auto horizontalAlignment = getHorizontalAlignment();
-                    auto verticalAlignment = getVerticalAlignment();
-
-                    switch(horizontalAlignment)
-                    {
-                    case HorizontalAlignment::LEFT:
-                    {
-                        screenPos.X() = ( referenceSize.X() * 0.0f ) + position.X();
-                        screenPos.X() -= size.X() * 0.0f;
-                    }
-                    break;
-                    case HorizontalAlignment::CENTER:
-                    {
-                        screenPos.X() = ( referenceSize.X() * 0.5f ) + position.X();
-                        screenPos.X() -= size.X() * 0.5f;
-                    }
-                    break;
-                    case HorizontalAlignment::RIGHT:
-                    {
-                        screenPos.X() = ( referenceSize.X() * 1.0f ) - position.X();
-                        screenPos.X() -= size.X() * 1.0f;
-                    }
-                    break;
-                    default:
-                    {
-                    }
-                    }
-
-                    switch(verticalAlignment)
-                    {
-                    case VerticalAlignment::TOP:
-                    {
-                        screenPos.Y() = ( referenceSize.Y() * 0.0f ) + position.Y();
-                        screenPos.Y() -= size.Y() * 0.0f;
-                    }
-                    break;
-                    case VerticalAlignment::CENTER:
-                    {
-                        screenPos.Y() = ( referenceSize.Y() * 0.5f ) + position.Y();
-                        screenPos.Y() -= size.Y() * 0.5f;
-                    }
-                    break;
-                    case VerticalAlignment::BOTTOM:
-                    {
-                        screenPos.Y() = ( referenceSize.Y() * 1.0f ) - position.Y();
-                        screenPos.Y() -= size.Y() * 1.0f;
-                    }
-                    break;
-                    default:
-                    {
-                    }
-                    }
-
-                    auto parentRelativePos = Vector2F::zero();
-                    auto parentRelativeSize = Vector2F::zero();
-
-                    if(auto parent = actor->getParent())
-                    {
-                        if(auto parentCanvasTransform = parent->getComponent<CanvasTransform>())
-                        {
-                            parentRelativePos = parentCanvasTransform->getAbsolutePosition();
-                        }
-                    }
-
-                    auto relativePos = Vector2F( screenPos.X() / static_cast<f32>(referenceSize.X()),
-                                                 screenPos.Y() / static_cast<f32>(referenceSize.Y()) );
-                    auto relativeSize = Vector2F( size.X() / static_cast<f32>(referenceSize.X()),
-                                                  size.Y() / static_cast<f32>(referenceSize.Y()) );
-
-                    if(uiComponent)
-                    {
-                        if(auto element = uiComponent->getElement())
-                        {
-                            auto absolutePosition = parentRelativePos + relativePos;
-                            setAbsolutePosition( absolutePosition );
-
-                            element->setPosition( absolutePosition );
-                            element->setSize( relativeSize );
-                        }
-                    }
-                }
-
-                auto components = actor->getComponentsInChildren<CanvasTransform>();
-                for(auto &component : components)
+                auto components = actor->getComponentsInChildren<LayoutTransform>();
+                for(auto component : components)
                 {
                     component->updateTransform();
                 }
             }
-            */
-        }
-
-        void LayoutTransform::reset()
-        {
-        }
-
-        void LayoutTransform::awake()
-        {
-            try
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                // auto canvasTransformManager =
-                //     applicationManager->getComponentManager<CanvasTransformManager>();
-                // if( canvasTransformManager )
-                //{
-                //     canvasTransformManager->addCanvasTransform( this );
-                // }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void LayoutTransform::destroy()
-        {
-            try
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                // auto canvasTransformManager =
-                //     applicationManager->getComponentManager<CanvasTransformManager>();
-                // if( canvasTransformManager )
-                //{
-                //     canvasTransformManager->removeCanvasTransform( this );
-                // }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void LayoutTransform::play()
-        {
-        }
-
-        void LayoutTransform::edit()
-        {
         }
 
         Vector2F LayoutTransform::getPosition() const
         {
-            auto data = getDataPtrByType<canvas_transform>();
-            return data->position;
+            if(auto data = getComponentStateByType<UITransformState>())
+            {
+                return data->getPosition();
+            }
+
+            return Vector2F::zero();
         }
 
         void LayoutTransform::setPosition( const Vector2F &position )
         {
-            auto data = getDataPtrByType<canvas_transform>();
-            data->position = position;
-            data->absolutePosition = position;
+            if(auto data = getComponentStateByType<UITransformState>())
+            {
+                data->setPosition( position );
+                data->setAbsolutePosition( position );
+            }
         }
 
         Vector2F LayoutTransform::getSize() const
         {
-            auto data = getDataPtrByType<canvas_transform>();
-            return data->size;
+            auto data = getComponentStateByType<UITransformState>();
+            return data->getSize();
         }
 
         void LayoutTransform::setSize( const Vector2F &size )
         {
-            if( auto data = getDataPtrByType<canvas_transform>() )
+            if(auto data = getComponentStateByType<UITransformState>())
             {
-                data->size = size;
-                data->absoluteSize = size;
+                data->setSize( size );
+                data->setAbsoluteSize( size );
             }
         }
 
         Vector2F LayoutTransform::getAnchor() const
         {
-            if( auto data = getDataPtrByType<canvas_transform>() )
+            if(auto data = getComponentStateByType<UITransformState>())
             {
-                return data->anchor;
+                return data->getAnchor();
             }
 
             return Vector2F::zero();
@@ -494,27 +110,45 @@ namespace fb
 
         void LayoutTransform::setAnchor( const Vector2F &anchor )
         {
-            if( auto data = getDataPtrByType<canvas_transform>() )
+            if(auto data = getComponentStateByType<UITransformState>())
             {
-                data->anchor = anchor;
+                data->setAnchor( anchor );
             }
         }
 
-        Vector2F LayoutTransform::getPivot() const
+        Vector2F LayoutTransform::getAnchorMin() const
         {
-            if( auto data = getDataPtrByType<canvas_transform>() )
+            if(auto data = getComponentStateByType<UITransformState>())
             {
-                return data->pivot;
+                return data->getAnchorMin();
             }
 
             return Vector2F::zero();
         }
 
-        void LayoutTransform::setPivot( const Vector2F &pivot )
+        void LayoutTransform::setAnchorMin( const Vector2F &anchorMin )
         {
-            if( auto data = getDataPtrByType<canvas_transform>() )
+            if(auto data = getComponentStateByType<UITransformState>())
             {
-                data->pivot = pivot;
+                data->setAnchorMin( anchorMin );
+            }
+        }
+
+        Vector2F LayoutTransform::getAnchorMax() const
+        {
+            if(auto data = getComponentStateByType<UITransformState>())
+            {
+                return data->getAnchorMax();
+            }
+
+            return Vector2F::zero();
+        }
+
+        void LayoutTransform::setAnchorMax( const Vector2F &anchorMax )
+        {
+            if(auto data = getComponentStateByType<UITransformState>())
+            {
+                data->setAnchorMax( anchorMax );
             }
         }
 
@@ -527,13 +161,26 @@ namespace fb
                 static const auto horizontalStr = String( "Horizontal" );
                 static const auto verticalStr = String( "Vertical" );
 
-                auto data = getDataPtrByType<canvas_transform>();
-                if( data )
+                auto data = getComponentStateByType<UITransformState>();
+                if(data)
                 {
-                    properties->setProperty( "Position", data->position );
-                    properties->setProperty( "Size", data->size );
-                    properties->setProperty( "Anchor", data->anchor );
-                    properties->setProperty( "Pivot", data->pivot );
+                    auto position = data->getPosition();
+                    auto size = data->getSize();
+
+                    auto absolutePosition = data->getAbsolutePosition();
+                    auto absoluteSize = data->getAbsoluteSize();
+
+                    auto anchor = data->getAnchor();
+                    auto anchorMin = data->getAnchorMin();
+                    auto anchorMax = data->getAnchorMax();
+
+                    properties->setProperty( "Position", position );
+                    properties->setProperty( "Size", size );
+                    properties->setProperty( "AbsolutePosition", absolutePosition );
+                    properties->setProperty( "AbsoluteSize", absoluteSize );
+                    properties->setProperty( "Anchor", anchor );
+                    properties->setProperty( "AnchorMin", anchorMin );
+                    properties->setProperty( "AnchorMax", anchorMax );
                 }
 
                 properties->setProperty( horizontalStr, "" );
@@ -562,7 +209,7 @@ namespace fb
 
                 return properties;
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -576,21 +223,30 @@ namespace fb
             {
                 Component::setProperties( properties );
 
-                auto data = getDataPtrByType<canvas_transform>();
+                auto data = getComponentStateByType<UITransformState>();
 
                 static const auto horizontalStr = String( "Horizontal" );
                 static const auto verticalStr = String( "Vertical" );
 
-                Vector2F position;
-                Vector2F size;
+                auto position = Vector2F::zero();
+                auto size = Vector2F( 1920.0f, 1080.0f );
 
                 properties->getPropertyValue( "Position", position );
                 properties->getPropertyValue( "Size", size );
 
-                if( data )
+                if(data)
                 {
-                    properties->getPropertyValue( "Anchor", data->anchor );
-                    properties->getPropertyValue( "Pivot", data->pivot );
+                    auto anchor = data->getAnchor();
+                    auto anchorMin = data->getAnchorMin();
+                    auto anchorMax = data->getAnchorMax();
+
+                    properties->getPropertyValue( "Anchor", anchor );
+                    properties->getPropertyValue( "AnchorMin", anchorMin );
+                    properties->getPropertyValue( "AnchorMax", anchorMax );
+
+                    data->setAnchor( anchor );
+                    data->setAnchorMin( anchorMin );
+                    data->setAnchorMax( anchorMax );
                 }
 
                 String horizontalAlignmentStr;
@@ -608,26 +264,26 @@ namespace fb
 
                 auto dirty = false;
 
-                if( data )
+                if(data)
                 {
-                    if( !MathUtil<f32>::equals( data->position, position ) )
+                    if(!MathUtil<f32>::equals( data->getPosition(), position ))
                     {
-                        data->position = position;
+                        data->setPosition( position );
                         dirty = true;
                     }
 
-                    if( !MathUtil<f32>::equals( data->size, size ) )
+                    if(!MathUtil<f32>::equals( data->getSize(), size ))
                     {
-                        data->size = size;
+                        data->setSize( size );
                         dirty = true;
                     }
                 }
 
-                if( dirty )
+                if(dirty)
                 {
-                    if( auto actor = getActor() )
+                    if(auto actor = getActor())
                     {
-                        if( auto transform = actor->getTransform() )
+                        if(auto transform = actor->getTransform())
                         {
                             auto pos = getPosition();
 
@@ -640,7 +296,7 @@ namespace fb
 
                 updateTransform();
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -648,45 +304,45 @@ namespace fb
 
         void LayoutTransform::setHorizontalAlignment( HorizontalAlignment gha )
         {
-            if( auto data = getDataPtrByType<canvas_transform>() )
+            if(auto data = getComponentStateByType<UITransformState>())
             {
-                data->horizontalAlignment = gha;
+                data->setHorizontalAlignment( static_cast<u8>(gha) );
             }
         }
 
         LayoutTransform::HorizontalAlignment LayoutTransform::getHorizontalAlignment() const
         {
-            if( auto data = getDataPtrByType<canvas_transform>() )
+            if(auto data = getComponentStateByType<UITransformState>())
             {
-                return data->horizontalAlignment;
+                return static_cast<LayoutTransform::HorizontalAlignment>(data->getHorizontalAlignment());
             }
 
-            return LayoutTransform::HorizontalAlignment::CENTER;
+            return HorizontalAlignment::CENTER;
         }
 
         void LayoutTransform::setVerticalAlignment( VerticalAlignment gva )
         {
-            if( auto data = getDataPtrByType<canvas_transform>() )
+            if(auto data = getComponentStateByType<UITransformState>())
             {
-                data->verticalAlignment = gva;
+                data->setVerticalAlignment( static_cast<u8>(gva) );
             }
         }
 
         LayoutTransform::VerticalAlignment LayoutTransform::getVerticalAlignment() const
         {
-            if( auto data = getDataPtrByType<canvas_transform>() )
+            if(auto data = getComponentStateByType<UITransformState>())
             {
-                return data->verticalAlignment;
+                return static_cast<LayoutTransform::VerticalAlignment>(data->getVerticalAlignment());
             }
 
-            return LayoutTransform::VerticalAlignment::CENTER;
+            return VerticalAlignment::CENTER;
         }
 
         Vector2F LayoutTransform::getAbsolutePosition() const
         {
-            if( auto data = getDataPtrByType<canvas_transform>() )
+            if(auto data = getComponentStateByType<UITransformState>())
             {
-                return data->absolutePosition;
+                return data->getAbsolutePosition();
             }
 
             return Vector2F::zero();
@@ -694,17 +350,17 @@ namespace fb
 
         void LayoutTransform::setAbsolutePosition( const Vector2F &absolutePosition )
         {
-            if( auto data = getDataPtrByType<canvas_transform>() )
+            if(auto data = getComponentStateByType<UITransformState>())
             {
-                data->absolutePosition = absolutePosition;
+                data->setAbsolutePosition( absolutePosition );
             }
         }
 
         Vector2F LayoutTransform::getAbsoluteSize() const
         {
-            if( auto data = getDataPtrByType<canvas_transform>() )
+            if(auto data = getComponentStateByType<UITransformState>())
             {
-                return data->absoluteSize;
+                return data->getAbsoluteSize();
             }
 
             return Vector2F::zero();
@@ -712,9 +368,9 @@ namespace fb
 
         void LayoutTransform::setAbsoluteSize( const Vector2F &absoluteSize )
         {
-            if( auto data = getDataPtrByType<canvas_transform>() )
+            if(auto data = getComponentStateByType<UITransformState>())
             {
-                data->absoluteSize = absoluteSize;
+                data->setAbsoluteSize( absoluteSize );
             }
         }
 
@@ -722,7 +378,7 @@ namespace fb
         {
             Component::handleComponentEvent( state, eventType );
 
-            switch( eventType )
+            switch(eventType)
             {
             case IFSM::Event::Change:
             {
@@ -730,8 +386,8 @@ namespace fb
             break;
             case IFSM::Event::Enter:
             {
-                auto eState = static_cast<State>( state );
-                switch( eState )
+                auto eState = static_cast<State>(state);
+                switch(eState)
                 {
                 case State::Destroyed:
                 {
@@ -740,9 +396,9 @@ namespace fb
                 case State::Edit:
                 case State::Play:
                 {
-                    if( auto actor = getActor() )
+                    if(auto actor = getActor())
                     {
-                        if( auto uiComponent = actor->getComponent<UIComponent>() )
+                        if(auto uiComponent = actor->getComponent<UIComponent>())
                         {
                             m_uiComponent = uiComponent;
                         }
@@ -759,8 +415,8 @@ namespace fb
             break;
             case IFSM::Event::Leave:
             {
-                auto eState = static_cast<State>( state );
-                switch( eState )
+                auto eState = static_cast<State>(state);
+                switch(eState)
                 {
                 case State::Play:
                 {
@@ -788,5 +444,5 @@ namespace fb
 
             return IFSM::ReturnType::Ok;
         }
-    }  // namespace scene
-}  // namespace fb
+    } // namespace scene
+}     // namespace fb

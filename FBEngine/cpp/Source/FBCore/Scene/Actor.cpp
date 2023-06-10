@@ -250,75 +250,12 @@ namespace fb
 
         void Actor::play()
         {
-            try
-            {
-                auto components = getComponents();
-
-                //std::sort(
-                //    components.begin(), components.end(),
-                //    []( const SmartPtr<ISharedObject> &a, const SmartPtr<ISharedObject> &b ) -> bool {
-                //        auto aPriority = ApplicationUtil::getEventPriority( a );
-                //        auto bPriority = ApplicationUtil::getEventPriority( b );
-
-                //        return aPriority > bPriority;
-                //    } );
-
-                for( auto component : components )
-                {
-                    if( component )
-                    {
-                        auto c = fb::static_pointer_cast<Component>( component );
-                        c->play();
-                    }
-                }
-
-                if( auto p = getChildrenPtr() )
-                {
-                    auto &children = *p;
-                    for( auto &child : children )
-                    {
-                        child->play();
-                    }
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
+            setState( IActor::State::Play );
         }
 
         void Actor::edit()
         {
-            try
-            {
-                if( auto p = getComponentsPtr() )
-                {
-                    auto &components = *p;
-                    for( auto component : components )
-                    {
-                        if( component )
-                        {
-                            component->edit();
-                        }
-                    }
-                }
-
-                if( auto p = getChildrenPtr() )
-                {
-                    auto &children = *p;
-                    for( auto &child : children )
-                    {
-                        if( child )
-                        {
-                            child->edit();
-                        }
-                    }
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
+            setState( IActor::State::Edit );
         }
 
         void Actor::levelWasLoaded( SmartPtr<IScene> scene )
@@ -584,16 +521,8 @@ namespace fb
                 auto sceneManager = applicationManager->getSceneManager();
                 FB_ASSERT( sceneManager );
 
-                auto id = sceneManager->addComponent( component );
-
-                FB_ASSERT( id != std::numeric_limits<u32>::max() );
-
-                auto handle = component->getHandle();
-                if( handle )
-                {
-                    handle->setInstanceId( id );
-                }
-
+                sceneManager->addComponent( component );
+                
                 if( auto p = getComponentsPtr() )
                 {
                     auto &components = *p;
@@ -2171,8 +2100,8 @@ namespace fb
                 auto bStatic = false;
 
                 actorData->getPropertyValue( "label", label );
-                actorData->getPropertyValue( "isEnabled", enabled );
-                actorData->getPropertyValue( "isVisible", visible );
+                actorData->getPropertyValue( "enabled", enabled );
+                actorData->getPropertyValue( "visible", visible );
                 actorData->getPropertyValue( "static", bStatic );
 
                 setName( label );
@@ -2302,10 +2231,10 @@ namespace fb
             properties->setProperty( "name", getName() );
 
             bool bIsStatic = isStatic();
-            properties->setProperty( "isStatic", bIsStatic );
+            properties->setProperty( "static", bIsStatic );
 
             auto enabled = isEnabled();
-            properties->setProperty( "isEnabled", enabled );
+            properties->setProperty( "enabled", enabled );
 
             return properties;
         }
@@ -2323,11 +2252,11 @@ namespace fb
             setName( name );
 
             bool bIsStatic = false;
-            properties->getPropertyValue( "isStatic", bIsStatic );
+            properties->getPropertyValue( "static", bIsStatic );
             setStatic( bIsStatic );
 
             auto enabled = isEnabled();
-            properties->getPropertyValue( "isEnabled", enabled );
+            properties->getPropertyValue( "enabled", enabled );
             setEnabled( enabled );
 
             if( auto handle = getHandle() )
@@ -2359,6 +2288,8 @@ namespace fb
             }
 
             auto componentsData = properties->getChildrenByName( "components" );
+            auto componentsDataAlt = properties->getChildrenByName( "component" );
+            componentsData.insert(componentsData.end(), componentsDataAlt.begin(), componentsDataAlt.end());
 
             auto components = Array<SmartPtr<IComponent>>();
             components.reserve( componentsData.size() );
@@ -2412,9 +2343,24 @@ namespace fb
                     if( pComponent )
                     {
                         pComponent->setActor( this );
-
                         pComponent->fromData( componentData );
+                    }
+                }
+                catch( std::exception &e )
+                {
+                    FB_LOG_EXCEPTION( e );
+                }
+            }
 
+            for( size_t i = 0; i < components.size(); ++i )
+            {
+                try
+                {
+                    auto &pComponent = components[i];
+                    auto &componentData = componentsData[i];
+
+                    if( pComponent )
+                    {
                         pComponent->load( nullptr );
                         componentLoaded( pComponent );
                     }
@@ -2426,6 +2372,9 @@ namespace fb
             }
 
             auto childrenData = properties->getChildrenByName( "children" );
+            auto childrenDataAlt = properties->getChildrenByName( "child" );
+            childrenData.insert(childrenData.end(), childrenDataAlt.begin(), childrenDataAlt.end());
+
             for( auto &childData : childrenData )
             {
                 auto childActor = sceneManager->createActor();

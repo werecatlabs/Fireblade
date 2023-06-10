@@ -16,11 +16,7 @@ namespace fb
 
         Layout::~Layout()
         {
-            const auto &state = getLoadingState();
-            if( state != LoadingState::Unloaded )
-            {
-                unload( nullptr );
-            }
+            unload( nullptr );
         }
 
         void Layout::load( SmartPtr<ISharedObject> data )
@@ -288,7 +284,8 @@ namespace fb
                 case State::Edit:
                 case State::Play:
                 {
-                    if( auto actor = getActor() )
+                    auto actor = getActor();
+                    if( actor )
                     {
                         auto canvasTransforms = actor->getComponentsAndInChildren<LayoutTransform>();
                         for( auto canvasTransform : canvasTransforms )
@@ -313,7 +310,7 @@ namespace fb
                         }
                     }
 
-                    if( auto actor = getActor() )
+                    if( actor )
                     {
                         auto children = actor->getComponentsInChildren<UIComponent>();
                         for( auto child : children )
@@ -325,6 +322,11 @@ namespace fb
                                     stateContext->setDirty( true );
                                 }
                             }
+                        }
+
+                        if( auto transform = actor->getComponent<LayoutTransform>() )
+                        {
+                            transform->setSize( Vector2F( 1920, 1080 ) );
                         }
                     }
                 }
@@ -408,7 +410,7 @@ namespace fb
                 auto it = std::find( elements.begin(), elements.end(), component );
                 if( it != elements.end() )
                 {
-                    return (u32)(elements.size() - std::distance( elements.begin(), it ));
+                    return (u32)( elements.size() - std::distance( elements.begin(), it ) );
                 }
             }
 

@@ -103,7 +103,8 @@ namespace fb
                     setName( name );
 
                     auto dataStr = stream->getAsString();
-                    auto sceneData = DataUtil::parseJson( dataStr );
+                    auto sceneData = fb::make_ptr<Properties>();
+                    DataUtil::parse( dataStr, sceneData.get() );
 
                     fromData( sceneData );
                 }
@@ -160,27 +161,26 @@ namespace fb
             auto fileSystem = applicationManager->getFileSystem();
             FB_ASSERT( fileSystem );
 
-            //auto data = toData();
-            //FB_ASSERT( data );
+            auto data = toData();
+            FB_ASSERT( data );
 
-            //if( data )
-            //{
-            //    setName( Path::getFileNameWithoutExtension( path ) );
+            if( data )
+            {
+                setName( Path::getFileNameWithoutExtension( path ) );
 
-            //    auto sceneData = data->getDataAsType<data::fb_scene>();
-            //    auto dataStr = DataUtil::toString( sceneData, true );
-            //    FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );
+                auto dataStr = DataUtil::toString( data.get(), true );
+                FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );
 
-            //    auto scenePath = StringUtil::cleanupPath( path );
-            //    FB_ASSERT( !StringUtil::isNullOrEmpty( scenePath ) );
+                auto scenePath = StringUtil::cleanupPath( path );
+                FB_ASSERT( !StringUtil::isNullOrEmpty( scenePath ) );
 
-            //    if( StringUtil::isNullOrEmpty( Path::getFileExtension( scenePath ) ) )
-            //    {
-            //        scenePath += ".fbscene";
-            //    }
+                if( StringUtil::isNullOrEmpty( Path::getFileExtension( scenePath ) ) )
+                {
+                    scenePath += ".fbscene";
+                }
 
-            //    fileSystem->writeAllText( scenePath, dataStr );
-            //}
+                fileSystem->writeAllText( scenePath, dataStr );
+            }
         }
 
         void Scene::saveScene()
@@ -804,6 +804,9 @@ namespace fb
         SmartPtr<ISharedObject> Scene::toData() const
         {
             auto properties = fb::make_ptr<Properties>();
+
+            auto lightingData = String();
+            properties->setProperty("lighting", lightingData);
 
             auto actors = getActors();
             for( auto actor : actors )

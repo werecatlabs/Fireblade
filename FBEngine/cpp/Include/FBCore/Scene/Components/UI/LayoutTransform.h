@@ -8,6 +8,7 @@ namespace fb
     namespace scene
     {
 
+        /** Component for ui component transforms. */
         class LayoutTransform : public Component
         {
         public:
@@ -31,10 +32,11 @@ namespace fb
                 COUNT
             };
 
+            /** Constructor. */
             LayoutTransform();
-            ~LayoutTransform() override;
 
-            static void updateComponents();
+            /** Destructor. */
+            ~LayoutTransform() override;
 
             /** @copydoc IObject::load */
             void load( SmartPtr<ISharedObject> data ) override;
@@ -45,21 +47,6 @@ namespace fb
             /** @copydoc IObject::preUpdate */
             void updateTransform() override;
 
-            /** @copydoc IComponent::reset */
-            void reset() override;
-
-            /** @copydoc IComponent::awake */
-            void awake() override;
-
-            /** @copydoc IComponent::destroy */
-            void destroy() override;
-
-            /** @copydoc IComponent::start */
-            void play();
-
-            /** @copydoc IComponent::edit */
-            void edit();
-
             Vector2F getPosition() const;
             void setPosition( const Vector2F &position );
 
@@ -69,8 +56,13 @@ namespace fb
             Vector2F getAnchor() const;
             void setAnchor( const Vector2F &anchor );
 
-            Vector2F getPivot() const;
-            void setPivot( const Vector2F &pivot );
+            Vector2F getAnchorMin() const;
+
+            void setAnchorMin( const Vector2F &anchorMin );
+
+            Vector2F getAnchorMax() const;
+
+            void setAnchorMax( const Vector2F &anchorMax );
 
             /** @copydoc BaseComponent::getProperties */
             SmartPtr<Properties> getProperties() const override;
@@ -100,18 +92,6 @@ namespace fb
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType );
 
             SmartPtr<UIComponent> m_uiComponent;
-
-            //Vector2F m_absolutePosition;
-            //Vector2F m_absoluteSize;
-
-            //Vector2F m_position;
-            //Vector2F m_relativePosition;
-            //Vector2F m_size;
-            //Vector2F m_anchor;
-            //Vector2F m_pivot = Vector2F::UNIT * 0.5f;
-
-            //VerticalAlignment m_verticalAlignment = VerticalAlignment::TOP;
-            //HorizontalAlignment m_horizontalAlignment = HorizontalAlignment::LEFT;
         };
     }  // namespace scene
 }  // end namespace fb

@@ -1,6 +1,8 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/FBCore.h>
 
+
+
 namespace fb
 {
     void FBCore::load( SmartPtr<ISharedObject> data )
@@ -32,6 +34,7 @@ namespace fb
         FactoryUtil::addFactory<SceneNodeState>();
         FactoryUtil::addFactory<RigidbodyState>();
         FactoryUtil::addFactory<TextureState>();
+        FactoryUtil::addFactory<UITransformState>();
 
         factoryManager->setPoolSizeByType<scene::Actor>( 32 );
 

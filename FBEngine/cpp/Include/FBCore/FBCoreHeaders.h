@@ -490,6 +490,8 @@
 #include <FBCore/Scene/Components/UI/Layout.h>
 #include <FBCore/Scene/Components/UI/LayoutTransform.h>
 
+#include <FBCore/Scene/Systems/UI/CanvasTransformSystem.h>
+
 #include <FBCore/Scene/Actor.h>
 #include <FBCore/Scene/CameraManager.h>
 #include <FBCore/Scene/SceneManager.h>
@@ -567,6 +569,7 @@
 #include <FBCore/State/States/OverlayElementState.h>
 #include <FBCore/State/States/OverlayTextState.h>
 #include <FBCore/State/States/ViewportState.h>
+#include <FBCore/State/States/UITransformState.h>
 
 #include <FBCore/System/ApplicationManager.h>
 #include <FBCore/System/ApplicationManagerMT.h>

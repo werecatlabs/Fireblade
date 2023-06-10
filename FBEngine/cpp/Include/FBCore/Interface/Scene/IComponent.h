@@ -270,6 +270,15 @@ namespace fb
 
             virtual void setDirector( SmartPtr<IDirector> director ) = 0;
 
+            virtual SmartPtr<IState> &getComponentState() = 0;
+
+            virtual const SmartPtr<IState> &getComponentState() const = 0;
+
+            virtual void setComponentState( SmartPtr<IState> state ) = 0;
+
+            template <class T>
+            SmartPtr<T> getComponentStateByType() const;
+
             /**
              * Adds a sub component component.
              *
@@ -302,6 +311,8 @@ namespace fb
             */
             template <class T>
             static void create( SmartPtr<IDirector> director );
+
+
 
             FB_CLASS_REGISTER_DECL;
         };
@@ -372,6 +383,13 @@ namespace fb
             auto properties = director->getProperties();
             component->setProperties( properties );
             return component;
+        }
+
+        template <class T>
+        SmartPtr<T> IComponent::getComponentStateByType() const
+        {
+            auto& state = getComponentState();
+            return (T *)state.get();
         }
 
     }  // namespace scene

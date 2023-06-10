@@ -24,26 +24,19 @@ namespace fb
     {
     public:
         enum class Format
-		{
-			JSON,
-			XML,
+        {
+            JSON,
+            XML,
             YAML,
 
             COUNT
-		};
+        };
 
         template <class T>
         static String toString( T *ptr, bool formatted = false, Format fmt = Format::JSON );
 
         template <class T>
-        static void parse( const String &jsonDataStr, T *ptr, Format fmt = Format::JSON );
-
-        /** Parses a JSON string into a Properties object. */
-        static SmartPtr<Properties> parseJson( const String &jsonDataStr );
-
-        /** Parses a JSON string into a Properties object. Expects the JSON string to for a properties object.
-         */
-        static SmartPtr<Properties> parsePropertiesFromJson( const String &jsonDataStr );
+        static void parse( const String &dataStr, T *ptr, Format fmt = Format::JSON );
 
         static void parse( SmartPtr<Properties> properties, Vector2F &value );
 
@@ -56,6 +49,13 @@ namespace fb
         static void parse( SmartPtr<Properties> properties, ColourF &value );
 
     private:
+        /** Parses a JSON string into a Properties object. */
+        static SmartPtr<Properties> parseJson( const String &jsonDataStr );
+
+        /** Parses a JSON string into a Properties object. Expects the JSON string to for a properties object.
+         */
+        static SmartPtr<Properties> parsePropertiesFromJson( const String &jsonDataStr );
+
         static String formatJson( const String &jsonString );
 
         static void parseJson( const boost::json::object *val, Vector2I *ptr );

@@ -22,11 +22,7 @@ namespace fb
 
         Text::~Text()
         {
-            const auto &state = getLoadingState();
-            if( state != LoadingState::Unloaded )
-            {
-                unload( nullptr );
-            }
+            unload( nullptr );
         }
 
         void Text::load( SmartPtr<ISharedObject> data )
@@ -180,13 +176,16 @@ namespace fb
 
         SmartPtr<Properties> Text::getProperties() const
         {
-            auto properties = UIComponent::getProperties();
+            if( auto properties = UIComponent::getProperties() )
+            {
+                properties->setProperty( "text", m_text );
+                properties->setProperty( "size", m_size );
+                properties->setProperty( "colour", m_colour );
 
-            properties->setProperty( "text", m_text );
-            properties->setProperty( "size", m_size );
-            properties->setProperty( "colour", m_colour );
+                return properties;
+            }
 
-            return properties;
+            return nullptr;
         }
 
         void Text::setProperties( SmartPtr<Properties> properties )

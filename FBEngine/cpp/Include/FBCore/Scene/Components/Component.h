@@ -298,6 +298,12 @@ namespace fb
 
             void setDirector( SmartPtr<IDirector> director ) override;
 
+            SmartPtr<IState> &getComponentState();
+
+            const SmartPtr<IState> &getComponentState() const;
+
+            void setComponentState( SmartPtr<IState> state );
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
@@ -361,6 +367,8 @@ namespace fb
              * @return The next state to transition to.
              */
             virtual IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType );
+
+            SmartPtr<IState> m_componentState;
 
             /**
              * The children of the component.

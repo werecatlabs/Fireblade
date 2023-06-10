@@ -125,42 +125,42 @@ void parseYAML( const YAML::Node *value, Properties *ptr, const String &name )
         {
             try
             {
-	            auto child = fb::make_ptr<Properties>();
-	            child->setName( name );
-	
-	            for( YAML::const_iterator itValue = ( *value ).begin(); itValue != ( *value ).end();
-	                 ++itValue )
-	            {
-	                try
-	                {
-		                // Access the key-value pair
-		                const std::string &keyValue = itValue->first.as<std::string>();
-		                const YAML::Node &valueValue = itValue->second;
-		
-		                if( valueValue.IsScalar() )
-		                {
-		                    auto s = valueValue.as<std::string>();
-		                    child->setProperty( keyValue, s );
-		                }
-		                else if( valueValue.IsSequence() )
-		                {
-		                    for( auto sequenceNode : valueValue )
-		                    {
-		                        parseYAML( &sequenceNode, child.get(), keyValue );
-		                    }
-		                }
-		                else if( valueValue.IsMap() )
-		                {
-		                    parseYAML( &valueValue, child.get(), keyValue );
-		                }
-	                }
+                auto child = fb::make_ptr<Properties>();
+                child->setName( name );
+
+                for( YAML::const_iterator itValue = ( *value ).begin(); itValue != ( *value ).end();
+                     ++itValue )
+                {
+                    try
+                    {
+                        // Access the key-value pair
+                        const std::string &keyValue = itValue->first.as<std::string>();
+                        const YAML::Node &valueValue = itValue->second;
+
+                        if( valueValue.IsScalar() )
+                        {
+                            auto s = valueValue.as<std::string>();
+                            child->setProperty( keyValue, s );
+                        }
+                        else if( valueValue.IsSequence() )
+                        {
+                            for( auto sequenceNode : valueValue )
+                            {
+                                parseYAML( &sequenceNode, child.get(), keyValue );
+                            }
+                        }
+                        else if( valueValue.IsMap() )
+                        {
+                            parseYAML( &valueValue, child.get(), keyValue );
+                        }
+                    }
                     catch( const YAML::Exception &e )
                     {
                         std::cerr << "Error: " << e.what() << std::endl;
                     }
-	            }
-	
-	            ptr->addChild( child );
+                }
+
+                ptr->addChild( child );
             }
             catch( const YAML::Exception &e )
             {
@@ -218,58 +218,58 @@ void parseYAML( const String &input, Properties *ptr )
         for( const YAML::Node &yamlNode : docs )
         {
             try
-           {
-	           for( YAML::const_iterator it = yamlNode.begin(); it != yamlNode.end(); ++it )
-	            {
-	                try
-	                {
-		                // Access the key-value pair
-		                const std::string &key = it->first.as<std::string>();
-		                const YAML::Node &value = it->second;
-		
-		                if( value.IsMap() )
-		                {
-		                    try
-		                    {
-		                        auto gameObject = fb::make_ptr<Properties>();
-		                        gameObject->setName( key );
-		
-		                        for( YAML::const_iterator itValue = value.begin(); itValue != value.end();
-		                             ++itValue )
-		                        {
-		                            // Access the key-value pair
-		                            const std::string &keyValue = itValue->first.as<std::string>();
-		                            const YAML::Node &valueValue = itValue->second;
-		
-		                            if( valueValue.IsScalar() )
-		                            {
-		                                auto s = valueValue.as<std::string>();
-		                                gameObject->setProperty( keyValue, s );
-		                            }
-		                            else
-		                            {
-		                                parseYAML( &valueValue, gameObject.get(), keyValue );
-		                            }
-		                        }
-		
-		                        ptr->addChild( gameObject );
-		                    }
-		                    catch( const YAML::Exception &e )
-		                    {
-		                        std::cerr << "Error: " << e.what() << std::endl;
-		                    }
-		                }
-	                }
+            {
+                for( YAML::const_iterator it = yamlNode.begin(); it != yamlNode.end(); ++it )
+                {
+                    try
+                    {
+                        // Access the key-value pair
+                        const std::string &key = it->first.as<std::string>();
+                        const YAML::Node &value = it->second;
+
+                        if( value.IsMap() )
+                        {
+                            try
+                            {
+                                auto gameObject = fb::make_ptr<Properties>();
+                                gameObject->setName( key );
+
+                                for( YAML::const_iterator itValue = value.begin();
+                                     itValue != value.end(); ++itValue )
+                                {
+                                    // Access the key-value pair
+                                    const std::string &keyValue = itValue->first.as<std::string>();
+                                    const YAML::Node &valueValue = itValue->second;
+
+                                    if( valueValue.IsScalar() )
+                                    {
+                                        auto s = valueValue.as<std::string>();
+                                        gameObject->setProperty( keyValue, s );
+                                    }
+                                    else
+                                    {
+                                        parseYAML( &valueValue, gameObject.get(), keyValue );
+                                    }
+                                }
+
+                                ptr->addChild( gameObject );
+                            }
+                            catch( const YAML::Exception &e )
+                            {
+                                std::cerr << "Error: " << e.what() << std::endl;
+                            }
+                        }
+                    }
                     catch( const YAML::Exception &e )
                     {
                         std::cerr << "Error: " << e.what() << std::endl;
                     }
-	            }
-           }
-           catch( const YAML::Exception &e )
-           {
+                }
+            }
+            catch( const YAML::Exception &e )
+            {
                 std::cerr << "Error: " << e.what() << std::endl;
-           }
+            }
         }
     }
     catch( const YAML::Exception &e )
@@ -346,7 +346,7 @@ FB_DECLARE_DATA_CLASS( Transform3F )
 FB_DECLARE_DATA_CLASS( Transform3D )
 
 FB_DECLARE_DATA_CLASS( Property )
-FB_DECLARE_DATA_CLASS( Properties )
+//FB_DECLARE_DATA_CLASS( Properties )
 
 SmartPtr<Properties> fromObject( const boost::json::object &obj )
 {
@@ -484,7 +484,15 @@ SmartPtr<Properties> propertiesFromObject( const boost::json::object &obj )
         std::string key = member.key();
         const boost::json::value &value = member.value();
 
-        if( key == "name" )
+        if( key == "handle_name" )
+        {
+            if( value.is_string() )
+            {
+                std::string val = value.as_string().c_str();
+                properties->setName( val );
+            }
+        }
+        else if( key == "name" )
         {
             isPropertyName = true;
 
@@ -574,7 +582,12 @@ SmartPtr<Properties> propertiesFromObject( const boost::json::object &obj )
                     const auto &childObj = element.as_object();
                     auto child = propertiesFromObject( childObj );
 
-                    child->setName( key );
+                    auto childName = child->getName();
+                    if( StringUtil::isNullOrEmpty( childName ) )
+                    {
+                        child->setName( key );
+                    }
+
                     properties->addChild( child );
                 }
             }
@@ -667,94 +680,219 @@ namespace fb
     //	return properties;
     //}
 
-    boost::json::object objectToJson( const rttr::instance &obj )
+    boost::json::object propertiesToJson( Properties *ptr )
     {
+        rttr::instance obj = *ptr;
+        auto objType = obj.get_type();
+        auto rawType = objType.get_raw_type();
+        auto objIsWrapper = rawType.is_wrapper();
+
         boost::json::object j;
-        rttr::instance obj_instance =
-            obj.get_type().get_raw_type().is_wrapper() ? obj.get_wrapped_instance() : obj;
+        rttr::instance obj_instance = objIsWrapper ? obj.get_wrapped_instance() : obj;
 
-        for( auto &prop : obj_instance.get_derived_type().get_properties() )
+        auto objInstanceType = obj_instance.get_derived_type();
+
+        j["handle_name"] = ptr->getName();
+
+        auto propertiesArray = ptr->getPropertiesAsArray();
+        for( auto &prop : propertiesArray )
         {
-            std::cout << "name: " << prop.get_name();
+            auto &name = prop.getName();
+            auto &value = prop.getValue();
+            j[name] = value;
+        }
 
+        // Handling Smart Pointers
+        if( objType.is_pointer() )
+        {
+            rttr::instance propInstance = objInstanceType;
+            rttr::instance wrappedInstance = obj.get_wrapped_instance();
+            if( wrappedInstance.is_valid() )
+            {
+                if( auto p = wrappedInstance.try_convert<SmartPtr<Properties>>() )
+                {
+                    auto pProperties = *p;
+                    auto &rProperties = *pProperties;
+                    return propertiesToJson( pProperties.get() );
+                }
+            }
+        }
+
+        auto propList = objInstanceType.get_properties();
+
+        for( auto &prop : propList )
+        {
+            // Check for metadata "NO_SERIALIZE"
             if( prop.get_metadata( "NO_SERIALIZE" ) )
             {
-                return boost::json::object();
+                return boost::json::object();  // You might want to handle this differently.
             }
 
             rttr::variant prop_value = prop.get_value( obj_instance );
             if( !prop_value )
             {
-                return boost::json::object();
+                continue;
             }
 
-            if( prop_value.get_type().is_sequential_container() )
+            auto propName = prop.get_name();
+            auto propNameStr = propName.to_string();
+            auto propType = prop_value.get_type();
+
+            if( propName == "properties" )
             {
-                boost::json::array array;
+                continue;
+            }
+
+            // Handling Smart Pointers
+            if( propType.is_pointer() || propType.is_wrapper() )
+            {
+                rttr::instance propInstance = prop_value;
+                rttr::instance wrappedInstance = propInstance.get_wrapped_instance();
+                if( wrappedInstance.is_valid() )
+                {
+                    //j[propNameStr] = propertiesToJson( wrappedInstance );
+                    continue;
+                }
+            }
+
+            // Handling Sequential Containers
+            if( propType.is_sequential_container() )
+            {
                 rttr::variant_sequential_view view = prop_value.create_sequential_view();
+
+                boost::json::array array;
+                array.reserve( view.get_size() );
+
                 for( const auto &item : view )
                 {
-                    array.push_back( objectToJson( item ) );
+                    rttr::instance itemInstance = item;
+                    if( auto p = itemInstance.try_convert<SmartPtr<Properties>>() )
+                    {
+                        auto pProperties = *p;
+                        array.push_back( propertiesToJson( pProperties.get() ) );
+                    }
                 }
-                j[prop.get_name().to_string()] = array;
+
+                j[propNameStr] = array;
             }
-            else if( prop_value.get_type().is_associative_container() )
+            // Handling Associative Containers
+            else if( propType.is_associative_container() )
             {
                 boost::json::object map;
                 rttr::variant_associative_view view = prop_value.create_associative_view();
                 for( const auto &item : view )
                 {
-                    //map[objectToJson( item.first )] = objectToJson( item.second );
+                    auto mapKey = item.first.to_string();
+                    //auto mapObject = propertiesToJson( item.second );
+                    //map[mapKey] = mapObject;
                 }
 
-                j[prop.get_name().to_string()] = map;
+                // j[propNameStr] = map;
             }
+            // Handling Basic Types
             else
             {
-                j[prop.get_name().to_string()] = prop_value.to_string();
+                //j[propNameStr] = prop_value.to_string();
             }
         }
 
-        for( auto &meth : obj_instance.get_derived_type().get_methods() )
-            std::cout << "name: " << meth.get_name();
+        return j;
+    }
 
-        //rttr::for_each( obj_instance.get_derived_type().get_properties(), [&]( rttr::property &prop ) {
-        //    if( prop.get_metadata( "NO_SERIALIZE" ) )
-        //    {
-        //        return;
-        //    }
+    boost::json::object objectToJson( const rttr::instance &obj )
+    {
+        auto objType = obj.get_type();
+        auto rawType = objType.get_raw_type();
+        auto objIsWrapper = rawType.is_wrapper();
 
-        //    rttr::variant prop_value = prop.get_value( obj_instance );
-        //    if( !prop_value )
-        //    {
-        //        return;
-        //    }
+        boost::json::object j;
+        rttr::instance obj_instance = objIsWrapper ? obj.get_wrapped_instance() : obj;
 
-        //    if( prop_value.get_type().is_sequential_container() )
-        //    {
-        //        boost::json::array array;
-        //        rttr::variant_sequential_view view = prop_value.create_sequential_view();
-        //        for( const auto &item : view )
-        //        {
-        //            array.push_back( objectToJson( item ) );
-        //        }
-        //        j[prop.get_name().to_string()] = array;
-        //    }
-        //    else if( prop_value.get_type().is_associative_container() )
-        //    {
-        //        boost::json::object map;
-        //        rttr::variant_associative_view view = prop_value.create_associative_view();
-        //        for( const auto &item : view )
-        //        {
-        //            map[objectToJson( item.first )] = objectToJson( item.second );
-        //        }
-        //        j[prop.get_name().to_string()] = map;
-        //    }
-        //    else
-        //    {
-        //        j[prop.get_name().to_string()] = prop_value.to_string();
-        //    }
-        //} );
+        auto objInstanceType = obj_instance.get_derived_type();
+
+        // Handling Smart Pointers
+        if( objType.is_pointer() )
+        {
+            rttr::instance propInstance = objInstanceType;
+            rttr::instance wrappedInstance = obj.get_wrapped_instance();
+            if( wrappedInstance.is_valid() )
+            {
+                if( auto p = wrappedInstance.try_convert<SmartPtr<Properties>>() )
+                {
+                    auto pProperties = *p;
+                    auto &rProperties = *pProperties;
+                    return objectToJson( rProperties );
+                }
+            }
+        }
+
+        auto propList = objInstanceType.get_properties();
+
+        for( auto &prop : propList )
+        {
+            // Check for metadata "NO_SERIALIZE"
+            if( prop.get_metadata( "NO_SERIALIZE" ) )
+            {
+                return boost::json::object();  // You might want to handle this differently.
+            }
+
+            rttr::variant prop_value = prop.get_value( obj_instance );
+            if( !prop_value )
+            {
+                continue;
+            }
+
+            auto propName = prop.get_name();
+            auto propNameStr = propName.to_string();
+            auto propType = prop_value.get_type();
+
+            // Handling Smart Pointers
+            if( propType.is_pointer() || propType.is_wrapper() )
+            {
+                rttr::instance propInstance = prop_value;
+                rttr::instance wrappedInstance = propInstance.get_wrapped_instance();
+                if( wrappedInstance.is_valid() )
+                {
+                    j[propNameStr] = objectToJson( wrappedInstance );
+                    continue;
+                }
+            }
+
+            // Handling Sequential Containers
+            if( propType.is_sequential_container() )
+            {
+                rttr::variant_sequential_view view = prop_value.create_sequential_view();
+
+                boost::json::array array;
+                array.reserve( view.get_size() );
+
+                for( const auto &item : view )
+                {
+                    array.push_back( objectToJson( item ) );
+                }
+
+                j[propNameStr] = array;
+            }
+            // Handling Associative Containers
+            else if( propType.is_associative_container() )
+            {
+                boost::json::object map;
+                rttr::variant_associative_view view = prop_value.create_associative_view();
+                for( const auto &item : view )
+                {
+                    auto mapKey = item.first.to_string();
+                    auto mapObject = objectToJson( item.second );
+                    map[mapKey] = mapObject;
+                }
+
+                j[propNameStr] = map;
+            }
+            // Handling Basic Types
+            else
+            {
+                j[propNameStr] = prop_value.to_string();
+            }
+        }
 
         return j;
     }
@@ -1088,6 +1226,66 @@ namespace fb
         }
 
         return "";
+    }
+
+    template <>
+    String DataUtil::toString( Properties *ptr, bool formatted, Format fmt )
+    {
+        if( !formatted )
+        {
+            auto j = propertiesToJson( ptr );
+            return boost::json::serialize( j );
+        }
+        else
+        {
+            auto jsonValue = propertiesToJson( ptr );
+
+            std::ostringstream formatted;
+            pretty_print( formatted, jsonValue );
+            return formatted.str();
+        }
+
+        return "";
+    }
+
+    template <>
+    void DataUtil::parse( const String &dataStr, Properties *ptr, Format fmt )
+    {
+        switch( fmt )
+        {
+        case Format::JSON:
+        {
+            *ptr = *parsePropertiesFromJson( dataStr );
+        }
+        break;
+        case Format::YAML:
+        {
+            parseYAML( dataStr, ptr );
+        }
+        break;
+        };        
+    }
+
+    template <>
+    String DataUtil::toString( ISharedObject *ptr, bool formatted, Format fmt )
+    {
+        if( ptr->isDerived<Properties>() )
+        {
+            auto properties = (Properties *)ptr;
+            return toString( properties, formatted, fmt );
+        }
+
+        return "";
+    }
+
+    template <>
+    void DataUtil::parse( const String &dataStr, ISharedObject *ptr, Format fmt )
+    {
+        if( ptr->isDerived<Properties>() )
+        {
+            auto properties = (Properties *)ptr;
+            parse( dataStr, properties, fmt );
+        }
     }
 
 }  // end namespace fb

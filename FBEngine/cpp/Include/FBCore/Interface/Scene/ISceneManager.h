@@ -111,6 +111,10 @@ namespace fb
              */
             virtual Array<SmartPtr<IComponent>> getComponents() const = 0;
 
+            virtual void addSystem( u32 id, SmartPtr<ISystem> system ) = 0;
+
+            virtual void removeSystem( u32 id ) = 0;
+
             /**
              * Gets the actor with the specified ID.
              * @param id The ID of the actor to retrieve.

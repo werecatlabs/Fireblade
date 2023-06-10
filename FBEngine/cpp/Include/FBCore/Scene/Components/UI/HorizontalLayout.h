@@ -1,5 +1,5 @@
-#ifndef VerticalLayoutContainer_h__
-#define VerticalLayoutContainer_h__
+#ifndef HorizontalLayoutContainer_h__
+#define HorizontalLayoutContainer_h__
 
 #include <FBCore/Scene/Components/UI/LayoutContainer.h>
 
@@ -8,10 +8,10 @@ namespace fb
     namespace scene
     {
 
-        class VerticalLayoutContainer : public LayoutContainer
+        class HorizontalLayout : public LayoutContainer
         {
         public:
-            VerticalLayoutContainer( int width );
+            HorizontalLayout( int width );
 
             void add_widget( const Widget &widget );
 
@@ -24,4 +24,4 @@ namespace fb
     }  // namespace scene
 }  // namespace fb
 
-#endif  // VerticalLayoutContainer_h__
+#endif  // HorizontalLayoutContainer_h__

@@ -1,6 +1,5 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/UI/Toggle.h>
-#include <FBCore/FBCore.h>
 
 namespace fb
 {
@@ -13,6 +12,7 @@ namespace fb
 
         Toggle::~Toggle()
         {
+            unload( nullptr );
         }
 
         void Toggle::load( SmartPtr<ISharedObject> data )
@@ -22,5 +22,6 @@ namespace fb
         void Toggle::unload( SmartPtr<ISharedObject> data )
         {
         }
+
     }  // namespace scene
 }  // end namespace fb

@@ -32,7 +32,7 @@ namespace fb
              */
             enum class State
             {
-                None,     ///< The actor is being created
+                None,       ///< The actor is being created
                 Create,     ///< The actor is being created
                 Destroyed,  ///< The actor has been destroyed
                 Edit,       ///< The actor is being edited
@@ -46,7 +46,7 @@ namespace fb
              */
             enum class GameState
             {
-                None,     ///< The actor is being created
+                None,       ///< The actor is being created
                 Create,     ///< The actor is being created
                 Edit,       ///< The actor is being edited
                 Play,       ///< The actor is being played
@@ -69,7 +69,7 @@ namespace fb
             static const u32 ActorFlagDummy;    ///< Actor is a dummy
             static const u32 ActorFlagInScene;  ///< Actor is in the scene
             static const u32 ActorFlagEnabledInScene;  ///< Actor is enabled in the scene
-            static const u32 ActorFlagIsEditor;  ///< Actor is visible in the editor
+            static const u32 ActorFlagIsEditor;        ///< Actor is visible in the editor
 
             /**
              * The destructor.
@@ -265,322 +265,14 @@ namespace fb
             /** Removes a component from the actor. */
             virtual void removeComponentInstance( SmartPtr<IComponent> component ) = 0;
 
-            /**
-             * Adds a component.
-             *
-             * @tparam T The type of component to add.
-             * @return A SmartPtr to the new component.
-             */
-            template <class T>
-            SmartPtr<T> addComponent()
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto factoryManager = applicationManager->getFactoryManager();
-                FB_ASSERT( factoryManager );
-
-                auto component = factoryManager->make_ptr<T>();
-                addComponentInstance( component );
-                component->load( nullptr );
-                return component;
-            }
-
-            /** Gets a component by the template type and the id.
-            @param id The id of the component.
-            */
-            template <class T>
-            SmartPtr<T> getComponentById( s32 id ) const
-            {
-                auto components = getComponents();
-                for( auto &component : components )
-                {
-                    if( component )
-                    {
-                        auto derivedComponent = fb::dynamic_pointer_cast<T>( component );
-                        if( derivedComponent )
-                        {
-                            auto handle = derivedComponent->getHandle();
-                            FB_ASSERT( handle );
-
-                            if( handle->getId() == id )
-                            {
-                                return derivedComponent;
-                            }
-                        }
-                    }
-                }
-
-                return nullptr;
-            }
-
-            /** Gets a component by the template type. */
-            template <class T>
-            SmartPtr<T> getComponent() const
-            {
-                auto components = getComponents();
-                for( auto &component : components )
-                {
-                    if( component )
-                    {
-                        auto derivedComponent = fb::dynamic_pointer_cast<T>( component );
-                        if( derivedComponent )
-                        {
-                            return derivedComponent;
-                        }
-                    }
-                }
-
-                return nullptr;
-            }
-
-            /** Gets a component in the actor and it's children by the template type. */
-            template <class T>
-            SmartPtr<T> getComponentInChildren() const
-            {
-                if( auto p = getChildrenPtr() )
-                {
-                    auto &children = *p;
-                    for( auto &child : children )
-                    {
-                        if( auto component = child->getComponent<T>() )
-                        {
-                            return component;
-                        }
-                    }
-                }
-
-                return nullptr;
-            }
-
-            /** Gets a component in the actor and it's children by the template type. */
-            template <class T>
-            SmartPtr<T> getComponentAndInChildren() const
-            {
-                auto components = getComponents();
-                for( auto &component : components )
-                {
-                    if( component )
-                    {
-                        if( auto derivedComponent = fb::dynamic_pointer_cast<T>( component ) )
-                        {
-                            return derivedComponent;
-                        }
-                    }
-                }
-
-                if( auto p = getChildrenPtr() )
-                {
-                    auto &children = *p;
-                    for( auto &child : children )
-                    {
-                        if( auto component = child->getComponentAndInChildren<T>() )
-                        {
-                            return component;
-                        }
-                    }
-                }
-
-                return nullptr;
-            }
-
-            /** Gets components in the actor and it's children by the template type. */
-            template <class T>
-            Array<SmartPtr<T>> getComponentsInChildren() const
-            {
-                Array<SmartPtr<T>> componentsInChildren;
-                componentsInChildren.reserve( 32 );
-
-                if( auto p = getChildrenPtr() )
-                {
-                    auto &children = *p;
-                    for( auto child : children )
-                    {
-                        if( child )
-                        {
-                            auto components = child->getComponentsByType<T>();
-                            if( !components.empty() )
-                            {
-                                componentsInChildren.insert( componentsInChildren.end(),
-                                                             components.begin(), components.end() );
-                            }
-
-                            auto childComponents = child->getComponentsInChildren<T>();
-                            if( !childComponents.empty() )
-                            {
-                                componentsInChildren.insert( componentsInChildren.end(),
-                                                             childComponents.begin(),
-                                                             childComponents.end() );
-                            }
-                        }
-                    }
-                }
-
-                return componentsInChildren;
-            }
-
-            /** Gets components in the actor and it's children by the template type. */
-            template <class T>
-            Array<SmartPtr<T>> getAllComponentsInChildren() const
-            {
-                Array<SmartPtr<T>> componentsInChildren;
-                componentsInChildren.reserve( 32 );
-
-                auto children = getAllChildren();
-                for( auto &child : children )
-                {
-                    auto childComponents = child->getComponentsByType<T>();
-                    if( !childComponents.empty() )
-                    {
-                        componentsInChildren.insert( componentsInChildren.end(), childComponents.begin(),
-                                                     childComponents.end() );
-                    }
-                }
-
-                return componentsInChildren;
-            }
-
-            /** Gets components in the actor and it's children by the template type. */
-            template <class T>
-            Array<SmartPtr<T>> getComponentsAndInChildren() const
-            {
-                const auto components = getComponents();
-
-                Array<SmartPtr<T>> componentsInChildren;
-                componentsInChildren.reserve( components.size() );
-
-                for( auto &component : components )
-                {
-                    if( component )
-                    {
-                        if( auto derivedComponent = fb::dynamic_pointer_cast<T>( component ) )
-                        {
-                            componentsInChildren.push_back( derivedComponent );
-                        }
-                    }
-                }
-
-                if( auto p = getChildrenPtr() )
-                {
-                    auto &children = *p;
-                    for( auto &child : children )
-                    {
-                        auto childComponents = child->getComponentsInChildren<T>();
-                        if( !childComponents.empty() )
-                        {
-                            componentsInChildren.insert( componentsInChildren.end(),
-                                                         childComponents.begin(),
-                                                         childComponents.end() );
-                        }
-                    }
-                }
-
-                return componentsInChildren;
-            }
-
-            /** Gets components in the actor and it's children by the template type. */
-            template <class T>
-            Array<SmartPtr<T>> getAllComponentsAndInChildren() const
-            {
-                const auto components = getComponents();
-
-                Array<SmartPtr<T>> componentsInChildren;
-                componentsInChildren.reserve( components.size() );
-
-                for( auto &component : components )
-                {
-                    if( component )
-                    {
-                        if( auto derivedComponent = fb::dynamic_pointer_cast<T>( component ) )
-                        {
-                            componentsInChildren.push_back( derivedComponent );
-                        }
-                    }
-                }
-
-                auto children = getAllChildren();
-                for( auto &child : children )
-                {
-                    auto childComponents = child->getComponents();
-                    if( !childComponents.empty() )
-                    {
-                        componentsInChildren.insert( componentsInChildren.end(), childComponents.begin(),
-                                                     childComponents.end() );
-                    }
-                }
-
-                return componentsInChildren;
-            }
-
-            /** Gets components in the actor by the template type. */
-            template <class T>
-            Array<SmartPtr<T>> getComponentsByType() const
-            {
-                const auto components = getComponents();
-
-                Array<SmartPtr<T>> componentsByType;
-                componentsByType.reserve( components.size() );
-
-                for( auto &component : components )
-                {
-                    if( component )
-                    {
-                        if( auto derivedComponent = fb::dynamic_pointer_cast<T>( component ) )
-                        {
-                            componentsByType.push_back( derivedComponent );
-                        }
-                    }
-                }
-
-                return componentsByType;
-            }
-
             /** Gets all components in the actor. */
             virtual Array<SmartPtr<scene::IComponent>> getComponents() const = 0;
 
             /** Gets all components in the actor. */
             virtual SharedPtr<ConcurrentArray<SmartPtr<IComponent>>> getComponentsPtr() const = 0;
 
-            /** Used to know if the actor has a component. */
-            template <class T>
-            bool hasComponent() const
-            {
-                const auto components = getComponents();
-                for( auto &component : components )
-                {
-                    if( component )
-                    {
-                        if( auto derivedComponent = fb::dynamic_pointer_cast<T>( component ) )
-                        {
-                            return true;
-                        }
-                    }
-                }
-
-                return false;
-            }
-
-            template <typename T>
-            SmartPtr<T> getComponentInParent()
-            {
-                auto currentActor = getSharedFromThis<IActor>();
-
-                while( currentActor != nullptr )
-                {
-                    auto componentInParent = currentActor->getComponent<T>();
-                    if( componentInParent != nullptr )
-                    {
-                        return componentInParent;
-                    }
-
-                    currentActor = currentActor->getParent();
-                }
-
-                return nullptr;
-            }
-
             /** Gets a child by index. */
-            virtual SmartPtr<IActor> getChildByIndex(u32 index) const = 0;
+            virtual SmartPtr<IActor> getChildByIndex( u32 index ) const = 0;
 
             /** Gets the number of children. */
             virtual u32 getNumChildren() const = 0;
@@ -777,8 +469,349 @@ namespace fb
             /** Updates the necessary flags. */
             virtual void updateVisibility() = 0;
 
+            /**
+             * Adds a component.
+             *
+             * @tparam T The type of component to add.
+             * @return A SmartPtr to the new component.
+             */
+            template <class T>
+            SmartPtr<T> addComponent();
+
+            /** Gets a component by the template type and the id.
+            @param id The id of the component.
+            */
+            template <class T>
+            SmartPtr<T> getComponentById( s32 id ) const;
+
+            /** Gets a component by the template type. */
+            template <class T>
+            SmartPtr<T> getComponent() const;
+
+            /** Gets a component in the actor and it's children by the template type. */
+            template <class T>
+            SmartPtr<T> getComponentInChildren() const;
+
+            /** Gets a component in the actor and it's children by the template type. */
+            template <class T>
+            SmartPtr<T> getComponentAndInChildren() const;
+
+            /** Gets components in the actor and it's children by the template type. */
+            template <class T>
+            Array<SmartPtr<T>> getComponentsInChildren() const;
+
+            /** Gets components in the actor and it's children by the template type. */
+            template <class T>
+            Array<SmartPtr<T>> getAllComponentsInChildren() const;
+
+            /** Gets components in the actor and it's children by the template type. */
+            template <class T>
+            Array<SmartPtr<T>> getComponentsAndInChildren() const;
+
+            /** Gets components in the actor and it's children by the template type. */
+            template <class T>
+            Array<SmartPtr<T>> getAllComponentsAndInChildren() const;
+
+            /** Gets components in the actor by the template type. */
+            template <class T>
+            Array<SmartPtr<T>> getComponentsByType() const;
+
+            /** Used to know if the actor has a component. */
+            template <class T>
+            bool hasComponent() const;
+
+            template <typename T>
+            SmartPtr<T> getComponentInParent();
+
             FB_CLASS_REGISTER_DECL;
         };
+
+        template <class T>
+        SmartPtr<T> IActor::addComponent()
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            auto factoryManager = applicationManager->getFactoryManager();
+
+            auto component = factoryManager->make_ptr<T>();
+            addComponentInstance( component );
+            component->load( nullptr );
+            return component;
+        }
+
+        template <class T>
+        SmartPtr<T> IActor::getComponentById( s32 id ) const
+        {
+            auto components = getComponents();
+            for( auto &component : components )
+            {
+                if( component )
+                {
+                    auto derivedComponent = fb::dynamic_pointer_cast<T>( component );
+                    if( derivedComponent )
+                    {
+                        auto handle = derivedComponent->getHandle();
+                        FB_ASSERT( handle );
+
+                        if( handle->getId() == id )
+                        {
+                            return derivedComponent;
+                        }
+                    }
+                }
+            }
+
+            return nullptr;
+        }
+
+        template <class T>
+        SmartPtr<T> IActor::getComponent() const
+        {
+            auto components = getComponents();
+            for( auto &component : components )
+            {
+                if( component )
+                {
+                    auto derivedComponent = fb::dynamic_pointer_cast<T>( component );
+                    if( derivedComponent )
+                    {
+                        return derivedComponent;
+                    }
+                }
+            }
+
+            return nullptr;
+        }
+
+        template <class T>
+        SmartPtr<T> IActor::getComponentInChildren() const
+        {
+            if( auto p = getChildrenPtr() )
+            {
+                auto &children = *p;
+                for( auto &child : children )
+                {
+                    if( auto component = child->getComponent<T>() )
+                    {
+                        return component;
+                    }
+                }
+            }
+
+            return nullptr;
+        }
+
+        template <class T>
+        SmartPtr<T> IActor::getComponentAndInChildren() const
+        {
+            auto components = getComponents();
+            for( auto &component : components )
+            {
+                if( component )
+                {
+                    if( auto derivedComponent = fb::dynamic_pointer_cast<T>( component ) )
+                    {
+                        return derivedComponent;
+                    }
+                }
+            }
+
+            if( auto p = getChildrenPtr() )
+            {
+                auto &children = *p;
+                for( auto &child : children )
+                {
+                    if( auto component = child->getComponentAndInChildren<T>() )
+                    {
+                        return component;
+                    }
+                }
+            }
+
+            return nullptr;
+        }
+
+        template <class T>
+        Array<SmartPtr<T>> IActor::getComponentsInChildren() const
+        {
+            Array<SmartPtr<T>> componentsInChildren;
+            componentsInChildren.reserve( 32 );
+
+            if( auto p = getChildrenPtr() )
+            {
+                auto &children = *p;
+                for( auto child : children )
+                {
+                    if( child )
+                    {
+                        auto components = child->getComponentsByType<T>();
+                        if( !components.empty() )
+                        {
+                            componentsInChildren.insert( componentsInChildren.end(), components.begin(),
+                                                         components.end() );
+                        }
+
+                        auto childComponents = child->getComponentsInChildren<T>();
+                        if( !childComponents.empty() )
+                        {
+                            componentsInChildren.insert( componentsInChildren.end(),
+                                                         childComponents.begin(),
+                                                         childComponents.end() );
+                        }
+                    }
+                }
+            }
+
+            return componentsInChildren;
+        }
+
+        template <class T>
+        Array<SmartPtr<T>> IActor::getAllComponentsInChildren() const
+        {
+            Array<SmartPtr<T>> componentsInChildren;
+            componentsInChildren.reserve( 32 );
+
+            auto children = getAllChildren();
+            for( auto &child : children )
+            {
+                auto childComponents = child->getComponentsByType<T>();
+                if( !childComponents.empty() )
+                {
+                    componentsInChildren.insert( componentsInChildren.end(), childComponents.begin(),
+                                                 childComponents.end() );
+                }
+            }
+
+            return componentsInChildren;
+        }
+
+        template <class T>
+        Array<SmartPtr<T>> IActor::getComponentsAndInChildren() const
+        {
+            const auto components = getComponents();
+
+            Array<SmartPtr<T>> componentsInChildren;
+            componentsInChildren.reserve( components.size() );
+
+            for( auto &component : components )
+            {
+                if( component )
+                {
+                    if( auto derivedComponent = fb::dynamic_pointer_cast<T>( component ) )
+                    {
+                        componentsInChildren.push_back( derivedComponent );
+                    }
+                }
+            }
+
+            if( auto p = getChildrenPtr() )
+            {
+                auto &children = *p;
+                for( auto &child : children )
+                {
+                    auto childComponents = child->getComponentsInChildren<T>();
+                    if( !childComponents.empty() )
+                    {
+                        componentsInChildren.insert( componentsInChildren.end(), childComponents.begin(),
+                                                     childComponents.end() );
+                    }
+                }
+            }
+
+            return componentsInChildren;
+        }
+
+        template <class T>
+        Array<SmartPtr<T>> IActor::getAllComponentsAndInChildren() const
+        {
+            const auto components = getComponents();
+
+            Array<SmartPtr<T>> componentsInChildren;
+            componentsInChildren.reserve( components.size() );
+
+            for( auto &component : components )
+            {
+                if( component )
+                {
+                    if( auto derivedComponent = fb::dynamic_pointer_cast<T>( component ) )
+                    {
+                        componentsInChildren.push_back( derivedComponent );
+                    }
+                }
+            }
+
+            auto children = getAllChildren();
+            for( auto &child : children )
+            {
+                auto childComponents = child->getComponents();
+                if( !childComponents.empty() )
+                {
+                    componentsInChildren.insert( componentsInChildren.end(), childComponents.begin(),
+                                                 childComponents.end() );
+                }
+            }
+
+            return componentsInChildren;
+        }
+
+        template <class T>
+        Array<SmartPtr<T>> IActor::getComponentsByType() const
+        {
+            const auto components = getComponents();
+
+            Array<SmartPtr<T>> componentsByType;
+            componentsByType.reserve( components.size() );
+
+            for( auto &component : components )
+            {
+                if( component )
+                {
+                    if( auto derivedComponent = fb::dynamic_pointer_cast<T>( component ) )
+                    {
+                        componentsByType.push_back( derivedComponent );
+                    }
+                }
+            }
+
+            return componentsByType;
+        }
+
+        template <class T>
+        bool IActor::hasComponent() const
+        {
+            const auto components = getComponents();
+            for( auto &component : components )
+            {
+                if( component )
+                {
+                    if( auto derivedComponent = fb::dynamic_pointer_cast<T>( component ) )
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        template <typename T>
+        SmartPtr<T> IActor::getComponentInParent()
+        {
+            auto currentActor = getSharedFromThis<IActor>();
+
+            while( currentActor != nullptr )
+            {
+                auto componentInParent = currentActor->getComponent<T>();
+                if( componentInParent != nullptr )
+                {
+                    return componentInParent;
+                }
+
+                currentActor = currentActor->getParent();
+            }
+
+            return nullptr;
+        }
+
     }  // namespace scene
 }  // namespace fb
 

@@ -1,6 +1,5 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/UI/Slider.h>
-#include <FBCore/FBCore.h>
 
 namespace fb
 {
@@ -12,6 +11,7 @@ namespace fb
 
         Slider::~Slider()
         {
+            unload( nullptr );
         }
 
         void Slider::load( SmartPtr<ISharedObject> data )

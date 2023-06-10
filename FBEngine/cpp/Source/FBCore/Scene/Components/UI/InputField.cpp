@@ -1,6 +1,5 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/UI/InputField.h>
-#include <FBCore/FBCore.h>
 
 namespace fb
 {
@@ -12,6 +11,7 @@ namespace fb
 
         InputField::~InputField()
         {
+            unload( nullptr );
         }
 
         void InputField::load( SmartPtr<ISharedObject> data )

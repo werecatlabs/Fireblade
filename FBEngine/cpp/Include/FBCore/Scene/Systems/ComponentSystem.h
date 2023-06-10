@@ -15,6 +15,9 @@ namespace fb
             ComponentSystem();
             virtual ~ComponentSystem();
 
+            void load( SmartPtr<ISharedObject> data ) override;
+            void unload( SmartPtr<ISharedObject> data ) override;
+
             u32 addComponent( SmartPtr<IComponent> component );
 
             void removeComponent( SmartPtr<IComponent> component );
@@ -24,8 +27,18 @@ namespace fb
             void reserve( size_t size );
 
             size_t getSize() const;
+            void setSize( size_t size );
+
+            hash_type getStateType() const;
+
+            void setStateType( hash_type type );
+
+            SmartPtr<IState> getState( u32 id ) const;
+            void setState( u32 id, SmartPtr<IState> state );
 
         protected:
+            virtual void reserveData( size_t size );
+
             bool isFreeSlot( u32 slot );
 
             const Atomic<LoadingState> &getLoadingState( u32 id ) const;
@@ -41,6 +54,8 @@ namespace fb
             // The index of the last freed object slot.
             atomic_u32 m_lastFreeSlot = 0;
 
+            hash_type m_stateType = 0;
+            Array<SmartPtr<IState>> m_data;
             Array<SmartPtr<IComponent>> m_components;
             Array<Atomic<LoadingState>> m_loadingStates;
             mutable RecursiveMutex m_mutex;

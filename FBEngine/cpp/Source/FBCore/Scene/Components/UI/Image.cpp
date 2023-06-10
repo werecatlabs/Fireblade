@@ -25,11 +25,7 @@ namespace fb
 
         Image::~Image()
         {
-            const auto &state = getLoadingState();
-            if( state != LoadingState::Unloaded )
-            {
-                unload( nullptr );
-            }
+            unload( nullptr );
         }
 
         void Image::load( SmartPtr<ISharedObject> data )
@@ -325,8 +321,7 @@ namespace fb
             }
         }
 
-        void Image::parentChanged( SmartPtr<scene::IActor> newParent,
-                                            SmartPtr<scene::IActor> oldParent )
+        void Image::parentChanged( SmartPtr<scene::IActor> newParent, SmartPtr<scene::IActor> oldParent )
         {
             auto image = getImage();
             if( !image )

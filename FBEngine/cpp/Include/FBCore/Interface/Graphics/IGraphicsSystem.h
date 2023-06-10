@@ -101,6 +101,9 @@ namespace fb
              */
             virtual SmartPtr<IGraphicsScene> getGraphicsSceneById( hash32 id ) const = 0;
 
+            /** Gets the scene managers. */
+            virtual Array<SmartPtr<IGraphicsScene>> getSceneManagers() const = 0;
+
             /**
              * Gets the overlay manager.
              *

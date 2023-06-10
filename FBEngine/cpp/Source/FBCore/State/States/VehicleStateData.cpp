@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
-#include "FBCore/State/States/VehicleStateData.h"
-#include "FBCore/Core/StringUtil.h"
+#include <FBCore/State/States/VehicleStateData.h>
+#include <FBCore/Core/StringUtil.h>
 
 namespace fb
 {

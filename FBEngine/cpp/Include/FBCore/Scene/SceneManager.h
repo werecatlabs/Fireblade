@@ -75,6 +75,10 @@ namespace fb
             u32 addComponent( SmartPtr<IComponent> component ) override;
             u32 removeComponent( SmartPtr<IComponent> component ) override;
 
+            void addSystem( u32 id, SmartPtr<ISystem> system );
+
+            void removeSystem( u32 id );
+
             SmartPtr<IActor> getActor( u32 id ) const override;
             SmartPtr<IActor> getActorByName( const String &name ) const override;
             SmartPtr<IActor> getActorByFileId( const String &id ) const override;
@@ -153,7 +157,7 @@ namespace fb
             ConcurrentQueue<SmartPtr<ITransform>> m_dirtyActorTransforms;
 
             UnorderedMap<u32, Array<SmartPtr<IComponent>>> m_components;
-            UnorderedMap<u32, Array<SmartPtr<ISystem>>> m_systems;
+            UnorderedMap<u32, SmartPtr<ISystem>> m_systems;
 
             Array<SmartPtr<ITransform>> m_transforms;
 

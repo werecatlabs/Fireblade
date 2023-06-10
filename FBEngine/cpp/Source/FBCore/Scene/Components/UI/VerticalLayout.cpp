@@ -1,21 +1,21 @@
 #include <FBCore/FBCorePCH.h>
-#include <FBCore/Scene/Components/UI/VerticalLayoutContainer.h>
+#include <FBCore/Scene/Components/UI/VerticalLayout.h>
 
 namespace fb
 {
     namespace scene
     {
 
-        VerticalLayoutContainer::VerticalLayoutContainer( int width ) : width( width )
+        VerticalLayout::VerticalLayout( int width ) : width( width )
         {
         }
 
-        void VerticalLayoutContainer::add_widget( const Widget &widget )
+        void VerticalLayout::add_widget( const Widget &widget )
         {
             widgets.push_back( widget );
         }
 
-        void VerticalLayoutContainer::layout()
+        void VerticalLayout::layout()
         {
             int x = 0, y = 0;
             for( const auto &widget : widgets )

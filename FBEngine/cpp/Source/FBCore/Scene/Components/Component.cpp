@@ -6,6 +6,7 @@
 #include <FBCore/Interface/FSM/IFSMManager.h>
 #include <FBCore/Interface/Scene/IComponentEvent.h>
 #include <FBCore/Interface/Scene/ISceneManager.h>
+#include <FBCore/Interface/System/IState.h>
 
 namespace fb
 {
@@ -446,29 +447,26 @@ namespace fb
                 handle->setUUID( uuid );
             }
 
-            auto properties = componentData->getChild( "properties" );
-            if( !properties )
-            {
-                properties = factoryManager->make_ptr<Properties>();
+            //auto properties = componentData->getChild( "properties" );
+            //if( !properties )
+            //{
+            //    properties = factoryManager->make_ptr<Properties>();
 
-                if( auto oldStyleProperties = componentData->getChild( "properties_" ) )
-                {
-                    auto childProperties = oldStyleProperties->getChildrenByName( "properties_" );
-                    for( auto child : childProperties )
-                    {
-                        Property property;
-                        property.setName( child->getProperty( "name" ) );
-                        property.setValue( child->getProperty( "value" ) );
-                        properties->addProperty( property );
-                    }
-                }
-            }
+            //    if( auto oldStyleProperties = componentData->getChild( "properties_" ) )
+            //    {
+            //        auto childProperties = oldStyleProperties->getChildrenByName( "properties_" );
+            //        for( auto child : childProperties )
+            //        {
+            //            Property property;
+            //            property.setName( child->getProperty( "name" ) );
+            //            property.setValue( child->getProperty( "value" ) );
+            //            properties->addProperty( property );
+            //        }
+            //    }
+            //}
 
-            if( properties )
-            {
-                sceneManager->queueProperties( this, properties );
-                //setProperties( pProperties );
-            }
+            sceneManager->queueProperties( this, data );
+            //setProperties( pProperties );
 
             auto subComponentData = componentData->getChildrenByName( "subComponent" );
 
@@ -860,5 +858,21 @@ namespace fb
         {
             m_owner = owner;
         }
+
+        SmartPtr<IState> &Component::getComponentState()
+        {
+            return m_componentState;
+        }
+
+        const SmartPtr<IState> &Component::getComponentState() const
+        {
+            return m_componentState;
+        }
+
+        void Component::setComponentState( SmartPtr<IState> state )
+        {
+            m_componentState = state;
+        }
+
     }  // namespace scene
 }  // end namespace fb

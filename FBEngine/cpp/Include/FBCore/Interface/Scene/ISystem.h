@@ -18,9 +18,27 @@ namespace fb
 
             void update() override = 0;
 
+            virtual u32 addComponent( SmartPtr<IComponent> component ) = 0;
+
+            virtual void removeComponent( SmartPtr<IComponent> component ) = 0;
+
+            virtual void removeComponent( u32 id ) = 0;
+
+            virtual void reserve( size_t size ) = 0;
+
+            virtual size_t getSize() const = 0;
+            virtual void setSize( size_t size ) = 0;
+
+            virtual hash_type getStateType() const = 0;
+
+            virtual void setStateType( hash_type type ) = 0;
+
+            virtual SmartPtr<IState> getState( u32 id ) const = 0;
+            virtual void setState( u32 id, SmartPtr<IState> state ) = 0;
+
             FB_CLASS_REGISTER_DECL;
         };
-    } // namespace scene
-}     // namespace fb
+    }  // namespace scene
+}  // namespace fb
 
 #endif  // ISystem_h__

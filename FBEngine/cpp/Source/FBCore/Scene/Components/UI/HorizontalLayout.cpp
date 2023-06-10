@@ -1,21 +1,21 @@
 #include <FBCore/FBCorePCH.h>
-#include <FBCore/Scene/Components/UI/HorizontalLayoutContainer.h>
+#include <FBCore/Scene/Components/UI/HorizontalLayout.h>
 
 namespace fb
 {
     namespace scene
     {
 
-        HorizontalLayoutContainer::HorizontalLayoutContainer( int width ) : width( width )
+        HorizontalLayout::HorizontalLayout( int width ) : width( width )
         {
         }
 
-        void HorizontalLayoutContainer::add_widget( const Widget &widget )
+        void HorizontalLayout::add_widget( const Widget &widget )
         {
             widgets.push_back( widget );
         }
 
-        void HorizontalLayoutContainer::layout()
+        void HorizontalLayout::layout()
         {
             int x = 0, y = 0;
             for( const auto &widget : widgets )

@@ -302,6 +302,11 @@ namespace fb
                 m_scene->update();
             }
 
+            for( auto &[key, system] : m_systems )
+            {
+                system->update();
+            }
+
             auto sceneTask = getStateTask();
             auto task = Thread::getCurrentTask();
             if( task == sceneTask )
@@ -309,9 +314,9 @@ namespace fb
                 //TruckController::updateComponents();
                 //StemComponent::updateComponents();
                 //LSystem::updateComponents();
-                UserComponent::updateComponents();
-                Rigidbody::updateComponents();
-                LayoutTransform::updateComponents();
+                //UserComponent::updateComponents();
+                //Rigidbody::updateComponents();
+                //LayoutTransform::updateComponents();
             }
         }
 
@@ -677,25 +682,56 @@ namespace fb
 
         u32 SceneManager::addComponent( SmartPtr<IComponent> component )
         {
-            if( auto handle = component->getHandle() )
+            auto handle = component->getHandle();
+            if( handle )
             {
-                auto uuid = StringUtil::getUUID();
-                handle->setUUID( uuid );
+                auto uuid = handle->getUUID();
+                if( StringUtil::isNullOrEmpty( uuid ) )
+                {
+                    uuid = StringUtil::getUUID();
+                    handle->setUUID( uuid );
+                }
             }
 
+            u32 systemId = 0;
+
             auto typeInfo = component->getTypeInfo();
+
+            auto it = m_systems.find( typeInfo );
+            if( it != m_systems.end() )
+            {
+                auto &system = it->second;
+                systemId = system->addComponent( component );
+            }
+
             auto &components = m_components[typeInfo];
             components.push_back( component );
-            return static_cast<u32>( components.size() - 1 );
+
+            auto id = systemId != 0 ? systemId : static_cast<u32>( components.size() - 1 );
+
+            if( handle )
+            {
+                handle->setInstanceId( id );
+            }
+
+            return id;
         }
 
         u32 SceneManager::removeComponent( SmartPtr<IComponent> component )
         {
             auto typeInfo = component->getTypeInfo();
-            auto it = m_components.find( typeInfo );
-            if( it != m_components.end() )
+
+            auto it = m_systems.find( typeInfo );
+            if( it != m_systems.end() )
             {
-                auto &components = it->second;
+                auto &system = it->second;
+                system->removeComponent( component );
+            }
+
+            auto itComponent = m_components.find( typeInfo );
+            if( itComponent != m_components.end() )
+            {
+                auto &components = itComponent->second;
                 auto componentIt = std::find( components.begin(), components.end(), component );
                 if( componentIt != components.end() )
                 {
@@ -704,6 +740,16 @@ namespace fb
             }
 
             return 0;
+        }
+
+        void SceneManager::addSystem( u32 id, SmartPtr<ISystem> system )
+        {
+            m_systems[id] = system;
+        }
+
+        void SceneManager::removeSystem( u32 id )
+        {
+            m_systems.erase( id );
         }
 
         SmartPtr<IActor> SceneManager::getActor( u32 id ) const
