@@ -2,6 +2,7 @@
 #define __IStateNode_h__
 
 #include <FBCore/FBCorePrerequisites.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Math/Vector3.h>
@@ -11,7 +12,7 @@
 
 namespace fb
 {
-    //--------------------------------------------
+    
     class ITransformNode : public ISharedObject
     {
     public:

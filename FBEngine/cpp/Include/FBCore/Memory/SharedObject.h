@@ -263,15 +263,15 @@ namespace fb
     template <typename T>
     void SharedObject<T>::setupGarbageCollectorData()
     {
-        if( m_objectId != std::numeric_limits<u32>::max() )
+        if( T::m_objectId != std::numeric_limits<u32>::max() )
         {
             auto &gc = GarbageCollector::instance();
 
             auto typeInfo = getTypeInfo();
-            m_references = gc.getReferencesPtr( typeInfo, m_objectId );
-            m_flags = gc.getFlagPtr( typeInfo, m_objectId );
-            m_handle = gc.getHandle( typeInfo, m_objectId );
-            m_loadingState = gc.getLoadingStatePtr( typeInfo, m_objectId );
+            T::m_references = gc.getReferencesPtr( typeInfo, T::m_objectId );
+            T::m_flags = gc.getFlagPtr( typeInfo, T::m_objectId );
+            T::m_handle = gc.getHandle( typeInfo, T::m_objectId );
+            T::m_loadingState = gc.getLoadingStatePtr( typeInfo, T::m_objectId );
         }
     }
 

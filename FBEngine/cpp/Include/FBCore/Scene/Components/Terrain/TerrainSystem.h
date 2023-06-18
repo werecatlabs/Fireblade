@@ -58,13 +58,13 @@ namespace fb
                 ~TerrainSharedObjectListener() override;
 
                 Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
-                                       const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object,
-                                       SmartPtr<IEvent> event );
+                                       const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
 
                 void loadingStateChanged( ISharedObject *sharedObject, LoadingState oldState,
-                                          LoadingState newState ) ;
+                                          LoadingState newState );
 
-                bool destroy( void *ptr ) ;
+                bool destroy( void *ptr );
 
                 TerrainSystem *getOwner() const;
 

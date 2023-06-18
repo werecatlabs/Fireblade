@@ -1,4 +1,5 @@
 #include <FBCore/FBCorePCH.h>
+#include <FBCore/Scene/Components/UI/LayoutContainer.h>
 
 namespace fb
 {

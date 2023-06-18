@@ -15,8 +15,8 @@ namespace fb
             ~ComponentEventListener() override;
 
             Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
-                                   const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object,
-                                   SmartPtr<IEvent> event ) override;
+                                   const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                   SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
             SmartPtr<IComponent> getComponent() const override;
 

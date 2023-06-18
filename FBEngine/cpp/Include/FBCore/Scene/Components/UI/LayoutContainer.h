@@ -15,7 +15,7 @@ namespace fb
             {
             }
 
-           int x;
+            int x;
             int y;
             int width;
             int height;

@@ -36,6 +36,12 @@ namespace fb
             SmartPtr<IState> getState( u32 id ) const;
             void setState( u32 id, SmartPtr<IState> state );
 
+	        u32 getGrowSize() const;
+
+            void setGrowSize( u32 growSize );
+
+            FB_CLASS_REGISTER_DECL;
+
         protected:
             virtual void reserveData( size_t size );
 
@@ -53,6 +59,7 @@ namespace fb
 
             // The index of the last freed object slot.
             atomic_u32 m_lastFreeSlot = 0;
+            u32 m_growSize = 128;
 
             hash_type m_stateType = 0;
             Array<SmartPtr<IState>> m_data;

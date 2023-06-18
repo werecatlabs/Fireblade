@@ -12,7 +12,6 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, FSMManager, IFSMManager );
 
-    constexpr auto size = 32768;
     u32 FSMManager::m_idExt = 0;
 
     FSMManager::FSMManager()
@@ -26,6 +25,8 @@ namespace fb
 
     SmartPtr<IFSM> FSMManager::createFSM()
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         FB_ASSERT( isValid() );
         FB_ASSERT( isLoaded() );
 
@@ -44,6 +45,15 @@ namespace fb
         FB_ASSERT( handle );
 
         auto id = createNewId();
+        while( id >= getSize() )
+        {
+            auto growSize = getGrowSize();
+            auto size = getSize() + growSize;
+            resize( size );
+        }
+
+        FB_ASSERT(id < m_fsms.size());
+
         handle->setInstanceId( id );
 
         m_fsms[id] = fsm;
@@ -55,6 +65,8 @@ namespace fb
 
     void FSMManager::destroyFSM( SmartPtr<IFSM> fsm )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         FB_ASSERT( fsm );
         FB_ASSERT( isValid() );
         FB_ASSERT( isLoaded() );
@@ -87,8 +99,29 @@ namespace fb
     {
         try
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+
             setLoadingState( LoadingState::Loading );
 
+            constexpr auto growSize = 32;
+            auto size = getSize() + growSize;
+            resize( size );
+
+            setLoadingState( LoadingState::Loaded );
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void FSMManager::resize( size_t size )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
+        auto currentSize = getSize();
+        if( currentSize != size )
+        {
             m_fsms.resize( size );
             m_previousStates.resize( size );
             m_currentStates.resize( size );
@@ -100,26 +133,22 @@ namespace fb
             m_flags.resize( size );
             m_ready.resize( size );
 
-            for( auto &value : m_previousStates )
+            for( size_t i = currentSize; i < m_previousStates.size(); ++i )
             {
-                value = 0;
+                m_previousStates[i] = 0;
             }
 
-            for( auto &value : m_currentStates )
+            for( size_t i = currentSize; i < m_currentStates.size(); ++i )
             {
-                value = 0;
+                m_currentStates[i] = 0;
             }
 
-            for( auto &value : m_newStates )
+            for( size_t i = currentSize; i < m_newStates.size(); ++i )
             {
-                value = 0;
+                m_newStates[i] = 0;
             }
 
-            setLoadingState( LoadingState::Loaded );
-        }
-        catch( std::exception &e )
-        {
-            FB_LOG_EXCEPTION( e );
+            setSize( size );
         }
     }
 
@@ -127,6 +156,8 @@ namespace fb
     {
         try
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+
             const auto &loadingState = getLoadingState();
             if( loadingState == LoadingState::Loaded )
             {
@@ -169,6 +200,8 @@ namespace fb
 
     void FSMManager::changeState( u32 i )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         auto &previousState = m_previousStates[i];
         auto &currentState = m_currentStates[i];
         auto &newState = m_newStates[i];
@@ -214,7 +247,11 @@ namespace fb
 
     void FSMManager::update()
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         FB_ASSERT( isLoaded() );
+
+        auto size = getSize();
 
         auto applicationManager = core::IApplicationManager::instance();
         auto timer = applicationManager->getTimer();
@@ -222,14 +259,14 @@ namespace fb
         {
             auto dt = timer->getDeltaTime();
 
-            for( size_t i = 0; i < m_idExt; ++i )
+            for( size_t i = 0; i < size; ++i )
             {
                 auto &stateTime = m_stateTimes[i];
                 stateTime += dt;
             }
         }
 
-        for( size_t i = 0; i < m_idExt; ++i )
+        for( size_t i = 0; i < size; ++i )
         {
             changeState( (u32)i );
         }
@@ -237,34 +274,40 @@ namespace fb
 
     f64 FSMManager::getStateChangeTime( u32 id ) const
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         return m_stateChangeTimes[id];
     }
 
     void FSMManager::setStateChangeTime( u32 id, const f64 &stateChangeTime )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         m_stateChangeTimes[id] = stateChangeTime;
     }
 
     u8 FSMManager::getPreviousState( u32 id ) const
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         FB_ASSERT( id < m_previousStates.size() );
         return m_previousStates[id];
     }
 
     u8 FSMManager::getCurrentState( u32 id ) const
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         FB_ASSERT( id < m_currentStates.size() );
         return m_currentStates[id];
     }
 
     u8 FSMManager::getNewState( u32 id ) const
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         FB_ASSERT( id < m_newStates.size() );
         return m_newStates[id];
     }
 
     void FSMManager::setNewState( u32 id, s32 state, bool changeNow )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         FB_ASSERT( id < m_newStates.size() );
         m_newStates[id] = state;
 
@@ -294,6 +337,8 @@ namespace fb
 
     void FSMManager::addListener( u32 id, SmartPtr<IFSMListener> listener )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         if( const auto pOldListeners = getListeners( id ) )
         {
             auto &oldListeners = *pOldListeners;
@@ -320,6 +365,8 @@ namespace fb
 
     void FSMManager::removeListener( u32 id, SmartPtr<IFSMListener> listener )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         auto pListeners = getListeners( id );
         if( pListeners )
         {
@@ -340,6 +387,8 @@ namespace fb
 
     void FSMManager::removeListeners( u32 id )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         if( auto pListeners = getListeners( id ) )
         {
             auto &listeners = *pListeners;
@@ -372,12 +421,14 @@ namespace fb
 
     bool FSMManager::isReady( u32 id ) const
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         FB_ASSERT( id < m_ready.size() );
         return m_ready[id];
     }
 
     void FSMManager::setReady( u32 id, bool ready )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         FB_ASSERT( id < m_ready.size() );
         m_ready[id] = ready;
     }
@@ -414,41 +465,48 @@ namespace fb
     {
     }
 
-    fb::u32 *FSMManager::getFlagsPtr( u32 id ) const
+    u32 *FSMManager::getFlagsPtr( u32 id ) const
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         return (u32 *)&m_flags[id];
     }
 
     u32 FSMManager::getFlags( u32 id )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         return m_flags[id];
     }
 
     void FSMManager::setFlags( u32 id, u32 flags )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         m_flags[id] = flags;
     }
 
     void FSMManager::setListeners( u32 id, SharedPtr<Array<SmartPtr<IFSMListener>>> listeners )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         FB_ASSERT( id < m_listeners.size() );
         m_listeners[id] = listeners;
     }
 
     SharedPtr<Array<SmartPtr<IFSMListener>>> FSMManager::getListeners( u32 id ) const
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         FB_ASSERT( id < m_listeners.size() );
         return m_listeners[id];
     }
 
     time_interval FSMManager::getStateTime( u32 id ) const
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         FB_ASSERT( id < m_stateTimes.size() );
         return m_stateTimes[id];
     }
 
     void FSMManager::setStateTime( u32 id, time_interval stateTime )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         FB_ASSERT( id < m_stateTimes.size() );
         FB_ASSERT( Math<time_interval>::isFinite( stateTime ) );
         m_stateTimes[id] = stateTime;
@@ -456,8 +514,11 @@ namespace fb
 
     bool FSMManager::isValid() const
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         if( getLoadingState() == LoadingState::Loaded )
         {
+            auto size = getSize();
+
             const auto statesAllocated = m_previousStates.size() == size &&
                                          m_currentStates.size() == size && m_newStates.size() == size;
             const auto timesAllocated = m_stateChangeTimes.size() == size && m_stateTimes.size() == size;
@@ -468,6 +529,30 @@ namespace fb
         }
 
         return true;
+    }
+
+    size_t FSMManager::getSize() const
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        return m_size;
+    }
+
+    void FSMManager::setSize( size_t size )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_size = size;
+    }
+
+    size_t FSMManager::getGrowSize() const
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        return m_growSize;
+    }
+
+    void FSMManager::setGrowSize( size_t growSize )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_growSize = growSize;
     }
 
 }  // end namespace fb

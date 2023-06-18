@@ -1,7 +1,18 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/Skybox.h>
 #include <FBCore/Scene/Components/Material.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Resource/IResourceDatabase.h>
+#include <FBCore/Interface/IO/IFileSystem.h>
+#include <FBCore/Interface/Graphics/IGraphicsSystem.h>
+#include <FBCore/Interface/Graphics/IGraphicsScene.h>
+#include <FBCore/Interface/Graphics/IMaterial.h>
+#include <FBCore/Interface/Graphics/ISceneNode.h>
+#include <FBCore/Interface/Graphics/ITexture.h>
+#include <FBCore/Interface/System/ITaskManager.h>
+#include <FBCore/State/Messages/StateMessageLoad.h>
+#include <FBCore/Interface/Scene/ITransform.h>
+#include <FBCore/Core/BitUtil.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {
@@ -37,9 +48,9 @@ namespace fb
                 FB_ASSERT( applicationManager );
 
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
-                if(graphicsSystem)
+                if( graphicsSystem )
                 {
-                    if(auto actor = getActor())
+                    if( auto actor = getActor() )
                     {
                         auto smgr = graphicsSystem->getGraphicsScene();
                         FB_ASSERT( smgr );
@@ -53,7 +64,7 @@ namespace fb
 
                 setLoadingState( LoadingState::Loaded );
             }
-            catch(std::exception &e)
+            catch( std::exception &e )
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -64,7 +75,7 @@ namespace fb
             try
             {
                 const auto &loadingState = getLoadingState();
-                if(loadingState != LoadingState::Unloaded)
+                if( loadingState != LoadingState::Unloaded )
                 {
                     setLoadingState( LoadingState::Unloading );
 
@@ -72,9 +83,9 @@ namespace fb
                     FB_ASSERT( applicationManager );
 
                     auto graphicsSystem = applicationManager->getGraphicsSystem();
-                    if(graphicsSystem)
+                    if( graphicsSystem )
                     {
-                        if(auto actor = getActor())
+                        if( auto actor = getActor() )
                         {
                             auto smgr = graphicsSystem->getGraphicsScene();
                             FB_ASSERT( smgr );
@@ -86,9 +97,9 @@ namespace fb
                         }
                     }
 
-                    if(m_materialSharedListener)
+                    if( m_materialSharedListener )
                     {
-                        if(m_material)
+                        if( m_material )
                         {
                             m_material->removeObjectListener( m_materialSharedListener.get() );
                         }
@@ -103,7 +114,7 @@ namespace fb
                     setLoadingState( LoadingState::Unloaded );
                 }
             }
-            catch(std::exception &e)
+            catch( std::exception &e )
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -111,30 +122,30 @@ namespace fb
 
         void Skybox::updateDirty( u32 flags, u32 oldFlags )
         {
-            if(auto actor = getActor())
+            if( auto actor = getActor() )
             {
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
-                if(graphicsSystem)
+                if( graphicsSystem )
                 {
                     auto smgr = graphicsSystem->getGraphicsScene();
                     FB_ASSERT( smgr );
 
                     auto rootNode = smgr->getRootSceneNode();
 
-                    if(BitUtil::getFlagValue( flags, IActor::ActorFlagInScene ) !=
-                       BitUtil::getFlagValue( oldFlags, IActor::ActorFlagInScene ))
+                    if( BitUtil::getFlagValue( flags, IActor::ActorFlagInScene ) !=
+                        BitUtil::getFlagValue( oldFlags, IActor::ActorFlagInScene ) )
                     {
-                        switch(auto state = actor->getState())
+                        switch( auto state = actor->getState() )
                         {
                         case IActor::State::Play:
                         case IActor::State::Edit:
                         {
                             auto visible = BitUtil::getFlagValue( flags, IActor::ActorFlagEnabled );
 
-                            if(graphicsSystem)
+                            if( graphicsSystem )
                             {
                                 auto smgr = graphicsSystem->getGraphicsScene();
                                 FB_ASSERT( smgr );
@@ -152,10 +163,10 @@ namespace fb
                         }
                     }
 
-                    if(BitUtil::getFlagValue( flags, IActor::ActorFlagEnabled ) !=
-                       BitUtil::getFlagValue( oldFlags, IActor::ActorFlagEnabled ))
+                    if( BitUtil::getFlagValue( flags, IActor::ActorFlagEnabled ) !=
+                        BitUtil::getFlagValue( oldFlags, IActor::ActorFlagEnabled ) )
                     {
-                        switch(auto state = actor->getState())
+                        switch( auto state = actor->getState() )
                         {
                         case IActor::State::Play:
                         case IActor::State::Edit:
@@ -164,7 +175,7 @@ namespace fb
 
                             auto visible = BitUtil::getFlagValue( flags, IActor::ActorFlagEnabled );
 
-                            if(graphicsSystem)
+                            if( graphicsSystem )
                             {
                                 auto smgr = graphicsSystem->getGraphicsScene();
                                 FB_ASSERT( smgr );
@@ -182,10 +193,10 @@ namespace fb
                         }
                     }
 
-                    if(BitUtil::getFlagValue( flags, IActor::ActorFlagDirty ) !=
-                       BitUtil::getFlagValue( oldFlags, IActor::ActorFlagDirty ))
+                    if( BitUtil::getFlagValue( flags, IActor::ActorFlagDirty ) !=
+                        BitUtil::getFlagValue( oldFlags, IActor::ActorFlagDirty ) )
                     {
-                        switch(auto state = actor->getState())
+                        switch( auto state = actor->getState() )
                         {
                         case IActor::State::Play:
                         case IActor::State::Edit:
@@ -194,7 +205,7 @@ namespace fb
 
                             auto visible = BitUtil::getFlagValue( flags, IActor::ActorFlagEnabled );
 
-                            if(graphicsSystem)
+                            if( graphicsSystem )
                             {
                                 auto smgr = graphicsSystem->getGraphicsScene();
                                 FB_ASSERT( smgr );
@@ -219,23 +230,18 @@ namespace fb
         {
             auto properties = Component::getProperties();
 
-            properties->setProperty( "Front",
-                                     m_textures[static_cast<u32>(
-                                         render::IMaterial::SkyboxTextureTypes::Front)] );
-            properties->setProperty( "Back",
-                                     m_textures[static_cast<u32>(
-                                         render::IMaterial::SkyboxTextureTypes::Back)] );
             properties->setProperty(
-                "Up", m_textures[static_cast<u32>(render::IMaterial::SkyboxTextureTypes::Up)] );
-            properties->setProperty( "Down",
-                                     m_textures[static_cast<u32>(
-                                         render::IMaterial::SkyboxTextureTypes::Down)] );
-            properties->setProperty( "Right",
-                                     m_textures[static_cast<u32>(
-                                         render::IMaterial::SkyboxTextureTypes::Right)] );
-            properties->setProperty( "Left",
-                                     m_textures[static_cast<u32>(
-                                         render::IMaterial::SkyboxTextureTypes::Left)] );
+                "Front", m_textures[static_cast<u32>( render::IMaterial::SkyboxTextureTypes::Front )] );
+            properties->setProperty(
+                "Back", m_textures[static_cast<u32>( render::IMaterial::SkyboxTextureTypes::Back )] );
+            properties->setProperty(
+                "Up", m_textures[static_cast<u32>( render::IMaterial::SkyboxTextureTypes::Up )] );
+            properties->setProperty(
+                "Down", m_textures[static_cast<u32>( render::IMaterial::SkyboxTextureTypes::Down )] );
+            properties->setProperty(
+                "Right", m_textures[static_cast<u32>( render::IMaterial::SkyboxTextureTypes::Right )] );
+            properties->setProperty(
+                "Left", m_textures[static_cast<u32>( render::IMaterial::SkyboxTextureTypes::Left )] );
 
             return properties;
         }
@@ -248,52 +254,46 @@ namespace fb
             Array<SmartPtr<render::ITexture>> textures;
             textures.resize( 6 );
 
-            properties->getPropertyValue( "Front",
-                                          textures[static_cast<u32>(
-                                              render::IMaterial::SkyboxTextureTypes::Front)] );
+            properties->getPropertyValue(
+                "Front", textures[static_cast<u32>( render::IMaterial::SkyboxTextureTypes::Front )] );
 
             SmartPtr<render::ITexture> backTexture;
-            properties->getPropertyValue( "Back",
-                                          textures[static_cast<u32>(
-                                              render::IMaterial::SkyboxTextureTypes::Back)] );
-            properties->getPropertyValue( "Up",
-                                          textures[static_cast<u32>(
-                                              render::IMaterial::SkyboxTextureTypes::Up)] );
-            properties->getPropertyValue( "Down",
-                                          textures[static_cast<u32>(
-                                              render::IMaterial::SkyboxTextureTypes::Down)] );
-            properties->getPropertyValue( "Right",
-                                          textures[static_cast<u32>(
-                                              render::IMaterial::SkyboxTextureTypes::Right)] );
-            properties->getPropertyValue( "Left",
-                                          textures[static_cast<u32>(
-                                              render::IMaterial::SkyboxTextureTypes::Left)] );
+            properties->getPropertyValue(
+                "Back", textures[static_cast<u32>( render::IMaterial::SkyboxTextureTypes::Back )] );
+            properties->getPropertyValue(
+                "Up", textures[static_cast<u32>( render::IMaterial::SkyboxTextureTypes::Up )] );
+            properties->getPropertyValue(
+                "Down", textures[static_cast<u32>( render::IMaterial::SkyboxTextureTypes::Down )] );
+            properties->getPropertyValue(
+                "Right", textures[static_cast<u32>( render::IMaterial::SkyboxTextureTypes::Right )] );
+            properties->getPropertyValue(
+                "Left", textures[static_cast<u32>( render::IMaterial::SkyboxTextureTypes::Left )] );
 
             auto dirty = false;
 
-            if(m_textures.size() != textures.size())
+            if( m_textures.size() != textures.size() )
             {
                 m_textures.resize( 6 );
             }
 
-            for(size_t i = 0; i < textures.size(); ++i)
+            for( size_t i = 0; i < textures.size(); ++i )
             {
-                if(m_textures[i] != textures[i])
+                if( m_textures[i] != textures[i] )
                 {
                     m_textures[i] = textures[i];
                     dirty = true;
                 }
             }
 
-            if(dirty)
+            if( dirty )
             {
-                if(auto actor = getActor())
+                if( auto actor = getActor() )
                 {
                     auto enabled = actor->isEnabledInScene();
                     setupMaterial();
 
                     auto graphicsSystem = applicationManager->getGraphicsSystem();
-                    if(graphicsSystem)
+                    if( graphicsSystem )
                     {
                         auto smgr = graphicsSystem->getGraphicsScene();
                         FB_ASSERT( smgr );
@@ -316,7 +316,7 @@ namespace fb
         {
             try
             {
-                if(auto actor = getActor())
+                if( auto actor = getActor() )
                 {
                     auto applicationManager = core::IApplicationManager::instance();
                     FB_ASSERT( applicationManager );
@@ -333,7 +333,7 @@ namespace fb
                     //smgr->setSkyBox( visible, skyboxMaterial, distance );
                 }
             }
-            catch(std::exception &e)
+            catch( std::exception &e )
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -351,7 +351,7 @@ namespace fb
 
         IFSM::ReturnType Skybox::handleComponentEvent( u32 state, IFSM::Event eventType )
         {
-            switch(eventType)
+            switch( eventType )
             {
             case IFSM::Event::Change:
             {
@@ -359,13 +359,13 @@ namespace fb
             break;
             case IFSM::Event::Enter:
             {
-                auto eState = static_cast<State>(state);
-                switch(eState)
+                auto eState = static_cast<State>( state );
+                switch( eState )
                 {
                 case State::Edit:
                 case State::Play:
                 {
-                    if(auto actor = getActor())
+                    if( auto actor = getActor() )
                     {
                         setupMaterial();
 
@@ -373,7 +373,7 @@ namespace fb
                         FB_ASSERT( applicationManager );
 
                         auto graphicsSystem = applicationManager->getGraphicsSystem();
-                        if(graphicsSystem)
+                        if( graphicsSystem )
                         {
                             auto smgr = graphicsSystem->getGraphicsScene();
                             FB_ASSERT( smgr );
@@ -381,7 +381,7 @@ namespace fb
                             auto visible = actor->isEnabledInScene();
                             auto distance = getDistance();
 
-                            if(auto skyboxMaterial = getMaterial())
+                            if( auto skyboxMaterial = getMaterial() )
                             {
                                 smgr->setSkyBox( visible, skyboxMaterial, distance );
                             }
@@ -395,7 +395,7 @@ namespace fb
                     FB_ASSERT( applicationManager );
 
                     auto graphicsSystem = applicationManager->getGraphicsSystem();
-                    if(graphicsSystem)
+                    if( graphicsSystem )
                     {
                         auto smgr = graphicsSystem->getGraphicsScene();
                         FB_ASSERT( smgr );
@@ -461,41 +461,41 @@ namespace fb
             auto resourceDatabase = applicationManager->getResourceDatabase();
             FB_ASSERT( resourceDatabase );
 
-            if(auto handle = getHandle())
+            if( auto handle = getHandle() )
             {
                 auto material = getMaterial();
-                if(!material)
+                if( !material )
                 {
-                    if(auto actor = getActor())
+                    if( auto actor = getActor() )
                     {
-                        if(auto materialComponent = actor->getComponent<Material>())
+                        if( auto materialComponent = actor->getComponent<Material>() )
                         {
                             material = materialComponent->getMaterial();
                         }
                     }
                 }
 
-                if(!material)
+                if( !material )
                 {
                     auto uuid = handle->getUUID();
                     auto materialResult =
                         resourceDatabase->createOrRetrieveByType<render::IMaterial>( uuid );
-                    if(materialResult.first)
+                    if( materialResult.first )
                     {
                         material = materialResult.first;
                     }
 
-                    if(materialResult.second)
+                    if( materialResult.second )
                     {
-                        if(!material->hasObjectListener( m_materialSharedListener ))
+                        if( !material->hasObjectListener( m_materialSharedListener ) )
                         {
                             material->addObjectListener( m_materialSharedListener );
                         }
                     }
 
-                    if(auto actor = getActor())
+                    if( auto actor = getActor() )
                     {
-                        if(auto materialComponent = actor->getComponent<Material>())
+                        if( auto materialComponent = actor->getComponent<Material>() )
                         {
                             materialComponent->setMaterial( material );
                         }
@@ -503,7 +503,7 @@ namespace fb
                 }
 
                 material->setMaterialType( render::IMaterial::MaterialType::SkyboxCubemap );
-                material->setLightingEnabled(false);
+                material->setLightingEnabled( false );
                 material->setCubicTexture( m_textures );
 
                 m_material = material;
@@ -518,12 +518,12 @@ namespace fb
         }
 
         void Skybox::MaterialSharedListener::loadingStateChanged( ISharedObject *sharedObject,
-            LoadingState oldState,
-            LoadingState newState )
+                                                                  LoadingState oldState,
+                                                                  LoadingState newState )
         {
-            if(newState == LoadingState::Loaded)
+            if( newState == LoadingState::Loaded )
             {
-                if(auto actor = m_owner->getActor())
+                if( auto actor = m_owner->getActor() )
                 {
                     actor->setDirty( true );
                 }
@@ -544,5 +544,5 @@ namespace fb
         {
             m_owner = owner;
         }
-    } // namespace scene
-}     // end namespace fb
+    }  // namespace scene
+}  // end namespace fb

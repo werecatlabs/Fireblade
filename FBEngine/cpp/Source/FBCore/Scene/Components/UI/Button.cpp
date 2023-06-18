@@ -96,9 +96,8 @@ namespace fb
         }
 
         Parameter Button::handleEvent( IEvent::Type eventType, hash_type eventValue,
-                                                const Array<Parameter> &arguments,
-                                                SmartPtr<ISharedObject> sender,
-                                                SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
+                                       const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
         {
             if( eventValue == IEvent::ACTIVATE_HASH )
             {

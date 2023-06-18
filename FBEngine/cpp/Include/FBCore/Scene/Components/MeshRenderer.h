@@ -30,14 +30,6 @@ namespace fb
             /** @copydoc IComponent::updateDirty */
             void updateDirty( u32 flags, u32 oldFlags ) override;
 
-            void awake() override;
-
-            ///< Plays the mesh.
-            void play();
-
-            ///< Edits the mesh.
-            void edit();
-
             /** @copydoc BaseComponent::getChildObjects */
             Array<SmartPtr<ISharedObject>> getChildObjects() const override;
 
@@ -68,16 +60,16 @@ namespace fb
             void updateTransform() override;
 
             ///< Gets the mesh object.
-            SmartPtr<render::IGraphicsMesh> getMeshObject() const;  
+            SmartPtr<render::IGraphicsMesh> getMeshObject() const;
 
             ///< Sets the mesh object.
-            void setMeshObject( SmartPtr<render::IGraphicsMesh> meshObject );  
+            void setMeshObject( SmartPtr<render::IGraphicsMesh> meshObject );
 
             ///< Gets the mesh scene node.
-            SmartPtr<render::ISceneNode> getMeshNode() const;  
+            SmartPtr<render::ISceneNode> getMeshNode() const;
 
             ///< Sets the mesh scene node.
-            void setMeshNode( SmartPtr<render::ISceneNode> meshNode );  
+            void setMeshNode( SmartPtr<render::ISceneNode> meshNode );
 
             FB_CLASS_REGISTER_DECL;
 
@@ -87,10 +79,10 @@ namespace fb
             void updateMesh();
 
             ///< The mesh object.
-            SmartPtr<render::IGraphicsMesh> m_meshObject;  
+            SmartPtr<render::IGraphicsMesh> m_meshObject;
 
             ///< The mesh scene node.
-            SmartPtr<render::ISceneNode> m_meshNode;       
+            SmartPtr<render::ISceneNode> m_meshNode;
         };
 
     }  // namespace scene

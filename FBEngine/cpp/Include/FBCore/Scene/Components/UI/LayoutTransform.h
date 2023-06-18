@@ -18,6 +18,7 @@ namespace fb
                 LEFT,
                 CENTER,
                 RIGHT,
+                CUSTOM,
 
                 COUNT
             };
@@ -28,6 +29,7 @@ namespace fb
                 TOP,
                 CENTER,
                 BOTTOM,
+                CUSTOM,
 
                 COUNT
             };

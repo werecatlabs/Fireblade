@@ -1,6 +1,8 @@
 #ifndef __DebugCheck_h__
 #define __DebugCheck_h__
 
+#include <FBCore/FBCorePrerequisites.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Memory/RawPtr.h>
 #include <FBCore/Atomics/Atomics.h>

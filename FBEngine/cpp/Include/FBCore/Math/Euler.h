@@ -44,6 +44,10 @@ namespace fb
         */
         Euler( const T &y, const T &p = T( 0.0 ), const T &r = T( 0.0 ) );
 
+        Euler( const Vector3<T> &rads ) : mYaw( rads.Y() ), mPitch( rads.X() ), mRoll( rads.Z() )
+        {
+        }
+
         /**
         @brief Default constructor with presets.
         @param quaternion Calculate starting values from this quaternion
@@ -121,6 +125,16 @@ namespace fb
 
         /// Get a vector pointing up.
         Vector3<T> up() const;
+
+        Vector3<T> toRadians() const
+        {
+            return Vector3<T>( mYaw, mPitch, mRoll );
+        }
+
+        Vector3<T> toDegrees() const
+        {
+            return Vector3<T>( mYaw, mPitch, mRoll ) * Math<T>::rad_to_deg();
+        }
 
         /**
         @brief Calculate the quaternion of the euler object.

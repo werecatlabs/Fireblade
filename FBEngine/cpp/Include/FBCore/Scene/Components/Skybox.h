@@ -42,8 +42,8 @@ namespace fb
                 ~MaterialSharedListener() = default;
 
                 Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
-                                       const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object,
-                                       SmartPtr<IEvent> event );
+                                       const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
 
                 void loadingStateChanged( ISharedObject *sharedObject, LoadingState oldState,
                                           LoadingState newState );

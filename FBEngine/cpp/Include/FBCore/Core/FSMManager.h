@@ -89,9 +89,19 @@ namespace fb
 
         bool isValid() const;
 
+        size_t getSize() const;
+
+        void setSize( size_t size );
+
+        size_t getGrowSize() const;
+
+        void setGrowSize( size_t growSize );
+
         FB_CLASS_REGISTER_DECL;
 
     protected:
+        void resize( size_t size );
+
         u32 createNewId();
 
         void changeState( u32 id );
@@ -116,6 +126,11 @@ namespace fb
         Array<SmartPtr<IFSM>> m_fsms;
 
         u32 m_idCount = 0;
+
+        size_t m_size = 0;
+        size_t m_growSize = 128;
+
+        mutable RecursiveMutex m_mutex;
 
         static u32 m_idExt;
     };

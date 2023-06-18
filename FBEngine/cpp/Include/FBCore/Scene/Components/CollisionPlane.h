@@ -8,7 +8,7 @@ namespace fb
 {
     namespace scene
     {
-        
+
         class CollisionPlane : public Collision
         {
         public:

@@ -6,8 +6,8 @@ namespace fb
     {
         auto &gc = GarbageCollector::instance();
         auto objectId = gc.addObject( this );
-        m_objectId.store( objectId );
-        FB_ASSERT( m_objectId != std::numeric_limits<u32>::max() );
+        T::m_objectId.store( objectId );
+        FB_ASSERT( T::m_objectId != std::numeric_limits<u32>::max() );
 
 #if FB_TRACK_REFERENCES
         setEnableReferenceTracking( true );
@@ -48,7 +48,7 @@ namespace fb
         //    }
         //}
 
-        const auto id = m_objectId.load();
+        const auto id = T::m_objectId.load();
         gc.removeObject( typeInfo, id );
 
 #if FB_TRACK_REFERENCES
@@ -85,7 +85,7 @@ namespace fb
     template <class T>
     Handle *SharedObject<T>::getHandle() const
     {
-        return m_handle;
+        return T::m_handle;
     }
 
     template <class T>
@@ -155,7 +155,7 @@ namespace fb
     template <class T>
     bool SharedObject<T>::isValid() const
     {
-        return m_objectId < std::numeric_limits<u32>::max();
+        return T::m_objectId < std::numeric_limits<u32>::max();
     }
 
     template <class T>
@@ -177,7 +177,7 @@ namespace fb
     const Atomic<LoadingState> &SharedObject<T>::getLoadingState() const
     {
         auto &gc = GarbageCollector::instance();
-        return gc.getLoadingState( getTypeInfo(), m_objectId );
+        return gc.getLoadingState( getTypeInfo(), T::m_objectId );
     }
 
     template <class T>
@@ -186,10 +186,10 @@ namespace fb
         auto applicationManager = core::IApplicationManager::instance();
         auto &gc = GarbageCollector::instance();
 
-        auto oldState = gc.getLoadingState( getTypeInfo(), m_objectId );
+        auto oldState = gc.getLoadingState( getTypeInfo(), T::m_objectId );
         if( oldState != state )
         {
-            gc.setLoadingState( getTypeInfo(), m_objectId, state );
+            gc.setLoadingState( getTypeInfo(), T::m_objectId, state );
 
             auto args = Array<Parameter>();
             args.resize( 2 );
@@ -235,7 +235,7 @@ namespace fb
     template <class T>
     bool SharedObject<T>::isAlive() const
     {
-        return ( *m_flags & GC_FLAG_OBJECT_ALIVE ) != 0;
+        return ( *T::m_flags & GC_FLAG_OBJECT_ALIVE ) != 0;
     }
 
     template <class T>
@@ -243,42 +243,42 @@ namespace fb
     {
         if( poolElement )
         {
-            ( *m_flags ) = *m_flags | GC_FLAG_POOL_ELEMENT;
+            ( *T::m_flags ) = *T::m_flags | GC_FLAG_POOL_ELEMENT;
         }
         else
         {
-            ( *m_flags ) = *m_flags & ~GC_FLAG_POOL_ELEMENT;
+            ( *T::m_flags ) = *T::m_flags & ~GC_FLAG_POOL_ELEMENT;
         }
     }
 
     template <class T>
     bool SharedObject<T>::isPoolElement() const
     {
-        return ( *m_flags & GC_FLAG_POOL_ELEMENT ) != 0;
+        return ( *T::m_flags & GC_FLAG_POOL_ELEMENT ) != 0;
     }
 
     template <class T>
     void *SharedObject<T>::getCreatorData() const
     {
-        return GarbageCollector::instance().getCreatorData( getTypeInfo(), m_objectId );
+        return GarbageCollector::instance().getCreatorData( getTypeInfo(), T::m_objectId );
     }
 
     template <class T>
     void SharedObject<T>::setCreatorData( void *val )
     {
-        GarbageCollector::instance().setCreatorData( getTypeInfo(), m_objectId, val );
+        GarbageCollector::instance().setCreatorData( getTypeInfo(), T::m_objectId, val );
     }
 
     template <class T>
     hash32 SharedObject<T>::getFactoryData() const
     {
-        return GarbageCollector::instance().getFactoryData( getTypeInfo(), m_objectId );
+        return GarbageCollector::instance().getFactoryData( getTypeInfo(), T::m_objectId );
     }
 
     template <class T>
     void SharedObject<T>::setFactoryData( hash32 factoryData )
     {
-        GarbageCollector::instance().setFactoryData( getTypeInfo(), m_objectId, factoryData );
+        GarbageCollector::instance().setFactoryData( getTypeInfo(), T::m_objectId, factoryData );
     }
 
     template <class T>
@@ -324,7 +324,7 @@ namespace fb
     template <class T>
     void *SharedObject<T>::getUserData() const
     {
-        return GarbageCollector::instance().getUserData( getTypeInfo(), m_objectId );
+        return GarbageCollector::instance().getUserData( getTypeInfo(), T::m_objectId );
     }
 
     template <class T>
@@ -341,7 +341,7 @@ namespace fb
     template <class T>
     void SharedObject<T>::setUserData( [[maybe_unused]] void *userData )
     {
-        GarbageCollector::instance().setUserData( getTypeInfo(), m_objectId, userData );
+        GarbageCollector::instance().setUserData( getTypeInfo(), T::m_objectId, userData );
     }
 
     template <class T>
@@ -438,34 +438,34 @@ namespace fb
     bool SharedObject<T>::getEnableReferenceTracking() const
     {
         const auto &gc = GarbageCollector::instance();
-        return gc.getFlag( getTypeInfo(), m_objectId, GC_FLAG_ENABLE_REFERENCE_TRACKING );
+        return gc.getFlag( getTypeInfo(), T::m_objectId, GC_FLAG_ENABLE_REFERENCE_TRACKING );
     }
 
     template <class T>
     void SharedObject<T>::setEnableReferenceTracking( bool referenceTracking )
     {
         auto &gc = GarbageCollector::instance();
-        gc.setFlag( getTypeInfo(), m_objectId, GC_FLAG_ENABLE_REFERENCE_TRACKING, referenceTracking );
+        gc.setFlag( getTypeInfo(), T::m_objectId, GC_FLAG_ENABLE_REFERENCE_TRACKING, referenceTracking );
     }
 
     template <class T>
     bool SharedObject<T>::isGarbageCollected() const
     {
         const auto &gc = GarbageCollector::instance();
-        return gc.getFlag( getTypeInfo(), m_objectId, GC_FLAG_GARBAGE_COLLECTED );
+        return gc.getFlag( getTypeInfo(), T::m_objectId, GC_FLAG_GARBAGE_COLLECTED );
     }
 
     template <class T>
     void SharedObject<T>::setGarbageCollected( bool garbageCollected )
     {
         auto &gc = GarbageCollector::instance();
-        gc.setFlag( getTypeInfo(), m_objectId, GC_FLAG_GARBAGE_COLLECTED, garbageCollected );
+        gc.setFlag( getTypeInfo(), T::m_objectId, GC_FLAG_GARBAGE_COLLECTED, garbageCollected );
     }
 
     template <class T>
     u32 SharedObject<T>::getObjectId() const
     {
-        return m_objectId;
+        return T::m_objectId;
     }
 
     template <class T>

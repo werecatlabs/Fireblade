@@ -3,10 +3,11 @@
 
 #include <FBCore/FBCoreTypes.h>
 #include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Math/Vector4.h>
 
 namespace fb
 {
-    //------------------------------------------------
+    
     template <class T>
     class LinearSpline4 : public SharedObject<ISharedObject>
     {
@@ -19,9 +20,13 @@ namespace fb
         {
         }
 
-        u32 getNumPoints() const;
+        u32 getNumPoints() const
+        {
+        	return m_points.size();
+        }
 
     protected:
+        Array<Vector4<T>> m_points;
     };
 
     using LinearSpline4F = LinearSpline4<f32>;

@@ -503,8 +503,12 @@ namespace fb
 
             if( applicationManager->isEditor() )
             {
-                auto t = m_editorTexture.lock();
-                return t->getRenderTarget();
+                if( auto t = m_editorTexture.lock() )
+                {
+                    return t->getRenderTarget();
+                }
+
+                return nullptr;
             }
 
             return applicationManager->getWindow();
@@ -651,41 +655,52 @@ namespace fb
 
             if( applicationManager->isEditorCamera() )
             {
-                auto actor = getActor();
-                if( !actor->getFlag( scene::IActor::ActorFlagIsEditor ) )
+                if( auto actor = getActor() )
                 {
-                    m_camera->setRenderUI( false );
-
-                    if( m_viewport )
+                    if( !actor->getFlag( scene::IActor::ActorFlagIsEditor ) )
                     {
-                        m_viewport->setEnableUI( false );
-                        m_viewport->setActive( false );
+                        if( m_camera )
+                        {
+                            m_camera->setRenderUI( false );
+                        }
+
+                        if( m_viewport )
+                        {
+                            m_viewport->setEnableUI( false );
+                            m_viewport->setActive( false );
+                        }
+
+                        if( m_camera )
+                        {
+                            m_camera->setVisible( false );
+                        }
                     }
-
-                    if( m_camera )
+                    else
                     {
-                        m_camera->setVisible( false );
-                    }
-                }
-                else
-                {
-                    m_camera->setRenderUI( false );
+                        if( m_camera )
+                        {
+                            m_camera->setRenderUI( false );
+                        }
 
-                    if( m_viewport )
-                    {
-                        m_viewport->setEnableUI( false );
-                        m_viewport->setActive( active );
-                    }
+                        if( m_viewport )
+                        {
+                            m_viewport->setEnableUI( false );
+                            m_viewport->setActive( active );
+                        }
 
-                    if( m_camera )
-                    {
-                        m_camera->setVisible( active );
+                        if( m_camera )
+                        {
+                            m_camera->setVisible( active );
+                        }
                     }
                 }
             }
             else
             {
-                m_camera->setRenderUI( false );
+                if( m_camera )
+                {
+                    m_camera->setRenderUI( false );
+                }
 
                 if( m_viewport )
                 {

@@ -130,7 +130,7 @@ namespace fb
                 auto pParent = actor->getParent();
                 if( pParent )
                 {
-                    SpinRWMutex::ScopedLock lock( m_mutex, true);
+                    SpinRWMutex::ScopedLock lock( m_mutex, true );
 
                     auto parentTransform = pParent->getTransform();
                     if( parentTransform )
@@ -480,7 +480,7 @@ namespace fb
                     }
                     else
                     {
-                        SpinRWMutex::ScopedLock lock( m_mutex, true);
+                        SpinRWMutex::ScopedLock lock( m_mutex, true );
                         auto localTransform = getLocalTransform();
 
                         auto worldTransform = getWorldTransform();
@@ -490,7 +490,7 @@ namespace fb
                 }
                 else
                 {
-                    SpinRWMutex::ScopedLock lock( m_mutex, true);
+                    SpinRWMutex::ScopedLock lock( m_mutex, true );
                     auto localTransform = getLocalTransform();
 
                     auto worldTransform = getWorldTransform();
@@ -518,11 +518,11 @@ namespace fb
             auto orientation = worldTransform.getOrientation();
             auto scale = worldTransform.getScale();
 
-            Vector3<real_Num> localRotation;
-            localOrientation.toDegrees( localRotation );
+            Euler<real_Num> eular(localOrientation);
+            Vector3<real_Num> localRotation = eular.toDegrees();
 
-            Vector3<real_Num> rotation;
-            orientation.toDegrees( rotation );
+            Euler<real_Num> worldEular(orientation);
+            Vector3<real_Num> rotation = worldEular.toDegrees();
 
             properties->setProperty( "Local Position", localPosition );
             properties->setProperty( "Local Rotation", localRotation );

@@ -3,6 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
+#include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Math/Transform3.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Quaternion.h>

@@ -2,9 +2,10 @@
 #define Transformation3_h__
 
 #include <FBCore/FBCoreTypes.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Memory/SmartPtr.h>
+#include <FBCore/Math/Math.h>
+#include <FBCore/Math/Euler.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Matrix4.h>
 #include <FBCore/Math/Quaternion.h>
@@ -365,18 +366,18 @@ namespace fb
     Vector3<T> Transform3<T>::getRotation() const
     {
         FB_ASSERT( isSane() );
-        Vector3<T> degrees;
-        m_orientation.toEuler( degrees );
-        return degrees;
+        Euler<T> euler( m_orientation );
+        return euler.toDegrees();
     }
 
     template <class T>
     void Transform3<T>::setRotation( const Vector3<T> &rotation )
     {
         FB_ASSERT( isSane() );
-        m_orientation = Quaternion<T>::angleAxis( rotation.Y(), Vector3<T>::UNIT_Y ) *
-                        Quaternion<T>::angleAxis( rotation.X(), Vector3<T>::UNIT_X ) *
-                        Quaternion<T>::angleAxis( rotation.Z(), Vector3<T>::UNIT_Z );
+
+        auto rads = Vector3<T>( rotation.y, rotation.x, rotation.z ) * Math<T>::deg_to_rad();
+        Euler<T> euler( rads );
+        m_orientation = euler.toQuaternion();
     }
 
     template <class T>

@@ -806,7 +806,7 @@ namespace fb
             auto properties = fb::make_ptr<Properties>();
 
             auto lightingData = String();
-            properties->setProperty("lighting", lightingData);
+            properties->setProperty( "lighting", lightingData );
 
             auto actors = getActors();
             for( auto actor : actors )

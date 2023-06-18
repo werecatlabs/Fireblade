@@ -1,6 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/Cubemap.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Graphics/ICubemap.h>
+#include <FBCore/Interface/System/ITimer.h>
 
 namespace fb
 {

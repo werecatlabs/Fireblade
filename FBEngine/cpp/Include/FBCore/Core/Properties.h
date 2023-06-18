@@ -1,6 +1,7 @@
 #ifndef _FBPropertyGroup_H
 #define _FBPropertyGroup_H
 
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/Property.h>
 #include <FBCore/Core/Array.h>

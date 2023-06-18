@@ -47,17 +47,17 @@ namespace fb
 
         void LayoutTransform::updateTransform()
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
                 data->setOwner( this );
                 data->setUIComponent( m_uiComponent.get() );
                 data->setDirty( true );
             }
 
-            if(auto actor = getActor())
+            if( auto actor = getActor() )
             {
                 auto components = actor->getComponentsInChildren<LayoutTransform>();
-                for(auto component : components)
+                for( auto component : components )
                 {
                     component->updateTransform();
                 }
@@ -66,7 +66,7 @@ namespace fb
 
         Vector2F LayoutTransform::getPosition() const
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
                 return data->getPosition();
             }
@@ -76,7 +76,7 @@ namespace fb
 
         void LayoutTransform::setPosition( const Vector2F &position )
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
                 data->setPosition( position );
                 data->setAbsolutePosition( position );
@@ -91,7 +91,7 @@ namespace fb
 
         void LayoutTransform::setSize( const Vector2F &size )
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
                 data->setSize( size );
                 data->setAbsoluteSize( size );
@@ -100,7 +100,7 @@ namespace fb
 
         Vector2F LayoutTransform::getAnchor() const
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
                 return data->getAnchor();
             }
@@ -110,7 +110,7 @@ namespace fb
 
         void LayoutTransform::setAnchor( const Vector2F &anchor )
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
                 data->setAnchor( anchor );
             }
@@ -118,7 +118,7 @@ namespace fb
 
         Vector2F LayoutTransform::getAnchorMin() const
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
                 return data->getAnchorMin();
             }
@@ -128,7 +128,7 @@ namespace fb
 
         void LayoutTransform::setAnchorMin( const Vector2F &anchorMin )
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
                 data->setAnchorMin( anchorMin );
             }
@@ -136,7 +136,7 @@ namespace fb
 
         Vector2F LayoutTransform::getAnchorMax() const
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
                 return data->getAnchorMax();
             }
@@ -146,7 +146,7 @@ namespace fb
 
         void LayoutTransform::setAnchorMax( const Vector2F &anchorMax )
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
                 data->setAnchorMax( anchorMax );
             }
@@ -162,7 +162,7 @@ namespace fb
                 static const auto verticalStr = String( "Vertical" );
 
                 auto data = getComponentStateByType<UITransformState>();
-                if(data)
+                if( data )
                 {
                     auto position = data->getPosition();
                     auto size = data->getSize();
@@ -209,7 +209,7 @@ namespace fb
 
                 return properties;
             }
-            catch(std::exception &e)
+            catch( std::exception &e )
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -234,7 +234,7 @@ namespace fb
                 properties->getPropertyValue( "Position", position );
                 properties->getPropertyValue( "Size", size );
 
-                if(data)
+                if( data )
                 {
                     auto anchor = data->getAnchor();
                     auto anchorMin = data->getAnchorMin();
@@ -264,26 +264,26 @@ namespace fb
 
                 auto dirty = false;
 
-                if(data)
+                if( data )
                 {
-                    if(!MathUtil<f32>::equals( data->getPosition(), position ))
+                    if( !MathUtil<f32>::equals( data->getPosition(), position ) )
                     {
                         data->setPosition( position );
                         dirty = true;
                     }
 
-                    if(!MathUtil<f32>::equals( data->getSize(), size ))
+                    if( !MathUtil<f32>::equals( data->getSize(), size ) )
                     {
                         data->setSize( size );
                         dirty = true;
                     }
                 }
 
-                if(dirty)
+                if( dirty )
                 {
-                    if(auto actor = getActor())
+                    if( auto actor = getActor() )
                     {
-                        if(auto transform = actor->getTransform())
+                        if( auto transform = actor->getTransform() )
                         {
                             auto pos = getPosition();
 
@@ -296,7 +296,7 @@ namespace fb
 
                 updateTransform();
             }
-            catch(std::exception &e)
+            catch( std::exception &e )
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -304,17 +304,18 @@ namespace fb
 
         void LayoutTransform::setHorizontalAlignment( HorizontalAlignment gha )
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
-                data->setHorizontalAlignment( static_cast<u8>(gha) );
+                data->setHorizontalAlignment( static_cast<u8>( gha ) );
             }
         }
 
         LayoutTransform::HorizontalAlignment LayoutTransform::getHorizontalAlignment() const
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
-                return static_cast<LayoutTransform::HorizontalAlignment>(data->getHorizontalAlignment());
+                return static_cast<LayoutTransform::HorizontalAlignment>(
+                    data->getHorizontalAlignment() );
             }
 
             return HorizontalAlignment::CENTER;
@@ -322,17 +323,17 @@ namespace fb
 
         void LayoutTransform::setVerticalAlignment( VerticalAlignment gva )
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
-                data->setVerticalAlignment( static_cast<u8>(gva) );
+                data->setVerticalAlignment( static_cast<u8>( gva ) );
             }
         }
 
         LayoutTransform::VerticalAlignment LayoutTransform::getVerticalAlignment() const
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
-                return static_cast<LayoutTransform::VerticalAlignment>(data->getVerticalAlignment());
+                return static_cast<LayoutTransform::VerticalAlignment>( data->getVerticalAlignment() );
             }
 
             return VerticalAlignment::CENTER;
@@ -340,7 +341,7 @@ namespace fb
 
         Vector2F LayoutTransform::getAbsolutePosition() const
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
                 return data->getAbsolutePosition();
             }
@@ -350,7 +351,7 @@ namespace fb
 
         void LayoutTransform::setAbsolutePosition( const Vector2F &absolutePosition )
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
                 data->setAbsolutePosition( absolutePosition );
             }
@@ -358,7 +359,7 @@ namespace fb
 
         Vector2F LayoutTransform::getAbsoluteSize() const
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
                 return data->getAbsoluteSize();
             }
@@ -368,7 +369,7 @@ namespace fb
 
         void LayoutTransform::setAbsoluteSize( const Vector2F &absoluteSize )
         {
-            if(auto data = getComponentStateByType<UITransformState>())
+            if( auto data = getComponentStateByType<UITransformState>() )
             {
                 data->setAbsoluteSize( absoluteSize );
             }
@@ -378,7 +379,7 @@ namespace fb
         {
             Component::handleComponentEvent( state, eventType );
 
-            switch(eventType)
+            switch( eventType )
             {
             case IFSM::Event::Change:
             {
@@ -386,8 +387,8 @@ namespace fb
             break;
             case IFSM::Event::Enter:
             {
-                auto eState = static_cast<State>(state);
-                switch(eState)
+                auto eState = static_cast<State>( state );
+                switch( eState )
                 {
                 case State::Destroyed:
                 {
@@ -396,9 +397,9 @@ namespace fb
                 case State::Edit:
                 case State::Play:
                 {
-                    if(auto actor = getActor())
+                    if( auto actor = getActor() )
                     {
-                        if(auto uiComponent = actor->getComponent<UIComponent>())
+                        if( auto uiComponent = actor->getComponent<UIComponent>() )
                         {
                             m_uiComponent = uiComponent;
                         }
@@ -415,8 +416,8 @@ namespace fb
             break;
             case IFSM::Event::Leave:
             {
-                auto eState = static_cast<State>(state);
-                switch(eState)
+                auto eState = static_cast<State>( state );
+                switch( eState )
                 {
                 case State::Play:
                 {
@@ -444,5 +445,5 @@ namespace fb
 
             return IFSM::ReturnType::Ok;
         }
-    } // namespace scene
-}     // namespace fb
+    }  // namespace scene
+}  // namespace fb

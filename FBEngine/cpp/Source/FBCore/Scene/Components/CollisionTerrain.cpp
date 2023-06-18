@@ -37,7 +37,7 @@ namespace fb
                 auto physicsManager = applicationManager->getPhysicsManager();
                 FB_ASSERT( physicsManager );
 
-                auto shape = physicsManager->createCollisionShape<physics::ITerrainShape>(nullptr);
+                auto shape = physicsManager->createCollisionShape<physics::ITerrainShape>( nullptr );
                 FB_ASSERT( shape );
 
                 setShape( shape );

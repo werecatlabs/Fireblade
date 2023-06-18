@@ -156,8 +156,8 @@ namespace fb
         auto sceneNodeScale = getScale();
         auto sceneNodeOrientation = getOrientation();
 
-        Vector3<real_Num> localRotation;
-        sceneNodeOrientation.toDegrees( localRotation );
+        Euler<real_Num> euler(sceneNodeOrientation);
+        Vector3<real_Num> localRotation = euler.toDegrees();
 
         properties->setProperty( "sceneNodePosition", sceneNodePosition );
         properties->setProperty( "sceneNodeScale", sceneNodeScale );

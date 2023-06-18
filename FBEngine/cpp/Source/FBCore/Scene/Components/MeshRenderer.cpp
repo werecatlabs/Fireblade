@@ -2,7 +2,18 @@
 #include <FBCore/Scene/Components/MeshRenderer.h>
 #include <FBCore/Scene/Components/Mesh.h>
 #include <FBCore/Scene/Components/Material.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Resource/IResourceDatabase.h>
+#include <FBCore/Interface/IO/IFileSystem.h>
+#include <FBCore/Interface/Graphics/IGraphicsSystem.h>
+#include <FBCore/Interface/Graphics/IGraphicsMesh.h>
+#include <FBCore/Interface/Graphics/IGraphicsScene.h>
+#include <FBCore/Interface/Graphics/IMaterial.h>
+#include <FBCore/Interface/Graphics/ISceneNode.h>
+#include <FBCore/Interface/System/ITaskManager.h>
+#include <FBCore/State/Messages/StateMessageLoad.h>
+#include <FBCore/Interface/Scene/ITransform.h>
+#include <FBCore/Core/BitUtil.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {
@@ -17,36 +28,6 @@ namespace fb
         MeshRenderer::~MeshRenderer()
         {
             unload( nullptr );
-        }
-
-        void MeshRenderer::awake()
-        {
-            // if (!m_meshObject)
-            //{
-            //	updateMesh();
-            //	updateMaterials();
-            //	updateTransform();
-            // }
-        }
-
-        void MeshRenderer::play()
-        {
-            if( !m_meshObject )
-            {
-                updateMesh();
-                updateMaterials();
-                updateTransform();
-            }
-        }
-
-        void MeshRenderer::edit()
-        {
-            if( !m_meshObject )
-            {
-                updateMesh();
-                updateMaterials();
-                updateTransform();
-            }
         }
 
         void MeshRenderer::updateDirty( u32 flags, u32 oldFlags )

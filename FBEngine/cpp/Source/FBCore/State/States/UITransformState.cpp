@@ -21,6 +21,7 @@ namespace fb
     void UITransformState::setUIComponent( ISharedObject *uiComponent )
     {
         m_uiComponent = uiComponent;
+        setDirty( true );
     }
 
     ISharedObject *UITransformState::getOwner() const
@@ -31,6 +32,7 @@ namespace fb
     void UITransformState::setOwner( ISharedObject *owner )
     {
         m_owner = owner;
+        setDirty( true );
     }
 
     Vector2F UITransformState::getPosition() const
@@ -41,6 +43,7 @@ namespace fb
     void UITransformState::setPosition( const Vector2F &position )
     {
         m_position = position;
+        setDirty( true );
     }
 
     Vector2F UITransformState::getSize() const
@@ -51,6 +54,7 @@ namespace fb
     void UITransformState::setSize( const Vector2F &size )
     {
         m_size = size;
+        setDirty( true );
     }
 
     Vector2F UITransformState::getAbsolutePosition() const
@@ -61,6 +65,7 @@ namespace fb
     void UITransformState::setAbsolutePosition( const Vector2F &absolutePosition )
     {
         m_absolutePosition = absolutePosition;
+        setDirty( true );
     }
 
     Vector2F UITransformState::getAbsoluteSize() const
@@ -71,6 +76,7 @@ namespace fb
     void UITransformState::setAbsoluteSize( const Vector2F &absoluteSize )
     {
         m_absoluteSize = absoluteSize;
+        setDirty( true );
     }
 
     Vector2F UITransformState::getAnchor() const
@@ -81,6 +87,7 @@ namespace fb
     void UITransformState::setAnchor( const Vector2F &anchor )
     {
         m_anchor = anchor;
+        setDirty( true );
     }
 
     Vector2F UITransformState::getAnchorMin() const
@@ -91,6 +98,7 @@ namespace fb
     void UITransformState::setAnchorMin( const Vector2F &anchorMin )
     {
         m_anchorMin = anchorMin;
+        setDirty( true );
     }
 
     Vector2F UITransformState::getAnchorMax() const
@@ -101,6 +109,7 @@ namespace fb
     void UITransformState::setAnchorMax( const Vector2F &anchorMax )
     {
         m_anchorMax = anchorMax;
+        setDirty( true );
     }
 
     u8 UITransformState::getVerticalAlignment() const
@@ -111,6 +120,7 @@ namespace fb
     void UITransformState::setVerticalAlignment( u8 verticalAlignment )
     {
         m_verticalAlignment = verticalAlignment;
+        setDirty( true );
     }
 
     u8 UITransformState::getHorizontalAlignment() const
@@ -121,5 +131,6 @@ namespace fb
     void UITransformState::setHorizontalAlignment( u8 horizontalAlignment )
     {
         m_horizontalAlignment = horizontalAlignment;
+        setDirty( true );
     }
 } // namespace fb

@@ -1,6 +1,8 @@
 #ifndef __IFSMListener_h__
 #define __IFSMListener_h__
 
+#include <FBCore/FBCorePrerequisites.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Interface/FSM/IFSM.h>
 
 namespace fb

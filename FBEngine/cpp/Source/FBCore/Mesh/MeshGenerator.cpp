@@ -36,7 +36,7 @@ namespace fb
 
         auto vertexBuffer = fb::make_ptr<VertexBuffer>();
         vertexBuffer->setVertexDeclaration( vertexDeclaration );
-        vertexBuffer->setNumVerticies( numVertices );
+        vertexBuffer->setNumVerticies( (u32)numVertices );
 
         auto vertexData = static_cast<f32 *>( vertexBuffer->createVertexData() );
         f32 *vertexDataPtr = vertexData;
@@ -395,8 +395,8 @@ namespace fb
             auto d0 = i / segments;
             auto d1 = ( i + 1 ) / segments;
 
-            auto pointA = spline->interpolate( d0 );
-            auto pointB = spline->interpolate( d1 );
+            auto pointA = spline->interpolate( (f32)d0 );
+            auto pointB = spline->interpolate( (f32)d1 );
 
             auto vec = ( pointB - pointA ).normaliseCopy();
             auto tangentA = vec.crossProduct( Vector3F::up() );

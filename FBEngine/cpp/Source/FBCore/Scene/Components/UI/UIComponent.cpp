@@ -476,6 +476,16 @@ namespace fb
             m_zOrder = zOrder;
         }
 
+        void UIComponent::childAdded( SmartPtr<IActor> child )
+        {
+            updateTransform();
+        }
+
+        void UIComponent::childRemoved( SmartPtr<IActor> child )
+        {
+            updateTransform();
+        }
+
         void UIComponent::setupCanvas()
         {
             if( auto actor = getActor() )

@@ -1,5 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/Physics/ISphereShape3.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {

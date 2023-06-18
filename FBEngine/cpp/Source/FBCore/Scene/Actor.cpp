@@ -522,7 +522,7 @@ namespace fb
                 FB_ASSERT( sceneManager );
 
                 sceneManager->addComponent( component );
-                
+
                 if( auto p = getComponentsPtr() )
                 {
                     auto &components = *p;
@@ -2029,8 +2029,13 @@ namespace fb
                 auto localTransform = transform->getLocalTransform();
                 auto worldTransform = transform->getWorldTransform();
 
-                actorData->setProperty( "localTransform", localTransform );
-                actorData->setProperty( "worldTransform", worldTransform );
+                auto localTransformProperties = localTransform.getProperties();
+                localTransformProperties->setName( "localTransform" );
+                actorData->addChild( localTransformProperties );
+
+                auto worldTransformProperties = worldTransform.getProperties();
+                worldTransformProperties->setName( "worldTransform" );
+                actorData->addChild( worldTransformProperties );
             }
 
             if( auto p = this->getChildrenPtr() )
@@ -2124,14 +2129,21 @@ namespace fb
 
                 if( auto transform = getTransform() )
                 {
-                    auto localTransform = transform->getLocalTransform();
-                    auto worldTransform = transform->getWorldTransform();
+                    if( auto localTransformChild = actorData->getChild( "localTransform" ) )
+                    {
+                        auto localTransform = transform->getLocalTransform();
+                        localTransform.setProperties( localTransformChild );
 
-                    actorData->getPropertyValue( "localTransform", localTransform );
-                    actorData->getPropertyValue( "worldTransform", worldTransform );
+                        transform->setLocalTransform( localTransform );
+                    }
 
-                    transform->setLocalTransform( localTransform );
-                    transform->setWorldTransform( worldTransform );
+                    if( auto worldTransformChild = actorData->getChild( "worldTransform" ) )
+                    {
+                        auto worldTransform = transform->getWorldTransform();
+                        worldTransform.setProperties( worldTransformChild );
+
+                        //transform->setWorldTransform( worldTransform );
+                    }
                 }
 
                 auto componentsData = actorData->getChildrenByName( "component" );
@@ -2275,21 +2287,27 @@ namespace fb
 
             if( auto transform = getTransform() )
             {
-                auto localTransformChild = properties->getChild( "localTransform" );
-                auto localTransform = transform->getLocalTransform();
-                localTransform.setProperties( localTransformChild );
+                if( auto localTransformChild = properties->getChild( "localTransform" ) )
+                {
+                    auto localTransform = transform->getLocalTransform();
+                    localTransform.setProperties( localTransformChild );
 
-                auto worldTransformChild = properties->getChild( "worldTransform" );
-                auto worldTransform = transform->getWorldTransform();
-                worldTransform.setProperties( properties );
+                    transform->setLocalTransform( localTransform );
+                }
 
-                transform->setLocalTransform( localTransform );
-                //transform->setWorldTransform( worldTransform );
+                if( auto worldTransformChild = properties->getChild( "worldTransform" ) )
+                {
+                    auto worldTransform = transform->getWorldTransform();
+                    worldTransform.setProperties( worldTransformChild );
+
+                    //transform->setWorldTransform( worldTransform );
+                }
             }
 
             auto componentsData = properties->getChildrenByName( "components" );
             auto componentsDataAlt = properties->getChildrenByName( "component" );
-            componentsData.insert(componentsData.end(), componentsDataAlt.begin(), componentsDataAlt.end());
+            componentsData.insert( componentsData.end(), componentsDataAlt.begin(),
+                                   componentsDataAlt.end() );
 
             auto components = Array<SmartPtr<IComponent>>();
             components.reserve( componentsData.size() );
@@ -2373,7 +2391,7 @@ namespace fb
 
             auto childrenData = properties->getChildrenByName( "children" );
             auto childrenDataAlt = properties->getChildrenByName( "child" );
-            childrenData.insert(childrenData.end(), childrenDataAlt.begin(), childrenDataAlt.end());
+            childrenData.insert( childrenData.end(), childrenDataAlt.begin(), childrenDataAlt.end() );
 
             for( auto &childData : childrenData )
             {

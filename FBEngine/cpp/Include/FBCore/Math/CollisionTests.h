@@ -1,6 +1,7 @@
 #ifndef CollisionTests_h__
 #define CollisionTests_h__
 
+#include <FBCore/Math/AABB2.h>
 #include <FBCore/Math/Line2.h>
 
 namespace fb

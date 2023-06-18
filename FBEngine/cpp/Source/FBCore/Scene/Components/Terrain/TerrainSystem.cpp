@@ -186,7 +186,7 @@ namespace fb
                 {
                     auto actorPosition = actorTransform->getPosition();
                     auto actorOrientation = actorTransform->getOrientation();
-                    auto actorScale = actorTransform->getScale();                    
+                    auto actorScale = actorTransform->getScale();
 
                     auto worldTransform = actorTransform->getWorldTransform();
 

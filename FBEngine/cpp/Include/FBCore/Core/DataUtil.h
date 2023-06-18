@@ -4,7 +4,7 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Memory/SmartPtr.h>
 #include <FBCore/Core/StringTypes.h>
-#include <FBCore/Core/Properties.h>
+#include <FBCore/Core/ColourF.h>
 #include <FBCore/Math/Transform3.h>
 
 namespace boost

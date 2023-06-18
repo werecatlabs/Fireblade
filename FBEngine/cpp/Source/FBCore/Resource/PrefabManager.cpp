@@ -23,8 +23,8 @@ namespace fb
             FB_ASSERT( factoryManager );
 
             auto newActor = sceneManager->createActor();
-            //auto prefabData = prefab->toData();
-            //newActor->fromData( prefabData );
+            auto prefabData = prefab->toData();
+            newActor->fromData( prefabData );
 
             return newActor;
         }
@@ -248,18 +248,17 @@ namespace fb
                 }
                 else if( ext == ".prefab" )
                 {
-                    //auto jsonStr = fileSystem->readAllText( name );
+                    auto jsonStr = fileSystem->readAllText( name );
 
-                    //auto pData = fb::make_ptr<Data<data::actor_data>>();
-                    //auto data = pData->getDataAsType<data::actor_data>();
-                    //DataUtil::parse( jsonStr, data );
+                    auto data = fb::make_ptr<Properties>();
+                    DataUtil::parse( jsonStr, data.get() );
 
-                    //auto actor = loadActor( *data, nullptr );
-                    //actor->updateTransform();
+                    auto actor = loadActor( data, nullptr );
+                    actor->updateTransform();
 
-                    //prefab->setActor( actor );
-                    //prefab->setData( pData );
-                    //return prefab;
+                    prefab->setActor( actor );
+                    prefab->setData( data );
+                    return prefab;
                 }
             }
             catch( std::exception &e )
@@ -321,10 +320,10 @@ namespace fb
             auto fileSystem = applicationManager->getFileSystem();
             FB_ASSERT( fileSystem );
 
-            //auto data = prefab->toJson();
-            //FB_ASSERT( !StringUtil::isNullOrEmpty( data ) );
+            auto data = prefab->toData();
+            auto dataStr = DataUtil::toString( data.get() );
 
-            //fileSystem->writeAllText( filePath, data );
+            fileSystem->writeAllText( filePath, dataStr );
         }
     }  // namespace scene
 }  // end namespace fb

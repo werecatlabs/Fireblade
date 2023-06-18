@@ -34,8 +34,7 @@ namespace fb
             void updateDirty( u32 flags, u32 oldFlags ) override;
 
             /** @copydoc IComponent::parentChanged */
-            void parentChanged( SmartPtr<IActor> newParent,
-                                SmartPtr<IActor> oldParent ) override;
+            void parentChanged( SmartPtr<IActor> newParent, SmartPtr<IActor> oldParent ) override;
 
             /** @copydoc IComponent::hierarchyChanged */
             void hierarchyChanged() override;
@@ -89,7 +88,7 @@ namespace fb
             SmartPtr<render::ITexture> m_texture;
             SmartPtr<render::IMaterial> m_material;
         };
-    } // namespace scene
-}     // end namespace fb
+    }  // namespace scene
+}  // end namespace fb
 
 #endif  // ImageComponent_h__

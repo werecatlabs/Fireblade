@@ -1,7 +1,11 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/Light.h>
 #include <FBCore/Scene/Components/Transform.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Graphics/IGraphicsSystem.h>
+#include <FBCore/Interface/Graphics/IGraphicsScene.h>
+#include <FBCore/Interface/Graphics/ISceneNode.h>
+#include <FBCore/Core/BitUtil.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {

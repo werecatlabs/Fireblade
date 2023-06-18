@@ -140,6 +140,10 @@ namespace fb
 
             void setZOrder( u32 zOrder );
 
+            void childAdded( SmartPtr<IActor> child );
+
+            void childRemoved( SmartPtr<IActor> child );
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
@@ -175,8 +179,8 @@ namespace fb
                  * @return A Parameter object as a result of handling the event.
                  */
                 Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
-                                       const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object,
-                                       SmartPtr<IEvent> event ) override;
+                                       const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
                 /**
                  * @brief Retrieves the owner of this UIElementListener.
@@ -211,7 +215,8 @@ namespace fb
              */
             virtual Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
                                            const Array<Parameter> &arguments,
-                                           SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
+                                           SmartPtr<ISharedObject> sender,
+                                           SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
 
             /**
              * @brief Handles component events within the context of the finite state machine (FSM).

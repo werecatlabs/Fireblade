@@ -261,19 +261,6 @@ namespace fb
         void fromRadians( const Vector3<T> &radians );
 
         /**
-         * @brief Converts this quaternion to euler angles.
-         * @param euler The resulting euler angles.
-         */
-        void toEuler( Vector3<T> &euler ) const;
-
-        /**
-         * @brief Converts the Quaternion's Euler angles to degrees.
-         *
-         * @param degrees A reference to a Vector3<T> where the degrees will be stored.
-         */
-        void toDegrees( Vector3<T> &degrees ) const;
-
-        /**
          * @brief Sets the Quaternion to identity.
          */
         void makeIdentity();
@@ -674,19 +661,6 @@ namespace fb
     }
 
     template <typename T>
-    void Quaternion<T>::toEuler( Vector3<T> &euler ) const
-    {
-        Matrix3<T> mat;
-        toRotationMatrix( mat );
-
-        Vector3<T> rot;
-        if( mat.toEulerAnglesYXZ( rot.Y(), rot.X(), rot.Z() ) )
-        {
-            euler = rot;
-        }
-    }
-
-    template <typename T>
     void Quaternion<T>::makeIdentity()
     {
         W() = T( 1.0 );
@@ -942,13 +916,6 @@ namespace fb
         auto kSlerpP = slerp( fT, rkP, rkQ, shortestPath );
         auto kSlerpQ = slerp( fT, rkA, rkB );
         return slerp( fSlerpT, kSlerpP, kSlerpQ );
-    }
-
-    template <typename T>
-    void Quaternion<T>::toDegrees( Vector3<T> &euler ) const
-    {
-        toEuler( euler );
-        euler *= Math<T>::rad_to_deg();
     }
 
     template <typename T>

@@ -16,6 +16,9 @@ namespace fb
             CanvasTransformSystem();
             ~CanvasTransformSystem();
 
+            void update() override;
+
+        protected:
             Vector2F calculateElementPosition( const Vector2F &parentPosition,
                                                const Vector2F &parentSize, const Vector2F &position,
                                                const Vector2F &size, const Vector2F &anchor,
@@ -35,9 +38,6 @@ namespace fb
                                                   const Vector2F &size, const Vector2F &anchor,
                                                   const Vector2F &anchorMin, const Vector2F &anchorMax,
                                                   f32 &left, f32 &right, f32 &top, f32 &bottom );
-            void update() override;
-
-        protected:
         };
 
     }  // namespace scene

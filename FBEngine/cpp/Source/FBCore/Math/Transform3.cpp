@@ -1,6 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Math/Transform3.h>
 #include <FBCore/Core/DataUtil.h>
+#include <FBCore/Core/Properties.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Memory/Data.h>
 #include <FBCore/System/RttiClassDefinition.h>
@@ -76,8 +77,8 @@ namespace fb
 
         properties->setProperty( "Position", m_position );
 
-        Vector3<T> rotation;
-        m_orientation.toDegrees( rotation );
+        Euler<T> euler(m_orientation);
+        Vector3<T> rotation = euler.toDegrees();
 
         properties->setProperty( "Rotation", rotation );
         properties->setProperty( "Scale", m_scale );

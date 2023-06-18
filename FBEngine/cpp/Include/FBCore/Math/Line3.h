@@ -16,8 +16,6 @@ namespace fb
     class Line3
     {
     public:
-        // Constructors
-
         /** Default constructor. */
         Line3();
 

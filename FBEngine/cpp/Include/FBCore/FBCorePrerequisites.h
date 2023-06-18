@@ -45,6 +45,7 @@ namespace fb
     class ISharedObject;
     class ISharedObjectListener;
     class FactoryManager;
+    class Property;
     class Properties;
     class IData;
     class IObjectYield;
@@ -665,7 +666,6 @@ namespace fb
         class Material;
         class Skybox;
         class Shader;
-        class Texture;
         class Tooltip;
         class Transform;
         class WheelController;

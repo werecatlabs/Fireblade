@@ -3,6 +3,7 @@
 
 #include <FBCore/Interface/Memory/IObject.h>
 #include <FBCore/Memory/SmartPtr.h>
+#include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Memory/GarbageCollector.h>
 

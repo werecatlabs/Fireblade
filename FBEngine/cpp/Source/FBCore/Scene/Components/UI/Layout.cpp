@@ -1,7 +1,18 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/UI/Layout.h>
 #include <FBCore/Scene/Components/UI/LayoutTransform.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Scene/Components/UI/LayoutTransform.h>
+#include <FBCore/Scene/Components/Material.h>
+#include <FBCore/Interface/Graphics/IMaterial.h>
+#include <FBCore/Interface/Graphics/IGraphicsSystem.h>
+#include <FBCore/Interface/Graphics/ITexture.h>
+#include <FBCore/Interface/UI/IUIContainer.h>
+#include <FBCore/Interface/UI/IUILayout.h>
+#include <FBCore/Interface/UI/IUIManager.h>
+#include <FBCore/Interface/UI/IUIImage.h>
+#include <FBCore/Interface/Resource/IResourceDatabase.h>
+#include <FBCore/Core/BitUtil.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {
@@ -161,6 +172,14 @@ namespace fb
         void Layout::setProperties( SmartPtr<Properties> properties )
         {
             properties->getPropertyValue( "referenceSize", m_referenceSize );
+
+            if( auto actor = getActor() )
+            {
+                if( auto transform = actor->getComponent<LayoutTransform>() )
+                {
+                    transform->setSize( Vector2F( m_referenceSize.X(), m_referenceSize.Y() ) );
+                }
+            }
         }
 
         void Layout::updateDirty( u32 flags, u32 oldFlags )

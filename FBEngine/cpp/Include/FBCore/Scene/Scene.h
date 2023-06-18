@@ -59,7 +59,7 @@ namespace fb
             void postUpdate() override;
 
             SharedPtr<ConcurrentArray<SmartPtr<IActor>>> getUpdateArray( Thread::UpdateState updateState,
-                s32 task );
+                                                                         s32 task );
 
             void addActor( SmartPtr<IActor> actor ) override;
             void removeActor( SmartPtr<IActor> actor ) override;
@@ -138,11 +138,11 @@ namespace fb
 
             AtomicSharedPtr<Array<SmartPtr<IActor>>> m_actors;
             FixedArray<FixedArray<SharedPtr<ConcurrentArray<SmartPtr<IActor>>>,
-                                  static_cast<s32>(Thread::Task::Count)>,
-                       static_cast<s32>(Thread::UpdateState::Count)>
-            m_updateObjects;
+                                  static_cast<s32>( Thread::Task::Count )>,
+                       static_cast<s32>( Thread::UpdateState::Count )>
+                m_updateObjects;
         };
-    } // namespace scene
-}     // namespace fb
+    }  // namespace scene
+}  // namespace fb
 
 #endif  // Scene_h__

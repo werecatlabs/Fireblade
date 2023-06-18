@@ -7,6 +7,8 @@ namespace fb
 {
     namespace scene
     {
+        FB_CLASS_REGISTER_DERIVED( fb, ComponentSystem, SharedObject<ISystem> );
+
         ComponentSystem::ComponentSystem()
         {
         }
@@ -72,8 +74,9 @@ namespace fb
                 FB_ASSERT( isValid() );
 
                 // grow the arrays
+                auto growSize = getGrowSize();
                 const auto currentSize = getSize();
-                reserve( currentSize + 8 );
+                reserve( ( currentSize + growSize ) * 2 );
 
                 FB_ASSERT( isValid() );
             }
@@ -166,6 +169,16 @@ namespace fb
             FB_ASSERT( id < getSize() );
 
             m_data[id] = state;
+        }
+
+        u32 ComponentSystem::getGrowSize() const
+        {
+            return m_growSize;
+        }
+
+        void ComponentSystem::setGrowSize( u32 growSize )
+        {
+            m_growSize = growSize;
         }
 
         void ComponentSystem::reserveData( size_t size )

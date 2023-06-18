@@ -8,7 +8,7 @@ namespace fb
 {
     namespace scene
     {
-        
+
         class CollisionSphere : public Collision
         {
         public:

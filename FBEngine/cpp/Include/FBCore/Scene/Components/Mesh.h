@@ -93,16 +93,16 @@ namespace fb
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType ) override;
 
             /** The mesh object. */
-            SmartPtr<IMesh> m_mesh;    
+            SmartPtr<IMesh> m_mesh;
 
             /** The mesh resource. */
-            SmartPtr<IMeshResource> m_meshResource;  
+            SmartPtr<IMeshResource> m_meshResource;
 
             /** The path to the mesh file. */
-            String m_meshPath;       
+            String m_meshPath;
 
             /** The component ID extension. */
-            static u32 m_idExt;                      
+            static u32 m_idExt;
         };
     }  // namespace scene
 }  // end namespace fb

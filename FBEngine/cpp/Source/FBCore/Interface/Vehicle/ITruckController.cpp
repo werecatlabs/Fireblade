@@ -1,5 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/Vehicle/ITruckController.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
