@@ -4,11 +4,11 @@
 #include <FBFileSystem/FBFileSystemHeaders.h>
 #include <FBCore/Interface/IO/IFileSystem.h>
 #include <FBCore/Interface/System/IPlugin.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
-    class FBFileSystem : public CSharedObject<ISharedObject>
+    class FBFileSystem : public SharedObject<ISharedObject>
     {
     public:
         FBFileSystem() = default;

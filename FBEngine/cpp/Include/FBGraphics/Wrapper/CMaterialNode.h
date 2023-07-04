@@ -66,7 +66,7 @@ namespace fb
             }
 
         protected:
-            class MaterialNodeStateListener : public CSharedObject<IStateListener>
+            class MaterialNodeStateListener : public SharedObject<IStateListener>
             {
             public:
                 MaterialNodeStateListener() = default;

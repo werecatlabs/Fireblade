@@ -5,7 +5,7 @@
 #include <FBImGui/FBImGuiPrerequisites.h>
 #include <FBCore/Memory/SmartPtr.h>
 #include <FBCore/Interface/Graphics/IWindowListener.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
@@ -24,7 +24,7 @@ namespace fb
             void draw(SmartPtr<IUIRenderWindow> renderWindow);
 
         protected:
-            class WindowListener : public CSharedObject<render::IWindowListener>
+            class WindowListener : public SharedObject<render::IWindowListener>
             {
             public:
                 WindowListener() = default;

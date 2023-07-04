@@ -4,10 +4,10 @@
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Interface/Physics/IPhysicsManager.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Memory/RawPtr.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/ConcurrentQueue.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/ConcurrentQueue.h>
 
 #define MAX_NUM_INDEX_BUFFERS 16
 #define NUM_PLAYER_CARS 1
@@ -22,7 +22,7 @@ namespace fb
         @author	Zane Desir
         @version 1.0
         */
-        class PhysxManager : public CSharedObject<IPhysicsManager>
+        class PhysxManager : public SharedObject<IPhysicsManager>
         {
         public:
             PhysxManager();
@@ -60,9 +60,6 @@ namespace fb
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
             void destroyMaterial( SmartPtr<IPhysicsMaterial3> material ) override;
-
-            /** @copydoc IPhysicsManager3::createCollisionShapeByType */
-            SmartPtr<IPhysicsShape3> createCollisionShapeByType( hash64 type ) override;
 
             /** @copydoc IPhysicsManager3::createCollisionShapeByType */
             SmartPtr<IPhysicsShape3> createCollisionShapeByType( hash64 type,
@@ -131,7 +128,7 @@ namespace fb
             SmartPtr<IConstraintDrive> createConstraintDrive() override;
 
             /** @copydoc IPhysicsManager3::createConstraintLinearLimit */
-            SmartPtr<IConstraintLinearLimit> createConstraintLinearLimit() override;
+            SmartPtr<IConstraintLinearLimit> createConstraintLinearLimit(real_Num extent, real_Num contactDist = real_Num(-1.0)) override;
 
             /** @copydoc IPhysicsManager3::createRaycastHitData */
             SmartPtr<IRaycastHit> createRaycastHitData() override;
@@ -240,6 +237,8 @@ namespace fb
             Array<SmartPtr<IPhysicsVehicle3>> m_vehicles;
 
             Array<SmartPtr<PhysxScene>> m_scenes;
+
+            bool m_enableDebugDraw = false;
 
             mutable RecursiveMutex PhysxMutex;
         };

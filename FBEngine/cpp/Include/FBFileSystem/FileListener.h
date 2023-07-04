@@ -5,7 +5,7 @@
 
 #    include <FBFileSystem/FBFileSystemPrerequisites.h>
 #    include <FileWatcher/FileWatcher.h>
-#    include <FBCore/Base/StringTypes.h>
+#    include <FBCore/Core/StringTypes.h>
 
 namespace fb
 {

@@ -6,7 +6,7 @@
 #include <FBCore/Interface/Graphics/IGraphicsScene.h>
 #include <FBGraphicsOgre/Wrapper/CGraphicsObjectOgre.h>
 #include <FBGraphicsOgre/Wrapper/CBillboardOgre.h>
-#include <FBCore/Base/Pool.h>
+#include <FBCore/Core/Pool.h>
 #include <vector>
 #include <list>
 

@@ -4,8 +4,8 @@
 #include <FBOISInput/FBOISInputPrerequisites.h>
 #include "FBCore/Interface/Input/IGameInputMap.h"
 #include "FBCore/Interface/Input/IInputActionData.h"
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/HashMap.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/HashMap.h>
 #include <map>
 #include <vector>
 
@@ -13,7 +13,7 @@ namespace fb
 {
     using ActionKeyMap = std::map<u32, SmartPtr<IInputActionData>>;
 
-    class OISGameInputMap : public CSharedObject<IGameInputMap>
+    class OISGameInputMap : public SharedObject<IGameInputMap>
     {
     public:
         OISGameInputMap();

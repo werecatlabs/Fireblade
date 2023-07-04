@@ -1,7 +1,7 @@
 #include <FBFileSystem/FBFileSystemPCH.h>
 #include <FBFileSystem/FileDataStream.h>
-#include <FBCore/Base/Exception.h>
-#include <FBCore/Base/LogManager.h>
+#include <FBCore/Core/Exception.h>
+#include <FBCore/Core/LogManager.h>
 #include <fstream>
 
 namespace fb

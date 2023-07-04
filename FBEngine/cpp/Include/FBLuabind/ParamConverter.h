@@ -1,7 +1,7 @@
 #ifndef ParamConverter_h__
 #define ParamConverter_h__
 
-#include <FBCore/Base/Parameter.h>
+#include <FBCore/Core/Parameter.h>
 #include <FBCore/Interface/Script/IScriptObject.h>
 #include "FBLuabind/ScriptObjectUtil.h"
 #include <luabind/operator.hpp>

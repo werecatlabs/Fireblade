@@ -5,7 +5,7 @@
 #include <FBPhysx/FBPhysxSharedObject.h>
 #include <FBCore/Interface/Physics/IPhysicsConstraint3.h>
 #include <FBCore/Interface/Physics/IPhysicsBody3.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {

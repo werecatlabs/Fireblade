@@ -6,7 +6,7 @@
 #define SHADOW_CAMERA_SETUP_STABLE_CSM_H
 
 #include "Ogre.h"
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {

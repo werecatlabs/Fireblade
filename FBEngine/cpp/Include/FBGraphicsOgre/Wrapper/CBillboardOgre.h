@@ -3,13 +3,13 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IBillboard.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     namespace render
     {
-        class CBillboardOgre : public CSharedObject<IBillboard>
+        class CBillboardOgre : public SharedObject<IBillboard>
         {
         public:
             CBillboardOgre();

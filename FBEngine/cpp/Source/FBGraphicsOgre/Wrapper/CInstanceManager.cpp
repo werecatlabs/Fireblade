@@ -299,7 +299,7 @@ namespace fb
 
                 Ogre::String meshFileName = OgreNGPlantLoader::loadMesh( meshFileNameNgp ).c_str();
 
-                MeshPtr mesh = MeshManager::getSingletonPtr()->load(
+                Ogre::MeshPtr mesh = Ogre::MeshManager::getSingletonPtr()->load(
                     meshFileName, ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME );
 
                 // Create one instance mgr per submesh, managerNames contains unique random names
@@ -318,7 +318,7 @@ namespace fb
                 AxisAlignedBox box = mesh->getBounds();
                 Ogre::Vector3 halfExtent = box.getHalfSize();
 
-                MeshManager::getSingleton().createPlane(
+                Ogre::MeshManager::getSingleton().createPlane(
                     "InstanceMgr" + meshFileName + "_BilboardPlane",
                     ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Plane( Ogre::Vector3::UNIT_Z, 0 ),
                     halfExtent.x, halfExtent.y, 1, 1, true, 1, 1.0f, 1.0f, Ogre::Vector3::UNIT_Y );
@@ -344,7 +344,7 @@ namespace fb
 
                     for( size_t subMeshIdx = 0; subMeshIdx < mesh->getNumSubMeshes(); ++subMeshIdx )
                     {
-                        SubMesh *subMesh = mesh->getSubMesh( subMeshIdx );
+                        Ogre::SubMesh *subMesh = mesh->getSubMesh( subMeshIdx );
 
                         Ogre::String instanceManagerName =
                             "InstanceMgr" + StringConverter::toString( subMeshIdx ) + meshFileName;
@@ -394,7 +394,7 @@ namespace fb
 
                 for( size_t subMeshIdx = 0; subMeshIdx < mesh->getNumSubMeshes(); ++subMeshIdx )
                 {
-                    SubMesh *subMesh = mesh->getSubMesh( subMeshIdx );
+                    Ogre::SubMesh *subMesh = mesh->getSubMesh( subMeshIdx );
 
                     Ogre::String instanceManagerName =
                         "InstanceMgr" + StringConverter::toString( subMeshIdx ) + meshFileName;

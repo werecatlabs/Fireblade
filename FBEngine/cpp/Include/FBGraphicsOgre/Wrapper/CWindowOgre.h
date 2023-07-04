@@ -2,11 +2,11 @@
 #define _CWindow_H
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBGraphicsOgre/Wrapper/CRenderTarget.h>
+#include <FBGraphicsOgre/Wrapper/CRenderTargetOgre.h>
 #include <FBCore/Interface/Graphics/IWindow.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/Array.h>
 #include <OgreWindowEventUtilities.h>
 
 namespace fb
@@ -16,7 +16,7 @@ namespace fb
         /**
          * Implementation of the IWindow interface using the Ogre graphics engine.
          */
-        class CWindowOgre : public CRenderTarget<IWindow>
+        class CWindowOgre : public CRenderTargetOgre<IWindow>
         {
         public:
             CWindowOgre();
@@ -166,7 +166,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class WindowStateListener : public CSharedObject<IStateListener>
+            class WindowStateListener : public SharedObject<IStateListener>
             {
             public:
                 WindowStateListener() = default;

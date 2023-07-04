@@ -2,12 +2,12 @@
 #define __FB_INPUT_EVENT__
 
 #include <FBCore/Interface/Input/IInputEvent.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     /** A structure to store input event data. */
-    class InputEvent : public CSharedObject<IInputEvent>
+    class InputEvent : public SharedObject<IInputEvent>
     {
     public:
         InputEvent();

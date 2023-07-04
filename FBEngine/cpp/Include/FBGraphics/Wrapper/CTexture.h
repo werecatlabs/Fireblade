@@ -4,7 +4,7 @@
 #include <FBGraphics/FBGraphicsPrerequisites.h>
 #include <FBCore/Interface/Graphics/ITexture.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBGraphics/Wrapper/CResourceGraphics.h>
 
 namespace fb
@@ -139,7 +139,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class StateListener : public CSharedObject<IStateListener>
+            class StateListener : public SharedObject<IStateListener>
             {
             public:
                 StateListener() = default;

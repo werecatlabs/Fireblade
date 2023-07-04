@@ -79,22 +79,22 @@ namespace fb
 
             m_overlayTxt->setCharHeight( charHeight );
 
-            String alignment( element->Attribute( "alignment" ) );
-            if( alignment == ( String( "center" ) ) )
-            {
-                m_overlayTxt->setAlignment(
-                    static_cast<u8>( render::IOverlayElementText::Alignment::Center ) );
-            }
-            else if( alignment == ( String( "left" ) ) )
-            {
-                m_overlayTxt->setAlignment(
-                    static_cast<u8>( render::IOverlayElementText::Alignment::Left ) );
-            }
-            else if( alignment == ( String( "right" ) ) )
-            {
-                m_overlayTxt->setAlignment(
-                    static_cast<u8>( render::IOverlayElementText::Alignment::Right ) );
-            }
+            //String alignment( element->Attribute( "alignment" ) );
+            //if( alignment == ( String( "center" ) ) )
+            //{
+            //    m_overlayTxt->setAlignment(
+            //        static_cast<u8>( render::IOverlayElementText::Alignment::Center ) );
+            //}
+            //else if( alignment == ( String( "left" ) ) )
+            //{
+            //    m_overlayTxt->setAlignment(
+            //        static_cast<u8>( render::IOverlayElementText::Alignment::Left ) );
+            //}
+            //else if( alignment == ( String( "right" ) ) )
+            //{
+            //    m_overlayTxt->setAlignment(
+            //        static_cast<u8>( render::IOverlayElementText::Alignment::Right ) );
+            //}
 
             m_overlayTxt->setCaption( m_text );
 

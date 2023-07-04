@@ -118,21 +118,21 @@ namespace fb
                 alignment = pAlignmentStr;
             }
 
-            if( alignment == ( String( "center" ) ) )
-            {
-                m_overlayTxt->setAlignment(
-                    static_cast<u8>( render::IOverlayElementText::Alignment::Center ) );
-            }
-            else if( alignment == ( String( "left" ) ) )
-            {
-                m_overlayTxt->setAlignment(
-                    static_cast<u8>( render::IOverlayElementText::Alignment::Left ) );
-            }
-            else if( alignment == ( String( "right" ) ) )
-            {
-                m_overlayTxt->setAlignment(
-                    static_cast<u8>( render::IOverlayElementText::Alignment::Right ) );
-            }
+            //if( alignment == ( String( "center" ) ) )
+            //{
+            //    m_overlayTxt->setAlignment(
+            //        static_cast<u8>( render::IOverlayElementText::Alignment::Center ) );
+            //}
+            //else if( alignment == ( String( "left" ) ) )
+            //{
+            //    m_overlayTxt->setAlignment(
+            //        static_cast<u8>( render::IOverlayElementText::Alignment::Left ) );
+            //}
+            //else if( alignment == ( String( "right" ) ) )
+            //{
+            //    m_overlayTxt->setAlignment(
+            //        static_cast<u8>( render::IOverlayElementText::Alignment::Right ) );
+            //}
 
             m_overlayTxt->setCaption( captionTxt );
 

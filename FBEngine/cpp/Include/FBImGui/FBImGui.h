@@ -3,13 +3,13 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Memory/SmartPtr.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     namespace ui
     {
-        class FBImGui : public CSharedObject<ISharedObject>
+        class FBImGui : public SharedObject<ISharedObject>
         {
         public:
             FBImGui() = default;

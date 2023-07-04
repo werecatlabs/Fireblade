@@ -3,9 +3,9 @@
 
 #include <FBLua/FBLuaPrerequisites.h>
 #include <FBCore/Interface/Script/IScriptManager.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/StringTypes.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/StringTypes.h>
+#include <FBCore/Core/Array.h>
 #include <FBCore/Memory/RawPtr.h>
 #include <luabind/object.hpp>
 
@@ -14,7 +14,7 @@ namespace fb
     /**
      * @brief LuaManager class responsible for managing Lua scripts, bindings, and functions. Inherits from IScriptManager.
      */
-    class LuaManager : public CSharedObject<IScriptManager>
+    class LuaManager : public SharedObject<IScriptManager>
     {
     public:
         /**

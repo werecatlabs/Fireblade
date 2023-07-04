@@ -7,7 +7,7 @@
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBGraphicsOgre/Wrapper/CGraphicsObjectOgre.h>
 #include <FBGraphicsOgre/Wrapper/CParticleNode.h>
-#include <FBCore/Base/HashMap.h>
+#include <FBCore/Core/HashMap.h>
 
 #if FB_OGRE_USE_PARTICLE_UNIVERSE
 #    include "ParticleUniverseSystemManager.h"
@@ -143,7 +143,7 @@ namespace fb
             void removeListener( SmartPtr<IParticleSystemListener> listener ) override;
 
         protected:
-            class ParticleSystemStateListener : public CSharedObject<IStateListener>
+            class ParticleSystemStateListener : public SharedObject<IStateListener>
             {
             public:
                 ParticleSystemStateListener( PUParticleSystem *puSystem );

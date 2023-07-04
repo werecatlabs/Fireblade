@@ -8,11 +8,11 @@
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/StringTypes.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/Properties.h>
-#include <FBCore/Base/Parameter.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/StringTypes.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/Properties.h>
+#include <FBCore/Core/Parameter.h>
 #include <FBCore/Math/Vector2.h>
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
@@ -124,10 +124,7 @@ namespace fb
             /** Gets the children of the gui item. */
             SharedPtr<ConcurrentArray<SmartPtr<IUIElement>>> getChildren() const;
 
-            void setChildren( SharedPtr<ConcurrentArray<SmartPtr<IUIElement>>> p )
-            {
-                m_children = p;
-            }
+            void setChildren( SharedPtr<ConcurrentArray<SmartPtr<IUIElement>>> p );
 
             /** Adds a child to this gui item. */
             void addChild( SmartPtr<IUIElement> child ) override;
@@ -266,7 +263,7 @@ namespace fb
             void addMessage( SmartPtr<IStateMessage> message );
 
         protected:
-            class ElementStateListener : public CSharedObject<IStateListener>
+            class ElementStateListener : public SharedObject<IStateListener>
             {
             public:
                 ElementStateListener() = default;
@@ -364,7 +361,7 @@ namespace fb
 
             auto task = Thread::getCurrentTask();
 
-            const auto &loadingState = CSharedObject<T>::getLoadingState();
+            const auto &loadingState = SharedObject<T>::getLoadingState();
 
             return loadingState == LoadingState::Loaded && task == renderTask;
         }
@@ -382,9 +379,19 @@ namespace fb
             }
         }
 
+        template <class T>
+        SharedPtr<ConcurrentArray<SmartPtr<IUIElement>>> CUIElement<T>::getChildren() const
+        {
+            return m_children;
+        }
+
+        template <class T>
+        void CUIElement<T>::setChildren( SharedPtr<ConcurrentArray<SmartPtr<IUIElement>>> p )
+        {
+            m_children = p;
+        }
+
     }  // end namespace ui
 }  // end namespace fb
-
-#include <FBRenderUI/CUIElement.inl>
 
 #endif

@@ -2,8 +2,8 @@
 #define __ZipUtil_h__
 
 #include <FBFileSystem/FBFileSystemPrerequisites.h>
-#include <FBCore/Base/StringTypes.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/StringTypes.h>
+#include <FBCore/Core/Array.h>
 
 #if defined( MSDOS ) || defined( OS2 ) || defined( WIN32 ) || defined( __CYGWIN__ )
 #    include <fcntl.h>

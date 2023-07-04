@@ -8,7 +8,7 @@ namespace fb
     namespace render
     {
 
-        FB_CLASS_REGISTER_DERIVED( fb, CTextureOgreStateListener, CSharedObject<IStateListener> );
+        FB_CLASS_REGISTER_DERIVED( fb, CTextureOgreStateListener, SharedObject<IStateListener> );
 
         void CTextureOgreStateListener::unload( SmartPtr<ISharedObject> data )
         {
@@ -42,13 +42,14 @@ namespace fb
                     auto textureState = fb::static_pointer_cast<TextureState>( state );
                     auto size = textureState->getSize();
                     auto texture = owner->getTexture();
-                    auto currentSize = Vector2I( texture->getWidth(), texture->getHeight() );
 
-                    if( currentSize != size )
+                    if( texture )
                     {
-                        if( texture )
+                        auto currentSize = Vector2I( texture->getWidth(), texture->getHeight() );
+
+                        if( currentSize != size )
                         {
-                            return;
+                            return; // todo: handle this case
 
                             texture->setWidth( size.x );
                             texture->setHeight( size.y );

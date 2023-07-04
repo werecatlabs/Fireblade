@@ -29,7 +29,7 @@ namespace fb
 {
     namespace physics
     {
-        FB_CLASS_REGISTER_DERIVED( fb, PhysxManager, CSharedObject<IPhysicsManager> );
+        FB_CLASS_REGISTER_DERIVED( fb, PhysxManager, SharedObject<IPhysicsManager> );
 
         PxVehicleTelemetryData *mTelemetryData4W;
 
@@ -744,66 +744,12 @@ namespace fb
 
         bool PhysxManager::getEnableDebugDraw() const
         {
-            return false;
+            return m_enableDebugDraw;
         }
 
         void PhysxManager::setEnableDebugDraw( bool enableDebugDraw )
         {
-        }
-
-        SmartPtr<IPhysicsShape3> PhysxManager::createCollisionShapeByType( hash64 type )
-        {
-            auto typeManager = TypeManager::instance();
-            FB_ASSERT( typeManager );
-
-            const auto sphereTypeInfo = ISphereShape3::typeInfo();
-            const auto boxTypeInfo = IBoxShape3::typeInfo();
-            const auto meshTypeInfo = IMeshShape::typeInfo();
-            const auto terrainTypeInfo = ITerrainShape::typeInfo();
-
-            const auto sphereType = typeManager->getHash( sphereTypeInfo );
-            const auto boxType = typeManager->getHash( boxTypeInfo );
-            const auto meshType = typeManager->getHash( meshTypeInfo );
-            const auto terrainType = typeManager->getHash( terrainTypeInfo );
-
-            if( type == sphereType )
-            {
-                return createSphere();
-            }
-            if( type == boxType )
-            {
-                return createBox();
-            }
-            if( type == meshType )
-            {
-                try
-                {
-                    ISharedObject::ScopedLock lock( this );
-
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto factoryManager = applicationManager->getFactoryManager();
-                    FB_ASSERT( factoryManager );
-
-                    auto mesh = factoryManager->make_ptr<PhysxMeshShape>();
-
-                    m_meshShapes.push_back( mesh );
-                    return mesh;
-                }
-                catch( std::exception &e )
-                {
-                    FB_LOG_EXCEPTION( e );
-                }
-
-                return nullptr;
-            }
-            if( type == terrainType )
-            {
-                return createTerrain();
-            }
-
-            return nullptr;
+            m_enableDebugDraw = enableDebugDraw;
         }
 
         SmartPtr<IPhysicsShape3> PhysxManager::createCollisionShapeByType( hash64 type,
@@ -1361,8 +1307,9 @@ namespace fb
             return nullptr;
         }
 
-        SmartPtr<IConstraintLinearLimit> PhysxManager::createConstraintLinearLimit()
+        SmartPtr<IConstraintLinearLimit> PhysxManager::createConstraintLinearLimit(real_Num extent, real_Num contactDist)
         {
+            physx::PxJointLinearLimit;
             return nullptr;
         }
 

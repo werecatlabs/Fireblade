@@ -43,7 +43,7 @@ namespace fb
 {
     namespace render
     {
-        FB_CLASS_REGISTER_DERIVED( fb, CTerrainOgre, CSharedObject<ITerrain> );
+        FB_CLASS_REGISTER_DERIVED( fb, CTerrainOgre, SharedObject<ITerrain> );
         u32 CTerrainOgre::m_ext = 0;
 
         CTerrainOgre::CTerrainOgre() :
@@ -144,24 +144,6 @@ namespace fb
         {
             try
             {
-                // if (!m_terrainTemplate)
-                //{
-                //	m_terrainTemplate = SmartPtr<scene::IDirector>(new TerrainTemplate);
-                // }
-
-                // some defaults
-
-                // defaultimp.layerList.resize(2);
-                // defaultimp.layerList[0].worldSize = 10;
-                // defaultimp.layerList[0].textureNames.push_back("dirt_grayrocky_diffusespecular.dds");
-                // defaultimp.layerList[0].textureNames.push_back("dirt_grayrocky_normalheight.dds");
-                // defaultimp.layerList[1].worldSize = 10;
-                // defaultimp.layerList[1].textureNames.push_back("growth_weirdfungus-03_diffusespecular.dds");
-                // defaultimp.layerList[1].textureNames.push_back("growth_weirdfungus-03_normalheight.dds");
-                // defaultimp.layerList[2].worldSize = 20;
-                // defaultimp.layerList[2].textureNames.push_back("growth_weirdfungus-03_diffusespecular.dds");
-                // defaultimp.layerList[2].textureNames.push_back("growth_weirdfungus-03_normalheight.dds");
-
                 auto applicationManager = core::IApplicationManager::instance();
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
                 auto factoryManager = applicationManager->getFactoryManager();
@@ -410,6 +392,8 @@ namespace fb
                 bool blankTerrain = false;
                 blankTerrain = true;  // initial terrain
 
+                auto ogreSceneManager = getOgreSceneManager();
+
                 // mSceneMgr->setFog(Ogre::FOG_EXP, Ogre::ColourValue::Red);
 
                 Ogre::LogManager::getSingleton().setLogDetail( Ogre::LL_BOREME );
@@ -418,7 +402,7 @@ namespace fb
                 lightdir.normalise();
 
                 auto lightName = String( "Light0" ) + StringUtil::toString( m_ext++ );
-                Ogre::Light *l = m_ogreSceneManager->createLight( lightName );
+                Ogre::Light *l = ogreSceneManager->createLight( lightName );
                 l->setType( Ogre::Light::LT_DIRECTIONAL );
                 l->setDirection( lightdir );
                 l->setDiffuseColour( Ogre::ColourValue::White );
@@ -462,10 +446,9 @@ namespace fb
 
                 //mTerrainGroup->loadLegacyTerrain("terrain.cfg");
 
-                mTerrainGroup = OGRE_NEW Ogre::TerrainGroup( m_ogreSceneManager,
+                mTerrainGroup = OGRE_NEW Ogre::TerrainGroup( ogreSceneManager,
                                                              Ogre::Terrain::ALIGN_X_Z, 129, 512.0f );
 
-                auto ogreSceneManager = getOgreSceneManager();
                 //mTerrainGroup = loadLegacyTerrain( "terrain.cfg", ogreSceneManager );
                 // mTerrainGroup->setFilenameConvention(TERRAIN_FILE_PREFIX, TERRAIN_FILE_SUFFIX);
                 mTerrainGroup->setAutoUpdateLod(
@@ -953,12 +936,12 @@ namespace fb
 
         SmartPtr<IMesh> CTerrainOgre::getMesh() const
         {
-            SmartPtr<IMesh> mesh( new CMesh );
-            SmartPtr<ISubMesh> subMesh( new CSubMesh );
+            SmartPtr<IMesh> mesh( new Mesh );
+            SmartPtr<ISubMesh> subMesh( new SubMesh );
             mesh->addSubMesh( subMesh );
 
             // create sub mesh data
-            SmartPtr<IVertexDeclaration> vertexDeclaration( new CVertexDeclaration );
+            SmartPtr<IVertexDeclaration> vertexDeclaration( new VertexDeclaration );
             /*vertexDeclaration->addElement(sizeof(Vector3F), VertexDeclaration::VES_POSITION,
             VertexDeclaration::VET_FLOAT3); vertexDeclaration->addElement(sizeof(Vector3F),
             VertexDeclaration::VES_NORMAL, VertexDeclaration::VET_FLOAT3);
@@ -966,7 +949,7 @@ namespace fb
             VertexDeclaration::VET_FLOAT2, 0); vertexDeclaration->addElement(sizeof(Vector2F),
             VertexDeclaration::VES_TEXTURE_COORDINATES, VertexDeclaration::VET_FLOAT2, 1);
             */
-            SmartPtr<IVertexBuffer> vertexBuffer( new CVertexBuffer );
+            SmartPtr<IVertexBuffer> vertexBuffer( new VertexBuffer );
             // vertexBuffer->setVertexDeclaration(vertexDeclaration);
 
             u32 tileSize = 512;
@@ -1020,18 +1003,18 @@ namespace fb
         void CTerrainOgre::setSceneManager( SmartPtr<IGraphicsScene> sceneManager )
         {
             m_sceneManager = sceneManager;
-
-            m_sceneManager->_getObject( (void **)&m_ogreSceneManager );
         }
 
         Ogre::SceneManager *CTerrainOgre::getOgreSceneManager() const
         {
-            return m_ogreSceneManager;
-        }
+            if( auto scene = getSceneManager() )
+            {
+                Ogre::SceneManager *smgr = nullptr;
+                scene->_getObject( (void **)&smgr );
+                return smgr;
+            }
 
-        void CTerrainOgre::setOgreSceneManager( Ogre::SceneManager *ogreSceneManager )
-        {
-            m_ogreSceneManager = ogreSceneManager;
+            return nullptr;
         }
 
         Ogre::Camera *CTerrainOgre::getTerrainCamera() const

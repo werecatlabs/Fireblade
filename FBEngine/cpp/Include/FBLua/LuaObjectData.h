@@ -2,14 +2,14 @@
 #define LuaObjectData_h__
 
 #include <FBCore/Interface/Script/IScriptData.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/StringTypes.h>
 #include <luabind/luabind.hpp>
 
 namespace fb
 {
 
-    class LuaObjectData : public CSharedObject<IScriptData>
+    class LuaObjectData : public SharedObject<IScriptData>
     {
     public:
         LuaObjectData();

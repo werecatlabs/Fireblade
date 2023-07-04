@@ -2,7 +2,7 @@
 #define RESOURCEGROUPHELPER_H
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 #include <utility>
 #include <string>
 #include <vector>

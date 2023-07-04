@@ -1,5 +1,5 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
-#include "FBGraphicsOgre/Wrapper/CCubemap.h"
+#include <FBGraphicsOgre/Wrapper/CCubemap.h>
 #include <FBCore/FBCore.h>
 #include <Ogre.h>
 #include <OgreRoot.h>
@@ -16,7 +16,7 @@ namespace fb
     namespace render
     {
 
-        FB_CLASS_REGISTER_DERIVED( fb, CCubemap, CSharedObject<ICubemap> );
+        FB_CLASS_REGISTER_DERIVED( fb, CCubemap, SharedObject<ICubemap> );
         u32 CCubemap::m_nameExt = 0;
 
         CCubemap::CCubemap() : m_currentIndex( 0 ), m_enable( false )
@@ -25,6 +25,7 @@ namespace fb
 
         CCubemap::~CCubemap()
         {
+            unload( nullptr );
         }
 
         void CCubemap::load( SmartPtr<ISharedObject> data )
@@ -108,12 +109,12 @@ namespace fb
         {
         }
 
-        void CCubemap::addExludedObject( SmartPtr<IGraphicsObject> object )
+        void CCubemap::addExcludedObject( SmartPtr<IGraphicsObject> object )
         {
             m_objects.push_back( object );
         }
 
-        Array<SmartPtr<IGraphicsObject>> CCubemap::getExludedObjects() const
+        Array<SmartPtr<IGraphicsObject>> CCubemap::getExcludedObjects() const
         {
             return m_objects;
         }

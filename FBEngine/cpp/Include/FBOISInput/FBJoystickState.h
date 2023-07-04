@@ -3,11 +3,11 @@
 
 #include <FBOISInput/FBOISInputPrerequisites.h>
 #include <FBCore/Interface/Input/IJoystickState.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
-    class JoystickState : public CSharedObject<IJoystickState>
+    class JoystickState : public SharedObject<IJoystickState>
     {
     public:
         JoystickState();

@@ -2,18 +2,18 @@
 #define FBGUI_CGUIMANAGER_H
 
 #include <FBRenderUI/FBRenderUIPrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/UI/IUIManager.h>
 #include <FBCore/Interface/System/IEventListener.h>
-#include <FBCore/Base/Map.h>
-#include <FBCore/Base/Parameter.h>
+#include <FBCore/Core/Map.h>
+#include <FBCore/Core/Parameter.h>
 
 namespace fb
 {
     namespace ui
     {
         /** Implementation of a ui system the uses the render system. */
-        class CUIManager : public CSharedObject<IUIManager>
+        class CUIManager : public SharedObject<IUIManager>
         {
         public:
             CUIManager();
@@ -101,7 +101,7 @@ namespace fb
             void unlock() override;
 
         private:
-            class InputListener : public CSharedObject<IEventListener>
+            class InputListener : public SharedObject<IEventListener>
             {
             public:
                 InputListener( CUIManager *mgr );

@@ -3,14 +3,14 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IDeferredShadingSystem.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     namespace render
     {
 
-        class CDeferredShadingSystem : public CSharedObject<IDeferredShadingSystem>
+        class CDeferredShadingSystem : public SharedObject<IDeferredShadingSystem>
         {
         public:
             CDeferredShadingSystem( SmartPtr<IViewport> viewport );

@@ -21,7 +21,7 @@ namespace fb
         const auto typeManager = TypeManager::instance();
         const auto type = SQLiteDatabase::typeInfo();
         const auto baseType = IDatabase::typeInfo();
-        const auto sharedType = CSharedObject<IDatabase>::typeInfo();
+        const auto sharedType = SharedObject<IDatabase>::typeInfo();
         const auto sharedBaseType = typeManager->getBaseType( sharedType );
         const auto managerBaseType = typeManager->getBaseType( type );
         const auto derivedTypes = typeManager->getDerivedTypes( baseType );

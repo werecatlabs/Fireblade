@@ -3,16 +3,16 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IFontManager.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/UtilityTypes.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/UtilityTypes.h>
 
 namespace fb
 {
     namespace render
     {
 
-        class CFontManager : public CSharedObject<IFontManager>
+        class CFontManager : public SharedObject<IFontManager>
         {
         public:
             CFontManager();

@@ -2,13 +2,13 @@
 #define _CCompositor_H_
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     namespace render
     {
-        class CCompositor : public CSharedObject<ISharedObject>
+        class CCompositor : public SharedObject<ISharedObject>
         {
         public:
             CCompositor();

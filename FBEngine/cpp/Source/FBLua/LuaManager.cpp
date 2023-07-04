@@ -37,7 +37,7 @@ namespace fb
     template <>
     LuaManager *Singleton<LuaManager>::m_singleton = nullptr;
 
-    FB_CLASS_REGISTER_DERIVED( fb, LuaManager, CSharedObject<IScriptManager> );
+    FB_CLASS_REGISTER_DERIVED( fb, LuaManager, SharedObject<IScriptManager> );
 
     void LuaManager::setClassNames( const Array<String> &classNames )
     {

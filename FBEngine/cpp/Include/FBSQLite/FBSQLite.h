@@ -3,11 +3,11 @@
 
 #include <FBCore/Interface/Database/IDatabase.h>
 #include <FBCore/Interface/System/IPlugin.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
-    class SQLitePlugin : public CSharedObject<ISharedObject>
+    class SQLitePlugin : public SharedObject<ISharedObject>
     {
     public:
         SQLitePlugin() = default;

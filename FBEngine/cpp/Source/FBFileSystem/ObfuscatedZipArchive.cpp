@@ -13,7 +13,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, ObfuscatedZipArchive, CSharedObject<IArchive> );
+    FB_CLASS_REGISTER_DERIVED( fb, ObfuscatedZipArchive, SharedObject<IArchive> );
 
     const int XOR_VALUE = 13;
 

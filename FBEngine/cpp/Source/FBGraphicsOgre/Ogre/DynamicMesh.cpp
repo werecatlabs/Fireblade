@@ -146,16 +146,16 @@ namespace fb
 
             const SmartPtr<IVertexElement> posElem =
                 vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                    fb::CVertexDeclaration::VertexElementSemantic::VES_POSITION );
+                    fb::VertexDeclaration::VertexElementSemantic::VES_POSITION );
             const SmartPtr<IVertexElement> normalElem =
                 vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                    fb::CVertexDeclaration::VertexElementSemantic::VES_NORMAL );
+                    fb::VertexDeclaration::VertexElementSemantic::VES_NORMAL );
             const SmartPtr<IVertexElement> texCoordElem =
                 vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                    fb::CVertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES, 0 );
+                    fb::VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES, 0 );
             const SmartPtr<IVertexElement> texCoordElem1 =
                 vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                    fb::CVertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES, 1 );
+                    fb::VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES, 1 );
 
             u32 fbVertexSize = vertexBuffer->getVertexDeclaration()->getSize();
             u8 *fbVertexDataPtr = (u8 *)vertexBuffer->getVertexData();

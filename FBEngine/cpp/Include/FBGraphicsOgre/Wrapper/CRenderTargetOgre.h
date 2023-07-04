@@ -1,46 +1,215 @@
-#include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
-#include <FBGraphicsOgre/Wrapper/CRenderTarget.h>
-#include <FBGraphicsOgre/Wrapper/CRenderTexture.h>
+#ifndef _CRenderTargetOgre_H
+#define _CRenderTargetOgre_H
+
+#include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
+#include <FBCore/Interface/Graphics/IRenderTarget.h>
+#include <FBCore/Interface/System/IFactoryManager.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Atomics/Atomics.h>
+#include <FBCore/Core/Exception.h>
+#include <FBCore/Core/LogManager.h>
 #include <FBGraphicsOgre/Wrapper/CViewportOgre.h>
-#include <FBCore/FBCore.h>
-#include <Ogre.h>
-#include <atomic>
-#include <type_traits>
+#include <OgreRenderTarget.h>
+#include <OgreViewport.h>
 
 namespace fb
 {
     namespace render
     {
+
+        /** Implements IRenderTarget interface for Ogre. */
         template <class T>
-        s32 CRenderTarget<T>::m_ext = 0;
+        class CRenderTargetOgre : public SharedObject<T>
+        {
+        public:
+            /** Constructor. */
+            CRenderTargetOgre();
+
+            /** Destructor. */
+            ~CRenderTargetOgre() override;
+
+            /** @copydoc ISharedObject::load */
+            void load( SmartPtr<ISharedObject> data ) override;
+
+            /** @copydoc ISharedObject::unload */
+            void unload( SmartPtr<ISharedObject> data ) override;
+
+            /** @copydoc ISharedObject::preUpdate */
+            void preUpdate() override;
+
+            /** @copydoc ISharedObject::update */
+            void update() override;
+
+            /** @copydoc ISharedObject::postUpdate */
+            void postUpdate() override;
+
+            /** @copydoc IRenderTarget::swapBuffers */
+            void swapBuffers() override;
+
+            /** @copydoc IRenderTarget::setPriority */
+            void setPriority( u8 priority ) override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            u8 getPriority() const override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            bool isActive() const override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            void setActive( bool state ) override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            void setAutoUpdated( bool autoupdate ) override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            bool isAutoUpdated() const override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            void getMetrics( u32 &width, u32 &height, u32 &colourDepth );
+
+            /** @copydoc IRenderTarget::getPriority */
+            SmartPtr<IViewport> addViewport( hash32 id, SmartPtr<ICamera> camera, s32 ZOrder = -1,
+                                             f32 left = 0.0f, f32 top = 0.0f, f32 width = 1.0f,
+                                             f32 height = 1.0f ) override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            u32 getNumViewports() const override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            SmartPtr<IViewport> getViewport( u32 index ) override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            SmartPtr<IViewport> getViewportById( hash32 id ) override;
+
+            /** @copydoc IRenderTarget::getViewportByZOrder */
+            SmartPtr<IViewport> getViewportByZOrder( s32 zorder ) const override;
+
+            /** @copydoc IRenderTarget::hasViewportWithZOrder */
+            bool hasViewportWithZOrder( s32 zorder ) const override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            Array<SmartPtr<IViewport>> getViewports() const override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            void removeViewport( SmartPtr<IViewport> vp ) override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            void removeAllViewports() override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            void getStatistics( f32 &lastFPS, f32 &avgFPS, f32 &bestFPS, f32 &worstFPS ) const;
+
+            /** @copydoc IRenderTarget::getPriority */
+            IRenderTarget::RenderTargetStats getRenderTargetStats() const override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            void _getObject( void **ppObject ) const override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            void copyContentsToMemory(
+                void *buffer, u32 size,
+                IRenderTarget::FrameBuffer bufferId = IRenderTarget::FrameBuffer::Auto ) override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            Vector2I getSize() const override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            void setSize( const Vector2I &size ) override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            u32 getColourDepth() const override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            void setColourDepth( u32 colourDepth ) override;
+
+            /** @copydoc IRenderTarget::getPriority */
+            bool getSwapBuffers() const;
+
+            /** @copydoc IRenderTarget::getPriority */
+            void setSwapBuffers( bool swapBuffers );
+
+            /** Gets the render target object. */
+            Ogre::RenderTarget *getRenderTarget() const;
+
+            /** Sets the render target object. */
+            void setRenderTarget( Ogre::RenderTarget *renderTarget );
+
+            /** Gets the state object. */
+            SmartPtr<IStateContext> getStateObject() const;
+
+            /** Sets the state object. */
+            void setStateObject( SmartPtr<IStateContext> stateObject );
+
+            /** Gets the state listener. */
+            SmartPtr<IStateListener> getStateListener() const;
+
+            /** Sets the state listener. */
+            void setStateListener( SmartPtr<IStateListener> stateListener );
+
+            /** @copydoc IRenderTarget::addRenderTargetListener */
+            void addRenderTargetListener( SmartPtr<IRenderTarget::Listener> listener );
+
+            /** @copydoc IRenderTarget::removeRenderTargetListener */
+            void removeRenderTargetListener( SmartPtr<IRenderTarget::Listener> listener );
+
+            /** @copydoc IRenderTarget::getRenderTargetListeners */
+            Array<SmartPtr<IRenderTarget::Listener>> getRenderTargetListeners() const;
+
+            /** @copydoc IRenderTarget::getTexture */
+            SmartPtr<ITexture> getTexture() const;
+
+            /** @copydoc IRenderTarget::setTexture */
+            void setTexture( SmartPtr<ITexture> texture );
+
+        protected:
+            /** Sets up the state object. */
+            virtual void setupStateObject();
+
+            /** Destroys the state object. */
+            virtual void destroyedStateObject();
+
+            WeakPtr<ITexture> m_texture;
+
+            AtomicSmartPtr<IStateContext> m_stateObject;
+            AtomicSmartPtr<IStateListener> m_stateListener;
+
+            Ogre::RenderTarget *m_renderTarget = nullptr;
+
+            Array<SmartPtr<IViewport>> m_viewports;
+
+            Array<SmartPtr<IRenderTarget::Listener>> m_rtListeners;
+
+            Vector2I m_size;
+            atomic_u32 m_colourDepth = 0;
+            atomic_bool m_swapBuffers = true;
+            atomic_bool m_isActive = true;
+
+            static s32 m_ext;
+        };
 
         template <class T>
-        CRenderTarget<T>::CRenderTarget()
+        s32 CRenderTargetOgre<T>::m_ext = 0;
+
+        template <class T>
+        CRenderTargetOgre<T>::CRenderTargetOgre()
         {
             setupStateObject();
         }
 
         template <class T>
-        CRenderTarget<T>::~CRenderTarget()
+        CRenderTargetOgre<T>::~CRenderTargetOgre()
         {
             unload( nullptr );
             destroyedStateObject();
         }
 
         template <class T>
-        void CRenderTarget<T>::load( SmartPtr<ISharedObject> data )
+        void CRenderTargetOgre<T>::load( SmartPtr<ISharedObject> data )
         {
-            try
-            {
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
         }
 
         template <class T>
-        void CRenderTarget<T>::unload( SmartPtr<ISharedObject> data )
+        void CRenderTargetOgre<T>::unload( SmartPtr<ISharedObject> data )
         {
             try
             {
@@ -64,12 +233,6 @@ namespace fb
                     m_renderTarget = nullptr;
                 }
 
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto stateManager = applicationManager->getStateManager();
-                FB_ASSERT( stateManager );
-
                 m_texture = nullptr;
                 m_renderTarget = nullptr;
 
@@ -82,7 +245,7 @@ namespace fb
         }
 
         template <class T>
-        void CRenderTarget<T>::preUpdate()
+        void CRenderTargetOgre<T>::preUpdate()
         {
             try
             {
@@ -128,7 +291,7 @@ namespace fb
         }
 
         template <class T>
-        void CRenderTarget<T>::update()
+        void CRenderTargetOgre<T>::update()
         {
             try
             {
@@ -155,7 +318,7 @@ namespace fb
         }
 
         template <class T>
-        void CRenderTarget<T>::postUpdate()
+        void CRenderTargetOgre<T>::postUpdate()
         {
             try
             {
@@ -176,7 +339,7 @@ namespace fb
         }
 
         template <class T>
-        void CRenderTarget<T>::getMetrics( u32 &width, u32 &height, u32 &colourDepth )
+        void CRenderTargetOgre<T>::getMetrics( u32 &width, u32 &height, u32 &colourDepth )
         {
             if( m_renderTarget )
             {
@@ -185,25 +348,33 @@ namespace fb
         }
 
         template <class T>
-        u32 CRenderTarget<T>::getColourDepth() const
+        u32 CRenderTargetOgre<T>::getColourDepth() const
         {
             return 0;
         }
 
         template <class T>
-        SmartPtr<IViewport> CRenderTarget<T>::addViewport( hash32 id, SmartPtr<ICamera> camera,
-                                                           s32 ZOrder /*= 0*/, f32 left /*= 0.0f*/,
-                                                           f32 top /*= 0.0f */, f32 width /*= 1.0f*/,
-                                                           f32 height /*= 1.0f*/ )
+        SmartPtr<IViewport> CRenderTargetOgre<T>::addViewport( hash32 id, SmartPtr<ICamera> camera,
+                                                               s32 ZOrder /*= 0*/, f32 left /*= 0.0f*/,
+                                                               f32 top /*= 0.0f */, f32 width /*= 1.0f*/,
+                                                               f32 height /*= 1.0f*/ )
         {
             try
             {
+                auto applicationManager = core::IApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto graphicsSystem = applicationManager->getGraphicsSystem();
+                FB_ASSERT( graphicsSystem );
+
+                auto factoryManager = applicationManager->getFactoryManager();
+
                 if( ZOrder == -1 )
                 {
                     ZOrder = m_ext++;
                 }
 
-                auto viewport = fb::make_ptr<CViewportOgre>();
+                auto viewport = factoryManager->make_ptr<CViewportOgre>();
 
                 auto handle = viewport->getHandle();
                 if( handle )
@@ -219,11 +390,7 @@ namespace fb
                 viewport->setCamera( camera );
                 m_viewports.push_back( viewport );
 
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
 
-                auto graphicsSystem = applicationManager->getGraphicsSystem();
-                FB_ASSERT( graphicsSystem );
 
                 graphicsSystem->loadObject( viewport );
 
@@ -238,13 +405,13 @@ namespace fb
         }
 
         template <class T>
-        u32 CRenderTarget<T>::getNumViewports() const
+        u32 CRenderTargetOgre<T>::getNumViewports() const
         {
             return (u32)m_viewports.size();
         }
 
         template <class T>
-        SmartPtr<IViewport> CRenderTarget<T>::getViewport( u32 index )
+        SmartPtr<IViewport> CRenderTargetOgre<T>::getViewport( u32 index )
         {
             FB_ASSERT( index < (u32)m_viewports.size() );
 
@@ -257,7 +424,7 @@ namespace fb
         }
 
         template <class T>
-        SmartPtr<IViewport> CRenderTarget<T>::getViewportById( hash32 id )
+        SmartPtr<IViewport> CRenderTargetOgre<T>::getViewportById( hash32 id )
         {
             for( auto vp : m_viewports )
             {
@@ -274,7 +441,7 @@ namespace fb
         }
 
         template <class T>
-        SmartPtr<IViewport> CRenderTarget<T>::getViewportByZOrder( s32 zorder ) const
+        SmartPtr<IViewport> CRenderTargetOgre<T>::getViewportByZOrder( s32 zorder ) const
         {
             for( auto vp : m_viewports )
             {
@@ -291,7 +458,7 @@ namespace fb
         }
 
         template <class T>
-        bool CRenderTarget<T>::hasViewportWithZOrder( s32 zorder ) const
+        bool CRenderTargetOgre<T>::hasViewportWithZOrder( s32 zorder ) const
         {
             for( auto vp : m_viewports )
             {
@@ -308,7 +475,7 @@ namespace fb
         }
 
         template <class T>
-        void CRenderTarget<T>::removeViewport( SmartPtr<IViewport> vp )
+        void CRenderTargetOgre<T>::removeViewport( SmartPtr<IViewport> vp )
         {
             try
             {
@@ -337,8 +504,9 @@ namespace fb
             }
         }
 
+
         template <class T>
-        void CRenderTarget<T>::removeAllViewports()
+        void CRenderTargetOgre<T>::removeAllViewports()
         {
             try
             {
@@ -365,8 +533,8 @@ namespace fb
         }
 
         template <class T>
-        void CRenderTarget<T>::getStatistics( f32 &lastFPS, f32 &avgFPS, f32 &bestFPS,
-                                              f32 &worstFPS ) const
+        void CRenderTargetOgre<T>::getStatistics( f32 &lastFPS, f32 &avgFPS, f32 &bestFPS,
+                                                  f32 &worstFPS ) const
         {
             if( m_renderTarget )
             {
@@ -384,7 +552,7 @@ namespace fb
         }
 
         template <class T>
-        IRenderTarget::RenderTargetStats CRenderTarget<T>::getRenderTargetStats() const
+        IRenderTarget::RenderTargetStats CRenderTargetOgre<T>::getRenderTargetStats() const
         {
             auto stats = IRenderTarget::RenderTargetStats();
 
@@ -406,19 +574,19 @@ namespace fb
         }
 
         template <class T>
-        void CRenderTarget<T>::_getObject( void **ppObject ) const
+        void CRenderTargetOgre<T>::_getObject( void **ppObject ) const
         {
             *ppObject = m_renderTarget;
         }
 
         template <class T>
-        void CRenderTarget<T>::setPriority( u8 priority )
+        void CRenderTargetOgre<T>::setPriority( u8 priority )
         {
             m_renderTarget->setPriority( priority );
         }
 
         template <class T>
-        u8 CRenderTarget<T>::getPriority() const
+        u8 CRenderTargetOgre<T>::getPriority() const
         {
             if( m_renderTarget )
             {
@@ -429,7 +597,7 @@ namespace fb
         }
 
         template <class T>
-        bool CRenderTarget<T>::isActive() const
+        bool CRenderTargetOgre<T>::isActive() const
         {
             if( m_renderTarget )
             {
@@ -439,8 +607,9 @@ namespace fb
             return false;
         }
 
+
         template <class T>
-        void CRenderTarget<T>::setActive( bool state )
+        void CRenderTargetOgre<T>::setActive( bool state )
         {
             if( m_renderTarget )
             {
@@ -449,7 +618,7 @@ namespace fb
         }
 
         template <class T>
-        void CRenderTarget<T>::setAutoUpdated( bool autoupdate )
+        void CRenderTargetOgre<T>::setAutoUpdated( bool autoupdate )
         {
             if( m_renderTarget )
             {
@@ -458,7 +627,7 @@ namespace fb
         }
 
         template <class T>
-        bool CRenderTarget<T>::isAutoUpdated() const
+        bool CRenderTargetOgre<T>::isAutoUpdated() const
         {
             if( m_renderTarget )
             {
@@ -469,14 +638,14 @@ namespace fb
         }
 
         template <class T>
-        void CRenderTarget<T>::copyContentsToMemory( void *buffer, u32 size,
-                                                     IRenderTarget::FrameBuffer bufferId /*= FB_AUTO */ )
+        void CRenderTargetOgre<T>::copyContentsToMemory(
+            void *buffer, u32 size, IRenderTarget::FrameBuffer bufferId /*= FB_AUTO */ )
         {
             // m_renderTarget->copyContentsToMemory( buffer, size, bufferId );
         }
 
         template <class T>
-        void CRenderTarget<T>::swapBuffers()
+        void CRenderTargetOgre<T>::swapBuffers()
         {
             if( m_renderTarget )
             {
@@ -485,13 +654,13 @@ namespace fb
         }
 
         template <class T>
-        Array<SmartPtr<IViewport>> CRenderTarget<T>::getViewports() const
+        Array<SmartPtr<IViewport>> CRenderTargetOgre<T>::getViewports() const
         {
             return m_viewports;
         }
 
         template <class T>
-        Vector2I CRenderTarget<T>::getSize() const
+        Vector2I CRenderTargetOgre<T>::getSize() const
         {
             if( auto texture = getTexture() )
             {
@@ -502,7 +671,7 @@ namespace fb
         }
 
         template <class T>
-        void CRenderTarget<T>::setSize( const Vector2I &size )
+        void CRenderTargetOgre<T>::setSize( const Vector2I &size )
         {
             if( auto texture = getTexture() )
             {
@@ -522,24 +691,24 @@ namespace fb
         }
 
         template <class T>
-        void CRenderTarget<T>::setColourDepth( u32 colourDepth )
+        void CRenderTargetOgre<T>::setColourDepth( u32 colourDepth )
         {
         }
 
         template <class T>
-        bool CRenderTarget<T>::getSwapBuffers() const
+        bool CRenderTargetOgre<T>::getSwapBuffers() const
         {
             return m_swapBuffers;
         }
 
         template <class T>
-        void CRenderTarget<T>::setSwapBuffers( bool swapBuffers )
+        void CRenderTargetOgre<T>::setSwapBuffers( bool swapBuffers )
         {
             m_swapBuffers = swapBuffers;
         }
 
         template <class T>
-        void CRenderTarget<T>::setRenderTarget( Ogre::RenderTarget *renderTarget )
+        void CRenderTargetOgre<T>::setRenderTarget( Ogre::RenderTarget *renderTarget )
         {
             if( m_renderTarget != renderTarget )
             {
@@ -554,43 +723,44 @@ namespace fb
         }
 
         template <class T>
-        Ogre::RenderTarget *CRenderTarget<T>::getRenderTarget() const
+        Ogre::RenderTarget *CRenderTargetOgre<T>::getRenderTarget() const
         {
             return m_renderTarget;
         }
 
         template <class T>
-        SmartPtr<IStateContext> CRenderTarget<T>::getStateObject() const
+        SmartPtr<IStateContext> CRenderTargetOgre<T>::getStateObject() const
         {
             return m_stateObject;
         }
 
         template <class T>
-        void CRenderTarget<T>::setStateObject( SmartPtr<IStateContext> stateObject )
+        void CRenderTargetOgre<T>::setStateObject( SmartPtr<IStateContext> stateObject )
         {
             m_stateObject = stateObject;
         }
 
         template <class T>
-        SmartPtr<IStateListener> CRenderTarget<T>::getStateListener() const
+        SmartPtr<IStateListener> CRenderTargetOgre<T>::getStateListener() const
         {
             return m_stateListener;
         }
 
         template <class T>
-        void CRenderTarget<T>::setStateListener( SmartPtr<IStateListener> stateListener )
+        void CRenderTargetOgre<T>::setStateListener( SmartPtr<IStateListener> stateListener )
         {
             m_stateListener = stateListener;
         }
 
         template <class T>
-        void CRenderTarget<T>::addRenderTargetListener( SmartPtr<IRenderTarget::Listener> listener )
+        void CRenderTargetOgre<T>::addRenderTargetListener( SmartPtr<IRenderTarget::Listener> listener )
         {
             m_rtListeners.push_back( listener );
         }
 
         template <class T>
-        void CRenderTarget<T>::removeRenderTargetListener( SmartPtr<IRenderTarget::Listener> listener )
+        void CRenderTargetOgre<T>::removeRenderTargetListener(
+            SmartPtr<IRenderTarget::Listener> listener )
         {
             auto it = std::find( m_rtListeners.begin(), m_rtListeners.end(), listener );
             if( it != m_rtListeners.end() )
@@ -600,13 +770,13 @@ namespace fb
         }
 
         template <class T>
-        Array<SmartPtr<IRenderTarget::Listener>> CRenderTarget<T>::getRenderTargetListeners() const
+        Array<SmartPtr<IRenderTarget::Listener>> CRenderTargetOgre<T>::getRenderTargetListeners() const
         {
             return m_rtListeners;
         }
 
         template <class T>
-        void CRenderTarget<T>::setupStateObject()
+        void CRenderTargetOgre<T>::setupStateObject()
         {
             try
             {
@@ -639,27 +809,27 @@ namespace fb
         }
 
         template <class T>
-        void CRenderTarget<T>::destroyedStateObject()
+        void CRenderTargetOgre<T>::destroyedStateObject()
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
-            auto stateManager = applicationManager->getStateManager();
-            FB_ASSERT( stateManager );
-
-            if( auto stateObject = getStateObject() )
+            if( auto stateManager = applicationManager->getStateManager() )
             {
-                stateObject->setOwner( nullptr );
-
-                if( auto stateListener = getStateListener() )
+                if( auto stateObject = getStateObject() )
                 {
-                    stateObject->removeStateListener( stateListener );
+                    stateObject->setOwner( nullptr );
+
+                    if( auto stateListener = getStateListener() )
+                    {
+                        stateObject->removeStateListener( stateListener );
+                    }
+
+                    stateManager->removeStateObject( stateObject );
+
+                    stateObject->unload( nullptr );
+                    setStateObject( nullptr );
                 }
-
-                stateManager->removeStateObject( stateObject );
-
-                stateObject->unload( nullptr );
-                setStateObject( nullptr );
             }
 
             if( auto stateListener = getStateListener() )
@@ -669,8 +839,19 @@ namespace fb
             }
         }
 
-        template class CRenderTarget<IRenderTarget>;
-        template class CRenderTarget<IRenderTexture>;
-        template class CRenderTarget<IWindow>;
+        template <class T>
+        SmartPtr<ITexture> CRenderTargetOgre<T>::getTexture() const
+        {
+            return m_texture.lock();
+        }
+
+        template <class T>
+        void CRenderTargetOgre<T>::setTexture( SmartPtr<ITexture> texture )
+        {
+            m_texture = texture;
+        }
+
     }  // end namespace render
 }  // end namespace fb
+
+#endif

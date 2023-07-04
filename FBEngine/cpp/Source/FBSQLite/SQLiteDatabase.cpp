@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, SQLiteDatabase, CSharedObject<IDatabase> );
+    FB_CLASS_REGISTER_DERIVED( fb, SQLiteDatabase, SharedObject<IDatabase> );
 
     SQLiteDatabase::SQLiteDatabase()
     {

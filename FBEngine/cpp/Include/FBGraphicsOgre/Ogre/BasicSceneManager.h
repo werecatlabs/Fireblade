@@ -3,7 +3,7 @@
 
 #include <OgreSceneManager.h>
 #include <OgreFrameListener.h>
-#include <FBCore/Base/Pool.h>
+#include <FBCore/Core/Pool.h>
 
 namespace fb
 {

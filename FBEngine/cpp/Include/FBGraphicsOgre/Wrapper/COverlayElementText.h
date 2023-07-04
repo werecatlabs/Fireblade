@@ -32,8 +32,11 @@ namespace fb
 
             void setCharHeight( f32 charHeight ) override;
 
-            void setAlignment( u8 alignment ) override;
-            u8 getAlignment() const override;
+            void setVerticalAlignment( u8 alignment ) override;
+            u8 getVerticalAlignment() const override;
+
+            virtual void setHorizontalAlignment( u8 alignment );
+            virtual u8 getHorizontalAlignment() const;
 
             void setSpaceWidth( f32 width ) override;
             f32 getSpaceWidth() const override;

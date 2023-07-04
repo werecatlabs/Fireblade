@@ -3,7 +3,7 @@
 
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBCore/Interface/Physics/ICharacterController3.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <foundation/PxVec3.h>
 
 namespace fb
@@ -11,7 +11,7 @@ namespace fb
     namespace physics
     {
         
-        class PhysxCharacterController : public CSharedObject<ICharacterController3>
+        class PhysxCharacterController : public SharedObject<ICharacterController3>
         {
         public:
             PhysxCharacterController();

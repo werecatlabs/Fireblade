@@ -2,11 +2,11 @@
 #define __ImGuiManager_h__
 
 #include <FBImGui/FBImGuiPrerequisites.h>
-#include <FBCore/Base/ConcurrentHashMap.h>
+#include <FBCore/Core/ConcurrentHashMap.h>
 #include <FBCore/Interface/UI/IUIManager.h>
 #include <FBCore/Interface/Graphics/IWindowListener.h>
 #include <FBCore/Interface/System/IEventListener.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <unordered_map>
 
 namespace fb
@@ -42,7 +42,7 @@ namespace fb
             Count
         };
 
-        class ImGuiManager : public CSharedObject<IUIManager>
+        class ImGuiManager : public SharedObject<IUIManager>
         {
         public:
             ImGuiManager();
@@ -100,7 +100,7 @@ namespace fb
             void setMainWindow( SmartPtr<IUIWindow> uiWindow );
 
         protected:
-            class InputListener : public CSharedObject<IEventListener>
+            class InputListener : public SharedObject<IEventListener>
             {
             public:
                 /** Triggered when an input event has occurred. */
@@ -122,7 +122,7 @@ namespace fb
                 ImGuiManager *m_owner = nullptr;
             };
 
-            class WindowListener : public CSharedObject<render::IWindowListener>
+            class WindowListener : public SharedObject<render::IWindowListener>
             {
             public:
                 WindowListener() = default;

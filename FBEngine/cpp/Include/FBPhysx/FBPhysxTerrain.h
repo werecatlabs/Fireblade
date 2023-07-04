@@ -4,7 +4,7 @@
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBPhysx/FBPhysxShape.h>
 #include <FBCore/Interface/Physics/ITerrainShape.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Math/Transform3.h>
 #include <geometry/PxHeightFieldGeometry.h>
 #include <PxSimpleTypes.h>

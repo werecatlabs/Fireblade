@@ -4,7 +4,7 @@
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBCore/Interface/Physics/IBoxShape3.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBPhysx/FBPhysxShape.h>
 #include <geometry/PxBoxGeometry.h>
 
@@ -32,7 +32,7 @@ namespace fb
             bool isValid() const;
 
         protected:
-            class BoxShapeStateListener : public CSharedObject<IStateListener>
+            class BoxShapeStateListener : public SharedObject<IStateListener>
             {
             public:
                 BoxShapeStateListener() = default;

@@ -4,9 +4,9 @@
 #include <FBGraphics/FBGraphicsPrerequisites.h>
 #include <FBGraphics/Wrapper/CSharedGraphicsObject.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Base/BitUtil.h>
-#include <FBCore/Base/Exception.h>
-#include <FBCore/Base/LogManager.h>
+#include <FBCore/Core/BitUtil.h>
+#include <FBCore/Core/Exception.h>
+#include <FBCore/Core/LogManager.h>
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/Graphics/IGraphicsObject.h>
 #include <FBCore/Interface/Graphics/IGraphicsScene.h>
@@ -160,7 +160,7 @@ namespace fb
             WeakPtr<IGraphicsScene> m_creator;
         };
 
-        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, CGraphicsObject, T, CSharedObject<T> );
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, CGraphicsObject, T, SharedObject<T> );
 
         template <class T>
         SmartPtr<IGraphicsScene> CGraphicsObject<T>::getCreator() const

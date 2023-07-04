@@ -28,9 +28,23 @@ namespace fb
             /** @copydoc IUIText::getTextSize */
             f32 getTextSize() const override;
 
+            void setVerticalAlignment( u8 alignment );
+            u8 getVerticalAlignment() const;
+
+            
+            void setHorizontalAlignment( u8 alignment )
+            {
+            }
+
+            u8 getHorizontalAlignment() const
+            {
+                return 0;
+            }
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
+            /** Text string. */
             String m_text;
             f32 m_textSize = 10.0f;
         };

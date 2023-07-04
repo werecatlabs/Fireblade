@@ -1,12 +1,8 @@
 #include <FBMesh/FBMeshPCH.h>
 #include "FBMesh/NGPlantLoader.h"
-#include <FBCore/Base/Path.h>
+#include <FBCore/Core/Path.h>
 #include <FBCore/Interface/Mesh/IVertexElement.h>
-#include "FBMesh/CMesh.h"
-#include "FBMesh/CVertexBuffer.h"
-#include "FBMesh/CIndexBuffer.h"
-#include "FBMesh/CSubMesh.h"
-#include <FBMesh/CVertexDeclaration.h>
+#include "FBCore/FBCore.h"
 
 #if FB_USE_NGPLANT
 #    include <ngpcore/p3dmodel.h>
@@ -348,9 +344,9 @@ namespace fb
         //	meshBuffer->getVertexBuffer()[vertIdx] = irrVert;
         // }
 
-        SmartPtr<IVertexBuffer> pBuf( new CVertexBuffer );
+        SmartPtr<IVertexBuffer> pBuf( new VertexBuffer );
 
-        SmartPtr<IVertexDeclaration> decl( new CVertexDeclaration );
+        SmartPtr<IVertexDeclaration> decl( new VertexDeclaration );
         pBuf->setVertexDeclaration( decl );
 
         f32 *pReal = nullptr;
@@ -361,13 +357,13 @@ namespace fb
 
         unsigned short iBinding = 0;
         u32 offset = 0;
-        decl->addElement( 0, offset, CVertexDeclaration::VertexElementSemantic::VES_POSITION,
+        decl->addElement( 0, offset, VertexDeclaration::VertexElementSemantic::VES_POSITION,
                           IVertexElement::VertexElementType::VET_FLOAT3 );
         offset += sizeof( f32 ) * 3;
-        decl->addElement( 0, offset, CVertexDeclaration::VertexElementSemantic::VES_NORMAL,
+        decl->addElement( 0, offset, VertexDeclaration::VertexElementSemantic::VES_NORMAL,
                           IVertexElement::VertexElementType::VET_FLOAT3 );
         offset += sizeof( f32 ) * 3;
-        decl->addElement( 0, offset, CVertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
+        decl->addElement( 0, offset, VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
                           IVertexElement::VertexElementType::VET_FLOAT2, 0 );
         offset += sizeof( f32 ) * 2;
 
@@ -413,9 +409,9 @@ namespace fb
         }
 
         bool useWords = ( pBuf->getNumVerticies() >= 65535 ) ? false : true;
-        SmartPtr<IIndexBuffer> pIBuf( new CIndexBuffer );
+        SmartPtr<IIndexBuffer> pIBuf( new IndexBuffer );
         pIBuf->setNumIndices( meshIndexCount );
-        pIBuf->setIndexType( useWords ? CIndexBuffer::Type::IT_16BIT : CIndexBuffer::Type::IT_32BIT );
+        pIBuf->setIndexType( useWords ? IndexBuffer::Type::IT_16BIT : IndexBuffer::Type::IT_32BIT );
 
         subMesh->setIndexBuffer( pIBuf );
         pIBuf->createIndexData();

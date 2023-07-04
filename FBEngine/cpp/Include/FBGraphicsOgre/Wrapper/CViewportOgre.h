@@ -4,7 +4,7 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBGraphics/Wrapper/CViewport.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
@@ -46,7 +46,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class ViewportStateListener : public CSharedObject<IStateListener>
+            class ViewportStateListener : public SharedObject<IStateListener>
             {
             public:
                 ViewportStateListener() = default;

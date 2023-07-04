@@ -3,14 +3,14 @@
 
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBCore/Interface/Physics/IPhysicsMaterial3.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Memory/RawPtr.h>
 
 namespace fb
 {
     namespace physics
     {
-        class PhysxMaterial : public CSharedObject<IPhysicsMaterial3>
+        class PhysxMaterial : public SharedObject<IPhysicsMaterial3>
         {
         public:
             PhysxMaterial();

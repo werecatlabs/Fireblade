@@ -5,7 +5,7 @@
 #include <FBCore/Interface/Graphics/IGraphicsScene.h>
 #include <FBCore/Interface/Graphics/IGraphicsObject.h>
 #include <FBCore/Interface/Graphics/IAnimationTextureControl.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <OgreMaterial.h>
 #include <OgreTextureUnitState.h>
 #include <OgreController.h>
@@ -15,7 +15,7 @@ namespace fb
     namespace render
     {
 
-        class CAnimationTextureControl : public CSharedObject<IAnimationTextureControl>
+        class CAnimationTextureControl : public SharedObject<IAnimationTextureControl>
         {
         public:
             //static const u32 FRAME_EVENT_RENDER_QUEUED;

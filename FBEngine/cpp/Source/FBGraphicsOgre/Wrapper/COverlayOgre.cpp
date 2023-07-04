@@ -11,7 +11,7 @@ namespace fb
 {
     namespace render
     {
-        FB_CLASS_REGISTER_DERIVED( fb::render, COverlayOgre, CSharedObject<IOverlay> );
+        FB_CLASS_REGISTER_DERIVED( fb::render, COverlayOgre, SharedObject<IOverlay> );
 
         COverlayOgre::COverlayOgre()
         {

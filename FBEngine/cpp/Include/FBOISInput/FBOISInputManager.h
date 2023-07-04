@@ -5,19 +5,19 @@
 #include <FBCore/Interface/Input/IInputDeviceManager.h>
 #include <FBCore/Interface/Graphics/IWindow.h>
 #include <FBCore/Interface/Graphics/IWindowListener.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Memory/RawPtr.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/FixedArray.h>
-#include <FBCore/Base/Map.h>
-#include <FBCore/Base/HashMap.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/FixedArray.h>
+#include <FBCore/Core/Map.h>
+#include <FBCore/Core/HashMap.h>
 #include <FBOISInput/Extern/OIS/OISKeyboard.h>
 #include <FBOISInput/Extern/OIS/OISJoyStick.h>
 #include <FBOISInput/Extern/OIS/OISMouse.h>
 
 namespace fb
 {
-    class OISInputManager : public CSharedObject<IInputDeviceManager>
+    class OISInputManager : public SharedObject<IInputDeviceManager>
     {
     public:
         class KeyListener : public OIS::KeyListener
@@ -185,7 +185,7 @@ namespace fb
         FB_CLASS_REGISTER_DECL;
 
     protected:
-        class WindowListener : public CSharedObject<render::IWindowListener>
+        class WindowListener : public SharedObject<render::IWindowListener>
         {
         public:
             WindowListener() = default;

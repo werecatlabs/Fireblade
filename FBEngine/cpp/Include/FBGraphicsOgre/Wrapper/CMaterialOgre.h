@@ -3,7 +3,7 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBGraphics/Wrapper/CMaterial.h>
 #include <OgreMaterial.h>
 #include <OgreRenderTargetListener.h>
@@ -38,18 +38,6 @@ namespace fb
             SmartPtr<IMaterialNode> getRoot() const override;
             void setRoot( SmartPtr<IMaterialNode> root ) override;
 
-            /** @copydoc IObject::toData */
-            SmartPtr<ISharedObject> toData() const override;
-
-            /** @copydoc IObject::fromData */
-            void fromData( SmartPtr<ISharedObject> data ) override;
-
-            /** @copydoc IResource::getProperties */
-            SmartPtr<Properties> getProperties() const override;
-
-            /** @copydoc IResource::setProperties */
-            void setProperties( SmartPtr<Properties> properties ) override;
-
             /** @copydoc IObject::getChildObjects */
             Array<SmartPtr<ISharedObject>> getChildObjects() const override;
 
@@ -63,7 +51,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class MaterialStateListener : public CSharedObject<IStateListener>
+            class MaterialStateListener : public SharedObject<IStateListener>
             {
             public:
                 MaterialStateListener();

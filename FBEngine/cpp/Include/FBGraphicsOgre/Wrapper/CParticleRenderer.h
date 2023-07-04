@@ -6,7 +6,7 @@
 #include <FBCore/Interface/Graphics/IGraphicsScene.h>
 #include <FBGraphicsOgre/Wrapper/CGraphicsObjectOgre.h>
 #include <FBGraphicsOgre/Wrapper/CParticleNode.h>
-#include <FBCore/Base/HashMap.h>
+#include <FBCore/Core/HashMap.h>
 
 #if FB_OGRE_USE_PARTICLE_UNIVERSE
 #    include "ParticleUniverseSystemManager.h"

@@ -858,17 +858,24 @@ namespace fb
                 }
             }
 
-            //if( auto p = getListenersPtr() )
-            //{
-            //    auto &listeners = *p;
-            //    for( auto &listener : listeners )
-            //    {
-            //        if( listener )
-            //        {
-            //            listener->handleTransform( transform );
-            //        }
-            //    }
-            //}
+            if( auto p = getObjectListenersPtr() )
+            {
+                auto &listeners = *p;
+                for( auto &listener : listeners )
+                {
+                    if( listener )
+                    {
+                        auto args = Parameters();
+                        args.resize(2);
+
+                        Parameter();
+                        args[0].setVector3( transform.getPosition() );
+                        args[1].setQuaternion( transform.getOrientation() );
+
+                        listener->handleEvent( IEvent::Type::Scene, IEvent::transform, args, this, nullptr, nullptr );                        
+                    }
+                }
+            }
         }
 
         Array<SmartPtr<ISharedObject>> PhysxRigidDynamic::getChildObjects() const

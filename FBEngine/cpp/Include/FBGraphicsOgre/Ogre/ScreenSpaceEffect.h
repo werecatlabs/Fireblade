@@ -3,7 +3,7 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IScreenSpaceEffect.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <OgrePixelFormat.h>
 #include <boost/shared_ptr.hpp>
 #include <OgrePrerequisites.h>
@@ -15,7 +15,7 @@ namespace fb
     namespace render
     {
 
-        class ScreenSpaceEffect : public CSharedObject<IScreenSpaceEffect>
+        class ScreenSpaceEffect : public SharedObject<IScreenSpaceEffect>
         {
         public:
             ScreenSpaceEffect( SSEffectRenderer *r );

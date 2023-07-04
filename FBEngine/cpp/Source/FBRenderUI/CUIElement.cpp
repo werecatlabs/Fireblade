@@ -257,9 +257,49 @@ namespace fb
         }
 
         template <class T>
-        SharedPtr<ConcurrentArray<SmartPtr<IUIElement>>> CUIElement<T>::getChildren() const
+        CUIElement<T>::CUIElement() :
+            m_parent( nullptr ),
+            m_userData( nullptr ),
+            m_isEnabled( false ),
+            m_hasFocus( false ),
+            m_isHighlighted( false ),
+            m_isSelected( false )
         {
-            return m_children;
+            m_name = String( "GUIElement" ) + StringUtil::toString( m_nextGeneratedNameExt++ );
+
+            m_layout = nullptr;
+
+            m_children = fb::make_shared<ConcurrentArray<SmartPtr<IUIElement>>>();
+        }
+
+        template <class T>
+        CUIElement<T>::~CUIElement()
+        {
+            unload( nullptr );
+        }
+
+        template <class T>
+        SmartPtr<ISharedObject> CUIElement<T>::getOwner() const
+        {
+            return m_owner;
+        }
+
+        template <class T>
+        void CUIElement<T>::setOwner( SmartPtr<ISharedObject> owner )
+        {
+            m_owner = owner;
+        }
+
+        template <class T>
+        bool CUIElement<T>::getSameLine() const
+        {
+            return m_sameLine;
+        }
+
+        template <class T>
+        void CUIElement<T>::setSameLine( bool sameLine )
+        {
+            m_sameLine = sameLine;
         }
 
         template <class T>
@@ -1005,8 +1045,8 @@ namespace fb
             auto factoryManager = applicationManager->getFactoryManager();
 
             auto properties = factoryManager->make_ptr<Properties>();
-            //properties->setProperty( "size", m_size );
-            //properties->setProperty( "position", m_position );
+            properties->setProperty( "size", getSize() );
+            properties->setProperty( "position", getPosition() );
             properties->setProperty( "enabled", m_isEnabled );
             properties->setProperty( "visible", isVisible() );
             return properties;
@@ -1015,10 +1055,15 @@ namespace fb
         template <class T>
         void CUIElement<T>::setProperties( SmartPtr<Properties> properties )
         {
+            auto enabled = isEnabled();
+            auto visible = isVisible();
             //properties->getPropertyValue( "size", m_size );
             //properties->getPropertyValue( "position", m_position );
-            properties->getPropertyValue( "enabled", m_isEnabled );
-            //properties->getPropertyValue( "visible", m_isVisible );
+            properties->getPropertyValue( "enabled", enabled );
+            properties->getPropertyValue( "visible", visible );
+
+            setEnabled( enabled );
+            setVisible( visible );
         }
 
         template <class T>
@@ -1029,7 +1074,11 @@ namespace fb
 
             objects.push_back( m_dragSource );
             objects.push_back( m_dropTarget );
-            //objects.push_back( m_container );
+
+            if( auto element = getOverlayElement() )
+            {
+                objects.push_back( element );
+            }
 
             return objects;
         }

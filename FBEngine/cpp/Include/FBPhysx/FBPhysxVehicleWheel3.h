@@ -3,14 +3,14 @@
 
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBCore/Interface/Physics/IPhysicsVehicleWheel3.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     namespace physics
     {
 
-        class PhysxVehicleWheel3 : public CSharedObject<IPhysicsVehicleWheel3>
+        class PhysxVehicleWheel3 : public SharedObject<IPhysicsVehicleWheel3>
         {
         public:
             PhysxVehicleWheel3();

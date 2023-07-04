@@ -2,7 +2,7 @@
 #define CRenderTexture_h__
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBGraphicsOgre/Wrapper/CRenderTarget.h>
+#include <FBGraphicsOgre/Wrapper/CRenderTargetOgre.h>
 #include <FBCore/Interface/Graphics/IRenderTexture.h>
 #include <sstream>
 
@@ -12,7 +12,7 @@ namespace fb
     {
 
         /** Implements IRenderTexture interface for Ogre. */
-        class CRenderTexture : public CRenderTarget<IRenderTexture>
+        class CRenderTexture : public CRenderTargetOgre<IRenderTexture>
         {
         public:
             /** Constructor. */

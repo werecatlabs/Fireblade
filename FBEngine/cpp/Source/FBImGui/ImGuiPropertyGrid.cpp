@@ -108,6 +108,25 @@ namespace fb
                                 handlePropertyChanged( propertyGrid, name, str );
                             }
                         }
+                        else if( typeLower == ( "vector2i" )  )
+                        {
+                            auto vector = StringUtil::parseVector2<s32>( value );
+
+                            s32 value[2] = { 0 };
+
+                            value[0] = vector.X();
+                            value[1] = vector.Y();
+
+                            if( ImGui::InputInt2( name.c_str(), value ) )
+                            {
+                                auto newVector = Vector2I( value[0], value[1] );
+                                auto str = StringUtil::toString( newVector );
+
+                                properties->setProperty( name, newVector );
+
+                                handlePropertyChanged( propertyGrid, name, str );
+                            }
+                        }
                         else if( typeLower == ( "vector2" ) || typeLower == ( "vector2f" ) ||
                                  typeLower == ( "vector2d" ) )
                         {
@@ -121,6 +140,26 @@ namespace fb
                             if( ImGui::InputFloat2( name.c_str(), value ) )
                             {
                                 auto newVector = Vector2F( value[0], value[1] );
+                                auto str = StringUtil::toString( newVector );
+
+                                properties->setProperty( name, newVector );
+
+                                handlePropertyChanged( propertyGrid, name, str );
+                            }
+                        }
+                        else if( typeLower == ( "vector3i" ) )
+                        {
+                            auto vector = StringUtil::parseVector3<s32>( value );
+
+                            s32 value[3] = { 0 };
+
+                            value[0] = vector.X();
+                            value[1] = vector.Y();
+                            value[2] = vector.Z();
+
+                            if( ImGui::InputInt3( name.c_str(), value ) )
+                            {
+                                auto newVector = Vector3I( value[0], value[1], value[2] );
                                 auto str = StringUtil::toString( newVector );
 
                                 properties->setProperty( name, newVector );

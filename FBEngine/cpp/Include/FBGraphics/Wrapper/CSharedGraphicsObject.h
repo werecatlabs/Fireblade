@@ -1,7 +1,7 @@
 #ifndef CSharedGraphicsObject_h__
 #define CSharedGraphicsObject_h__
 
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/System/IStateManager.h>
@@ -14,7 +14,7 @@ namespace fb
     namespace render
     {
         template <typename T>
-        class CSharedGraphicsObject : public CSharedObject<T>
+        class CSharedGraphicsObject : public SharedObject<T>
         {
         public:
             CSharedGraphicsObject() = default;
@@ -33,7 +33,7 @@ namespace fb
 
                 auto task = Thread::getCurrentTask();
 
-                const auto &loadingState = CSharedObject<T>::getLoadingState();
+                const auto &loadingState = SharedObject<T>::getLoadingState();
 
                 return loadingState == LoadingState::Loaded && task == renderTask;
             }
@@ -145,7 +145,7 @@ namespace fb
             m_stateListener = stateListener;
         }
 
-        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb::render, CSharedGraphicsObject, T, CSharedObject<T> );
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb::render, CSharedGraphicsObject, T, SharedObject<T> );
 
     }  // namespace render
 }  // namespace fb

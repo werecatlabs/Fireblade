@@ -15,10 +15,10 @@ same license as the rest of the engine.
 #ifndef H_WJ_MaterialGenerator
 #define H_WJ_MaterialGenerator
 
-#include <FBCore/Base/HashMap.h>
+#include <FBCore/Core/HashMap.h>
 #include "OgreMaterial.h"
 #include "OgreStringVector.h"
-#include <FBCore/Base/HashMap.h>
+#include <FBCore/Core/HashMap.h>
 
 class DeferredShadingSystem;
 

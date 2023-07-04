@@ -2,7 +2,7 @@
 #define NGPlantLoader_h__
 
 #include <FBMesh/FBMeshPrerequisites.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 
 namespace fb
 {

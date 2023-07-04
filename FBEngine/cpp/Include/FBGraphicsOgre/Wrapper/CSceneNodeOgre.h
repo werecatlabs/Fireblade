@@ -3,11 +3,11 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/ISceneNode.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/Script/IScriptReceiver.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Atomics/Atomics.h>
-#include <FBCore/Base/Parameter.h>
+#include <FBCore/Core/Parameter.h>
 #include <FBGraphics/Wrapper/CSceneNode.h>
 #include <OgreNode.h>
 
@@ -132,7 +132,7 @@ namespace fb
 
             void destroyStateContext();
 
-            class ScriptReceiver : public CSharedObject<IScriptReceiver>
+            class ScriptReceiver : public SharedObject<IScriptReceiver>
             {
             public:
                 ScriptReceiver( CSceneNodeOgre *node );
@@ -149,7 +149,7 @@ namespace fb
                 CSceneNodeOgre *m_node = nullptr;
             };
 
-            class SceneNodeStateListener : public CSharedObject<IStateListener>
+            class SceneNodeStateListener : public SharedObject<IStateListener>
             {
             public:
                 SceneNodeStateListener() = default;

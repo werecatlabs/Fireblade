@@ -3,14 +3,14 @@
 
 #include <FBFileSystem/FBFileSystemPrerequisites.h>
 #include <FBCore/Interface/IO/IArchive.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/FileInfo.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/FileInfo.h>
 
 namespace fb
 {
 
-    class ZipArchive : public CSharedObject<IArchive>
+    class ZipArchive : public SharedObject<IArchive>
     {
     public:
         ZipArchive() = default;

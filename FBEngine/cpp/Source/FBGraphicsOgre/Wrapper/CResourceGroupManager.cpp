@@ -231,7 +231,7 @@ namespace fb
 
         void CResourceGroupManager::parseScripts( const Array<String> &scripts )
         {
-            parseScripts( CoreUtil::createSet( scripts ) );
+            parseScripts( Util::createSet( scripts ) );
         }
 
         void CResourceGroupManager::parseScripts( const Set<String> &scripts )
@@ -334,7 +334,7 @@ namespace fb
                 Array<String> scriptFileNames;
                 fileSystem->getFileNamesWithExtension( extension, scriptFileNames );
 
-                auto uniqueScriptFileNames = CoreUtil::createSet( scriptFileNames );
+                auto uniqueScriptFileNames = Util::createSet( scriptFileNames );
                 for( auto fileName : uniqueScriptFileNames )
                 {
                     auto data = fileSystem->open( fileName, true, false, false, false );
@@ -386,7 +386,7 @@ namespace fb
                 Array<String> scriptFileNames;
                 fileSystem->getFileNamesWithExtension( extension, scriptFileNames );
 
-                auto uniqueScriptFileNames = CoreUtil::createSet( scriptFileNames );
+                auto uniqueScriptFileNames = Util::createSet( scriptFileNames );
                 for( auto fileName : uniqueScriptFileNames )
                 {
                     auto data = fileSystem->open( fileName );
@@ -424,7 +424,7 @@ namespace fb
                 Array<String> scriptFileNames;
                 fileSystem->getFileNamesWithExtension( extension, scriptFileNames );
 
-                auto uniqueScriptFileNames = CoreUtil::createSet( scriptFileNames );
+                auto uniqueScriptFileNames = Util::createSet( scriptFileNames );
                 for( auto fileName : uniqueScriptFileNames )
                 {
                     auto data = fileSystem->open( fileName );

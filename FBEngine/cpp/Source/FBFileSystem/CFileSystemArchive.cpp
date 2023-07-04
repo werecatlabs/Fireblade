@@ -9,7 +9,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, CFileSystemArchive, CSharedObject<IArchive> );
+    FB_CLASS_REGISTER_DERIVED( fb, CFileSystemArchive, SharedObject<IArchive> );
 
     CFileSystemArchive::CFileSystemArchive( const String &path, bool ignoreCase, bool ignorePaths ) :
         m_path( path )

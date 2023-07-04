@@ -2,10 +2,10 @@
 #define CResourceGraphics_h__
 
 #include <FBCore/Interface/Resource/IResource.h>
-#include <FBCore/Resource/CResource.h>
+#include <FBCore/Resource/Resource.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Base/Handle.h>
-#include <FBCore/Base/Properties.h>
+#include <FBCore/Core/Handle.h>
+#include <FBCore/Core/Properties.h>
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/System/IStateManager.h>
@@ -19,7 +19,7 @@ namespace fb
     {
 
         template <class T>
-        class CResourceGraphics : public CResource<T>
+        class CResourceGraphics : public Resource<T>
         {
         public:
             CResourceGraphics()
@@ -33,7 +33,7 @@ namespace fb
             /** @copydoc ISharedObject::unload */
             void unload( SmartPtr<ISharedObject> data )
             {
-                CResource<T>::unload( data );
+                Resource<T>::unload( data );
             }
 
             void saveToFile( const String &filePath )
@@ -47,7 +47,7 @@ namespace fb
             /** @copydoc IResource::getProperties */
             virtual SmartPtr<Properties> getProperties() const
             {
-                auto properties = CResource<T>::getProperties();
+                auto properties = Resource<T>::getProperties();
 
                 const auto handle = this->getHandle();
                 properties->setProperty( "name", handle->getName() );
@@ -80,9 +80,9 @@ namespace fb
 
                 if( auto stateManager = applicationManager->getStateManager() )
                 {
-                    if( auto stateObject = CResource<T>::getStateObject() )
+                    if( auto stateObject = Resource<T>::getStateObject() )
                     {
-                        if( auto stateListener = CResource<T>::getStateListener() )
+                        if( auto stateListener = Resource<T>::getStateListener() )
                         {
                             stateObject->removeStateListener( stateListener );
                         }
@@ -101,14 +101,14 @@ namespace fb
                         stateObject->unload( nullptr );
                     }
 
-                    if( auto stateListener = CResource<T>::getStateListener() )
+                    if( auto stateListener = Resource<T>::getStateListener() )
                     {
                         stateListener->unload( nullptr );
                     }
                 }
 
-                CResource<T>::setStateListener( nullptr );
-                CResource<T>::setStateObject( nullptr );
+                Resource<T>::setStateListener( nullptr );
+                Resource<T>::setStateObject( nullptr );
             }
 
             bool isThreadSafe() const
@@ -119,7 +119,7 @@ namespace fb
 
                 auto task = Thread::getCurrentTask();
 
-                const auto &loadingState = CSharedObject<T>::getLoadingState();
+                const auto &loadingState = SharedObject<T>::getLoadingState();
 
                 return loadingState == LoadingState::Loaded && task == renderTask;
             }
@@ -129,7 +129,7 @@ namespace fb
                 auto applicationManager = core::IApplicationManager::instance();
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
 
-                if( auto stateObject = CResource<T>::getStateObject() )
+                if( auto stateObject = Resource<T>::getStateObject() )
                 {
                     const auto stateTask = graphicsSystem->getStateTask();
                     stateObject->addMessage( stateTask, message );
@@ -139,7 +139,7 @@ namespace fb
             FB_CLASS_REGISTER_TEMPLATE_DECL( CResourceGraphics, T );
         };
 
-        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, CResourceGraphics, T, CResource<T> );
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, CResourceGraphics, T, Resource<T> );
 
     }  // end namespace render
 }  // end namespace fb

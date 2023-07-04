@@ -3,16 +3,16 @@
 
 #include <FBGraphics/Wrapper/CGraphicsScene.h>
 #include <FBCore/Interface/Graphics/ISceneNode.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/ConcurrentArray.h>
-#include <FBCore/Base/HashMap.h>
-#include <FBCore/Base/StringTypes.h>
-#include <FBCore/Base/Pool.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/ConcurrentArray.h>
+#include <FBCore/Core/HashMap.h>
+#include <FBCore/Core/StringTypes.h>
+#include <FBCore/Core/Pool.h>
 #include <FBGraphicsOgre/FBOgreTypes.h>
 #include <FBGraphicsOgre/Wrapper/CSceneNodeOgre.h>
-#include <FBCore/Base/Map.h>
-#include <FBCore/Base/Set.h>
-#include <FBCore/Base/HashMap.h>
+#include <FBCore/Core/Map.h>
+#include <FBCore/Core/Set.h>
+#include <FBCore/Core/HashMap.h>
 
 namespace fb
 {
@@ -165,7 +165,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class MaterialSharedListener : public CSharedObject<IEventListener>
+            class MaterialSharedListener : public SharedObject<IEventListener>
             {
             public:
                 MaterialSharedListener() = default;
@@ -190,7 +190,7 @@ namespace fb
                 WeakPtr<CGraphicsSceneOgre> m_owner = nullptr;
             };
 
-            class SceneManagerStateListener : public CSharedObject<IStateListener>
+            class SceneManagerStateListener : public SharedObject<IStateListener>
             {
             public:
                 SceneManagerStateListener();
@@ -207,7 +207,7 @@ namespace fb
                 CGraphicsSceneOgre *m_owner = nullptr;
             };
 
-            class SkyboxStateListener : public CSharedObject<IStateListener>
+            class SkyboxStateListener : public SharedObject<IStateListener>
             {
             public:
                 SkyboxStateListener();

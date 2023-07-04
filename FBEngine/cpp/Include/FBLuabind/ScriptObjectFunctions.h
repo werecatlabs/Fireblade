@@ -3,7 +3,7 @@
 
 #include "FBLuabind/FBLuabindTypes.h"
 #include "FBLuabind/FBLuaScriptError.h"
-#include <FBCore/Base/Parameter.h>
+#include <FBCore/Core/Parameter.h>
 #include <FBCore/FBCore.h>
 
 namespace fb

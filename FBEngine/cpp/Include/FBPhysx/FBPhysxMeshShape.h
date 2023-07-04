@@ -4,8 +4,8 @@
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBCore/Interface/Physics/IMeshShape.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/Array.h>
 #include <FBPhysx/FBPhysxShape.h>
 #include <geometry/PxBoxGeometry.h>
 

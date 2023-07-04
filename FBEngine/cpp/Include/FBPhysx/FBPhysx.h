@@ -2,7 +2,7 @@
 #define __FBPhysx_h__
 
 #include <FBCore/FBCoreTypes.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 #if FB_USE_AUTO_LINK
 #    ifdef _DEBUG
@@ -92,7 +92,7 @@ namespace fb
 {
     namespace physics
     {
-        class FBPhysx : public CSharedObject<ISharedObject>
+        class FBPhysx : public SharedObject<ISharedObject>
         {
         public:
             FBPhysx() = default;

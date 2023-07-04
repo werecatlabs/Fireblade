@@ -2,9 +2,9 @@
 #define MeshLoader_h__
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/StringTypes.h>
 #include <OgreMesh.h>
 
 #if FB_USE_ASSET_IMPORT
@@ -18,7 +18,7 @@ namespace fb
     namespace render
     {
         
-        class MeshLoader : public CSharedObject<ISharedObject>
+        class MeshLoader : public SharedObject<ISharedObject>
         {
         public:
             MeshLoader();

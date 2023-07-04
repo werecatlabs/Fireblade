@@ -2,12 +2,12 @@
 #include <FBFileSystem/CNativeFileDialog.h>
 #include <FBFileSystem/extern/nativefiledialog/nfd.h>
 #include <FBFileSystem/extern/nativefiledialog/common.h>
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/Core/StringUtil.h>
 #include <iostream>
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, CNativeFileDialog, CSharedObject<INativeFileDialog> );
+    FB_CLASS_REGISTER_DERIVED( fb, CNativeFileDialog, SharedObject<INativeFileDialog> );
 
     CNativeFileDialog::CNativeFileDialog()
     {

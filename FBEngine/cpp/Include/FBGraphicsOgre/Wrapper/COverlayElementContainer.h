@@ -53,7 +53,7 @@ namespace fb
                 void handleQuery( SmartPtr<IStateQuery> &query ) override;
             };
 
-            class MaterialStateListener : public CSharedObject<IStateListener>
+            class MaterialStateListener : public SharedObject<IStateListener>
             {
             public:
                 MaterialStateListener() = default;

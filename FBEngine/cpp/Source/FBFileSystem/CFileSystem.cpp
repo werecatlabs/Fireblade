@@ -1042,7 +1042,7 @@ namespace fb
     {
         try
         {
-            FB_ASSERT( CSharedObject<IArchive>::typeInfo() != 0 );
+            FB_ASSERT( SharedObject<IArchive>::typeInfo() != 0 );
 
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );

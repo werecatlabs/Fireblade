@@ -3,13 +3,13 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/ITerrainRayResult.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     namespace render
     {
-        class CTerrainRayResult : public CSharedObject<ITerrainRayResult>
+        class CTerrainRayResult : public SharedObject<ITerrainRayResult>
         {
         public:
             CTerrainRayResult();

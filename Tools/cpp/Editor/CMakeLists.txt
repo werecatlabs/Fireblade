@@ -699,7 +699,7 @@ set_target_properties(Editor PROPERTIES
 
         )
 
-add_dependencies(Editor FBAnimation FBApplication FBCPlusPlus FBGraphics FBAero FBAi FBAudio FBCore FBFileSystem FBMesh FBProcedural FBSQLite FBVehicle FBRenderUI)
+add_dependencies(Editor FBGraphics FBCore FBFileSystem FBRenderUI)
 
 if (FB_ENABLE_LUA)
     add_dependencies(Editor FBLua)

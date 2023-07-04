@@ -3,7 +3,7 @@
 
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBCore/Interface/Physics/IPhysicsVehicleInput3.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace physx
 {
@@ -12,7 +12,7 @@ namespace physx
 
 namespace fb::physics
 {
-    class PhysxVehicleInput : public CSharedObject<IPhysicsVehicleInput3>
+    class PhysxVehicleInput : public SharedObject<IPhysicsVehicleInput3>
     {
     public:
         PhysxVehicleInput();

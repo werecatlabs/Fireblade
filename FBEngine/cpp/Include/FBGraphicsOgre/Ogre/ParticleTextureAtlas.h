@@ -2,7 +2,7 @@
 #define ParticleTextureAtlas_h__
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <Ogre.h>
 
 namespace fb

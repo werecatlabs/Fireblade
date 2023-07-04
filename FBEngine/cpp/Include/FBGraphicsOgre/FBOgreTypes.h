@@ -1,7 +1,7 @@
 #ifndef _FBOgreTypes_H_
 #define _FBOgreTypes_H_
 
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/Core/StringUtil.h>
 
 namespace fb
 {

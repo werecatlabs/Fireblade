@@ -3,15 +3,15 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Resource/IMeshManager.h>
-#include <FBCore/Base/HashMap.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Core/HashMap.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     namespace render
     {
 
-        class CMeshManager : public CSharedObject<IMeshManager>
+        class CMeshManager : public SharedObject<IMeshManager>
         {
         public:
             CMeshManager();

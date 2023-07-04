@@ -1,10 +1,10 @@
-#ifndef Cubemap_h__
-#define Cubemap_h__
+#ifndef __CCubemap_h__
+#define __CCubemap_h__
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/ICubemap.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/Array.h>
 #include <OgreFrameListener.h>
 #include <OgreRenderTargetListener.h>
 #include <OgreTexture.h>
@@ -16,7 +16,7 @@ namespace fb
         /**
         * @brief A cubemap object.
          */
-        class CCubemap : public CSharedObject<ICubemap>
+        class CCubemap : public SharedObject<ICubemap>
         {
         public:
             /** @brief Constructor. */
@@ -53,8 +53,8 @@ namespace fb
             u32 getUpdateInterval() const override;
             void setUpdateInterval( u32 milliseconds ) override;
 
-            void addExludedObject( SmartPtr<IGraphicsObject> object ) override;
-            Array<SmartPtr<IGraphicsObject>> getExludedObjects() const override;
+            void addExcludedObject( SmartPtr<IGraphicsObject> object ) override;
+            Array<SmartPtr<IGraphicsObject>> getExcludedObjects() const override;
 
             void generateMaterial( const String &materialName );
 
@@ -125,4 +125,4 @@ namespace fb
     }  // end namespace render
 }  // end namespace fb
 
-#endif  // Cubemap_h__
+#endif  // __CCubemap_h__

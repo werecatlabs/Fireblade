@@ -13,7 +13,7 @@
 #    include <OgreResourceGroupManager.h>
 #    include <OgreSimpleRenderable.h>
 #    include <OgreRenderQueueListener.h>
-#    include <FBCore/Base/StringTypes.h>
+#    include <FBCore/Core/StringTypes.h>
 #include "FBCore/Memory/SmartPtr.h"
 
 #    include <imgui.h>

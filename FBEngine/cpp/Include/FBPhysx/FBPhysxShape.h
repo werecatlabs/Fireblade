@@ -6,9 +6,9 @@
 #include <FBCore/Interface/Physics/IPhysicsShape3.h>
 #include <FBCore/Interface/Physics/IPhysicsBody3.h>
 #include <FBCore/Interface/Physics/IPhysicsMaterial3.h>
-#include <FBCore/Rtti/RttiClassDefinition.h>
-#include <FBCore/Base/Properties.h>
-#include <FBCore/Base/LogManager.h>
+#include <FBCore/System/RttiClassDefinition.h>
+#include <FBCore/Core/Properties.h>
+#include <FBCore/Core/LogManager.h>
 #include <FBCore/State/Messages/StateMessage.h>
 #include <FBCore/Interface/System/IStateMessage.h>
 #include <FBCore/Interface/System/IStateListener.h>
@@ -191,7 +191,7 @@ namespace fb
             FB_CLASS_REGISTER_TEMPLATE_DECL( PhysxShape, T );
 
         protected:
-            class ShapeStateListener : public CSharedObject<IStateListener>
+            class ShapeStateListener : public SharedObject<IStateListener>
             {
             public:
                 ShapeStateListener() = default;

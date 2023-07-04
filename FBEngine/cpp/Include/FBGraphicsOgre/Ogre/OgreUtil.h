@@ -2,12 +2,12 @@
 #define _OgreUtil_H
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBCore/Base/ColourF.h>
+#include <FBCore/Core/ColourF.h>
 #include <FBCore/Math/AABB3.h>
 #include <FBCore/Math/Vector2.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Quaternion.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 #include <OgreVector.h>
 #include <OgreString.h>
 #include <OgreColourValue.h>

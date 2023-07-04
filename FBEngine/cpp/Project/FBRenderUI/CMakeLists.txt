@@ -1,6 +1,6 @@
 project(FBRenderUI)
 
-add_compile_definitions (MYGUI_STATIC)
+#add_compile_definitions (MYGUI_STATIC)
 #add_compile_definitions (MYGUI_USE_FREETYPE)
 add_compile_definitions (FB_USE_MYGUI=0)
 
@@ -35,19 +35,10 @@ endif()
 
 include_directories( ${FB_ROOT}/Dependencies/tinyxml/include )
 include_directories( ${FB_ROOT}/Dependencies/utf8/source )
-include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/include )
-include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/OgreMain/include )
-include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/Components/Overlay/include )
-include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/Components/Terrain/include )
-include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/Components/Paging/include )
-include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/Components/Bites/include )
-include_directories( ${FB_ROOT}/AdditionalLibraries/particle_universe/include )
-include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/PlugIns/CgProgramManager/include )
-include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/RenderSystems/GL/include )
 include_directories( ../../Include )
 include_directories( ../../Include/FBRenderUI )
-include_directories( ../../Include/FBRenderUI/Extern/MyGUI/MyGUIEngine/include )
-include_directories( ../../Include/FBRenderUI/Extern/MyGUI/Platforms/Ogre/OgrePlatform/include )
+#include_directories( ../../Include/FBRenderUI/Extern/MyGUI/MyGUIEngine/include )
+#include_directories( ../../Include/FBRenderUI/Extern/MyGUI/Platforms/Ogre/OgrePlatform/include )
 
 if(WIN32)
     #include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/include/win32 )
@@ -60,13 +51,12 @@ else()
     include_directories( ../../Include/FBGraphicsOgre/BuildSettings/linux )
 endif()
 
-include_directories( ${FB_ROOT}/FBEngine/cpp/Include/FBGraphicsOgre/Ogre/include )
-include_directories( ${FB_ROOT}/FBEngine/cpp/Include/FBGraphicsOgre/Ogre/OgreMain/include )
+#include_directories( ${FB_ROOT}/FBEngine/cpp/Include/FBGraphicsOgre/Ogre/include )
+#include_directories( ${FB_ROOT}/FBEngine/cpp/Include/FBGraphicsOgre/Ogre/OgreMain/include )
 
-include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/Dependencies/include )
-include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/Dependencies/include/freetype )
-include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/Dependencies/include/freetype/config )
-
+#include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/Dependencies/include )
+#include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/Dependencies/include/freetype )
+#include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/Dependencies/include/freetype/config )
 
 if (FB_USE_PRECOMPILED_HEADERS)
     use_precompiled_header(FBWxWidgets "FBRenderUI/FBRenderUIPCH.h" "${CMAKE_SOURCE_DIR}/FBEngine/cpp/Source/FBRenderUI/FBRenderUIPCH.cpp")

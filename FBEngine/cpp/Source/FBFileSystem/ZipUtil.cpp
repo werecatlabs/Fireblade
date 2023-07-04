@@ -4,8 +4,8 @@
 
 #if defined FB_PLATFORM_WIN32
 #    if FB_USE_ZZIP
-#        include <FBCore/Base/Path.h>
-#        include <FBCore/Base/StringUtil.h>
+#        include <FBCore/Core/Path.h>
+#        include <FBCore/Core/StringUtil.h>
 #        include <zzip/zzip.h>
 #        include <zzip/plugin.h>
 #        include <zip.h>

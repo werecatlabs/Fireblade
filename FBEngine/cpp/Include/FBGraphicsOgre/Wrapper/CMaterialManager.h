@@ -3,16 +3,16 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IMaterialManager.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/UtilityTypes.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/UtilityTypes.h>
 
 namespace fb
 {
     namespace render
     {
 
-        class CMaterialManager : public CSharedObject<IMaterialManager>
+        class CMaterialManager : public SharedObject<IMaterialManager>
         {
         public:
             CMaterialManager();

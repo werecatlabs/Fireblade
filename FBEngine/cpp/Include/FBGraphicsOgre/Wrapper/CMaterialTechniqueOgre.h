@@ -4,7 +4,7 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBGraphics/Wrapper/CMaterialTechnique.h>
 #include <FBCore/Interface/Graphics/IMaterialTechnique.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {

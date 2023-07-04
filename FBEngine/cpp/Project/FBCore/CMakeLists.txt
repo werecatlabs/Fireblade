@@ -14,6 +14,7 @@ set(FB_SOURCE_REL_PATH "${FB_ROOT}/FBEngine/cpp/Source/FBCore")
 
 add_compile_definitions (ENABLE_PTR_RTTI=0)
 add_compile_definitions (_FB_STATIC_LIB_)
+add_compile_definitions (YAML_CPP_STATIC_DEFINE)
 
 foreach(_source IN ITEMS ${HEADER_FILES})
     get_filename_component(_source_file_path "${_source}" DIRECTORY)
@@ -46,6 +47,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/tinyxml/include )
 include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/utf8/source )
 include_directories( ${CMAKE_SOURCE_DIR}/FBEngine/cpp/Include )
 include_directories( ${CMAKE_SOURCE_DIR}/FBEngine/cpp/Include/FBCore/Extern )
+include_directories( ${CMAKE_SOURCE_DIR}/FBEngine/cpp/Source/FBCore/Extern )
 include_directories( ${CMAKE_SOURCE_DIR}/AdditionalLibraries )
 
 if(APPLE)

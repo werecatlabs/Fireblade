@@ -4,24 +4,19 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IOverlayElement.h>
 #include <FBGraphics/Wrapper/COverlayElement.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     namespace render
     {
-                
+
         template <class T>
         class COverlayElementOgre : public COverlayElement<T>
         {
         public:
-            COverlayElementOgre() : COverlayElement<T>()
-            {
-            }
-
-            ~COverlayElementOgre() override
-            {
-            }
+            COverlayElementOgre();
+            ~COverlayElementOgre() override;
 
             virtual void _getObject( void **ppObject ) const override
             {
@@ -31,7 +26,7 @@ namespace fb
             /** @copydoc IObject::isValid */
             bool isValid() const override
             {
-                if( CSharedObject<T>::isLoaded() )
+                if( SharedObject<T>::isLoaded() )
                 {
                     if( auto parent = COverlayElement<T>::getParent() )
                     {
@@ -65,7 +60,6 @@ namespace fb
 
             virtual void setupMaterial( SmartPtr<IMaterial> material )
             {
-                
             }
 
             FB_CLASS_REGISTER_TEMPLATE_DECL( COverlayElementOgre, T );
@@ -88,6 +82,17 @@ namespace fb
 
             Ogre::OverlayElement *m_element = nullptr;
         };
+
+        template <class T>
+        COverlayElementOgre<T>::COverlayElementOgre() : COverlayElement<T>()
+        {
+        }
+
+        template <class T>
+        COverlayElementOgre<T>::~COverlayElementOgre()
+        {
+        }
+
     }  // end namespace render
 }  // end namespace fb
 

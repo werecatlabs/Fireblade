@@ -10,7 +10,7 @@ namespace fb
 {
     namespace render
     {
-        FB_CLASS_REGISTER_DERIVED( fb, CDeferredShadingSystem, CSharedObject<IDeferredShadingSystem> );
+        FB_CLASS_REGISTER_DERIVED( fb, CDeferredShadingSystem, SharedObject<IDeferredShadingSystem> );
 
         CDeferredShadingSystem::CDeferredShadingSystem( SmartPtr<IViewport> viewport ) :
             mSystem( nullptr ),

@@ -3,7 +3,7 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBGraphicsOgre/Ogre/DynamicRenderable.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {

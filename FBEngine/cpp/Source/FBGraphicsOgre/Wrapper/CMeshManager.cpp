@@ -27,10 +27,10 @@ namespace fb
                 SmartPtr<IStream> stream = fileSystem->open( fileName );
                 if( stream )
                 {
-                    auto mesh = fb::make_ptr<CMesh>();
+                    auto mesh = fb::make_ptr<Mesh>();
 
                     MeshSerializer meshSerializer;
-                    meshSerializer.importMesh( stream, static_cast<CMesh *>( mesh.get() ) );
+                    meshSerializer.importMesh( stream, static_cast<Mesh *>( mesh.get() ) );
 
                     mesh->updateAABB( true );
 

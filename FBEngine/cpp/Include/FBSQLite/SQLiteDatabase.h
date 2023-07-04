@@ -3,12 +3,12 @@
 
 #include <FBSQLite/FBSQLitePrerequisites.h>
 #include <FBCore/Interface/Database/IDatabase.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
 
-    class SQLiteDatabase : public CSharedObject<IDatabase>
+    class SQLiteDatabase : public SharedObject<IDatabase>
     {
     public:
         SQLiteDatabase();

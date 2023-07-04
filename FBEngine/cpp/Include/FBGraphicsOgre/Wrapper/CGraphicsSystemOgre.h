@@ -4,16 +4,16 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBGraphics/Wrapper/CGraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <OgreWindowEventUtilities.h>
 #include <OgreFrameListener.h>
 #include <OgreRenderQueueListener.h>
 #include <OgreRTShaderSystem.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/ConcurrentArray.h>
-#include <FBCore/Base/ConcurrentQueue.h>
-#include <FBCore/Base/HashMap.h>
-#include <FBCore/Base/Set.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/ConcurrentArray.h>
+#include <FBCore/Core/ConcurrentQueue.h>
+#include <FBCore/Core/HashMap.h>
+#include <FBCore/Core/Set.h>
 #include <OgreBuildSettings.h>
 #include <OgreComponents.h>
 #include <FBCore/State/States/BaseStateT.h>
@@ -99,17 +99,6 @@ namespace fb
 
             /** @copydoc IGraphicsSystem::addSceneManager */
             SmartPtr<IGraphicsScene> addGraphicsScene( const String &type, const String &name ) override;
-
-            /** @copydoc IGraphicsSystem::getSceneManager */
-            SmartPtr<IGraphicsScene> getGraphicsScene() const override;
-
-            void setGraphicsScene( SmartPtr<IGraphicsScene> smgr );
-
-            /** @copydoc IGraphicsSystem::getSceneManager */
-            SmartPtr<IGraphicsScene> getGraphicsScene( const String &name ) const override;
-
-            /** @copydoc IGraphicsSystem::getSceneManagerById */
-            SmartPtr<IGraphicsScene> getGraphicsSceneById( hash32 id ) const override;
 
             /** @copydoc IGraphicsSystem::getOverlayManager */
             SmartPtr<IOverlayManager> getOverlayManager() const override;
@@ -302,8 +291,6 @@ namespace fb
 
             ConcurrentArray<SmartPtr<ISharedObject>> m_graphicsObjects;
 
-            AtomicSmartPtr<IGraphicsScene> m_defaultSceneManager;
-
             AtomicSmartPtr<IDebug> m_debug;
 
             ///
@@ -385,9 +372,6 @@ namespace fb
 
             ///
             Array<SmartPtr<IDeferredShadingSystem>> m_deferredShadingSystems;
-
-            ///
-            Array<SmartPtr<IGraphicsScene>> m_sceneManagers;
 
             bool m_useRTSS = false;
             atomic_bool m_isUpdating = false;

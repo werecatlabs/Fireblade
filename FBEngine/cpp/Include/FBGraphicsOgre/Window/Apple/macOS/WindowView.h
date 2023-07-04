@@ -3,7 +3,7 @@
 //#include "OgreMetalPrerequisites.h"
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IInstanceManager.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 #include <Cocoa/Cocoa.h>
 #import <AppKit/AppKit.h>

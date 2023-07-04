@@ -2,13 +2,13 @@
 #define FBSQLiteQuery_h__
 
 #include <FBCore/Interface/Database/IDatabaseQuery.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/Array.h>
 #include <FBSQLite/extern/CppSQLite3.h>
 
 namespace fb
 {
-    class SQLiteQuery : public CSharedObject<IDatabaseQuery>
+    class SQLiteQuery : public SharedObject<IDatabaseQuery>
     {
     public:
         SQLiteQuery();

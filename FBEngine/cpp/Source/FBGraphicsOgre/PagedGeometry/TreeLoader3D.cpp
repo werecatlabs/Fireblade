@@ -17,7 +17,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "PagedGeometry.h"
 #include "PropertyMaps.h"
 #include "FBCore/FBCoreTypes.h"
-#include "FBCore/Base/BitUtil.h"
+#include "FBCore/Core/BitUtil.h"
 #include "FBCore/Interface/Graphics/IGraphicsObject.h"
 
 using namespace Ogre;

@@ -46,7 +46,7 @@ namespace fb
     namespace render
     {
 
-        FB_CLASS_REGISTER_DERIVED( fb, CGraphicsSceneOgre, CSharedObject<IGraphicsScene> );
+        FB_CLASS_REGISTER_DERIVED( fb, CGraphicsSceneOgre, SharedObject<IGraphicsScene> );
         u32 CGraphicsSceneOgre::m_nextGeneratedNameExt = 0;
 
         CGraphicsSceneOgre::CGraphicsSceneOgre() :

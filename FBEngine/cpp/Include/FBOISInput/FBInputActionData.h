@@ -3,12 +3,12 @@
 
 #include <FBOISInput/FBOISInputPrerequisites.h>
 #include <FBCore/Interface/Input/IInputActionData.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     /** Stores data for an action. */
-    class InputActionData : public CSharedObject<IInputActionData>
+    class InputActionData : public SharedObject<IInputActionData>
     {
     public:
         InputActionData();

@@ -13,7 +13,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, ZipArchive, CSharedObject<IArchive> );
+    FB_CLASS_REGISTER_DERIVED( fb, ZipArchive, SharedObject<IArchive> );
 
     ZipArchive::ZipArchive( const String &name, bool ignoreCase, bool ignorePaths ) : m_path( name )
     {

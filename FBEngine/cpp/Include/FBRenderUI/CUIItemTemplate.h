@@ -2,7 +2,7 @@
 #define _CGUIItemTemplate_H
 
 #include <FBRenderUI/FBRenderUIPrerequisites.h>
-#include "FBCore/Base/Properties.h"
+#include "FBCore/Core/Properties.h"
 #include <FBRenderUI/CUIElement.h>
 #include <FBRenderUI/CUIElement.h>
 

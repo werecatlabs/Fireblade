@@ -13,11 +13,11 @@ namespace tinyxml2
 namespace fb
 {
     // mesh
-    class CMesh;
-    class CSubMesh;
-    class CVertexBuffer;
-    class CVertexDeclaration;
-    class CIndexBuffer;
+    class Mesh;
+    class SubMesh;
+    class VertexBuffer;
+    class VertexDeclaration;
+    class IndexBuffer;
     class CollisionMesh;
     class CollisionSubMesh;
 } // end namespace fb

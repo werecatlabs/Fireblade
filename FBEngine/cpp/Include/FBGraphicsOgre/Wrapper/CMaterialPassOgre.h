@@ -5,7 +5,7 @@
 #include <FBCore/Interface/Graphics/IMaterialPass.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBGraphics/Wrapper/CMaterialPass.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 #include <OgrePass.h>
 
 namespace fb

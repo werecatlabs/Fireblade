@@ -12,7 +12,7 @@ namespace fb
     typedef ArrayFunctions<String> stringc_array_functions;
     //typedef Array<String> StringVector;
 
-    //class StringVector : public CSharedObject<ISharedObject>
+    //class StringVector : public SharedObject<ISharedObject>
     //{
     //public:
     //    StringVector()

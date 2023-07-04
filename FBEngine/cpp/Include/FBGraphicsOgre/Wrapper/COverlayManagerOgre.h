@@ -3,8 +3,8 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IOverlayManager.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {
@@ -12,7 +12,7 @@ namespace fb
     {
 
         /** Implements IOverlayManager interface for Ogre. */
-        class COverlayManagerOgre : public CSharedObject<IOverlayManager>
+        class COverlayManagerOgre : public SharedObject<IOverlayManager>
         {
         public:
             /** Constructor. */

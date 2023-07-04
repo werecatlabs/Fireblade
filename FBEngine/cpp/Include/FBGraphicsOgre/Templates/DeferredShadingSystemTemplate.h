@@ -2,12 +2,12 @@
 #define DeferredShadingSystemTemplate_h__
 
 //#include <FBCore/Interface/System/IDirector.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
 
-    class DeferredShadingSystemTemplate : public CSharedObject<ISharedObject>
+    class DeferredShadingSystemTemplate : public SharedObject<ISharedObject>
     {
     public:
         DeferredShadingSystemTemplate();

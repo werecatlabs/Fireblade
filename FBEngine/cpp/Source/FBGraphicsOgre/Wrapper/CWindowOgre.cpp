@@ -199,7 +199,7 @@ namespace fb
                     }
 #endif
 
-                    CRenderTarget<IWindow>::unload( nullptr );
+                    CRenderTargetOgre<IWindow>::unload( nullptr );
 
                     setLoadingState( LoadingState::Unloaded );
                 }
@@ -278,7 +278,7 @@ namespace fb
                     }
                 }
 
-                CRenderTarget<IWindow>::update();
+                CRenderTargetOgre<IWindow>::update();
             }
         }
 

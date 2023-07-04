@@ -12,7 +12,7 @@ namespace fb
             auto size = getSize();
             if( size.x > 0 && size.y > 0 )
             {
-                CRenderTarget<IRenderTexture>::update();
+                CRenderTargetOgre<IRenderTexture>::update();
             }
         }
 
@@ -21,7 +21,7 @@ namespace fb
             try
             {
                 setLoadingState( LoadingState::Loading );
-                CRenderTarget<IRenderTexture>::load( data );
+                CRenderTargetOgre<IRenderTexture>::load( data );
                 setLoadingState( LoadingState::Loaded );
             }
             catch( std::exception &e )
@@ -39,13 +39,7 @@ namespace fb
                 {
                     setLoadingState( LoadingState::Unloading );
 
-                    CRenderTarget<IRenderTexture>::unload( data );
-
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto fileSystem = applicationManager->getFileSystem();
-                    FB_ASSERT( fileSystem );
+                    CRenderTargetOgre<IRenderTexture>::unload( data );
 
                     setLoadingState( LoadingState::Unloaded );
                 }

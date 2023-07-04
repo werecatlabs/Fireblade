@@ -2,7 +2,7 @@
 #define SSEffectRenderer_h__
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/Graphics/IScreenSpaceEffectRenderer.h>
 #include <OgrePrerequisites.h>
 #include <OgreString.h>
@@ -12,7 +12,7 @@ namespace fb
     namespace render
     {
 
-        class SSEffectRenderer : public CSharedObject<IScreenSpaceEffectRenderer>
+        class SSEffectRenderer : public SharedObject<IScreenSpaceEffectRenderer>
         {
         public:
             SSEffectRenderer( Ogre::SceneManager *sceneMgr, Ogre::Viewport *viewport );

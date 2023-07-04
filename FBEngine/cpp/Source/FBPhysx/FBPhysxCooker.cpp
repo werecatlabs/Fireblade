@@ -86,7 +86,7 @@ namespace fb
                     numIndices += indexBuffer->getNumIndices();
 
                 // We assume that every submesh uses the same index format
-                indices32 = ( indexBuffer->getIndexType() == CIndexBuffer::Type::IT_32BIT );
+                indices32 = ( indexBuffer->getIndexType() == IndexBuffer::Type::IT_32BIT );
             }
 
             outInfo.vertices.resize( numVertices );
@@ -144,7 +144,7 @@ namespace fb
                 {
                     const SmartPtr<IVertexElement> posElem =
                         vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                            CVertexDeclaration::VertexElementSemantic::VES_POSITION );
+                            VertexDeclaration::VertexElementSemantic::VES_POSITION );
 
                     auto pVertices =
                         static_cast<unsigned char *>(vertexBuffer->getVertexData());

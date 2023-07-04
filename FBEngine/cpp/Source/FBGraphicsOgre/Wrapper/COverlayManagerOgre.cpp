@@ -18,7 +18,7 @@ namespace fb
 {
     namespace render
     {
-        FB_CLASS_REGISTER_DERIVED( fb::render, COverlayManagerOgre, CSharedObject<IOverlayManager> );
+        FB_CLASS_REGISTER_DERIVED( fb::render, COverlayManagerOgre, SharedObject<IOverlayManager> );
 
         u32 COverlayManagerOgre::m_nameExt = 0;
 

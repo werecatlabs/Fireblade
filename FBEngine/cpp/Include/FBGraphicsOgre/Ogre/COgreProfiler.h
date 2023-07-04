@@ -42,7 +42,7 @@ Ogre-dependent is in the visualization/logging routines and the use of the Timer
 #define __CProfiler_H__
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBCore/Base/Singleton.h>
+#include <FBCore/Core/Singleton.h>
 #include "OgrePrerequisites.h"
 #include "OgreString.h"
 #include "OgreOverlay.h"

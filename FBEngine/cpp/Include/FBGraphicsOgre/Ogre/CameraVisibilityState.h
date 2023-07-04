@@ -2,8 +2,8 @@
 #define __CameraVisibilityState_h__
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBCore/Base/HashMap.h>
-#include <FBCore/Base/Pool.h>
+#include <FBCore/Core/HashMap.h>
+#include <FBCore/Core/Pool.h>
 #include <OgreHardwareOcclusionQuery.h>
 #include <OgreVector.h>
 #include <OgrePlane.h>

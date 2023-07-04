@@ -4,10 +4,10 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBGraphics/Wrapper/CGraphicsObject.h>
 #include <FBCore/Interface/Graphics/IGraphicsObject.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/BitUtil.h>
-#include <FBCore/Base/Handle.h>
-#include <FBCore/Base/Properties.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/BitUtil.h>
+#include <FBCore/Core/Handle.h>
+#include <FBCore/Core/Properties.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Interface/System/IEvent.h>
 #include <FBCore/Interface/Graphics/ISceneNode.h>
@@ -70,7 +70,7 @@ namespace fb
             FB_CLASS_REGISTER_TEMPLATE_DECL( CGraphicsObjectOgre, T );
 
         protected:
-            class StateListener : public CSharedObject<IStateListener>
+            class StateListener : public SharedObject<IStateListener>
             {
             public:
                 StateListener() = default;

@@ -2,7 +2,7 @@
 #define NGPlantLoader_h__
 
 #include <FBCore/FBCoreTypes.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 
 namespace fb
 {

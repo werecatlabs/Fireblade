@@ -1121,13 +1121,14 @@ namespace fb
                 auto sceneNodeScale = m_sceneNode->getScale();
                 auto sceneNodeOrientation = OgreUtil::convert( m_sceneNode->getOrientation() );
 
-                Vector3<real_Num> localRotation;
-                sceneNodeOrientation.toDegrees( localRotation );
+                Euler<real_Num> euler(sceneNodeOrientation);
+                Vector3<real_Num> localRotation = euler.toDegrees();
 
-                sceneNodeOrientation.normalise().toDegrees( localRotation );
+                Euler<real_Num> euler2(sceneNodeOrientation.normalise());
+                localRotation = euler2.toDegrees();
 
-                Vector3<real_Num> localRotation2;
-                m_state->getOrientation().toDegrees( localRotation2 );
+                Euler<real_Num> euler3(m_state->getOrientation());
+                Vector3<real_Num> localRotation2 = euler3.toDegrees();
 
                 properties->setProperty( "sceneNodePosition",
                                          Ogre::StringConverter::toString( sceneNodePosition ) );

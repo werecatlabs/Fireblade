@@ -2,14 +2,14 @@
 #define LodPage_h__
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     namespace render
     {
         
-        class LodPage : public CSharedObject<ISharedObject>
+        class LodPage : public SharedObject<ISharedObject>
         {
         public:
             LodPage();

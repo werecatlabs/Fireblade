@@ -3,8 +3,8 @@
 
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBCore/Interface/Physics/IPhysicsScene3.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/Array.h>
 #include <PxSimpleTypes.h>
 #include <PxQueryReport.h>
 #include <PxFiltering.h>
@@ -15,7 +15,7 @@ namespace fb
 {
     namespace physics
     {
-        class PhysxScene : public CSharedObject<IPhysicsScene3>
+        class PhysxScene : public SharedObject<IPhysicsScene3>
         {
         public:
             PhysxScene();

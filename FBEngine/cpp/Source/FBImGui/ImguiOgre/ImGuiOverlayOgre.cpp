@@ -414,14 +414,14 @@ namespace fb
         mRenderOp.useIndexes = true;
         mRenderOp.useGlobalInstancingVertexBufferIsAvailable = false;
 
-        VertexDeclaration *decl = mRenderOp.vertexData->vertexDeclaration;
+        auto decl = mRenderOp.vertexData->vertexDeclaration;
 
         // vertex declaration
         size_t offset = 0;
         decl->addElement( 0, offset, VET_FLOAT2, VES_POSITION );
-        offset += VertexElement::getTypeSize( VET_FLOAT2 );
+        offset += Ogre::VertexElement::getTypeSize( VET_FLOAT2 );
         decl->addElement( 0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0 );
-        offset += VertexElement::getTypeSize( VET_FLOAT2 );
+        offset += Ogre::VertexElement::getTypeSize( VET_FLOAT2 );
         decl->addElement( 0, offset, VET_UBYTE4_NORM, VES_DIFFUSE );
     }
 
@@ -488,7 +488,7 @@ namespace fb
                     auto graphicsSystem = applicationManager->getGraphicsSystem();
                     FB_ASSERT( graphicsSystem );
 
-                    auto sceneManager = graphicsSystem->getSceneManager();
+                    auto sceneManager = graphicsSystem->getGraphicsScene();
                     auto cameras = sceneManager->getGraphicsObjectsByType<render::ICamera>();
 
                     auto renderUI = false;

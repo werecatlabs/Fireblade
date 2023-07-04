@@ -231,9 +231,6 @@ namespace fb
                           ( Pair<SmartPtr<IResource>, bool>( IResourceDatabase::* )( const String & ) ) &
                               IResourceDatabase::createOrRetrieve )
                     .def( "getObject", &IResourceDatabase::getObject )
-                    .def( "addResourceListener", &IResourceDatabase::addResourceListener )
-                    .def( "setResourceListeners", &IResourceDatabase::setResourceListeners )
-                    .def( "getResourceListeners", &IResourceDatabase::getResourceListeners )
                     .scope[def( "typeInfo", IResourceDatabase::typeInfo )]];
 
         module( L )[class_<IEventListener, ISharedObject>( "IEventListener" )

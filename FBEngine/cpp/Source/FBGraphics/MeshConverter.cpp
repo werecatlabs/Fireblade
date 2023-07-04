@@ -1,6 +1,6 @@
 #include "FBGraphics/MeshConverter.h"
 #include <FBCore/Scene/Components/Mesh.h>
-#include <FBCore/Base/Path.h>
+#include <FBCore/Core/Path.h>
 
 #ifdef COLLADA_SUPPORT
 #    include "FUtils/FUtils.h"
@@ -42,9 +42,6 @@
 #endif
 
 #include <FBCore/Interface/Mesh/IMesh.h>
-
-#include <FBMesh/MeshSerializer.h>
-
 #include <FBCore/FBCoreHeaders.h>
 #include <FBMesh/FBMeshHeaders.h>
 
@@ -94,7 +91,7 @@ namespace fb
                         auto workingDir = Path::getWorkingDirectory();
                         Path::setWorkingDirectory( cacheFolder );
                         auto fileName = pMesh->getName() + ".fbmeshbin";
-                        serializer.exportMesh( (CMesh *)pMesh, fileName );
+                        serializer.exportMesh( (Mesh *)pMesh, fileName );
                         Path::setWorkingDirectory( workingDir );
                     }
                 }

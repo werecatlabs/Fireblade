@@ -2,7 +2,7 @@
 #define _WATER_MESH_H_
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/StringTypes.h>
 #include "OgrePlatform.h"
 #include "Ogre.h"
 

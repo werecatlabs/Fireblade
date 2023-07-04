@@ -6,7 +6,7 @@
 #include <FBCore/Interface/Physics/IPhysicsBody3.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/State/States/PhysicsBodyState.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
@@ -142,7 +142,7 @@ namespace fb
         {
         }
 
-        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, PhysxBody3, T, CSharedObject<T> );
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, PhysxBody3, T, SharedObject<T> );
     }  // namespace physics
 }  // namespace fb
 

@@ -68,7 +68,7 @@ namespace fb
                 void handleQuery( SmartPtr<IStateQuery> &query ) override;
             };
 
-            class TextureListener : public CSharedObject<IEventListener>
+            class TextureListener : public SharedObject<IEventListener>
             {
             public:
                 TextureListener() = default;

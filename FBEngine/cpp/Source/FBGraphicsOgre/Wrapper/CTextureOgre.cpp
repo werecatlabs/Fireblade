@@ -1,6 +1,6 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
 #include <FBGraphicsOgre/Wrapper/CTextureOgre.h>
-#include <FBGraphicsOgre/Wrapper/CRenderTarget.h>
+#include <FBGraphicsOgre/Wrapper/CRenderTargetOgre.h>
 #include <FBGraphicsOgre/Wrapper/CRenderTexture.h>
 #include <FBGraphicsOgre/Wrapper/CTextureOgreStateListener.h>
 #include <FBCore/FBCore.h>

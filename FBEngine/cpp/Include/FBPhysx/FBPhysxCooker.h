@@ -3,7 +3,7 @@
 
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBCore/Math/Vector3.h>
-#include <FBCore/Base/Map.h>
+#include <FBCore/Core/Map.h>
 #include "foundation/PxVec3.h"
 #include "PxPhysics.h"
 #include "common/PxCoreUtilityTypes.h"

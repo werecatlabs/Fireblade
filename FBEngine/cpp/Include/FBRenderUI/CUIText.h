@@ -28,13 +28,23 @@ namespace fb
             void setTextSize( f32 textSize ) override;
             f32 getTextSize() const override;
 
-            void _getObject( void **ppObject ) const override;
+            void setVerticalAlignment( u8 alignment );
+            u8 getVerticalAlignment() const;
 
-            //
-            // Callbacks
-            //
+            void setHorizontalAlignment( u8 alignment )
+            {
+                
+            }
+
+            u8 getHorizontalAlignment() const
+            {
+                return 0;
+            }
+
             void onToggleVisibility() override;
             void onToggleHighlight() override;
+
+            void _getObject( void **ppObject ) const override;
 
             SmartPtr<render::IOverlayElementText> getOverlayText() const;
 
@@ -45,6 +55,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         private:
+            /** Overlay text object. */
             SmartPtr<render::IOverlayElementText> m_overlayText;
         };
     }  // end namespace ui

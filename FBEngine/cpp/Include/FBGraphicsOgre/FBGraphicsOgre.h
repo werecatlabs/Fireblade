@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Memory/SmartPtr.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 /*
 #ifdef _DEBUG
@@ -48,7 +48,7 @@ namespace fb
     namespace render
     {
 
-        class FBGraphicsOgre : public CSharedObject<ISharedObject>
+        class FBGraphicsOgre : public SharedObject<ISharedObject>
         {
         public:
             FBGraphicsOgre() = default;

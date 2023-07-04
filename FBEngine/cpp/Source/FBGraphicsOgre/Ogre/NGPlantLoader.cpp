@@ -1,6 +1,6 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
 #include "FBGraphicsOgre/Ogre/NGPlantLoader.h"
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/Core/StringUtil.h>
 
 #ifdef FB_OGRE_USE_NGPLANT
 

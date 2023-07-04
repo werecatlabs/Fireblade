@@ -3,7 +3,7 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/FBCoreTypes.h>
 #include <OgreVector3.h>
 
@@ -32,7 +32,7 @@ namespace fb
             SmartPtr<IStateContext> getStateObject() const;
             void setStateObject( SmartPtr<IStateContext> val );
 
-            class InstanceObjectStateListener : public CSharedObject<IStateListener>
+            class InstanceObjectStateListener : public SharedObject<IStateListener>
             {
             public:
                 InstanceObjectStateListener( CInstanceObjectOld *instanceObject );

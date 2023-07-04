@@ -3,11 +3,11 @@
 
 #include <FBFileSystem/FBFileSystemPrerequisites.h>
 #include <FBCore/Interface/IO/IFileSystem.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/ConcurrentArray.h>
-#include <FBCore/Base/Map.h>
-#include <FBCore/Base/FileInfo.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/ConcurrentArray.h>
+#include <FBCore/Core/Map.h>
+#include <FBCore/Core/FileInfo.h>
 
 namespace fb
 {
@@ -15,7 +15,7 @@ namespace fb
     /** @class CFileSystem
      *  @brief An implementation of the IFileSystem interface to manage file and folder operations.
      */
-    class CFileSystem : public CSharedObject<IFileSystem>
+    class CFileSystem : public SharedObject<IFileSystem>
     {
     public:
         /** @brief Constructor. */

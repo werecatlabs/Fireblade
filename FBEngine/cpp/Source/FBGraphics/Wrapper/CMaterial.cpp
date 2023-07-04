@@ -97,7 +97,8 @@ namespace fb
             {
                 auto materialStr = stream->getAsString();
 
-                auto materialData = DataUtil::parseJson( materialStr );
+                auto materialData = fb::make_ptr<Properties>();
+                DataUtil::parse( materialStr, materialData.get() );
 
                 FileInfo fileInfo;
                 if( fileSystem->findFileInfo( filePath, fileInfo ) )
@@ -993,6 +994,8 @@ namespace fb
                     auto pTechniqueData = technique->toData();
                     properties->addChild( pTechniqueData );
                 }
+
+                return properties;
             }
             catch( std::exception &e )
             {
@@ -1006,44 +1009,47 @@ namespace fb
         {
             try
             {
-                auto properties = fb::static_pointer_cast<Properties>( data );
-
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto factoryManager = applicationManager->getFactoryManager();
-                FB_ASSERT( factoryManager );
-
-                auto iMaterialType = 0;
-                properties->getPropertyValue( "materialType", iMaterialType );
-
-                auto materialType = static_cast<MaterialType>( iMaterialType );
-                FB_ASSERT( materialType < IMaterial::MaterialType::Count );
-                setMaterialType( materialType );
-
-                createMaterialByType();
-
-                auto count = 0;
-
-                auto techniques = getTechniques();
-
-                auto schemes = properties->getChildrenByName( "schemes" );
-                for( auto &scheme : schemes )
+                if( data && data->isDerived<Properties>() )
                 {
-                    auto technique = SmartPtr<IMaterialTechnique>();
+                    auto properties = fb::static_pointer_cast<Properties>( data );
 
-                    if( count < techniques.size() )
+                    auto applicationManager = core::IApplicationManager::instance();
+                    FB_ASSERT( applicationManager );
+
+                    auto factoryManager = applicationManager->getFactoryManager();
+                    FB_ASSERT( factoryManager );
+
+                    auto iMaterialType = 0;
+                    properties->getPropertyValue( "materialType", iMaterialType );
+
+                    auto materialType = static_cast<MaterialType>( iMaterialType );
+                    FB_ASSERT( materialType < IMaterial::MaterialType::Count );
+                    setMaterialType( materialType );
+
+                    createMaterialByType();
+
+                    auto count = 0;
+
+                    auto techniques = getTechniques();
+
+                    auto schemes = properties->getChildrenByName( "schemes" );
+                    for( auto &scheme : schemes )
                     {
-                        technique = techniques[count];
-                    }
-                    else
-                    {
-                        technique = createTechnique();
-                    }
+                        auto technique = SmartPtr<IMaterialTechnique>();
 
-                    technique->fromData( scheme );
+                        if( count < techniques.size() )
+                        {
+                            technique = techniques[count];
+                        }
+                        else
+                        {
+                            technique = createTechnique();
+                        }
 
-                    count++;
+                        technique->fromData( scheme );
+
+                        count++;
+                    }
                 }
             }
             catch( std::exception &e )

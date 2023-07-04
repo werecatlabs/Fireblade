@@ -32,7 +32,7 @@
 #ifndef GORILLA_H
 #define GORILLA_H
 
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 #include "Ogre.h"
 #include <vector>
 

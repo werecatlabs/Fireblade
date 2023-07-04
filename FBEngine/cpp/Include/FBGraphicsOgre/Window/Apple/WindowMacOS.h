@@ -2,7 +2,7 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IInstanceManager.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Math/Vector2.h>
 //#include <Cocoa/Cocoa.h>
 //#include <Foundation/NSObject.h>

@@ -49,7 +49,7 @@ namespace fb
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             FB_ASSERT( graphicsSystem );
 
-            auto sceneManager = graphicsSystem->getSceneManager();
+            auto sceneManager = graphicsSystem->getGraphicsScene();
             FB_ASSERT( sceneManager );
 
             auto window = graphicsSystem->getDefaultWindow();

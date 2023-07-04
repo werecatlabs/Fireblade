@@ -1,8 +1,8 @@
 #ifndef FBOISKeyConverter_h__
 #define FBOISKeyConverter_h__
 
-#include <FBCore/Base/Singleton.h>
-#include <FBCore/Base/StringTypes.h>
+#include <FBCore/Core/Singleton.h>
+#include <FBCore/Core/StringTypes.h>
 #include <OISKeyboard.h>
 
 namespace fb

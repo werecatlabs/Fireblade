@@ -2,7 +2,7 @@
 
 #include <Ogre.h>
 #include "FBGraphicsOgre/Ogre/ScreenSplitShadowCamera.h"
-#include <FBCore/Base/Array.h>
+#include <FBCore/Core/Array.h>
 #include <FBCore/Math/Vector2.h>
 
 namespace fb

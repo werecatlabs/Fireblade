@@ -1,14 +1,14 @@
 #ifndef NullScriptObject_h__
 #define NullScriptObject_h__
 
-#include <FBCore/Base/Singleton.h>
-#include <FBCore/Base/Parameter.h>
+#include <FBCore/Core/Singleton.h>
+#include <FBCore/Core/Parameter.h>
 #include <FBCore/Interface/Script/IScriptObject.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
-    class NullScriptObject : public CSharedObject<IScriptObject>, public Singleton<NullScriptObject>
+    class NullScriptObject : public SharedObject<IScriptObject>, public Singleton<NullScriptObject>
     {
     public:
         NullScriptObject();

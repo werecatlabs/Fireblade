@@ -199,7 +199,7 @@ namespace fb
             }
         }
 
-        void COverlayElementText::setAlignment( u8 alignment )
+        void COverlayElementText::setVerticalAlignment( u8 alignment )
         {
             if( auto stateObject = getStateObject() )
             {
@@ -210,7 +210,7 @@ namespace fb
             }
         }
 
-        u8 COverlayElementText::getAlignment() const
+        u8 COverlayElementText::getVerticalAlignment() const
         {
             if( auto stateObject = getStateObject() )
             {
@@ -220,6 +220,16 @@ namespace fb
                 }
             }
 
+            return 0;
+        }
+
+        void COverlayElementText::setHorizontalAlignment( u8 alignment )
+        {
+            
+        }
+
+        u8 COverlayElementText::getHorizontalAlignment() const
+        {
             return 0;
         }
 

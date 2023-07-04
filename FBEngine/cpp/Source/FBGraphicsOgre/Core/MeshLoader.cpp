@@ -1,5 +1,6 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
 #include <FBGraphicsOgre/Core/MeshLoader.h>
+#include <FBCore/FBCore.h>
 #include <FBMesh/FBMesh.h>
 #include "Ogre.h"
 #include <OgreMeshSerializer.h>

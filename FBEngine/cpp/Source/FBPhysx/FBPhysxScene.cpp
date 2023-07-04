@@ -212,7 +212,7 @@ namespace fb
                 FB_ASSERT( Math<time_interval>::isFinite( dt ) );
                 FB_ASSERT( dt > 0.0 );
 
-                const auto maxDT = 1.0 / 30.0;
+                const auto maxDT = 1.0 / 50.0;
                 if( dt > maxDT )
                 {
                     dt = maxDT;
@@ -416,7 +416,7 @@ namespace fb
             {
                 auto applicationManager = core::IApplicationManager::instance();
                 auto physicsManager = applicationManager->getPhysicsManager();
-
+                
                 if( auto scene = getScene() )
                 {
                     FB_PXSCENE_WRITE_LOCK( scene );

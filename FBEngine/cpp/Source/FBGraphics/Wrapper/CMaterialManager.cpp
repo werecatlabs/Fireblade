@@ -271,7 +271,8 @@ namespace fb
                     {
                         auto materialStr = stream->getAsString();
 
-                        auto materialData = DataUtil::parseJson( materialStr );
+                        auto materialData = fb::make_ptr<Properties>();
+                        DataUtil::parse( materialStr, materialData.get() );
 
                         auto material = create( materialName );
 

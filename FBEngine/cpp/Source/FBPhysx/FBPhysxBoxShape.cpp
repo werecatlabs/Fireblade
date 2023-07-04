@@ -264,30 +264,33 @@ namespace fb
             //if( ( loadingState == LoadingState::Loading || loadingState == LoadingState::Loaded ) &&
             //    task == physicsTask )
             //{
-                auto physics = physicsManager->getPhysics();
-                FB_ASSERT( physics );
+            auto physics = physicsManager->getPhysics();
+            FB_ASSERT( physics );
 
-                auto extents = getExtents() / static_cast<real_Num>( 2.0 );
+            auto extents = getExtents() / static_cast<real_Num>( 2.0 );
 
-                physx::PxVec3 dimensions( ( extents.X() ), ( extents.Y() ), ( extents.Z() ) );
-                physx::PxBoxGeometry geometry( dimensions );
-                physx::PxTransform localPose = PhysxUtil::toPx( getLocalPose() );
+            physx::PxVec3 dimensions( ( extents.X() ), ( extents.Y() ), ( extents.Z() ) );
+            physx::PxBoxGeometry geometry( dimensions );
+            physx::PxTransform localPose = PhysxUtil::toPx( getLocalPose() );
 
-                auto material = getMaterial();
-                FB_ASSERT( material );
+            auto material = getMaterial();
+            FB_ASSERT( material );
 
-                auto physicsMaterial = fb::static_pointer_cast<PhysxMaterial>( material );
-                FB_ASSERT( physicsMaterial );
+            auto physicsMaterial = fb::static_pointer_cast<PhysxMaterial>( material );
+            FB_ASSERT( physicsMaterial );
 
-                auto m = physicsMaterial->getMaterial();
+            auto m = physicsMaterial->getMaterial();
 
-                physx::PxShape *shape = physics->createShape( geometry, *m );
-                setShape( shape );
+            physx::PxShape *shape = physics->createShape( geometry, *m );
+            setShape( shape );
 
+            if( shape )
+            {
                 shape->setLocalPose( localPose );
+            }
 
-                // shape->setSimulationFilterData(simFilterData);
-                // shape->setQueryFilterData(qryFilterData);
+            // shape->setSimulationFilterData(simFilterData);
+            // shape->setQueryFilterData(qryFilterData);
             //}
             //else
             //{

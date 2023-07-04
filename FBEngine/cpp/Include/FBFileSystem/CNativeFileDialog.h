@@ -3,12 +3,12 @@
 
 #include <FBFileSystem/FBFileSystemPrerequisites.h>
 #include <FBCore/Interface/IO/INativeFileDialog.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
 
-    class CNativeFileDialog : public CSharedObject<INativeFileDialog>
+    class CNativeFileDialog : public SharedObject<INativeFileDialog>
     {
     public:
         // Default constructor.

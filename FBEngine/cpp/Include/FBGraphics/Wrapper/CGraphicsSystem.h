@@ -9,16 +9,15 @@ namespace fb
 {
     namespace render
     {
-
         /** @brief Graphics system implementation */
         class CGraphicsSystem : public CSharedGraphicsObject<IGraphicsSystem>
         {
         public:
             /** Constructor */
-            CGraphicsSystem() = default;
+            CGraphicsSystem();
 
             /** Destructor */
-            ~CGraphicsSystem() override = default;
+            ~CGraphicsSystem() override;
 
             /** @copydoc IGraphicsSystem::load */
             void load( SmartPtr<ISharedObject> data ) override;
@@ -27,20 +26,42 @@ namespace fb
             void unload( SmartPtr<ISharedObject> data ) override;
 
             /** @copydoc IGraphicsSystem::lock */
-            void lock();
+            void lock() override;
 
             /** @copydoc IGraphicsSystem::unlock */
-            void unlock();
+            void unlock() override;
 
             /** @copydoc IGraphicsSystem::getWindows */
             Array<SmartPtr<IWindow>> getWindows() const override;
+
+            Array<SmartPtr<IGraphicsScene>> getSceneManagers() const override;
+
+            SharedPtr<ConcurrentArray<SmartPtr<IGraphicsScene>>> getScenesPtr() const;
+
+            void setScenesPtr( SharedPtr<ConcurrentArray<SmartPtr<IGraphicsScene>>> scenes );
+
+            void addScenePtr( SmartPtr<IGraphicsScene> sceneManager );
+
+            void removeScenePtr( SmartPtr<IGraphicsScene> sceneManager );
+
+            SmartPtr<IGraphicsScene> getGraphicsScene( const String &name ) const override;
+
+            SmartPtr<IGraphicsScene> getGraphicsSceneById( hash32 id ) const override;
+
+            SmartPtr<IGraphicsScene> getGraphicsScene() const override;
+
+            void setGraphicsScene( SmartPtr<IGraphicsScene> smgr );
 
         protected:
             mutable RecursiveMutex m_mutex;
 
             Array<SmartPtr<IWindow>> m_windows;
+
+            AtomicSmartPtr<IGraphicsScene> m_defaultSceneManager;
+
+            AtomicSharedPtr<ConcurrentArray<SmartPtr<IGraphicsScene>>> m_scenes;
         };
-    }  // namespace render
-}  // namespace fb
+    } // namespace render
+}     // namespace fb
 
 #endif  // CGraphicsSystem_h__

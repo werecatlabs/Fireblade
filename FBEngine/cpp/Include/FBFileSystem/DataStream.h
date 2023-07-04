@@ -3,12 +3,12 @@
 
 #include <FBFileSystem/FBFileSystemPrerequisites.h>
 #include <FBCore/Interface/IO/IStream.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {
-    class DataStream : public CSharedObject<IStream>
+    class DataStream : public SharedObject<IStream>
     {
     public:
         /// Constructor for creating unnamed streams

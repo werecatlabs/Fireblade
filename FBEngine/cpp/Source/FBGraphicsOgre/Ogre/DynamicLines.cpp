@@ -89,7 +89,7 @@ namespace fb
 
         void DynamicLines::createVertexDeclaration()
         {
-            VertexDeclaration *decl = mRenderOp.vertexData->vertexDeclaration;
+            Ogre::VertexDeclaration *decl = mRenderOp.vertexData->vertexDeclaration;
             decl->addElement( POSITION_BINDING, 0, VertexElementType::VET_FLOAT3,
                               VertexElementSemantic::VES_POSITION );
         }

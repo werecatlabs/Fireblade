@@ -3,11 +3,11 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Memory/SmartPtr.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
-    class OISInput : public CSharedObject<ISharedObject>
+    class OISInput : public SharedObject<ISharedObject>
     {
     public:
         OISInput();

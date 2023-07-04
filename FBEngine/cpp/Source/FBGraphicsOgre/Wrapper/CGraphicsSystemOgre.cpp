@@ -213,6 +213,8 @@ namespace fb
 
                 setLoadingState( LoadingState::Loading );
 
+                CGraphicsSystem::load( data );
+
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
                 FB_ASSERT( applicationManager->isValid() );
@@ -445,12 +447,16 @@ namespace fb
                         m_compositorManager = nullptr;
                     }
 
-                    for( auto sceneManager : m_sceneManagers )
+                    if( auto p = getScenesPtr() )
                     {
-                        sceneManager->unload( nullptr );
-                    }
+                        auto &scenes = *p;
+                        for( auto sceneManager : scenes )
+                        {
+                            sceneManager->unload( nullptr );
+                        }
 
-                    m_sceneManagers.clear();
+                        setScenesPtr( nullptr );
+                    }
 
                     if( auto defaultSceneManager = getGraphicsScene() )
                     {
@@ -863,7 +869,7 @@ namespace fb
         }
 
         SmartPtr<IGraphicsScene> CGraphicsSystemOgre::addGraphicsScene( const String &type,
-                                                                       const String &name )
+                                                                        const String &name )
         {
             FB_ASSERT( !StringUtil::isNullOrEmpty( type ) );
             FB_ASSERT( !StringUtil::isNullOrEmpty( name ) );
@@ -875,51 +881,13 @@ namespace fb
             auto defaultSceneManager = getGraphicsScene();
             if( !defaultSceneManager )
             {
-                m_defaultSceneManager = sceneManager;
+                setGraphicsScene( sceneManager );
             }
 
-            m_sceneManagers.push_back( sceneManager );
+            addScenePtr( sceneManager );
             loadObject( sceneManager );
 
             return sceneManager;
-        }
-
-        SmartPtr<IGraphicsScene> CGraphicsSystemOgre::getGraphicsScene( const String &name ) const
-        {
-            for( auto sceneManager : m_sceneManagers )
-            {
-                if( sceneManager->getName() == name )
-                {
-                    return sceneManager;
-                }
-            }
-
-            return nullptr;
-        }
-
-        SmartPtr<IGraphicsScene> CGraphicsSystemOgre::getGraphicsScene() const
-        {
-            return m_defaultSceneManager;
-        }
-
-        void CGraphicsSystemOgre::setGraphicsScene( SmartPtr<IGraphicsScene> smgr )
-        {
-            m_defaultSceneManager = smgr;
-        }
-
-        SmartPtr<IGraphicsScene> CGraphicsSystemOgre::getGraphicsSceneById( hash32 id ) const
-        {
-            for( auto sceneManager : m_sceneManagers )
-            {
-                auto name = sceneManager->getName();
-                auto hash = StringUtil::getHash( name );
-                if( hash == id )
-                {
-                    return sceneManager;
-                }
-            }
-
-            return nullptr;
         }
 
         SmartPtr<IOverlayManager> CGraphicsSystemOgre::getOverlayManager() const
@@ -1045,8 +1013,7 @@ namespace fb
         {
             try
             {
-                const auto &loadingState = getLoadingState();
-                if( loadingState == LoadingState::Loaded )
+                if( isLoaded() )
                 {
                     ScopedLock lock( this );
 
@@ -1062,21 +1029,24 @@ namespace fb
                     auto t = timer->getTime();
                     auto dt = timer->getDeltaTime();
 
-                    for( auto sceneManager : m_sceneManagers )
-                    {
-                        if( sceneManager )
-                        {
-                            sceneManager->update();
-                        }
-                    }
-
                     auto hasUnloadedSceneManagers = false;
-                    for( auto sceneManager : m_sceneManagers )
+                    if( auto p = getScenesPtr() )
                     {
-                        const auto &loadingState = getLoadingState();
-                        if( loadingState != LoadingState::Loaded )
+                        auto &scenes = *p;
+
+                        for( auto scene : scenes )
                         {
-                            hasUnloadedSceneManagers = true;
+                            if( scene )
+                            {
+                                if( scene->isLoaded() )
+                                {
+                                    scene->update();
+                                }
+                                else
+                                {
+                                    //hasUnloadedSceneManagers = true;
+                                }
+                            }
                         }
                     }
 

@@ -4,8 +4,8 @@
 #include <FBGraphics/FBGraphicsPrerequisites.h>
 #include <FBGraphics/Wrapper/CSharedGraphicsObject.h>
 #include <FBCore/Interface/Graphics/IMaterialManager.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/UtilityTypes.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/UtilityTypes.h>
 
 namespace fb
 {

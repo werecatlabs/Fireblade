@@ -2,8 +2,6 @@
 #include <FBGraphicsOgre/Wrapper/CCameraOgre.h>
 #include <FBGraphicsOgre/Wrapper/CViewportOgre.h>
 #include <FBGraphicsOgre/Wrapper/CGraphicsSceneOgre.h>
-#include <FBGraphicsOgreNext/CompositorManager.h>
-#include <FBGraphicsOgreNext/Compositor.h>
 #include <FBCore/FBCore.h>
 #include <OgreCamera.h>
 #include <OgreSceneManager.h>

@@ -47,34 +47,34 @@ namespace fb
         SmartPtr<IMaterial> CMaterialManager::cloneMaterial( SmartPtr<IMaterial> material,
                                                              const String &clonedMaterialName )
         {
-            //try
-            //{
-            //    auto applicationManager = core::IApplicationManager::instance();
-            //    FB_ASSERT( applicationManager );
+            try
+            {
+                auto applicationManager = core::IApplicationManager::instance();
+                FB_ASSERT( applicationManager );
 
-            //    auto factoryManager = applicationManager->getFactoryManager();
-            //    FB_ASSERT( factoryManager );
+                auto factoryManager = applicationManager->getFactoryManager();
+                FB_ASSERT( factoryManager );
 
-            //    auto newMaterial = factoryManager->make_ptr<CMaterialOgre>();
+                auto newMaterial = factoryManager->make_ptr<CMaterialOgre>();
 
-            //    newMaterial->setParentPrototype( material );
+                newMaterial->setParentPrototype( material );
 
-            //    auto data = material->toData();
-            //    newMaterial->fromData( data );
+                auto data = material->toData();
+                newMaterial->fromData( data );
 
-            //    if( auto handle = newMaterial->getHandle() )
-            //    {
-            //        handle->setName( clonedMaterialName );
-            //    }
+                if( auto handle = newMaterial->getHandle() )
+                {
+                    handle->setName( clonedMaterialName );
+                }
 
-            //    m_materials.push_back( newMaterial );
+                m_materials.push_back( newMaterial );
 
-            //    return newMaterial;
-            //}
-            //catch( std::exception &e )
-            //{
-            //    FB_LOG_EXCEPTION( e );
-            //}
+                return newMaterial;
+            }
+            catch( std::exception &e )
+            {
+                FB_LOG_EXCEPTION( e );
+            }
 
             return nullptr;
         }
@@ -88,21 +88,21 @@ namespace fb
             auto factoryManager = applicationManager->getFactoryManager();
             FB_ASSERT( factoryManager );
 
-            //auto materialResource = getByName( name );
-            //if( materialResource )
-            //{
-            //    auto material = factoryManager->make_ptr<CMaterialOgre>();
+            auto materialResource = getByName( name );
+            if( materialResource )
+            {
+                auto material = factoryManager->make_ptr<CMaterialOgre>();
 
-            //    auto data = materialResource->toData();
-            //    material->fromData( data );
+                auto data = materialResource->toData();
+                material->fromData( data );
 
-            //    auto handle = material->getHandle();
-            //    handle->setName( clonedMaterialName );
+                auto handle = material->getHandle();
+                handle->setName( clonedMaterialName );
 
-            //    m_materials.push_back( material );
+                m_materials.push_back( material );
 
-            //    return material;
-            //}
+                return material;
+            }
 
             return nullptr;
         }
@@ -212,29 +212,27 @@ namespace fb
 
         void CMaterialManager::saveToFile( const String &filePath, SmartPtr<IResource> resource )
         {
-            //try
-            //{
-            //    FB_ASSERT( !StringUtil::isNullOrEmpty( filePath ) );
-            //    FB_ASSERT( resource );
+            try
+            {
+                FB_ASSERT( !StringUtil::isNullOrEmpty( filePath ) );
+                FB_ASSERT( resource );
 
-            //    auto applicationManager = core::IApplicationManager::instance();
-            //    FB_ASSERT( applicationManager );
+                auto applicationManager = core::IApplicationManager::instance();
+                FB_ASSERT( applicationManager );
 
-            //    auto fileSystem = applicationManager->getFileSystem();
-            //    FB_ASSERT( fileSystem );
+                auto fileSystem = applicationManager->getFileSystem();
+                FB_ASSERT( fileSystem );
 
-            //    auto material = fb::static_pointer_cast<IMaterial>( resource );
-            //    auto pData = material->toData();
+                auto material = fb::static_pointer_cast<IMaterial>( resource );
+                auto pData = fb::static_pointer_cast<Properties>( material->toData() );
+                auto materialStr = DataUtil::toString( pData.get(), true );
 
-            //    auto mat = pData->getDataAsType<data::material_graph>();
-            //    auto materialStr = DataUtil::toString( mat, true );
-
-            //    fileSystem->writeAllText( filePath, materialStr );
-            //}
-            //catch( std::exception &e )
-            //{
-            //    FB_LOG_EXCEPTION( e );
-            //}
+                fileSystem->writeAllText( filePath, materialStr );
+            }
+            catch( std::exception &e )
+            {
+                FB_LOG_EXCEPTION( e );
+            }
         }
 
         SmartPtr<IResource> CMaterialManager::loadFromFile( const String &filePath )
@@ -272,41 +270,39 @@ namespace fb
                     }
                 }
 
-                //auto ext = Path::getFileExtension( filePath );
-                //if( ext == ".mat" )
-                //{
-                //    auto stream = fileSystem->open( filePath, true, false, false, false, false );
-                //    if( !stream )
-                //    {
-                //        stream = fileSystem->open( filePath, true, false, false, true, true );
-                //    }
+                auto ext = Path::getFileExtension( filePath );
+                if( ext == ".mat" )
+                {
+                    auto stream = fileSystem->open( filePath, true, false, false, false, false );
+                    if( !stream )
+                    {
+                        stream = fileSystem->open( filePath, true, false, false, true, true );
+                    }
 
-                //    if( stream )
-                //    {
-                //        auto materialStr = stream->getAsString();
+                    if( stream )
+                    {
+                        auto materialStr = stream->getAsString();
 
-                //        data::material_graph materialData;
-                //        DataUtil::parse( materialStr, &materialData );
+                        auto materialData = fb::make_ptr<Properties>();
+                        DataUtil::parse( materialStr, materialData.get() );
 
-                //        auto material = create( materialName );
+                        auto material = create( materialName );
 
-                //        FileInfo fileInfo;
-                //        if( fileSystem->findFileInfo( filePath, fileInfo ) )
-                //        {
-                //            auto fileId = fileInfo.fileId;
-                //            material->setFileSystemId( fileId );
-                //        }
+                        FileInfo fileInfo;
+                        if( fileSystem->findFileInfo( filePath, fileInfo ) )
+                        {
+                            auto fileId = fileInfo.fileId;
+                            material->setFileSystemId( fileId );
+                        }
 
-                //        auto data = fb::make_ptr<Data<data::material_graph>>();
-                //        data->setData( &materialData );
-                //        material->fromData( data );
-                //        material->load( nullptr );
+                        material->fromData( materialData );
+                        material->load( nullptr );
 
-                //        m_materials.push_back( material );
+                        m_materials.push_back( material );
 
-                //        return material;
-                //    }
-                //}
+                        return material;
+                    }
+                }
             }
             catch( std::exception &e )
             {

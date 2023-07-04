@@ -31,5 +31,16 @@ namespace fb
         {
             return m_textSize;
         }
+
+        void ImGuiText::setVerticalAlignment( u8 alignment )
+        {
+            
+        }
+
+        u8 ImGuiText::getVerticalAlignment() const
+        {
+            return 0;
+        }
+
     }  // end namespace ui
 }  // end namespace fb

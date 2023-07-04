@@ -92,7 +92,7 @@ namespace fb
             bool isLoaded() const override;
 
         protected:
-            class InstancedObjectStateListener : public CSharedObject<IStateListener>
+            class InstancedObjectStateListener : public SharedObject<IStateListener>
             {
             public:
                 InstancedObjectStateListener( CInstancedObject *instancedObject );
@@ -105,7 +105,7 @@ namespace fb
                 CInstancedObject *m_owner = nullptr;
             };
 
-            class InstancedObjectState : public CSharedObject<IState>
+            class InstancedObjectState : public SharedObject<IState>
             {
             public:
                 InstancedObjectState();

@@ -2,7 +2,7 @@
 #define _COverlayElement_H
 
 #include <FBGraphics/FBGraphicsPrerequisites.h>
-#include <FBCore/Base/Properties.h>
+#include <FBCore/Core/Properties.h>
 #include <FBCore/Interface/Graphics/IOverlay.h>
 #include <FBCore/Interface/Graphics/IOverlayElement.h>
 #include <FBCore/Interface/System/IStateContext.h>
@@ -447,7 +447,7 @@ namespace fb
             FB_CLASS_REGISTER_TEMPLATE_DECL( COverlayElement, T );
 
         protected:
-            class ElementStateListener : public CSharedObject<IStateListener>
+            class ElementStateListener : public SharedObject<IStateListener>
             {
             public:
                 ElementStateListener() = default;
@@ -502,7 +502,7 @@ namespace fb
             SmartPtr<IStateListener> m_stateListener;
         };
 
-        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, COverlayElement, T, CSharedObject<T> );
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, COverlayElement, T, SharedObject<T> );
     } // end namespace render
 }     // end namespace fb
 

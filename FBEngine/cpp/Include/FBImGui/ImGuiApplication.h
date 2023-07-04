@@ -4,8 +4,8 @@
 #include <FBImGui/FBImGuiPrerequisites.h>
 #include <FBCore/Interface/UI/IUIApplication.h>
 #include <FBCore/Interface/Graphics/IWindowListener.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/ColourF.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/ColourF.h>
 #include <imgui_internal.h>
 
 namespace fb
@@ -13,7 +13,7 @@ namespace fb
     namespace ui
     {
 
-        class ImGuiApplication : public CSharedObject<IUIApplication>
+        class ImGuiApplication : public SharedObject<IUIApplication>
         {
         public:
             ImGuiApplication();
@@ -63,7 +63,7 @@ namespace fb
             static ImGuiOverlayOgre *getOverlay();
 
         protected:
-            class WindowListener : public CSharedObject<render::IWindowListener>
+            class WindowListener : public SharedObject<render::IWindowListener>
             {
             public:
                 WindowListener() = default;

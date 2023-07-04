@@ -5,7 +5,7 @@
 #include <FBGraphics/Wrapper/CTerrain.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Interface/Graphics/ITerrain.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <OgreVector3.h>
 #include <OgreRenderTargetListener.h>
 #include <OgreTexture.h>
@@ -150,8 +150,6 @@ namespace fb
 
             Ogre::SceneManager *getOgreSceneManager() const;
 
-            void setOgreSceneManager( Ogre::SceneManager *ogreSceneManager );
-
             Ogre::Camera *getTerrainCamera() const;
             void setTerrainCamera( Ogre::Camera *terrainCamera );
 
@@ -172,7 +170,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class TerrainStateListener : public CSharedObject<IStateListener>
+            class TerrainStateListener : public SharedObject<IStateListener>
             {
             public:
                 TerrainStateListener() = default;
@@ -226,9 +224,7 @@ namespace fb
             Ogre::TerrainPaging *mTerrainPaging = nullptr;
             Ogre::PageManager *mPageManager = nullptr;
 
-            Ogre::SceneManager *m_ogreSceneManager = nullptr;
-
-            SmartPtr<IGraphicsScene> m_sceneManager;
+            AtomicSmartPtr<IGraphicsScene> m_sceneManager;
 
             f32 mHeightUpdateCountDown = 0.0f;
             f32 mHeightUpdateRate = 0.0f;

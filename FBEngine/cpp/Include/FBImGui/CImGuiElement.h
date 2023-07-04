@@ -6,11 +6,11 @@
 #include <FBCore/Interface/UI/IUIDragSource.h>
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/StringTypes.h>
-#include <FBCore/Base/Array.h>
-#include <FBCore/Base/Properties.h>
-#include <FBCore/Base/Parameter.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/StringTypes.h>
+#include <FBCore/Core/Array.h>
+#include <FBCore/Core/Properties.h>
+#include <FBCore/Core/Parameter.h>
 #include <FBCore/Math/Vector2.h>
 #include <FBCore/System/Prototype.h>
 
@@ -305,7 +305,7 @@ namespace fb
             FB_CLASS_REGISTER_TEMPLATE_DECL( CImGuiElement, T );
 
         protected:
-            class BaseStateListener : public CSharedObject<IStateListener>
+            class BaseStateListener : public SharedObject<IStateListener>
             {
             public:
                 BaseStateListener() = default;
@@ -422,7 +422,7 @@ namespace fb
             static u32 m_nextGeneratedNameExt;
         };
 
-        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, CImGuiElement, T, CSharedObject<T> );
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, CImGuiElement, T, SharedObject<T> );
     }  // end namespace ui
 }  // end namespace fb
 

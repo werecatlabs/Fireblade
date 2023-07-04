@@ -4,13 +4,13 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/ITextureManager.h>
 #include <FBCore/Interface/Memory/ISharedObjectListener.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     namespace render
     {
-        class CTextureManagerOgre : public CSharedObject<ITextureManager>
+        class CTextureManagerOgre : public SharedObject<ITextureManager>
         {
         public:
             CTextureManagerOgre();
@@ -89,7 +89,7 @@ namespace fb
             void _getObject( void **ppObject ) const override;
 
         protected:
-            class TextureListener : public CSharedObject<IEventListener>
+            class TextureListener : public SharedObject<IEventListener>
             {
             public:
                 TextureListener() = default;

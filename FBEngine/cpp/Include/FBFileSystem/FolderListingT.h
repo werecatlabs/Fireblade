@@ -4,14 +4,14 @@
 #include <FBFileSystem/FBFileSystemPrerequisites.h>
 #include <FBCore/Interface/IO/IFolderExplorer.h>
 #include <FBCore/Interface/IO/IFolderExplorerW.h>
-#include <FBCore/Memory/CSharedObject.h>
-#include <FBCore/Base/Array.h>
+#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {
 
     template <class TInterface, class T>
-    class FolderListingT : public CSharedObject<TInterface>
+    class FolderListingT : public SharedObject<TInterface>
     {
     public:
         FolderListingT();

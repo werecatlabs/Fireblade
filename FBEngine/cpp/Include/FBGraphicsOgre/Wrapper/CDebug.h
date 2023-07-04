@@ -3,9 +3,9 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IDebug.h>
-#include <FBCore/Base/ConcurrentArray.h>
-#include <FBCore/Base/ConcurrentQueue.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Core/ConcurrentArray.h>
+#include <FBCore/Core/ConcurrentQueue.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Thread/Threading.h>
 #include <OgreMaterial.h>
 
@@ -13,7 +13,7 @@ namespace fb
 {
     namespace render
     {
-        class CDebug : public CSharedObject<IDebug>
+        class CDebug : public SharedObject<IDebug>
         {
         public:
             CDebug();

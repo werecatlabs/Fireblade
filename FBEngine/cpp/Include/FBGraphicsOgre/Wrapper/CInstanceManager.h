@@ -3,7 +3,7 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IInstanceManager.h>
-#include <FBCore/Memory/CSharedObject.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <OgrePrerequisites.h>
 #include <OgreRenderTargetListener.h>
 
@@ -12,7 +12,7 @@ namespace fb
     namespace render
     {
 
-        class CInstanceManager : public CSharedObject<IInstanceManager>,
+        class CInstanceManager : public SharedObject<IInstanceManager>,
                                  public Ogre::RenderTargetListener
         {
         public:

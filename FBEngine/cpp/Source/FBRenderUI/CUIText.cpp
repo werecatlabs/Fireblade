@@ -116,7 +116,7 @@ namespace fb
                 m_overlayText = overlayManager->addElement(
                     "TextArea", "TextArea_" + StringUtil::toString( m_nextGeneratedNameExt++ ) );
                 // panel->addChild(text);
-                m_overlayText->setAlignment(
+                m_overlayText->setHorizontalAlignment( 
                     static_cast<u8>( render::IOverlayElementText::Alignment::Center ) );
 
                 m_overlayText->setCaption( "Test" );
@@ -177,6 +177,24 @@ namespace fb
             }
 
             return 0.0f;
+        }
+
+        void CUIText::setVerticalAlignment( u8 alignment )
+        {
+            if( m_overlayText )
+            {
+                m_overlayText->setVerticalAlignment( alignment );
+            }
+        }
+
+        u8 CUIText::getVerticalAlignment() const
+        {
+            if( m_overlayText )
+            {
+                return m_overlayText->getVerticalAlignment();
+            }
+
+            return 0;
         }
 
         //

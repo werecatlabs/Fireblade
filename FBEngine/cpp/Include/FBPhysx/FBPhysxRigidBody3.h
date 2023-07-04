@@ -9,7 +9,7 @@
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/State/Messages/StateMessageObject.h>
-#include <FBCore/Base/LogManager.h>
+#include <FBCore/Core/LogManager.h>
 #include <PxRigidBody.h>
 
 namespace fb
@@ -288,7 +288,7 @@ namespace fb
             Array<SmartPtr<IPhysicsShape3>> m_shapes;
         };
 
-        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, PhysxRigidBody3, T, CSharedObject<T> );
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, PhysxRigidBody3, T, SharedObject<T> );
 
         template <class T>
         physx::PxRigidActor *PhysxRigidBody3<T>::getActor() const

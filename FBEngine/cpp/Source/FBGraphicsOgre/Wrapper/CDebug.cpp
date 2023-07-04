@@ -10,7 +10,7 @@ namespace fb
 {
     namespace render
     {
-        FB_CLASS_REGISTER_DERIVED( fb, CDebug, CSharedObject<IDebug> );
+        FB_CLASS_REGISTER_DERIVED( fb, CDebug, SharedObject<IDebug> );
 
         CDebug::CDebug()
         {
