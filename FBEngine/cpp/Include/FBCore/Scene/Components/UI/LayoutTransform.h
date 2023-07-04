@@ -88,12 +88,31 @@ namespace fb
 
             void setAbsoluteSize( const Vector2F &absoluteSize );
 
+            SmartPtr<UIComponent> getLayout() const;
+
+            void setLayout( SmartPtr<UIComponent> layout );
+
             FB_CLASS_REGISTER_DECL;
+
+
 
         protected:
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType );
 
+                        /**
+             * @brief Sets up the canvas for the UIComponent.
+             *
+             * This method is responsible for initializing the canvas for the UIComponent.
+             * It should be implemented by derived classes if additional setup is needed.
+             */
+            virtual void setupCanvas();
+
             SmartPtr<UIComponent> m_uiComponent;
+
+            /**
+             * @brief A smart pointer to the UIComponent object representing the canvas on which the UIComponent is drawn.
+             */
+            SmartPtr<UIComponent> m_layout;
         };
     }  // namespace scene
 }  // end namespace fb

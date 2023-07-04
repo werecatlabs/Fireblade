@@ -12,4 +12,4 @@ namespace fb
     void AsyncOperation::addCompleteEvent( std::function<void()> func )
     {
     }
-} // end namespace fb
+}  // end namespace fb

@@ -115,8 +115,7 @@ namespace fb
         return m_messageQueue.exchange( messageQueue );
     }
 
-    void StateQueue::setMessageQueue(
-        SharedPtr<ConcurrentArray<SmartPtr<IStateMessage>>> messageQueue )
+    void StateQueue::setMessageQueue( SharedPtr<ConcurrentArray<SmartPtr<IStateMessage>>> messageQueue )
     {
         m_messageQueue = messageQueue;
     }

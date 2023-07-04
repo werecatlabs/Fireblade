@@ -375,7 +375,7 @@ namespace fb
     {
         FB_ASSERT( isSane() );
 
-        auto rads = Vector3<T>( rotation.y, rotation.x, rotation.z ) * Math<T>::deg_to_rad();
+        auto rads = rotation * Math<T>::deg_to_rad();
         Euler<T> euler( rads );
         m_orientation = euler.toQuaternion();
     }

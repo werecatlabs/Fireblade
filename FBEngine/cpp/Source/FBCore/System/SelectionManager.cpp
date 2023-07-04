@@ -4,24 +4,21 @@
 
 namespace fb
 {
-    
+
     SelectionManager::SelectionManager()
     {
     }
 
-    
     SelectionManager::~SelectionManager()
     {
         unload( nullptr );
     }
 
-    
     void SelectionManager::unload( SmartPtr<ISharedObject> data )
     {
         m_selection.clear();
     }
 
-    
     void SelectionManager::addSelectedObject( SmartPtr<ISharedObject> object )
     {
         m_selection.push_back( object );
@@ -32,7 +29,6 @@ namespace fb
         //}
     }
 
-    
     void SelectionManager::removeSelectedObject( SmartPtr<ISharedObject> object )
     {
         auto it = std::find( m_selection.begin(), m_selection.end(), object );
@@ -47,7 +43,6 @@ namespace fb
         //}
     }
 
-    
     void SelectionManager::clearSelection()
     {
         m_selection.clear();
@@ -58,7 +53,6 @@ namespace fb
         //}
     }
 
-    
     Array<SmartPtr<ISharedObject>> SelectionManager::getSelection() const
     {
         return m_selection;

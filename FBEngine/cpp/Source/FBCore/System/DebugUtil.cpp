@@ -19,7 +19,7 @@ namespace fb
         return strStream.str();
     }
 
-    String DebugUtil::getStackTraceForException(std::exception& e)
+    String DebugUtil::getStackTraceForException( std::exception &e )
     {
         std::stringstream strStream;
 

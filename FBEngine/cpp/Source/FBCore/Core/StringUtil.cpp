@@ -914,6 +914,17 @@ namespace fb
 
     template <class T>
     template <class B>
+    T StringUtility<T>::toString( const Quaternion<B> &val )
+    {
+        std::basic_stringstream<typename T::value_type, std::char_traits<typename T::value_type>,
+                                std::allocator<typename T::value_type>>
+            stream;
+        stream << val.X() << " " << val.Y() << " " << val.Z() << " " << val.W();
+        return stream.str();
+    }
+
+    template <class T>
+    template <class B>
     Vector2<B> StringUtility<T>::parseVector2( const T &val, const Vector2<B> &defaultValue )
     {
         // Split on space
@@ -991,6 +1002,22 @@ namespace fb
         return Vector4<B>(
             static_cast<B>( parseDouble( vec[0] ) ), static_cast<B>( parseDouble( vec[1] ) ),
             static_cast<B>( parseDouble( vec[2] ) ), static_cast<B>( parseDouble( vec[3] ) ) );
+    }
+
+    template <class T>
+    template <class B>
+    Quaternion<B> StringUtility<T>::parseQuaternion( const T &val, const Quaternion<B> &defaultValue )
+    {
+        // Split on space
+        auto vec = StringUtility::split( val );
+        if( vec.size() != 4 )
+        {
+            return defaultValue;
+        }
+
+        return Quaternion<B>(
+            static_cast<B>( parseDouble( vec[3] ) ), static_cast<B>( parseDouble( vec[0] ) ),
+            static_cast<B>( parseDouble( vec[1] ) ), static_cast<B>( parseDouble( vec[2] ) ) );
     }
 
     template <class T>
@@ -1352,7 +1379,7 @@ namespace fb
     }
 
     template <>
-    String StringUtility<String>::cleanupPath(const String& path)
+    String StringUtility<String>::cleanupPath( const String &path )
     {
         if( path == "./" )
         {
@@ -1364,63 +1391,63 @@ namespace fb
 
 #ifdef FB_USE_BOOST
         boost::filesystem::path fspath( path );
-        bool isAbsolute =  fspath.is_absolute();
+        bool isAbsolute = fspath.is_absolute();
 #else
-        bool isAbsolute =  false;
+        bool isAbsolute = false;
 #endif
 
-        for (const auto& c : path)
+        for( const auto &c : path )
         {
-            if (c == '/' || c == '\\')
+            if( c == '/' || c == '\\' )
             {
-                if (component == "..")
+                if( component == ".." )
                 {
-                    if (!components.empty() && components.back() != "..")
+                    if( !components.empty() && components.back() != ".." )
                     {
                         components.pop_back();
                     }
-                    else if (!isAbsolute)
+                    else if( !isAbsolute )
                     {
-                        components.push_back("..");
+                        components.push_back( ".." );
                     }
                 }
-                else if (component != "." && !component.empty())
+                else if( component != "." && !component.empty() )
                 {
-                    components.push_back(component);
+                    components.push_back( component );
                 }
                 component.clear();
             }
             else
             {
-                component.push_back(c);
+                component.push_back( c );
             }
         }
 
-        if (component == "..")
+        if( component == ".." )
         {
-            if (!components.empty() && components.back() != "..")
+            if( !components.empty() && components.back() != ".." )
             {
                 components.pop_back();
             }
-            else if (!isAbsolute)
+            else if( !isAbsolute )
             {
-                components.push_back("..");
+                components.push_back( ".." );
             }
         }
-        else if (component != "." && !component.empty())
+        else if( component != "." && !component.empty() )
         {
-            components.push_back(component);
+            components.push_back( component );
         }
 
         std::string result;
 
-        for (const auto& component : components)
+        for( const auto &component : components )
         {
-            if (!result.empty() && component != "../" && component != "..\\")
+            if( !result.empty() && component != "../" && component != "..\\" )
             {
                 result += '/';
             }
-            else if (isAbsolute && result.empty())
+            else if( isAbsolute && result.empty() )
             {
 #ifdef FB_PLATFORM_APPLE
                 result += '/';
@@ -1542,6 +1569,8 @@ namespace fb
     template std::string StringUtility<std::string>::toString<s32>( const Vector3I & );
     template std::string StringUtility<std::string>::toString<f32>( const Vector3F & );
     template std::string StringUtility<std::string>::toString<f64>( const Vector3D & );
+    template std::string StringUtility<std::string>::toString<f32>( const QuaternionF & );
+    template std::string StringUtility<std::string>::toString<f64>( const QuaternionD & );
 
     template Vector2I StringUtility<std::string>::parseVector2<s32>( const std::string &,
                                                                      const Vector2I & );
@@ -1582,6 +1611,11 @@ namespace fb
     template Vector4D StringUtility<std::string>::parseVector4<f64>( const std::string &,
                                                                      const std::string &,
                                                                      const Vector4D & );
+
+    template QuaternionF StringUtility<std::string>::parseQuaternion<f32>( const std::string &,
+                                                                           const QuaternionF & );
+    template QuaternionD StringUtility<std::string>::parseQuaternion<f64>( const std::string &,
+                                                                           const QuaternionD & );
 
     template class StringUtility<StringW>;
 }  // end namespace fb

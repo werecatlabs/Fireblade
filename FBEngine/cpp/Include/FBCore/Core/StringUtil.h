@@ -5,6 +5,7 @@
 #include <FBCore/Math/Vector2.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Vector4.h>
+#include <FBCore/Math/Quaternion.h>
 #include <FBCore/Core/ColourI.h>
 #include <FBCore/Core/ColourF.h>
 #include <FBCore/Core/StringTypes.h>
@@ -139,6 +140,15 @@ namespace fb
         template <class B>
         static Vector4<B> parseVector4( const T &val, const T &split,
                                         const Vector4<B> &defaultValue = Vector4<B>::zero() );
+
+        /** Converts a 4d vector to a string. */
+        template <class B>
+        static T toString( const Quaternion<B> &value );
+
+        /** Converts a string to a 4d vector. */
+        template <class B>
+        static Quaternion<B> parseQuaternion(
+            const T &value, const Quaternion<B> &defaultValue = Quaternion<B>::identity() );
 
         /** Converts a boolean to a string. */
         static String toString( const ColourI &colour );

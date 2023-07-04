@@ -860,7 +860,33 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, Transform3F &value )
+    bool Properties::getPropertyValue( const String &name, QuaternionF &value ) const
+    {
+        if( hasProperty( name ) )
+        {
+            const auto &property = getPropertyObject( name );
+            auto str = property.getValue();
+            value = StringUtil::parseQuaternion<f32>( str );
+            return true;
+        }
+
+        return false;
+    }
+
+    bool Properties::getPropertyValue( const String &name, QuaternionD &value ) const
+    {
+        if( hasProperty( name ) )
+        {
+            const auto &property = getPropertyObject( name );
+            auto str = property.getValue();
+            value = StringUtil::parseQuaternion<f64>( str );
+            return true;
+        }
+
+        return false;
+    }
+
+    bool Properties::getPropertyValue( const String &name, Transform3F &value ) const
     {
         if( hasProperty( name ) )
         {
@@ -885,7 +911,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, Transform3D &value )
+    bool Properties::getPropertyValue( const String &name, Transform3D &value ) const
     {
         if( hasProperty( name ) )
         {
@@ -1063,15 +1089,15 @@ namespace fb
     template <typename T>
     struct MyCustomPtrConverter : public rttr::detail::type_converter_target<T>
     {
-        MyCustomPtrConverter(const type& target_type)
-            :rttr::detail::type_converter_target<T>(target_type)
+        MyCustomPtrConverter( const type &target_type ) :
+            rttr::detail::type_converter_target<T>( target_type )
         {
         }
 
-        T convert(void* data, bool& ok) const
+        T convert( void *data, bool &ok ) const
         {
-        	ok = true;
-			return T( *static_cast<T*>(data) ); 
+            ok = true;
+            return T( *static_cast<T *>( data ) );
         }
 
         static void *extract( const rttr::variant &var )
@@ -1112,9 +1138,9 @@ namespace fb
         //    .property( "children", &Properties::m_children );
 
         //MyCustomPtrConverter<Properties>::register_converter();
-        auto p = new MyCustomPtrConverter<Properties>(rttr::type::get<Properties>());
-        detail::type_register::register_converter(p);
-        
+        auto p = new MyCustomPtrConverter<Properties>( rttr::type::get<Properties>() );
+        detail::type_register::register_converter( p );
+
         //rttr::registration::conversion::constructor<std::unique_ptr<int>, std::unique_ptr<int>>(
         //    "std::unique_ptr<int>" );
         //rttr::registration::conversion::constructor<std::shared_ptr<int>, std::shared_ptr<int>>(

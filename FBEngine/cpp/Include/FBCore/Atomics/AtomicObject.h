@@ -135,7 +135,7 @@ namespace fb
     template <class T>
     void AtomicObject<T>::operator=( const AtomicObject &other )
     {
-        m_value = other.m_value;
+        m_value = other.m_value.load();
     }
 
     template <class T>

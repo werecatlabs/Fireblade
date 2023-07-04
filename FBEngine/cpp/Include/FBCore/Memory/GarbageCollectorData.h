@@ -187,6 +187,11 @@ namespace fb
          */
         s32 removeReference( u32 id );
 
+        s32 getWeakReferences( u32 id ) const;
+        void setWeakReferences( u32 id, s32 references );
+        s32 addWeakReference( u32 id );
+        s32 removeWeakReference( u32 id );
+
         /**
          * Updates the reference count of all objects in the garbage collector data.
          */
@@ -261,6 +266,8 @@ namespace fb
          * @return The pointer to the reference count.
          */
         atomic_s32 *getReferencesPtr( u32 id );
+
+        atomic_s32 *getWeakReferencesPtr( u32 id );
 
         /**
          * Gets the garbage collector mode.
@@ -375,6 +382,7 @@ namespace fb
         ConcurrentArray<void *> m_userData;
         ConcurrentArray<hash32> m_factoryData;
         ConcurrentArray<atomic_s32> m_references;
+        ConcurrentArray<atomic_s32> m_weakReferences;
         ConcurrentArray<atomic_u8> m_flags;
 
         // Counters and state variables.

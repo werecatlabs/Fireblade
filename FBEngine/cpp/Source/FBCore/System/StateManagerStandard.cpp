@@ -58,15 +58,15 @@ namespace fb
             {
                 setLoadingState( LoadingState::Unloading );
 
-                if (auto p = getStateObjectsPtr())
+                if( auto p = getStateObjectsPtr() )
                 {
-                    auto& stateObjects = *p;
-                    for(auto &stateObject : stateObjects)
+                    auto &stateObjects = *p;
+                    for( auto &stateObject : stateObjects )
                     {
                         stateObject->unload( nullptr );
                     }
 
-                    setStateObjectsPtr(nullptr);
+                    setStateObjectsPtr( nullptr );
                 }
 
                 auto numStateQueues = getNumStateQueues();
@@ -108,7 +108,7 @@ namespace fb
         auto stateObject = factoryManager->make_ptr<StateContextStandard>();
         FB_ASSERT( stateObject );
 
-        stateObject->load(nullptr);
+        stateObject->load( nullptr );
 
         if( auto pStateObjects = getStateObjectsPtr() )
         {

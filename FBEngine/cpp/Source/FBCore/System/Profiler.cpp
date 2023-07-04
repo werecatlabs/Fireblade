@@ -35,7 +35,7 @@ namespace fb
 
     SmartPtr<IProfile> Profiler::addProfile()
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );  
+        RecursiveMutex::ScopedLock lock( m_mutex );
         auto profile = fb::make_ptr<Profile>();
         m_profiles.push_back( profile );
 
@@ -44,7 +44,7 @@ namespace fb
 
     void Profiler::removeProfile( SmartPtr<IProfile> profile )
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );  
+        RecursiveMutex::ScopedLock lock( m_mutex );
         auto it = std::find( m_profiles.begin(), m_profiles.end(), profile );
         if( it != m_profiles.end() )
         {
@@ -54,7 +54,7 @@ namespace fb
 
     SmartPtr<IProfile> Profiler::getProfile( hash64 id ) const
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );  
+        RecursiveMutex::ScopedLock lock( m_mutex );
         for( auto &p : m_profiles )
         {
             if( auto handle = p->getHandle() )
@@ -71,7 +71,7 @@ namespace fb
 
     Array<SmartPtr<IProfile>> Profiler::getProfiles() const
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );  
+        RecursiveMutex::ScopedLock lock( m_mutex );
         return m_profiles;
     }
 

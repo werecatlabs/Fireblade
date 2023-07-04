@@ -55,9 +55,9 @@ namespace fb
 {
     namespace core
     {
-        FB_CLASS_REGISTER_DERIVED( fb, ApplicationManager, SharedObject<IApplicationManager> );
+        FB_CLASS_REGISTER_DERIVED( fb, ApplicationManager, IApplicationManager );
 
-        ApplicationManager::ApplicationManager() : SharedObject<IApplicationManager>()
+        ApplicationManager::ApplicationManager() 
         {
         }
 

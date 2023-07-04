@@ -5,10 +5,7 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, Timer, SharedObject<ITimer> );
 
-    Timer::Timer() :
-        m_minDeltaTime( 0.0 ),
-        m_maxDeltaTime( 1e10 ),
-        m_enableSmoothing( false )
+    Timer::Timer() : m_minDeltaTime( 0.0 ), m_maxDeltaTime( 1e10 ), m_enableSmoothing( false )
     {
     }
 
@@ -261,22 +258,22 @@ namespace fb
 
     u32 Timer::getTimeMilliseconds() const
     {
-        return static_cast<u32>(getTime() * 1000.0);
+        return static_cast<u32>( getTime() * 1000.0 );
     }
 
     u32 Timer::getRealTime() const
     {
-        return static_cast<u32>(getTime() * 1000.0);
+        return static_cast<u32>( getTime() * 1000.0 );
     }
 
     u32 Timer::getTimeIntervalMilliseconds() const
     {
-        return static_cast<u32>(getDeltaTime() * 1000.0);
+        return static_cast<u32>( getDeltaTime() * 1000.0 );
     }
 
     time_interval Timer::getTimeInterval() const
     {
-        return getDeltaTime(); // todo remove
+        return getDeltaTime();  // todo remove
     }
 
     void Timer::setFrameSmoothingPeriod( u32 milliSeconds )
@@ -291,4 +288,4 @@ namespace fb
     void Timer::resetSmoothing()
     {
     }
-} // end namespace fb
+}  // end namespace fb

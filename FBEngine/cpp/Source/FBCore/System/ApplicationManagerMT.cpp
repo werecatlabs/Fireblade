@@ -60,9 +60,9 @@ namespace fb
 {
     namespace core
     {
-        FB_CLASS_REGISTER_DERIVED( fb, ApplicationManagerMT, SharedObject<IApplicationManager> );
+        FB_CLASS_REGISTER_DERIVED( fb, ApplicationManagerMT, IApplicationManager );
 
-        ApplicationManagerMT::ApplicationManagerMT() : SharedObject<IApplicationManager>()
+        ApplicationManagerMT::ApplicationManagerMT() 
         {
         }
 

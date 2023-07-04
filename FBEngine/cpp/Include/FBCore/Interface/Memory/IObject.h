@@ -26,87 +26,87 @@ namespace fb
          * Called before the object is updated.
          * Implementations of this function can perform any necessary pre-update processing.
          */
-        virtual void preUpdate() = 0;
+        virtual void preUpdate();
 
         /**
          * Called to update the object.
          * Implementations of this function can perform any necessary updating of the object.
          */
-        virtual void update() = 0;
+        virtual void update();
 
         /**
          * Called after the object is updated.
          * Implementations of this function can perform any necessary post-update processing.
          */
-        virtual void postUpdate() = 0;
+        virtual void postUpdate();
 
         /**
          * Returns a pointer to the `Handle` object associated with this object.
          * @return A pointer to the `Handle` object.
          */
-        virtual Handle *getHandle() const = 0;
+        virtual Handle *getHandle() const;
 
         /**
          * Checks if the object is valid.
          * @return Returns a boolean indicating if the object is valid.
          */
-        virtual bool isValid() const = 0;
+        virtual bool isValid() const;
 
         /**
          * Gets the creator data associated with this object.
          * @return A pointer to the creator data.
          */
-        virtual void *getCreatorData() const = 0;
+        virtual void *getCreatorData() const;
 
         /**
          * Sets the creator data associated with this object.
          * @param data A pointer to the creator data.
          */
-        virtual void setCreatorData( void *data ) = 0;
+        virtual void setCreatorData( void *data );
 
         /**
          * Gets the factory data associated with this object.
          * @return An integer representing the factory data.
          */
-        virtual hash32 getFactoryData() const = 0;
+        virtual hash32 getFactoryData() const;
 
         /**
          * Sets the factory data associated with this object.
          * @param data An integer representing the factory data.
          */
-        virtual void setFactoryData( hash32 data ) = 0;
+        virtual void setFactoryData( hash32 data );
 
         /**
          * Gets the object data as a string.
          * @return The object data as a `String` object.
          */
-        virtual String toString() const = 0;
+        virtual String toString() const;
 
         /**
          * Gets the user data associated with this object.
          * @return A pointer to the user data.
          */
-        virtual void *getUserData() const = 0;
+        virtual void *getUserData() const;
 
         /**
          * Sets the user data associated with this object.
          * @param data A pointer to the user data.
          */
-        virtual void setUserData( void *data ) = 0;
+        virtual void setUserData( void *data );
 
         /**
          * Gets the user data attached to this object with the specified ID.
          * @param id The ID of the user data.
          * @return A pointer to the user data.
          */
-        virtual void *getUserData( hash32 id ) const = 0;
+        virtual void *getUserData( hash32 id ) const;
 
         /**
          * Sets the user data attached to this object with the specified ID.
          * @param id The ID of the user data.
          * @param userData A pointer to the user data.
          */
-        virtual void setUserData( hash32 id, void *userData ) = 0;
+        virtual void setUserData( hash32 id, void *userData );
 
         /**
          * @brief Check if the current object is derived from a specified type.
@@ -118,13 +118,7 @@ namespace fb
          * @param type The type ID to check against.
          * @return True if the current object is derived from the specified type, false otherwise.
          */
-        virtual bool derived( u32 type ) const
-        {
-            auto typeManager = TypeManager::instance();
-
-            auto typeInfo = getTypeInfo();
-            return typeManager->isDerived( typeInfo, type );
-        }
+        virtual bool derived( u32 type ) const;
 
         /**
          * @brief Check if the current object is of exactly the specified type.
@@ -136,13 +130,7 @@ namespace fb
          * @param type The type ID to check against.
          * @return True if the current object is of exactly the specified type, false otherwise.
          */
-        virtual bool exactly( u32 type ) const
-        {
-            auto typeManager = TypeManager::instance();
-
-            auto typeInfo = getTypeInfo();
-            return typeManager->isExactly( typeInfo, type );
-        }
+        virtual bool exactly( u32 type ) const;
 
         /**
          * Checks if the class represented by this `IObject` instance is derived from a specified class `B`.
@@ -224,7 +212,29 @@ namespace fb
         }
 #endif
 
+#if FB_USE_CUSTOM_NEW_DELETE
+        void *operator new( size_t sz );
+        void *operator new( size_t sz, void *ptr );
+        void *operator new[]( size_t sz );
+        void operator delete( void *ptr );
+        void operator delete( void *ptr, void * );
+        void operator delete[]( void *ptr );
+
+        void *operator new( size_t sz, const char *file, int line, const char *func );
+        void *operator new( size_t sz, void *ptr, const char *file, int line, const char *func );
+        void *operator new[]( size_t sz, const char *file, int line, const char *func );
+        void operator delete( void *reportedAddress, const char *file, int line,
+                              const char *func ) throw();
+        void operator delete( void *ptr, void *, const char *file, int line, const char *func );
+        void operator delete[]( void *reportedAddress, const char *file, int line,
+                                const char *func ) throw();
+#endif
+
         FB_OBJECT_CLASS_REGISTER_DECL;
+
+    protected:
+        Handle *m_handle = nullptr;
+        atomic_u8 *m_flags = nullptr;    
     };
 }  // end namespace fb
 

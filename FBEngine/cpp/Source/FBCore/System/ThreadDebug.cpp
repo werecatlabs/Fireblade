@@ -11,8 +11,7 @@ namespace fb
     {
     }
 
-    ThreadDebug::ThreadDebug() :
-        m_writeThreadId( 0 )
+    ThreadDebug::ThreadDebug() : m_writeThreadId( 0 )
     {
     }
 
@@ -28,7 +27,7 @@ namespace fb
 
     ThreadDebug::Call::~Call()
     {
-        if(m_bWrite)
+        if( m_bWrite )
             m_debug->setWriteThreadId( 0 );
     }
 
@@ -41,15 +40,15 @@ namespace fb
         m_function( nullptr ),
         m_line( 0 )
     {
-        if(m_bWrite)
+        if( m_bWrite )
         {
-            auto writeThreadId = static_cast<u32>(Thread::getCurrentThreadId());
+            auto writeThreadId = static_cast<u32>( Thread::getCurrentThreadId() );
 
-            if(debug->getWriteThreadId() != 0 && writeThreadId != debug->getWriteThreadId())
+            if( debug->getWriteThreadId() != 0 && writeThreadId != debug->getWriteThreadId() )
             {
                 std::stringstream strStream;
                 strStream << "Possible data race: " << file << " " << function << " " << line
-                    << std::endl;
+                          << std::endl;
                 std::cout << strStream.str().c_str() << std::endl;
 
                 FB_LOG_MESSAGE( "Thread", strStream.str().c_str() );
@@ -59,16 +58,16 @@ namespace fb
         }
         else
         {
-            m_readThreadId = static_cast<u32>(Thread::getCurrentThreadId());
+            m_readThreadId = static_cast<u32>( Thread::getCurrentThreadId() );
         }
 
-        if(debug->getWriteThreadId() != 0)
+        if( debug->getWriteThreadId() != 0 )
         {
-            if(debug->getWriteThreadId() != m_readThreadId)
+            if( debug->getWriteThreadId() != m_readThreadId )
             {
                 std::stringstream strStream;
                 strStream << "Possible data race: " << file << " " << function << " " << line
-                    << std::endl;
+                          << std::endl;
                 std::cout << strStream.str().c_str() << std::endl;
 
                 FB_LOG_MESSAGE( "Thread", strStream.str().c_str() );
@@ -95,4 +94,4 @@ namespace fb
     {
         return m_readThreadId;
     }
-} // end namespace fb
+}  // end namespace fb

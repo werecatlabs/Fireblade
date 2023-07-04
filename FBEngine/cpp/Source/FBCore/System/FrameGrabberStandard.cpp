@@ -5,7 +5,7 @@
 
 namespace fb
 {
-    
+
     FrameGrabberStandard::FrameGrabberStandard()
     {
         // auto engine = core::IApplicationManager::instance();
@@ -13,12 +13,10 @@ namespace fb
         // m_videoStream = videoMgr->createVideoStream();
     }
 
-    
     FrameGrabberStandard::~FrameGrabberStandard()
     {
     }
 
-    
     void FrameGrabberStandard::update()
     {
         // auto engine = core::IApplicationManager::instance();
@@ -45,15 +43,13 @@ namespace fb
         // m_videoStream->addFrame(data);
     }
 
-    
     void FrameGrabberStandard::addFrame( SmartPtr<IStateMessage> message )
     {
         // m_videoStream->addFrame(message);
     }
 
-    
     SmartPtr<IStateMessage> FrameGrabberStandard::popFrame() const
     {
         return nullptr;
     }
-} // end namespace fb
+}  // end namespace fb

@@ -293,6 +293,12 @@ namespace fb
         return objectData.getReferencesPtr( id );
     }
 
+    atomic_s32 *GarbageCollector::getWeakReferencesPtr( u32 typeInfo, u32 id )
+    {
+        auto &objectData = getObjectData( typeInfo );
+        return objectData.getWeakReferencesPtr( id );
+    }
+
     GarbageCollectorMode GarbageCollector::getMode() const
     {
         return m_mode;

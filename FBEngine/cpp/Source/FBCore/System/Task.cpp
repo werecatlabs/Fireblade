@@ -15,6 +15,9 @@ namespace fb
 
     void Task::load( SmartPtr<ISharedObject> data )
     {
+        setLoadingState( LoadingState::Loading );
+
+        setLoadingState( LoadingState::Loaded );
     }
 
     void Task::reload( SmartPtr<ISharedObject> data )
@@ -23,7 +26,10 @@ namespace fb
 
     void Task::unload( SmartPtr<ISharedObject> data )
     {
+        setLoadingState( LoadingState::Unloading );
+        m_profile = nullptr;
         m_jobs.clear();
+        setLoadingState( LoadingState::Unloaded );
     }
 
     void Task::update()
@@ -31,35 +37,33 @@ namespace fb
         try
         {
             auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
             auto timer = applicationManager->getTimer();
-            FB_ASSERT( timer );
 
-            if (auto profile = getProfile())
+            auto profile = getProfile();
+            if( profile )
             {
                 profile->start();
             }
 
-            if(getNextUpdateTime() < timer->now())
+            auto nextUpdateTime = getNextUpdateTime();
+            if( nextUpdateTime < timer->now() )
             {
                 auto task = getTask();
                 auto prevTask = Thread::getCurrentTask();
                 Thread::setCurrentTask( task );
 
                 timer->update();
-                auto dt = timer->getDeltaTime();
 
-                if(!m_jobs.empty())
+                if( !m_jobs.empty() )
                 {
                     SmartPtr<IJob> job;
-                    while(m_jobs.try_pop( job ))
+                    while( m_jobs.try_pop( job ) )
                     {
                         job->execute();
                     }
                 }
 
-                if(auto owner = getOwner())
+                if( auto owner = getOwner() )
                 {
                     try
                     {
@@ -67,7 +71,7 @@ namespace fb
                         owner->update();
                         owner->postUpdate();
                     }
-                    catch(std::exception &e)
+                    catch( std::exception &e )
                     {
                         FB_LOG_EXCEPTION( e );
                     }
@@ -78,7 +82,7 @@ namespace fb
 
                 auto nextUpdateTime = getNextUpdateTime();
                 auto targetFPS = getTargetFPS();
-                if(targetFPS > std::numeric_limits<time_interval>::epsilon())
+                if( targetFPS > std::numeric_limits<time_interval>::epsilon() )
                 {
                     auto rate = 1.0 / targetFPS;
                     nextUpdateTime = nextUpdateTime + rate;
@@ -88,12 +92,12 @@ namespace fb
                 Thread::setCurrentTask( prevTask );
             }
 
-            if( auto profile = getProfile() )
+            if( profile )
             {
                 profile->end();
             }
         }
-        catch(std::exception &e)
+        catch( std::exception &e )
         {
             FB_LOG_EXCEPTION( e );
         }
@@ -106,7 +110,7 @@ namespace fb
 
     void Task::queueJob( SmartPtr<IJob> job )
     {
-        if(job)
+        if( job )
         {
             m_jobs.push( job );
         }
@@ -119,10 +123,10 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
             auto taskId = getTask();
-            taskManager->setFlags( static_cast<u32>(taskId), primary_flag, usePrimary );
+            taskManager->setFlags( static_cast<u32>( taskId ), primary_flag, usePrimary );
         }
     }
 
@@ -133,10 +137,10 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
             auto taskId = getTask();
-            return taskManager->getFlags( static_cast<u32>(taskId), primary_flag );
+            return taskManager->getFlags( static_cast<u32>( taskId ), primary_flag );
         }
 
         return false;
@@ -149,9 +153,9 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
-            taskManager->setFlags( static_cast<u32>(getTask()), recycle_flag, recycle );
+            taskManager->setFlags( static_cast<u32>( getTask() ), recycle_flag, recycle );
         }
     }
 
@@ -162,9 +166,9 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
-            return taskManager->getFlags( static_cast<u32>(getTask()), recycle_flag );
+            return taskManager->getFlags( static_cast<u32>( getTask() ), recycle_flag );
         }
 
         return false;
@@ -187,9 +191,9 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
-            return taskManager->getFlags( static_cast<u32>(getTask()), parallel_flag );
+            return taskManager->getFlags( static_cast<u32>( getTask() ), parallel_flag );
         }
 
         return false;
@@ -202,9 +206,9 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
-            taskManager->setFlags( static_cast<u32>(getTask()), parallel_flag, parallel );
+            taskManager->setFlags( static_cast<u32>( getTask() ), parallel_flag, parallel );
         }
     }
 
@@ -215,9 +219,9 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
-            return taskManager->getFlags( static_cast<u32>(getTask()), enabled_flag );
+            return taskManager->getFlags( static_cast<u32>( getTask() ), enabled_flag );
         }
 
         return false;
@@ -230,9 +234,9 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
-            taskManager->setFlags( static_cast<u32>(getTask()), enabled_flag, enabled );
+            taskManager->setFlags( static_cast<u32>( getTask() ), enabled_flag, enabled );
         }
     }
 
@@ -243,9 +247,9 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
-            return taskManager->getFlags( static_cast<u32>(getTask()), paused_flag );
+            return taskManager->getFlags( static_cast<u32>( getTask() ), paused_flag );
         }
 
         return false;
@@ -258,9 +262,9 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
-            taskManager->setFlags( static_cast<u32>(getTask()), paused_flag, paused );
+            taskManager->setFlags( static_cast<u32>( getTask() ), paused_flag, paused );
         }
     }
 
@@ -285,16 +289,16 @@ namespace fb
 
         --m_stopped;
 
-        if(isExecuting())
+        if( isExecuting() )
         {
             auto task = getTask();
             auto currentTask = Thread::getCurrentTask();
 
-            if(task != currentTask)
+            if( task != currentTask )
             {
                 setPaused( true );
 
-                while(isExecuting())
+                while( isExecuting() )
                 {
                     Thread::yield();
                 }
@@ -355,9 +359,9 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
-            return taskManager->getTargetFPS( static_cast<u32>(getTask()) );
+            return taskManager->getTargetFPS( static_cast<u32>( getTask() ) );
         }
 
         return 0.0;
@@ -370,9 +374,9 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
-            taskManager->setTargetFPS( static_cast<u32>(getTask()), targetFPS );
+            taskManager->setTargetFPS( static_cast<u32>( getTask() ), targetFPS );
         }
     }
 
@@ -393,12 +397,12 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
-            return taskManager->getNextUpdateTime( static_cast<u32>(getTask()) );
+            return taskManager->getNextUpdateTime( static_cast<u32>( getTask() ) );
         }
 
-        return static_cast<time_interval>(0.0);
+        return static_cast<time_interval>( 0.0 );
     }
 
     void Task::setNextUpdateTime( time_interval nextUpdateTime )
@@ -408,9 +412,9 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
-            taskManager->setNextUpdateTime( static_cast<u32>(getTask()), nextUpdateTime );
+            taskManager->setNextUpdateTime( static_cast<u32>( getTask() ), nextUpdateTime );
         }
     }
 
@@ -450,9 +454,9 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
-            taskManager->setTaskState( static_cast<u32>(getTask()), state );
+            taskManager->setTaskState( static_cast<u32>( getTask() ), state );
         }
     }
 
@@ -463,10 +467,10 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
             auto eTask = getTask();
-            return taskManager->getTaskState( static_cast<u32>(eTask) );
+            return taskManager->getTaskState( static_cast<u32>( eTask ) );
         }
 
         return State::None;
@@ -479,9 +483,9 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
-            return taskManager->getOwner( static_cast<u32>(getTask()) );
+            return taskManager->getOwner( static_cast<u32>( getTask() ) );
         }
 
         return nullptr;
@@ -494,9 +498,9 @@ namespace fb
 
         auto pTaskManager = applicationManager->getTaskManager();
         auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if(taskManager)
+        if( taskManager )
         {
-            taskManager->setOwner( static_cast<u32>(getTask()), owner );
+            taskManager->setOwner( static_cast<u32>( getTask() ), owner );
         }
     }
 
@@ -504,7 +508,7 @@ namespace fb
     {
         FB_DEBUG_TRACE;
 
-        if(task)
+        if( task )
         {
             setTask( task );
 
@@ -525,7 +529,7 @@ namespace fb
     {
         FB_DEBUG_TRACE;
 
-        if(auto task = getTask())
+        if( auto task = getTask() )
         {
             task->start();
         }
@@ -541,4 +545,4 @@ namespace fb
     {
         m_task = task;
     }
-} // end namespace fb
+}  // end namespace fb

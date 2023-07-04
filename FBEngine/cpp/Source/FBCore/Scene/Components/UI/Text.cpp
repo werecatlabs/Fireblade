@@ -181,6 +181,8 @@ namespace fb
                 properties->setProperty( "text", m_text );
                 properties->setProperty( "size", m_size );
                 properties->setProperty( "colour", m_colour );
+                properties->setProperty( "verticalAlignment", (u32)m_verticalAlignment );
+                properties->setProperty( "horizontalAlignment", (u32)m_horizontalAlignment );
 
                 return properties;
             }
@@ -190,9 +192,17 @@ namespace fb
 
         void Text::setProperties( SmartPtr<Properties> properties )
         {
+            u32 verticalAlignment = 0;
+            u32 horizontalAlignment = 0;
+
             properties->getPropertyValue( "text", m_text );
             properties->getPropertyValue( "size", m_size );
             properties->getPropertyValue( "colour", m_colour );
+            properties->getPropertyValue( "verticalAlignment", verticalAlignment );
+            properties->getPropertyValue( "horizontalAlignment", horizontalAlignment );
+
+            m_verticalAlignment = verticalAlignment;
+            m_horizontalAlignment = horizontalAlignment;
 
             updateElementState();
 
@@ -206,6 +216,8 @@ namespace fb
                 text->setText( m_text );
                 text->setTextSize( (f32)m_size );
                 text->setColour( m_colour );
+                text->setVerticalAlignment( m_verticalAlignment );
+                text->setHorizontalAlignment( m_horizontalAlignment );
             }
         }
 

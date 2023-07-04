@@ -246,45 +246,39 @@ namespace fb
                                         elementSize.y = MathF::Abs( elementSize.y );
                                     }
 
-                                    auto uiComponents = actor->getComponentsByType<UIComponent>();
-                                    for( auto uiComponent : uiComponents )
+                                    auto canvas =
+                                        fb::static_pointer_cast<Layout>( canvasTransform->getLayout() );
+                                    if( canvas )
                                     {
-                                        if( uiComponent )
+                                        auto canvasSize = canvas->getReferenceSize();
+
+                                        if( !( MathF::equals( canvasSize.X(), 0.0f ) &&
+                                               MathF::equals( canvasSize.Y(), 0.0f ) ) )
                                         {
-                                            auto canvas = fb::static_pointer_cast<Layout>(
-                                                uiComponent->getCanvas() );
-                                            if( canvas )
+                                            relativePos = Vector2F(
+                                                elementPos.X() / static_cast<f32>( canvasSize.X() ),
+                                                elementPos.Y() / static_cast<f32>( canvasSize.Y() ) );
+                                            relativeSize = Vector2F(
+                                                elementSize.X() / static_cast<f32>( canvasSize.X() ),
+                                                elementSize.Y() / static_cast<f32>( canvasSize.Y() ) );
+                                        }
+
+                                        auto absolutePosition =
+                                            relativePos * Vector2F( canvasSize.X(), canvasSize.Y() );
+                                        auto absoluteSize =
+                                            relativeSize * Vector2F( canvasSize.X(), canvasSize.Y() );
+
+                                        transform.setAbsolutePosition( absolutePosition );
+                                        transform.setAbsoluteSize( absoluteSize );
+
+                                        FB_ASSERT( relativePos.isValid() );
+                                        FB_ASSERT( relativeSize.isValid() );
+
+                                        auto uiComponents = actor->getComponentsByType<UIComponent>();
+                                        for( auto uiComponent : uiComponents )
+                                        {
+                                            if( uiComponent )
                                             {
-                                                auto canvasSize = canvas->getReferenceSize();
-
-                                                if( !( MathF::equals( canvasSize.X(), 0.0f ) &&
-                                                       MathF::equals( canvasSize.Y(), 0.0f ) ) )
-                                                {
-                                                    relativePos = Vector2F(
-                                                        elementPos.X() /
-                                                            static_cast<f32>( canvasSize.X() ),
-                                                        elementPos.Y() /
-                                                            static_cast<f32>( canvasSize.Y() ) );
-                                                    relativeSize = Vector2F(
-                                                        elementSize.X() /
-                                                            static_cast<f32>( canvasSize.X() ),
-                                                        elementSize.Y() /
-                                                            static_cast<f32>( canvasSize.Y() ) );
-                                                }
-
-                                                auto absolutePosition =
-                                                    relativePos *
-                                                    Vector2F( canvasSize.X(), canvasSize.Y() );
-                                                auto absoluteSize =
-                                                    relativeSize *
-                                                    Vector2F( canvasSize.X(), canvasSize.Y() );
-
-                                                transform.setAbsolutePosition( absolutePosition );
-                                                transform.setAbsoluteSize( absoluteSize );
-
-                                                FB_ASSERT( relativePos.isValid() );
-                                                FB_ASSERT( relativeSize.isValid() );
-
                                                 if( auto element = uiComponent->getElement() )
                                                 {
                                                     element->setPosition( relativePos );

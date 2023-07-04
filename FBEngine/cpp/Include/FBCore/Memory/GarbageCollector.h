@@ -297,6 +297,8 @@ namespace fb
          */
         atomic_s32 *getReferencesPtr( u32 typeInfo, u32 id );
 
+        atomic_s32 *getWeakReferencesPtr( u32 typeInfo, u32 id );
+
         /**
          * Gets the garbage collector mode.
          * @return The garbage collector mode.

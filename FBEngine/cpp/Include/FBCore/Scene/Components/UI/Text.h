@@ -51,6 +51,8 @@ namespace fb
 
             u32 m_size = 12;
             ColourF m_colour = ColourF::Black;
+            u8 m_verticalAlignment = 0;
+            u8 m_horizontalAlignment = 0;
             String m_text;
             SmartPtr<ui::IUIText> m_textObject;
         };

@@ -128,12 +128,12 @@ namespace fb
 
         Vector3<T> toRadians() const
         {
-            return Vector3<T>( mYaw, mPitch, mRoll );
+            return Vector3<T>( mPitch, mYaw, mRoll );
         }
 
         Vector3<T> toDegrees() const
         {
-            return Vector3<T>( mYaw, mPitch, mRoll ) * Math<T>::rad_to_deg();
+            return Vector3<T>( mPitch, mYaw, mRoll ) * Math<T>::rad_to_deg();
         }
 
         /**
@@ -262,7 +262,7 @@ namespace fb
         mutable Quaternion<T> mCachedQuaternion;
 
         //!< Is the cached quaternion out of date?
-        mutable bool mChanged = false;
+        mutable bool mChanged = true;
     };
 
     template <class T>
@@ -401,8 +401,9 @@ namespace fb
         if( mChanged )
         {
             mCachedQuaternion = Quaternion<T>::angleAxis( mYaw, Vector3<T>::positiveY() ) *
-                                Quaternion<T>::angleAxis( mPitch, Vector3<T>::positiveX() ) *
+                                Quaternion<T>::angleAxis( mPitch, Vector3<T>::negativeX() ) *
                                 Quaternion<T>::angleAxis( mRoll, Vector3<T>::positiveZ() );
+
             mChanged = false;
         }
 

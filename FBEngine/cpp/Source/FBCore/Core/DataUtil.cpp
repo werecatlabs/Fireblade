@@ -682,6 +682,11 @@ namespace fb
 
     boost::json::object propertiesToJson( Properties *ptr )
     {
+        if( !ptr )
+        {
+            return boost::json::object();
+        }
+
         rttr::instance obj = *ptr;
         auto objType = obj.get_type();
         auto rawType = objType.get_raw_type();
@@ -1263,7 +1268,7 @@ namespace fb
             parseYAML( dataStr, ptr );
         }
         break;
-        };        
+        };
     }
 
     template <>

@@ -33,5 +33,5 @@ namespace fb
         void PluginManager::unloadPlugin( SmartPtr<IPlugin> plugin )
         {
         }
-    } // namespace core
-}     // namespace fb
+    }  // namespace core
+}  // namespace fb

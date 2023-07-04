@@ -29,4 +29,4 @@ namespace fb
         FB_LOG( text );
 #endif
     }
-} // end namespace fb
+}  // end namespace fb

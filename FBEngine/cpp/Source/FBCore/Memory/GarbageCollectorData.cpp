@@ -53,6 +53,7 @@ namespace fb
             m_userData.resize( size );
             m_factoryData.resize( size );
             m_references.resize( size );
+            m_weakReferences.resize( size );
             m_flags.resize( size );
 
             for( size_t i = currentSize; i < size; ++i )
@@ -687,8 +688,6 @@ namespace fb
 
     void GarbageCollectorData::setFlag( u32 id, u8 flag, bool value )
     {
-        //FB_ASSERT( id < getSize() );
-
         if( value )
         {
             m_flags[id].fetch_or( flag );
@@ -768,6 +767,12 @@ namespace fb
     {
         FB_ASSERT( id < getSize() );
         return &m_references[id];
+    }
+
+    atomic_s32 *GarbageCollectorData::getWeakReferencesPtr( u32 id )
+    {
+        FB_ASSERT( id < getSize() );
+        return &m_weakReferences[id];
     }
 
     GarbageCollectorMode GarbageCollectorData::getMode() const

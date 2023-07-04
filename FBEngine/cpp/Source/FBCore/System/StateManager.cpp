@@ -16,7 +16,7 @@ namespace fb
     {
         setGarbageCollected( false );
 
-        m_stateQueues.resize( static_cast<u32>(Thread::Task::Count) );
+        m_stateQueues.resize( static_cast<u32>( Thread::Task::Count ) );
 
         auto applicationManager = core::IApplicationManager::instance();
         FB_ASSERT( applicationManager );
@@ -24,7 +24,7 @@ namespace fb
         auto factoryManager = applicationManager->getFactoryManager();
         FB_ASSERT( factoryManager );
 
-        for(u32 i = 0; i < m_stateQueues.size(); ++i)
+        for( u32 i = 0; i < m_stateQueues.size(); ++i )
         {
             auto queue = factoryManager->make_ptr<StateQueueStandard>();
             queue->setGarbageCollected( false );
@@ -46,7 +46,7 @@ namespace fb
 
     void StateManager::unload( SmartPtr<ISharedObject> data )
     {
-        for(auto stateQueue : m_stateQueues)
+        for( auto stateQueue : m_stateQueues )
         {
             stateQueue->unload( nullptr );
         }
@@ -85,13 +85,13 @@ namespace fb
             Array<SmartPtr<IStateContext>>( stateObjects.begin(), stateObjects.end() );
 
         auto it = std::find( newStateObjects.begin(), newStateObjects.end(), stateObject );
-        if(it != newStateObjects.end())
+        if( it != newStateObjects.end() )
         {
             newStateObjects.erase( it );
 
             auto pNewStateObjects = fb::make_shared<ConcurrentArray<SmartPtr<IStateContext>>>();
             *pNewStateObjects = ConcurrentArray<SmartPtr<IStateContext>>( newStateObjects.begin(),
-                newStateObjects.end() );
+                                                                          newStateObjects.end() );
             setStateObjectsPtr( pNewStateObjects );
 
             return true;
@@ -130,23 +130,23 @@ namespace fb
 
         auto task = Thread::getCurrentTask();
 
-        auto stateQueue = m_stateQueues[static_cast<u32>(task)];
-        if(stateQueue)
+        auto stateQueue = m_stateQueues[static_cast<u32>( task )];
+        if( stateQueue )
         {
             auto pStateObjects = getStateObjectsPtr();
             auto stateObjects = *pStateObjects;
 
-            if(!stateQueue->isEmpty())
+            if( !stateQueue->isEmpty() )
             {
                 auto pMessages = stateQueue->getMessagesAndClear();
                 auto &messages = *pMessages;
-                for(auto &message : messages)
+                for( auto &message : messages )
                 {
-                    for(auto &stateObject : stateObjects)
+                    for( auto &stateObject : stateObjects )
                     {
                         auto pListeners = stateObject->getStateListeners();
                         auto listeners = *pListeners;
-                        for(auto &listener : listeners)
+                        for( auto &listener : listeners )
                         {
                             listener->handleStateChanged( message );
                         }
@@ -154,7 +154,7 @@ namespace fb
                 }
             }
 
-            for(auto &stateObject : stateObjects)
+            for( auto &stateObject : stateObjects )
             {
                 stateObject->update();
             }
@@ -163,13 +163,13 @@ namespace fb
 
     void StateManager::sendMessage( Thread::Task taskId, SmartPtr<IStateMessage> message )
     {
-        auto stateQueue = m_stateQueues[static_cast<u32>(taskId)];
+        auto stateQueue = m_stateQueues[static_cast<u32>( taskId )];
         stateQueue->queueMessage( message );
     }
 
     SmartPtr<IStateQueue> StateManager::getQueue( Thread::Task taskId )
     {
-        return m_stateQueues[static_cast<u32>(taskId)];
+        return m_stateQueues[static_cast<u32>( taskId )];
     }
 
     void StateManager::destroyQueue( SmartPtr<IStateQueue> queue )
@@ -216,20 +216,20 @@ namespace fb
         auto typeManager = TypeManager::instance();
         FB_ASSERT( typeManager );
 
-        if(m_states2d.empty())
+        if( m_states2d.empty() )
         {
             auto totalNumTypes = typeManager->getTotalNumTypes();
             m_states2d.resize( totalNumTypes );
         }
 
         auto typeInfo = state->getTypeInfo();
-        if(typeInfo)
+        if( typeInfo )
         {
             auto typeIndex = typeManager->getTypeIndex( typeInfo );
             auto &states2d = m_states2d[typeIndex];
-            if(index >= states2d.size())
+            if( index >= states2d.size() )
             {
-                while(index >= states2d.size())
+                while( index >= states2d.size() )
                 {
                     states2d.push_back( Array<SmartPtr<IState>>() );
                 }
@@ -242,10 +242,10 @@ namespace fb
 
     void StateManager::removeState2D( u32 index, SmartPtr<IState> state )
     {
-        if(!m_states2d.empty())
+        if( !m_states2d.empty() )
         {
             auto typeInfo = state->getTypeInfo();
-            if(typeInfo)
+            if( typeInfo )
             {
                 auto typeManager = TypeManager::instance();
                 FB_ASSERT( typeManager );
@@ -255,7 +255,7 @@ namespace fb
                 auto &states = states2d[index];
 
                 auto it = std::find( states.begin(), states.end(), state );
-                if(it != states.end())
+                if( it != states.end() )
                 {
                     states.erase( it );
                 }
@@ -268,13 +268,13 @@ namespace fb
         auto typeManager = TypeManager::instance();
         FB_ASSERT( typeManager );
 
-        if(m_states2d.empty())
+        if( m_states2d.empty() )
         {
             auto totalNumTypes = typeManager->getTotalNumTypes();
             m_states2d.resize( totalNumTypes );
         }
 
-        if(typeInfo)
+        if( typeInfo )
         {
             auto typeIndex = typeManager->getTypeIndex( typeInfo );
             auto &states2d = m_states2d[typeIndex];
@@ -292,7 +292,7 @@ namespace fb
         FB_ASSERT( typeManager );
 
         auto typeIndex = typeManager->getTypeIndex( typeInfo );
-        if(typeIndex < m_states2d.size())
+        if( typeIndex < m_states2d.size() )
         {
             return m_states2d[typeIndex];
         }
@@ -311,4 +311,4 @@ namespace fb
         m_stateObjects = stateObjects;
     }
 
-} // end namespace fb
+}  // end namespace fb

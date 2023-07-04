@@ -166,7 +166,7 @@ namespace fb
         {
             setState( State::Stop );
 
-            while( isUpdating() && updatingCount < maxCount)
+            while( isUpdating() && updatingCount < maxCount )
             {
                 Thread::yield();
                 updatingCount++;

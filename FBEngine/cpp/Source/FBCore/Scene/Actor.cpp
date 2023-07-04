@@ -2287,6 +2287,13 @@ namespace fb
 
             if( auto transform = getTransform() )
             {
+
+                if (getName() == "Palmetto_Med")
+                {
+                    int a = 0;
+                    a = 0;
+                }
+
                 if( auto localTransformChild = properties->getChild( "localTransform" ) )
                 {
                     auto localTransform = transform->getLocalTransform();

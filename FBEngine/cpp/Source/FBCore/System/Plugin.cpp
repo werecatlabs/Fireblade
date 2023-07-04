@@ -39,7 +39,7 @@ namespace fb
             m_hMod = dlopen( pFilePathUTF8, mode );
 #endif
 
-            if(!m_hMod)
+            if( !m_hMod )
             {
                 const auto errorMessage =
                     "Unable to load library: " + StringUtil::toUTF16to8( filePath );
@@ -60,7 +60,7 @@ namespace fb
             setLoadingState( LoadingState::Unloading );
 
 #if defined FB_PLATFORM_WIN32
-            if(m_hMod)
+            if( m_hMod )
             {
                 FreeLibrary( m_hMod );
                 m_hMod = nullptr;
@@ -108,5 +108,5 @@ namespace fb
         {
             m_filename = fileName;
         }
-    } // namespace core
-}     // namespace fb
+    }  // namespace core
+}  // namespace fb

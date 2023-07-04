@@ -40,6 +40,9 @@ namespace fb
         {
             setLoadingState( LoadingState::Unloading );
 
+            m_uiComponent = nullptr;
+            m_layout = nullptr;
+
             setDataPtr( nullptr );
 
             setLoadingState( LoadingState::Unloaded );
@@ -375,6 +378,16 @@ namespace fb
             }
         }
 
+        SmartPtr<UIComponent> LayoutTransform::getLayout() const
+        {
+            return m_layout;
+        }
+
+        void LayoutTransform::setLayout( SmartPtr<UIComponent> layout )
+        {
+            m_layout = layout;
+        }
+
         IFSM::ReturnType LayoutTransform::handleComponentEvent( u32 state, IFSM::Event eventType )
         {
             Component::handleComponentEvent( state, eventType );
@@ -404,6 +417,8 @@ namespace fb
                             m_uiComponent = uiComponent;
                         }
                     }
+
+                    setupCanvas();
 
                     updateTransform();
                 }
@@ -445,5 +460,18 @@ namespace fb
 
             return IFSM::ReturnType::Ok;
         }
+
+        void LayoutTransform::setupCanvas()
+        {
+            if( auto actor = getActor() )
+            {
+                if( auto rootActor = actor->getSceneRoot() )
+                {
+                    auto layout = rootActor->getComponentAndInChildren<Layout>();
+                    setLayout( layout );
+                }
+            }
+        }
+
     }  // namespace scene
 }  // namespace fb

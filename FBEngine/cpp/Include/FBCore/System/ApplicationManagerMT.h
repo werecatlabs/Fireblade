@@ -2,8 +2,8 @@
 #define __ApplicationManagerMT_h__
 
 #include <FBCore/Interface/IApplicationManager.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/IApplicationClient.h>
+#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/ConcurrentQueue.h>
 
 namespace fb

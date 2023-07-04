@@ -64,9 +64,9 @@ namespace fb
 
             auto pStateQueues = factoryManager->make_shared<ConcurrentArray<SmartPtr<IStateQueue>>>();
             auto &stateQueues = *pStateQueues;
-            stateQueues.resize( static_cast<u32>(Thread::Task::Count) );
+            stateQueues.resize( static_cast<u32>( Thread::Task::Count ) );
 
-            for(auto &queue : stateQueues)
+            for( auto &queue : stateQueues )
             {
                 queue = factoryManager->make_ptr<StateQueueStandard>();
             }
@@ -75,7 +75,7 @@ namespace fb
 
             setLoadingState( LoadingState::Loaded );
         }
-        catch(std::exception &e)
+        catch( std::exception &e )
         {
             FB_LOG_EXCEPTION( e );
         }
@@ -86,22 +86,22 @@ namespace fb
         try
         {
             const auto &loadingState = getLoadingState();
-            if(loadingState == LoadingState::Loaded)
+            if( loadingState == LoadingState::Loaded )
             {
                 setLoadingState( LoadingState::Unloading );
 
-                if(auto pStateQueues = getStateQueuesPtr())
+                if( auto pStateQueues = getStateQueuesPtr() )
                 {
                     auto stateQueues = *pStateQueues;
-                    for(auto &stateQueue : stateQueues)
+                    for( auto &stateQueue : stateQueues )
                     {
-                        if(stateQueue)
+                        if( stateQueue )
                         {
-                            if(auto pMessages = stateQueue->getMessagesAndClear())
+                            if( auto pMessages = stateQueue->getMessagesAndClear() )
                             {
                                 auto &messages = *pMessages;
 
-                                for(auto &message : messages)
+                                for( auto &message : messages )
                                 {
                                     message->unload( nullptr );
                                 }
@@ -110,7 +110,7 @@ namespace fb
                     }
                 }
 
-                if(auto state = getState())
+                if( auto state = getState() )
                 {
                     state->setStateContext( nullptr );
                     state->unload( nullptr );
@@ -119,10 +119,10 @@ namespace fb
 
                 m_states.clear();
 
-                if(auto pStateQueues = getStateQueuesPtr())
+                if( auto pStateQueues = getStateQueuesPtr() )
                 {
                     auto &stateQueues = *pStateQueues;
-                    for(auto stateQueue : stateQueues)
+                    for( auto stateQueue : stateQueues )
                     {
                         stateQueue->unload( nullptr );
                     }
@@ -136,7 +136,7 @@ namespace fb
                 setLoadingState( LoadingState::Unloaded );
             }
         }
-        catch(std::exception &e)
+        catch( std::exception &e )
         {
             FB_LOG_EXCEPTION( e );
         }
@@ -172,19 +172,19 @@ namespace fb
             //    }
             //}
 
-            if(auto state = getState())
+            if( auto state = getState() )
             {
-                if(bool dirty = state->isDirty())
+                if( bool dirty = state->isDirty() )
                 {
                     auto stateTask = state->getTaskId();
-                    if(task == stateTask)
+                    if( task == stateTask )
                     {
-                        if(auto pListeners = getStateListeners())
+                        if( auto pListeners = getStateListeners() )
                         {
                             auto &listeners = *pListeners;
-                            for(auto &listener : listeners)
+                            for( auto &listener : listeners )
                             {
-                                if(listener)
+                                if( listener )
                                 {
                                     listener->handleStateChanged( state );
                                 }
@@ -192,50 +192,50 @@ namespace fb
                         }
                     }
 
-                    if(state->isDirty())
+                    if( state->isDirty() )
                     {
                         stateManager->addDirty( this, task );
                     }
                 }
             }
 
-            if(auto owner = getOwner())
+            if( auto owner = getOwner() )
             {
                 const auto &loadingState = owner->getLoadingState();
-                if(loadingState != LoadingState::Loaded)
+                if( loadingState != LoadingState::Loaded )
                 {
                     stateManager->addDirty( this, task );
                     return;
                 }
             }
 
-            if(auto stateQueue = getStateQueue( static_cast<u32>(task) ))
+            if( auto stateQueue = getStateQueue( static_cast<u32>( task ) ) )
             {
-                if(!stateQueue->isEmpty())
+                if( !stateQueue->isEmpty() )
                 {
-                    if(auto pMessages = stateQueue->getMessagesAndClear())
+                    if( auto pMessages = stateQueue->getMessagesAndClear() )
                     {
                         auto &messages = *pMessages;
 
-                        for(auto &message : messages)
+                        for( auto &message : messages )
                         {
-                            if(message)
+                            if( message )
                             {
-                                if(auto pListeners = getStateListeners())
+                                if( auto pListeners = getStateListeners() )
                                 {
                                     auto &listeners = *pListeners;
-                                    for(auto &listener : listeners)
+                                    for( auto &listener : listeners )
                                     {
                                         try
                                         {
-                                            if(listener)
+                                            if( listener )
                                             {
                                                 listener->handleStateChanged( message );
                                             }
 
                                             message->unload( nullptr );
                                         }
-                                        catch(std::exception &e)
+                                        catch( std::exception &e )
                                         {
                                             FB_LOG_EXCEPTION( e );
                                         }
@@ -246,13 +246,13 @@ namespace fb
                     }
                 }
 
-                if(stateQueue->isEmpty())
+                if( stateQueue->isEmpty() )
                 {
-                    setDirtyFlag( ( 1 << static_cast<u32>(task) ), false );
+                    setDirtyFlag( ( 1 << static_cast<u32>( task ) ), false );
                 }
             }
         }
-        catch(std::exception &e)
+        catch( std::exception &e )
         {
             FB_LOG_EXCEPTION( e );
         }
@@ -260,14 +260,14 @@ namespace fb
 
     void StateContextStandard::addMessage( Thread::Task taskId, SmartPtr<IStateMessage> message )
     {
-        if(message)
+        if( message )
         {
             message->setStateObject( this );
 
-            if(auto enableMessageQueues = getEnableMessageQueues())
+            if( auto enableMessageQueues = getEnableMessageQueues() )
             {
-                auto iTask = static_cast<u32>(taskId);
-                if(auto stateQueue = getStateQueue( iTask ))
+                auto iTask = static_cast<u32>( taskId );
+                if( auto stateQueue = getStateQueue( iTask ) )
                 {
                     stateQueue->queueMessage( message );
                 }
@@ -277,7 +277,7 @@ namespace fb
                 sendMessage( message );
             }
 
-            setDirtyFlag( ( 1 << static_cast<u32>(taskId) ), true );
+            setDirtyFlag( ( 1 << static_cast<u32>( taskId ) ), true );
 
             m_removeCount = 0;
 
@@ -290,13 +290,13 @@ namespace fb
     void StateContextStandard::addStateListener( SmartPtr<IStateListener> stateListner )
     {
         auto pListeners = getStateListeners();
-        if(!pListeners)
+        if( !pListeners )
         {
             pListeners = fb::make_shared<ConcurrentArray<SmartPtr<IStateListener>>>();
             setStateListeners( pListeners );
         }
 
-        if(pListeners)
+        if( pListeners )
         {
             auto &listeners = *pListeners;
             listeners.push_back( stateListner );
@@ -305,11 +305,11 @@ namespace fb
 
     bool StateContextStandard::removeStateListener( SmartPtr<IStateListener> stateListner )
     {
-        if(auto pListeners = getStateListeners())
+        if( auto pListeners = getStateListeners() )
         {
             auto listeners = Array<SmartPtr<IStateListener>>( pListeners->begin(), pListeners->end() );
             auto it = std::find( listeners.begin(), listeners.end(), stateListner );
-            if(it != listeners.end())
+            if( it != listeners.end() )
             {
                 listeners.erase( it );
 
@@ -333,13 +333,13 @@ namespace fb
     void StateContextStandard::addEventListener( SmartPtr<IEventListener> eventListener )
     {
         auto pEventListeners = getEventListeners();
-        if(!pEventListeners)
+        if( !pEventListeners )
         {
             pEventListeners = fb::make_shared<Array<SmartPtr<IEventListener>>>();
             setEventListeners( pEventListeners );
         }
 
-        if(pEventListeners)
+        if( pEventListeners )
         {
             auto &eventListeners = *pEventListeners;
             eventListeners.push_back( eventListener );
@@ -348,11 +348,11 @@ namespace fb
 
     bool StateContextStandard::removeEventListener( SmartPtr<IEventListener> eventListener )
     {
-        if(auto pEventListeners = getEventListeners())
+        if( auto pEventListeners = getEventListeners() )
         {
             auto &eventListeners = *pEventListeners;
             auto it = std::find( eventListeners.begin(), eventListeners.end(), eventListener );
-            if(it != eventListeners.end())
+            if( it != eventListeners.end() )
             {
                 eventListeners.erase( it );
                 return true;
@@ -384,7 +384,7 @@ namespace fb
 
     SmartPtr<ISharedObject> StateContextStandard::getOwner() const
     {
-        if(auto p = m_owner.load())
+        if( auto p = m_owner.load() )
         {
             return p.lock();
         }
@@ -394,12 +394,12 @@ namespace fb
 
     SmartPtr<IStateQueue> StateContextStandard::getStateQueue( u32 taskId ) const
     {
-        if(auto p = getStateQueuesPtr())
+        if( auto p = getStateQueuesPtr() )
         {
             auto &stateQueues = *p;
-            if(!stateQueues.empty())
+            if( !stateQueues.empty() )
             {
-                if(taskId < stateQueues.size())
+                if( taskId < stateQueues.size() )
                 {
                     return stateQueues[taskId];
                 }
@@ -411,11 +411,11 @@ namespace fb
 
     void StateContextStandard::sendMessage( SmartPtr<IStateMessage> message )
     {
-        if(auto pListeners = getStateListeners())
+        if( auto pListeners = getStateListeners() )
         {
             auto &listeners = *pListeners;
 
-            for(auto &listener : listeners)
+            for( auto &listener : listeners )
             {
                 listener->handleStateChanged( message );
             }
@@ -424,11 +424,11 @@ namespace fb
 
     void StateContextStandard::_processStateUpdate( SmartPtr<IState> &state )
     {
-        if(auto pListeners = getStateListeners())
+        if( auto pListeners = getStateListeners() )
         {
             auto &listeners = *pListeners;
 
-            for(auto &listener : listeners)
+            for( auto &listener : listeners )
             {
                 listener->handleStateChanged( state );
             }
@@ -437,11 +437,11 @@ namespace fb
 
     void StateContextStandard::_processQuery( SmartPtr<IStateQuery> &query )
     {
-        if(auto pListeners = getStateListeners())
+        if( auto pListeners = getStateListeners() )
         {
             auto &listeners = *pListeners;
 
-            for(auto &listener : listeners)
+            for( auto &listener : listeners )
             {
                 listener->handleQuery( query );
             }
@@ -450,7 +450,7 @@ namespace fb
 
     void StateContextStandard::add()
     {
-        if(!m_isAdded)
+        if( !m_isAdded )
         {
             auto engine = core::IApplicationManager::instance();
             auto stateMgr = engine->getStateManager();
@@ -461,7 +461,7 @@ namespace fb
 
     void StateContextStandard::remove()
     {
-        if(m_isAdded)
+        if( m_isAdded )
         {
             auto engine = core::IApplicationManager::instance();
             auto stateMgr = engine->getStateManager();
@@ -511,7 +511,7 @@ namespace fb
     {
         m_state = state;
 
-        if(state)
+        if( state )
         {
             state->setStateContext( this );
         }
@@ -526,9 +526,9 @@ namespace fb
     {
         m_isDirty = dirty;
 
-        if(cascade)
+        if( cascade )
         {
-            if(auto state = getState())
+            if( auto state = getState() )
             {
                 state->setDirty( dirty );
             }
@@ -542,16 +542,16 @@ namespace fb
 
     void StateContextStandard::setStateDirty( bool dirty )
     {
-        if(dirty)
+        if( dirty )
             ++m_stateChangeCount;
         else
-            m_stateUpdateCount = static_cast<u32>(m_stateChangeCount);
+            m_stateUpdateCount = static_cast<u32>( m_stateChangeCount );
     }
 
     bool StateContextStandard::isBitSet( u32 flags, s32 bitIdx ) const
     {
         u32 flag = ( 1 << bitIdx );
-        if(( flags & flag ) != 0)
+        if( ( flags & flag ) != 0 )
         {
             return true;
         }
@@ -573,7 +573,7 @@ namespace fb
     {
         auto dirtyFlags = getDirtyFlags();
 
-        if(val)
+        if( val )
         {
             dirtyFlags |= flag;
         }
@@ -639,7 +639,7 @@ namespace fb
     void StateContextStandard::setProperties( SmartPtr<Properties> properties )
     {
     }
-    
+
     Parameter StateContextStandard::triggerEvent( IEvent::Type eventType, hash_type eventValue,
                                                   const Array<Parameter> &arguments,
                                                   SmartPtr<ISharedObject> sender,
@@ -650,7 +650,7 @@ namespace fb
         FB_ASSERT( applicationManager );
 
         auto jobQueue = applicationManager->getJobQueue();
-        if(jobQueue)
+        if( jobQueue )
         {
             auto eventJob = fb::make_ptr<EventJob>();
             eventJob->owner = this;
@@ -663,12 +663,12 @@ namespace fb
 
             jobQueue->queueJobAll( eventJob );
 
-            if(auto pEventListeners = getEventListeners())
+            if( auto pEventListeners = getEventListeners() )
             {
                 auto &eventListeners = *pEventListeners;
-                for(auto eventListener : eventListeners)
+                for( auto eventListener : eventListeners )
                 {
-                    if(eventListener)
+                    if( eventListener )
                     {
                         eventListener->handleEvent( eventType, eventValue, arguments, sender, object,
                                                     event );
@@ -683,11 +683,11 @@ namespace fb
     bool StateContextStandard::isValid() const
     {
         auto owner = getOwner();
-        if(owner && getState())
+        if( owner && getState() )
         {
             return true;
         }
 
         return false;
     }
-} // end namespace fb
+}  // end namespace fb

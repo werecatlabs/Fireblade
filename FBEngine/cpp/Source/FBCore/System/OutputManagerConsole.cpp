@@ -26,4 +26,4 @@ namespace fb
         wcout << outputStr.c_str() << endl;
 #endif
     }
-} // end namespace fb
+}  // end namespace fb

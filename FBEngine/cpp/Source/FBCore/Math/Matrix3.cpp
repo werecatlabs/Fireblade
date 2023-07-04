@@ -204,7 +204,7 @@ namespace fb
         //       -cz*sy+cy*sx*sz  cy*cz*sx+sy*sz  cx*cy
 
         rfPAngle = Math<T>::ASin( -m[1][2] );
-        if( rfPAngle < T( Math<T>::half_pi() ) )
+        if( rfPAngle < Math<T>::half_pi() )
         {
             if( rfPAngle > T( -Math<T>::half_pi() ) )
             {
@@ -212,14 +212,16 @@ namespace fb
                 rfRAngle = Math<T>::ATan2( m[1][0], m[1][1] );
                 return true;
             }
+
             // WARNING.  Not a unique solution.
-            T fRmY = Math<T>::ATan2( -m[0][1], m[0][0] );
+            auto fRmY = Math<T>::ATan2( -m[0][1], m[0][0] );
             rfRAngle = T( 0.0 );  // any angle works
             rfYAngle = rfRAngle - fRmY;
             return false;
         }
+
         // WARNING.  Not a unique solution.
-        T fRpY = Math<T>::ATan2( -m[0][1], m[0][0] );
+        auto fRpY = Math<T>::ATan2( -m[0][1], m[0][0] );
         rfRAngle = T( 0.0 );  // any angle works
         rfYAngle = fRpY - rfRAngle;
         return false;

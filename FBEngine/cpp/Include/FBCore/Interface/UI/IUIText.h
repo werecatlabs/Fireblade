@@ -14,6 +14,14 @@ namespace fb
         class IUIText : public IUIElement
         {
         public:
+            /** Alignment options for the text element. */
+            enum class Alignment
+            {
+                Left,  /**< Align text to the left. */
+                Right, /**< Align text to the right. */
+                Center /**< Center text. */
+            };
+
             /** Virtual destructor. */
             ~IUIText() override = default;
 
@@ -40,6 +48,30 @@ namespace fb
              * @return The current size of the text.
              */
             virtual f32 getTextSize() const = 0;
+
+            /**
+             * Sets the alignment of the text within the element.
+             * @param alignment The alignment value to set.
+             */
+            virtual void setVerticalAlignment( u8 alignment ) = 0;
+
+            /**
+             * Gets the alignment of the text within the element.
+             * @return The alignment value.
+             */
+            virtual u8 getVerticalAlignment() const = 0;
+
+            /**
+             * Sets the alignment of the text within the element.
+             * @param alignment The alignment value to set.
+             */
+            virtual void setHorizontalAlignment( u8 alignment ) = 0;
+
+            /**
+             * Gets the alignment of the text within the element.
+             * @return The alignment value.
+             */
+            virtual u8 getHorizontalAlignment() const = 0;
 
             FB_CLASS_REGISTER_DECL;
         };

@@ -6,14 +6,14 @@ namespace fb
     {
         auto &gc = GarbageCollector::instance();
         auto objectId = gc.addObject( this );
-        T::m_objectId.store( objectId );
-        FB_ASSERT( T::m_objectId != std::numeric_limits<u32>::max() );
+        SharedObject<T>::m_objectId.store( objectId );
+        FB_ASSERT( SharedObject<T>::m_objectId != std::numeric_limits<u32>::max() );
 
 #if FB_TRACK_REFERENCES
         setEnableReferenceTracking( true );
 #endif
 
-        setupGarbageCollectorData();
+        SharedObject<T>::setupGarbageCollectorData();
 
 #if FB_TRACK_REFERENCES
         auto &objectTracker = ObjectTracker::instance();
@@ -39,16 +39,7 @@ namespace fb
 
         auto typeInfo = getTypeInfo();
 
-        //if( TypeManager::instance()->getTypeGroup( typeInfo ) == (u32)TypeGroups::Application )
-        //{
-        //    if( m_objectId.load() == 960 )
-        //    {
-        //        int stop = 0;
-        //        stop = 0;
-        //    }
-        //}
-
-        const auto id = T::m_objectId.load();
+        const auto id = SharedObject<T>::m_objectId.load();
         gc.removeObject( typeInfo, id );
 
 #if FB_TRACK_REFERENCES
@@ -86,70 +77,6 @@ namespace fb
     Handle *SharedObject<T>::getHandle() const
     {
         return T::m_handle;
-    }
-
-    template <class T>
-    s32 SharedObject<T>::addWeakReference()
-    {
-#if FB_TRACK_REFERENCES
-#    if FB_TRACK_WEAK_REFERENCES
-        auto address = (void *)this;
-        const c8 *file = __FILE__;
-        const u32 line = __LINE__;
-        const c8 *func = __FUNCTION__;
-
-        auto &objectTracker = ObjectTracker::instance();
-        objectTracker.addRef( this, address, file, line, func );
-#    endif
-#endif
-
-        return ++m_weakReferences;
-    }
-
-    template <class T>
-    s32 SharedObject<T>::addWeakReference( void *address, const c8 *file, u32 line, const c8 *func )
-    {
-#if FB_TRACK_REFERENCES
-#    if FB_TRACK_WEAK_REFERENCES
-        auto &objectTracker = ObjectTracker::instance();
-        objectTracker.addRef( this, address, file, line, func );
-#    endif
-#endif
-
-        return ++m_weakReferences;
-    }
-
-    template <class T>
-    bool SharedObject<T>::removeWeakReference()
-    {
-#if FB_TRACK_REFERENCES
-#    if FB_TRACK_WEAK_REFERENCES
-        auto address = (void *)this;
-        const c8 *file = __FILE__;
-        const u32 line = __LINE__;
-        const c8 *func = __FUNCTION__;
-
-        auto &objectTracker = ObjectTracker::instance();
-        objectTracker.removeRef( this, address, file, line, func );
-#    endif
-#endif
-
-        return --m_weakReferences == 0;
-    }
-
-    template <class T>
-    bool SharedObject<T>::removeWeakReference( void *address, const c8 *file, u32 line, const c8 *func )
-    {
-#if FB_TRACK_REFERENCES
-#    if FB_TRACK_WEAK_REFERENCES
-        // If reference tracking is enabled, remove the weak reference tracking information.
-        auto &objectTracker = ObjectTracker::instance();
-        objectTracker.removeRef( this, address, file, line, func );
-#    endif
-#endif
-
-        // Decrement the weak reference count and return true if the count is now 0.
-        return --m_weakReferences == 0;
     }
 
     template <class T>
@@ -345,12 +272,6 @@ namespace fb
     }
 
     template <class T>
-    s32 SharedObject<T>::getWeakReferences() const
-    {
-        return m_weakReferences;
-    }
-
-    template <class T>
     String SharedObject<T>::toJson() const
     {
         return "";
@@ -480,230 +401,4 @@ namespace fb
         m_scriptData = data;
     }
 
-#if FB_USE_CUSTOM_NEW_DELETE
-
-    template <class T>
-    void *SharedObject<T>::operator new( size_t sz )
-    {
-        void *ptr = nullptr;
-
-#    if FB_OBJECT_ALIGNED_ALLOC
-        ptr = Memory::ScalableAlignedMalloc( sz, FB_ALIGNMENT );
-#    else
-        ptr = Memory::malloc( sz );
-#    endif
-
-#    if FB_ENABLE_MEMORY_TRACKER
-#        if FB_ARCH_TYPE == FB_ARCHITECTURE_64
-#            if FB_ENABLE_TRACE
-        std::stringstream backtraceMsg;
-        backtraceMsg << boost::stacktrace::stacktrace();
-        auto msg = backtraceMsg.str();
-        MemoryTracker::get()._recordAlloc( ptr, sz, 0, msg.c_str() );
-#            else
-        MemoryTracker::get()._recordAlloc( ptr, sz, 0, "" );
-#            endif
-#        else
-        MemoryTracker::get()._recordAlloc( ptr, sz, 0, "" );
-#        endif
-#    endif
-
-        return ptr;
-    }
-
-    template <class T>
-    void *SharedObject<T>::operator new( size_t sz, void *ptr )
-    {
-        (void)sz;
-        return ptr;
-    }
-
-    template <class T>
-    void *SharedObject<T>::operator new( size_t sz, [[maybe_unused]] const c8 *file,
-                                         [[maybe_unused]] s32 line, [[maybe_unused]] const c8 *func )
-    {
-        void *ptr = nullptr;
-
-#    if FB_OBJECT_ALIGNED_ALLOC
-        ptr = Memory::ScalableAlignedMalloc( sz, FB_ALIGNMENT );
-#    else
-        ptr = Memory::malloc( sz );
-#    endif
-
-#    if FB_ENABLE_MEMORY_TRACKER
-#        if FB_ARCH_TYPE == FB_ARCHITECTURE_64
-#            if FB_ENABLE_TRACE
-        std::stringstream backtraceMsg;
-        backtraceMsg << boost::stacktrace::stacktrace();
-        auto msg = backtraceMsg.str();
-        MemoryTracker::get()._recordAlloc( ptr, sz, 0, file, line, msg.c_str() );
-#            else
-        MemoryTracker::get()._recordAlloc( ptr, sz, 0, file, line, "" );
-#            endif
-#        else
-        MemoryTracker::get()._recordAlloc( ptr, sz, 0, file, line, "" );
-#        endif
-#    endif
-
-        return ptr;
-    }
-
-    template <class T>
-    void *SharedObject<T>::operator new( size_t sz, void *ptr, [[maybe_unused]] const c8 *file,
-                                         [[maybe_unused]] s32 line, [[maybe_unused]] const c8 *func )
-    {
-        (void)sz;
-
-#    if FB_ENABLE_MEMORY_TRACKER
-#        if FB_ARCH_TYPE == FB_ARCHITECTURE_64
-#            if FB_ENABLE_TRACE
-        std::stringstream backtraceMsg;
-        backtraceMsg << boost::stacktrace::stacktrace();
-        auto msg = backtraceMsg.str();
-        MemoryTracker::get()._recordAlloc( ptr, sz, 0, file, line, msg.c_str() );
-#            else
-        MemoryTracker::get()._recordAlloc( ptr, sz, 0, file, line, "" );
-#            endif
-#        else
-        MemoryTracker::get()._recordAlloc( ptr, sz, 0, file, line, "" );
-#        endif
-#    endif
-
-        return ptr;
-    }
-
-    template <class T>
-    void *SharedObject<T>::operator new[]( size_t sz, [[maybe_unused]] const char *file,
-                                           [[maybe_unused]] int line, [[maybe_unused]] const char *func )
-    {
-        void *ptr = nullptr;
-
-#    if FB_OBJECT_ALIGNED_ALLOC
-        ptr = Memory::ScalableAlignedMalloc( sz, FB_ALIGNMENT );
-#    else
-        ptr = Memory::malloc( sz );
-#    endif
-
-#    if FB_ENABLE_MEMORY_TRACKER
-        MemoryTracker::get()._recordAlloc( ptr, sz, 0, file, line );
-#    endif
-
-        return ptr;
-    }
-
-    template <class T>
-    void *SharedObject<T>::operator new[]( size_t sz )
-    {
-        void *ptr = nullptr;
-
-#    if FB_OBJECT_ALIGNED_ALLOC
-        ptr = Memory::ScalableAlignedMalloc( sz, FB_ALIGNMENT );
-#    else
-        ptr = Memory::malloc( sz );
-#    endif
-
-#    if FB_ENABLE_MEMORY_TRACKER
-#        if FB_ARCH_TYPE == FB_ARCHITECTURE_64
-#            if FB_ENABLE_TRACE
-        std::stringstream backtraceMsg;
-        backtraceMsg << boost::stacktrace::stacktrace();
-        auto msg = backtraceMsg.str();
-        MemoryTracker::get()._recordAlloc( ptr, sz, 0, msg.c_str() );
-#            else
-        MemoryTracker::get()._recordAlloc( ptr, sz, 0, "" );
-#            endif
-#        endif
-        MemoryTracker::get()._recordAlloc( ptr, sz, 0, "" );
-#    endif
-        return ptr;
-    }
-
-    template <class T>
-    void SharedObject<T>::operator delete( void *ptr )
-    {
-#    if FB_OBJECT_ALIGNED_ALLOC
-        Memory::ScalableAlignedFree( ptr );
-#    else
-        Memory::free( ptr );
-#    endif
-
-#    if FB_ENABLE_MEMORY_TRACKER
-        MemoryTracker::get()._recordDealloc( ptr );
-#    endif
-    }
-
-    template <class T>
-    void SharedObject<T>::operator delete( void *ptr, void * )
-    {
-#    if FB_OBJECT_ALIGNED_ALLOC
-        Memory::ScalableAlignedFree( ptr );
-#    else
-        Memory::free( ptr );
-#    endif
-
-#    if FB_ENABLE_MEMORY_TRACKER
-        MemoryTracker::get()._recordDealloc( ptr );
-#    endif
-    }
-
-    template <class T>
-    void SharedObject<T>::operator delete[]( void *ptr )
-    {
-#    if FB_OBJECT_ALIGNED_ALLOC
-        Memory::ScalableAlignedFree( ptr );
-#    else
-        Memory::free( ptr );
-#    endif
-
-#    if FB_ENABLE_MEMORY_TRACKER
-        MemoryTracker::get()._recordDealloc( ptr );
-#    endif
-    }
-
-    template <class T>
-    void SharedObject<T>::operator delete( void *ptr, [[maybe_unused]] const char *file,
-                                           [[maybe_unused]] int line,
-                                           [[maybe_unused]] const char *func ) throw()
-    {
-#    if FB_OBJECT_ALIGNED_ALLOC
-        Memory::ScalableAlignedFree( ptr );
-#    else
-        Memory::free( ptr );
-#    endif
-
-#    if FB_ENABLE_MEMORY_TRACKER
-        MemoryTracker::get()._recordDealloc( ptr );
-#    endif
-    }
-
-    template <class T>
-    void SharedObject<T>::operator delete( void *ptr, void *, const char *file, int line,
-                                           const char *func )
-    {
-#    if FB_OBJECT_ALIGNED_ALLOC
-        Memory::ScalableAlignedFree( ptr );
-#    else
-        Memory::free( ptr );
-#    endif
-
-#    if FB_ENABLE_MEMORY_TRACKER
-        MemoryTracker::get()._recordDealloc( ptr );
-#    endif
-    }
-
-    template <class T>
-    void SharedObject<T>::operator delete[]( void *ptr, const char *file, int line,
-                                             const char *func ) throw()
-    {
-#    if FB_OBJECT_ALIGNED_ALLOC
-        Memory::ScalableAlignedFree( ptr );
-#    else
-        Memory::free( ptr );
-#    endif
-
-#    if FB_ENABLE_MEMORY_TRACKER
-        MemoryTracker::get()._recordDealloc( ptr );
-#    endif
-    }
-#endif
 }  // end namespace fb

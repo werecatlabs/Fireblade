@@ -64,22 +64,6 @@ namespace fb
         /** @copydoc ISharedObject::getHandle. */
         Handle *getHandle() const override;
 
-        /** @copydoc ISharedObject::addWeakReference. */
-        s32 addWeakReference() override;
-
-        /** @copydoc ISharedObject::addWeakReference. */
-        s32 addWeakReference( void *address, const c8 *file, u32 line, const c8 *func ) override;
-
-        /** @copydoc ISharedObject::removeWeakReference. */
-        bool removeWeakReference() override;
-
-        /** @copydoc ISharedObject::removeWeakReference. */
-        bool removeWeakReference( void *address, const c8 *file = "??", u32 line = 0,
-                                  const c8 *func = "??" ) override;
-
-        /** @copydoc ISharedObject::getReferences */
-        s32 getWeakReferences() const override;
-
         /** @copydoc ISharedObject::isValid */
         virtual bool isValid() const override;
 
@@ -201,29 +185,9 @@ namespace fb
 
         void setScriptData( SmartPtr<ISharedObject> data );
 
-        void setupGarbageCollectorData();
-
         virtual void lock();
 
         virtual void unlock();
-
-#if FB_USE_CUSTOM_NEW_DELETE
-        void *operator new( size_t sz );
-        void *operator new( size_t sz, void *ptr );
-        void *operator new[]( size_t sz );
-        void operator delete( void *ptr );
-        void operator delete( void *ptr, void * );
-        void operator delete[]( void *ptr );
-
-        void *operator new( size_t sz, const char *file, int line, const char *func );
-        void *operator new( size_t sz, void *ptr, const char *file, int line, const char *func );
-        void *operator new[]( size_t sz, const char *file, int line, const char *func );
-        void operator delete( void *reportedAddress, const char *file, int line,
-                              const char *func ) throw();
-        void operator delete( void *ptr, void *, const char *file, int line, const char *func );
-        void operator delete[]( void *reportedAddress, const char *file, int line,
-                                const char *func ) throw();
-#endif
 
         FB_CLASS_REGISTER_TEMPLATE_DECL( SharedObject, T );
 
@@ -231,13 +195,6 @@ namespace fb
         SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> getObjectListenersPtr() const;
 
         void setObjectListenersPtr( SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> p );
-
-        SmartPtr<ISharedObject> m_scriptData;
-        
-        atomic_s32 m_weakReferences = 0;
-
-        AtomicRawPtr<ISharedObjectListener> m_sharedObjectListener;
-        SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> m_sharedEventListeners;
     };
 
     FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, SharedObject, T, T );
@@ -258,21 +215,6 @@ namespace fb
     void SharedObject<T>::setSharedObjectListener( ISharedObjectListener *listener )
     {
         m_sharedObjectListener = listener;
-    }
-
-    template <typename T>
-    void SharedObject<T>::setupGarbageCollectorData()
-    {
-        if( T::m_objectId != std::numeric_limits<u32>::max() )
-        {
-            auto &gc = GarbageCollector::instance();
-
-            auto typeInfo = getTypeInfo();
-            T::m_references = gc.getReferencesPtr( typeInfo, T::m_objectId );
-            T::m_flags = gc.getFlagPtr( typeInfo, T::m_objectId );
-            T::m_handle = gc.getHandle( typeInfo, T::m_objectId );
-            T::m_loadingState = gc.getLoadingStatePtr( typeInfo, T::m_objectId );
-        }
     }
 
     template <typename T>

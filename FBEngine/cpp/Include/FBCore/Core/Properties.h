@@ -391,9 +391,12 @@ namespace fb
         @return Returns true if the property was found. Returns false if the property was not found.
         */
         bool getPropertyValue( const String &name, Vector3D &value ) const;
+        
+        bool getPropertyValue( const String &name, QuaternionF &value ) const;
+        bool getPropertyValue( const String &name, QuaternionD &value ) const;
 
-        bool getPropertyValue( const String &name, Transform3F &value );
-        bool getPropertyValue( const String &name, Transform3D &value );
+        bool getPropertyValue( const String &name, Transform3F &value ) const;
+        bool getPropertyValue( const String &name, Transform3D &value ) const;
 
         /** Gets a property value. Returns true if the property was found.
         @param name The name of the property.

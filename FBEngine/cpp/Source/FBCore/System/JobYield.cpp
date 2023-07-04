@@ -6,8 +6,7 @@ namespace fb
 {
     namespace core
     {
-        JobYield::JobYield( SmartPtr<IJob> job ) :
-            m_job( job )
+        JobYield::JobYield( SmartPtr<IJob> job ) : m_job( job )
         {
         }
 
@@ -20,5 +19,5 @@ namespace fb
         {
             m_job->setState( Job::JobState::Finish );
         }
-    } // namespace core
-}     // namespace fb
+    }  // namespace core
+}  // namespace fb

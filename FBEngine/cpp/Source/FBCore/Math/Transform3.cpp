@@ -76,11 +76,11 @@ namespace fb
         auto properties = fb::make_ptr<Properties>();
 
         properties->setProperty( "Position", m_position );
+        
+        //auto rotation = getRotation();
+        //properties->setProperty( "Rotation", rotation );
 
-        Euler<T> euler(m_orientation);
-        Vector3<T> rotation = euler.toDegrees();
-
-        properties->setProperty( "Rotation", rotation );
+        properties->setProperty( "Orientation", m_orientation );
         properties->setProperty( "Scale", m_scale );
 
         return properties;
@@ -127,6 +127,10 @@ namespace fb
                 child->getPropertyValue( "z", m_orientation.z );
                 child->getPropertyValue( "w", m_orientation.w );
             }
+            else
+            {
+                properties->getPropertyValue( "Orientation", m_orientation );
+            }
 
             if( auto child = properties->getChild( "scale" ) )
             {
@@ -149,8 +153,8 @@ namespace fb
             parentTransform.convertWorldToLocalOrientation( worldTransform.getOrientation() );
         m_scale = worldTransform.getScale();
     }
-
-    template class Transform3<s32>;
+    
     template class Transform3<f32>;
     template class Transform3<f64>;
+
 }  // end namespace fb

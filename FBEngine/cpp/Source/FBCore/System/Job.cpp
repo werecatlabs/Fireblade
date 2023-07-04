@@ -59,7 +59,7 @@ namespace fb
 
     bool Job::wait()
     {
-        while(!isFinished())
+        while( !isFinished() )
         {
             Thread::yield();
         }
@@ -69,7 +69,7 @@ namespace fb
 
     bool Job::wait( f64 maxWaitTime )
     {
-        while(!isFinished())
+        while( !isFinished() )
         {
             Thread::yield();
         }
@@ -93,7 +93,7 @@ namespace fb
 
     void Job::coroutine_execute()
     {
-        if(!m_yieldObject)
+        if( !m_yieldObject )
         {
             m_yieldObject = SmartPtr<core::JobYield>( new core::JobYield( this ) );
         }
@@ -115,4 +115,4 @@ namespace fb
     {
         m_isCoroutine = coroutine;
     }
-} // end namespace fb
+}  // end namespace fb

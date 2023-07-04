@@ -41,13 +41,25 @@ namespace fb
              * Sets the alignment of the text within the element.
              * @param alignment The alignment value to set.
              */
-            virtual void setAlignment( u8 alignment ) = 0;
+            virtual void setVerticalAlignment( u8 alignment ) = 0;
 
             /**
              * Gets the alignment of the text within the element.
              * @return The alignment value.
              */
-            virtual u8 getAlignment() const = 0;
+            virtual u8 getVerticalAlignment() const = 0;
+
+            /**
+             * Sets the alignment of the text within the element.
+             * @param alignment The alignment value to set.
+             */
+            virtual void setHorizontalAlignment( u8 alignment ) = 0;
+
+            /**
+             * Gets the alignment of the text within the element.
+             * @return The alignment value.
+             */
+            virtual u8 getHorizontalAlignment() const = 0;
 
             /**
              * Sets the width of the space character.
