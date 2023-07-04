@@ -519,5 +519,5 @@ if (FB_BUILD_TESTS)
 endif()
 
 if (FB_BUILD_TOOLS)
-    #add_subdirectory(Tools)
+    add_subdirectory(Tools)
 endif()
