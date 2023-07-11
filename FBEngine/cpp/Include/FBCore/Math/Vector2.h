@@ -15,7 +15,8 @@ namespace fb
     class Vector2
     {
     public:
-        Vector2() = default;
+        /** Default constructor. */
+        Vector2();
 
         /**
          * Constructs a Vector2 from its x and y components.
@@ -67,8 +68,10 @@ namespace fb
         operator T *();
         T operator[]( s32 i ) const;
         T &operator[]( s32 i );
+
         T X() const;
         T &X();
+
         T Y() const;
         T &Y();
 
@@ -208,14 +211,19 @@ namespace fb
         FBCore_API static const Vector2 UNIT;
 
         /** The x-component of the vector. */
-        T x = T( 0.0 );
+        T x;
 
         /** The y-component of the vector. */
-        T y = T( 0.0 );
+        T y;
 
     private:
         s32 compare( const Vector2 &other ) const;
     };
+
+    template <class T>
+    Vector2<T>::Vector2() : x( 0 ), y( 0 )
+    {
+    }
 
     template <class T>
     Vector2<T>::Vector2( T x, T y ) : x( x ), y( y )

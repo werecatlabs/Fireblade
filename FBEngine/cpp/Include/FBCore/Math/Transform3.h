@@ -186,28 +186,28 @@ namespace fb
          * @param worldPos The position in world space.
          * @return The position in local space.
          */
-        Vector3<T> convertWorldToLocalPosition( const Vector3<T> &worldPos );
+        Vector3<T> convertWorldToLocalPosition( const Vector3<T> &worldPos ) const;
 
         /**
          * Converts an orientation from world space to local space.
          * @param worldOrientation The orientation in world space.
          * @return The orientation in local space.
          */
-        Quaternion<T> convertWorldToLocalOrientation( const Quaternion<T> &worldOrientation );
+        Quaternion<T> convertWorldToLocalOrientation( const Quaternion<T> &worldOrientation ) const;
 
         /**
          * Converts a position from local space to world space.
          * @param localPos The position in local space.
          * @return The position in world space.
          */
-        Vector3<T> convertLocalToWorldPosition( const Vector3<T> &localPos );
+        Vector3<T> convertLocalToWorldPosition( const Vector3<T> &localPos ) const;
 
         /**
          * Converts an orientation from local space to world space.
          * @param localOrientation The orientation in local space.
          * @return The orientation in world space.
          */
-        Quaternion<T> convertLocalToWorldOrientation( const Quaternion<T> &localOrientation );
+        Quaternion<T> convertLocalToWorldOrientation( const Quaternion<T> &localOrientation ) const;
 
         /**
          * Transforms an AABB from local space to world space.
@@ -538,7 +538,7 @@ namespace fb
     }
 
     template <class T>
-    Vector3<T> Transform3<T>::convertWorldToLocalPosition( const Vector3<T> &worldPos )
+    Vector3<T> Transform3<T>::convertWorldToLocalPosition( const Vector3<T> &worldPos ) const
     {
         auto scale = getScale();
         auto pos = getPosition();
@@ -564,14 +564,14 @@ namespace fb
     }
 
     template <class T>
-    Quaternion<T> Transform3<T>::convertWorldToLocalOrientation( const Quaternion<T> &worldOrientation )
+    Quaternion<T> Transform3<T>::convertWorldToLocalOrientation( const Quaternion<T> &worldOrientation ) const
     {
         auto rot = getOrientation();
         return rot.inverse() * worldOrientation;
     }
 
     template <class T>
-    Vector3<T> Transform3<T>::convertLocalToWorldPosition( const Vector3<T> &localPos )
+    Vector3<T> Transform3<T>::convertLocalToWorldPosition( const Vector3<T> &localPos ) const
     {
         auto scale = getScale();
         auto pos = getPosition();
@@ -581,7 +581,7 @@ namespace fb
     }
 
     template <class T>
-    Quaternion<T> Transform3<T>::convertLocalToWorldOrientation( const Quaternion<T> &localOrientation )
+    Quaternion<T> Transform3<T>::convertLocalToWorldOrientation( const Quaternion<T> &localOrientation ) const
     {
         auto rot = getOrientation();
         return rot * localOrientation;

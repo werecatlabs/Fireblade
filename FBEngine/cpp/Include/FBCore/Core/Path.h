@@ -13,13 +13,13 @@ namespace fb
     {
     public:
         /** Gets a file path from a file path. */
-        static T getFilePath( const T &path );
+        static T getFilePath( const T &filePath );
 
         /** Gets a file name from a file path. */
-        static T getFileName( const T &path );
+        static T getFileName( const T &filePath );
 
         /** Gets the file extension from a file path. */
-        static T getFileExtension( const T &path );
+        static T getFileExtension( const T &filePath );
 
         static T getFileNameWithoutExtension( const T &path );
 

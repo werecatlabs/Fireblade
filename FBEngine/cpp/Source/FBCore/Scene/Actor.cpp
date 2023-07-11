@@ -101,6 +101,7 @@ namespace fb
             if( auto transform = getTransform() )
             {
                 transform->setLocalPosition( localPosition );
+                transform->setDirty( true );
             }
         }
 
@@ -121,6 +122,7 @@ namespace fb
             if( transform )
             {
                 transform->setLocalScale( localScale );
+                transform->setDirty( true );
             }
         }
 
@@ -141,6 +143,7 @@ namespace fb
             if( transform )
             {
                 transform->setLocalOrientation( localOrientation );
+                transform->setDirty( true );
             }
         }
 
@@ -176,6 +179,7 @@ namespace fb
             if( transform )
             {
                 transform->setPosition( position );
+                transform->setLocalDirty( true );
             }
         }
 
@@ -196,6 +200,7 @@ namespace fb
             if( transform )
             {
                 transform->setPosition( scale );
+                transform->setLocalDirty( true );
             }
         }
 
@@ -216,6 +221,7 @@ namespace fb
             if( transform )
             {
                 transform->setOrientation( orientation );
+                transform->setLocalDirty( true );
             }
         }
 
@@ -2287,8 +2293,7 @@ namespace fb
 
             if( auto transform = getTransform() )
             {
-
-                if (getName() == "Palmetto_Med")
+                if( getName() == "Palmetto_Med" )
                 {
                     int a = 0;
                     a = 0;

@@ -166,7 +166,10 @@ namespace fb
 
             if( data )
             {
-                setName( Path::getFileNameWithoutExtension( path ) );
+                setFilePath( path );
+
+                auto name = Path::getFileNameWithoutExtension( path );
+                setName( name );
 
                 auto dataStr = DataUtil::toString( data.get(), true );
                 FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );

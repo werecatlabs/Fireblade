@@ -16,7 +16,7 @@ namespace fb
     {
     public:
         /** Default constructor. */
-        Vector3() = default;
+        Vector3();
 
         /**
          * Constructor.
@@ -74,10 +74,13 @@ namespace fb
         operator T *();
         T operator[]( s32 i ) const;
         T &operator[]( s32 i );
+
         T X() const;
         T &X();
+
         T Y() const;
         T &Y();
+
         T Z() const;
         T &Z();
 
@@ -368,13 +371,13 @@ namespace fb
         FBCore_API static const Vector3 UNIT;
 
         /** The x-component of the vector. */
-        T x = T( 0.0 );
+        T x;
 
         /** The y-component of the vector. */
-        T y = T( 0.0 );
+        T y;
 
         /** The z-component of the vector. */
-        T z = T( 0.0 );
+        T z;
 
     private:
         /** Compares this vector with another vector.
@@ -384,6 +387,11 @@ namespace fb
          */
         s32 compare( const Vector3 &other ) const;
     };
+
+    template <class T>
+    Vector3<T>::Vector3() : x( 0 ), y( 0 ), z( 0 )
+    {
+    }
 
     template <class T>
     Vector3<T>::Vector3( T x, T y, T z ) : x( x ), y( y ), z( z )

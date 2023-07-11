@@ -25,63 +25,7 @@ namespace fb
 
             return Parameter();
         }
-
-        void RigidbodyListener::updateChild( SmartPtr<scene::IActor> actor )
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-            FB_ASSERT( sceneManager );
-
-#if _DEBUG
-            auto handle = actor->getHandle();
-            if( handle )
-            {
-                auto name = handle->getName();
-
-                if( name == "dynamics" )
-                {
-                    int stop = 0;
-                    stop = 0;
-                }
-
-                if( name == "F40f40" )
-                {
-                    int stop = 0;
-                    stop = 0;
-                }
-            }
-#endif
-            // sceneManager->addDirtyTransform( actor );
-
-            auto transform = actor->getTransform();
-            if( transform )
-            {
-                transform->setDirty( true );
-                sceneManager->addDirtyTransform( transform );
-            }
-
-            auto components = actor->getComponents();
-            for( auto component : components )
-            {
-                // if( !component->isDerived<Rigidbody>() )
-                {
-                    sceneManager->addDirtyComponentTransform( component );
-                }
-            }
-
-            if( auto p = actor->getChildrenPtr() )
-            {
-                auto &children = *p;
-                for( auto child : children )
-                {
-                    updateChild( child );
-                }
-            }
-        }
-
+        
         void RigidbodyListener::handleTransform( const Transform3<real_Num> &t )
         {
             auto applicationManager = core::IApplicationManager::instance();
@@ -92,35 +36,42 @@ namespace fb
             FB_ASSERT( sceneManager );
 
             FB_ASSERT( m_owner );
-            auto actor = m_owner->getActor();
-            if( actor )
+            if( auto actor = m_owner->getActor() )
             {
                 auto position = t.getPosition();
                 auto orientation = t.getOrientation();
 
-                auto transform = actor->getTransform();
-                if( transform )
+                if( auto transform = actor->getTransform() )
                 {
                     transform->setLocalPosition( position );
                     transform->setLocalOrientation( orientation );
 
-                    sceneManager->addDirtyTransform( transform );
+                    transform->setPosition( position );
+                    transform->setOrientation( orientation );
                 }
 
                 auto components = actor->getComponents();
-                for( auto component : components )
+                for( auto &component : components )
                 {
-                    if( !component->isDerived<Rigidbody>() )
+                    if( component != m_owner )
                     {
                         sceneManager->addDirtyComponentTransform( component );
                     }
                 }
 
-                // auto children = actor->getChildren();
-                // for( auto child : children )
-                //{
-                //     updateChild( child );
-                // }
+                if( auto p = actor->getChildrenPtr() )
+                {
+                    auto &children = *p;
+                    for( auto &child : children )
+                    {
+                        FB_ASSERT( child );
+
+                        auto childTransform = child->getTransform();
+                        FB_ASSERT( childTransform );
+
+                        childTransform->setDirty( true );
+                    }
+                }
             }
         }
 

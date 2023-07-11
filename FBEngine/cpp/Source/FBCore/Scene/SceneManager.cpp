@@ -123,7 +123,7 @@ namespace fb
                     //m_collisionBoxes.clear();
                     //m_meshComponents.clear();
                     //m_meshRenderers.clear();
-                    //m_transforms.clear();
+                    m_transforms.clear();
 
                     m_fsms.clear();
                     m_gameFSMs.clear();

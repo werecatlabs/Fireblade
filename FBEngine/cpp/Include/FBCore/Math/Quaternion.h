@@ -482,7 +482,7 @@ namespace fb
         T z;  //!< The z component of the quaternion.
         T w;  //!< The w component of the quaternion.
     };
-
+    
     template <typename T>
     Quaternion<T>::Quaternion() : x( T( 0.0 ) ), y( T( 0.0 ) ), z( T( 0.0 ) ), w( T( 1.0 ) )
     {

@@ -201,42 +201,44 @@ namespace fb
 
         void Transform::setLocalDirty( bool localDirty, bool cascade )
         {
-            // FB_ASSERT(m_state);
-            m_isLocalDirty = localDirty;
-
-            if( m_isLocalDirty )
+            if( m_isLocalDirty != localDirty )
             {
-                auto actor = getActor();
-                if( actor )
+                m_isLocalDirty = localDirty;
+
+                if( m_isLocalDirty )
                 {
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto sceneManager =
-                        fb::static_pointer_cast<SceneManager>( applicationManager->getSceneManager() );
-
-                    auto transform = getSharedFromThis<ITransform>();
-                    sceneManager->addDirtyTransform( transform );
-
-                    auto components = actor->getComponents();
-                    for( auto &component : components )
+                    auto actor = getActor();
+                    if( actor )
                     {
-                        sceneManager->addDirtyComponentTransform( component );
-                    }
+                        auto applicationManager = core::IApplicationManager::instance();
+                        FB_ASSERT( applicationManager );
 
-                    if( cascade )
-                    {
-                        if( auto p = actor->getChildrenPtr() )
+                        auto sceneManager = fb::static_pointer_cast<SceneManager>(
+                            applicationManager->getSceneManager() );
+
+                        auto transform = getSharedFromThis<ITransform>();
+                        sceneManager->addDirtyTransform( transform );
+
+                        auto components = actor->getComponents();
+                        for( auto &component : components )
                         {
-                            auto &children = *p;
-                            for( auto &child : children )
+                            sceneManager->addDirtyComponentTransform( component );
+                        }
+
+                        if( cascade )
+                        {
+                            if( auto p = actor->getChildrenPtr() )
                             {
-                                FB_ASSERT( child );
+                                auto &children = *p;
+                                for( auto &child : children )
+                                {
+                                    FB_ASSERT( child );
 
-                                auto childTransform = child->getTransform();
-                                FB_ASSERT( childTransform );
+                                    auto childTransform = child->getTransform();
+                                    FB_ASSERT( childTransform );
 
-                                childTransform->setLocalDirty( true );
+                                    childTransform->setLocalDirty( true );
+                                }
                             }
                         }
                     }
@@ -251,40 +253,43 @@ namespace fb
 
         void Transform::setDirty( bool dirty, bool cascade )
         {
-            m_isDirty = dirty;
-
-            if( m_isDirty )
+            if( m_isDirty != dirty )
             {
-                if( auto actor = getActor() )
+                m_isDirty = dirty;
+
+                if( m_isDirty )
                 {
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto sceneManager =
-                        fb::static_pointer_cast<SceneManager>( applicationManager->getSceneManager() );
-
-                    auto transform = getSharedFromThis<ITransform>();
-                    sceneManager->addDirtyTransform( transform );
-
-                    auto components = actor->getComponents();
-                    for( auto &component : components )
+                    if( auto actor = getActor() )
                     {
-                        sceneManager->addDirtyComponentTransform( component );
-                    }
+                        auto applicationManager = core::IApplicationManager::instance();
+                        FB_ASSERT( applicationManager );
 
-                    if( cascade )
-                    {
-                        if( auto p = actor->getChildrenPtr() )
+                        auto sceneManager = fb::static_pointer_cast<SceneManager>(
+                            applicationManager->getSceneManager() );
+
+                        auto transform = getSharedFromThis<ITransform>();
+                        sceneManager->addDirtyTransform( transform );
+
+                        auto components = actor->getComponents();
+                        for( auto &component : components )
                         {
-                            auto &children = *p;
-                            for( auto &child : children )
+                            sceneManager->addDirtyComponentTransform( component );
+                        }
+
+                        if( cascade )
+                        {
+                            if( auto p = actor->getChildrenPtr() )
                             {
-                                FB_ASSERT( child );
+                                auto &children = *p;
+                                for( auto &child : children )
+                                {
+                                    FB_ASSERT( child );
 
-                                auto childTransform = child->getTransform();
-                                FB_ASSERT( childTransform );
+                                    auto childTransform = child->getTransform();
+                                    FB_ASSERT( childTransform );
 
-                                childTransform->setDirty( true );
+                                    childTransform->setDirty( true );
+                                }
                             }
                         }
                     }
@@ -343,7 +348,6 @@ namespace fb
             if( !MathUtil<real_Num>::equals( p, localPosition ) )
             {
                 m_localTransform.setPosition( localPosition );
-                setDirty( true );
             }
         }
 
@@ -358,7 +362,6 @@ namespace fb
             if( !MathUtil<real_Num>::equals( s, localScale ) )
             {
                 m_localTransform.setScale( localScale );
-                setDirty( true );
             }
         }
 
@@ -373,7 +376,6 @@ namespace fb
             if( !MathUtil<real_Num>::equals( r, localOrientation ) )
             {
                 m_localTransform.setOrientation( localOrientation );
-                setDirty( true );
             }
         }
 
@@ -406,7 +408,6 @@ namespace fb
             if( !MathUtil<real_Num>::equals( p, position ) )
             {
                 m_worldTransform.setPosition( position );
-                setLocalDirty( true );
             }
         }
 
@@ -421,7 +422,6 @@ namespace fb
             if( !MathUtil<real_Num>::equals( s, scale ) )
             {
                 m_worldTransform.setScale( scale );
-                setLocalDirty( true );
             }
         }
 
@@ -436,7 +436,6 @@ namespace fb
             if( !MathUtil<real_Num>::equals( r, orientation ) )
             {
                 m_worldTransform.setOrientation( orientation );
-                setLocalDirty( true );
             }
         }
 
@@ -518,10 +517,10 @@ namespace fb
             auto orientation = worldTransform.getOrientation();
             auto scale = worldTransform.getScale();
 
-            Euler<real_Num> eular(localOrientation);
+            Euler<real_Num> eular( localOrientation );
             Vector3<real_Num> localRotation = eular.toDegrees();
 
-            Euler<real_Num> worldEular(orientation);
+            Euler<real_Num> worldEular( orientation );
             Vector3<real_Num> rotation = worldEular.toDegrees();
 
             properties->setProperty( "Local Position", localPosition );

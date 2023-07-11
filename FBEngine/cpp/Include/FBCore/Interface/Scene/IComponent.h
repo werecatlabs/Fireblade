@@ -312,8 +312,6 @@ namespace fb
             template <class T>
             static void create( SmartPtr<IDirector> director );
 
-
-
             FB_CLASS_REGISTER_DECL;
         };
 
@@ -388,7 +386,7 @@ namespace fb
         template <class T>
         SmartPtr<T> IComponent::getComponentStateByType() const
         {
-            auto& state = getComponentState();
+            auto &state = getComponentState();
             return (T *)state.get();
         }
 

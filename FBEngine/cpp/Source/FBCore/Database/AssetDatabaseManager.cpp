@@ -219,7 +219,10 @@ namespace fb
     {
         try
         {
-            FB_ASSERT( object );
+            if ( !object )
+            {
+                return;
+            }
 
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );

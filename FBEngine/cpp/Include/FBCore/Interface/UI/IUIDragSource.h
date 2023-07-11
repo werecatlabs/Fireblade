@@ -21,13 +21,13 @@ namespace fb
              */
             ~IUIDragSource() override = default;
 
-            /**
-             * @brief Handles a drag event
-             * @param position The position of the drag event in the UI
-             * @param element The UI element involved in the drag event
-             * @return The data associated with the drag event as a string
-             */
-            virtual String handleDrag( const Vector2I &position, SmartPtr<IUIElement> element ) = 0;
+            ///**
+            // * @brief Handles a drag event
+            // * @param position The position of the drag event in the UI
+            // * @param element The UI element involved in the drag event
+            // * @return The data associated with the drag event as a string
+            // */
+            //virtual String handleDrag( const Vector2I &position, SmartPtr<IUIElement> element ) = 0;
 
             FB_CLASS_REGISTER_DECL;
         };

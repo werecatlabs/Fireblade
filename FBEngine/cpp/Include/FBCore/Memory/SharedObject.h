@@ -208,13 +208,13 @@ namespace fb
     template <typename T>
     ISharedObjectListener *SharedObject<T>::getSharedObjectListener() const
     {
-        return m_sharedObjectListener.load();
+        return T::m_sharedObjectListener.load();
     }
 
     template <typename T>
     void SharedObject<T>::setSharedObjectListener( ISharedObjectListener *listener )
     {
-        m_sharedObjectListener = listener;
+        T::m_sharedObjectListener = listener;
     }
 
     template <typename T>
@@ -230,13 +230,13 @@ namespace fb
     template <typename T>
     SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> SharedObject<T>::getObjectListenersPtr() const
     {
-        return m_sharedEventListeners;
+        return T::m_sharedEventListeners;
     }
 
     template <typename T>
     void SharedObject<T>::setObjectListenersPtr( SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> p )
     {
-        m_sharedEventListeners = p;
+        T::m_sharedEventListeners = p;
     }
 
 }  // end namespace fb

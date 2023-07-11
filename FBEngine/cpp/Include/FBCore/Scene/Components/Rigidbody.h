@@ -30,13 +30,7 @@ namespace fb
 
             /** @brief Invoked when a component is loaded */
             void componentLoaded( SmartPtr<IComponent> component );
-
-            /** @brief Invoked when the component is awake */
-            void awake() override;
-
-            /** @brief Initiates the playback of the Rigidbody simulation */
-            void play();
-
+            
             /** @brief Updates all Rigidbody components */
             static void updateComponents();
 
@@ -214,7 +208,7 @@ namespace fb
             atomic_bool m_isKinematic = false;
 
             /** @brief Indicates whether the Rigidbody's transform is being updated */
-            atomic_bool m_isUpdatingTransform = false;
+            atomic_s32 m_transformReferences = 0;
 
             /** @brief The bounds of the Rigidbody */
             AABB3<real_Num> m_bounds;

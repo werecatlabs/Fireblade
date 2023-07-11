@@ -1,6 +1,17 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/Memory/IObject.h>
 #include <FBCore/System/RttiClassDefinition.h>
+#include <FBCore/Memory/Memory.h>
+#include <FBCore/Memory/ObjectTracker.h>
+#include <FBCore/Memory/GarbageCollector.h>
+#include <FBCore/Memory/TypeManager.h>
+#include <FBCore/Memory/PointerUtil.h>
+#include <FBCore/System/RttiClassDefinition.h>
+#include <FBCore/Atomics/Atomics.h>
+#include <FBCore/Core/StringTypes.h>
+#include <FBCore/Core/Handle.h>
+#include <FBCore/Interface/System/IEventListener.h>
+#include <FBCore/Interface/IApplicationManager.h>
 
 namespace fb
 {

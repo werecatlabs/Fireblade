@@ -15,7 +15,9 @@ namespace fb
     class Vector4
     {
     public:
-        Vector4() = default;
+        /** Default constructor. */
+        Vector4();
+
         Vector4( T x, T y, T z, T w );
         Vector4( const Vector4<T> &other );
         Vector4( const T *ptr );
@@ -53,12 +55,16 @@ namespace fb
         operator T *();
         T operator[]( s32 i ) const;
         T &operator[]( s32 i );
+
         T X() const;
         T &X();
+
         T Y() const;
         T &Y();
+
         T Z() const;
         T &Z();
+
         T W() const;
         T &W();
 
@@ -85,20 +91,25 @@ namespace fb
         FBCore_API static const Vector4 UNIT;
 
         /** The x-component of the vector. */
-        T x = T( 0.0 );
+        T x;
 
         /** The y-component of the vector. */
-        T y = T( 0.0 );
+        T y;
 
         /** The z-component of the vector. */
-        T z = T( 0.0 );
+        T z;
 
         /** The w-component of the vector. */
-        T w = T( 0.0 );
+        T w;
 
     private:
         s32 compare( const Vector4 &other ) const;
     };
+
+    template <class T>
+    Vector4<T>::Vector4() : x( 0 ), y( 0 ), z( 0 ), w( 0 )
+    {
+    }
 
     template <class T>
     Vector4<T>::Vector4( T x, T y, T z, T w ) : x( x ), y( y ), z( z ), w( w )

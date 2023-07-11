@@ -392,13 +392,13 @@ namespace fb
     template <class T>
     SmartPtr<ISharedObject> SharedObject<T>::getScriptData() const
     {
-        return m_scriptData;
+        return T::m_scriptData;
     }
 
     template <class T>
     void SharedObject<T>::setScriptData( SmartPtr<ISharedObject> data )
     {
-        m_scriptData = data;
+        T::m_scriptData = data;
     }
 
 }  // end namespace fb

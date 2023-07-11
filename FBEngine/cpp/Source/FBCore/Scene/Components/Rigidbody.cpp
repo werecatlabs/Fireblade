@@ -3,8 +3,6 @@
 #include <FBCore/Scene/Components/RigidbodyListener.h>
 #include <FBCore/Scene/SceneManager.h>
 #include <FBCore/Scene/Components/Collision.h>
-#include <FBCore/Scene/Components/CollisionPlane.h>
-#include <FBCore/Scene/Components/CollisionMesh.h>
 #include <FBCore/Scene/Components/Transform.h>
 #include <FBCore/Interface/Physics/IPhysicsManager.h>
 #include <FBCore/Interface/Physics/IPhysicsScene3.h>
@@ -20,6 +18,7 @@ namespace fb
 {
     namespace scene
     {
+
         FB_CLASS_REGISTER_DERIVED( fb::scene, Rigidbody, Component );
 
         Rigidbody::Rigidbody()
@@ -59,6 +58,62 @@ namespace fb
                 */
 
                 setLoadingState( LoadingState::Loaded );
+            }
+            catch( std::exception &e )
+            {
+                FB_LOG_EXCEPTION( e );
+            }
+        }
+
+        void Rigidbody::unload( SmartPtr<ISharedObject> data )
+        {
+            try
+            {
+                setLoadingState( LoadingState::Unloading );
+
+                auto applicationManager = core::IApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto physicsManager = applicationManager->getPhysicsManager();
+                if( physicsManager )
+                {
+                    if( m_rigidDynamic )
+                    {
+                        physicsManager->destroyPhysicsBody( m_rigidDynamic );
+                        m_rigidDynamic = nullptr;
+                    }
+
+                    if( m_rigidStatic )
+                    {
+                        physicsManager->destroyPhysicsBody( m_rigidStatic );
+                        m_rigidStatic = nullptr;
+                    }
+
+                    if( m_material )
+                    {
+                        physicsManager->destroyMaterial( m_material );
+                        m_material = nullptr;
+                    }
+                }
+
+                m_scene = nullptr;
+
+                auto pSceneManager = applicationManager->getSceneManager();
+                auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
+
+                /*
+                if( auto actor = getActor() )
+                {
+                    auto entity = (entt::registry::entity_type)actor->getEntity();
+
+                    auto registry = sceneManager->getRegistry();
+                    registry->remove<rigidbody_data>( entity );
+                }
+                */
+
+                Component::unload( data );
+
+                setLoadingState( LoadingState::Unloaded );
             }
             catch( std::exception &e )
             {
@@ -323,78 +378,12 @@ namespace fb
             return IFSM::ReturnType::Ok;
         }
 
-        void Rigidbody::unload( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-                setLoadingState( LoadingState::Unloading );
-
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto physicsManager = applicationManager->getPhysicsManager();
-                if( physicsManager )
-                {
-                    if( m_rigidDynamic )
-                    {
-                        physicsManager->destroyPhysicsBody( m_rigidDynamic );
-                        m_rigidDynamic = nullptr;
-                    }
-
-                    if( m_rigidStatic )
-                    {
-                        physicsManager->destroyPhysicsBody( m_rigidStatic );
-                        m_rigidStatic = nullptr;
-                    }
-
-                    if( m_material )
-                    {
-                        physicsManager->destroyMaterial( m_material );
-                        m_material = nullptr;
-                    }
-                }
-
-                m_scene = nullptr;
-
-                auto pSceneManager = applicationManager->getSceneManager();
-                auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-
-                /*
-                if( auto actor = getActor() )
-                {
-                    auto entity = (entt::registry::entity_type)actor->getEntity();
-
-                    auto registry = sceneManager->getRegistry();
-                    registry->remove<rigidbody_data>( entity );
-                }
-                */
-
-                Component::unload( data );
-
-                setLoadingState( LoadingState::Unloaded );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
         void Rigidbody::componentLoaded( SmartPtr<IComponent> component )
         {
             if( component->isDerived<Collision>() )
             {
                 attachShape();
             }
-        }
-
-        void Rigidbody::awake()
-        {
-            // updateTransform();
-        }
-
-        void Rigidbody::play()
-        {
-            updateTransform();
         }
 
         void Rigidbody::updateKinematicState( bool val )
@@ -666,45 +655,21 @@ namespace fb
             case State::Edit:
             case State::Play:
             {
-                if( m_isUpdatingTransform == false )
+                if( auto actor = getActor() )
                 {
-                    auto actor = getActor();
-                    if( actor )
+                    auto p = actor->getPosition();
+                    auto r = actor->getOrientation();
+
+                    auto transform = Transform3<real_Num>( p, r );
+
+                    if( m_rigidDynamic )
                     {
-#if _DEBUG
-                        auto handle = actor->getHandle();
-                        if( handle )
-                        {
-                            auto name = handle->getName();
+                        m_rigidDynamic->setTransform( transform );
+                    }
 
-                            if( name == "dynamics" )
-                            {
-                                int stop = 0;
-                                stop = 0;
-                            }
-
-                            if( name == "F40f40" )
-                            {
-                                int stop = 0;
-                                stop = 0;
-                            }
-                        }
-#endif
-
-                        auto p = actor->getPosition();
-                        auto r = actor->getOrientation();
-
-                        auto transform = Transform3<real_Num>( p, r );
-
-                        if( m_rigidDynamic )
-                        {
-                            m_rigidDynamic->setTransform( transform );
-                        }
-
-                        if( m_rigidStatic )
-                        {
-                            m_rigidStatic->setTransform( transform );
-                        }
+                    if( m_rigidStatic )
+                    {
+                        m_rigidStatic->setTransform( transform );
                     }
                 }
             }

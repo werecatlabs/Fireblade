@@ -19,8 +19,7 @@ namespace fb
             Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
                                    const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
                                    SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
-
-            void updateChild( SmartPtr<scene::IActor> actor );
+            
             void handleTransform( const Transform3<real_Num> &t );
 
             Rigidbody *getOwner() const;
