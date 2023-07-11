@@ -4,6 +4,8 @@
 #include <GameEditorPrerequisites.h>
 #include <FBCore/Memory/SharedObject.h>
 
+#include "FBCore/Math/Triangle3.h"
+
 namespace fb
 {
     namespace editor

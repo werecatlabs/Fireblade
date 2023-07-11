@@ -6,6 +6,7 @@
 #include <FBCore/FBCore.h>
 #include "ActorWindow.h"
 #include "UIManager.h"
+#include "commands/AddComponentCmd.h"
 
 namespace fb
 {
@@ -13,17 +14,6 @@ namespace fb
     {
         ObjectBrowserDialog::ObjectBrowserDialog()
         {
-            // wxBoxSizer* baseSizer = new wxBoxSizer(wxVERTICAL);
-            // SetSizer(baseSizer);
-
-            // m_tree = new wxTreeCtrl(this, -1);
-            // baseSizer->Add(m_tree, 1, wxEXPAND);
-
-            // m_tree->Bind(wxEVT_TREE_SEL_CHANGED, &ObjectBrowserDialog::handleTreeSelectionChanged,
-            // this, -1); m_tree->Bind(wxEVT_TREE_ITEM_ACTIVATED,
-            // &ObjectBrowserDialog::handleTreeSelectionActivated, this, -1);
-
-            // populate();
         }
 
         ObjectBrowserDialog::~ObjectBrowserDialog()
@@ -208,33 +198,7 @@ namespace fb
             m_tree = tree;
         }
 
-        void ObjectBrowserDialog::handleTreeSelectionChanged()
-        {
-            // auto selectedId = event.GetItem();
-            // auto data = (ProjectTreeData*)m_tree->GetItemData(selectedId);
-            // if (data)
-            //{
-            //	auto factory = fb::static_pointer_cast<IFactory>(data->getOwnerData());
-            //	auto selectedObject = factory->getObjectType();
-            //	setSelectedObject(selectedObject);
-            // }
-        }
-
-        void ObjectBrowserDialog::handleTreeSelectionActivated()
-        {
-            // auto selectedId = event.GetItem();
-            // auto data = (ProjectTreeData*)m_tree->GetItemData(selectedId);
-            // if (data)
-            //{
-            //	auto factory = fb::static_pointer_cast<IFactory>(data->getOwnerData());
-            //	auto selectedObject = factory->getObjectType();
-            //	setSelectedObject(selectedObject);
-            // }
-
-            // EndModal(wxID_OK);
-        }
-
-        fb::Parameter ObjectBrowserDialog::UIElementListener::handleEvent(
+        Parameter ObjectBrowserDialog::UIElementListener::handleEvent(
             IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
             SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
         {
@@ -244,64 +208,21 @@ namespace fb
                 auto tree = owner->getTree();
                 auto selectedNode = tree->getSelectTreeNode();
 
-                auto element = fb::dynamic_pointer_cast<ui::IUIElement>( sender );
-                auto elementId = static_cast<ObjectBrowserDialog::WidgetId>( element->getElementId() );
-                switch( elementId )
-                {
-                case AddComponent:
-                {
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
+                auto applicationManager = core::IApplicationManager::instance();
+                FB_ASSERT( applicationManager );
 
-                    auto selectionManager = applicationManager->getSelectionManager();
-                    FB_ASSERT( selectionManager );
+                auto factoryManager = applicationManager->getFactoryManager();
+                auto commandManager = applicationManager->getCommandManager();
 
-                    auto selection = selectionManager->getSelection();
-                    for( auto selected : selection )
-                    {
-                        if( selected )
-                        {
-                            if( selected->isDerived<scene::IActor>() )
-                            {
-                                auto actor = fb::static_pointer_cast<scene::IActor>( selected );
-                                if( actor )
-                                {
-                                    if( selectedNode )
-                                    {
-                                        auto userData = selectedNode->getNodeUserData();
-                                        auto projectData =
-                                            fb::static_pointer_cast<ProjectTreeData>( userData );
+                auto userData = selectedNode->getNodeUserData();
+                auto projectData = fb::static_pointer_cast<ProjectTreeData>( userData );
 
-                                        auto objectData = projectData->getObjectData();
-                                        auto factory = fb::static_pointer_cast<IFactory>( objectData );
+                auto objectData = projectData->getObjectData();
+                auto factory = fb::static_pointer_cast<IFactory>( objectData );
 
-                                        auto component = static_cast<scene::IComponent *>(
-                                            factory->createObjectFromPool() );
-                                        actor->addComponentInstance( component );
-
-                                        if( applicationManager->isEditor() )
-                                        {
-                                            component->setState( scene::IComponent::State::Edit );
-                                        }
-                                        else
-                                        {
-                                            component->setState( scene::IComponent::State::Play );
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    auto editorManager = EditorManager::getSingletonPtr();
-                    auto ui = editorManager->getUI();
-                    if( auto actorWindow = ui->getActorWindow() )
-                    {
-                        actorWindow->buildTree();
-                    }
-                }
-                break;
-                }
+                auto cmd = fb::make_ptr<AddComponentCmd>();
+                cmd->setFactory( factory );
+                commandManager->addCommand( cmd );
             }
 
             return Parameter();

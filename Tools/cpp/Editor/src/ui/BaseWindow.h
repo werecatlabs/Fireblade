@@ -163,7 +163,7 @@ namespace fb
                                        const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
                                        SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
 
-                String handleDrag( const Vector2I &position, SmartPtr<ui::IUIElement> element ) override;
+                String handleDrag( const Vector2I &position, SmartPtr<ui::IUIElement> element );
 
                 BaseWindow *getOwner() const;
 
@@ -184,7 +184,7 @@ namespace fb
                                        SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
 
                 bool handleDrop( const Vector2I &position, SmartPtr<ui::IUIElement> src,
-                                 SmartPtr<ui::IUIElement> dst, const String &data ) override;
+                                 SmartPtr<ui::IUIElement> dst, const String &data );
 
                 BaseWindow *getOwner() const;
 

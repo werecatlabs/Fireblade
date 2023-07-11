@@ -62,8 +62,9 @@ namespace fb
                     FB_ASSERT( !StringUtil::isNullOrEmpty( tempScenePath ) );
                     FB_ASSERT( !Path::isPathAbsolute( tempScenePath ) );
 
-                    //scene->clear();
-                    //scene->loadScene( tempScenePath );
+                    auto sceneFilePath = scene->getFilePath();
+                    scene->clear();
+                    scene->loadScene( sceneFilePath );
 
                     auto editorManager = EditorManager::getSingletonPtr();
                     FB_ASSERT( editorManager );

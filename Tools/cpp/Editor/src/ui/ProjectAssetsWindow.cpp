@@ -9,9 +9,8 @@
 #include <commands/AddResourceCmd.h>
 #include <commands/DragDropActorCmd.h>
 #include <commands/AddActorCmd.h>
-#include <editor/Project.h>
-
 #include "commands/RemoveResourceCmd.h"
+#include <editor/Project.h>
 
 #define TREE_ITEM_STATE_NOT_FOUND 0
 #define TREE_ITEM_STATE_EXPANDED 1
@@ -101,6 +100,10 @@ namespace fb
                 ApplicationUtil::addMenuItem( m_applicationAddMenu,
                                               static_cast<s32>( MenuId::AddMaterial ), "Material",
                                               "Material" );
+
+                ApplicationUtil::addMenuItem( m_applicationAddMenu,
+                                              static_cast<s32>( MenuId::AddScript ), "Script",
+                                              "Add a script" );
 
                 ApplicationUtil::addMenuSeparator( m_applicationAddMenu );
                 ApplicationUtil::addMenuItem( m_applicationAddMenu,
@@ -856,6 +859,7 @@ namespace fb
             case MenuId::AddMaterial:
             {
                 auto filePath = owner->getSelectedPath();
+                filePath = Path::getFilePath( filePath );
 
                 const auto materialName = String( "NewMaterial.mat" );
 
@@ -868,9 +872,26 @@ namespace fb
                 commandManager->addCommand( cmd );
             }
             break;
+            case MenuId::AddScript:
+            {
+                auto filePath = owner->getSelectedPath();
+                filePath = Path::getFilePath( filePath );
+
+                const auto materialName = String( "NewScript.lua" );
+
+                auto cmd = fb::make_ptr<AddResourceCmd>();
+
+                auto materialPath = filePath + "/" + materialName;
+                cmd->setFilePath( materialPath );
+
+                cmd->setResourceType( AddResourceCmd::ResourceType::Script );
+                commandManager->addCommand( cmd );
+            }
+            break;
             case MenuId::AddTerrainDirector:
             {
                 auto filePath = owner->getSelectedPath();
+                filePath = Path::getFilePath( filePath );
 
                 const auto materialName = String( "NewTerrain.resource" );
 
@@ -886,6 +907,7 @@ namespace fb
             case MenuId::Remove:
             {
                 auto filePath = owner->getSelectedPath();
+
                 auto cmd = fb::make_ptr<RemoveResourceCmd>();
                 cmd->setFilePath( filePath );
                 commandManager->addCommand( cmd );
@@ -920,6 +942,12 @@ namespace fb
             IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
             SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
         {
+            if( eventValue == IEvent::handleDrag )
+            {
+                auto str = handleDrag( Vector2I::zero(), sender );
+                return Parameter( str );
+            }
+
             return Parameter();
         }
 
@@ -1006,6 +1034,16 @@ namespace fb
             IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
             SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
         {
+            if( eventValue == IEvent::handleDrop )
+            {
+                Vector2I position;
+                SmartPtr<ui::IUIElement> src;
+                SmartPtr<ui::IUIElement> dst;
+                String dataText = arguments[0].str;
+
+                handleDrop( position, src, dst, dataText );
+            }
+
             return Parameter();
         }
 
@@ -1014,116 +1052,81 @@ namespace fb
                                                           SmartPtr<ui::IUIElement> dst,
                                                           const String &text )
         {
-            //try
-            //{
-            //    auto applicationManager = core::IApplicationManager::instance();
-            //    FB_ASSERT( applicationManager );
+            try
+            {
+                auto applicationManager = core::IApplicationManager::instance();
+                FB_ASSERT( applicationManager );
 
-            //    auto commandManager = applicationManager->getCommandManager();
-            //    FB_ASSERT( commandManager );
+                auto commandManager = applicationManager->getCommandManager();
+                FB_ASSERT( commandManager );
 
-            //    auto fileSystem = applicationManager->getFileSystem();
-            //    FB_ASSERT( fileSystem );
+                auto fileSystem = applicationManager->getFileSystem();
+                FB_ASSERT( fileSystem );
 
-            //    auto sceneManager = applicationManager->getSceneManager();
+                auto sceneManager = applicationManager->getSceneManager();
 
-            //    data::drag_drop_data data;
-            //    auto dataStr = String( text.c_str() );
+                auto properties = fb::make_ptr<Properties>();
+                auto dataStr = String( text.c_str() );
 
-            //    if( !StringUtil::isNullOrEmpty( dataStr ) )
-            //    {
-            //        DataUtil::parse( dataStr, &data );
+                if( !StringUtil::isNullOrEmpty( dataStr ) )
+                {
+                    DataUtil::parse( dataStr, properties.get() );
 
-            //        auto filePath = data.filePath;
+                    auto filePath = properties->getProperty( "filePath" );
 
-            //        FileInfo fileInfo;
-            //        if( fileSystem->findFileInfo( data.filePath, fileInfo ) )
-            //        {
-            //            filePath = fileInfo.absolutePath;
-            //        }
+                    FileInfo fileInfo;
+                    if( fileSystem->findFileInfo( filePath, fileInfo ) )
+                    {
+                        filePath = fileInfo.absolutePath;
+                    }
 
-            //        /*
-            //    SmartPtr<IData> pFileData;
+                    auto owner = getOwner();
+                    auto tree = owner->m_tree;
 
-            //    if (src)
-            //    {
-            //        if (src->isDerived<ui::IUITreeNode>())
-            //        {
-            //            auto pTreeNode = fb::static_pointer_cast<ui::IUITreeNode>(src);
-            //            pFileData = pTreeNode->getNodeUserData();
-            //        }
-            //    }
+                    auto dragSrc = tree->getDragSourceElement();
+                    auto dropDst = tree->getDropDestinationElement();
 
-            //    auto fileInfo = pFileData->getDataAsType<FileInfo>();
-            //    auto filePath = StringUtil::cleanupPath( fileInfo->absolutePath );
-            //    if (StringUtil::isNullOrEmpty(filePath))
-            //    {
-            //        filePath = data.filePath;
-            //    }
-            //    */
+                    auto dropProperties = fb::make_ptr<Properties>();
+                    DataUtil::parse( text, dropProperties.get() );
 
-            //        auto owner = getOwner();
-            //        auto tree = owner->m_tree;
+                    u32 actorId = 0;
+                    dropProperties->getPropertyValue( "actorId", actorId );
 
-            //        auto dragSrc = tree->getDragSourceElement();
-            //        auto dropDst = tree->getDropDestinationElement();
+                    if( auto actor = sceneManager->getActor( actorId ) )
+                    {
+                        if( auto handle = actor->getHandle() )
+                        {
+                            auto name = handle->getName();
 
-            //        //if( dragSrc && dropDst )
-            //        {
-            //            data::drag_drop_data data;
-            //            DataUtil::parse( text, &data );
+                            auto pActorData = actor->toData();
+                            auto actorData = fb::static_pointer_cast<Properties>( pActorData );
 
-            //            if( auto actor = sceneManager->getActor( data.actorId ) )
-            //            {
-            //                if( auto handle = actor->getHandle() )
-            //                {
-            //                    auto name = handle->getName();
+                            auto path = applicationManager->getProjectPath();
 
-            //                    auto actorData = actor->toData();
-            //                    auto pActorData = actorData->getDataAsType<data::actor_data>();
+                            auto treeDropDst = fb::static_pointer_cast<ui::IUITreeNode>( dropDst );
+                            if( auto userData = treeDropDst->getNodeUserData() )
+                            {
+                                auto projectTreeData =
+                                    fb::static_pointer_cast<ProjectTreeData>( userData );
+                                if( projectTreeData )
+                                {
+                                    path = Path::getFilePath( projectTreeData->getObjectType() );
+                                }
+                            }
 
-            //                    auto path = applicationManager->getProjectPath();
+                            auto jsonStr = DataUtil::toString( actorData.get(), true );
+                            fileSystem->writeAllText( path + "/" + name + ".prefab", jsonStr );
+                            fileSystem->refreshAll( false );
+                        }
+                    }
 
-            //                    auto treeDropDst = fb::static_pointer_cast<ui::IUITreeNode>( dropDst );
-            //                    if( auto userData = treeDropDst->getNodeUserData() )
-            //                    {
-            //                        auto projectTreeData =
-            //                            fb::static_pointer_cast<ProjectTreeData>( userData );
-            //                        if( projectTreeData )
-            //                        {
-            //                            path = Path::getFilePath( projectTreeData->getObjectType() );
-            //                        }
-            //                    }
-
-            //                    auto jsonStr = DataUtil::toString( pActorData, true );
-            //                    fileSystem->writeAllText( path + "/" + name + ".prefab", jsonStr );
-            //                    fileSystem->refreshAll( false );
-            //                }
-            //            }
-
-            //            //auto cmd = fb::make_ptr<DragDropActorCmd>();
-            //            //cmd->setPosition( position );
-            //            //cmd->setSrc( dragSrc );
-            //            //cmd->setDst( dropDst );
-            //            //cmd->setData( text );
-
-            //            //commandManager->addCommand( cmd );
-            //        }
-            //        //else if( !StringUtil::isNullOrEmpty( filePath ) )
-            //        //{
-            //        //    auto cmd = fb::make_ptr<AddActorCmd>();
-            //        //    cmd->setActorType( AddActorCmd::ActorType::Actor );
-            //        //    cmd->setFilePath( filePath );
-            //        //    commandManager->addCommand( cmd );
-            //        //}
-
-            //        owner->build();
-            //    }
-            //}
-            //catch( std::exception &e )
-            //{
-            //    FB_LOG_EXCEPTION( e );
-            //}
+                    owner->build();
+                }
+            }
+            catch( std::exception &e )
+            {
+                FB_LOG_EXCEPTION( e );
+            }
 
             return false;
         }
@@ -1133,9 +1136,9 @@ namespace fb
             return m_owner;
         }
 
-        void ProjectAssetsWindow::DropTarget::setOwner( ProjectAssetsWindow *val )
+        void ProjectAssetsWindow::DropTarget::setOwner( ProjectAssetsWindow *owner )
         {
-            m_owner = val;
+            m_owner = owner;
         }
 
         ProjectAssetsWindow::BuildTreeJob::BuildTreeJob()

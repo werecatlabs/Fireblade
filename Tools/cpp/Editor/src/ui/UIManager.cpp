@@ -30,6 +30,7 @@
 #include "jobs/PlaymodeJob.h"
 #include "jobs/LeavePlaymodeJob.h"
 #include "jobs/ImportUnityYaml.h"
+#include "jobs/SaveSceneJob.h"
 
 namespace fb
 {
@@ -327,6 +328,10 @@ namespace fb
             aboutDialog->load( nullptr );
             setAboutDialog( aboutDialog );
             aboutDialog->setWindowVisible( false );
+
+            //auto addDialog = fb::make_ptr<BaseWindow>();
+            //addDialog->load( nullptr );
+            //setProjectWindow( addDialog );
 
             m_updateSelectionJob = fb::make_ptr<UpdateSelectionJob>();
 
@@ -927,51 +932,8 @@ namespace fb
                 break;
                 case WidgetId::SaveId:
                 {
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto fileSystem = applicationManager->getFileSystem();
-                    FB_ASSERT( fileSystem );
-
-                    auto editorManager = EditorManager::getSingletonPtr();
-                    FB_ASSERT( editorManager );
-
-                    auto uiManager = editorManager->getUI();
-                    FB_ASSERT( uiManager );
-
-                    auto sceneManager = applicationManager->getSceneManager();
-                    FB_ASSERT( sceneManager );
-
-                    if( auto scene = sceneManager->getCurrentScene() )
-                    {
-                        auto filePath = scene->getFilePath();
-                        if( fileSystem->isExistingFile( filePath ) )
-                        {
-                            scene->saveScene();
-                        }
-                        else
-                        {
-                            if( auto fileDialog = fileSystem->openFileDialog() )
-                            {
-                                auto projectPath = Path::getWorkingDirectory();
-                                if( !fileSystem->isExistingFolder( projectPath ) )
-                                {
-                                    projectPath = "";
-                                }
-
-                                fileDialog->setDialogMode( INativeFileDialog::DialogMode::Open );
-                                fileDialog->setFileExtension( ".json" );
-                                fileDialog->setFilePath( projectPath );
-
-                                auto result = fileDialog->openDialog();
-                                if( result == INativeFileDialog::Result::Dialog_Okay )
-                                {
-                                    auto filePath = fileDialog->getFilePath();
-                                    scene->saveScene( filePath );
-                                }
-                            }
-                        }
-                    }
+                    auto job = fb::make_ptr<SaveSceneJob>();
+                    jobQueue->queueJob( job );
                 }
                 break;
                 case WidgetId::SaveSceneAsId:

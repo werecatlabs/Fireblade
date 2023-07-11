@@ -1,9 +1,6 @@
 #ifndef AddEntityCmd_h__
 #define AddEntityCmd_h__
 
-#include <FBCore/Interface/System/ICommand.h>
-#include <FBCore/Memory/SharedObject.h>
-#include <GameEditorPrerequisites.h>
 #include <commands/Command.h>
 
 namespace fb
@@ -18,9 +15,11 @@ namespace fb
             {
                 Actor,
                 Button,
+                Camera,
                 Car,
                 Canvas,
                 Cube,
+                CubeMesh,
                 Cubemap,
                 CubeGround,
                 DirectionalLight,
@@ -31,10 +30,12 @@ namespace fb
                 Plane,
                 ProceduralScene,
                 PointLight,
+                PhysicsCube,
                 Skybox,
                 SimpleButton,
                 Terrain,
                 Text,
+                Vehicle,
 
                 EmptyActor
             };

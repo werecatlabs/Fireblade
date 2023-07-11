@@ -2,11 +2,12 @@
 #include <commands/FileMenuCmd.h>
 #include <editor/EditorManager.h>
 #include <editor/Project.h>
-
 #include <ui/UIManager.h>
 #include "ui/ProjectWindow.h"
 #include <FBApplication/FBApplication.h>
 #include <FBCore/FBCore.h>
+
+#include "jobs/OpenSceneJob.h"
 
 namespace fb
 {
@@ -133,42 +134,11 @@ namespace fb
                     auto result = fileDialog->openDialog();
                     if( result == INativeFileDialog::Result::Dialog_Okay )
                     {
-                        auto project = editorManager->getProject();
-                        FB_ASSERT( project );
-
                         auto filePath = fileDialog->getFilePath();
                         if( !StringUtil::isNullOrEmpty( filePath ) )
                         {
-                            auto fileSystem = applicationManager->getFileSystem();
-                            FB_ASSERT( fileSystem );
-
-                            auto path = Path::getFilePath( filePath );
-                            path = StringUtil::cleanupPath( path );
-
-                            auto projectPath = applicationManager->getProjectPath();
-                            if( StringUtil::isNullOrEmpty( projectPath ) )
-                            {
-                                projectPath = Path::getWorkingDirectory();
-                            }
-
-                            auto scenePath = Path::getRelativePath( projectPath, filePath );
-                            scenePath = StringUtil::cleanupPath( scenePath );
-
-                            project->setCurrentScenePath( filePath );
-
-                            auto sceneManager = applicationManager->getSceneManager();
-                            if( auto scene = sceneManager->getCurrentScene() )
-                            {
-                                scene->clear();
-                                scene->loadScene( scenePath );
-                            }
-
-                            uiManager->rebuildSceneTree();
-
-                            if( auto projectWindow = uiManager->getProjectWindow() )
-                            {
-                                projectWindow->buildTree();
-                            }
+                            auto job = fb::make_ptr<OpenSceneJob>();
+                            job->execute();
                         }
                     }
                 }

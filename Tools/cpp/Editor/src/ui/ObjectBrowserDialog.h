@@ -53,9 +53,6 @@ namespace fb
                 ObjectBrowserDialog *m_owner = nullptr;
             };
 
-            void handleTreeSelectionChanged();
-            void handleTreeSelectionActivated();
-
             SmartPtr<ui::IUITreeCtrl> m_tree;
             SmartPtr<IEventListener> m_uiListener;
 

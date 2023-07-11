@@ -90,7 +90,9 @@ namespace fb
                                               "Car", "Car" );
                 ApplicationUtil::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_CUBE ),
                                               "Cube", "Cube" );
-
+                ApplicationUtil::addMenuItem( m_applicationAddMenu,
+                                              static_cast<s32>( MenuId::ADD_CUBE_MESH ), "Cube Mesh",
+                                              "Cube Mesh" );
                 ApplicationUtil::addMenuSeparator( m_applicationAddMenu );
                 ApplicationUtil::addMenuItem( m_applicationAddMenu,
                                               static_cast<s32>( MenuId::ADD_CUBEMAP ), "Cubemap",
@@ -137,9 +139,6 @@ namespace fb
 
                 ApplicationUtil::addMenuItem(
                     m_applicationAddMenu, static_cast<s32>( MenuId::ADD_BUTTON ), "Button", "Button" );
-                ApplicationUtil::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>( MenuId::ADD_SIMPLE_BUTTON ),
-                                              "Simple Button", "Simple Button" );
 
                 ApplicationUtil::addMenuItem(
                     m_applicationAddMenu, static_cast<s32>( MenuId::ADD_CANVAS ), "Canvas", "Canvas" );
@@ -287,37 +286,21 @@ namespace fb
                 m_dataArray.clear();
 
                 auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
                 auto editorManager = EditorManager::getSingletonPtr();
-                FB_ASSERT( editorManager );
 
                 auto sceneManager = applicationManager->getSceneManager();
-                FB_ASSERT( sceneManager );
-
                 auto currentScene = sceneManager->getCurrentScene();
-                FB_ASSERT( currentScene );
+                auto project = editorManager->getProject();
 
                 if( currentScene )
                 {
-                    auto project = editorManager->getProject();
-                    FB_ASSERT( project );
-
-                    //auto appTemplate = project->getApplicationTemplate();
-
                     auto sceneName = currentScene->getName();
-
-                    // ProjectTreeData data("project", "project", project, project);
-                    // ProjectTreeData scriptsData(m_applicationMenu, "project", "filter", project,
-                    // m_parentFilter);
 
                     auto rootNode = m_tree->addRoot();
                     if( rootNode )
                     {
                         ApplicationUtil::setText( rootNode, sceneName );
                         rootNode->setExpanded( true );
-
-                        // sceneName.c_str(), -1, -1, new ProjectTreeData(data)
 
                         auto actors = currentScene->getActors();
                         for( auto actor : actors )
@@ -335,50 +318,6 @@ namespace fb
             {
                 FB_LOG_EXCEPTION( e );
             }
-
-            // try
-            //{
-            //	FB_ASSERT(m_treeWX);
-            //	m_treeWX->DeleteAllItems();
-
-            //	auto applicationManager = core::IApplicationManager::instance();
-            //	auto editorManager = EditorManager::getSingletonPtr();
-
-            //	auto sceneManager = applicationManager->getSceneManager();
-            //	FB_ASSERT(sceneManager);
-
-            //	auto currentScene = sceneManager->getCurrentScene();
-            //	FB_ASSERT(currentScene);
-
-            //	if (currentScene)
-            //	{
-            //		auto project = editorManager->getProject();
-            //		FB_ASSERT(project);
-
-            //		auto appTemplate = project->getApplicationTemplate();
-
-            //		auto sceneName = currentScene->getName();
-
-            //		ProjectTreeData data("project", "project", project, project);
-            //		ProjectTreeData scriptsData(m_applicationMenu, "project", "filter", project,
-            // m_parentFilter);
-
-            //		auto rootId = m_treeWX->AddRoot(sceneName.c_str(), -1, -1, new
-            // ProjectTreeData(data));
-
-            //		auto actors = currentScene->getActors();
-            //		for (auto actor : actors)
-            //		{
-            //			addActorToTree(actor, rootId);
-            //		}
-
-            //		m_treeWX->Expand(rootId);
-            //	}
-            //}
-            // catch (std::exception& e)
-            //{
-            //	wxMessageBox(e.what());
-            //}
         }
 
         void SceneWindow::addActorToTree( SmartPtr<IActor> actor, SmartPtr<ui::IUITreeNode> parentNode )
@@ -394,10 +333,7 @@ namespace fb
                     }
 
                     auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
                     auto factoryManager = applicationManager->getFactoryManager();
-                    FB_ASSERT( factoryManager );
 
                     auto node = m_tree->addNode();
                     FB_ASSERT( node );
@@ -438,8 +374,6 @@ namespace fb
             auto applicationManager = core::IApplicationManager::instance();
             auto selectionManager = applicationManager->getSelectionManager();
             selectionManager->clearSelection();
-
-            // m_tree->UnselectAll();
         }
 
         void SceneWindow::handleTreeSelectionChanged( SmartPtr<ui::IUITreeNode> node )
@@ -483,508 +417,6 @@ namespace fb
                                        nullptr );
 
             m_nodeSelectTime = timer->now();
-
-            // try
-            //{
-            //	FB_ASSERT(m_treeWX);
-
-            //	if(m_treeWX->HasFocus())
-            //	{
-            //		auto selectedId = event.GetItem ();
-            //		if (!selectedId)
-            //		{
-            //			return;
-            //		}
-
-            //		if (selectedId.IsOk())
-            //		{
-            //			m_lastSelectedItem = selectedId;
-            //		}
-
-            //		auto applicationManager = core::IApplicationManager::instance();
-            //		auto selectionManager = applicationManager->getSelectionManager();
-
-            //		auto appRoot = EditorManager::getSingletonPtr();
-            //		auto data = (ProjectTreeData*)m_treeWX->GetItemData(selectedId);
-            //		if(data)
-            //		{
-            //			if(data->getOwnerType()==("entity"))
-            //			{
-            //				SmartPtr<EntityTemplate> entityTemplate = data->getOwnerData();
-            //				appRoot->getProject()->setSelectedEntityTemplate(entityTemplate);
-            //			}
-            //			else if(data->getObjectType()==("mesh"))
-            //			{
-            //				SmartPtr<MeshTemplate> meshTemplate = data->getObjectData();
-
-            //				SmartPtr<SceneViewManager> meshViewManager = appRoot->getSceneViewManager();
-            //				meshViewManager->setMeshTemplate(meshTemplate);
-            //			}
-            //			else if (data->getObjectType() == "actor")
-            //			{
-            //				auto object = data->getObjectData();
-            //				auto pObject = object->getSharedFromThis<ISharedObject>();
-            //
-            //				selectionManager->clearSelection();
-            //				selectionManager->addSelectedObject(pObject);
-            //			}
-            //			else
-            //			{
-            //				selectionManager->clearSelection();
-            //			}
-            //		}
-            //		else
-            //		{
-            //			selectionManager->clearSelection();
-            //		}
-
-            //		wxTreeItemId parentId = m_treeWX->GetItemParent(selectedId);
-            //		if (!parentId)
-            //			return;
-
-            //		wxString parentType = m_treeWX->GetItemText(parentId);
-            //		wxString componentName = m_treeWX->GetItemText(selectedId);
-
-            //		EntityTreeItemSelectedPtr msg(new EntityTreeItemSelected);
-
-            //		//msg->setComponentType(parentType.mb_str().data());
-            //		//msg->setComponentName(componentName.mb_str().data());
-
-            //		if(data)
-            //		{
-            //			if (m_selectedObject)
-            //			{
-            //				//m_selectedObject = (IEditableObject*)data->getObjectData();
-
-            //				const String& editableType = m_selectedObject->getEditableType();
-            //				if (editableType == ("EntityTemplate"))
-            //				{
-            //					m_selectedEntity = m_selectedObject;
-            //				}
-
-            //				msg->setSelectedObject(m_selectedObject);
-            //			}
-            //		}
-            //		else
-            //		{
-            //			m_selectedObject = nullptr;
-            //		}
-
-            //		auto messageManager = appRoot->getMessageManager();
-            //		if (messageManager)
-            //		{
-            //			messageManager->postMessage(msg);
-            //		}
-
-            //		auto uiManager = appRoot->getUI();
-            //		if (uiManager)
-            //		{
-            //			uiManager->updateSelection();
-            //		}
-            //	}
-            //}
-            // catch (std::exception& e)
-            //{
-            //	wxMessageBox(e.what());
-            //}
-        }
-
-        void SceneWindow::handleTreeDragStart()
-        {
-            // auto selectedId = event.GetItem();
-            // if (!selectedId)
-            //{
-            //	return;
-            // }
-
-            // auto applicationManager = core::IApplicationManager::instance();
-            // FB_ASSERT(applicationManager);
-
-            // auto selectionManager = applicationManager->getSelectionManager();
-            // FB_ASSERT(selectionManager);
-
-            // data::drag_drop_data data;
-
-            // auto itemData = (ProjectTreeData*)m_treeWX->GetItemData(selectedId);
-            // if (itemData)
-            //{
-            //	//auto ownerType = itemData->getOwnerType();
-            //	//if (ownerType == "file")
-            //	//{
-            //	//	auto path = itemData->getObjectType();
-            //	//	data.filePath = path;
-
-            //	//	auto fileSelection = fb::make_ptr<FileSelection>();
-            //	//	fileSelection->setFilePath(path);
-
-            //	//	selectionManager->clearSelection();
-            //	//	selectionManager->addSelectedObject(fileSelection);
-            //	//}
-            //}
-
-            ////auto selection = selectionManager->getSelected();
-            ////for (auto selected : selection)
-            ////{
-            ////	if (selected->isExactly<FileSelection>())
-            ////	{
-            ////		auto fileSelection = fb::static_pointer_cast<FileSelection>(selected);
-            ////	}
-            ////}
-
-            // auto dataStr = DataUtil::toString(&data, true);
-
-            // wxTextDataObject my_data(dataStr.c_str());
-
-            // wxDropSource dragSource(m_treeWX);
-            // dragSource.SetData(my_data);
-            // wxDragResult result = dragSource.DoDragDrop(true);
-        }
-
-        void SceneWindow::OnActivateItem()
-        {
-            // auto applicationManager = core::IApplicationManager::instance();
-            // auto selectionManager = applicationManager->getSelectionManager();
-
-            // if(m_treeWX->HasFocus())
-            //{
-            //	wxTreeItemId selectedId = m_treeWX->GetSelection();
-            //	if(!selectedId)
-            //		return;
-
-            //	wxTreeItemId parentId = m_treeWX->GetItemParent(selectedId);
-            //	if(!parentId)
-            //		return;
-
-            //	wxString parentType = m_treeWX->GetItemText(parentId);
-            //	wxString componentName = m_treeWX->GetItemText(selectedId);
-
-            //	if(parentType.length() == 0 || componentName.length() == 0)
-            //		return;
-
-            //	ProjectTreeData* projectTreeData = (ProjectTreeData*)m_treeWX->GetItemData(selectedId);
-            //	if(projectTreeData)
-            //	{
-            //		selectionManager->clearSelection();
-
-            //		if (projectTreeData->getOwnerType() == "Actor" || projectTreeData->getOwnerType() ==
-            //"actor")
-            //		{
-            //			auto actor = fb::static_pointer_cast<IActor>(projectTreeData->getOwnerData());
-            //			selectionManager->addSelectedObject(actor);
-            //		}
-
-            //		EntityTreeItemActivatedPtr msg(new EntityTreeItemActivated);
-
-            //		String componentType;
-
-            //		String ext = Path::getFileExtension(componentName.mb_str().data());
-            //		if(ext==(".lua"))
-            //		{
-            //			componentType = "Script";
-            //		}
-            //		else if(ext==(".gui"))
-            //		{
-            //			componentType = "GUI";
-
-            //			//appRoot->getSceneViewManager()->addOverlay(componentName.mb_str().data());
-            //		}
-            //		else
-            //		{
-            //			componentType = parentType.mb_str().data();
-            //		}
-
-            //		msg->setComponentType(componentType);
-            //		msg->setComponentName(componentName.mb_str().data());
-            //		msg->setObject(projectTreeData->getObjectData());
-            //		//appRoot->getMessageManager()->postMessage(msg);
-            //	}
-            //}
-        }
-
-        void SceneWindow::addNewActor()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto commandManager = applicationManager->getCommandManager();
-            auto cmd = fb::make_ptr<AddActorCmd>();
-            commandManager->addCommand( cmd );
-        }
-
-        void SceneWindow::removeActor()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto commandManager = applicationManager->getCommandManager();
-
-            auto cmd = fb::make_ptr<RemoveSelectionCmd>();
-            commandManager->addCommand( cmd );
-        }
-
-        void SceneWindow::addSkybox()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto commandManager = applicationManager->getCommandManager();
-            auto cmd = fb::make_ptr<AddActorCmd>();
-            cmd->setActorType( AddActorCmd::ActorType::Skybox );
-            commandManager->addCommand( cmd );
-        }
-
-        void SceneWindow::addNewTerrain()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto commandManager = applicationManager->getCommandManager();
-            auto cmd = fb::make_ptr<AddActorCmd>();
-            cmd->setActorType( AddActorCmd::ActorType::Terrain );
-            commandManager->addCommand( cmd );
-        }
-
-        void SceneWindow::addDirectionalLight()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto commandManager = applicationManager->getCommandManager();
-
-            auto cmd = fb::make_ptr<AddActorCmd>();
-            cmd->setActorType( AddActorCmd::ActorType::DirectionalLight );
-            commandManager->addCommand( cmd );
-        }
-
-        void SceneWindow::addPointLight()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto commandManager = applicationManager->getCommandManager();
-
-            auto cmd = fb::make_ptr<AddActorCmd>();
-            cmd->setActorType( AddActorCmd::ActorType::PointLight );
-            commandManager->addCommand( cmd );
-        }
-
-        void SceneWindow::addCube()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto commandManager = applicationManager->getCommandManager();
-            auto cmd = fb::make_ptr<AddActorCmd>();
-            cmd->setActorType( AddActorCmd::ActorType::Cube );
-            commandManager->addCommand( cmd );
-        }
-
-        void SceneWindow::addCubemap()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto commandManager = applicationManager->getCommandManager();
-            auto cmd = fb::make_ptr<AddActorCmd>();
-            cmd->setActorType( AddActorCmd::ActorType::Cubemap );
-            commandManager->addCommand( cmd );
-        }
-
-        void SceneWindow::addPhysicsCube()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto editorManager = EditorManager::getSingletonPtr();
-            auto projectManager = editorManager->getProjectManager();
-            auto project = editorManager->getProject();
-
-            ApplicationUtil::createDefaultGround();
-
-            auto uiManager = editorManager->getUI();
-            uiManager->rebuildSceneTree();
-        }
-
-        void SceneWindow::addPlane()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto editorManager = EditorManager::getSingletonPtr();
-            auto projectManager = editorManager->getProjectManager();
-            auto project = editorManager->getProject();
-
-            ApplicationUtil::createDefaultPlane();
-
-            auto uiManager = editorManager->getUI();
-            uiManager->rebuildSceneTree();
-        }
-
-        void SceneWindow::addCamera()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto editorManager = EditorManager::getSingletonPtr();
-            auto projectManager = editorManager->getProjectManager();
-            auto project = editorManager->getProject();
-
-            ApplicationUtil::createCamera();
-
-            auto uiManager = editorManager->getUI();
-            uiManager->rebuildSceneTree();
-        }
-
-        void SceneWindow::addCar()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto editorManager = EditorManager::getSingletonPtr();
-            auto projectManager = editorManager->getProjectManager();
-            auto project = editorManager->getProject();
-
-            ApplicationUtil::createDefaultVehicle();
-
-            auto uiManager = editorManager->getUI();
-            uiManager->rebuildSceneTree();
-        }
-
-        void SceneWindow::addButton()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto commandManager = applicationManager->getCommandManager();
-            auto cmd = fb::make_ptr<AddActorCmd>();
-            cmd->setActorType( AddActorCmd::ActorType::Button );
-            commandManager->addCommand( cmd );
-        }
-
-        void SceneWindow::addSimpleButton()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto commandManager = applicationManager->getCommandManager();
-            auto cmd = fb::make_ptr<AddActorCmd>();
-            cmd->setActorType( AddActorCmd::ActorType::SimpleButton );
-            commandManager->addCommand( cmd );
-        }
-
-        void SceneWindow::addCanvas()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto commandManager = applicationManager->getCommandManager();
-            auto cmd = fb::make_ptr<AddActorCmd>();
-            cmd->setActorType( AddActorCmd::ActorType::Canvas );
-            commandManager->addCommand( cmd );
-        }
-
-        void SceneWindow::addPanel()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto commandManager = applicationManager->getCommandManager();
-            auto cmd = fb::make_ptr<AddActorCmd>();
-            cmd->setActorType( AddActorCmd::ActorType::Panel );
-            commandManager->addCommand( cmd );
-        }
-
-        void SceneWindow::addText()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto commandManager = applicationManager->getCommandManager();
-            auto cmd = fb::make_ptr<AddActorCmd>();
-            cmd->setActorType( AddActorCmd::ActorType::Text );
-            commandManager->addCommand( cmd );
-        }
-
-        void SceneWindow::beginDrag()
-        {
-            //// need to explicitly allow drag
-            // if (event.GetItem() != m_treeWX->GetRootItem())
-            //{
-            //	m_draggedItem = event.GetItem();
-
-            //	wxPoint clientpt = event.GetPoint();
-            //	wxPoint screenpt = m_treeWX->ClientToScreen(clientpt);
-
-            //	event.Allow();
-            //}
-            // else
-            //{
-            //	wxLogMessage("OnBeginDrag: this item can't be dragged.");
-            //}
-        }
-
-        void SceneWindow::endDrag()
-        {
-            // auto applicationManager = core::IApplicationManager::instance();
-            // FB_ASSERT(applicationManager);
-
-            // auto sceneManager = applicationManager->getSceneManager();
-            // FB_ASSERT(applicationManager);
-
-            // auto scene = sceneManager->getCurrentScene();
-            // FB_ASSERT(scene);
-
-            // auto itemSrc = m_draggedItem;
-            // auto itemDst = event.GetItem();
-
-            // if (itemSrc && itemDst)
-            //{
-            //	m_draggedItem = (wxTreeItemId)0l;
-
-            //	//// where to copy the item?
-            //	//if (itemDst.IsOk() && !m_tree->ItemHasChildren(itemDst))
-            //	//{
-            //	//	// copy to the parent then
-            //	//	itemDst = m_tree->GetItemParent(itemDst);
-            //	//}
-
-            //	//if (!itemDst.IsOk())
-            //	//{
-            //	//	wxLogMessage("OnEndDrag: can't drop here.");
-
-            //	//	return;
-            //	//}
-
-            //	wxString text = m_treeWX->GetItemText(itemSrc);
-            //	//wxLogMessage("OnEndDrag: '%s' copied to '%s'.",
-            //	//	text, GetItemText(itemDst));
-
-            //	// just do append here - we could also insert it just before/after the item
-            //	// on which it was dropped, but this requires slightly more work... we also
-            //	// completely ignore the client data and icon of the old item but could
-            //	// copy them as well.
-            //	//
-            //	// Finally, we only copy one item here but we might copy the entire tree if
-            //	// we were dragging a folder.
-            //	//int image = wxGetApp().ShowImages() ? TreeCtrlIcon_File : -1;
-            //	wxTreeItemId id = m_treeWX->AppendItem(itemDst, text);
-
-            //	//if (wxGetApp().ShowStates())
-            //	//	SetItemState(id, GetItemState(itemSrc));
-
-            //	auto srcData = (ProjectTreeData*)m_treeWX->GetItemData(itemSrc);
-            //	auto dstData = (ProjectTreeData*)m_treeWX->GetItemData(itemDst);
-
-            //	if (srcData && dstData)
-            //	{
-            //		auto objectTypeSrc = srcData->getObjectType();
-            //		auto objectTypeDst = dstData->getObjectType();
-
-            //		if (objectTypeSrc == "actor" || objectTypeDst == "actor")
-            //		{
-            //			auto objectSrc = srcData->getObjectData();
-            //			auto pObjectSrc = objectSrc->getSharedFromThis<ISharedObject>();
-            //			auto actorSrc = fb::static_pointer_cast<IActor>(pObjectSrc);
-
-            //			auto objectDst = dstData->getObjectData();
-            //			auto pObjectDst = objectDst->getSharedFromThis<ISharedObject>();
-            //			auto actorDst = fb::static_pointer_cast<IActor>(pObjectDst);
-            //			auto projectDst = fb::static_pointer_cast<Project>(pObjectDst);
-
-            //			if (actorSrc && actorDst)
-            //			{
-            //				auto parent = actorSrc->getParent();
-            //				if (parent != nullptr)
-            //				{
-            //					parent->removeChild(actorSrc);
-            //				}
-            //				else
-            //				{
-            //					scene->removeActor(actorSrc);
-            //				}
-
-            //				actorDst->addChild(actorSrc);
-            //				this->buildTree();
-            //			}
-            //			else if (actorSrc && projectDst)
-            //			{
-            //				auto parent = actorSrc->getParent();
-            //				if (parent != nullptr)
-            //				{
-            //					parent->removeChild(actorSrc);
-            //					scene->addActor(actorSrc);
-            //					this->buildTree();
-            //				}
-            //			}
-            //		}
-            //	}
-            //}
         }
 
         void SceneWindow::saveTreeState()
@@ -1036,10 +468,6 @@ namespace fb
                     isExpanded = node->isExpanded();
                 }
             }
-
-            //get selected state
-            //if(m_treeWX->IsSelected(itemId))
-            //m_newSelectedItem = itemId;
 
             // add item to map
             if( auto p = getTreeState() )
@@ -1116,12 +544,6 @@ namespace fb
             {
                 node->setExpanded( true );
             }
-
-            //// show item
-            // if(showItem)
-            //{
-            //	m_newSelectedItem = itemId;
-            // }
 
             if( auto p = node->getChildren() )
             {
@@ -1226,6 +648,9 @@ namespace fb
             IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
             SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
         {
+            auto applicationManager = core::IApplicationManager::instance();
+            auto commandManager = applicationManager->getCommandManager();
+
             if( eventValue == IEvent::handleSelection )
             {
                 auto element = fb::dynamic_pointer_cast<ui::IUIElement>( object );
@@ -1235,33 +660,41 @@ namespace fb
                 {
                 case MenuId::ADD_NEW_ENTITY:
                 {
-                    m_owner->addNewActor();
+                    auto cmd = fb::make_ptr<AddActorCmd>();
+                    cmd->setActorType( AddActorCmd::ActorType::Actor );
+                    commandManager->addCommand( cmd );
                 }
                 break;
                 case MenuId::ADD_SKYBOX:
                 {
-                    m_owner->addSkybox();
+                    auto cmd = fb::make_ptr<AddActorCmd>();
+                    cmd->setActorType( AddActorCmd::ActorType::Skybox );
+                    commandManager->addCommand( cmd );
                 }
                 break;
                 case MenuId::ADD_NEW_TERRAIN:
                 {
-                    m_owner->addNewTerrain();
+                    auto cmd = fb::make_ptr<AddActorCmd>();
+                    cmd->setActorType( AddActorCmd::ActorType::Terrain );
+                    commandManager->addCommand( cmd );
                 }
                 break;
                 case MenuId::ADD_CAMERA:
                 {
-                    m_owner->addCamera();
+                    auto cmd = fb::make_ptr<AddActorCmd>();
+                    cmd->setActorType( AddActorCmd::ActorType::Camera );
+                    commandManager->addCommand( cmd );
                 }
                 break;
                 case MenuId::ADD_CAR:
                 {
-                    m_owner->addCar();
+                    auto cmd = fb::make_ptr<AddActorCmd>();
+                    cmd->setActorType( AddActorCmd::ActorType::Car );
+                    commandManager->addCommand( cmd );
                 }
                 break;
                 case MenuId::ADD_PARTICLESYSTEM:
                 {
-                    auto applicationManager = core::IApplicationManager::instance();
-                    auto commandManager = applicationManager->getCommandManager();
                     auto cmd = fb::make_ptr<AddActorCmd>();
                     cmd->setActorType( AddActorCmd::ActorType::ParticleSystem );
                     commandManager->addCommand( cmd );
@@ -1269,8 +702,6 @@ namespace fb
                 break;
                 case MenuId::ADD_PARTICLESYSTEM_SMOKE:
                 {
-                    auto applicationManager = core::IApplicationManager::instance();
-                    auto commandManager = applicationManager->getCommandManager();
                     auto cmd = fb::make_ptr<AddActorCmd>();
                     cmd->setActorType( AddActorCmd::ActorType::ParticleSystemSmoke );
                     commandManager->addCommand( cmd );
@@ -1278,8 +709,6 @@ namespace fb
                 break;
                 case MenuId::ADD_PARTICLESYSTEM_SAND:
                 {
-                    auto applicationManager = core::IApplicationManager::instance();
-                    auto commandManager = applicationManager->getCommandManager();
                     auto cmd = fb::make_ptr<AddActorCmd>();
                     cmd->setActorType( AddActorCmd::ActorType::ParticleSystemSand );
                     commandManager->addCommand( cmd );
@@ -1287,62 +716,92 @@ namespace fb
                 break;
                 case MenuId::ADD_PLANE:
                 {
-                    m_owner->addPlane();
+                    auto cmd = fb::make_ptr<AddActorCmd>();
+                    cmd->setActorType( AddActorCmd::ActorType::Plane );
+                    commandManager->addCommand( cmd );
                 }
                 break;
                 case MenuId::ADD_CUBE:
                 {
-                    m_owner->addCube();
+                    auto cmd = fb::make_ptr<AddActorCmd>();
+                    cmd->setActorType( AddActorCmd::ActorType::Cube );
+                    commandManager->addCommand( cmd );
+                }
+                break;
+                case MenuId::ADD_CUBE_MESH:
+                {
+                    auto cmd = fb::make_ptr<AddActorCmd>();
+                    cmd->setActorType( AddActorCmd::ActorType::CubeMesh );
+                    commandManager->addCommand( cmd );
                 }
                 break;
                 case MenuId::ADD_CUBEMAP:
                 {
-                    m_owner->addCubemap();
+                    auto cmd = fb::make_ptr<AddActorCmd>();
+                    cmd->setActorType( AddActorCmd::ActorType::Cubemap );
+                    commandManager->addCommand( cmd );
                 }
                 break;
                 case MenuId::ADD_PHYSICS_CUBE:
                 {
-                    m_owner->addPhysicsCube();
+                    auto cmd = fb::make_ptr<AddActorCmd>();
+                    cmd->setActorType( AddActorCmd::ActorType::PhysicsCube );
+                    commandManager->addCommand( cmd );
                 }
                 break;
                 case MenuId::ADD_DIRECTIONAL_LIGHT:
                 {
-                    m_owner->addDirectionalLight();
+                    auto cmd = fb::make_ptr<AddActorCmd>();
+                    cmd->setActorType( AddActorCmd::ActorType::DirectionalLight );
+                    commandManager->addCommand( cmd );
                 }
                 break;
                 case MenuId::ADD_POINT_LIGHT:
                 {
-                    m_owner->addPointLight();
+                    auto cmd = fb::make_ptr<AddActorCmd>();
+                    cmd->setActorType( AddActorCmd::ActorType::PointLight );
+                    commandManager->addCommand( cmd );
                 }
                 break;
                 case MenuId::ADD_BUTTON:
                 {
-                    m_owner->addButton();
+                    auto cmd = fb::make_ptr<AddActorCmd>();
+                    cmd->setActorType( AddActorCmd::ActorType::Button );
+                    commandManager->addCommand( cmd );
                 }
                 break;
                 case MenuId::ADD_SIMPLE_BUTTON:
                 {
-                    m_owner->addSimpleButton();
+                    auto cmd = fb::make_ptr<AddActorCmd>();
+                    cmd->setActorType( AddActorCmd::ActorType::Button );
+                    commandManager->addCommand( cmd );
                 }
                 break;
                 case MenuId::ADD_CANVAS:
                 {
-                    m_owner->addCanvas();
+                    auto cmd = fb::make_ptr<AddActorCmd>();
+                    cmd->setActorType( AddActorCmd::ActorType::Canvas );
+                    commandManager->addCommand( cmd );
                 }
                 break;
                 case MenuId::ADD_PANEL:
                 {
-                    m_owner->addPanel();
+                    auto cmd = fb::make_ptr<AddActorCmd>();
+                    cmd->setActorType( AddActorCmd::ActorType::Panel );
+                    commandManager->addCommand( cmd );
                 }
                 break;
                 case MenuId::ADD_TEXT:
                 {
-                    m_owner->addText();
+                    auto cmd = fb::make_ptr<AddActorCmd>();
+                    cmd->setActorType( AddActorCmd::ActorType::Text );
+                    commandManager->addCommand( cmd );
                 }
                 break;
                 case MenuId::SCENE_REMOVE_ACTOR:
                 {
-                    m_owner->removeActor();
+                    auto cmd = fb::make_ptr<RemoveSelectionCmd>();
+                    commandManager->addCommand( cmd );
                 }
                 break;
                 default:
@@ -1466,6 +925,12 @@ namespace fb
             return Parameter();
         }
 
+        bool SceneWindow::DropTarget::handleDrop( const Vector2I &position, SmartPtr<ui::IUIElement> src,
+                                                  SmartPtr<ui::IUIElement> dst, const String &data )
+        {
+            return false;
+        }
+
         SceneWindow *SceneWindow::DropTarget::getOwner() const
         {
             return m_owner;
@@ -1482,6 +947,12 @@ namespace fb
                                                         SmartPtr<ISharedObject> object,
                                                         SmartPtr<IEvent> event )
         {
+            if( eventValue == IEvent::handleDrag )
+            {
+                auto dataStr = handleDrag( Vector2I::zero(), sender );
+                 return Parameter(dataStr);
+            }
+
             return Parameter();
         }
 
@@ -1489,10 +960,7 @@ namespace fb
                                                     SmartPtr<ui::IUIElement> element )
         {
             auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
             auto selectionManager = applicationManager->getSelectionManager();
-            FB_ASSERT( selectionManager );
 
             if( element->isDerived<ui::IUITreeNode>() )
             {
@@ -1509,8 +977,9 @@ namespace fb
 
                     data->setProperty( "sourceId", treeNode->getTreeNodeId() );
 
-                    SmartPtr<ProjectTreeData> treeData = treeNode->getNodeUserData();
-                    SmartPtr<IActor> actor = treeData->getObjectData();
+                    auto treeData =
+                        fb::static_pointer_cast<ProjectTreeData>( treeNode->getNodeUserData() );
+                    auto actor = treeData->getObjectData();
 
                     if( actor )
                     {

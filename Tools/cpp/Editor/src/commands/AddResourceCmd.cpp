@@ -1,7 +1,6 @@
 #include <GameEditorPCH.h>
 #include <commands/AddResourceCmd.h>
 #include <editor/EditorManager.h>
-
 #include <editor/Project.h>
 #include "ui/UIManager.h"
 #include <FBCore/FBCore.h>
@@ -33,6 +32,9 @@ namespace fb
                 auto fileSystem = applicationManager->getFileSystem();
                 FB_ASSERT( fileSystem );
 
+                auto graphicsSystem = applicationManager->getGraphicsSystem();
+                auto materialManager = graphicsSystem->getMaterialManager();
+
                 auto resourceDatabase = applicationManager->getResourceDatabase();
 
                 auto editorManager = EditorManager::getSingletonPtr();
@@ -43,7 +45,7 @@ namespace fb
                 auto filePath = getFilePath();
 
                 SmartPtr<IResource> resource;
-                SmartPtr<IData> data;
+                SmartPtr<Properties> data;
                 String dataStr;
 
                 auto resourceType = getResourceType();
@@ -51,20 +53,21 @@ namespace fb
                 {
                 case ResourceType::Script:
                 {
+                    resource = nullptr;
+                    data = nullptr;
+                    dataStr = "";
                 }
                 break;
                 case ResourceType::Material:
                 {
-                    //resource = ApplicationUtil::createDefaultMaterial();
-                    //FB_ASSERT( resource );
+                    resource = ApplicationUtil::createDefaultMaterial();
+                    FB_ASSERT( resource );
 
-                    //data = resource->toData();
-                    //FB_ASSERT( data );
+                    data = resource->toData();
+                    FB_ASSERT( data );
 
-                    //auto mat = data->getDataAsType<data::material_graph>();
-
-                    //dataStr = DataUtil::toString( mat, true );
-                    //FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );
+                    dataStr = DataUtil::toString( data.get(), true );
+                    FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );
                 }
                 break;
                 case ResourceType::Scene:
@@ -73,18 +76,16 @@ namespace fb
                 break;
                 case ResourceType::Director:
                 {
-                    //auto director = fb::make_ptr<TerrainDirector>();
-                    //FB_ASSERT( director );
+                    auto director = fb::make_ptr<TerrainDirector>();
+                    FB_ASSERT( director );
 
-                    //director->load( nullptr );
+                    director->load( nullptr );
 
-                    //data = director->toData();
-                    //FB_ASSERT( data );
-
-                    //auto mat = data->getDataAsType<data::properties>();
-
-                    //dataStr = DataUtil::toString( mat, true );
-                    //FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );
+                    data = director->toData();
+                    FB_ASSERT( data );
+                    
+                    dataStr = DataUtil::toString( data.get(), true );
+                    FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );
                 }
                 break;
                 };

@@ -15,9 +15,10 @@ using namespace fb::editor;
 
 BOOST_AUTO_TEST_CASE( ui_test )
 {
+    fb::editor::Application app;
+
     try
-    {
-        fb::editor::Application app;
+    {        
         app.load( nullptr );
         //app.run();
 

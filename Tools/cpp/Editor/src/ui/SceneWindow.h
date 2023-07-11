@@ -30,6 +30,7 @@ namespace fb
                 ADD_PARTICLESYSTEM_SAND,
                 ADD_PLANE,
                 ADD_CUBE,
+                ADD_CUBE_MESH,
                 ADD_CUBEMAP,
                 ADD_PHYSICS_CUBE,
                 ADD_DIRECTIONAL_LIGHT,
@@ -161,7 +162,7 @@ namespace fb
 
                 Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
                                        const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
-                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
                 SceneWindow *getOwner() const;
                 void setOwner( SceneWindow *owner );
@@ -195,9 +196,9 @@ namespace fb
 
                 Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
                                        const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
-                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
-                String handleDrag( const Vector2I &position, SmartPtr<ui::IUIElement> element ) override;
+                String handleDrag( const Vector2I &position, SmartPtr<ui::IUIElement> element );
 
                 SceneWindow *getOwner() const;
 
@@ -215,13 +216,10 @@ namespace fb
 
                 Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
                                        const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
-                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
                 bool handleDrop( const Vector2I &position, SmartPtr<ui::IUIElement> src,
-                                 SmartPtr<ui::IUIElement> dst, const String &data ) override
-                {
-                    return false;
-                }
+                                 SmartPtr<ui::IUIElement> dst, const String &data );
 
                 SceneWindow *getOwner() const;
 
@@ -233,32 +231,6 @@ namespace fb
 
             void handleWindowClicked();
             void handleTreeSelectionChanged( SmartPtr<ui::IUITreeNode> node );
-            void handleTreeDragStart();
-
-            void OnActivateItem();
-
-            void addNewActor();
-            void removeActor();
-
-            void addSkybox();
-            void addNewTerrain();
-            void addDirectionalLight();
-            void addPointLight();
-            void addCube();
-            void addCubemap();
-            void addPhysicsCube();
-            void addPlane();
-            void addCamera();
-            void addCar();
-
-            void addButton();
-            void addSimpleButton();
-            void addCanvas();
-            void addPanel();
-            void addText();
-
-            void beginDrag();
-            void endDrag();
 
             s32 getItemState( const String &itemName ) const;
             void saveItemState( SmartPtr<ui::IUITreeNode> parent, SmartPtr<ui::IUITreeNode> node );

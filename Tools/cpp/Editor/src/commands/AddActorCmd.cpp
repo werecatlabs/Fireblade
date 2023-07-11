@@ -291,6 +291,18 @@ namespace fb
                 return actor;
             }
             break;
+            case ActorType::Camera:
+            {
+                auto actor = ApplicationUtil::createCamera( false );
+                return actor;
+            }
+            break;
+            case ActorType::Car:
+            {
+                auto actor = ApplicationUtil::createDefaultVehicle( false );
+                return actor;
+            }
+            break;
             case ActorType::Canvas:
             {
                 auto actor = sceneManager->createActor();
@@ -306,6 +318,12 @@ namespace fb
             case ActorType::Cube:
             {
                 auto actor = ApplicationUtil::createDefaultCube( false );
+                return actor;
+            }
+            break;
+            case ActorType::CubeMesh:
+            {
+                auto actor = ApplicationUtil::createDefaultCubeMesh( false );
                 return actor;
             }
             break;
@@ -406,6 +424,11 @@ namespace fb
                 return ApplicationUtil::createPointLight( false );
             }
             break;
+            case ActorType::PhysicsCube:
+            {
+                return ApplicationUtil::createDefaultGround( false );
+            }
+            break;
             case ActorType::Skybox:
             {
                 return ApplicationUtil::createDefaultSky( false );
@@ -457,9 +480,9 @@ namespace fb
                 }
 
                 auto text = actor->addComponent<scene::Text>();
-                if (text)
+                if( text )
                 {
-                    text->setText("Text");
+                    text->setText( "Text" );
                 }
 
                 return actor;
@@ -493,6 +516,12 @@ namespace fb
                     material->setMaterialPath( "DefaultTerrain.mat" );
                 }
 
+                return actor;
+            }
+            break;
+            case ActorType::Vehicle:
+            {
+                auto actor = ApplicationUtil::createDefaultVehicle( false );
                 return actor;
             }
             break;

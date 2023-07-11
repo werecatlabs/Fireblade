@@ -19,6 +19,7 @@ namespace fb
             enum class MenuId
             {
                 AddMaterial,
+                AddScript,
                 AddTerrainDirector,
                 Remove,
 
@@ -97,7 +98,7 @@ namespace fb
                                        const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
                                        SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
-                String handleDrag( const Vector2I &position, SmartPtr<ui::IUIElement> element ) override;
+                String handleDrag( const Vector2I &position, SmartPtr<ui::IUIElement> element );
 
                 ProjectAssetsWindow *getOwner() const;
                 void setOwner( ProjectAssetsWindow *val );
@@ -117,11 +118,11 @@ namespace fb
                                        SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
                 bool handleDrop( const Vector2I &position, SmartPtr<ui::IUIElement> src,
-                                 SmartPtr<ui::IUIElement> dst, const String &data ) override;
+                                 SmartPtr<ui::IUIElement> dst, const String &data );
 
                 ProjectAssetsWindow *getOwner() const;
 
-                void setOwner( ProjectAssetsWindow *val );
+                void setOwner( ProjectAssetsWindow *owner );
 
             private:
                 ProjectAssetsWindow *m_owner = nullptr;
