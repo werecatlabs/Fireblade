@@ -13,6 +13,8 @@ namespace fb
         virtual SmartPtr<ITask> getTask() const = 0;
 
         virtual void setTask( SmartPtr<ITask> task ) = 0;
+
+        FB_CLASS_REGISTER_DECL;
     };
 }  // end namespace fb
 

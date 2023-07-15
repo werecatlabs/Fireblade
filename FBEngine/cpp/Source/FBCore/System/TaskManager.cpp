@@ -8,11 +8,13 @@
 #include <FBCore/Interface/System/IProfile.h>
 #include <FBCore/Interface/System/IThreadPool.h>
 #include <FBCore/Interface/System/ITimer.h>
+#include <FBCore/Interface/FSM/IFSM.h>
 #include <FBCore/System/Task.h>
+#include "FBCore/Core/FSMManager.h"
+#include "FBCore/System/TaskLock.h"
 
 namespace fb
 {
-
     FB_CLASS_REGISTER_DERIVED( fb::render, TaskManager, SharedObject<ITaskManager> );
     u32 TaskManager::m_idExt = 0;
 
@@ -31,6 +33,9 @@ namespace fb
         try
         {
             setLoadingState( LoadingState::Loading );
+
+            m_fsmManager = fb::make_ptr<FSMManager>();
+            m_fsmManager->load( nullptr );
 
             auto count = 0;
             for( auto &task : m_tasks )
@@ -74,16 +79,22 @@ namespace fb
 
     void TaskManager::reload( SmartPtr<ISharedObject> data )
     {
+        unload( data );
+        load( data );
     }
 
     void TaskManager::unload( SmartPtr<ISharedObject> data )
     {
         try
         {
+            setLoadingState( LoadingState::Unloading );
+
             for( auto &task : m_tasks )
             {
                 task.unload( nullptr );
             }
+
+            setLoadingState( LoadingState::Unloaded );
         }
         catch( std::exception &e )
         {
@@ -122,6 +133,17 @@ namespace fb
 
             auto threadId = Thread::getCurrentThreadId();
 
+            switch( threadId )
+            {
+            case Thread::ThreadId::Primary:
+            {
+                m_fsmManager->update();
+            }
+            break;
+            default:
+                break;
+            }
+
             auto taskManagerState = getState();
             switch( taskManagerState )
             {
@@ -148,18 +170,7 @@ namespace fb
                                     auto &pTask = m_tasks[i];
                                     // if( m_nextUpdateTimes[i] < t )
                                     {
-                                        auto paused = pTask.isPaused();
-                                        if( !paused )
-                                        {
-                                            auto state = pTask.getState();
-                                            if( state == ITask::State::Idle ||
-                                                state == ITask::State::None )
-                                            {
-                                                pTask.setState( ITask::State::Executing );
-                                                pTask.update();
-                                                pTask.setState( ITask::State::Idle );
-                                            }
-                                        }
+                                        pTask.update();
                                     }
                                 }
                             }
@@ -179,20 +190,10 @@ namespace fb
                                     if( enabled )
                                     {
                                         auto &pTask = m_tasks[i];
-                                        auto paused = pTask.isPaused();
-                                        if( !paused )
+
+                                        if( m_nextUpdateTimes[i] < t )
                                         {
-                                            if( m_nextUpdateTimes[i] < t )
-                                            {
-                                                auto state = pTask.getState();
-                                                if( state == ITask::State::Idle ||
-                                                    state == ITask::State::None )
-                                                {
-                                                    pTask.setState( ITask::State::Executing );
-                                                    pTask.update();
-                                                    pTask.setState( ITask::State::Idle );
-                                                }
-                                            }
+                                            pTask.update();
                                         }
                                     }
                                 }
@@ -217,20 +218,10 @@ namespace fb
                                     if( !primary )
                                     {
                                         auto &pTask = m_tasks[i];
-                                        auto paused = pTask.isPaused();
-                                        if( !paused )
+
+                                        if( m_nextUpdateTimes[i] < t )
                                         {
-                                            if( m_nextUpdateTimes[i] < t )
-                                            {
-                                                auto state = pTask.getState();
-                                                if( state == ITask::State::Idle ||
-                                                    state == ITask::State::None )
-                                                {
-                                                    pTask.setState( ITask::State::Executing );
-                                                    pTask.update();
-                                                    pTask.setState( ITask::State::Idle );
-                                                }
-                                            }
+                                            pTask.update();
                                         }
                                     }
                                 }
@@ -252,19 +243,10 @@ namespace fb
                             if( enabled )
                             {
                                 auto &pTask = m_tasks[i];
-                                auto paused = pTask.isPaused();
-                                if( !paused )
+
+                                if( m_nextUpdateTimes[i] < t )
                                 {
-                                    if( m_nextUpdateTimes[i] < t )
-                                    {
-                                        auto state = pTask.getState();
-                                        if( state == ITask::State::Idle || state == ITask::State::None )
-                                        {
-                                            pTask.setState( ITask::State::Executing );
-                                            pTask.update();
-                                            pTask.setState( ITask::State::Idle );
-                                        }
-                                    }
+                                    pTask.update();
                                 }
                             }
                         }
@@ -361,6 +343,11 @@ namespace fb
         return BitUtil::getFlagValue( flags, flag );
     }
 
+    atomic_u32 *TaskManager::getFlagsPtr( u32 id ) const
+    {
+        return (atomic_u32 *)&m_taskFlags[id];
+    }
+
     f64 TaskManager::getTargetFPS( u32 id ) const
     {
         FB_ASSERT( id < m_targetfps.size() );
@@ -424,6 +411,16 @@ namespace fb
         return true;
     }
 
+    SmartPtr<IFSMManager> TaskManager::getFSMManager() const
+    {
+        return m_fsmManager;
+    }
+
+    void TaskManager::setFSMManager( SmartPtr<IFSMManager> fsmManager )
+    {
+        m_fsmManager = fsmManager;
+    }
+
     void TaskManager::setState( u32 id, ITask::State state )
     {
         FB_ASSERT( id < m_states.size() );
@@ -434,14 +431,6 @@ namespace fb
     {
         FB_ASSERT( id < m_states.size() );
         return m_states[id];
-    }
-
-    void TaskManager::queueTask( SmartPtr<ITask> task )
-    {
-    }
-
-    void TaskManager::updateParallelTasks()
-    {
     }
 
     Array<SmartPtr<ITask>> TaskManager::getTasks() const
@@ -476,14 +465,14 @@ namespace fb
         }
     }
 
-    SmartPtr<ITaskLock> TaskManager::lockTask( Thread::Task taskId )
+    TaskLock TaskManager::lockTask( Thread::Task taskId )
     {
         if( auto task = getTask( taskId ) )
         {
-            return fb::make_ptr<Task::Lock>( task );
+            return TaskLock( task );
         }
 
-        return nullptr;
+        return TaskLock();
     }
 
     u32 TaskManager::getNumTasks() const
@@ -501,50 +490,6 @@ namespace fb
         }
 
         return count;
-    }
-
-    SmartPtr<ITask> TaskManager::addTask( u32 id, f64 updateFrequency )
-    {
-        // TaskMinimalPtr task(new TaskMinimal(id, updateFrequency, this), true);
-        // m_tasks.push_back(task);
-        return SmartPtr<ITask>();
-    }
-
-    void TaskManager::removeTask( u32 id )
-    {
-        FB_ASSERT_TRUE( true );  // not implemented
-    }
-
-    void TaskManager::destroyAllTasks()
-    {
-    }
-
-    void TaskManager::OnQueueTask( SmartPtr<ITask> &task )
-    {
-        // task->setQueueState(ITask::TQS_QUEUED);
-        // task->setState(ITask::TPS_QUEUED);
-    }
-
-    void TaskManager::OnTaskRemoveFromQueue( SmartPtr<ITask> &task )
-    {
-        // auto engine = core::IApplicationManager::instance();
-        // SmartPtr<ITimer>& timer = engine->getMainTimer();
-        // u32 currentTime = timer->getTimeMilliseconds();
-
-        // SmartPtr<TaskDataStandard> data;// = task->getTaskData();
-        ////task->setState(ITask::TQS_READY);
-        ////task->setState(ITask::TPS_READY);
-        // data->setLastUpdateTime(currentTime);
-    }
-
-    void TaskManager::OnTaskUpdateStart( SmartPtr<ITask> &task )
-    {
-        // task->setState(ITask::TPS_EXECUTING);
-    }
-
-    void TaskManager::OnTaskUpdateEnd( SmartPtr<ITask> &task )
-    {
-        // task->setState(ITask::TPS_COMPLETED);
     }
 
     TaskManager::Lock::Lock( SmartPtr<ITaskManager> taskManager ) : m_taskManager( taskManager )

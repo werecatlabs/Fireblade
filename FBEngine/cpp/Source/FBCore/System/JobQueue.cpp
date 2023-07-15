@@ -88,7 +88,7 @@ namespace fb
         Thread::setCurrentTask( currentTask );
     }
 
-    void JobQueue::queueJob( SmartPtr<IJob> job )
+    void JobQueue::addJob( SmartPtr<IJob> job )
     {
         if( job->isPrimary() )
         {
@@ -100,7 +100,7 @@ namespace fb
         }
     }
 
-    void JobQueue::queueJob( SmartPtr<IJob> job, Thread::Task task )
+    void JobQueue::addJob( SmartPtr<IJob> job, Thread::Task task )
     {
         auto applicationManager = core::IApplicationManager::instance();
         FB_ASSERT( applicationManager );
@@ -115,7 +115,7 @@ namespace fb
         }
     }
 
-    void JobQueue::queueJobAll( SmartPtr<IJob> job )
+    void JobQueue::addJobAllTasks( SmartPtr<IJob> job )
     {
         auto applicationManager = core::IApplicationManager::instance();
         FB_ASSERT( applicationManager );

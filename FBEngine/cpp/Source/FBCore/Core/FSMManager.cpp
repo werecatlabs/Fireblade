@@ -52,7 +52,7 @@ namespace fb
             resize( size );
         }
 
-        FB_ASSERT(id < m_fsms.size());
+        FB_ASSERT( id < m_fsms.size() );
 
         handle->setInstanceId( id );
 
@@ -212,30 +212,42 @@ namespace fb
             if( pListeners )
             {
                 const auto &fsmListeners = *pListeners;
-                for( auto listener : fsmListeners )
+                if( !fsmListeners.empty() )
                 {
-                    if( listener )
+                    for( auto listener : fsmListeners )
                     {
-                        listener->handleEvent( currentState, IFSM::Event::Leave );
-                    }
-
-                    currentState = newState;
-
-                    if( listener )
-                    {
-                        listener->handleEvent( currentState, IFSM::Event::Enter );
-                    }
-
-                    if( listener )
-                    {
-                        const auto result = listener->handleEvent( currentState, IFSM::Event::Complete );
-                        if( result != IFSM::ReturnType::Ok )
+                        if( listener )
                         {
-                            auto stateStr = StringUtil::toString( currentState );
-                            FB_LOG( "State change complete not ok: " + stateStr );
+                            listener->handleEvent( currentState, IFSM::Event::Leave );
+                        }
+
+                        currentState = newState;
+
+                        if( listener )
+                        {
+                            listener->handleEvent( currentState, IFSM::Event::Enter );
+                        }
+
+                        if( listener )
+                        {
+                            const auto result =
+                                listener->handleEvent( currentState, IFSM::Event::Complete );
+                            if( result != IFSM::ReturnType::Ok )
+                            {
+                                auto stateStr = StringUtil::toString( currentState );
+                                FB_LOG( "State change complete not ok: " + stateStr );
+                            }
                         }
                     }
                 }
+                else
+                {
+                    currentState = newState;
+                }
+            }
+            else
+            {
+                currentState = newState;
             }
 
             auto applicationManager = core::IApplicationManager::instance();

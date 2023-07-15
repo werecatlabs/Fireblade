@@ -289,7 +289,7 @@ namespace fb
             FB_ASSERT( jobQueue );
 
             SmartPtr<QueryJob> job( new QueryJob( this, queryStr ) );
-            jobQueue->queueJob( job );
+            jobQueue->addJob( job );
         }
         catch( Exception &e )
         {
@@ -339,7 +339,7 @@ namespace fb
             auto jobQueue = applicationManager->getJobQueue();
 
             SmartPtr<DMLQueryJob> job( new DMLQueryJob( this, tag, val ) );
-            jobQueue->queueJob( job );
+            jobQueue->addJob( job );
         }
         catch( Exception &e )
         {

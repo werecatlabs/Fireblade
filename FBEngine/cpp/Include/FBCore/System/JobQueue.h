@@ -19,11 +19,11 @@ namespace fb
 
         void update() override;
 
-        void queueJob( SmartPtr<IJob> job ) override;
+        void addJob( SmartPtr<IJob> job ) override;
 
-        void queueJob( SmartPtr<IJob> job, Thread::Task task ) override;
+        void addJob( SmartPtr<IJob> job, Thread::Task task ) override;
 
-        void queueJobAll( SmartPtr<IJob> job ) override;
+        void addJobAllTasks( SmartPtr<IJob> job ) override;
 
         bool isRunning() const override;
 

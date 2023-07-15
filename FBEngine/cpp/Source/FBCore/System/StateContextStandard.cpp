@@ -661,7 +661,7 @@ namespace fb
             eventJob->setObject( object );
             eventJob->event = event;
 
-            jobQueue->queueJobAll( eventJob );
+            jobQueue->addJobAllTasks( eventJob );
 
             if( auto pEventListeners = getEventListeners() )
             {

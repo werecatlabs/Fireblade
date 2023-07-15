@@ -413,6 +413,8 @@ namespace fb
         {
             try
             {
+                RecursiveMutex::ScopedLock lock( m_mutex );
+
                 FB_ASSERT( isValid() );
 
                 auto applicationManager = core::IApplicationManager::instance();
@@ -467,6 +469,8 @@ namespace fb
         {
             try
             {
+                RecursiveMutex::ScopedLock lock( m_mutex );
+
                 FB_ASSERT( isValid() );
 
                 auto applicationManager = core::IApplicationManager::instance();
@@ -506,6 +510,13 @@ namespace fb
 
         void Scene::removeAllActors()
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+
+            if( auto pActors = getActorsPtr() )
+            {
+                auto& actors = *pActors;
+                actors.clear();
+            }
         }
 
         SmartPtr<IActor> Scene::findActorById( int id ) const

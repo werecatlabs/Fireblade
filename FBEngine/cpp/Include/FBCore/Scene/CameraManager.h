@@ -11,7 +11,6 @@ namespace fb
 {
     namespace scene
     {
-
         class CameraManager : public SharedObject<ICameraManager>
         {
         public:
@@ -26,17 +25,17 @@ namespace fb
 
             bool postEvent( const String &cameraName, const SmartPtr<IInputEvent> &event ) override;
 
-            void addCamera( SmartPtr<scene::IActor> camera ) override;
-            bool removeCamera( SmartPtr<scene::IActor> camera ) override;
+            void addCamera( SmartPtr<IActor> camera ) override;
+            bool removeCamera( SmartPtr<IActor> camera ) override;
             bool removeCamera( const String &name ) override;
 
-            SmartPtr<scene::IActor> findCamera( const String &name ) const override;
+            SmartPtr<IActor> findCamera( const String &name ) const override;
             void setCurrentCamera( const String &name );
-            void setCurrentCamera( SmartPtr<scene::IActor> camera ) override;
+            void setCurrentCamera( SmartPtr<IActor> camera ) override;
             String getCurrentCameraName() const override;
-            SmartPtr<scene::IActor> getCurrentCamera() const override;
+            SmartPtr<IActor> getCurrentCamera() const override;
 
-            Array<SmartPtr<scene::IActor>> getCameras() const override;
+            Array<SmartPtr<IActor>> getCameras() const override;
 
             void setFlag( u32 flag, bool value ) override;
             bool getFlag( u32 flag ) const override;
@@ -53,7 +52,7 @@ namespace fb
             void stop() override;
 
             /** @copydoc ICameraManager::reset */
-            void reset();
+            void reset() override;
 
             SmartPtr<render::ITexture> getEditorTexture() const override;
 
@@ -63,13 +62,12 @@ namespace fb
             WeakPtr<render::ITexture> m_editorTexture;
 
             RecursiveMutex m_camerasMutex;
-            Array<SmartPtr<scene::IActor>> m_cameras;
-            Array<SmartPtr<scene::IActor>> m_sceneCameras;
+            Array<SmartPtr<IActor>> m_cameras;
+            Array<SmartPtr<IActor>> m_sceneCameras;
 
-            AtomicSmartPtr<scene::IActor> m_selectedCameraCtrl;
+            AtomicSmartPtr<IActor> m_selectedCameraCtrl;
         };
-
-    }  // namespace scene
-}  // namespace fb
+    } // namespace scene
+}     // namespace fb
 
 #endif

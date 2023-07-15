@@ -125,6 +125,8 @@ namespace fb
 
             void setActorsPtr( SharedPtr<Array<SmartPtr<IActor>>> ptr );
 
+            mutable RecursiveMutex m_mutex;
+
             State m_state;
             SceneLoadingState m_sceneLoadingState;
 

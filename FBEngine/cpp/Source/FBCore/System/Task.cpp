@@ -8,6 +8,8 @@
 #include <FBCore/Interface/System/IProfile.h>
 #include <FBCore/Interface/System/ITaskManager.h>
 #include <FBCore/Interface/System/ITimer.h>
+#include <FBCore/Interface/FSM/IFSM.h>
+#include <FBCore/Interface/FSM/IFSMManager.h>
 
 namespace fb
 {
@@ -17,18 +19,38 @@ namespace fb
     {
         setLoadingState( LoadingState::Loading );
 
+        auto applicationManager = core::IApplicationManager::instance();
+        auto taskManager = fb::static_pointer_cast<TaskManager>( applicationManager->getTaskManager() );
+
+        auto fsmManager = taskManager->getFSMManager();
+        m_fsm = fsmManager->createFSM();
+
+        auto taskId = static_cast<u32>( getTask() );
+        m_taskFlags = taskManager->getFlagsPtr( taskId );
         setLoadingState( LoadingState::Loaded );
     }
 
     void Task::reload( SmartPtr<ISharedObject> data )
     {
+        unload( data );
+        load( data );
     }
 
     void Task::unload( SmartPtr<ISharedObject> data )
     {
         setLoadingState( LoadingState::Unloading );
+
+        auto applicationManager = core::IApplicationManager::instance();
+        auto taskManager = fb::static_pointer_cast<TaskManager>( applicationManager->getTaskManager() );
+
+        auto fsmManager = taskManager->getFSMManager();
+        fsmManager->destroyFSM( m_fsm );
+
+        m_fsm = nullptr;
+
         m_profile = nullptr;
         m_jobs.clear();
+
         setLoadingState( LoadingState::Unloaded );
     }
 
@@ -36,65 +58,90 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto timer = applicationManager->getTimer();
+            Flags flags( this );
 
-            auto profile = getProfile();
-            if( profile )
+            if( auto fsm = getFSM() )
             {
-                profile->start();
-            }
-
-            auto nextUpdateTime = getNextUpdateTime();
-            if( nextUpdateTime < timer->now() )
-            {
-                auto task = getTask();
-                auto prevTask = Thread::getCurrentTask();
-                Thread::setCurrentTask( task );
-
-                timer->update();
-
-                if( !m_jobs.empty() )
+                auto eState = static_cast<State>( fsm->getCurrentState() );
+                switch( eState )
                 {
-                    SmartPtr<IJob> job;
-                    while( m_jobs.try_pop( job ) )
+                case State::None:
+                {
+                }
+                break;
+                case State::Idle:
+                {
+                }
+                break;
+                case State::Stopped:
+                {
+                }
+                break;
+                case State::Executing:
+                {
+                    auto applicationManager = core::IApplicationManager::instance();
+                    auto timer = applicationManager->getTimer();
+
+                    auto profile = getProfile();
+                    if( profile )
                     {
-                        job->execute();
+                        profile->start();
+                    }
+
+                    auto nextUpdateTime = getNextUpdateTime();
+                    if( nextUpdateTime < timer->now() )
+                    {
+                        auto task = getTask();
+                        auto prevTask = Thread::getCurrentTask();
+                        Thread::setCurrentTask( task );
+
+                        timer->update();
+
+                        if( !m_jobs.empty() )
+                        {
+                            SmartPtr<IJob> job;
+                            while( m_jobs.try_pop( job ) )
+                            {
+                                job->execute();
+                            }
+                        }
+
+                        if( auto owner = getOwner() )
+                        {
+                            try
+                            {
+                                owner->preUpdate();
+                                owner->update();
+                                owner->postUpdate();
+                            }
+                            catch( std::exception &e )
+                            {
+                                FB_LOG_EXCEPTION( e );
+                            }
+                        }
+
+                        auto &gc = GarbageCollector::instance();
+                        gc.update();
+
+                        auto nextUpdateTime = getNextUpdateTime();
+                        auto targetFPS = getTargetFPS();
+                        if( targetFPS > std::numeric_limits<time_interval>::epsilon() )
+                        {
+                            auto rate = 1.0 / targetFPS;
+                            nextUpdateTime = nextUpdateTime + rate;
+                            setNextUpdateTime( nextUpdateTime );
+                        }
+
+                        Thread::setCurrentTask( prevTask );
+                    }
+
+                    if( profile )
+                    {
+                        profile->end();
                     }
                 }
-
-                if( auto owner = getOwner() )
-                {
-                    try
-                    {
-                        owner->preUpdate();
-                        owner->update();
-                        owner->postUpdate();
-                    }
-                    catch( std::exception &e )
-                    {
-                        FB_LOG_EXCEPTION( e );
-                    }
+                break;
                 }
-
-                auto &gc = GarbageCollector::instance();
-                gc.update();
-
-                auto nextUpdateTime = getNextUpdateTime();
-                auto targetFPS = getTargetFPS();
-                if( targetFPS > std::numeric_limits<time_interval>::epsilon() )
-                {
-                    auto rate = 1.0 / targetFPS;
-                    nextUpdateTime = nextUpdateTime + rate;
-                    setNextUpdateTime( nextUpdateTime );
-                }
-
-                Thread::setCurrentTask( prevTask );
-            }
-
-            if( profile )
-            {
-                profile->end();
             }
         }
         catch( std::exception &e )
@@ -118,60 +165,42 @@ namespace fb
 
     void Task::setPrimary( bool usePrimary )
     {
-        auto applicationManager = core::IApplicationManager::instance();
-        FB_ASSERT( applicationManager );
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
 
-        auto pTaskManager = applicationManager->getTaskManager();
-        auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if( taskManager )
+        if( usePrimary )
         {
-            auto taskId = getTask();
-            taskManager->setFlags( static_cast<u32>( taskId ), primary_flag, usePrimary );
+            ( *m_taskFlags ) = *m_taskFlags | ITask::primary_flag;
+        }
+        else
+        {
+            ( *m_taskFlags ) = *m_taskFlags & ~primary_flag;
         }
     }
 
     bool Task::isPrimary() const
     {
-        auto applicationManager = core::IApplicationManager::instance();
-        FB_ASSERT( applicationManager );
-
-        auto pTaskManager = applicationManager->getTaskManager();
-        auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if( taskManager )
-        {
-            auto taskId = getTask();
-            return taskManager->getFlags( static_cast<u32>( taskId ), primary_flag );
-        }
-
-        return false;
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+        return ( *m_taskFlags & primary_flag ) != 0;
     }
 
     void Task::setRecycle( bool recycle )
     {
-        auto applicationManager = core::IApplicationManager::instance();
-        FB_ASSERT( applicationManager );
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
 
-        auto pTaskManager = applicationManager->getTaskManager();
-        auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if( taskManager )
+        if( recycle )
         {
-            taskManager->setFlags( static_cast<u32>( getTask() ), recycle_flag, recycle );
+            ( *m_taskFlags ) = *m_taskFlags | ITask::recycle_flag;
+        }
+        else
+        {
+            ( *m_taskFlags ) = *m_taskFlags & ~recycle_flag;
         }
     }
 
     bool Task::getRecycle() const
     {
-        auto applicationManager = core::IApplicationManager::instance();
-        FB_ASSERT( applicationManager );
-
-        auto pTaskManager = applicationManager->getTaskManager();
-        auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if( taskManager )
-        {
-            return taskManager->getFlags( static_cast<u32>( getTask() ), recycle_flag );
-        }
-
-        return false;
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+        return ( *m_taskFlags & recycle_flag ) != 0;
     }
 
     void Task::setAffinity( s32 id )
@@ -186,85 +215,41 @@ namespace fb
 
     bool Task::isParallel() const
     {
-        auto applicationManager = core::IApplicationManager::instance();
-        FB_ASSERT( applicationManager );
-
-        auto pTaskManager = applicationManager->getTaskManager();
-        auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if( taskManager )
-        {
-            return taskManager->getFlags( static_cast<u32>( getTask() ), parallel_flag );
-        }
-
-        return false;
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+        return ( *m_taskFlags & parallel_flag ) != 0;
     }
 
     void Task::setParallel( bool parallel )
     {
-        auto applicationManager = core::IApplicationManager::instance();
-        FB_ASSERT( applicationManager );
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
 
-        auto pTaskManager = applicationManager->getTaskManager();
-        auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if( taskManager )
+        if( parallel )
         {
-            taskManager->setFlags( static_cast<u32>( getTask() ), parallel_flag, parallel );
+            ( *m_taskFlags ) = *m_taskFlags | ITask::parallel_flag;
+        }
+        else
+        {
+            ( *m_taskFlags ) = *m_taskFlags & ~parallel_flag;
         }
     }
 
     bool Task::isEnabled() const
     {
-        auto applicationManager = core::IApplicationManager::instance();
-        FB_ASSERT( applicationManager );
-
-        auto pTaskManager = applicationManager->getTaskManager();
-        auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if( taskManager )
-        {
-            return taskManager->getFlags( static_cast<u32>( getTask() ), enabled_flag );
-        }
-
-        return false;
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+        return ( *m_taskFlags & enabled_flag ) != 0;
     }
 
     void Task::setEnabled( bool enabled )
     {
-        auto applicationManager = core::IApplicationManager::instance();
-        FB_ASSERT( applicationManager );
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
 
-        auto pTaskManager = applicationManager->getTaskManager();
-        auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if( taskManager )
+        if( enabled )
         {
-            taskManager->setFlags( static_cast<u32>( getTask() ), enabled_flag, enabled );
+            ( *m_taskFlags ) = *m_taskFlags | ITask::enabled_flag;
         }
-    }
-
-    bool Task::isPaused() const
-    {
-        auto applicationManager = core::IApplicationManager::instance();
-        FB_ASSERT( applicationManager );
-
-        auto pTaskManager = applicationManager->getTaskManager();
-        auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if( taskManager )
+        else
         {
-            return taskManager->getFlags( static_cast<u32>( getTask() ), paused_flag );
-        }
-
-        return false;
-    }
-
-    void Task::setPaused( bool paused )
-    {
-        auto applicationManager = core::IApplicationManager::instance();
-        FB_ASSERT( applicationManager );
-
-        auto pTaskManager = applicationManager->getTaskManager();
-        auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if( taskManager )
-        {
-            taskManager->setFlags( static_cast<u32>( getTask() ), paused_flag, paused );
+            ( *m_taskFlags ) = *m_taskFlags & ~enabled_flag;
         }
     }
 
@@ -282,39 +267,26 @@ namespace fb
     {
         FB_DEBUG_TRACE;
 
-#if FB_ENABLE_TRACE
-        std::stringstream backtraceMsg;
-        std::cout << boost::stacktrace::stacktrace();
-#endif
-
         --m_stopped;
 
-        if( isExecuting() )
+        if( isUpdating() )
         {
-            auto task = getTask();
-            auto currentTask = Thread::getCurrentTask();
+            const auto task = getTask();
+            const auto currentTask = Thread::getCurrentTask();
 
             if( task != currentTask )
             {
-                setPaused( true );
-
-                while( isExecuting() )
+                if( auto fsm = getFSM() )
                 {
-                    Thread::yield();
+                    while( fsm->getCurrentState() != static_cast<u8>( State::Stopped ) )
+                    {
+                        setState( State::Stopped );
+                        Thread::yield();
+                    }
                 }
-
-                FB_ASSERT( isExecuting() == false );
-            }
-            else
-            {
-                setPaused( true );
             }
 
             FB_ASSERT( isStopped() == true );
-        }
-        else
-        {
-            setPaused( true );
         }
     }
 
@@ -322,14 +294,7 @@ namespace fb
     {
         FB_DEBUG_TRACE;
 
-#if FB_ENABLE_TRACE
-        std::stringstream backtraceMsg;
-        std::cout << boost::stacktrace::stacktrace();
-#endif
-
         ++m_stopped;
-
-        setPaused( false );
     }
 
     bool Task::isStopped() const
@@ -339,12 +304,22 @@ namespace fb
 
     bool Task::isUpdating() const
     {
-        return m_isUpdating;
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+        return ( *m_taskFlags & updating_flag ) != 0;
     }
 
     void Task::setUpdating( bool updating )
     {
-        m_isUpdating = updating;
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
+
+        if( updating )
+        {
+            ( *m_taskFlags ) = *m_taskFlags | ITask::updating_flag;
+        }
+        else
+        {
+            ( *m_taskFlags ) = *m_taskFlags & ~updating_flag;
+        }
     }
 
     bool Task::isExecuting() const
@@ -382,12 +357,22 @@ namespace fb
 
     bool Task::getUseFixedTime() const
     {
-        return m_useFixedTime;
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+        return ( *m_taskFlags & fixed_time_flag ) != 0;
     }
 
     void Task::setUseFixedTime( bool useFixedTime )
     {
-        m_useFixedTime = useFixedTime;
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
+
+        if( useFixedTime )
+        {
+            ( *m_taskFlags ) = *m_taskFlags | ITask::fixed_time_flag;
+        }
+        else
+        {
+            ( *m_taskFlags ) = *m_taskFlags & ~fixed_time_flag;
+        }
     }
 
     time_interval Task::getNextUpdateTime() const
@@ -402,7 +387,7 @@ namespace fb
             return taskManager->getNextUpdateTime( static_cast<u32>( getTask() ) );
         }
 
-        return static_cast<time_interval>( 0.0 );
+        return 0.0;
     }
 
     void Task::setNextUpdateTime( time_interval nextUpdateTime )
@@ -420,6 +405,21 @@ namespace fb
 
     void Task::calculateAutoFPS()
     {
+        auto applicationManager = core::IApplicationManager::instance();
+        auto timer = applicationManager->getTimer();
+
+        auto fps = 1.0 / timer->getSmoothDeltaTime();
+        if( fps > 0.0 )
+        {
+            auto targetFPS = (f64)( ( (s32)fps - 50 ) / 100 * 100 );
+            targetFPS = Math<f64>::clamp( targetFPS, 30.0, 60.0 );
+
+            setAutoFPS( targetFPS );
+        }
+        else
+        {
+            setAutoFPS( 60.0 );
+        }
     }
 
     f64 Task::getAutoFPS() const
@@ -447,30 +447,24 @@ namespace fb
         m_profile = profile;
     }
 
+    SmartPtr<IFSM> Task::getFSM() const
+    {
+        return m_fsm;
+    }
+
     void Task::setState( State state )
     {
-        auto applicationManager = core::IApplicationManager::instance();
-        FB_ASSERT( applicationManager );
-
-        auto pTaskManager = applicationManager->getTaskManager();
-        auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if( taskManager )
+        if( auto fsm = getFSM() )
         {
-            taskManager->setTaskState( static_cast<u32>( getTask() ), state );
+            fsm->setNewState( static_cast<u8>( state ) );
         }
     }
 
     ITask::State Task::getState() const
     {
-        auto applicationManager = core::IApplicationManager::instance();
-        FB_ASSERT( applicationManager );
-
-        auto pTaskManager = applicationManager->getTaskManager();
-        auto taskManager = fb::static_pointer_cast<TaskManager>( pTaskManager );
-        if( taskManager )
+        if( auto fsm = getFSM() )
         {
-            auto eTask = getTask();
-            return taskManager->getTaskState( static_cast<u32>( eTask ) );
+            return static_cast<State>( fsm->getCurrentState() );
         }
 
         return State::None;
@@ -504,44 +498,61 @@ namespace fb
         }
     }
 
-    Task::Lock::Lock( SmartPtr<ITask> task )
+    Task::Flags::Flags( SmartPtr<Task> task )
     {
-        FB_DEBUG_TRACE;
+        setTask( task );
 
         if( task )
         {
-            setTask( task );
+            task->setUpdating( true );
 
-#if !FB_FINAL
-            FB_LOG( "Task id: " + Thread::getTaskName( task->getTask() ) );
-#endif
-
-            task->stop();
+            if( auto fsm = task->getFSM() )
+            {
+                if( !fsm->isPending() )
+                {
+                    if( task->isStopped() )
+                    {
+                        fsm->setNewState( static_cast<u32>( ITask::State::Stopped ), true );
+                    }
+                    else if( !task->isStopped() )
+                    {
+                        if( fsm->getCurrentState() == static_cast<u32>( ITask::State::Idle ) )
+                        {
+                            fsm->setNewState( static_cast<u32>( ITask::State::Executing ), true );
+                        }
+                        else
+                        {
+                            fsm->setNewState( static_cast<u32>( ITask::State::Idle ), true );
+                        }
+                    }
+                }
+            }
         }
     }
 
-    Task::Lock::Lock()
+    Task::Flags::~Flags()
     {
-        FB_DEBUG_TRACE;
-    }
-
-    Task::Lock::~Lock()
-    {
-        FB_DEBUG_TRACE;
-
         if( auto task = getTask() )
         {
-            task->start();
+            task->setUpdating( false );
+
+            if( auto fsm = task->getFSM() )
+            {
+                auto currentState = static_cast<Task::State>( fsm->getCurrentState() );
+                if( currentState == State::Executing )
+                {
+                    fsm->setNewState( static_cast<u32>( Task::State::Idle ), true );
+                }
+            }
         }
     }
 
-    SmartPtr<ITask> Task::Lock::getTask() const
+    SmartPtr<Task> Task::Flags::getTask() const
     {
-        auto p = m_task.load();
-        return p.lock();
+        return m_task;
     }
 
-    void Task::Lock::setTask( SmartPtr<ITask> task )
+    void Task::Flags::setTask( SmartPtr<Task> task )
     {
         m_task = task;
     }

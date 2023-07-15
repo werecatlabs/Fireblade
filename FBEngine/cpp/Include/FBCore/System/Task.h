@@ -8,6 +8,7 @@
 #include <FBCore/Atomics/AtomicFloat.h>
 #include <FBCore/Core/ConcurrentQueue.h>
 #include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Thread/SpinRWMutex.h>
 
 namespace fb
 {
@@ -15,18 +16,19 @@ namespace fb
     class Task : public SharedObject<ITask>
     {
     public:
-        class Lock : public SharedObject<ITaskLock>
+        class Flags
         {
         public:
-            Lock();
-            Lock( SmartPtr<ITask> task );
-            ~Lock() override;
+            Flags( SmartPtr<Task> task );
 
-            SmartPtr<ITask> getTask() const override;
-            void setTask( SmartPtr<ITask> task ) override;
+            ~Flags();
+
+            SmartPtr<Task> getTask() const;
+
+            void setTask( SmartPtr<Task> task );
 
         private:
-            AtomicWeakPtr<ITask> m_task;
+            AtomicSmartPtr<Task> m_task;
         };
 
         /** Constructor */
@@ -86,12 +88,6 @@ namespace fb
         /** @copydoc ITask::setEnabled */
         void setEnabled( bool val ) override;
 
-        /** Gets if the task if enabled. */
-        bool isPaused() const override;
-
-        /** Sets if the task if enabled. */
-        void setPaused( bool paused ) override;
-
         /** @copydoc ITask::removeListener */
         Thread::Task getTask() const override;
 
@@ -132,7 +128,7 @@ namespace fb
         /** @copydoc ITask::setNextUpdateTime */
         void setNextUpdateTime( time_interval nextUpdateTime ) override;
 
-        /** @copydoc ITask::setUseFixedTime */
+        /** @copydoc ITask::setState */
         void setState( State state ) override;
 
         /** @copydoc ITask::getState */
@@ -159,10 +155,14 @@ namespace fb
 
         void setProfile( SmartPtr<IProfile> profile );
 
+        SmartPtr<IFSM> getFSM() const;
+
         FB_CLASS_REGISTER_DECL;
 
     protected:
-        SmartPtr<IProfile> m_profile;
+        AtomicSmartPtr<IFSM> m_fsm;
+
+        AtomicSmartPtr<IProfile> m_profile;
 
         Thread::Task m_taskId = Thread::Task::Primary;
         ConcurrentQueue<SmartPtr<IJob>> m_jobs;
@@ -170,10 +170,11 @@ namespace fb
         atomic_u32 m_tickCount = 0;
         atomic_s32 m_stopped = 0;
         atomic_s32 m_affinity = 0;
-        atomic_bool m_isUpdating = false;
-        atomic_bool m_useFixedTime = false;
+        atomic_u32* m_taskFlags = nullptr;
 
         void *m_managerData = nullptr;
+
+        mutable SpinRWMutex m_mutex;
     };
 } // end namespace fb
 

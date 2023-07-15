@@ -620,17 +620,7 @@ namespace fb
     template <class T>
     bool BasePath<T>::isExistingFile( const T &filePath )
     {
-#if defined FB_PLATFORM_WIN32
-        std::ifstream file( filePath );
-        if( file.is_open() )
-        {
-            return true;
-        }
-
-        return false;
-#else
         return boost::filesystem::exists( filePath );
-#endif
     }
 
     template <>

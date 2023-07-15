@@ -445,7 +445,7 @@ namespace fb
 
             if( auto p = getChildrenPtr() )
             {
-                auto &children = *p;
+                auto children = *p;
                 for( auto child : children )
                 {
                     if( child )
@@ -685,8 +685,9 @@ namespace fb
             auto enabledInScene = isEnabled();
             if( enabledInScene )
             {
+                auto count = 0;
                 auto parent = getParent();
-                while( parent )
+                while( parent && count++ < 1000 )
                 {
                     if( !parent->isEnabled() )
                     {
@@ -884,7 +885,7 @@ namespace fb
         {
             if( auto p = getComponentsPtr() )
             {
-                auto &components = *p;
+                auto components = *p;
                 return Array<SmartPtr<IComponent>>( components.begin(), components.end() );
             }
 
@@ -1807,7 +1808,7 @@ namespace fb
 
             if( auto p = getComponentsPtr() )
             {
-                auto &components = *p;
+                auto components = *p;
                 for( auto &component : components )
                 {
                     component->childAdded( child );
@@ -1816,7 +1817,7 @@ namespace fb
 
             if( auto p = getChildrenPtr() )
             {
-                auto &children = *p;
+                auto children = *p;
                 for( auto &c : children )
                 {
                     c->childAddedInHierarchy( child );
@@ -1834,12 +1835,13 @@ namespace fb
                 const auto it = std::find( childrenArray.begin(), childrenArray.end(), child );
                 if( it != childrenArray.end() )
                 {
-                    child->setParent( nullptr );
                     childrenArray.erase( it );
                 }
 
                 *m_children =
                     ConcurrentArray<SmartPtr<IActor>>( childrenArray.begin(), childrenArray.end() );
+
+                child->setParent( nullptr );
             }
 
             if( auto p = getComponentsPtr() )
@@ -1865,7 +1867,7 @@ namespace fb
         {
             if( auto p = getComponentsPtr() )
             {
-                auto &components = *p;
+                auto components = *p;
                 for( auto &component : components )
                 {
                     component->childAddedInHierarchy( child );
@@ -1874,7 +1876,7 @@ namespace fb
 
             if( auto p = getChildrenPtr() )
             {
-                auto &children = *p;
+                auto children = *p;
                 for( auto &c : children )
                 {
                     c->childAddedInHierarchy( child );
@@ -1973,29 +1975,20 @@ namespace fb
 
         void Actor::setParent( SmartPtr<IActor> parent )
         {
-            auto pParent = fb::static_pointer_cast<Actor>( parent );
-
             auto p = getParent();
             if( p != parent )
             {
-                auto oldParent = p;
+                m_parent = parent;
 
-                if( pParent )
+                if( auto transform = getTransform() )
                 {
-                    m_parent = pParent;
-                }
-
-                auto transform = getTransform();
-                if( transform )
-                {
-                    transform->parentChanged( parent, oldParent );
+                    transform->parentChanged( parent, p );
                 }
 
                 auto components = getComponents();
                 for( auto component : components )
                 {
-                    auto c = fb::static_pointer_cast<Component>( component );
-                    c->parentChanged( parent, oldParent );
+                    component->parentChanged( parent, p );
                 }
             }
         }
@@ -2293,18 +2286,13 @@ namespace fb
 
             if( auto transform = getTransform() )
             {
-                if( getName() == "Palmetto_Med" )
-                {
-                    int a = 0;
-                    a = 0;
-                }
-
                 if( auto localTransformChild = properties->getChild( "localTransform" ) )
                 {
                     auto localTransform = transform->getLocalTransform();
                     localTransform.setProperties( localTransformChild );
 
                     transform->setLocalTransform( localTransform );
+                    transform->setDirty( true );
                 }
 
                 if( auto worldTransformChild = properties->getChild( "worldTransform" ) )

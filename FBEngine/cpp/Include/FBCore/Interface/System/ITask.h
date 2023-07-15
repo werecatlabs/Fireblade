@@ -70,7 +70,7 @@ namespace fb
         static const u32 paused_flag;
 
         /** @brief Virtual destructor. */
-        virtual ~ITask() override = default;
+        ~ITask() override = default;
 
         /**
          * @brief Resets the task to its initial state.
@@ -147,18 +147,6 @@ namespace fb
          * @param val Whether the task is enabled or not.
          */
         virtual void setEnabled( bool val ) = 0;
-
-        /**
-         * Gets whether the task is paused or not.
-         * @return Whether the task is paused or not.
-         */
-        virtual bool isPaused() const = 0;
-
-        /**
-         * Sets whether the task is paused or not.
-         * @param paused Whether the task is paused or not.
-         */
-        virtual void setPaused( bool paused ) = 0;
 
         /**
          * @brief Gets the task ID of this task.

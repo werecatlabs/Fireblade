@@ -10,7 +10,6 @@
 
 namespace fb
 {
-
     /** Default task manager implementation.  */
     class TaskManager : public SharedObject<ITaskManager>
     {
@@ -44,26 +43,13 @@ namespace fb
         /** @copydoc ISharedObject::update */
         void update() override;
 
-        void OnQueueTask( SmartPtr<ITask> &task );
-        void OnTaskRemoveFromQueue( SmartPtr<ITask> &task );
-        void OnTaskUpdateStart( SmartPtr<ITask> &task );
-        void OnTaskUpdateEnd( SmartPtr<ITask> &task );
-
-        SmartPtr<ITask> addTask( u32 id, f64 updateFrequency );
-        void removeTask( u32 id );
-        void destroyAllTasks();
-
-        void queueTask( SmartPtr<ITask> task );
-
-        void updateParallelTasks();
-
         Array<SmartPtr<ITask>> getTasks() const override;
 
-        void wait();
-        void stop();
-        void reset();
+        void wait() override;
+        void stop() override;
+        void reset() override;
 
-        SmartPtr<ITaskLock> lockTask( Thread::Task taskId );
+        TaskLock lockTask( Thread::Task taskId ) override;
 
         u32 getNumTasks() const override;
 
@@ -72,11 +58,13 @@ namespace fb
         void setState( State state ) override;
         State getState() const override;
 
-        /** @copydoc ITask::setPrimary */
+        /** @copydoc ITask::setFlags */
         void setFlags( u32 id, u32 flag, bool value );
 
-        /** @copydoc ITask::isPrimary */
+        /** @copydoc ITask::getFlags */
         bool getFlags( u32 id, u32 flag ) const;
+
+        atomic_u32 *getFlagsPtr( u32 id ) const;
 
         /** @copydoc ITask::setState */
         void setState( u32 id, ITask::State state );
@@ -122,27 +110,33 @@ namespace fb
 
         bool isValid() const override;
 
+        SmartPtr<IFSMManager> getFSMManager() const;
+
+        void setFSMManager( SmartPtr<IFSMManager> fsmManager );
+
         FB_CLASS_REGISTER_DECL;
 
     private:
         mutable SpinRWMutex m_mutex;
 
+        SmartPtr<IFSMManager> m_fsmManager;
+
         Atomic<State> m_state = State::None;
 
-        FixedArray<Task, static_cast<u32>( Thread::Task::Count )> m_tasks;
-        FixedArray<atomic_u32, static_cast<u32>( Thread::Task::Count )> m_affinity;
-        FixedArray<atomic_u32, static_cast<u32>( Thread::Task::Count )> m_taskFlags;
-        FixedArray<atomic_f64, static_cast<u32>( Thread::Task::Count )> m_targetfps;
-        FixedArray<atomic_f64, static_cast<u32>( Thread::Task::Count )> m_nextUpdateTimes;
-        FixedArray<Thread::Task, static_cast<u32>( Thread::Task::Count )> m_taskIds;
-        FixedArray<ITask::State, static_cast<u32>( Thread::Task::Count )> m_states;
-        FixedArray<SmartPtr<ISharedObject>, static_cast<u32>( Thread::Task::Count )> m_owners;
-        FixedArray<atomic_u32, static_cast<u32>( Thread::Task::Count )> m_threadHint;
+        FixedArray<Task, static_cast<u32>(Thread::Task::Count)> m_tasks;
+        FixedArray<atomic_u32, static_cast<u32>(Thread::Task::Count)> m_affinity;
+        FixedArray<atomic_u32, static_cast<u32>(Thread::Task::Count)> m_taskFlags;
+        FixedArray<atomic_f64, static_cast<u32>(Thread::Task::Count)> m_targetfps;
+        FixedArray<atomic_f64, static_cast<u32>(Thread::Task::Count)> m_nextUpdateTimes;
+        FixedArray<Thread::Task, static_cast<u32>(Thread::Task::Count)> m_taskIds;
+        FixedArray<ITask::State, static_cast<u32>(Thread::Task::Count)> m_states;
+        FixedArray<SmartPtr<ISharedObject>, static_cast<u32>(Thread::Task::Count)> m_owners;
+        FixedArray<atomic_u32, static_cast<u32>(Thread::Task::Count)> m_threadHint;
 
         u32 m_idCount = 0;
 
         static u32 m_idExt;
     };
-}  // end namespace fb
+} // end namespace fb
 
 #endif  // TaskManager_h__

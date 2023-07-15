@@ -15,21 +15,21 @@ namespace fb
          */
         ~IJobQueue() override = default;
 
-        /** Queues a job for processing.
+        /** Adds a job for processing.
         @param job The job to be queued.
         */
-        virtual void queueJob( SmartPtr<IJob> job ) = 0;
+        virtual void addJob( SmartPtr<IJob> job ) = 0;
 
-        /** Queues a job for processing.
+        /** Adds a job for processing.
         @param job The job to be queued.
         @param task The task that should process the job.
         */
-        virtual void queueJob( SmartPtr<IJob> job, Thread::Task task ) = 0;
+        virtual void addJob( SmartPtr<IJob> job, Thread::Task task ) = 0;
 
-        /** Queues a job for processing.
+        /** Adds a job for processing.
         @param job The job to be queued.
         */
-        virtual void queueJobAll( SmartPtr<IJob> job ) = 0;
+        virtual void addJobAllTasks( SmartPtr<IJob> job ) = 0;
 
         /** Gets whether the job queue is running.
         @return A boolean to indicate whether the job queue is running.

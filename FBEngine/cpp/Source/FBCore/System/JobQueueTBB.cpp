@@ -75,7 +75,7 @@ namespace fb
         }
     }
 
-    void JobQueueTBB::queueJob( SmartPtr<IJob> job )
+    void JobQueueTBB::addJob( SmartPtr<IJob> job )
     {
         job->setState( IJob::JobState::Queue );
 
@@ -97,7 +97,7 @@ namespace fb
         }
     }
 
-    void JobQueueTBB::queueJob( SmartPtr<IJob> job, Thread::Task task )
+    void JobQueueTBB::addJob( SmartPtr<IJob> job, Thread::Task task )
     {
         auto applicationManager = core::IApplicationManager::instance();
         FB_ASSERT( applicationManager );
@@ -112,7 +112,7 @@ namespace fb
         }
     }
 
-    void JobQueueTBB::queueJobAll( SmartPtr<IJob> job )
+    void JobQueueTBB::addJobAllTasks( SmartPtr<IJob> job )
     {
         auto applicationManager = core::IApplicationManager::instance();
         FB_ASSERT( applicationManager );

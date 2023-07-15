@@ -421,6 +421,8 @@ namespace fb
         {
             try
             {
+                RecursiveMutex::ScopedLock lock( m_mutex );
+
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
@@ -486,6 +488,8 @@ namespace fb
         {
             try
             {
+                RecursiveMutex::ScopedLock lock( m_mutex );
+
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
@@ -545,6 +549,8 @@ namespace fb
         {
             try
             {
+                RecursiveMutex::ScopedLock lock( m_mutex );
+
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
@@ -628,6 +634,8 @@ namespace fb
         {
             try
             {
+                RecursiveMutex::ScopedLock lock( m_mutex );
+
                 auto actors = getActors();
                 for( auto actor : actors )
                 {

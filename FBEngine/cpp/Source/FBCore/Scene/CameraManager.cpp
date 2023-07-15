@@ -7,7 +7,6 @@ namespace fb
 {
     namespace scene
     {
-
         CameraManager::CameraManager( u32 id )
         {
         }
@@ -55,7 +54,7 @@ namespace fb
                     {
                         if( camera )
                         {
-                            if( !camera->getFlag( scene::IActor::ActorFlagIsEditor ) )
+                            if( !camera->getFlag( IActor::ActorFlagIsEditor ) )
                             {
                                 camera->update();
                             }
@@ -69,7 +68,7 @@ namespace fb
                     {
                         if( camera )
                         {
-                            if( camera->getFlag( scene::IActor::ActorFlagIsEditor ) )
+                            if( camera->getFlag( IActor::ActorFlagIsEditor ) )
                             {
                                 camera->update();
                             }
@@ -91,7 +90,7 @@ namespace fb
             return false;
         }
 
-        void CameraManager::addCamera( SmartPtr<scene::IActor> camera )
+        void CameraManager::addCamera( SmartPtr<IActor> camera )
         {
             if( camera )
             {
@@ -103,7 +102,7 @@ namespace fb
             {
                 if( auto editorTexture = getEditorTexture() )
                 {
-                    auto cameraComponent = camera->getComponent<scene::Camera>();
+                    auto cameraComponent = camera->getComponent<Camera>();
                     if( cameraComponent )
                     {
                         cameraComponent->setEditorTexture( editorTexture );
@@ -112,7 +111,7 @@ namespace fb
             }
         }
 
-        bool CameraManager::removeCamera( SmartPtr<scene::IActor> camera )
+        bool CameraManager::removeCamera( SmartPtr<IActor> camera )
         {
             if( camera == m_selectedCameraCtrl )
             {
@@ -126,7 +125,7 @@ namespace fb
                 if( it != m_cameras.end() )
                 {
                     auto cameraActor = ( *it );
-                    auto cameraComponent = cameraActor->getComponent<scene::Camera>();
+                    auto cameraComponent = cameraActor->getComponent<Camera>();
                     if( cameraComponent )
                     {
                         cameraComponent->setEditorTexture( nullptr );
@@ -144,12 +143,12 @@ namespace fb
             return true;
         }
 
-        SmartPtr<scene::IActor> CameraManager::findCamera( const String &name ) const
+        SmartPtr<IActor> CameraManager::findCamera( const String &name ) const
         {
             auto cameras = getCameras();
             for( auto camera : cameras )
             {
-                if( camera->getName() == ( name ) )
+                if( camera->getName() == name )
                 {
                     return camera;
                 }
@@ -166,7 +165,7 @@ namespace fb
                 auto selectedCamera = getCurrentCamera();
                 if( selectedCamera != nullptr )
                 {
-                    auto cameraController = selectedCamera->getComponent<scene::Camera>();
+                    auto cameraController = selectedCamera->getComponent<Camera>();
                     cameraController->setActive( false );
                 }
 
@@ -174,17 +173,17 @@ namespace fb
 
                 if( camera != nullptr )
                 {
-                    auto cameraController = camera->getComponent<scene::Camera>();
+                    auto cameraController = camera->getComponent<Camera>();
                     cameraController->setActive( true );
                 }
             }
         }
 
-        void CameraManager::setCurrentCamera( SmartPtr<scene::IActor> camera )
+        void CameraManager::setCurrentCamera( SmartPtr<IActor> camera )
         {
             for( auto selectedCamera : m_cameras )
             {
-                auto cameraController = selectedCamera->getComponent<scene::Camera>();
+                auto cameraController = selectedCamera->getComponent<Camera>();
                 if( cameraController )
                 {
                     cameraController->setActive( false );
@@ -197,14 +196,14 @@ namespace fb
             {
                 if( auto editorTexture = getEditorTexture() )
                 {
-                    auto cameraComponent = camera->getComponent<scene::Camera>();
+                    auto cameraComponent = camera->getComponent<Camera>();
                     if( cameraComponent )
                     {
                         cameraComponent->setEditorTexture( editorTexture );
                     }
                 }
 
-                auto cameraController = camera->getComponent<scene::Camera>();
+                auto cameraController = camera->getComponent<Camera>();
                 if( cameraController )
                 {
                     cameraController->setActive( true );
@@ -223,12 +222,12 @@ namespace fb
             return StringUtil::EmptyString;
         }
 
-        SmartPtr<scene::IActor> CameraManager::getCurrentCamera() const
+        SmartPtr<IActor> CameraManager::getCurrentCamera() const
         {
             return m_selectedCameraCtrl;
         }
 
-        Array<SmartPtr<scene::IActor>> CameraManager::getCameras() const
+        Array<SmartPtr<IActor>> CameraManager::getCameras() const
         {
             return m_cameras;
         }
@@ -274,15 +273,18 @@ namespace fb
                     {
                         for( auto cameraActor : cameras )
                         {
-                            cameraActor->setState( scene::IActor::State::Play );
+                            cameraActor->setState( IActor::State::Play );
                         }
 
                         for( auto cameraActor : cameras )
                         {
-                            if( cameraActor->getFlag( scene::IActor::ActorFlagIsEditor ) )
+                            if( cameraActor->isEnabledInScene() )
                             {
-                                setCurrentCamera( cameraActor );
-                                break;
+                                if( cameraActor->getFlag( IActor::ActorFlagIsEditor ) )
+                                {
+                                    setCurrentCamera( cameraActor );
+                                    break;
+                                }
                             }
                         }
                     }
@@ -294,15 +296,18 @@ namespace fb
                     {
                         for( auto cameraActor : cameras )
                         {
-                            cameraActor->setState( scene::IActor::State::Edit );
+                            cameraActor->setState( IActor::State::Edit );
                         }
 
                         for( auto cameraActor : cameras )
                         {
-                            if( cameraActor->getFlag( scene::IActor::ActorFlagIsEditor ) )
+                            if( cameraActor->isEnabledInScene() )
                             {
-                                setCurrentCamera( cameraActor );
-                                break;
+                                if( cameraActor->getFlag( IActor::ActorFlagIsEditor ) )
+                                {
+                                    setCurrentCamera( cameraActor );
+                                    break;
+                                }
                             }
                         }
                     }
@@ -317,15 +322,18 @@ namespace fb
                     {
                         for( auto cameraActor : cameras )
                         {
-                            cameraActor->setState( scene::IActor::State::Play );
+                            cameraActor->setState( IActor::State::Play );
                         }
 
                         for( auto cameraActor : cameras )
                         {
-                            if( !cameraActor->getFlag( scene::IActor::ActorFlagIsEditor ) )
+                            if( cameraActor->isEnabledInScene() )
                             {
-                                setCurrentCamera( cameraActor );
-                                break;
+                                if( !cameraActor->getFlag( IActor::ActorFlagIsEditor ) )
+                                {
+                                    setCurrentCamera( cameraActor );
+                                    break;
+                                }
                             }
                         }
                     }
@@ -337,15 +345,18 @@ namespace fb
                     {
                         for( auto cameraActor : cameras )
                         {
-                            cameraActor->setState( scene::IActor::State::Edit );
+                            cameraActor->setState( IActor::State::Edit );
                         }
 
                         for( auto cameraActor : cameras )
                         {
-                            if( !cameraActor->getFlag( scene::IActor::ActorFlagIsEditor ) )
+                            if( cameraActor->isEnabledInScene() )
                             {
-                                setCurrentCamera( cameraActor );
-                                break;
+                                if( !cameraActor->getFlag( IActor::ActorFlagIsEditor ) )
+                                {
+                                    setCurrentCamera( cameraActor );
+                                    break;
+                                }
                             }
                         }
                     }
@@ -362,6 +373,5 @@ namespace fb
         {
             m_editorTexture = editorTexture;
         }
-
     }  // namespace scene
 }  // end namespace fb

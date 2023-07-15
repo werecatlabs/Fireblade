@@ -6,6 +6,7 @@
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Thread/ThreadTypes.h>
+#include <FBCore/System/TaskLock.h>
 
 namespace fb
 {
@@ -90,7 +91,7 @@ namespace fb
          * @param taskId The ID of the task to lock.
          * @return A smart pointer to an ITaskLock for the locked task.
          */
-        virtual SmartPtr<ITaskLock> lockTask( Thread::Task taskId ) = 0;
+        virtual TaskLock lockTask( Thread::Task taskId ) = 0;
 
         FB_CLASS_REGISTER_DECL;
     };
