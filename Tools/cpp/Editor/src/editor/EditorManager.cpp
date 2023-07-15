@@ -23,6 +23,7 @@ namespace fb
 
         EditorManager::~EditorManager()
         {
+            unload( nullptr );
         }
 
         void EditorManager::unload( SmartPtr<ISharedObject> data )

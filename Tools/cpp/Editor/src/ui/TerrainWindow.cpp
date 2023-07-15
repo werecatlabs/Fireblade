@@ -1,6 +1,5 @@
 #include <GameEditorPCH.h>
 #include "TerrainWindow.h"
-#include "ApplicationFrame.h"
 #include <FBCore/FBCore.h>
 #include <FBApplication/FBApplication.h>
 #include <editor/EditorManager.h>

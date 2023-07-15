@@ -8,8 +8,7 @@ namespace fb
 {
     namespace editor
     {
-
-        //-------------------------------------------------
+                
         class ProjectTreeData : public SharedObject<ISharedObject>
         {
         public:

@@ -6,12 +6,12 @@
 #include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/Resource/IResource.h>
 #include <FBCore/Interface/System/IEventListener.h>
+#include "FBCore/System/Job.h"
 
 namespace fb
 {
     namespace editor
     {
-
         /**
          * Window for displaying and editing the properties of a selected object.
          * This class extends the BaseWindow class and provides functionality to manage the properties of objects and display them in a property grid.
@@ -80,9 +80,31 @@ namespace fb
              * Sets the selected object.
              * @param selected The selected object.
              */
-            void setSelected( fb::SmartPtr<fb::ISharedObject> selected );
+            void setSelected( SmartPtr<ISharedObject> selected );
 
         protected:
+            class UpdateSelectionJob : public Job
+            {
+            public:
+                UpdateSelectionJob();
+
+                ~UpdateSelectionJob();
+
+                void execute();
+
+                SmartPtr<PropertiesWindow> getOwner() const;
+
+                void setOwner( SmartPtr<PropertiesWindow> owner );
+
+                SmartPtr<ISharedObject> getObject() const;
+
+                void setObject( SmartPtr<ISharedObject> object );
+
+            protected:
+                AtomicWeakPtr<ISharedObject> m_object;
+                AtomicWeakPtr<PropertiesWindow> m_owner;
+            };
+
             /**
              * @class PropertiesListener
              * @brief Class for listening to property changes.
@@ -113,7 +135,7 @@ namespace fb
                  */
                 Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
                                        const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
-                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
                 /**
                  * @brief Gets the owner of the PropertiesListener.
@@ -142,6 +164,9 @@ namespace fb
              * @param isButton Flag indicating if the change is triggered by a button press (default: false).
              */
             void propertyChange( const String &name, const String &value, bool isButton = false );
+
+            /** Updates the selection. */
+            void updateSelectionMT( SmartPtr<ISharedObject> object );
 
             /**
              * @brief Handles property change events for a specific object.
@@ -172,7 +197,7 @@ namespace fb
              */
             bool m_isDirty = false;
         };
-    }  // end namespace editor
-}  // end namespace fb
+    } // end namespace editor
+}     // end namespace fb
 
 #endif  // PropertiesWindow_h__

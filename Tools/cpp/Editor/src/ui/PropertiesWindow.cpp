@@ -11,7 +11,6 @@ namespace fb
 {
     namespace editor
     {
-
         PropertiesWindow::PropertiesWindow()
         {
         }
@@ -109,21 +108,25 @@ namespace fb
             try
             {
                 auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
                 auto selectionManager = applicationManager->getSelectionManager();
-                FB_ASSERT( selectionManager );
+                auto jobQueue = applicationManager->getJobQueue();
 
                 if( auto selected = getSelected() )
                 {
-                    updateSelection( selected );
+                    auto job = fb::make_ptr<UpdateSelectionJob>();
+                    job->setOwner( this );
+                    job->setObject( selected );
+                    jobQueue->addJob( job );
                 }
                 else
                 {
                     auto selection = selectionManager->getSelection();
                     for( auto object : selection )
                     {
-                        updateSelection( object );
+                        auto job = fb::make_ptr<UpdateSelectionJob>();
+                        job->setOwner( this );
+                        job->setObject( object );
+                        jobQueue->addJob( job );
                     }
                 }
             }
@@ -134,6 +137,237 @@ namespace fb
         }
 
         void PropertiesWindow::updateSelection( SmartPtr<ISharedObject> object )
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            auto materialManager = graphicsSystem->getMaterialManager();
+
+            auto resourceDatabase = applicationManager->getResourceDatabase();
+
+            auto meshManager = applicationManager->getMeshManager();
+
+            if( object )
+            {
+                if( object->isDerived<scene::IActor>() )
+                {
+                    auto actor = fb::dynamic_pointer_cast<scene::IActor>( object );
+
+                    auto properties = actor->getProperties();
+                    if( properties )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<physics::IPhysicsMaterial3>() )
+                {
+                    auto physicsMaterial =
+                        fb::dynamic_pointer_cast<physics::IPhysicsMaterial3>( object );
+
+                    auto properties = physicsMaterial->getProperties();
+                    if( properties )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<physics::IPhysicsShape>() )
+                {
+                    auto physicsShape = fb::dynamic_pointer_cast<physics::IPhysicsShape>( object );
+
+                    auto properties = physicsShape->getProperties();
+                    if( properties )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<physics::IPhysicsBody3>() )
+                {
+                    auto physicsBody = fb::dynamic_pointer_cast<physics::IPhysicsBody3>( object );
+
+                    auto properties = physicsBody->getProperties();
+                    if( properties )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<scene::ITransform>() )
+                {
+                    auto transform = fb::dynamic_pointer_cast<scene::ITransform>( object );
+
+                    auto properties = transform->getProperties();
+                    if( properties )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<render::ISceneNode>() )
+                {
+                    auto sceneNode = fb::dynamic_pointer_cast<render::ISceneNode>( object );
+
+                    auto properties = sceneNode->getProperties();
+                    if( properties )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<render::IGraphicsObject>() )
+                {
+                    auto graphicsObject = fb::dynamic_pointer_cast<render::IGraphicsObject>( object );
+
+                    auto properties = graphicsObject->getProperties();
+                    if( properties )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<IStateContext>() )
+                {
+                    auto stateObject = fb::dynamic_pointer_cast<IStateContext>( object );
+
+                    auto properties = stateObject->getProperties();
+                    if( properties )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<IState>() )
+                {
+                    auto state = fb::dynamic_pointer_cast<IState>( object );
+
+                    auto properties = state->getProperties();
+                    if( properties )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<IMeshResource>() )
+                {
+                    auto meshResource = fb::static_pointer_cast<IMeshResource>( object );
+
+                    auto properties = meshResource->getProperties();
+                    if( properties )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<render::IMaterial>() )
+                {
+                    auto material = fb::static_pointer_cast<render::IMaterial>( object );
+
+                    auto properties = material->getProperties();
+                    if( properties )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<render::IMaterialNode>() )
+                {
+                    auto materialNode = fb::static_pointer_cast<render::IMaterialNode>( object );
+
+                    auto properties = materialNode->getProperties();
+                    if( properties )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<scene::IComponent>() )
+                {
+                    auto derived = fb::dynamic_pointer_cast<scene::IComponent>( object );
+
+                    if( auto properties = derived->getProperties() )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<scene::IComponentEventListener>() )
+                {
+                    auto derived = fb::dynamic_pointer_cast<scene::IComponentEventListener>( object );
+
+                    if( auto properties = derived->getProperties() )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<scene::IDirector>() )
+                {
+                    auto derived = fb::dynamic_pointer_cast<scene::IDirector>( object );
+
+                    if( auto properties = derived->getProperties() )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<ui::IUIElement>() )
+                {
+                    auto element = fb::dynamic_pointer_cast<ui::IUIElement>( object );
+
+                    if( auto properties = element->getProperties() )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<render::IOverlayElement>() )
+                {
+                    auto element = fb::dynamic_pointer_cast<render::IOverlayElement>( object );
+                    if( auto properties = element->getProperties() )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<FileSelection>() )
+                {
+                    auto fileSelection = fb::dynamic_pointer_cast<FileSelection>( object );
+
+                    auto filePath = fileSelection->getFilePath();
+                    auto ext = Path::getFileExtension( filePath );
+                    ext = StringUtil::make_lower( ext );
+
+                    static const auto materialExt = String( ".mat" );
+                    static const auto fbxExt = String( ".fbx" );
+                    static const auto resourceExt = String( ".resource" );
+
+                    if( ext == materialExt )
+                    {
+                        auto material = materialManager->loadFromFile( filePath );
+                        if( material )
+                        {
+                            auto properties = material->getProperties();
+                            if( properties )
+                            {
+                                m_propertyGrid->setProperties( properties );
+                            }
+                        }
+                    }
+                    else if( ext == fbxExt )
+                    {
+                        auto mesh = meshManager->loadFromFile( filePath );
+                        if( mesh )
+                        {
+                            auto properties = mesh->getProperties();
+                            if( properties )
+                            {
+                                m_propertyGrid->setProperties( properties );
+                            }
+                        }
+                    }
+                    else if( ext == resourceExt )
+                    {
+                        auto resource = resourceDatabase->loadResource( filePath );
+                        if( resource )
+                        {
+                            auto properties = resource->getProperties();
+                            if( properties )
+                            {
+                                m_propertyGrid->setProperties( properties );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        void PropertiesWindow::updateSelectionMT( SmartPtr<ISharedObject> object )
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
@@ -383,7 +617,7 @@ namespace fb
 
                 auto job = fb::make_ptr<ObjectUpdateJob>();
                 job->setOwner( this );
-                jobQueue->queueJob( job );
+                jobQueue->addJob( job );
             }
         }
 
@@ -890,7 +1124,7 @@ namespace fb
             return resourceType;
         }
 
-        fb::Parameter PropertiesWindow::PropertiesListener::handleEvent(
+        Parameter PropertiesWindow::PropertiesListener::handleEvent(
             IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
             SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
         {
@@ -926,5 +1160,43 @@ namespace fb
             m_owner = owner;
         }
 
+        PropertiesWindow::UpdateSelectionJob::UpdateSelectionJob()
+        {
+        }
+
+        PropertiesWindow::UpdateSelectionJob::~UpdateSelectionJob()
+        {
+        }
+
+        void PropertiesWindow::UpdateSelectionJob::execute()
+        {
+            auto owner = getOwner();
+            FB_ASSERT( owner );
+
+            auto object = getObject();
+            owner->updateSelectionMT( object );
+        }
+
+        SmartPtr<PropertiesWindow> PropertiesWindow::UpdateSelectionJob::getOwner() const
+        {
+            auto p = m_owner.load();
+            return p.lock();
+        }
+
+        void PropertiesWindow::UpdateSelectionJob::setOwner( SmartPtr<PropertiesWindow> owner )
+        {
+            m_owner = owner;
+        }
+
+        SmartPtr<ISharedObject> PropertiesWindow::UpdateSelectionJob::getObject() const
+        {
+            auto p = m_object.load();
+            return p.lock();
+        }
+
+        void PropertiesWindow::UpdateSelectionJob::setObject( SmartPtr<ISharedObject> object )
+        {
+            m_object = object;
+        }
     }  // end namespace editor
 }  // end namespace fb

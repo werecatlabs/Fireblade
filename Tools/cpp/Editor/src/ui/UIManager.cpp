@@ -7,7 +7,6 @@
 #include "commands/FileMenuCmd.h"
 #include <ui/AboutDialog.h>
 #include <ui/ActorWindow.h>
-#include <ui/ApplicationFrame.h>
 #include <ui/ProjectWindow.h>
 #include <ui/TerrainWindow.h>
 #include <ui/SceneWindow.h>
@@ -416,11 +415,6 @@ namespace fb
 
         void UIManager::update( time_interval t, time_interval dt )
         {
-            if( m_projectWindow )
-            {
-                m_projectWindow->update( t, dt );
-            }
-
             if( m_frameStatistics )
             {
                 m_frameStatistics->update();
@@ -933,7 +927,7 @@ namespace fb
                 case WidgetId::SaveId:
                 {
                     auto job = fb::make_ptr<SaveSceneJob>();
-                    jobQueue->queueJob( job );
+                    jobQueue->addJob( job );
                 }
                 break;
                 case WidgetId::SaveSceneAsId:
@@ -991,7 +985,7 @@ namespace fb
                     auto dst = L"C:/dev/FirebladeRuntime/";
                     job->setDst( dst );
 
-                    jobQueue->queueJob( job );
+                    jobQueue->addJob( job );
                 }
                 break;
                 case WidgetId::AssetImportId:
@@ -1079,7 +1073,7 @@ namespace fb
                 case WidgetId::ImportUnityYamlId:
                 {
                     auto job = fb::make_ptr<ImportUnityYaml>();
-                    jobQueue->queueJob( job );
+                    jobQueue->addJob( job );
                 }
                 break;
                 case WidgetId::UndoId:
@@ -1134,7 +1128,7 @@ namespace fb
                     FB_ASSERT( applicationManager );
 
                     auto job = fb::make_ptr<GenerateSkyboxMaterials>();
-                    jobQueue->queueJob( job );
+                    jobQueue->addJob( job );
                 }
                 break;
                 case WidgetId::CreateBoxTestId:
@@ -1155,7 +1149,7 @@ namespace fb
                     auto jobQueue = applicationManager->getJobQueue();
 
                     auto job = fb::make_ptr<ProjectCleanJob>();
-                    jobQueue->queueJob( job );
+                    jobQueue->addJob( job );
                 }
                 break;
                 case WidgetId::SetupMaterialsId:
@@ -1166,7 +1160,7 @@ namespace fb
                     auto jobQueue = applicationManager->getJobQueue();
 
                     auto job = fb::make_ptr<SetupMaterialJob>();
-                    jobQueue->queueJob( job );
+                    jobQueue->addJob( job );
                 }
                 break;
                 case WidgetId::OptimiseDatabasesId:
@@ -1177,7 +1171,7 @@ namespace fb
                     auto jobQueue = applicationManager->getJobQueue();
 
                     auto job = fb::make_ptr<OptimiseDatabasesJob>();
-                    jobQueue->queueJob( job );
+                    jobQueue->addJob( job );
                 }
                 break;
                 case WidgetId::AboutId:
@@ -1288,13 +1282,13 @@ namespace fb
                 case WidgetId::RunId:
                 {
                     auto job = fb::make_ptr<PlaymodeJob>();
-                    jobQueue->queueJob( job );
+                    jobQueue->addJob( job );
                 }
                 break;
                 case WidgetId::StopId:
                 {
                     auto job = fb::make_ptr<LeavePlaymodeJob>();
-                    jobQueue->queueJob( job );
+                    jobQueue->addJob( job );
                 }
                 break;
                 case WidgetId::StatsId:
@@ -1310,7 +1304,7 @@ namespace fb
                 case WidgetId::ReloadScriptsId:
                 {
                     auto job = fb::make_ptr<ReloadScriptsJob>();
-                    jobQueue->queueJob( job );
+                    jobQueue->addJob( job );
                 }
                 break;
                 case WidgetId::ToggleEditorCameraId:

@@ -35,7 +35,7 @@ namespace fb
                 auto filePath = scene->getFilePath();
                 if (!StringUtil::isNullOrEmpty(filePath))
                 {
-                    if( fileSystem->isExistingFile( filePath ) )
+                    if( Path::isExistingFile( filePath ) )
                     {
                         scene->saveScene();
                     }

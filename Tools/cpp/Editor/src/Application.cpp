@@ -4,7 +4,6 @@
 #include <jobs/JobRendererSetup.h>
 #include <jobs/PlaymodeJob.h>
 #include "jobs/LeavePlaymodeJob.h"
-#include <ui/ApplicationFrame.h>
 #include <ui/ProjectWindow.h>
 #include <ui/UIManager.h>
 #include <FBCore/FBCore.h>
@@ -414,6 +413,11 @@ namespace fb
                             m_renderWindow = nullptr;
                         }
                     }
+
+                    const auto editorSettings = applicationManager->getEditorSettings();
+
+                    const auto dataStr = DataUtil::toString( editorSettings.get(), true );
+                    Path::writeAllText( "editor.settings", dataStr );
 
                     if( auto cameraManager = applicationManager->getCameraManager() )
                     {
@@ -968,18 +972,24 @@ namespace fb
                     auto applicationManager = core::IApplicationManager::instance();
                     FB_ASSERT( applicationManager );
 
+                    auto fileSystem = applicationManager->getFileSystem();
+
                     auto editorSettings = applicationManager->getEditorSettings();
                     FB_ASSERT( editorSettings );
 
                     auto editorManager = EditorManager::getSingletonPtr();
                     FB_ASSERT( editorManager );
 
-                    auto projectPath = String();
-                    if( editorSettings->getPropertyValue( "Project Path", projectPath ) )
+                    auto projectFilePath = String();
+                    if( editorSettings->getPropertyValue( "Project Path", projectFilePath ) )
                     {
-                        if( !StringUtil::isNullOrEmpty( projectPath ) )
+                        if( !StringUtil::isNullOrEmpty( projectFilePath ) )
                         {
-                            editorManager->loadProject( projectPath );
+                            
+                            if( Path::isExistingFile( projectFilePath ) )
+                            {
+                                editorManager->loadProject( projectFilePath );
+                            }
                         }
                     }
                 }
@@ -1046,7 +1056,7 @@ namespace fb
             auto jobQueue = applicationManager->getJobQueue();
 
             auto job = fb::make_ptr<PlaymodeJob>();
-            jobQueue->queueJob( job );
+            jobQueue->addJob( job );
         }
 
         void Application::stopPlayMode()
@@ -1055,7 +1065,7 @@ namespace fb
             auto jobQueue = applicationManager->getJobQueue();
 
             auto job = fb::make_ptr<LeavePlaymodeJob>();
-            jobQueue->queueJob( job );
+            jobQueue->addJob( job );
         }
 
         void Application::createLogManager()
@@ -1663,7 +1673,7 @@ namespace fb
             }
             else
             {
-                jobQueue->queueJob( jobRendererSetup );
+                jobQueue->addJob( jobRendererSetup );
             }
         }
 

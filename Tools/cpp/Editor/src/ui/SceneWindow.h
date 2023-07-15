@@ -2,7 +2,6 @@
 #define __SceneWindow_h__
 
 #include "ui/BaseWindow.h"
-
 #include <FBCore/Interface/System/IEventListener.h>
 #include <FBCore/Interface/UI/IUIDropTarget.h>
 #include <FBCore/Interface/UI/IUIDragSource.h>
@@ -152,6 +151,10 @@ namespace fb
              * @param treeState The state of the scene tree.
              */
             void setTreeState( SharedPtr<std::map<String, bool>> treeState );
+            
+            SmartPtr<ICommand> getDragDropActorCmd() const;
+
+            void setDragDropActorCmd( SmartPtr<ICommand> dragDropActorCmd );
 
         protected:
             class TreeCtrlListener : public SharedObject<IEventListener>
@@ -261,7 +264,7 @@ namespace fb
 
             AtomicSharedPtr<std::map<String, bool>> m_treeState;
         };
-    }  // end namespace editor
-}  // end namespace fb
+    } // end namespace editor
+}     // end namespace fb
 
 #endif  // EntityWindow_h__

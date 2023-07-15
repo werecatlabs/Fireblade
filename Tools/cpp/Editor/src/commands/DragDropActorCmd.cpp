@@ -74,6 +74,32 @@ namespace fb
                             }
 
                             scene->removeActor( dragSrcActor );
+                            if( dropDstActor->getParent() == dragSrcActor )
+                            {
+                                auto srcParent = dropDstActor->getParent();
+                                if( srcParent )
+                                {
+                                    srcParent->removeChild( dropDstActor );
+                                }
+
+                                auto dstParent = dropDstActor->getParent();
+                                if( dstParent )
+                                {
+                                    dstParent->removeChild( dropDstActor );
+                                }
+
+                                auto parent = dragSrcActor->getParent();
+                                if( !parent )
+                                {
+                                    FB_ASSERT(dropDstActor->getParent() == nullptr);
+                                    scene->addActor( dropDstActor );
+                                }
+                                else
+                                {
+                                    parent->addChild( dropDstActor );
+                                }
+                            }
+
                             dropDstActor->addChild( dragSrcActor );
                         }
                     }

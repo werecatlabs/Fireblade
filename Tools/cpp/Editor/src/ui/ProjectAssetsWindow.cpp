@@ -310,7 +310,7 @@ namespace fb
 
             auto job = fb::make_ptr<BuildTreeJob>();
             job->setOwner( this );
-            jobQueue->queueJob( job );
+            jobQueue->addJob( job );
         }
 
         void ProjectAssetsWindow::buildTree()
@@ -387,103 +387,7 @@ namespace fb
                 FB_LOG_EXCEPTION( e );
             }
         }
-
-        void ProjectAssetsWindow::handleTreeSelectionChanged()
-        {
-            // try
-            //{
-            //	//if(m_tree->HasFocus())
-            //	{
-            //		wxTreeItemId selectedId = event.GetItem();
-            //		if (!selectedId)
-            //		{
-            //			return;
-            //		}
-
-            //		if (selectedId.IsOk())
-            //		{
-            //			m_lastSelectedItem = selectedId;
-            //		}
-
-            //		auto editorManager = EditorManager::getSingletonPtr();
-            //		auto ui = editorManager->getUI();
-
-            //		auto project = editorManager->getProject();
-            //		auto data = (ProjectTreeData*)m_tree->GetItemData(selectedId);
-            //		if (data)
-            //		{
-            //			if (data->getOwnerType() == ("entity"))
-            //			{
-            //				SmartPtr<EntityTemplate> entityTemplate = data->getOwnerData();
-            //				editorManager->getProject()->setSelectedEntityTemplate(entityTemplate);
-            //			}
-            //			else if (data->getOwnerType() == "folder")
-            //			{
-            //				auto path = data->getObjectType();
-            //				project->setSelectedProjectPath(path);
-
-            //				auto fileWindow = ui->getFileWindow();
-            //				if (fileWindow)
-            //				{
-            //					fileWindow->buildTree();
-            //				}
-            //			}
-            //			else if (data->getObjectType() == ("mesh"))
-            //			{
-            //				SmartPtr<MeshTemplate> meshTemplate = data->getObjectData();
-
-            //				SmartPtr<SceneViewManager> meshViewManager =
-            // editorManager->getSceneViewManager();
-            // meshViewManager->setMeshTemplate(meshTemplate);
-            //			}
-            //			else
-            //			{
-            //				editorManager->getProject()->setSelectedEntityTemplate(nullptr);
-            //			}
-            //		}
-
-            //		//wxTreeItemId parentId = m_tree->GetItemParent(selectedId);
-            //		//if(!parentId)
-            //		//	return;
-
-            //		//wxString parentType = m_tree->GetItemText(parentId);
-            //		//wxString componentName = m_tree->GetItemText(selectedId);
-
-            //		EntityTreeItemSelectedPtr msg(new EntityTreeItemSelected);
-
-            //		//msg->setComponentType(parentType.mb_str().data());
-            //		//msg->setComponentName(componentName.mb_str().data());
-
-            //		if (data)
-            //		{
-            //			m_selectedObject = data->getObjectData();
-
-            //			const String& editableType = m_selectedObject->getEditableType();
-            //			if (editableType == ("EntityTemplate"))
-            //			{
-            //				m_selectedEntity = m_selectedObject;
-            //			}
-
-            //			msg->setSelectedObject(m_selectedObject);
-            //		}
-            //		else
-            //		{
-            //			m_selectedObject = nullptr;
-            //		}
-
-            //		editorManager->getMessageManager()->postMessage(msg);
-            //	}
-            //}
-            // catch (Exception& e)
-            //{
-            //	wxMessageBox(e.what());
-            //}
-            // catch (std::exception& e)
-            //{
-            //	wxMessageBox(e.what());
-            //}
-        }
-
+        
         void ProjectAssetsWindow::handleTreeSelectionActivated( SmartPtr<ui::IUITreeNode> node )
         {
             auto applicationManager = core::IApplicationManager::instance();
@@ -579,139 +483,17 @@ namespace fb
 
             uiManager->rebuildSceneTree();
         }
-
-        void ProjectAssetsWindow::OnContextMenu()
-        {
-            // wxTreeItemId itemId = event.GetItem();
-
-            //// select the item so the context menu functions works fine
-            // if (itemId.IsOk())
-            //	m_tree->SelectItem(itemId);
-
-            // ProjectTreeData* data = (ProjectTreeData*)m_tree->GetItemData(itemId);
-            // if (data != NULL)
-            //{
-            //	wxMenu* menu = data->getContextMenu();
-            //	if (menu)
-            //		m_tree->PopupMenu(menu);
-            //	else
-            //		m_tree->PopupMenu(m_defaultMenu);
-            // }
-            // else
-            //{
-            //	m_tree->PopupMenu(m_defaultMenu);
-            // }
-
-            // event.Skip();
-        }
-
-        void ProjectAssetsWindow::OnActivateItem()
-        {
-            // if (m_tree->HasFocus())
-            //{
-            //	wxTreeItemId selectedId = m_tree->GetSelection();
-            //	if (!selectedId)
-            //		return;
-
-            //	wxTreeItemId parentId = m_tree->GetItemParent(selectedId);
-            //	if (!parentId)
-            //		return;
-
-            //	wxString parentType = m_tree->GetItemText(parentId);
-            //	wxString componentName = m_tree->GetItemText(selectedId);
-
-            //	if (parentType.length() == 0 || componentName.length() == 0)
-            //		return;
-
-            //	ProjectTreeData* projectTreeData = (ProjectTreeData*)m_tree->GetItemData(selectedId);
-            //	if (projectTreeData)
-            //	{
-            //		auto appRoot = IApplicationManager::instance();
-            //		EntityTreeItemActivatedPtr msg(new EntityTreeItemActivated);
-
-            //		String componentType;
-
-            //		String ext = Path::getFileExtension(componentName.mb_str().data());
-            //		if (ext == (".lua"))
-            //		{
-            //			componentType = "Script";
-            //		}
-            //		else if (ext == (".gui"))
-            //		{
-            //			componentType = "GUI";
-
-            //			//appRoot->getSceneViewManager()->addOverlay(componentName.mb_str().data());
-            //		}
-            //		else
-            //		{
-            //			componentType = parentType.mb_str().data();
-            //		}
-
-            //		msg->setComponentType(componentType);
-            //		msg->setComponentName(componentName.mb_str().data());
-            //		msg->setObject(projectTreeData->getObjectData());
-            //		//appRoot->getMessageManager()->postMessage(msg);
-            //	}
-            //}
-        }
-
+        
         void ProjectAssetsWindow::saveTreeState()
         {
-            //// clear map
-            // treeState.clear();
-
-            //// reset selected item
-            // m_newSelectedItem = NULL;
-
-            // wxTreeItemId itemId = m_tree->GetRootItem();
-            // String parent = "";
-            // if (itemId)
-            //	saveItemState(parent, itemId);
         }
 
         void ProjectAssetsWindow::saveItemState()
         {
-            //// make item name
-            // String itemName = String(m_tree->GetItemText(itemId));
-            // if (parent != "")
-            //	itemName = parent + "/" + itemName;
-
-            //// get expanded state
-            // bool isExpanded = false;
-            // if (m_tree->ItemHasChildren(itemId))
-            //	isExpanded = m_tree->IsExpanded(itemId);
-
-            ////get selected state
-            // if (m_tree->IsSelected(itemId))
-            //	m_newSelectedItem = itemId;
-
-            //// add item to map
-            // treeState.insert(std::map<String, bool>::value_type(itemName, isExpanded));
-
-            //// parse childes
-            // wxTreeItemIdValue cookie;
-            // wxTreeItemId childrenItem = m_tree->GetFirstChild(itemId, cookie);
-            // while (childrenItem.IsOk())
-            //{
-            //	saveItemState(itemName, childrenItem);
-            //	childrenItem = m_tree->GetNextChild(itemId, cookie);
-            // }
         }
 
         void ProjectAssetsWindow::restoreTreeState()
         {
-            // wxTreeItemId itemId = m_tree->GetRootItem();
-
-            //// restore items
-            // String parent = "";
-            // if (itemId)
-            //	restoreItemState(parent, itemId, false);
-
-            // if (m_newSelectedItem)
-            //{
-            //	m_tree->EnsureVisible(m_newSelectedItem);
-            //	m_tree->SelectItem(m_newSelectedItem);
-            // }
         }
 
         SmartPtr<ui::IUIWindow> ProjectAssetsWindow::getParentWindow() const
@@ -726,45 +508,6 @@ namespace fb
 
         void ProjectAssetsWindow::restoreItemState()
         {
-            //// make item name
-            // String itemName = String(m_tree->GetItemText(itemId));
-            // if (parent != "")
-            //	itemName = parent + "/" + itemName;
-
-            //// get item state from map
-            // int state = getItemState(itemName);
-
-            // bool isExpanded = false;
-            // bool showItem = false;
-            // if (state != TREE_ITEM_STATE_NOT_FOUND)
-            //{
-            //	isExpanded = (state == TREE_ITEM_STATE_EXPANDED) ? true : false;
-            //	parentWasNew = false;
-            // }
-            // else
-            //{
-            //	showItem = parentWasNew ? false : true;
-            //	parentWasNew = true;
-            // }
-
-            //// set item state
-            // if (isExpanded)
-            //	m_tree->Expand(itemId);
-
-            //// show item
-            // if (showItem)
-            //{
-            //	m_newSelectedItem = itemId;
-            // }
-
-            //// parse childes
-            // wxTreeItemIdValue cookie;
-            // wxTreeItemId childrenItem = m_tree->GetFirstChild(itemId, cookie);
-            // while (childrenItem.IsOk())
-            //{
-            //	restoreItemState(itemName, childrenItem, parentWasNew);
-            //	childrenItem = m_tree->GetNextChild(itemId, cookie);
-            // }
         }
 
         String ProjectAssetsWindow::getSelectedPath() const
@@ -795,14 +538,6 @@ namespace fb
             }
 
             return TREE_ITEM_STATE_NOT_FOUND;
-        }
-
-        ProjectAssetsWindow::TreeCtrlListener::TreeCtrlListener()
-        {
-        }
-
-        ProjectAssetsWindow::TreeCtrlListener::~TreeCtrlListener()
-        {
         }
 
         Parameter ProjectAssetsWindow::TreeCtrlListener::handleEvent(
@@ -928,14 +663,6 @@ namespace fb
         void ProjectAssetsWindow::WindowListener::setOwner( ProjectAssetsWindow *val )
         {
             m_owner = val;
-        }
-
-        ProjectAssetsWindow::DragSource::DragSource()
-        {
-        }
-
-        ProjectAssetsWindow::DragSource::~DragSource()
-        {
         }
 
         Parameter ProjectAssetsWindow::DragSource::handleEvent(
@@ -1139,14 +866,6 @@ namespace fb
         void ProjectAssetsWindow::DropTarget::setOwner( ProjectAssetsWindow *owner )
         {
             m_owner = owner;
-        }
-
-        ProjectAssetsWindow::BuildTreeJob::BuildTreeJob()
-        {
-        }
-
-        ProjectAssetsWindow::BuildTreeJob::~BuildTreeJob()
-        {
         }
 
         void ProjectAssetsWindow::BuildTreeJob::execute()

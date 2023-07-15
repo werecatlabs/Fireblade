@@ -8,7 +8,6 @@
 #include "jobs/JobSaveTree.h"
 #include "commands/AddNewScriptCmd.h"
 #include "ui/ProjectWindow.h"
-#include "ui/ApplicationFrame.h"
 #include "ui/UIManager.h"
 #include <FBApplication/FBApplication.h>
 #include <FBCore/FBCore.h>
@@ -90,7 +89,7 @@ namespace fb
             SmartPtr<JobOpenScript> jobOpenScript( new JobOpenScript );
             jobOpenScript->setPrimary( true );
             //jobOpenScript->setScriptTemplate( jobGenerateScript->getScriptTemplate() );
-            applicationManager->getJobQueue()->queueJob( jobOpenScript );
+            applicationManager->getJobQueue()->addJob( jobOpenScript );
         }
 
         //--------------------------------------------

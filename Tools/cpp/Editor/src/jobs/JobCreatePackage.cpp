@@ -2,7 +2,6 @@
 #include "jobs/JobCreatePackage.h"
 #include "commands/AddNewScriptCmd.h"
 #include "ui/ProjectWindow.h"
-#include "ui/ApplicationFrame.h"
 #include "editor/EditorManager.h"
 #include <FBApplication/FBApplication.h>
 #include <FBCore/FBCore.h>

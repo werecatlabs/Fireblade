@@ -292,31 +292,37 @@ namespace fb
                 case scene::ITransform::Type::LocalPosition:
                 {
                     transform->setLocalPosition( value );
+                    transform->setDirty( true );
                 }
                 break;
                 case scene::ITransform::Type::LocalRotation:
                 {
                     transform->setLocalRotation( value );
+                    transform->setDirty( true );
                 }
                 break;
                 case scene::ITransform::Type::LocalScale:
                 {
                     transform->setLocalScale( value );
+                    transform->setDirty( true );
                 }
                 break;
                 case scene::ITransform::Type::Position:
                 {
                     transform->setPosition( value );
+                    transform->setLocalDirty( true );
                 }
                 break;
                 case scene::ITransform::Type::Rotation:
                 {
                     transform->setRotation( value );
+                    transform->setLocalDirty( true );
                 }
                 break;
                 case scene::ITransform::Type::Scale:
                 {
                     transform->setScale( value );
+                    transform->setLocalDirty( true );
                 }
                 break;
                 default:

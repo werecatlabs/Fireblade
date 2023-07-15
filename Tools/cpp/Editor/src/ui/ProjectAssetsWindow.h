@@ -57,8 +57,8 @@ namespace fb
             class TreeCtrlListener : public SharedObject<IEventListener>
             {
             public:
-                TreeCtrlListener();
-                ~TreeCtrlListener() override;
+                TreeCtrlListener() = default;
+                ~TreeCtrlListener() override = default;
 
                 Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
                                        const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
@@ -91,8 +91,8 @@ namespace fb
             class DragSource : public SharedObject<ui::IUIDragSource>
             {
             public:
-                DragSource();
-                ~DragSource() override;
+                DragSource() = default;
+                ~DragSource() override = default;
 
                 Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
                                        const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
@@ -131,8 +131,8 @@ namespace fb
             class BuildTreeJob : public Job
             {
             public:
-                BuildTreeJob();
-                ~BuildTreeJob() override;
+                BuildTreeJob() = default;
+                ~BuildTreeJob() override = default;
 
                 void execute() override;
 
@@ -146,12 +146,9 @@ namespace fb
 
             void buildTree();
 
-            void handleTreeSelectionChanged();
-
             void handleTreeSelectionActivated( SmartPtr<ui::IUITreeNode> node );
             void handleTreeNodeDoubleClicked( SmartPtr<ui::IUITreeNode> node );
-
-            void OnContextMenu();
+            
             void OnActivateItem();
 
             int getItemState( String itemName );

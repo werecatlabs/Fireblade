@@ -4,7 +4,6 @@
 #include <editor/EditorManager.h>
 #include "editor/Project.h"
 #include "ui/ProjectWindow.h"
-#include "ui/ApplicationFrame.h"
 #include "ui/UIManager.h"
 #include <FBApplication/Script/ScriptGenerator.h>
 #include <FBCore/FBCore.h>

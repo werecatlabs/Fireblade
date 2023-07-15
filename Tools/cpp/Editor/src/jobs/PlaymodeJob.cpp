@@ -21,6 +21,8 @@ namespace fb
         {
             try
             {
+                std::cout << "PlaymodeJob::execute" << std::endl;
+
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
@@ -91,6 +93,8 @@ namespace fb
                 {
                     cameraManager->play();
                 }
+
+                std::cout << "PlaymodeJob::execute end" << std::endl;
             }
             catch( Exception &e )
             {

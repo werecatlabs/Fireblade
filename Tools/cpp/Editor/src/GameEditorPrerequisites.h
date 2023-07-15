@@ -16,7 +16,9 @@ namespace fb
     namespace editor
     {
 
-        // forward decs
+        class SceneDropJob;
+        class SceneWindow;
+
         class AboutDialog;
         class ActorWindow;
         class ApplicationFrame;

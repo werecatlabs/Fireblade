@@ -9,7 +9,6 @@ namespace fb
 {
     namespace editor
     {
-        
         class ProjectWindow : public BaseWindow
         {
         public:
@@ -94,7 +93,7 @@ namespace fb
             };
 
             ProjectWindow();
-            ~ProjectWindow();
+            ~ProjectWindow() override;
 
             /** @copydoc ISharedObject::load */
             void load( SmartPtr<ISharedObject> data ) override;
@@ -102,48 +101,22 @@ namespace fb
             /** @copydoc ISharedObject::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            void update( time_interval t, time_interval dt );
-
-            // void addFolderToTree(wxTreeItemId parent, SmartPtr<IFolderExplorer> listing);
-
             void buildTree();
 
-            void saveTreeState();
-
-            void restoreTreeState();
-
-            bool isValid() const;
+            bool isValid() const override;
 
         protected:
-            void handleTreeSelectionChanged();
-
-            void OnContextMenu();
-
-            void OnActivateItem();
-
-            void populateCameras();
-
-            void populateApplication();
-
-            void populateProjectResources();
-
             int getItemState( String itemName );
-
-            void saveItemState();
-
-            void restoreItemState();
 
             SmartPtr<ProjectAssetsWindow> m_projectAssetsWindow;
             SmartPtr<FileWindow> m_fileWindow;
 
             SmartPtr<ISharedObject> m_selectedObject;
             SmartPtr<ISharedObject> m_selectedEntity;
-            //SmartPtr<TemplateFilter> m_parentFilter;
 
             std::map<String, bool> treeState;
         };
-
-    }  // end namespace editor
-}  // end namespace fb
+    } // end namespace editor
+}     // end namespace fb
 
 #endif  // EntityWindow_h__

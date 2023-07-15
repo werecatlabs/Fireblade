@@ -25,27 +25,6 @@ namespace fb
             m_entitiesPath( StringUtil::EmptyString ),
             m_version( StringUtil::EmptyString )
         {
-            // try
-            //{
-            //	m_label = DEFAULT_PROJECT_NAME;
-            //	m_scriptsPath = DEFAULT_SCRIPTS_PATH;
-            //	m_entitiesPath = DEFAULT_ENTITIES_PATH;
-            //	m_version = DEFAULT_VERSION;
-
-            //	setCameraManagerTemplate(SmartPtr<CameraManagerTemplate>(new CameraManagerTemplate));
-
-            //	setResourcesetTemplate(SmartPtr<ResourceSetTemplate>(new ResourceSetTemplate));
-
-            //	setApplicationTemplate(SmartPtr<ApplicationTemplate>(new ApplicationTemplate));
-            //	addCoreComponents();
-
-            //	addDefaultTasks();
-            //	addDefaultScript();
-            //}
-            // catch (std::exception& e)
-            //{
-            //	wxMessageBox(e.what());
-            //}
         }
 
         Project::~Project()
