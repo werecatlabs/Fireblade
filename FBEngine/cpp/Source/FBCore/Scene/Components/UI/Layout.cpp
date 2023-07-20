@@ -177,7 +177,8 @@ namespace fb
             {
                 if( auto transform = actor->getComponent<LayoutTransform>() )
                 {
-                    transform->setSize( Vector2F( m_referenceSize.X(), m_referenceSize.Y() ) );
+                    auto sz = Vector2F( (f32)m_referenceSize.X(), (f32)m_referenceSize.Y() );
+                    transform->setSize( sz );
                 }
             }
         }

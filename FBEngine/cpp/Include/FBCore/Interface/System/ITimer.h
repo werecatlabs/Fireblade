@@ -130,7 +130,7 @@ namespace fb
          */
         virtual void resetSmoothing() = 0;
 
-         /**
+        /**
          * @brief Gets the tick count for the specified task.
          * @return The tick count as an unsigned 32-bit integer.
          */

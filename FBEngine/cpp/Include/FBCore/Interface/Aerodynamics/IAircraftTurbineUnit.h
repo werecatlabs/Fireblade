@@ -6,6 +6,7 @@
 
 namespace fb
 {
+
     class IAircraftTurbineUnit : public IVehicleComponent
     {
     public:
@@ -29,6 +30,7 @@ namespace fb
 
         virtual Vector3<real_Num> getThrust() const = 0;
     };
+
 }  // end namespace fb
 
 #endif  //  IAircraftTurbineUnit_h__

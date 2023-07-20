@@ -8,7 +8,7 @@ namespace fb
 {
     namespace render
     {
-        
+
         class IAnimationState : public ISharedObject
         {
         public:

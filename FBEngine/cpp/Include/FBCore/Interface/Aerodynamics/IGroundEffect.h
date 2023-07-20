@@ -5,7 +5,7 @@
 
 namespace fb
 {
-    //-------------------------------------------------
+
     class IGroundEffect : public IVehicleComponent
     {
     public:

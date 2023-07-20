@@ -82,7 +82,7 @@ namespace fb
         void *_createArrayById( hash64 typeId, u32 numElements, u32 &objectSize ) override;
 
         /** @copydoc IFactoryManager::setPoolSize */
-        void setPoolSize( hash64 typeId, u32 size ) override;
+        void setPoolSize( hash64 typeId, size_t size ) override;
 
         FB_CLASS_REGISTER_DECL;
 

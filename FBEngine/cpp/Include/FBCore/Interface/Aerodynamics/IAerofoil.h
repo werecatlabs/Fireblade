@@ -7,7 +7,7 @@
 
 namespace fb
 {
-    //-------------------------------------------------
+
     /** Interface for an aerofoil class. */
     class IAerofoil : public ISharedObject
     {
@@ -34,6 +34,7 @@ namespace fb
         virtual bool getReverseValues() const = 0;
         virtual void setReverseValues( bool val ) = 0;
     };
+
 }  // end namespace fb
 
 #endif  // IAerofoil_h__

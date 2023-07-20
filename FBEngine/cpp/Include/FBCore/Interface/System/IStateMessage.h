@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     /// An interface for a state message.
     class IStateMessage : public ISharedObject
     {

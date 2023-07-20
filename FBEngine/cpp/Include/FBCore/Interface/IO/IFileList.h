@@ -148,4 +148,4 @@ namespace fb
     };
 }  // end namespace fb
 
-#endif // IFileList_h__
+#endif  // IFileList_h__

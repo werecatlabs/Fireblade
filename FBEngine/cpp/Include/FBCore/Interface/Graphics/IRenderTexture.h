@@ -7,7 +7,7 @@ namespace fb
 {
     namespace render
     {
-        
+
         /** Interface to manage a render texture. */
         class IRenderTexture : public IRenderTarget
         {

@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    //---------------------------------------------
+
     class IAnimationTrack : public ISharedObject
     {
     public:
@@ -130,6 +130,7 @@ namespace fb
         /** Returns the parent Animation object for this track. */
         virtual IAnimation *getParent() const = 0;
     };
+
 }  // end namespace fb
 
 #endif  // IAnimationTrack_h__

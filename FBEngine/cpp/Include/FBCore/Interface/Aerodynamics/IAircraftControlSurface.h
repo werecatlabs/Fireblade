@@ -7,7 +7,7 @@
 
 namespace fb
 {
-    
+
     class IAircraftControlSurface : public IVehicleComponent
     {
     public:
@@ -91,6 +91,7 @@ namespace fb
         virtual real_Num getTipHingeDistanceFromTrailingEdge() const = 0;
         virtual void setTipHingeDistanceFromTrailingEdge( real_Num val ) = 0;
     };
+
 }  // namespace fb
 
 #endif  // IAircraftControlSurface_h__

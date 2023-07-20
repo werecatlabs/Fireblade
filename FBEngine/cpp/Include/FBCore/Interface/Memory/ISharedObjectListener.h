@@ -16,7 +16,8 @@ namespace fb
         virtual ~ISharedObjectListener() = default;
 
         /** Loading state changed event. */
-        virtual void loadingStateChanged(ISharedObject* sharedObject, LoadingState oldState, LoadingState newState) = 0;
+        virtual void loadingStateChanged( ISharedObject *sharedObject, LoadingState oldState,
+                                          LoadingState newState ) = 0;
 
         /** Function to destroy shared object listener.
         @param ptr A pointer to the object.

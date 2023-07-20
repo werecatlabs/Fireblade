@@ -2,7 +2,7 @@
 #define ITest_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/IObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/StringTypes.h>
 
 namespace fb
@@ -52,6 +52,6 @@ namespace fb
          */
         virtual void setName( const String &name ) = 0;
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif  // ITest_h__

@@ -164,7 +164,7 @@ namespace fb
              * @return An array of SmartPtrs to components of the specified type.
              */
             virtual Array<SmartPtr<IComponent>> getComponents( u32 type ) const = 0;
-                        
+
             /** Gets the list of types to ignore. */
             virtual Array<String> getComponentFactoryIgnoreList() const = 0;
 

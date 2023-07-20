@@ -1,7 +1,6 @@
 #ifndef IScriptGenerator_h__
 #define IScriptGenerator_h__
 
-
 #include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb
@@ -18,6 +17,4 @@ namespace fb
 
 }  // end namespace fb
 
-
-#endif // IScriptGenerator_h__
-
+#endif  // IScriptGenerator_h__

@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    //---------------------------------------------
+
     class IAnimationInterface : public ISharedObject
     {
     public:

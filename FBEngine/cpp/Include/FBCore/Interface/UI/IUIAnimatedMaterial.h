@@ -7,7 +7,7 @@ namespace fb
 {
     namespace ui
     {
-        
+
         class IUIAnimatedMaterial : public IUIElement
         {
         public:

@@ -22,6 +22,6 @@ namespace fb
          */
         virtual void setPan( f32 pan ) = 0;
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif

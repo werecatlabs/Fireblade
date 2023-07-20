@@ -1,34 +1,6 @@
 #ifndef __FB_MemoryTracker_h__
 #define __FB_MemoryTracker_h__
 
-/*
------------------------------------------------------------------------------
-This source file is part of OGRE
-(Object-oriented Graphics Rendering Engine)
-For the latest info, see http://www.ogre3d.org/
-
-Copyright (c) 2000-2013 Torus Knot Software Ltd
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
------------------------------------------------------------------------------
-*/
-
 #include <FBCore/FBCoreConfig.h>
 #include <FBCore/Thread/Threading.h>
 #include <FBCore/Core/StringTypes.h>
@@ -46,17 +18,21 @@ namespace fb
     class MemoryTracker
     {
     public:
-        // ctor
+        /** Default constructor. */
         MemoryTracker();
+
+        /** Destructor. */
         ~MemoryTracker();
 
+        /** Report any memory leaks to the default output (usually stderr)
+         */
         void reportLeaks();
 
         /** Set the name of the report file that will be produced on exit. */
         void setReportFileName( const String &name );
 
-        /// Return the name of the file which will contain the report at exit
-        const String &getReportFileName() const;
+        /** Return the name of the file which will contain the report at exit */
+        String getReportFileName() const;
 
         /// Sets whether the memory report should be sent to stdout
         void setReportToStdOut( bool rep );
@@ -79,8 +55,8 @@ namespace fb
             @param ln The line on which the allocation is being made
             @param func The function in which the allocation is being made
         */
-        void _recordAlloc( void *ptr, size_t sz, u32 pool = 0, const char *file = 0, size_t ln = 0,
-                           const char *func = 0 );
+        void _recordAlloc( void *ptr, size_t sz, u32 pool = 0, const c8 *file = nullptr, size_t ln = 0,
+                           const c8 *func = nullptr );
 
         /** Record the deallocation of memory. */
         void _recordDealloc( void *ptr );
@@ -95,13 +71,13 @@ namespace fb
         static MemoryTracker &get();
 
     protected:
-        RecursiveMutex m_mutex;  
+        mutable RecursiveMutex m_mutex;
 
         // Allocation record
         struct Alloc
         {
             Alloc();
-            Alloc( size_t sz, unsigned int p, const char *file, size_t ln, const char *func );
+            Alloc( size_t sz, u32 p, const c8 *file, size_t ln, const c8 *func );
 
             u32 pool;
             size_t bytes;
@@ -117,11 +93,8 @@ namespace fb
 
         String m_fileName;
 
-        typedef std::unordered_map<void *, Alloc> AllocationMap;
-        AllocationMap m_allocations;
-
-        typedef Array<size_t> AllocationsByPool;
-        AllocationsByPool m_allocationsByPool;
+        std::unordered_map<void *, Alloc> m_allocations;
+        Array<size_t> m_allocationsByPool;
     };
 
 #endif

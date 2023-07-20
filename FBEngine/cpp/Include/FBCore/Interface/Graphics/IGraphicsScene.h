@@ -28,7 +28,7 @@ namespace fb
             /** Fog modes. */
             enum FogMode
             {
-                /// No fog. 
+                /// No fog.
                 FOG_NONE,
                 /// Fog density increases  exponentially from the camera (fog = 1/e^(distance * density))
                 FOG_EXP,
@@ -298,7 +298,7 @@ namespace fb
             /** Adds a graphics object.
              * @paramt T The type of the graphics object.
              */
-            template<class T>
+            template <class T>
             SmartPtr<T> addGraphicsObjectByType();
 
             FB_CLASS_REGISTER_DECL;

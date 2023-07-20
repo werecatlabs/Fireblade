@@ -6,6 +6,7 @@
 
 namespace fb
 {
+
     /** Use to animate an object.
      */
     class IAnimator : public ISharedObject

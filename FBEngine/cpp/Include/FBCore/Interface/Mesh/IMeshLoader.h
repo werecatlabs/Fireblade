@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     /// Interface for a mesh loader.
     class IMeshLoader : public ISharedObject
     {

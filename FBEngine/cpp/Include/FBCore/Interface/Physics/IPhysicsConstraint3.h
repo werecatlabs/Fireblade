@@ -57,7 +57,7 @@ namespace fb
              * @param actor The actor whose local pose to set.
              * @param localPose The local pose to set.
              */
-            virtual void setLocalPose( PxJointActorIndex::Enum actor,
+            virtual void setLocalPose( JointActorIndex::Enum actor,
                                        const Transform3<real_Num> &localPose ) = 0;
 
             /**
@@ -66,7 +66,7 @@ namespace fb
              * @param actor The actor whose local pose to get.
              * @return Transform3<real_Num> The local pose of the joint actor.
              */
-            virtual Transform3<real_Num> getLocalPose( PxJointActorIndex::Enum actor ) const = 0;
+            virtual Transform3<real_Num> getLocalPose( JointActorIndex::Enum actor ) const = 0;
 
             /**
              * @brief Set a constraint flag.
@@ -74,14 +74,14 @@ namespace fb
              * @param flag The flag to set.
              * @param value The value to set the flag to.
              */
-            virtual void setConstraintFlag( PxConstraintFlag::Enum flag, bool value ) = 0;
+            virtual void setConstraintFlag( ConstraintFlag::Enum flag, bool value ) = 0;
 
             /**
              * @brief Get the constraint flags.
              *
              * @return PxConstraintFlag::Enum The constraint flags.
              */
-            virtual PxConstraintFlag::Enum getConstraintFlags() const = 0;
+            virtual ConstraintFlag::Enum getConstraintFlags() const = 0;
 
             /**
              * @brief Set the force at which the constraint should break.

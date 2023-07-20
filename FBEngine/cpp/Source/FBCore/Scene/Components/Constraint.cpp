@@ -84,14 +84,14 @@ namespace fb
                 switch( transX )
                 {
                 case 'L':
-                    d6joint->setMotion( physics::PxD6Axis::eX, physics::PxD6Motion::eLOCKED );
+                    d6joint->setMotion( physics::D6Axis::eX, physics::D6Motion::eLOCKED );
                     break;
                 case 'F':
-                    d6joint->setMotion( physics::PxD6Axis::eX, physics::PxD6Motion::eFREE );
+                    d6joint->setMotion( physics::D6Axis::eX, physics::D6Motion::eFREE );
                     break;
                 case 'R':
                 {
-                    d6joint->setMotion( physics::PxD6Axis::eX, physics::PxD6Motion::eLIMITED );
+                    d6joint->setMotion( physics::D6Axis::eX, physics::D6Motion::eLIMITED );
                     d6joint->setLinearLimit(
                         physicsManager->createConstraintLinearLimit( tLimits.x, tLimits.y ) );
                 }
@@ -101,13 +101,13 @@ namespace fb
                 switch( transY )
                 {
                 case 'L':
-                    d6joint->setMotion( physics::PxD6Axis::eY, physics::PxD6Motion::eLOCKED );
+                    d6joint->setMotion( physics::D6Axis::eY, physics::D6Motion::eLOCKED );
                     break;
                 case 'F':
-                    d6joint->setMotion( physics::PxD6Axis::eY, physics::PxD6Motion::eFREE );
+                    d6joint->setMotion( physics::D6Axis::eY, physics::D6Motion::eFREE );
                     break;
                 case 'R':
-                    d6joint->setMotion( physics::PxD6Axis::eY, physics::PxD6Motion::eLIMITED );
+                    d6joint->setMotion( physics::D6Axis::eY, physics::D6Motion::eLIMITED );
                     d6joint->setLinearLimit(
                         physicsManager->createConstraintLinearLimit( tLimits.x, tLimits.y ) );
                     break;
@@ -116,13 +116,13 @@ namespace fb
                 switch( transZ )
                 {
                 case 'L':
-                    d6joint->setMotion( physics::PxD6Axis::eZ, physics::PxD6Motion::eLOCKED );
+                    d6joint->setMotion( physics::D6Axis::eZ, physics::D6Motion::eLOCKED );
                     break;
                 case 'F':
-                    d6joint->setMotion( physics::PxD6Axis::eZ, physics::PxD6Motion::eFREE );
+                    d6joint->setMotion( physics::D6Axis::eZ, physics::D6Motion::eFREE );
                     break;
                 case 'R':
-                    d6joint->setMotion( physics::PxD6Axis::eZ, physics::PxD6Motion::eLIMITED );
+                    d6joint->setMotion( physics::D6Axis::eZ, physics::D6Motion::eLIMITED );
                     d6joint->setLinearLimit(
                         physicsManager->createConstraintLinearLimit( tLimits.x, tLimits.y ) );
                     break;
@@ -131,10 +131,10 @@ namespace fb
                 switch( constraintType[3] )
                 {
                 case 'L':
-                    d6joint->setMotion( physics::PxD6Axis::eTWIST, physics::PxD6Motion::eLOCKED );
+                    d6joint->setMotion( physics::D6Axis::eTWIST, physics::D6Motion::eLOCKED );
                     break;
                 case 'F':
-                    d6joint->setMotion( physics::PxD6Axis::eTWIST, physics::PxD6Motion::eFREE );
+                    d6joint->setMotion( physics::D6Axis::eTWIST, physics::D6Motion::eFREE );
                     break;
                 case 'R':
                 {
@@ -433,15 +433,15 @@ namespace fb
             auto d6joint = getD6Joint();
             if( d6joint )
             {
-                d6joint->setLocalPose( physics::PxJointActorIndex::eACTOR0, localPose0 );
-                d6joint->setLocalPose( physics::PxJointActorIndex::eACTOR1, localPose1 );
+                d6joint->setLocalPose( physics::JointActorIndex::eACTOR0, localPose0 );
+                d6joint->setLocalPose( physics::JointActorIndex::eACTOR1, localPose1 );
             }
 
             auto fixedJoint = getFixedJoint();
             if( fixedJoint )
             {
-                fixedJoint->setLocalPose( physics::PxJointActorIndex::eACTOR0, localPose0 );
-                fixedJoint->setLocalPose( physics::PxJointActorIndex::eACTOR1, localPose1 );
+                fixedJoint->setLocalPose( physics::JointActorIndex::eACTOR0, localPose0 );
+                fixedJoint->setLocalPose( physics::JointActorIndex::eACTOR1, localPose1 );
             }
         }
 
@@ -467,18 +467,18 @@ namespace fb
                     bodyA ? bodyA->getRigidDynamic() : nullptr, transformA,
                     bodyB ? bodyB->getRigidDynamic() : nullptr, transformB );
 
-                m_positionJoint->setMotion( physics::PxD6Axis::eX, physics::PxD6Motion::eLOCKED );
-                m_positionJoint->setMotion( physics::PxD6Axis::eY, physics::PxD6Motion::eFREE );
-                m_positionJoint->setMotion( physics::PxD6Axis::eZ, physics::PxD6Motion::eLOCKED );
+                m_positionJoint->setMotion( physics::D6Axis::eX, physics::D6Motion::eLOCKED );
+                m_positionJoint->setMotion( physics::D6Axis::eY, physics::D6Motion::eFREE );
+                m_positionJoint->setMotion( physics::D6Axis::eZ, physics::D6Motion::eLOCKED );
 
-                m_positionJoint->setMotion( physics::PxD6Axis::eSWING1, physics::PxD6Motion::eLOCKED );
-                m_positionJoint->setMotion( physics::PxD6Axis::eSWING2, physics::PxD6Motion::eLOCKED );
-                m_positionJoint->setMotion( physics::PxD6Axis::eTWIST, physics::PxD6Motion::eFREE );
+                m_positionJoint->setMotion( physics::D6Axis::eSWING1, physics::D6Motion::eLOCKED );
+                m_positionJoint->setMotion( physics::D6Axis::eSWING2, physics::D6Motion::eLOCKED );
+                m_positionJoint->setMotion( physics::D6Axis::eTWIST, physics::D6Motion::eFREE );
 
                 constexpr auto maxForce = std::numeric_limits<f32>::max();
                 m_positionJoint->setBreakForce( maxForce, maxForce );
 
-                m_positionJoint->setConstraintFlag( physics::PxConstraintFlag::eVISUALIZATION, true );
+                m_positionJoint->setConstraintFlag( physics::ConstraintFlag::eVISUALIZATION, true );
 
                 m_bodyA = bodyA;
                 m_bodyB = bodyB;
@@ -712,18 +712,18 @@ namespace fb
                 physics->d6JointCreate( bodyA ? bodyA->getRigidDynamic() : nullptr, transformA,
                                         bodyB ? bodyB->getRigidDynamic() : nullptr, transformB );
 
-            m_positionJoint->setMotion( physics::PxD6Axis::eX, physics::PxD6Motion::eLOCKED );
-            m_positionJoint->setMotion( physics::PxD6Axis::eY, physics::PxD6Motion::eFREE );
-            m_positionJoint->setMotion( physics::PxD6Axis::eZ, physics::PxD6Motion::eLOCKED );
+            m_positionJoint->setMotion( physics::D6Axis::eX, physics::D6Motion::eLOCKED );
+            m_positionJoint->setMotion( physics::D6Axis::eY, physics::D6Motion::eFREE );
+            m_positionJoint->setMotion( physics::D6Axis::eZ, physics::D6Motion::eLOCKED );
 
-            m_positionJoint->setMotion( physics::PxD6Axis::eSWING1, physics::PxD6Motion::eLOCKED );
-            m_positionJoint->setMotion( physics::PxD6Axis::eSWING2, physics::PxD6Motion::eLOCKED );
-            m_positionJoint->setMotion( physics::PxD6Axis::eTWIST, physics::PxD6Motion::eFREE );
+            m_positionJoint->setMotion( physics::D6Axis::eSWING1, physics::D6Motion::eLOCKED );
+            m_positionJoint->setMotion( physics::D6Axis::eSWING2, physics::D6Motion::eLOCKED );
+            m_positionJoint->setMotion( physics::D6Axis::eTWIST, physics::D6Motion::eFREE );
 
             auto maxForce = std::numeric_limits<f32>::max();
             m_positionJoint->setBreakForce( maxForce, maxForce );
 
-            m_positionJoint->setConstraintFlag( physics::PxConstraintFlag::eVISUALIZATION, true );
+            m_positionJoint->setConstraintFlag( physics::ConstraintFlag::eVISUALIZATION, true );
 
             m_bodyA = bodyA;
             m_bodyB = bodyB;
@@ -1829,7 +1829,7 @@ namespace fb
         {
             if( m_d6joint )
             {
-                u32 val = ( m_d6joint->getConstraintFlags() & physics::PxConstraintFlag::eBROKEN );
+                u32 val = ( m_d6joint->getConstraintFlags() & physics::ConstraintFlag::eBROKEN );
                 if( val != 0 )
                 {
                     return true;
@@ -1917,7 +1917,7 @@ namespace fb
         //	//}
         // }
 
-        void Constraint::setLocalPosition( physics::PxJointActorIndex::Enum actor,
+        void Constraint::setLocalPosition( physics::JointActorIndex::Enum actor,
                                            const Vector3<real_Num> &pos )
         {
             // if (m_d6joint)
@@ -1942,7 +1942,7 @@ namespace fb
             // }
         }
 
-        Transform3<real_Num> Constraint::getLocalPose( physics::PxJointActorIndex::Enum actor ) const
+        Transform3<real_Num> Constraint::getLocalPose( physics::JointActorIndex::Enum actor ) const
         {
             // auto physicsScene = getScene();
             // FB_STATE_PXSCENE_WRITE_LOCK(physicsScene);
@@ -1965,7 +1965,7 @@ namespace fb
             return Transform3<real_Num>();
         }
 
-        void Constraint::setLocalPose( physics::PxJointActorIndex::Enum actor,
+        void Constraint::setLocalPose( physics::JointActorIndex::Enum actor,
                                        const Transform3<real_Num> &localPose )
         {
             // auto physicsScene = getScene();
@@ -2002,7 +2002,7 @@ namespace fb
             return nullptr;
         }
 
-        void Constraint::setMotion( physics::PxD6Axis::Enum axis, physics::PxD6Motion::Enum type )
+        void Constraint::setMotion( physics::D6Axis::Enum axis, physics::D6Motion::Enum type )
         {
             // if (m_positionJoint)
             //{
@@ -2361,12 +2361,12 @@ namespace fb
             // JOB_END()
         }
 
-        physics::PxConstraintFlag::Enum Constraint::FlagSetJob::getFlag() const
+        physics::ConstraintFlag::Enum Constraint::FlagSetJob::getFlag() const
         {
             return m_flag;
         }
 
-        void Constraint::FlagSetJob::setFlag( physics::PxConstraintFlag::Enum val )
+        void Constraint::FlagSetJob::setFlag( physics::ConstraintFlag::Enum val )
         {
             m_flag = val;
         }

@@ -9,7 +9,7 @@ namespace fb
 {
     namespace physics
     {
-        
+
         /** A physics manager class to manager 2d physics. */
         class IPhysicsManager2D : public ISharedObject
         {

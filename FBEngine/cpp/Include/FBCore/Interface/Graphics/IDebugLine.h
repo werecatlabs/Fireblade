@@ -9,7 +9,7 @@ namespace fb
 {
     namespace render
     {
-        
+
         /** Interface for a debug line. */
         class IDebugLine : public ISharedObject
         {

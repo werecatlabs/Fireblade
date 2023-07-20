@@ -7,7 +7,7 @@ namespace fb
 {
     namespace ui
     {
-        //---------------------------------------------
+        /** Interface for a search bar. */
         class IUISearchBar : public IUIElement
         {
         public:
@@ -16,6 +16,7 @@ namespace fb
 
             FB_CLASS_REGISTER_DECL;
         };
+
     }  // end namespace ui
 }  // end namespace fb
 

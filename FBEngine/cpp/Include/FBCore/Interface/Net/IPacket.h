@@ -9,7 +9,7 @@
 
 namespace fb
 {
-    //---------------------------------------------
+
     class IPacket : public ISharedObject
     {
     public:
@@ -56,6 +56,7 @@ namespace fb
 
         virtual SmartPtr<ISystemAddress> getSystemAddress() const = 0;
     };
+
 }  // end namespace fb
 
 #endif

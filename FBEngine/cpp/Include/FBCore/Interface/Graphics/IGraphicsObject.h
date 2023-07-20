@@ -11,7 +11,7 @@ namespace fb
 {
     namespace render
     {
-        
+
         /** Interface for a class that can be attached to a scene node.
          */
         class IGraphicsObject : public ISharedObject

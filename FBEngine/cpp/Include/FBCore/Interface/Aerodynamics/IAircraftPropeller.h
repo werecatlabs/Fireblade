@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    //-------------------------------------------------
+
     class IAircraftPropeller : public IVehicleComponent
     {
     public:
@@ -33,6 +33,7 @@ namespace fb
         virtual real_Num getSideThrust() const = 0;
         virtual void setSideThrust( real_Num val ) = 0;
     };
+
 }  // end namespace fb
 
 #endif  // IAircraftPropeller_h__

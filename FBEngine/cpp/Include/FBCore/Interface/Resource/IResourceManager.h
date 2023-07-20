@@ -8,7 +8,7 @@
 
 namespace fb
 {
-    
+
     /** Interface for a resource manager. */
     class IResourceManager : public ISharedObject
     {

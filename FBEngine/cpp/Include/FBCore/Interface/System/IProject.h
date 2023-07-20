@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     class IProject : public ISharedObject
     {
     public:

@@ -8,7 +8,7 @@ namespace fb
 {
     namespace physics
     {
-        
+
         class IBoxShape2 : public IPhysicsShape2
         {
         public:
@@ -18,6 +18,7 @@ namespace fb
 
             FB_CLASS_REGISTER_DECL;
         };
+
     }  // end namespace physics
 }  // end namespace fb
 

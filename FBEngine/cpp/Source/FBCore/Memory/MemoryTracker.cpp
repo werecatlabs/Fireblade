@@ -1,31 +1,3 @@
-/*
------------------------------------------------------------------------------
-This source file is part of OGRE
-(Object-oriented Graphics Rendering Engine)
-For the latest info, see http://www.ogre3d.org/
-
-Copyright (c) 2000-2013 Torus Knot Software Ltd
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
------------------------------------------------------------------------------
-*/
-
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/FBCoreConfig.h>
 #include <FBCore/Memory/MemoryTracker.h>
@@ -52,7 +24,6 @@ namespace fb
 {
 #if FB_ENABLE_MEMORY_TRACKER
 
-    //-----------------------------------------------
     MemoryTracker::MemoryTracker() :
         m_fileName( "MemoryLeaks.log" ),
         m_dumpToStdOut( true ),
@@ -61,33 +32,29 @@ namespace fb
     {
     }
 
-    //-----------------------------------------------
     MemoryTracker::~MemoryTracker()
     {
         reportLeaks();
     }
 
-    //-----------------------------------------------
     bool MemoryTracker::getRecordEnable() const
     {
         return m_recordEnable;
     }
 
-    //-----------------------------------------------
     MemoryTracker &MemoryTracker::get()
     {
         static MemoryTracker tracker;
         return tracker;
     }
 
-    //-----------------------------------------------
     void MemoryTracker::_recordAlloc( void *ptr, size_t sz, unsigned int pool, const char *file,
                                       size_t ln, const char *func )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         if( m_recordEnable )
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );  
-
             // FB_ASSERT(mAllocations.find(ptr) == mAllocations.end() && "Double allocation with same
             // address - " 	"this probably means you have a mismatched allocation / deallocation style, "
             //	"check if you're are using OGRE_ALLOC_T / OGRE_FREE and OGRE_NEW_T / OGRE_DELETE_T
@@ -101,9 +68,10 @@ namespace fb
         }
     }
 
-    //-----------------------------------------------
     void MemoryTracker::_recordDealloc( void *ptr )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         if( m_recordEnable )
         {
             // deal cleanly with null pointers
@@ -112,9 +80,7 @@ namespace fb
                 return;
             }
 
-            RecursiveMutex::ScopedLock lock( m_mutex );  
-
-            AllocationMap::iterator i = m_allocations.find( ptr );
+            auto i = m_allocations.find( ptr );
             FB_ASSERT( i != m_allocations.end() &&
                        "Unable to locate allocation unit - "
                        "this probably means you have a mismatched allocation / deallocation style, "
@@ -128,45 +94,40 @@ namespace fb
         }
     }
 
-    //-----------------------------------------------
     void MemoryTracker::setRecordEnable( bool recordEnable )
     {
         m_recordEnable = recordEnable;
     }
 
-    //-----------------------------------------------
-    const String &MemoryTracker::getReportFileName() const
+    String MemoryTracker::getReportFileName() const
     {
         return m_fileName;
     }
 
-    //-----------------------------------------------
     void MemoryTracker::setReportToStdOut( bool rep )
     {
         m_dumpToStdOut = rep;
     }
 
-    //-----------------------------------------------
     bool MemoryTracker::getReportToStdOut() const
     {
         return m_dumpToStdOut;
     }
 
-    //-----------------------------------------------
     size_t MemoryTracker::getTotalMemoryAllocated() const
     {
         return m_totalAllocations;
     }
 
-    //-----------------------------------------------
     size_t MemoryTracker::getMemoryAllocatedForPool( u32 pool ) const
     {
         return m_allocationsByPool[pool];
     }
 
-    //-----------------------------------------------
     void MemoryTracker::reportLeaks()
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         if( m_recordEnable )
         {
             std::stringstream os;
@@ -182,8 +143,7 @@ namespace fb
                    << m_totalAllocations << " bytes." << std::endl;
                 os << "Memory: Dumping allocations -> " << std::endl;
 
-                for( AllocationMap::const_iterator i = m_allocations.begin(); i != m_allocations.end();
-                     ++i )
+                for( auto i = m_allocations.begin(); i != m_allocations.end(); ++i )
                 {
                     os << std::endl;
 
@@ -214,14 +174,12 @@ namespace fb
         }
     }
 
-    //-----------------------------------------------
     void MemoryTracker::setReportFileName( const String &name )
     {
         m_fileName = name;
     }
 
-    //-----------------------------------------------
-    MemoryTracker::Alloc::Alloc( size_t sz, u32 p, const char *file, size_t ln, const char *func ) :
+    MemoryTracker::Alloc::Alloc( size_t sz, u32 p, const c8 *file, size_t ln, const c8 *func ) :
         bytes( sz ),
         pool( p ),
         line( ln )
@@ -237,7 +195,6 @@ namespace fb
         }
     }
 
-    //-----------------------------------------------
     MemoryTracker::Alloc::Alloc() : bytes( 0 ), line( 0 )
     {
     }

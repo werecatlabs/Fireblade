@@ -10,20 +10,19 @@
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Core/Handle.h>
-#include <FBCore/Interface/System/IEventListener.h>
-#include <FBCore/Interface/IApplicationManager.h>
+
+#if FB_ENABLE_TRACE
+#    include <boost/stacktrace.hpp>
+#endif
+
+#if FB_ENABLE_MEMORY_TRACKER
+#    include <FBCore/Memory/MemoryTracker.h>
+#endif
 
 namespace fb
 {
     FB_CLASS_REGISTER( fb, IObject );
 
-    void IObject::setUserData( hash32 id, void *userData )
-    {
-    }
-
-    void IObject::setUserData( void *data )
-    {
-    }
 
     void IObject::preUpdate()
     {
@@ -34,6 +33,14 @@ namespace fb
     }
 
     void IObject::postUpdate()
+    {
+    }
+
+    void IObject::setUserData( hash32 id, void *userData )
+    {
+    }
+
+    void IObject::setUserData( void *data )
     {
     }
 
@@ -56,7 +63,7 @@ namespace fb
     {
     }
 
-    fb::hash32 IObject::getFactoryData() const
+    hash32 IObject::getFactoryData() const
     {
         return 0;
     }
@@ -65,7 +72,7 @@ namespace fb
     {
     }
 
-    fb::String IObject::toString() const
+    String IObject::toString() const
     {
         return "";
     }
@@ -307,4 +314,4 @@ namespace fb
 #    endif
     }
 #endif
-}  // end namespace fb
+} // end namespace fb

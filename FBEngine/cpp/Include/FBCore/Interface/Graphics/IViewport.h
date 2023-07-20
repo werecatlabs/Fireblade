@@ -79,7 +79,7 @@ namespace fb
              * @param size The size to set.
              */
             virtual void setSize( const Vector2F &size ) = 0;
-            
+
             /**
              * Sets the initial background colour of the viewport (before rendering).
              *
@@ -101,7 +101,7 @@ namespace fb
              * @param buffers Which buffers to clear (colour, depth, stencil).
              */
             virtual void setClearEveryFrame( bool clear, u32 buffers = IGraphicsScene::FBT_COLOUR |
-                                                 IGraphicsScene::FBT_DEPTH ) = 0;
+                                                                       IGraphicsScene::FBT_DEPTH ) = 0;
 
             /**
              * Determines if the viewport is cleared before every frame.
@@ -213,7 +213,7 @@ namespace fb
 
             FB_CLASS_REGISTER_DECL;
         };
-    } // end namespace render
-}     // end namespace fb
+    }  // end namespace render
+}  // end namespace fb
 
 #endif

@@ -8,7 +8,7 @@ namespace fb
 {
     namespace render
     {
-        
+
         /** Interface for a frustum used in culling. */
         class IFrustum : public IGraphicsObject
         {

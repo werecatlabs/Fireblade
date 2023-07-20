@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     class IScriptBind : public ISharedObject
     {
     public:

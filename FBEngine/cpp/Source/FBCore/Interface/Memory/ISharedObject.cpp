@@ -36,32 +36,10 @@ namespace fb
         }
     }
 
-    s32 ISharedObject::getWeakReferences() const
-    {
-        return *m_weakReferences;
-    }
-
     s32 ISharedObject::addWeakReference( void *address, const c8 *file, u32 line, const c8 *func )
     {
 #if FB_TRACK_REFERENCES
 #    if FB_TRACK_WEAK_REFERENCES
-        auto &objectTracker = ObjectTracker::instance();
-        objectTracker.addRef( this, address, file, line, func );
-#    endif
-#endif
-
-        return ++( *m_weakReferences );
-    }
-
-    s32 ISharedObject::addWeakReference()
-    {
-#if FB_TRACK_REFERENCES
-#    if FB_TRACK_WEAK_REFERENCES
-        auto address = (void *)this;
-        const c8 *file = __FILE__;
-        const u32 line = __LINE__;
-        const c8 *func = __FUNCTION__;
-
         auto &objectTracker = ObjectTracker::instance();
         objectTracker.addRef( this, address, file, line, func );
 #    endif
@@ -101,34 +79,6 @@ namespace fb
         return --( *m_weakReferences ) == 0;
     }
 
-    s32 ISharedObject::addReference()
-    {
-#if FB_TRACK_REFERENCES
-#    if FB_TRACK_STRONG_REFERENCES
-        auto &gc = GarbageCollector::instance();
-        auto references = gc.addReference( SharedObject<T>::typeInfo(), m_objectId );
-
-        // FB_ASSERT( isGarbageCollected() && references > 0 );
-        FB_ASSERT( references < 1e10 );
-
-        auto address = (void *)this;
-        const c8 *file = __FILE__;
-        const u32 line = __LINE__;
-        const c8 *func = __FUNCTION__;
-
-        auto &objectTracker = ObjectTracker::instance();
-        objectTracker.addRef( this, address, file, line, func );
-
-        return references;
-#    else
-        auto &gc = GarbageCollector::instance();
-        return gc.addReference( SharedObject<T>::typeInfo(), m_objectId );
-#    endif
-#else
-        return ++( *m_references );
-#endif
-    }
-
     bool ISharedObject::removeReference( void *address, const c8 *file, const u32 line, const c8 *func )
     {
 #if FB_TRACK_REFERENCES
@@ -138,8 +88,9 @@ namespace fb
 
         if( --( *m_references ) == 0 )
         {
+            auto typeInfo = getTypeInfo();
             auto &gc = GarbageCollector::instance();
-            gc.destroyObject( getTypeInfo(), m_objectId );
+            gc.destroyObject( typeInfo, m_objectId );
         }
 
         return *m_references == 0;
@@ -167,12 +118,6 @@ namespace fb
         }
 
         return false;
-    }
-
-    s32 ISharedObject::getReferences() const
-    {
-        FB_ASSERT( m_references );
-        return *m_references;
     }
 
     s32 ISharedObject::addReference( void *address, const c8 *file, const u32 line, const c8 *func )

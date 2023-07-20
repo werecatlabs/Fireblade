@@ -1,6 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/Terrain/TerrainBlendMap.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Graphics/ITerrainBlendMap.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {

@@ -9,7 +9,7 @@ namespace fb
 {
     namespace render
     {
-        
+
         /** The class is used to control animations for a mesh graphics object.
          */
         class IAnimationController : public ISharedObject

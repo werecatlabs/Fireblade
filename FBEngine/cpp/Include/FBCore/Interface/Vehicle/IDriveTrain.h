@@ -7,7 +7,7 @@
 
 namespace fb
 {
-    
+
     /** Interface for a vehicle drive train. */
     class IDriveTrain : public IVehicleComponent
     {

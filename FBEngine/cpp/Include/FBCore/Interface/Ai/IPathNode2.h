@@ -7,7 +7,7 @@
 
 namespace fb
 {
-    
+
     class IPathNode2 : public ISharedObject
     {
     public:

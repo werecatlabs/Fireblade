@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     /** Interface for a job queue class. */
     class IJobQueue : public ISharedObject
     {

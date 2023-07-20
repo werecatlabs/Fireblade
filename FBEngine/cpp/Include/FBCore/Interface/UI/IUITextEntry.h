@@ -7,7 +7,7 @@ namespace fb
 {
     namespace ui
     {
-        
+
         class IUITextEntry : public IUIElement
         {
         public:

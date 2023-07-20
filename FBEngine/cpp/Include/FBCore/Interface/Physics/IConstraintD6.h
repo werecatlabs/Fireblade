@@ -39,7 +39,7 @@ namespace fb
              * @param index The index of the drive to set.
              * @param drive The drive to set.
              */
-            virtual void setDrive( PxD6Drive::Enum index, SmartPtr<IConstraintDrive> drive ) = 0;
+            virtual void setDrive( D6Drive::Enum index, SmartPtr<IConstraintDrive> drive ) = 0;
 
             /**
              * @brief Gets the drive for the specified index.
@@ -47,7 +47,7 @@ namespace fb
              * @param index The index of the drive to get.
              * @return The drive for the specified index.
              */
-            virtual SmartPtr<IConstraintDrive> getDrive( PxD6Drive::Enum index ) const = 0;
+            virtual SmartPtr<IConstraintDrive> getDrive( D6Drive::Enum index ) const = 0;
 
             /**
              * @brief Sets the linear limit for the constraint.
@@ -69,7 +69,7 @@ namespace fb
              * @param axis The axis to set the motion for.
              * @param type The motion type to set.
              */
-            virtual void setMotion( PxD6Axis::Enum axis, PxD6Motion::Enum type ) = 0;
+            virtual void setMotion( D6Axis::Enum axis, D6Motion::Enum type ) = 0;
 
             /**
              * @brief Gets the motion type for the specified axis.
@@ -77,7 +77,7 @@ namespace fb
              * @param axis The axis to get the motion type for.
              * @return The motion type for the specified axis.
              */
-            virtual PxD6Motion::Enum getMotion( PxD6Axis::Enum axis ) const = 0;
+            virtual D6Motion::Enum getMotion( D6Axis::Enum axis ) const = 0;
         };
 
     }  // end namespace physics

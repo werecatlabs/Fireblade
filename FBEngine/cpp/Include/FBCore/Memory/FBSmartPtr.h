@@ -475,38 +475,38 @@ namespace fb
     template <class T>
     bool FBSmartPtr<T>::operator==( T *other ) const
     {
-        return get() == other;
+        return m_pointer == other;
     }
 
     template <class T>
     bool FBSmartPtr<T>::operator!=( T *other ) const
     {
-        return get() != other;
+        return m_pointer != other;
     }
 
     template <class T>
     bool FBSmartPtr<T>::operator==( const FBSmartPtr &other ) const
     {
-        return get() == other.get();
+        return m_pointer == other.get();
     }
 
     template <class T>
     bool FBSmartPtr<T>::operator!=( const FBSmartPtr &other ) const
     {
-        return get() != other.get();
+        return m_pointer != other.get();
     }
 
     template <class T>
     bool FBSmartPtr<T>::operator==( const RawPtr<T> &other ) const
     {
-        return get() == other.get();
+        return m_pointer == other.get();
     }
 
     template <class T>
     template <class B>
     bool FBSmartPtr<T>::operator==( const RawPtr<B> &other ) const
     {
-        return get() == other.get();
+        return m_pointer == other.get();
     }
 
     template <class T>

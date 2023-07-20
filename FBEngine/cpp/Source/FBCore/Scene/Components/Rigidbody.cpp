@@ -710,14 +710,19 @@ namespace fb
 
         Vector3<real_Num> Rigidbody::getPointVelocity( const Vector3<real_Num> &point )
         {
-            const auto globalPose = m_rigidDynamic->getTransform();
-            const auto cmassLocalPose = m_rigidDynamic->getCMassLocalPose();
-            const auto centerOfMass = globalPose.transformPoint( cmassLocalPose.getPosition() );
-            const auto rpoint = point - centerOfMass;
+            if( m_rigidDynamic )
+            {
+                const auto globalPose = m_rigidDynamic->getTransform();
+                const auto cmassLocalPose = m_rigidDynamic->getCMassLocalPose();
+                const auto centerOfMass = globalPose.transformPoint( cmassLocalPose.getPosition() );
+                const auto rpoint = point - centerOfMass;
 
-            const auto linearVelocity = getLinearVelocity();
-            const auto angularVelocity = getAngularVelocity();
-            return linearVelocity + angularVelocity.crossProduct( rpoint );
+                const auto linearVelocity = getLinearVelocity();
+                const auto angularVelocity = getAngularVelocity();
+                return linearVelocity + angularVelocity.crossProduct( rpoint );
+            }
+
+            return Vector3<real_Num>::zero();
         }
 
         void Rigidbody::setAngularVelocity( const Vector3<real_Num> &linearVelocity )
@@ -785,24 +790,6 @@ namespace fb
             return m_mass;
         }
 
-        void Rigidbody::setMOI( const Vector3<real_Num> &moi )
-        {
-            if( m_rigidDynamic )
-            {
-                m_rigidDynamic->setMassSpaceInertiaTensor( moi );
-            }
-        }
-
-        Vector3<real_Num> Rigidbody::getMOI() const
-        {
-            if( m_rigidDynamic )
-            {
-                return m_rigidDynamic->getMassSpaceInertiaTensor();
-            }
-
-            return Vector3<real_Num>::zero();
-        }
-
         Vector3<real_Num> Rigidbody::getLocalPointVelocity( const Vector3<real_Num> &point )
         {
             const auto globalPose = m_rigidDynamic->getTransform();
@@ -820,6 +807,11 @@ namespace fb
 
         Vector3<real_Num> Rigidbody::getMassSpaceInertiaTensor() const
         {
+            if( m_rigidDynamic )
+            {
+                return m_rigidDynamic->getMassSpaceInertiaTensor();
+            }
+
             return m_massSpaceInertiaTensor;
         }
 

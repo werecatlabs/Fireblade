@@ -8,7 +8,6 @@
 namespace fb
 {
 
-    //-------------------------------------------------
     class IVideoTexture : public render::ITexture
     {
     public:

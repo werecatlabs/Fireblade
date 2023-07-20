@@ -251,9 +251,11 @@ namespace fb
                                     if( canvas )
                                     {
                                         auto canvasSize = canvas->getReferenceSize();
+                                        auto fCanvasSize =
+                                            Vector2F( (f32)canvasSize.X(), (f32)canvasSize.Y() );
 
-                                        if( !( MathF::equals( canvasSize.X(), 0.0f ) &&
-                                               MathF::equals( canvasSize.Y(), 0.0f ) ) )
+                                        if( !( MathF::equals( (f32)canvasSize.X(), 0.0f ) &&
+                                               MathF::equals( (f32)canvasSize.Y(), 0.0f ) ) )
                                         {
                                             relativePos = Vector2F(
                                                 elementPos.X() / static_cast<f32>( canvasSize.X() ),
@@ -263,10 +265,8 @@ namespace fb
                                                 elementSize.Y() / static_cast<f32>( canvasSize.Y() ) );
                                         }
 
-                                        auto absolutePosition =
-                                            relativePos * Vector2F( canvasSize.X(), canvasSize.Y() );
-                                        auto absoluteSize =
-                                            relativeSize * Vector2F( canvasSize.X(), canvasSize.Y() );
+                                        auto absolutePosition = relativePos * fCanvasSize;
+                                        auto absoluteSize = relativeSize * fCanvasSize;
 
                                         transform.setAbsolutePosition( absolutePosition );
                                         transform.setAbsoluteSize( absoluteSize );

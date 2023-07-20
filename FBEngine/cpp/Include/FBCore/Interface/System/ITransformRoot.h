@@ -14,7 +14,7 @@ namespace fb
         ~ITransformRoot() override = default;
 
         virtual SmartPtr<ITransformManager> createSceneManager( const String &typeName,
-                                                                 const String &instanceName ) = 0;
+                                                                const String &instanceName ) = 0;
         virtual void destroySceneManager( SmartPtr<ITransformManager> sm ) = 0;
         virtual SmartPtr<ITransformManager> getSceneManager( const String &instanceName ) const = 0;
 

@@ -12,7 +12,7 @@ namespace fb
 {
     namespace render
     {
-        
+
         class IMaterialPass : public IMaterialNode
         {
         public:

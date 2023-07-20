@@ -5,7 +5,11 @@
 
 namespace fb
 {
-    //-------------------------------------------------
+
+    /**
+     *        * @brief An interface for a drone.
+     *
+     */
     class IDrone : public IVehicleController
     {
     public:
@@ -17,6 +21,7 @@ namespace fb
         virtual Vector3<real_Num> getDrag() const = 0;
         virtual void setDrag( const Vector3<real_Num> &val ) = 0;
     };
+
 }  // end namespace fb
 
 #endif  // IDrone_h__

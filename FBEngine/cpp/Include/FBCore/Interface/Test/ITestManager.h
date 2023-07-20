@@ -57,6 +57,6 @@ namespace fb
          */
         virtual void setTests( Array<SmartPtr<ITest>> tests ) = 0;
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif  // ITestManager_h__

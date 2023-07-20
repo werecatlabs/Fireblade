@@ -15,7 +15,7 @@ namespace fb
 
         virtual void setFullScreen( bool isFullScreen ) = 0;
         virtual bool isFullScreen() const = 0;
-        
+
         virtual u32 getTargetRate() const = 0;
         virtual void setTargetRate( u32 fps ) = 0;
 

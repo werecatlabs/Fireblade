@@ -5,7 +5,7 @@
 
 namespace fb
 {
-    
+
     class IElectricMotor : public IVehicleComponent
     {
     public:

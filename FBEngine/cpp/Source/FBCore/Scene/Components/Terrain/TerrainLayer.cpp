@@ -1,7 +1,8 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/Terrain/TerrainLayer.h>
 #include <FBCore/Scene/Components/Terrain/TerrainSystem.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Graphics/ITexture.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {

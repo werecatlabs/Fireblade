@@ -26,4 +26,4 @@ namespace fb
     }  // end namespace ui
 }  // end namespace fb
 
-#endif // IUITerrainEditor_h__
+#endif  // IUITerrainEditor_h__

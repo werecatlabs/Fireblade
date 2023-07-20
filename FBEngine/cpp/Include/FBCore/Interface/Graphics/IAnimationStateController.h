@@ -9,7 +9,7 @@ namespace fb
 {
     namespace render
     {
-        
+
         /** The class is used to control animations states.
          */
         class IAnimationStateController : public ISharedObject

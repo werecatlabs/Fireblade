@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     class IAiSensoryMemory : public ISharedObject
     {
     public:

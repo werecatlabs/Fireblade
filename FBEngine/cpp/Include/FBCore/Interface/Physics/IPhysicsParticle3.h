@@ -8,7 +8,7 @@ namespace fb
 {
     namespace physics
     {
-        //-------------------------------------------------
+
         class IPhysicsParticle3 : public IPhysicsBody3
         {
         public:
@@ -25,6 +25,7 @@ namespace fb
 
             FB_CLASS_REGISTER_DECL;
         };
+
     }  // end namespace physics
 }  // end namespace fb
 

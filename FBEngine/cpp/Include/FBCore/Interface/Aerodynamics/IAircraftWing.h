@@ -5,7 +5,7 @@
 
 namespace fb
 {
-    //-------------------------------------------------
+
     /** Interface for an aircraft wing class. */
     class IAircraftWing : public IVehicleComponent
     {

@@ -9,7 +9,7 @@ namespace fb
 {
     namespace physics
     {
-        
+
         /// This holds the mass data computed for a shape.
         class IMassData2 : public ISharedObject
         {

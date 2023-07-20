@@ -45,7 +45,7 @@ namespace fb
         virtual void execute() = 0;
 
         virtual State getState() const = 0;
-        virtual void setState(State state) = 0;
+        virtual void setState( State state ) = 0;
     };
 
 }  // end namespace fb

@@ -119,7 +119,7 @@ namespace fb
     private:
         mutable SpinRWMutex m_mutex;
 
-        SmartPtr<IFSMManager> m_fsmManager;
+        AtomicSmartPtr<IFSMManager> m_fsmManager;
 
         Atomic<State> m_state = State::None;
 

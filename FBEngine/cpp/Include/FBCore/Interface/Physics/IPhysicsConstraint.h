@@ -8,7 +8,7 @@ namespace fb
 {
     namespace physics
     {
-        
+
         class IPhysicsConstraint : public ISharedObject
         {
         public:

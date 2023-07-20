@@ -38,20 +38,29 @@ namespace fb
 
     void Task::unload( SmartPtr<ISharedObject> data )
     {
-        setLoadingState( LoadingState::Unloading );
+        if( isLoaded() )
+        {
+            setLoadingState( LoadingState::Unloading );
 
-        auto applicationManager = core::IApplicationManager::instance();
-        auto taskManager = fb::static_pointer_cast<TaskManager>( applicationManager->getTaskManager() );
+            auto applicationManager = core::IApplicationManager::instance();
+            auto taskManager =
+                fb::static_pointer_cast<TaskManager>( applicationManager->getTaskManager() );
 
-        auto fsmManager = taskManager->getFSMManager();
-        fsmManager->destroyFSM( m_fsm );
+            if( taskManager )
+            {
+                if( auto fsmManager = taskManager->getFSMManager() )
+                {
+                    fsmManager->destroyFSM( m_fsm );
+                }
+            }
 
-        m_fsm = nullptr;
+            m_fsm = nullptr;
 
-        m_profile = nullptr;
-        m_jobs.clear();
+            m_profile = nullptr;
+            m_jobs.clear();
 
-        setLoadingState( LoadingState::Unloaded );
+            setLoadingState( LoadingState::Unloaded );
+        }
     }
 
     void Task::update()

@@ -7,6 +7,7 @@ namespace fb
 {
     namespace physics
     {
+
         /**
          * @brief Interface for a dynamic rigid body.
          */
@@ -160,7 +161,8 @@ namespace fb
 
             FB_CLASS_REGISTER_DECL;
         };
-    } // end namespace physics
-}     // end namespace fb
+
+    }  // end namespace physics
+}  // end namespace fb
 
 #endif  // IRigidDynamic3_h__

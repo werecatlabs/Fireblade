@@ -12,7 +12,7 @@ namespace fb
 {
     namespace physics
     {
-        //-------------------------------------------------
+
         /** An interface for a 2d particle.
          */
         class IPhysicsParticle2 : public IPhysicsBody2D
@@ -28,6 +28,7 @@ namespace fb
 
             FB_CLASS_REGISTER_DECL;
         };
+
     }  // end namespace physics
 }  // end namespace fb
 

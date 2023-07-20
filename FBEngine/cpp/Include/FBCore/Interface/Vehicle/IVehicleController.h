@@ -8,7 +8,7 @@
 
 namespace fb
 {
-    
+
     /** Interface for a vehicle class. */
     class IVehicleController : public ISharedObject
     {

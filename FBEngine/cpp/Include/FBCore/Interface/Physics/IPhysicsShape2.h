@@ -10,14 +10,15 @@ namespace fb
 {
     namespace physics
     {
-        //-------------------------------------------------
+
         class IPhysicsShape2 : public IPhysicsShape
         {
         public:
             ~IPhysicsShape2() override = default;
 
-            virtual const Sphere2<real_Num> &getSphere() const = 0;
-            virtual const AABB2<real_Num> &getAABB() const = 0;
+            virtual Sphere2<real_Num> getSphere() const = 0;
+
+            virtual AABB2<real_Num> getAABB() const = 0;
 
             virtual void getPoints( Array<Vector2<real_Num>> &points ) const = 0;
 

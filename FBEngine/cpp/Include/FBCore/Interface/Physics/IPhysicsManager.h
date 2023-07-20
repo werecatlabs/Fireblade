@@ -139,7 +139,8 @@ namespace fb
             virtual SmartPtr<IConstraintDrive> createConstraintDrive() = 0;
 
             /** Creates a constraint linear limit. */
-            virtual SmartPtr<IConstraintLinearLimit> createConstraintLinearLimit(real_Num extent, real_Num contactDist = real_Num(-1.0)) = 0;
+            virtual SmartPtr<IConstraintLinearLimit> createConstraintLinearLimit(
+                real_Num extent, real_Num contactDist = real_Num( -1.0 ) ) = 0;
 
             /** Creates raycast hit data. */
             virtual SmartPtr<IRaycastHit> createRaycastHitData() = 0;

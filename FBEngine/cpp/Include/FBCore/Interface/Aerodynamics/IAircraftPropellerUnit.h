@@ -6,6 +6,7 @@
 
 namespace fb
 {
+
     class IAircraftPropellerUnit : public IVehicleComponent
     {
     public:
@@ -33,6 +34,7 @@ namespace fb
         virtual Vector3<real_Num> getPropwash() const = 0;
         virtual void setPropwash( const Vector3<real_Num> &propwash ) = 0;
     };
+
 }  // end namespace fb
 
 #endif  // IAircraftPropellerUnit_h__

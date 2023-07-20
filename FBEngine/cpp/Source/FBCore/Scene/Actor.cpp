@@ -2262,6 +2262,12 @@ namespace fb
             properties->getPropertyValue( "label", name );
             setName( name );
 
+            if (name == "Vehicle")
+            {
+                int a = 0;
+                a = 0;
+            }
+
             bool bIsStatic = false;
             properties->getPropertyValue( "static", bIsStatic );
             setStatic( bIsStatic );

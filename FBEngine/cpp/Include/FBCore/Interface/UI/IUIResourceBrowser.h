@@ -7,6 +7,7 @@ namespace fb
 {
     namespace ui
     {
+
         /** Interface for a resource browser. */
         class IUIResourceBrowser : public IUIDialogBox
         {
@@ -16,6 +17,7 @@ namespace fb
 
             FB_CLASS_REGISTER_DECL;
         };
+
     }  // end namespace ui
 }  // end namespace fb
 

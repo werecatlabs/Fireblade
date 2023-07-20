@@ -7,6 +7,7 @@ namespace fb
 {
     namespace ui
     {
+
         /**
          * @class IUIPropertyGrid
          * @brief Interface for a UI Property Grid, extending IUIElement and providing functionality to manage and display properties

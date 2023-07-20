@@ -38,12 +38,13 @@ namespace fb
 
     private:
         void *m_windowHandle = nullptr;
-        u32 m_message = 0;
+        void *m_event = nullptr;
+        void *m_self = nullptr;
+
         size_t m_wParam = 0;
         size_t m_lParam = 0;
 
-        void *m_event = nullptr;
-        void *m_self = nullptr;
+        u32 m_message = 0;
     };
 }  // end namespace fb
 

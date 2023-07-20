@@ -8,7 +8,7 @@
 
 namespace fb
 {
-    
+
     class IAiSteering3 : public ISharedObject
     {
     public:

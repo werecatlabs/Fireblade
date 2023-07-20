@@ -7,7 +7,7 @@ namespace fb
 {
     namespace physics
     {
-        
+
         class IConstraintFixed3 : public IPhysicsConstraint3
         {
         public:

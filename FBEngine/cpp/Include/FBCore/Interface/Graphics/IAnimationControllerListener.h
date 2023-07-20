@@ -9,7 +9,7 @@ namespace fb
 {
     namespace render
     {
-        
+
         class IAnimationControllerListener : public ISharedObject
         {
         public:

@@ -476,13 +476,12 @@ namespace fb
          */
         static Quaternion<T> getRotationTo( const Vector3<T> &src, const Vector3<T> &dest,
                                             const Vector3<T> &fallbackAxis = Vector3<T>::zero() );
-
+        T w;  //!< The w component of the quaternion.
         T x;  //!< The x component of the quaternion.
         T y;  //!< The y component of the quaternion.
         T z;  //!< The z component of the quaternion.
-        T w;  //!< The w component of the quaternion.
     };
-    
+
     template <typename T>
     Quaternion<T>::Quaternion() : x( T( 0.0 ) ), y( T( 0.0 ) ), z( T( 0.0 ) ), w( T( 1.0 ) )
     {
@@ -686,7 +685,7 @@ namespace fb
     {
         FB_ASSERT( i >= 0 );
         FB_ASSERT( i <= 3 );
-        return ( &x )[i];
+        return ( &w )[i];
     }
 
     template <typename T>
@@ -694,7 +693,7 @@ namespace fb
     {
         FB_ASSERT( i >= 0 );
         FB_ASSERT( i <= 3 );
-        return ( &x )[i];
+        return ( &w )[i];
     }
 
     template <typename T>
@@ -1197,7 +1196,7 @@ namespace fb
         constexpr auto defaultTolerance = std::numeric_limits<T>::epsilon();
         constexpr auto defaultMagnitude = T( 1.0 );
 
-        auto tolerance = defaultTolerance * T( 10.0 ); // Adjust as needed
+        auto tolerance = defaultTolerance * T( 10.0 );  // Adjust as needed
 
         return isFinite() && Math<T>::Abs( magnitude() - defaultMagnitude ) < tolerance;
     }

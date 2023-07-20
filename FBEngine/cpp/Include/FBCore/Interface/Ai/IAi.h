@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     /** A base ai class.
      */
     class IAi : public ISharedObject

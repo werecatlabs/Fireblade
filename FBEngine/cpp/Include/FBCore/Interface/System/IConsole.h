@@ -5,7 +5,7 @@
 
 namespace fb
 {
-    
+
     /** Interface for an interactive console. */
     class IConsole : public ISharedObject
     {

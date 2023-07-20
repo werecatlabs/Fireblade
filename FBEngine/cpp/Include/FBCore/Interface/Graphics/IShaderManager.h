@@ -7,7 +7,7 @@ namespace fb
 {
     namespace render
     {
-        
+
         class IShaderManager : public IResourceManager
         {
         public:

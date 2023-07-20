@@ -11,7 +11,7 @@ namespace fb
 {
     namespace physics
     {
-        
+
         /** Interface for a 3d physics material. */
         class IPhysicsMaterial3 : public ISharedObject
         {

@@ -6,12 +6,14 @@
 
 namespace fb
 {
+
     class ILearning : public ISharedObject
     {
     public:
         /** Virtual destructor. */
         ~ILearning() override = default;
     };
+
 }  // end namespace fb
 
 #endif  // ILearning_h__

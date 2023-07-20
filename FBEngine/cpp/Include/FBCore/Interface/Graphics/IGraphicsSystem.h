@@ -76,7 +76,7 @@ namespace fb
              * @return A pointer to the newly created scene manager.
              */
             virtual SmartPtr<IGraphicsScene> addGraphicsScene( const String &type,
-                                                             const String &name ) = 0;
+                                                               const String &name ) = 0;
 
             /**
              * Gets the default scene manager.

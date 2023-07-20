@@ -21,14 +21,15 @@ namespace fb
         /** The object that owns the invoker. */
         virtual void setOwner( SmartPtr<ISharedObject> owner ) = 0;
 
-         /** Calls an object member. */
+        /** Calls an object member. */
         virtual void callObjectMember( const String &functionName ) = 0;
 
         /** Calls an object member. */
         virtual void callObjectMember( const String &functionName, const Parameters &params ) = 0;
 
         /** Calls an object member. */
-        virtual void callObjectMember( const String &functionName, const Parameters &params, Parameters &results ) = 0;
+        virtual void callObjectMember( const String &functionName, const Parameters &params,
+                                       Parameters &results ) = 0;
 
         /** Calls a script event with the given hash id. */
         virtual void event( hash_type hash ) = 0;

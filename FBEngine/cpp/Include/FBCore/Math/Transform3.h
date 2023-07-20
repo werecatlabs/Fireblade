@@ -60,9 +60,9 @@ namespace fb
 
         /**
          * Sets the position of the transformation.
-         * \param val The new position of the transformation.
+         * \param position The new position of the transformation.
          */
-        void setPosition( const Vector3<T> &val );
+        void setPosition( const Vector3<T> &position );
 
         /**
          * Returns the scale of the transformation.
@@ -72,9 +72,9 @@ namespace fb
 
         /**
          * Sets the scale of the transformation.
-         * \param val The new scale of the transformation.
+         * \param scale The new scale of the transformation.
          */
-        void setScale( const Vector3<T> &val );
+        void setScale( const Vector3<T> &scale );
 
         /**
          * Returns the orientation of the transformation.
@@ -84,9 +84,9 @@ namespace fb
 
         /**
          * Sets the orientation of the transformation.
-         * \param val The new orientation of the transformation.
+         * \param orientation The new orientation of the transformation.
          */
-        void setOrientation( const Quaternion<T> &val );
+        void setOrientation( const Quaternion<T> &orientation );
 
         /**
          * Returns the rotation of the transformation.
@@ -325,11 +325,11 @@ namespace fb
     }
 
     template <class T>
-    void Transform3<T>::setPosition( const Vector3<T> &val )
+    void Transform3<T>::setPosition( const Vector3<T> &position )
     {
         FB_ASSERT( isSane() );
-        FB_ASSERT( val.isFinite() );
-        m_position = val;
+        FB_ASSERT( position.isFinite() );
+        m_position = position;
     }
 
     template <class T>
@@ -340,11 +340,11 @@ namespace fb
     }
 
     template <class T>
-    void Transform3<T>::setScale( const Vector3<T> &val )
+    void Transform3<T>::setScale( const Vector3<T> &scale )
     {
         FB_ASSERT( isSane() );
-        FB_ASSERT( val.isFinite() );
-        m_scale = val;
+        FB_ASSERT( scale.isFinite() );
+        m_scale = scale;
     }
 
     template <class T>
@@ -355,11 +355,11 @@ namespace fb
     }
 
     template <class T>
-    void Transform3<T>::setOrientation( const Quaternion<T> &val )
+    void Transform3<T>::setOrientation( const Quaternion<T> &orientation )
     {
         FB_ASSERT( isSane() );
-        FB_ASSERT( val.isSane() );
-        m_orientation = val;
+        FB_ASSERT( orientation.isSane() );
+        m_orientation = orientation;
     }
 
     template <class T>

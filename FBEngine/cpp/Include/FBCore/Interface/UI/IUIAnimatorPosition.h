@@ -7,7 +7,7 @@ namespace fb
 {
     namespace ui
     {
-        
+
         /** Animates a gui item.
          */
         class IUIAnimatorPosition : public IUIAnimator

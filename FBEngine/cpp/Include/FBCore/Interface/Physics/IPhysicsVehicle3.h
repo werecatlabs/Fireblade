@@ -12,7 +12,7 @@ namespace fb
 {
     namespace physics
     {
-        //-------------------------------------------------
+
         /** */
         class IPhysicsVehicle3 : public ISharedObject
         {
@@ -88,6 +88,7 @@ namespace fb
 
             FB_CLASS_REGISTER_DECL;
         };
+
     }  // end namespace physics
 }  // end namespace fb
 

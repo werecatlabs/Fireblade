@@ -6,13 +6,14 @@
 
 namespace fb
 {
-    //-------------------------------------------------
+
     class IAiTargetingSystem : public ISharedObject
     {
     public:
         /** Virtual destructor. */
         ~IAiTargetingSystem() override = default;
     };
+
 }  // namespace fb
 
 #endif  // IAiTargetingSystem_h__

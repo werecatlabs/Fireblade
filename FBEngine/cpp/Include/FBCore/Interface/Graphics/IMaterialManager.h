@@ -7,7 +7,7 @@ namespace fb
 {
     namespace render
     {
-        
+
         /** Interface for a material manager. */
         class IMaterialManager : public IResourceManager
         {

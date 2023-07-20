@@ -7,7 +7,7 @@ namespace fb
 {
     namespace physics
     {
-        //---------------------------------------------
+
         class ICharacterController3 : public IPhysicsBody3
         {
         public:
@@ -32,6 +32,7 @@ namespace fb
             virtual void setWalkVector( const Vector3F &vector ) = 0;
             virtual void stop() = 0;
         };
+
     }  // end namespace physics
 }  // end namespace fb
 

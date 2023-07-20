@@ -7,7 +7,7 @@
 
 namespace fb
 {
-    
+
     class IAiTargeting3 : public ISharedObject
     {
     public:

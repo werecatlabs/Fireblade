@@ -34,8 +34,9 @@ namespace fb
         {
             setLoadingState( LoadingState::Loading );
 
-            m_fsmManager = fb::make_ptr<FSMManager>();
-            m_fsmManager->load( nullptr );
+            auto fsmManager = fb::make_ptr<FSMManager>();
+            fsmManager->load( nullptr );
+            setFSMManager( fsmManager );
 
             auto count = 0;
             for( auto &task : m_tasks )
@@ -137,7 +138,10 @@ namespace fb
             {
             case Thread::ThreadId::Primary:
             {
-                m_fsmManager->update();
+                if( auto fsmManager = getFSMManager() )
+                {
+                    fsmManager->update();
+                }
             }
             break;
             default:

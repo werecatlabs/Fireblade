@@ -11,7 +11,7 @@
 
 namespace fb
 {
-    //---------------------------------------------
+
     class INetworkManager : public ISharedObject
     {
     public:
@@ -179,6 +179,7 @@ namespace fb
         /** Creates a packet. */
         virtual SmartPtr<IPacket> createPacket() = 0;
     };
+
 }  // end namespace fb
 
 #endif

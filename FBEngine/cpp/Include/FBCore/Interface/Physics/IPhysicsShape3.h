@@ -64,14 +64,14 @@ namespace fb
              *
              * @param data The collision filter data to set for the shape.
              */
-            virtual void setSimulationFilterData( const PxFilterData &data ) = 0;
+            virtual void setSimulationFilterData( const FilterData &data ) = 0;
 
             /**
              * @brief Gets the collision filter data.
              *
              * @return The collision filter data.
              */
-            virtual PxFilterData getSimulationFilterData() const = 0;
+            virtual FilterData getSimulationFilterData() const = 0;
 
             /**
              * @brief Sets the actor this collision shape is attached to.

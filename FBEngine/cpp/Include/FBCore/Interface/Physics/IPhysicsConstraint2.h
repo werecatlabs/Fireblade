@@ -7,7 +7,7 @@ namespace fb
 {
     namespace physics
     {
-        //--------------------------------------------
+
         class IPhysicsConstraint2 : public IPhysicsConstraint
         {
         public:
@@ -19,6 +19,7 @@ namespace fb
             virtual SmartPtr<IPhysicsBody2D> getBodyB() const = 0;
             virtual void setBodyB( SmartPtr<IPhysicsBody2D> val ) = 0;
         };
+
     }  // end namespace physics
 }  // end namespace fb
 

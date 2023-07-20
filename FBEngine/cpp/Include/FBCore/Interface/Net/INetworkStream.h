@@ -6,11 +6,13 @@
 
 namespace fb
 {
+
     class INetworkStream : public ISharedObject
     {
     public:
         ~INetworkStream() override = default;
     };
+
 }  // end namespace fb
 
 #endif  // INetworkStream_h__

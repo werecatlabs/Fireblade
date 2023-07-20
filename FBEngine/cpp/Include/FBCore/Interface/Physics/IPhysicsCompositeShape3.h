@@ -7,7 +7,7 @@ namespace fb
 {
     namespace physics
     {
-        //--------------------------------------------
+
         class IPhysicsCompositeShape3 : public IPhysicsShape3
         {
         public:
@@ -16,6 +16,7 @@ namespace fb
             virtual Array<SmartPtr<IPhysicsShape3>> getShapes() const = 0;
             virtual void setShapes( const Array<SmartPtr<IPhysicsShape3>> &shapes ) = 0;
         };
+
     }  // end namespace physics
 }  // end namespace fb
 

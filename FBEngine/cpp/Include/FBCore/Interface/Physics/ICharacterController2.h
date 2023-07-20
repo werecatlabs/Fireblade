@@ -7,12 +7,13 @@ namespace fb
 {
     namespace physics
     {
-        //---------------------------------------------
+
         class ICharacterController2 : public ISharedObject
         {
         public:
             ~ICharacterController2() override = default;
         };
+
     }  // end namespace physics
 }  // end namespace fb
 

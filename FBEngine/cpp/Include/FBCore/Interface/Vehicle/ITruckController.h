@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     class ITruckController : public IVehicleController
     {
     public:

@@ -7,6 +7,10 @@
 #include <sstream>
 #include <fstream>
 
+#if FB_ENABLE_TRACE
+#    include <boost/stacktrace.hpp>
+#endif
+
 namespace fb
 {
 

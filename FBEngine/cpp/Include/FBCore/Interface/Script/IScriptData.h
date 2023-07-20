@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     /** An interface for an object to store data used by the script system.
      */
     class IScriptData : public ISharedObject

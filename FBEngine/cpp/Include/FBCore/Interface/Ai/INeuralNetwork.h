@@ -1,11 +1,11 @@
 #ifndef INeuralNetwork_h__
 #define INeuralNetwork_h__
 
-#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb
 {
+
     class INeuralNetwork : public ISharedObject
     {
     public:

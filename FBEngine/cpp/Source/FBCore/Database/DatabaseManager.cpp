@@ -565,7 +565,7 @@ namespace fb
         return 0.0f;
     }
 
-    void DatabaseManager::optmise()
+    void DatabaseManager::optimise()
     {
         RecursiveMutex::ScopedLock lock( m_mutex );  
 

@@ -7,12 +7,14 @@ namespace fb
 {
     namespace ui
     {
+
         class IUIScrollingText : public IUIElement
         {
         public:
             /** Destructor. */
             ~IUIScrollingText() override = default;
         };
+
     }  // end namespace ui
 }  // end namespace fb
 

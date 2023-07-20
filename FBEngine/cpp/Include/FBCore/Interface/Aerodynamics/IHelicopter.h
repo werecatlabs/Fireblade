@@ -5,12 +5,13 @@
 
 namespace fb
 {
-    //-------------------------------------------------
+
     class IHelicopter : public IVehicleController
     {
     public:
         ~IHelicopter() override = default;
     };
+
 }  // end namespace fb
 
 #endif  // IHelicopter_h__

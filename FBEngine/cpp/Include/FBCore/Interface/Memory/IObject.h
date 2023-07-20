@@ -234,7 +234,7 @@ namespace fb
 
     protected:
         Handle *m_handle = nullptr;
-        atomic_u8 *m_flags = nullptr;    
+        atomic_u8 *m_flags = nullptr;
     };
 }  // end namespace fb
 

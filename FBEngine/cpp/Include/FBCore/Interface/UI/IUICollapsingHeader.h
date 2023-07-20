@@ -18,7 +18,4 @@ namespace fb
     }  // end namespace ui
 }  // end namespace fb
 
-
-#endif // IUICollapsingHeader_h__
-
-
+#endif  // IUICollapsingHeader_h__

@@ -20,7 +20,7 @@ namespace fb
          * Sub components should provide their own implementation for the methods defined here.
          *
          * @author Zane Desir
-         * @version 1.0           
+         * @version 1.0
          */
         class ISubComponent : public IResource
         {

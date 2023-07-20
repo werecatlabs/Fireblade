@@ -1,7 +1,8 @@
-#ifndef TaskLock_h__
-#define TaskLock_h__
+#ifndef __FB_TaskLock_h__
+#define __FB_TaskLock_h__
 
 #include <FBCore/FBCorePrerequisites.h>
+#include <FBCore/Memory/SmartPtr.h>
 
 namespace fb
 {

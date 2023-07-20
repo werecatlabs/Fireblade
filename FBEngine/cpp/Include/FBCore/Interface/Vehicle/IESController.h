@@ -5,7 +5,7 @@
 
 namespace fb
 {
-    
+
     class IESController : public IVehicleComponent
     {
     public:

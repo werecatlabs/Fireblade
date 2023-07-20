@@ -9,7 +9,7 @@ namespace fb
 {
     namespace render
     {
-        
+
         /** Manages billboards. */
         class IBillboardSet : public IGraphicsObject
         {

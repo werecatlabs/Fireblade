@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     class ICommandManagerListener : public ISharedObject
     {
     public:

@@ -11,7 +11,7 @@ namespace fb
 {
     namespace physics
     {
-        
+
         /** A body that interacts in the physics world.
          */
         class IPhysicsBody3 : public ISharedObject
@@ -38,10 +38,10 @@ namespace fb
             virtual Transform3<real_Num> getTransform() const = 0;
 
             /** Sets an actor flag. */
-            virtual void setActorFlag( PxActorFlag::Enum flag, bool value ) = 0;
+            virtual void setActorFlag( ActorFlag::Enum flag, bool value ) = 0;
 
             /** Gets the actor flags. */
-            virtual PxActorFlag::Enum getActorFlags() const = 0;
+            virtual ActorFlag::Enum getActorFlags() const = 0;
 
             /** Gets the body's mass. */
             virtual real_Num getMass() const = 0;

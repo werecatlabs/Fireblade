@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     /** Interface for an aircraft callback class. */
     class IAircraftCallback : public IVehicleCallback
     {
@@ -48,6 +48,7 @@ namespace fb
 
         Vector3<real_Num> getPointVelocity( const Vector3<real_Num> &p ) override = 0;
     };
+
 }  // end namespace fb
 
 #endif  // IAircraftCallback_h__

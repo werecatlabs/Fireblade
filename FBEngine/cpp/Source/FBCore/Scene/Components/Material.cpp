@@ -97,34 +97,6 @@ namespace fb
             }
         }
 
-        void Material::play()
-        {
-            try
-            {
-                updateMaterial();
-                updateImageComponent();
-                updateDependentComponents();
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void Material::edit()
-        {
-            try
-            {
-                updateMaterial();
-                updateImageComponent();
-                updateDependentComponents();
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
         IFSM::ReturnType Material::handleComponentEvent( u32 state, IFSM::Event eventType )
         {
             Component::handleComponentEvent( state, eventType );

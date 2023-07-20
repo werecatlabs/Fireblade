@@ -39,11 +39,11 @@ namespace fb
             {
             public:
                 MaterialSharedListener() = default;
-                ~MaterialSharedListener() = default;
+                ~MaterialSharedListener() override = default;
 
                 Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
                                        const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
-                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
                 void loadingStateChanged( ISharedObject *sharedObject, LoadingState oldState,
                                           LoadingState newState );
@@ -67,7 +67,7 @@ namespace fb
 
             f32 m_distance = 50000.0f;
         };
-    }  // namespace scene
-}  // end namespace fb
+    } // namespace scene
+}     // end namespace fb
 
 #endif  // SkyboxComponent_h__

@@ -8,7 +8,7 @@ namespace fb
 {
     namespace physics
     {
-        
+
         /** Interface for a constraint drive. */
         class IConstraintDrive : public IPhysicsSpring
         {
@@ -23,10 +23,10 @@ namespace fb
             virtual void setForceLimit( real_Num forceLimit ) = 0;
 
             /** Gets the flags. */
-            virtual PxD6JointDriveFlag::Enum getDriveFlags() const = 0;
+            virtual D6JointDriveFlag::Enum getDriveFlags() const = 0;
 
             /** Sets the flags. */
-            virtual void setDriveFlags( PxD6JointDriveFlag::Enum driveFlags ) = 0;
+            virtual void setDriveFlags( D6JointDriveFlag::Enum driveFlags ) = 0;
 
             /** Sets acceleration. */
             virtual void setIsAcceleration( bool acceleration ) const = 0;

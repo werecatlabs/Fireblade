@@ -77,6 +77,7 @@ namespace fb
         virtual real_Num getRollwiseDamping() const = 0;
         virtual void setRollwiseDamping( real_Num rollwiseDamping ) = 0;
     };
+
 }  // end namespace fb
 
 #endif  // IAircraft_h__

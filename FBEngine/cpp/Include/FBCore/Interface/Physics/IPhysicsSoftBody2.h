@@ -11,7 +11,7 @@ namespace fb
 {
     namespace physics
     {
-        //-------------------------------------------------
+
         class IPhysicsSoftBody2 : public ISharedObject
         {
         public:
@@ -25,7 +25,8 @@ namespace fb
 
             FB_CLASS_REGISTER_DECL;
         };
+
     }  // namespace physics
-}  // end namespace fb
+}  // namespace fb
 
 #endif

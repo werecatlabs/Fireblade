@@ -61,7 +61,8 @@ namespace fb
 
         /** Creates an object instance defined in the script and stores the data in ScriptObject for
          * future use. */
-        virtual SmartPtr<IScriptClass> createObject( const String &className, SmartPtr<ISharedObject> object ) = 0;
+        virtual SmartPtr<IScriptClass> createObject( const String &className,
+                                                     SmartPtr<ISharedObject> object ) = 0;
 
         /** Creates an object instance. */
         virtual void *createInstance( const String &className ) = 0;
@@ -74,6 +75,8 @@ namespace fb
 
         /** Reloads the scripts that in the manager. */
         virtual void reloadScripts() = 0;
+
+        virtual bool reloadPending() const = 0;
 
         /** Gets a string containing debug information. */
         virtual String getDebugInfo() = 0;

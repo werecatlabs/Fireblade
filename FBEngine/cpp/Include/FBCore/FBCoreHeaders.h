@@ -453,6 +453,7 @@
 #include <FBCore/Memory/FactoryRegistration.h>
 #include <FBCore/Memory/FactoryTemplate.h>
 #include <FBCore/Memory/FactoryUtil.h>
+#include <FBCore/Memory/MemoryTracker.h>
 
 #include <FBCore/Resource/MeshManager.h>
 #include <FBCore/Resource/PrefabManager.h>

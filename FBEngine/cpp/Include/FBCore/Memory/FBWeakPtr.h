@@ -507,7 +507,7 @@ namespace fb
     template <class T>
     bool FBWeakPtr<T>::operator!=( const FBWeakPtr &other ) const
     {
-        return get() != other.get();
+        return m_pointer != other.get();
     }
 
     template <class T>

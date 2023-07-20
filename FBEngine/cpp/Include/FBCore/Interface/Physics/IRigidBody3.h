@@ -37,14 +37,14 @@ namespace fb
              * @param flag The flag to set.
              * @param value The value to set the flag to.
              */
-            virtual void setRigidBodyFlag( PxRigidBodyFlag::Enum flag, bool value ) = 0;
+            virtual void setRigidBodyFlag( RigidBodyFlag::Enum flag, bool value ) = 0;
 
             /**
              * @brief Gets the rigid body flags.
              *
              * @return The rigid body flags.
              */
-            virtual PxRigidBodyFlag::Enum getRigidBodyFlags() const = 0;
+            virtual RigidBodyFlag::Enum getRigidBodyFlags() const = 0;
 
             /**
              * @brief Adds a shape to the body.

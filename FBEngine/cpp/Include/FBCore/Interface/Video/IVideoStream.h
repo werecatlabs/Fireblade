@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     /** An interface for a video stream class. */
     class IVideoStream : public IVideo
     {

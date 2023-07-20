@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    //---------------------------------------------
+
     class ISystemAddress : public ISharedObject
     {
     public:
@@ -18,6 +18,7 @@ namespace fb
         virtual void setPort( u16 port ) = 0;
         virtual u16 getPort() const = 0;
     };
+
 }  // end namespace fb
 
 #endif

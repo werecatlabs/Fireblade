@@ -12,7 +12,7 @@
 
 namespace fb
 {
-    
+
     class ITransformNode : public ISharedObject
     {
     public:

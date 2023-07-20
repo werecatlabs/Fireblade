@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    //---------------------------------------------
+
     class IAnimationKeyFrame : public ISharedObject
     {
     public:
@@ -15,6 +15,7 @@ namespace fb
         virtual f32 getTime() const = 0;
         virtual void setTime( f32 val ) = 0;
     };
+
 }  // end namespace fb
 
 #endif  // IAnimationKeyFrame_h__

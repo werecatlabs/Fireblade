@@ -6,10 +6,12 @@
 
 namespace fb
 {
+
     class IAnimationMorphKeyFrame : public IAnimationKeyFrame
     {
     public:
     };
+
 }  // end namespace fb
 
 #endif  // IAnimationMorphKeyFrame_h__

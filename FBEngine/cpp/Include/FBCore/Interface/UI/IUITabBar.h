@@ -1,7 +1,6 @@
 #ifndef IUITabBar_h__
 #define IUITabBar_h__
 
-
 #include <FBCore/Interface/UI/IUIElement.h>
 
 namespace fb
@@ -21,4 +20,4 @@ namespace fb
     }  // end namespace ui
 }  // end namespace fb
 
-#endif // IUITabBar_h__
+#endif  // IUITabBar_h__

@@ -7,7 +7,7 @@ namespace fb
 {
     namespace ui
     {
-        
+
         class IUISystemWindow : public IUIElement
         {
         public:

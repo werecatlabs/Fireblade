@@ -131,6 +131,10 @@ namespace fb
              */
             virtual void _getObject( void **ppObject ) const = 0;
 
+            /** Sets a texture layer.
+             * @param layer The layer index.
+             * @param textureName The name of the texture to set.
+             */
             virtual void setTextureLayer( s32 layer, const String &textureName ) = 0;
 
             FB_CLASS_REGISTER_DECL;

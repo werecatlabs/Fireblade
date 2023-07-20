@@ -7,14 +7,6 @@ namespace fb
 {
     namespace physics
     {
-        enum PhysicsShapeType
-        {
-            PST_SPHERE,
-            PST_BOX,
-            PST_POLYGON,
-
-            PST_COUNT
-        };
 
         class PhysicsTypes
         {
@@ -43,7 +35,7 @@ namespace fb
             };
         };
 
-        struct PxConstraintFlag
+        struct ConstraintFlag
         {
             enum Enum
             {
@@ -81,7 +73,7 @@ namespace fb
             };
         };
 
-        struct PxD6Axis
+        struct D6Axis
         {
             enum Enum
             {
@@ -101,7 +93,7 @@ namespace fb
             };
         };
 
-        struct PxJointActorIndex
+        struct JointActorIndex
         {
             enum Enum
             {
@@ -111,7 +103,7 @@ namespace fb
             };
         };
 
-        struct PxD6Drive
+        struct D6Drive
         {
             enum Enum
             {
@@ -131,7 +123,7 @@ namespace fb
             };
         };
 
-        struct PxD6Motion
+        struct D6Motion
         {
             enum Enum
             {
@@ -143,7 +135,7 @@ namespace fb
             };
         };
 
-        struct PxActorFlag
+        struct ActorFlag
         {
             enum Enum
             {
@@ -189,7 +181,7 @@ namespace fb
             };
         };
 
-        struct PxRigidBodyFlag
+        struct RigidBodyFlag
         {
             enum Enum
             {
@@ -263,12 +255,12 @@ namespace fb
             };
         };
 
-        struct PxFilterData
+        struct FilterData
         {
             /**
             \brief Default constructor.
             */
-            PxFilterData()
+            FilterData()
             {
                 word0 = word1 = word2 = word3 = 0;
             }
@@ -276,7 +268,7 @@ namespace fb
             /**
             \brief Constructor to set filter data initially.
             */
-            PxFilterData( u32 w0, u32 w1, u32 w2, u32 w3 ) :
+            FilterData( u32 w0, u32 w1, u32 w2, u32 w3 ) :
                 word0( w0 ),
                 word1( w1 ),
                 word2( w2 ),
@@ -289,7 +281,7 @@ namespace fb
             */
             void setToDefault()
             {
-                *this = PxFilterData();
+                *this = FilterData();
             }
 
             u32 word0;
@@ -298,7 +290,7 @@ namespace fb
             u32 word3;
         };
 
-        struct PxD6JointDriveFlag
+        struct D6JointDriveFlag
         {
             enum Enum
             {

@@ -75,6 +75,6 @@ namespace fb
         virtual void set3DAttributes( Vector3<real_Num> pos, Vector3<real_Num> vel,
                                       Quaternion<real_Num> ori ) = 0;
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif  // SoundEvent_h__

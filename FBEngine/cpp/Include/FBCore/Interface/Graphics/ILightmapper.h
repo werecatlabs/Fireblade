@@ -8,7 +8,7 @@ namespace fb
 {
     namespace render
     {
-        
+
         class ILightmapper : public ISharedObject
         {
         public:

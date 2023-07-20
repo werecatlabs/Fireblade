@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     /** A manager class used to create and manager AI objects.
      */
     class IAiManager : public ISharedObject

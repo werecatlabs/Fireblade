@@ -142,7 +142,8 @@ namespace fb
              * @param position The position of the drop event.
              * @param element The element that is being dropped.
              * @param data The data to be dropped. */
-            virtual void handleDrop( const Vector2I &position, SmartPtr<ui::IUIElement> element, const String &data ) = 0;
+            virtual void handleDrop( const Vector2I &position, SmartPtr<ui::IUIElement> element,
+                                     const String &data ) = 0;
 
             FB_CLASS_REGISTER_DECL;
         };

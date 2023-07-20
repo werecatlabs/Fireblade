@@ -11,34 +11,34 @@
  */
 
 #if FB_PROFILING
-    /**
-     * @brief Start a profile.
-     * @param id The ID of the profile.
-     */
-    #define FB_PROFILE_START( id ) \
+/**
+ * @brief Start a profile.
+ * @param id The ID of the profile.
+ */
+#    define FB_PROFILE_START( id ) \
         if( profiler ) \
             profiler->start( id );
 
-    /**
-     * @brief Start a profile with a description.
-     * @param id The ID of the profile.
-     * @param desc The description of the profile.
-     */
-    #define FB_PROFILE_START_DESC( id, desc ) \
+/**
+ * @brief Start a profile with a description.
+ * @param id The ID of the profile.
+ * @param desc The description of the profile.
+ */
+#    define FB_PROFILE_START_DESC( id, desc ) \
         if( profiler ) \
             profiler->start( id, desc );
 
-    /**
-     * @brief End a profile.
-     * @param id The ID of the profile.
-     */
-    #define FB_PROFILE_END( id ) \
+/**
+ * @brief End a profile.
+ * @param id The ID of the profile.
+ */
+#    define FB_PROFILE_END( id ) \
         if( profiler ) \
             profiler->end( id );
 #else
-    #define FB_PROFILE_START( id )
-    #define FB_PROFILE_START_DESC( id, desc )
-    #define FB_PROFILE_END( id )
+#    define FB_PROFILE_START( id )
+#    define FB_PROFILE_START_DESC( id, desc )
+#    define FB_PROFILE_END( id )
 #endif
 
 namespace fb
@@ -83,6 +83,5 @@ namespace fb
         virtual void logResults() = 0;
     };
 }  // end namespace fb
-
 
 #endif  // IProfiler_h__

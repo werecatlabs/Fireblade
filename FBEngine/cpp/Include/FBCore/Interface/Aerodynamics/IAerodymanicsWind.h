@@ -7,7 +7,7 @@
 
 namespace fb
 {
-    
+
     class IAerodymanicsWind : public IVehicleComponent
     {
     public:

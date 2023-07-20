@@ -336,7 +336,7 @@ namespace fb
         m_factories = ptr;
     }
 
-    void FactoryManager::setPoolSize( hash64 typeId, u32 size )
+    void FactoryManager::setPoolSize( hash64 typeId, size_t size )
     {
         if( auto factory = getFactory( typeId ) )
         {

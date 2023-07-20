@@ -6,11 +6,11 @@
 namespace fb
 {
     namespace ui
-    {       
+    {
         /**
-         * @class IUICursor         
+         * @class IUICursor
          * @brief Interface for a cursor UI element that displays a cursor in the user interface.
-         */        
+         */
         class IUICursor : public IUIElement
         {
         public:

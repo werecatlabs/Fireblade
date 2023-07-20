@@ -23,8 +23,8 @@ namespace fb
          @param event The event data. This can be null.
          @return Contains a return parameter. */
         virtual Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
-                                       const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object,
-                                       SmartPtr<IEvent> event ) = 0;
+                                       const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) = 0;
 
         FB_CLASS_REGISTER_DECL;
     };

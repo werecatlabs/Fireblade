@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    //---------------------------------------------
+
     class IAnimationTimeIndex : public ISharedObject
     {
     public:
@@ -18,6 +18,7 @@ namespace fb
 
         virtual u32 getKeyIndex() const = 0;
     };
+
 }  // end namespace fb
 
 #endif  // IAnimationTimeIndex_h__

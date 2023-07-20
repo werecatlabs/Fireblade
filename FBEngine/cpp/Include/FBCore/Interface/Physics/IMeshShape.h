@@ -7,7 +7,7 @@ namespace fb
 {
     namespace physics
     {
-        
+
         /** Interface for a mesh shape. */
         class IMeshShape : public IPhysicsShape3
         {

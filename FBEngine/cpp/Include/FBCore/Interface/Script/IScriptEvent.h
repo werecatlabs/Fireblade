@@ -5,7 +5,7 @@
 
 namespace fb
 {
-    
+
     /** A class used to store info for a scripted event. */
     class IScriptEvent : public IEvent
     {

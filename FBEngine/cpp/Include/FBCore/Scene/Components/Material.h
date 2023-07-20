@@ -23,9 +23,6 @@ namespace fb
             /** @copydoc IComponent::updateDirty */
             void updateDirty( u32 flags, u32 oldFlags ) override;
 
-            void play();
-            void edit();
-
             /** @copydoc BaseComponent::getProperties */
             SmartPtr<Properties> getProperties() const override;
 

@@ -7,7 +7,7 @@ namespace fb
 {
     namespace ui
     {
-        
+
         class IUIBar : public IUIElement
         {
         public:

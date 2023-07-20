@@ -5,7 +5,7 @@
 
 namespace fb
 {
-    
+
     /** Interface for an input event. */
     class IInputEvent : public IEvent
     {

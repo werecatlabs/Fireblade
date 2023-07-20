@@ -285,6 +285,10 @@ namespace fb
              */
             virtual void setTexture( const String &fileName, u32 layerIdx = 0 ) = 0;
 
+            virtual SharedPtr<Array<SmartPtr<ITexture>>> getTextures() const = 0;
+
+            virtual void setTextures( SharedPtr<Array<SmartPtr<ITexture>>> textures ) = 0;
+
             /**
              * @brief Gets the name of the texture associated with the given layer index.
              *

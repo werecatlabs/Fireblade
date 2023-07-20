@@ -7,7 +7,7 @@
 
 namespace fb
 {
-    
+
     /** Used a generic way to receive script calls. */
     class IScriptReceiver : public ISharedObject
     {
@@ -84,7 +84,8 @@ namespace fb
         @param results The function results.
         @return Returns an error code.
         */
-        virtual s32 callFunction( hash_type hash, SmartPtr<ISharedObject> object, Parameters &results ) = 0;
+        virtual s32 callFunction( hash_type hash, SmartPtr<ISharedObject> object,
+                                  Parameters &results ) = 0;
 
         FB_CLASS_REGISTER_DECL;
     };

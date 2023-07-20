@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     class IMouseState : public ISharedObject
     {
     public:

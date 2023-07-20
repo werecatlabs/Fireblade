@@ -6,13 +6,14 @@
 
 namespace fb
 {
-    //-------------------------------------------------
+
     class IAiWorld3 : public ISharedObject
     {
     public:
         /** Virtual destructor. */
         ~IAiWorld3() override = default;
     };
+
 }  // end namespace fb
 
 #endif  // IAiWorld3_h__

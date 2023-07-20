@@ -7,7 +7,7 @@ namespace fb
 {
     namespace physics
     {
-        //-------------------------------------------------
+
         class IPhysicsVehicleInput3 : public ISharedObject
         {
         public:

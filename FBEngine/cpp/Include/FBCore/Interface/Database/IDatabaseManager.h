@@ -56,7 +56,7 @@ namespace fb
         virtual void setDatabase( SmartPtr<IDatabase> database ) = 0;
 
         /** Optimizes the database. */
-        virtual void optmise() = 0;
+        virtual void optimise() = 0;
 
         /** Gets the attached databases. */
         virtual Array<String> getAttached() const = 0;

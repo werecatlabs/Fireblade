@@ -7,7 +7,7 @@ namespace fb
 {
     namespace physics
     {
-        //--------------------------------------------
+
         class IPhysicsBodyEffectSnap2 : public IPhysicsBodyEffect2
         {
         public:
@@ -19,6 +19,7 @@ namespace fb
             virtual bool getUseAxis( int axis ) const = 0;
             virtual void setUseAxis( int axis, bool val ) = 0;
         };
+
     }  // namespace physics
 }  // end namespace fb
 

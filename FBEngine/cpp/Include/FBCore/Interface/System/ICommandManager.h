@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     /** Interface for a command manager class.
      */
     class ICommandManager : public ISharedObject

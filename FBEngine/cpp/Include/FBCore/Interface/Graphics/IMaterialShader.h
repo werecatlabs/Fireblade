@@ -7,7 +7,7 @@ namespace fb
 {
     namespace render
     {
-        
+
         class IMaterialShader : public IResource
         {
         public:

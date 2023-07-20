@@ -20,5 +20,4 @@ namespace fb
     }  // end namespace ui
 }  // end namespace fb
 
-
-#endif // IUITabItem_h__
+#endif  // IUITabItem_h__

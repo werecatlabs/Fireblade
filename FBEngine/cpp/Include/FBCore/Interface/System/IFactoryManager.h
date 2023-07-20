@@ -112,11 +112,11 @@ namespace fb
         SharedPtr<T> make_shared( _Types &&..._Args );
 
         /** Sets the factory pool size. */
-        virtual void setPoolSize( hash64 typeId, u32 size ) = 0;
+        virtual void setPoolSize( hash64 typeId, size_t size ) = 0;
 
         /** Sets the factory pool size. */
         template <class T>
-        void setPoolSizeByType( u32 size );
+        void setPoolSizeByType( size_t size );
 
         FB_CLASS_REGISTER_DECL;
     };
@@ -196,7 +196,7 @@ namespace fb
     }
 
     template <class T>
-    void IFactoryManager::setPoolSizeByType( u32 size )
+    void IFactoryManager::setPoolSizeByType( size_t size )
     {
         auto typeInfo = T::typeInfo();
         FB_ASSERT( typeInfo != 0 );

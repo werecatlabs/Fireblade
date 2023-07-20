@@ -33,8 +33,8 @@ namespace fb
                 void execute() override;
                 void coroutine_execute_step( SmartPtr<IObjectYield> &rYield ) override;
 
-                physics::PxConstraintFlag::Enum getFlag() const;
-                void setFlag( physics::PxConstraintFlag::Enum val );
+                physics::ConstraintFlag::Enum getFlag() const;
+                void setFlag( physics::ConstraintFlag::Enum val );
 
                 bool getFlagValue() const;
                 void setFlagValue( bool val );
@@ -43,8 +43,8 @@ namespace fb
                 void setConstraint( SmartPtr<Constraint> val );
 
             private:
-                physics::PxConstraintFlag::Enum m_flag =
-                    static_cast<physics::PxConstraintFlag::Enum>( 0 );
+                physics::ConstraintFlag::Enum m_flag =
+                    static_cast<physics::ConstraintFlag::Enum>( 0 );
                 SmartPtr<Constraint> m_constraint = nullptr;
                 bool m_flagValue = false;
             };
@@ -137,18 +137,18 @@ namespace fb
 
             bool isBroken() const;
 
-            void setDrive( physics::PxD6Drive::Enum index, SmartPtr<physics::IConstraintDrive> drive );
+            void setDrive( physics::D6Drive::Enum index, SmartPtr<physics::IConstraintDrive> drive );
 
-            void setLocalPosition( physics::PxJointActorIndex::Enum actor,
+            void setLocalPosition( physics::JointActorIndex::Enum actor,
                                    const Vector3<real_Num> &pos );
 
-            Transform3<real_Num> getLocalPose( physics::PxJointActorIndex::Enum actor ) const;
-            void setLocalPose( physics::PxJointActorIndex::Enum actor,
+            Transform3<real_Num> getLocalPose( physics::JointActorIndex::Enum actor ) const;
+            void setLocalPose( physics::JointActorIndex::Enum actor,
                                const Transform3<real_Num> &localPose );
 
             SmartPtr<physics::IPhysicsScene3> getScene() const;
 
-            void setMotion( physics::PxD6Axis::Enum axis, physics::PxD6Motion::Enum type );
+            void setMotion( physics::D6Axis::Enum axis, physics::D6Motion::Enum type );
 
             bool isControlComponent() const;
 

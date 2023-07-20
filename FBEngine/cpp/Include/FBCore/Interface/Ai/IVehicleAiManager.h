@@ -7,6 +7,7 @@
 
 namespace fb
 {
+
     class IVehicleAiManager : public ISharedObject
     {
     public:
@@ -25,6 +26,7 @@ namespace fb
         /**  */
         virtual void setVehicles( const Array<SmartPtr<IVehicleController>> &vehicles ) = 0;
     };
+
 }  // end namespace fb
 
 #endif  // IVehicleAiManager_h__

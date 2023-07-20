@@ -6,6 +6,7 @@
 
 namespace fb
 {
+
     class INetworkView : public ISharedObject
     {
     public:
@@ -13,6 +14,7 @@ namespace fb
 
         virtual void RPC() = 0;
     };
+
 }  // end namespace fb
 
 #endif  // INetworkView_h__

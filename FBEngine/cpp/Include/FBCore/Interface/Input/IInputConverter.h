@@ -5,7 +5,7 @@
 
 namespace fb
 {
-    //-------------------------------------------------
+
     class IInputConverter : public ISharedObject
     {
     public:
@@ -24,6 +24,7 @@ namespace fb
         /** Gets an action name from the id provided. */
         virtual String getActionName( u32 actionId ) const = 0;
     };
+
 }  // namespace fb
 
 #endif  // _FB_IInputConverter_H

@@ -161,7 +161,7 @@ namespace fb
         const auto iState = static_cast<u8>( state );
         setNewState( iState, changeNow );
     }
-    
+
     template <class T>
     T IFSM::getState() const
     {

@@ -19,13 +19,7 @@
 
 #include <sstream>
 
-#if FB_ENABLE_TRACE
-#    include <boost/stacktrace.hpp>
-#endif
 
-#if FB_ENABLE_MEMORY_TRACKER
-#    include <FBCore/Memory/MemoryTracker.h>
-#endif
 
 namespace fb
 {

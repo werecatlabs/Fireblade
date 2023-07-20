@@ -81,7 +81,7 @@ namespace fb
         static void writeAllText( const T &path, const T &contents );
     };
 
-    using Path = BasePath<std::string>;
+    using Path = BasePath<String>;
     using PathW = BasePath<StringW>;
 }  // end namespace fb
 

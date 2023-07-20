@@ -7,7 +7,7 @@ namespace fb
 {
     namespace ui
     {
-        
+
         /** Interface for a ui image. */
         class IUIImage : public IUIElement
         {

@@ -5,7 +5,7 @@
 
 namespace fb
 {
-    
+
     /** An Interface for a job group class. Intended to control the execution of group of jobs. */
     class IJobGroup : public IJob
     {

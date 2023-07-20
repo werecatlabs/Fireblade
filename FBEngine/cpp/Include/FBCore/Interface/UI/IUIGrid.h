@@ -7,7 +7,7 @@ namespace fb
 {
     namespace ui
     {
-        
+
         /** Interface for a ui frame. */
         class IUIGrid : public IUIElement
         {

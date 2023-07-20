@@ -142,12 +142,6 @@ namespace fb
             /** @brief Returns the mass of the Rigidbody */
             real_Num getMass() const;
 
-            /** @brief Sets the moment of inertia (MOI) of the Rigidbody */
-            void setMOI( const Vector3<real_Num> &moi );
-
-            /** @brief Returns the moment of inertia (MOI) of the Rigidbody */
-            Vector3<real_Num> getMOI() const;
-
             /** @brief Returns the velocity at a specific point on the Rigidbody */
             Vector3<real_Num> getPointVelocity( const Vector3<real_Num> &point );
 

@@ -8,7 +8,7 @@
 
 namespace fb
 {
-    
+
     class IPathfinder2 : public ISharedObject
     {
     public:

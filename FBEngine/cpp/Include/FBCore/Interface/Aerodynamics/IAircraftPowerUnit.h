@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     /** Interface for an aircraft attachment class. */
     class IAircraftPowerUnit : public IVehiclePowerUnit
     {
@@ -32,6 +32,7 @@ namespace fb
         virtual real_Num getMoi() const = 0;
         virtual void setMoi( real_Num val ) = 0;
     };
+
 }  // end namespace fb
 
 #endif  // IAircraftPowerUnit_h__

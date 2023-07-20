@@ -9,7 +9,7 @@ namespace fb
 {
     namespace scene
     {
-        
+
         /** Interface for a transform object.
         @author	Zane Desir
         @version 1.0

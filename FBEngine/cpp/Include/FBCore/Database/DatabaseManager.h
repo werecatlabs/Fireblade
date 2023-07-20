@@ -23,7 +23,7 @@ namespace fb
         void loadFromFile( const String &filePath ) override;
         void loadFromFile( const StringW &filePath ) override;
 
-        void optmise() override;
+        void optimise() override;
 
         void unload( SmartPtr<ISharedObject> data ) override;
 
