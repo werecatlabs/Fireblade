@@ -225,7 +225,7 @@
 #include <FBCore/Interface/Input/IGameInput.h>
 #include <FBCore/Interface/Input/IGameInputMap.h>
 #include <FBCore/Interface/Input/IGameInputState.h>
-#include <FBCore/Interface/Input/IInputActionData.h>
+#include <FBCore/Interface/Input/IInputAction.h>
 #include <FBCore/Interface/Input/IInputConverter.h>
 #include <FBCore/Interface/Input/IInputEvent.h>
 #include <FBCore/Interface/Input/IInput.h>

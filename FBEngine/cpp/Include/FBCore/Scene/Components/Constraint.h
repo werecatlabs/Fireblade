@@ -104,7 +104,7 @@ namespace fb
                          const Transform3<real_Num> &transformA,
                          const Transform3<real_Num> &transformB );
 
-            void setDrivePosition( float position );
+            void setDrivePosition( f32 position );
 
             void resetPositions();
 
@@ -119,7 +119,7 @@ namespace fb
 
             SmartPtr<physics::IConstraintD6> getD6Joint();
 
-            void setBreakForce( float force, float torque );
+            void setBreakForce( f32 force, f32 torque );
 
             void makeBroken();
             void makeBreakable( bool bNow );
@@ -129,8 +129,8 @@ namespace fb
 
             void setBreakState( bool state );
 
-            float getOriginalBreakForce() const;
-            float getOriginalBreakTorque() const;
+            f32 getOriginalBreakForce() const;
+            f32 getOriginalBreakTorque() const;
 
             void setOriginalBreakForce( f32 breakForce );
             void setOriginalBreakTorque( f32 breakTorque );
@@ -150,12 +150,10 @@ namespace fb
 
             void setMotion( physics::D6Axis::Enum axis, physics::D6Motion::Enum type );
 
-            bool isControlComponent() const;
-
             void updateComponentState();
 
-            int getServoHash() const;
-            void setServoHash( int val );
+            s32 getServoHash() const;
+            void setServoHash( s32 val );
 
             SmartPtr<physics::IConstraintFixed3> getFixedJoint() const;
             void setFixedJoint( SmartPtr<physics::IConstraintFixed3> val );
@@ -175,8 +173,8 @@ namespace fb
             String getRotorName() const;
             void setRotorName( const String &val );
 
-            int getChannel() const;
-            void setChannel( int val );
+            s32 getChannel() const;
+            void setChannel( s32 val );
 
             bool getFlag() const;
             void setFlag( bool val );
@@ -214,28 +212,10 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            void enterCrashState();
-            void leaveCrashState();
-
-            void enterWorkbenchState();
-            void updateWorkbenchState();
-            void leaveWorkbenchState();
-
-            void enterDestroyedState();
-            void updateDestroyedState();
-            void leaveDestroyedState();
-
-            void enterResetState();
-            void updateResetState();
-            void leaveResetState();
-
             void setConstraintType( const String &constraintType, Vector3<real_Num> &tLimits,
                                     Vector3<real_Num> &aLimits );
 
-            int lookup( String shape );
-
-            void updateDrive();
-            void updateDriveEditor();
+            s32 lookup( String shape );
 
             void restoreFlags();
 
@@ -275,8 +255,8 @@ namespace fb
             SmartPtr<physics::IConstraintD6> m_positionJoint;
             SmartPtr<physics::IConstraintFixed3> m_fixedJoint;
 
-            SmartPtr<Rigidbody> m_bodyA;
-            SmartPtr<Rigidbody> m_bodyB;
+            SmartPtr<Rigidbody> m_body0;
+            SmartPtr<Rigidbody> m_body1;
 
             Transform3<real_Num> m_localPose0;
             Transform3<real_Num> m_localPose1;
@@ -316,17 +296,17 @@ namespace fb
 
             Type m_type = Type::D6;
 
-            String m_servo = "";
-            String m_constraintType = "";
-            String m_clf_scenenode = "";
-            String m_rotorName = "";
-            String actor0 = "";
-            String actor1 = "";
-            String anchor0 = "";
-            String anchor1 = "";
-            String anchor1_id = "";
-            String drive_axis = "";
-            String sceneNodeName = "";
+            String m_servo;
+            String m_constraintType;
+            String m_clf_scenenode;
+            String m_rotorName;
+            String actor0;
+            String actor1;
+            String anchor0;
+            String anchor1;
+            String anchor1_id;
+            String drive_axis;
+            String sceneNodeName;
 
             // lookup for constraint types types
             static const String constraints[4];

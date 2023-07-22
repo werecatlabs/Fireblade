@@ -1,13 +1,12 @@
 #ifndef ISystemManager_h__
 #define ISystemManager_h__
 
-#include <FBCore/Interface/Scene/IComponent.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/StringTypes.h>
 
 namespace fb
 {
-    class ISystemManager : public scene::IComponent
+    class ISystemManager : public ISharedObject
     {
     public:
         /** Virtual destructor. */

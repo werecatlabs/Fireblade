@@ -274,6 +274,11 @@ namespace fb
 
     void Task::stop()
     {
+        if( !isLoaded() )
+        {
+            return;
+        }
+
         FB_DEBUG_TRACE;
 
         --m_stopped;
@@ -287,10 +292,13 @@ namespace fb
             {
                 if( auto fsm = getFSM() )
                 {
-                    while( fsm->getCurrentState() != static_cast<u8>( State::Stopped ) )
+                    if( fsm->isLoaded() )
                     {
-                        setState( State::Stopped );
-                        Thread::yield();
+                        while( fsm->getCurrentState() != static_cast<u8>( State::Stopped ) )
+                        {
+                            setState( State::Stopped );
+                            Thread::yield();
+                        }
                     }
                 }
             }

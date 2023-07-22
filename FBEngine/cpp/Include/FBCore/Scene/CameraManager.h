@@ -11,6 +11,8 @@ namespace fb
 {
     namespace scene
     {
+
+        /** Implementation of the camera manager. */
         class CameraManager : public SharedObject<ICameraManager>
         {
         public:
@@ -23,7 +25,9 @@ namespace fb
 
             void update() override;
 
-            bool postEvent( const String &cameraName, const SmartPtr<IInputEvent> &event ) override;
+            void addEditorCamera( SmartPtr<IActor> camera ) override;
+
+            bool removeEditorCamera( SmartPtr<IActor> camera ) override;
 
             void addCamera( SmartPtr<IActor> camera ) override;
             bool removeCamera( SmartPtr<IActor> camera ) override;
@@ -40,8 +44,6 @@ namespace fb
             void setFlag( u32 flag, bool value ) override;
             bool getFlag( u32 flag ) const override;
 
-            void setCameraSettings( const String &name, const Properties &properties ) override;
-
             /** @copydoc ICameraManager::play */
             void play() override;
 
@@ -54,19 +56,29 @@ namespace fb
             /** @copydoc ICameraManager::reset */
             void reset() override;
 
+            /** @copydoc ICameraManager::getEditorTexture */
             SmartPtr<render::ITexture> getEditorTexture() const override;
 
+            /** @copydoc ICameraManager::setEditorTexture */
             void setEditorTexture( SmartPtr<render::ITexture> editorTexture ) override;
 
         private:
+            /** The editor texture */
             WeakPtr<render::ITexture> m_editorTexture;
 
-            RecursiveMutex m_camerasMutex;
+            /** The scene cameras. */
             Array<SmartPtr<IActor>> m_cameras;
-            Array<SmartPtr<IActor>> m_sceneCameras;
 
-            AtomicSmartPtr<IActor> m_selectedCameraCtrl;
+            /** The editor cameras. */
+            Array<SmartPtr<IActor>> m_editorCameras;
+
+            /** The current camera. */
+            AtomicSmartPtr<IActor> m_selectedCamera;
+
+            /** The camera manager mutex. */
+            mutable RecursiveMutex m_mutex;
         };
+
     } // namespace scene
 }     // namespace fb
 

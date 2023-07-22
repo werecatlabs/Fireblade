@@ -11,7 +11,6 @@ namespace fb
 {
     namespace scene
     {
-
         /**
          * @brief A class to manage camera controllers.
          */
@@ -41,26 +40,30 @@ namespace fb
              */
             ~ICameraManager() override = default;
 
-            /**
-             * @brief Posts an input event to the camera manager.
-             * @param cameraName The name of the camera.
-             * @param event The input event to be posted.
-             * @return True if the event was handled, false if not.
-             */
-            virtual bool postEvent( const String &cameraName, const SmartPtr<IInputEvent> &event ) = 0;
-
-            /**
-             * @brief Adds a camera to the camera manager.
+            /** Adds a camera to the camera manager.
              * @param camera The camera to add.
              */
-            virtual void addCamera( SmartPtr<scene::IActor> camera ) = 0;
+            virtual void addEditorCamera( SmartPtr<IActor> camera ) = 0;
 
             /**
              * @brief Removes a camera from the camera manager.
              * @param camera The camera to remove.
              * @return True if the camera is successfully removed, false if not.
              */
-            virtual bool removeCamera( SmartPtr<scene::IActor> camera ) = 0;
+            virtual bool removeEditorCamera( SmartPtr<IActor> camera ) = 0;
+
+            /**
+             * @brief Adds a camera to the camera manager.
+             * @param camera The camera to add.
+             */
+            virtual void addCamera( SmartPtr<IActor> camera ) = 0;
+
+            /**
+             * @brief Removes a camera from the camera manager.
+             * @param camera The camera to remove.
+             * @return True if the camera is successfully removed, false if not.
+             */
+            virtual bool removeCamera( SmartPtr<IActor> camera ) = 0;
 
             /**
              * @brief Removes a camera from the camera manager.
@@ -74,7 +77,7 @@ namespace fb
              * @param name The name of the camera to find.
              * @return The camera object. Will return null if the camera is not found.
              */
-            virtual SmartPtr<scene::IActor> findCamera( const String &name ) const = 0;
+            virtual SmartPtr<IActor> findCamera( const String &name ) const = 0;
 
             /**
              * @brief Gets the current camera's name.
@@ -86,19 +89,19 @@ namespace fb
              * @brief Sets the current camera.
              * @param camera The camera to set as the current camera.
              */
-            virtual void setCurrentCamera( SmartPtr<scene::IActor> camera ) = 0;
+            virtual void setCurrentCamera( SmartPtr<IActor> camera ) = 0;
 
             /**
              * @brief Gets the current camera.
              * @return The current camera.
              */
-            virtual SmartPtr<scene::IActor> getCurrentCamera() const = 0;
+            virtual SmartPtr<IActor> getCurrentCamera() const = 0;
 
             /**
              * @brief Gets a list of the cameras in the camera manager.
              * @return An array of cameras.
              */
-            virtual Array<SmartPtr<scene::IActor>> getCameras() const = 0;
+            virtual Array<SmartPtr<IActor>> getCameras() const = 0;
 
             /**
              * @brief Sets the value of a flag.
@@ -113,13 +116,6 @@ namespace fb
              * @return The value of the flag.
              */
             virtual bool getFlag( u32 flag ) const = 0;
-
-            /**
-             * @brief Sets the settings of a camera that the camera manager contains.
-             * @param name The name of the camera.
-             * @param properties The properties to set.
-             */
-            virtual void setCameraSettings( const String &name, const Properties &properties ) = 0;
 
             /**
              * @brief Triggers the play event, transitioning the camera manager state to play mode.
@@ -155,8 +151,7 @@ namespace fb
 
             FB_CLASS_REGISTER_DECL;
         };
-
-    }  // namespace scene
-}  // namespace fb
+    } // namespace scene
+}     // namespace fb
 
 #endif

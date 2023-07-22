@@ -24,9 +24,9 @@ namespace fb
             m_editorTexture = nullptr;
 
             m_cameras.clear();
-            m_sceneCameras.clear();
+            m_editorCameras.clear();
 
-            m_selectedCameraCtrl = nullptr;
+            m_selectedCamera = nullptr;
         }
 
         void CameraManager::update()
@@ -85,16 +85,24 @@ namespace fb
             }
         }
 
-        bool CameraManager::postEvent( const String &cameraName, const SmartPtr<IInputEvent> &event )
+        void CameraManager::addEditorCamera( SmartPtr<IActor> camera )
         {
-            return false;
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            m_editorCameras.push_back( camera );
+        }
+
+        bool CameraManager::removeEditorCamera( SmartPtr<IActor> camera )
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            m_editorCameras.erase( std::find( m_editorCameras.begin(), m_editorCameras.end(), camera ) );
+            return true;
         }
 
         void CameraManager::addCamera( SmartPtr<IActor> camera )
         {
             if( camera )
             {
-                RecursiveMutex::ScopedLock lock( m_camerasMutex );
+                RecursiveMutex::ScopedLock lock( m_mutex );
                 m_cameras.push_back( camera );
             }
 
@@ -113,14 +121,14 @@ namespace fb
 
         bool CameraManager::removeCamera( SmartPtr<IActor> camera )
         {
-            if( camera == m_selectedCameraCtrl )
+            if( camera == m_selectedCamera )
             {
-                m_selectedCameraCtrl = nullptr;
+                m_selectedCamera = nullptr;
             }
 
             if( camera )
             {
-                RecursiveMutex::ScopedLock lock( m_camerasMutex );
+                RecursiveMutex::ScopedLock lock( m_mutex );
                 auto it = std::find( m_cameras.begin(), m_cameras.end(), camera );
                 if( it != m_cameras.end() )
                 {
@@ -169,7 +177,7 @@ namespace fb
                     cameraController->setActive( false );
                 }
 
-                m_selectedCameraCtrl = camera;
+                m_selectedCamera = camera;
 
                 if( camera != nullptr )
                 {
@@ -190,7 +198,7 @@ namespace fb
                 }
             }
 
-            m_selectedCameraCtrl = camera;
+            m_selectedCamera = camera;
 
             if( camera != nullptr )
             {
@@ -224,7 +232,7 @@ namespace fb
 
         SmartPtr<IActor> CameraManager::getCurrentCamera() const
         {
-            return m_selectedCameraCtrl;
+            return m_selectedCamera;
         }
 
         Array<SmartPtr<IActor>> CameraManager::getCameras() const
@@ -239,10 +247,6 @@ namespace fb
         bool CameraManager::getFlag( u32 flag ) const
         {
             return false;
-        }
-
-        void CameraManager::setCameraSettings( const String &name, const Properties &properties )
-        {
         }
 
         void CameraManager::play()

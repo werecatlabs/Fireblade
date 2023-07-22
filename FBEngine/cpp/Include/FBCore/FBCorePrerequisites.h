@@ -436,7 +436,7 @@ namespace fb
     class IGameInput;
     class IGameInputMap;
     class IGameInputState;
-    class IInputActionData;
+    class IInputAction;
     class IInputConverter;
     class IInputEvent;
     class IInputDeviceManager;

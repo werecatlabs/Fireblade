@@ -88,6 +88,8 @@ namespace fb
             /** Clones the physics body. */
             virtual SmartPtr<IPhysicsBody3> clone() = 0;
 
+            virtual void wakeUp() = 0;
+
             /** Gets the data as a properties object.
             @return The data as a properties object.
             */

@@ -6,6 +6,7 @@
 
 namespace fb
 {
+
     class IScheduler : public ISharedObject
     {
     public:
@@ -17,6 +18,7 @@ namespace fb
 
         virtual SmartPtr<ITask> getNext() = 0;
     };
+
 }  // end namespace fb
 
 #endif  // IScheduler_h__
