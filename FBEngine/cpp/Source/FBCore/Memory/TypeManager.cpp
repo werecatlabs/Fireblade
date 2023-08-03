@@ -233,13 +233,17 @@ namespace fb
 
     u32 TypeManager::getTypeGroup( u32 id ) const
     {
-        FB_ASSERT( id < getSize() );
-        if( m_typeGroup[id].load() == 0 )
+        if( id < getSize() )
         {
-            m_typeGroup[id] = calculateGroupIndex( id );
+            if( m_typeGroup[id].load() == 0 )
+            {
+                m_typeGroup[id] = calculateGroupIndex( id );
+            }
+
+            return m_typeGroup[id];
         }
 
-        return m_typeGroup[id];
+        return 0;
     }
 
     u32 TypeManager::getTotalNumTypes()

@@ -32,6 +32,44 @@ namespace fb
             //virtual bool handleDrop( const Vector2I &position, SmartPtr<IUIElement> src,
             //                         SmartPtr<IUIElement> dst, const String &data ) = 0;
 
+            /*
+            void onDragEnter( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+
+            void onDragLeave( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+
+            void onDragMove( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+
+            void onDrop( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+
+            void onDropLeave( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+
+            void onDropMove( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+
+            void onDropEnter( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+
+            void onDropCancel( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+
+            void onDropFinish( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+
+            void onDropAccept( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+
+            void onDropReject( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+
+            void onDropComplete( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+
+            void onDropFail( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+
+            void onDropSuccess( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+
+            void onDropError( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+
+            void onDropStart( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+
+            void onDropStop( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+
+            void onDropUpdate( SmartPtr<ui::IUIDragData> dragData, const Vector2i &position ) override;
+            */
+
             FB_CLASS_REGISTER_DECL;
         };
 

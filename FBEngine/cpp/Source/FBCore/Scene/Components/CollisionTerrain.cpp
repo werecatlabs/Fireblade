@@ -4,7 +4,6 @@
 #include <FBCore/Interface/Physics/ITerrainShape.h>
 #include <FBCore/Interface/Physics/IPhysicsManager.h>
 #include <FBCore/Interface/Physics/IPhysicsMaterial3.h>
-#include <FBCore/Interface/Physics/IPhysicsShape3.h>
 #include <FBCore/Core/Exception.h>
 #include <FBCore/Core/LogManager.h>
 

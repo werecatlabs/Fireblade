@@ -127,6 +127,11 @@ namespace fb
         static u32 m_nameExt;
     };
 
+    inline u32 Handle::getInstanceId() const
+    {
+        return m_instanceId;
+    }
+
 }  // end namespace fb
 
 #endif  // Handle_h__

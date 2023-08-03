@@ -544,23 +544,6 @@ namespace fb
     }
 
     template <class T>
-    T Math<T>::lerp( const T a, const T b, const T t )
-    {
-        return ( a * ( 1 - t ) ) + ( b * t );
-    }
-
-    template <class T>
-    T Math<T>::inverseLerp( const T a, const T b, const T t )
-    {
-        if( Abs( b - a ) < epsilon() )
-        {
-            return a;
-        }
-
-        return ( t - a ) / ( b - a );
-    }
-
-    template <class T>
     bool Math<T>::isZero( const T a, const T tolerance )
     {
         return Math<T>::Abs( a ) < tolerance;

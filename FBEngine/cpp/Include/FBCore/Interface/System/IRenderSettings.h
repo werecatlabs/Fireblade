@@ -12,6 +12,8 @@ namespace fb
     public:
         /** Virtual destructor. */
         ~IRenderSettings() override = default;
+
+        FB_CLASS_REGISTER_DECL;
     };
 
 }  // namespace fb

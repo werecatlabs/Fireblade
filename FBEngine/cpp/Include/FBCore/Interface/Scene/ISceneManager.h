@@ -180,6 +180,23 @@ namespace fb
             /** Gets a factory to build a component. */
             virtual String getComponentFactoryType( const String &type ) const = 0;
 
+            virtual void addTransformState( u32 id, time_interval time,
+                                            const Transform3<real_Num> &transform ) = 0;
+
+            virtual bool getTransformState( u32 id, time_interval t,
+                                            Transform3<real_Num> &transform ) = 0;
+
+            virtual SharedPtr<Array<SmartPtr<IComponent>>> getRegisteredComponents(
+                Thread::UpdateState state, Thread::Task task ) const = 0;
+
+            virtual void registerComponentUpdate( Thread::Task task, Thread::UpdateState state,
+                                                  SmartPtr<IComponent> component ) = 0;
+
+            virtual void unregisterComponentUpdate( Thread::Task task, Thread::UpdateState state,
+                                                    SmartPtr<IComponent> component ) = 0;
+
+            virtual void unregisterAllComponent( SmartPtr<IComponent> component ) = 0;
+
             /**
              * Returns an array of all components of the specified type attached to the actors in the current scene.
              * @tparam T The type of component to search for.

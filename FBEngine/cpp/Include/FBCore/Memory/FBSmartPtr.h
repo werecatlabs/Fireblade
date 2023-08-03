@@ -256,12 +256,12 @@ namespace fb
     template <class T>
     FBSmartPtr<T>::FBSmartPtr( const FBSmartPtr &other )
     {
-        if( auto pObject = other.get() )
+        if( auto p = other.get() )
         {
-            if( pObject->isAlive() )
+            if( p->isAlive() )
             {
-                m_pointer = pObject;
-                pObject->addReference();
+                m_pointer = p;
+                p->addReference();
             }
         }
     }
@@ -269,10 +269,10 @@ namespace fb
     template <class T>
     FBSmartPtr<T>::FBSmartPtr( const FBSmartPtr &&other )
     {
-        if( auto pObject = other.get() )
+        if( auto p = other.get() )
         {
-            m_pointer = pObject;
-            pObject->addReference();
+            m_pointer = p;
+            p->addReference();
         }
     }
 
@@ -319,12 +319,12 @@ namespace fb
     template <class T>
     FBSmartPtr<T>::~FBSmartPtr()
     {
-        if( auto object = get() )
+        if( auto p = get() )
         {
 #if FB_TRACK_REFERENCES
-            object->removeReference( this, __FILE__, __LINE__, __FUNCTION__ );
+            p->removeReference( this, __FILE__, __LINE__, __FUNCTION__ );
 #else
-            object->removeReference();
+            p->removeReference();
 #endif
 
             m_pointer = nullptr;

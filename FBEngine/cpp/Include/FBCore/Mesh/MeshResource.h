@@ -114,18 +114,11 @@ namespace fb
         /** @copydoc IMeshResource::setMesh */
         void setMesh( SmartPtr<IMesh> val ) override;
 
-        /** @copydoc IMeshResource::getMeshPath */
-        String getMeshPath() const override;
-
-        /** @copydoc IMeshResource::setMeshPath */
-        void setMeshPath( const String &val ) override;
-
         FB_CLASS_REGISTER_DECL;
 
     protected:
         SmartPtr<IStateContext> m_stateObject;
         SmartPtr<IMesh> m_mesh;
-        String m_meshPath;
 
         f32 m_scale = 1.0f;
 

@@ -318,15 +318,6 @@ namespace fb
             position = m_d6joint->getDrivePosition();
         }
 
-        void Constraint::awake()
-        {
-        }
-
-        void Constraint::play()
-        {
-            reload( nullptr );
-        }
-
         SmartPtr<Properties> Constraint::getProperties() const
         {
             if( auto properties = Component::getProperties() )
@@ -655,19 +646,6 @@ namespace fb
 
         void Constraint::MakeBreakable::coroutine_execute_step( SmartPtr<IObjectYield> &rYield )
         {
-        }
-
-        void Constraint::setupUpdateRegistration()
-        {
-            if( auto actor = getActor() )
-            {
-                actor->registerComponentUpdate( Thread::Task::Primary, Thread::UpdateState::PreUpdate,
-                                                this );
-                actor->registerComponentUpdate( Thread::Task::Primary, Thread::UpdateState::Update,
-                                                this );
-                actor->registerComponentUpdate( Thread::Task::Primary, Thread::UpdateState::PostUpdate,
-                                                this );
-            }
         }
 
         String Constraint::getConstraintType() const

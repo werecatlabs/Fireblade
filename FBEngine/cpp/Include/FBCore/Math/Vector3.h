@@ -702,7 +702,7 @@ namespace fb
     template <class T>
     Vector3<T> Vector3<T>::normaliseCopy() const
     {
-        Vector3<T> ret = *this;
+        auto ret = *this;
         ret.normalise();
         return ret;
     }

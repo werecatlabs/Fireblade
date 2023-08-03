@@ -78,6 +78,14 @@ namespace fb
 
             virtual void parentChanged( SmartPtr<IActor> newParent, SmartPtr<IActor> oldParent ) = 0;
 
+            virtual time_interval getFrameTime() const = 0;
+
+            virtual void setFrameTime( time_interval frameTime ) = 0;
+
+            virtual time_interval getFrameDeltaTime() const = 0;
+
+            virtual void setFrameDeltaTime( time_interval frameDeltaTime ) = 0;
+
             /** Gets the data as a properties object.
             @return The data as a properties object.
             */

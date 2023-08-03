@@ -1,7 +1,8 @@
 #include <FBCore/FBCorePCH.h>
-#include <FBCore/Scene/Components/Transform.h>
+#include <FBCore/Scene/Transform.h>
 #include <FBCore/Scene/SceneManager.h>
 #include <FBCore/Interface/System/IStateManager.h>
+#include <FBCore/Interface/System/ITimer.h>
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/Core/Properties.h>
 #include <FBCore/Core/StringUtil.h>
@@ -130,8 +131,6 @@ namespace fb
                 auto pParent = actor->getParent();
                 if( pParent )
                 {
-                    SpinRWMutex::ScopedLock lock( m_mutex, true );
-
                     auto parentTransform = pParent->getTransform();
                     if( parentTransform )
                     {
@@ -207,8 +206,9 @@ namespace fb
 
                 if( m_isLocalDirty )
                 {
-                    auto actor = getActor();
-                    if( actor )
+                    updateFrameTime();
+
+                    if( auto actor = getActor() )
                     {
                         auto applicationManager = core::IApplicationManager::instance();
                         FB_ASSERT( applicationManager );
@@ -259,6 +259,8 @@ namespace fb
 
                 if( m_isDirty )
                 {
+                    updateFrameTime();
+
                     if( auto actor = getActor() )
                     {
                         auto applicationManager = core::IApplicationManager::instance();
@@ -319,64 +321,62 @@ namespace fb
 
         Transform3<real_Num> Transform::getLocalTransform() const
         {
+            SpinRWMutex::ScopedLock lock( m_mutex, false );
             return m_localTransform;
         }
 
         void Transform::setLocalTransform( Transform3<real_Num> transform )
         {
+            SpinRWMutex::ScopedLock lock( m_mutex, true );
             m_localTransform = transform;
         }
 
         Transform3<real_Num> Transform::getWorldTransform() const
         {
+            SpinRWMutex::ScopedLock lock( m_mutex, false );
             return m_worldTransform;
         }
 
         void Transform::setWorldTransform( Transform3<real_Num> transform )
         {
+            SpinRWMutex::ScopedLock lock( m_mutex, true );
             m_worldTransform = transform;
         }
 
         Vector3<real_Num> Transform::getLocalPosition() const
         {
+            SpinRWMutex::ScopedLock lock( m_mutex, false );
             return m_localTransform.getPosition();
         }
 
         void Transform::setLocalPosition( const Vector3<real_Num> &localPosition )
         {
-            auto p = getLocalPosition();
-            if( !MathUtil<real_Num>::equals( p, localPosition ) )
-            {
-                m_localTransform.setPosition( localPosition );
-            }
+            SpinRWMutex::ScopedLock lock( m_mutex, true );
+            m_localTransform.setPosition( localPosition );
         }
 
         Vector3<real_Num> Transform::getLocalScale() const
         {
+            SpinRWMutex::ScopedLock lock( m_mutex, false );
             return m_localTransform.getScale();
         }
 
         void Transform::setLocalScale( const Vector3<real_Num> &localScale )
         {
-            auto s = getScale();
-            if( !MathUtil<real_Num>::equals( s, localScale ) )
-            {
-                m_localTransform.setScale( localScale );
-            }
+            SpinRWMutex::ScopedLock lock( m_mutex, true );
+            m_localTransform.setScale( localScale );
         }
 
         Quaternion<real_Num> Transform::getLocalOrientation() const
         {
+            SpinRWMutex::ScopedLock lock( m_mutex, false );
             return m_localTransform.getOrientation();
         }
 
         void Transform::setLocalOrientation( const Quaternion<real_Num> &localOrientation )
         {
-            auto r = getLocalOrientation();
-            if( !MathUtil<real_Num>::equals( r, localOrientation ) )
-            {
-                m_localTransform.setOrientation( localOrientation );
-            }
+            SpinRWMutex::ScopedLock lock( m_mutex, true );
+            m_localTransform.setOrientation( localOrientation );
         }
 
         Vector3<real_Num> Transform::getLocalRotation() const
@@ -399,44 +399,38 @@ namespace fb
 
         Vector3<real_Num> Transform::getPosition() const
         {
+            SpinRWMutex::ScopedLock lock( m_mutex, false );
             return m_worldTransform.getPosition();
         }
 
         void Transform::setPosition( const Vector3<real_Num> &position )
         {
-            auto p = getPosition();
-            if( !MathUtil<real_Num>::equals( p, position ) )
-            {
-                m_worldTransform.setPosition( position );
-            }
+            SpinRWMutex::ScopedLock lock( m_mutex, true );
+            m_worldTransform.setPosition( position );
         }
 
         Vector3<real_Num> Transform::getScale() const
         {
+            SpinRWMutex::ScopedLock lock( m_mutex, false );
             return m_worldTransform.getScale();
         }
 
         void Transform::setScale( const Vector3<real_Num> &scale )
         {
-            auto s = getScale();
-            if( !MathUtil<real_Num>::equals( s, scale ) )
-            {
-                m_worldTransform.setScale( scale );
-            }
+            SpinRWMutex::ScopedLock lock( m_mutex, true );
+            m_worldTransform.setScale( scale );
         }
 
         Quaternion<real_Num> Transform::getOrientation() const
         {
+            SpinRWMutex::ScopedLock lock( m_mutex, false );
             return m_worldTransform.getOrientation();
         }
 
         void Transform::setOrientation( const Quaternion<real_Num> &orientation )
         {
-            auto r = getOrientation();
-            if( !MathUtil<real_Num>::equals( r, orientation ) )
-            {
-                m_worldTransform.setOrientation( orientation );
-            }
+            SpinRWMutex::ScopedLock lock( m_mutex, true );
+            m_worldTransform.setOrientation( orientation );
         }
 
         Vector3<real_Num> Transform::getRotation() const
@@ -479,7 +473,6 @@ namespace fb
                     }
                     else
                     {
-                        SpinRWMutex::ScopedLock lock( m_mutex, true );
                         auto localTransform = getLocalTransform();
 
                         auto worldTransform = getWorldTransform();
@@ -489,7 +482,6 @@ namespace fb
                 }
                 else
                 {
-                    SpinRWMutex::ScopedLock lock( m_mutex, true );
                     auto localTransform = getLocalTransform();
 
                     auto worldTransform = getWorldTransform();
@@ -538,6 +530,8 @@ namespace fb
         {
             try
             {
+                SpinRWMutex::ScopedLock lock( m_mutex, true );
+
                 auto localTransform = getLocalTransform();
                 auto currentLocalPosition = localTransform.getPosition();
                 auto currentLocalOrientation = localTransform.getOrientation();
@@ -667,6 +661,34 @@ namespace fb
             registration::class_<Transform>( "Transform" )
                 .property( "worldTransform", &Transform::m_worldTransform )
                 .property( "localTransform", &Transform::m_localTransform );
+        }
+
+        time_interval Transform::getFrameTime() const
+        {
+            return m_frameTime;
+        }
+
+        void Transform::setFrameTime( time_interval frameTime )
+        {
+            m_frameTime = frameTime;
+        }
+
+        time_interval Transform::getFrameDeltaTime() const
+        {
+            return m_frameDeltaTime;
+        }
+
+        void Transform::setFrameDeltaTime( time_interval frameDeltaTime )
+        {
+            m_frameDeltaTime = frameDeltaTime;
+        }
+
+        void Transform::updateFrameTime()
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            auto timer = applicationManager->getTimer();
+            m_frameTime = timer->getTime();
+            m_frameDeltaTime = timer->getDeltaTime();
         }
 
     }  // namespace scene

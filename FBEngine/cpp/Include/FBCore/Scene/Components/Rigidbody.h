@@ -154,6 +154,8 @@ namespace fb
             /** @brief Sets the mass space inertia tensor of the Rigidbody */
             void setMassSpaceInertiaTensor( const Vector3<real_Num> &massSpaceInertiaTensor );
 
+            Transform3<real_Num> getTransform() const;
+
             FB_CLASS_REGISTER_DECL;
 
         protected:

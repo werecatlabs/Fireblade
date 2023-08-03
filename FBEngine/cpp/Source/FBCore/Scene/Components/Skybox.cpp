@@ -18,7 +18,6 @@ namespace fb
 {
     namespace scene
     {
-
         FB_CLASS_REGISTER_DERIVED( fb::scene, Skybox, Component );
 
         Skybox::Skybox()
@@ -243,6 +242,8 @@ namespace fb
             properties->setProperty(
                 "Left", m_textures[static_cast<u32>( render::IMaterial::SkyboxTextureTypes::Left )] );
 
+            properties->setProperty( "swapLeftRight", m_swapLeftRight );
+
             return properties;
         }
 
@@ -268,6 +269,7 @@ namespace fb
                 "Right", textures[static_cast<u32>( render::IMaterial::SkyboxTextureTypes::Right )] );
             properties->getPropertyValue(
                 "Left", textures[static_cast<u32>( render::IMaterial::SkyboxTextureTypes::Left )] );
+            properties->getPropertyValue( "swapLeftRight", m_swapLeftRight );
 
             auto dirty = false;
 
@@ -339,14 +341,73 @@ namespace fb
             }
         }
 
+        bool Skybox::getSwapLeftRight() const
+        {
+            return m_swapLeftRight;
+        }
+
+        void Skybox::setSwapLeftRight( bool swapLeftRight )
+        {
+            m_swapLeftRight = swapLeftRight;
+        }
+
         f32 Skybox::getDistance() const
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             return m_distance;
         }
 
         void Skybox::setDistance( f32 distance )
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             m_distance = distance;
+        }
+
+        Array<SmartPtr<render::ITexture>> Skybox::getTextures() const
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            return m_textures;
+        }
+
+        void Skybox::setTextures( Array<SmartPtr<render::ITexture>> textures )
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            m_textures = textures;
+        }
+
+        SmartPtr<render::ITexture> Skybox::getTexture( u8 index ) const
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            return m_textures[index];
+        }
+
+        void Skybox::setTexture( SmartPtr<render::ITexture> texture, u8 index )
+        {
+            if( texture )
+            {
+                if( index < m_textures.size() )
+                {
+                    RecursiveMutex::ScopedLock lock( m_mutex );
+                    m_textures[index] = texture;
+                }
+            }
+
+            setupMaterial();
+        }
+
+        void Skybox::setTextureByName( const String &textureName, u8 index )
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            auto resourceDatabase = applicationManager->getResourceDatabase();
+
+            auto texture = resourceDatabase->loadResourceByType<render::ITexture>( textureName );
+            if( texture )
+            {
+                RecursiveMutex::ScopedLock lock( m_mutex );
+                m_textures[index] = texture;
+            }
+
+            setupMaterial();
         }
 
         IFSM::ReturnType Skybox::handleComponentEvent( u32 state, IFSM::Event eventType )

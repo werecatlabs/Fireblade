@@ -184,15 +184,7 @@ namespace fb
 
             void forceBreak();
 
-            void setupUpdateRegistration() override;
-
             void setupDrive();
-
-            /** @copydoc IComponent::awake */
-            void awake() override;
-
-            /** @copydoc IComponent::start */
-            void play();
 
             /** @copydoc IComponent::getProperties */
             SmartPtr<Properties> getProperties() const override;

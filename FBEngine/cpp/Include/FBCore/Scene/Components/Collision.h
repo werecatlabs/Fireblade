@@ -60,6 +60,8 @@ namespace fb
 
             bool isValid() const;
 
+            void updateTransform() override;
+
             FB_CLASS_REGISTER_DECL;
 
         protected:

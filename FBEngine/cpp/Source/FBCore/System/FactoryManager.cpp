@@ -340,7 +340,7 @@ namespace fb
     {
         if( auto factory = getFactory( typeId ) )
         {
-            factory->setDataSize( size );
+            factory->setDataSize( (u32)size );
         }
     }
 }  // end namespace fb

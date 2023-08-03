@@ -62,7 +62,7 @@ namespace fb
     {
         FB_CLASS_REGISTER_DERIVED( fb, ApplicationManagerMT, IApplicationManager );
 
-        ApplicationManagerMT::ApplicationManagerMT() 
+        ApplicationManagerMT::ApplicationManagerMT()
         {
         }
 
@@ -909,43 +909,50 @@ namespace fb
             return m_vehicleManager;
         }
 
-        void ApplicationManagerMT::setVehicleManager( SmartPtr<IVehicleManager> val )
+        void ApplicationManagerMT::setVehicleManager( SmartPtr<IVehicleManager> vehicleManager )
         {
-            m_vehicleManager = val;
+            m_vehicleManager = vehicleManager;
         }
 
         String ApplicationManagerMT::getCachePath() const
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             return m_cachePath;
         }
 
         void ApplicationManagerMT::setCachePath( const String &cachePath )
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             m_cachePath = cachePath;
         }
 
         String ApplicationManagerMT::getProjectPath() const
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             return m_projectPath;
         }
 
         void ApplicationManagerMT::setProjectPath( const String &projectPath )
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             m_projectPath = projectPath;
         }
 
         String ApplicationManagerMT::getProjectLibraryName() const
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             return m_projectLibraryName;
         }
 
         void ApplicationManagerMT::setProjectLibraryName( const String &projectLibraryName )
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             m_projectLibraryName = projectLibraryName;
         }
 
         void ApplicationManagerMT::setSettingsCachePath( const String &val )
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             m_settingsCachePath = val;
         }
 
@@ -960,8 +967,8 @@ namespace fb
 
         String ApplicationManagerMT::getProjectLibraryExtension() const
         {
-            return String( ".dll" );
-            // return String(".lib");
+            return ".dll";
+            // return ".lib";
         }
 
         String ApplicationManagerMT::getProjectLibraryPath() const
@@ -976,17 +983,19 @@ namespace fb
 
         String ApplicationManagerMT::getMediaPath() const
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             return m_mediaPath;
         }
 
         void ApplicationManagerMT::setMediaPath( const String &mediaPath )
         {
-            m_mediaPath = mediaPath + "/";
-            m_mediaPath = StringUtil::cleanupPath( m_mediaPath );
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            m_mediaPath = mediaPath;
         }
 
         String ApplicationManagerMT::getSettingsCachePath() const
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             return m_settingsCachePath;
         }
 

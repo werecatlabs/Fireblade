@@ -9,6 +9,7 @@
 #include <FBCore/Interface/Graphics/IViewport.h>
 #include <FBCore/Interface/Scene/ICameraManager.h>
 #include <FBCore/Interface/Scene/ISceneManager.h>
+#include <FBCore/Interface/Scene/ITransform.h>
 #include <FBCore/Core/BitUtil.h>
 #include <FBCore/Core/LogManager.h>
 
@@ -40,7 +41,7 @@ namespace fb
                 auto actor = getActor();
 
                 auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
+                auto sceneManager = applicationManager->getSceneManager();
 
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
                 FB_ASSERT( graphicsSystem );
@@ -90,6 +91,9 @@ namespace fb
 
                 setActive( false );
 
+                sceneManager->registerComponentUpdate( Thread::Task::Render,
+                                                       Thread::UpdateState::Transform, this );
+
                 setLoadingState( LoadingState::Loaded );
             }
             catch( std::exception &e )
@@ -108,7 +112,7 @@ namespace fb
                     setLoadingState( LoadingState::Unloading );
 
                     auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
+                    auto sceneManager = applicationManager->getSceneManager();
 
                     if( auto graphicsSystem = applicationManager->getGraphicsSystem() )
                     {
@@ -173,6 +177,8 @@ namespace fb
                             m_node = nullptr;
                         }
                     }
+
+                    sceneManager->unregisterAllComponent( this );
 
                     Component::unload( data );
 
@@ -347,38 +353,40 @@ namespace fb
 
         void Camera::updateTransform()
         {
-            auto state = getState();
-            switch( state )
+            switch( auto task = Thread::getCurrentTask() )
             {
-            case State::Edit:
-            case State::Play:
+            case Thread::Task::Application:
             {
-                auto actor = getActor();
-                if( actor )
+                auto state = getState();
+                switch( state )
                 {
-                    auto p = actor->getPosition();
-                    auto r = actor->getOrientation();
+                case State::Edit:
+                case State::Play:
+                {
+                    //if( auto actor = getActor() )
+                    //{
+                    //    if( auto transform = actor->getTransform() )
+                    //    {
+                    //        auto t = transform->getWorldTransform();
 
-                    m_node->setPosition( p );
-                    m_node->setOrientation( r );
+                    //        auto p = t.getPosition();
+                    //        auto r = t.getOrientation();
 
-                    // m_camera->setPosition( p );
-                    // m_camera->setOrientation( r );
-
-#ifdef _DEBUG
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto graphicsSystem = applicationManager->getGraphicsSystem();
-                    FB_ASSERT( graphicsSystem );
-
-                    auto smgr = graphicsSystem->getGraphicsScene();
-                    FB_ASSERT( smgr );
-
-                    // auto activeCamera = smgr->getActiveCamera();
-                    // FB_ASSERT( isActive() && activeCamera == m_camera );
-#endif
+                    //        m_node->setPosition( p );
+                    //        m_node->setOrientation( r );
+                    //    }
+                    //}
                 }
+                break;
+                default:
+                {
+                }
+                break;
+                }
+            }
+            break;
+            case Thread::Task::Render:
+            {
             }
             break;
             default:
@@ -394,7 +402,7 @@ namespace fb
             {
                 if( actor->getFlag( IActor::ActorFlagIsEditor ) )
                 {
-                    setZOrder( 0 );
+                    setZOrder( 100 );
                     return;
                 }
             }
@@ -466,6 +474,21 @@ namespace fb
             if( m_viewport )
             {
                 m_viewport->setZOrder( zOrder );
+            }
+        }
+
+        void Camera::updateTransform( const Transform3<real_Num> &t )
+        {
+            if( isActive() )
+            {
+                if( m_node )
+                {
+                    auto p = t.getPosition();
+                    auto r = t.getOrientation();
+
+                    m_node->setPosition( p );
+                    m_node->setOrientation( r );
+                }
             }
         }
 
@@ -649,7 +672,7 @@ namespace fb
 
         void Camera::updateActiveState( bool active )
         {
-#if 1
+#if 0
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 

@@ -211,5 +211,33 @@ namespace fb
             return false;
         }
 
+        void Collision::updateTransform()
+        {
+            try
+            {
+                auto applicationManager = core::IApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto actor = getActor();
+
+                auto physicsManager = applicationManager->getPhysicsManager();
+                if( physicsManager )
+                {
+                    auto shape = getShape();
+                    if( shape )
+                    {
+                        auto localTransform = actor->getWorldTransform();
+                        localTransform.setPosition( Vector3F::zero() );
+                        localTransform.setOrientation( QuaternionF::identity() );
+                        shape->setLocalPose( localTransform );
+                    }
+                }
+            }
+            catch( std::exception &e )
+            {
+                FB_LOG_EXCEPTION( e );
+            }
+        }
+
     }  // namespace scene
 }  // end namespace fb

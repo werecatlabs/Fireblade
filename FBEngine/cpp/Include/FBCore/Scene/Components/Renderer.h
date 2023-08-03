@@ -79,15 +79,6 @@ namespace fb
             /** @copydoc BaseComponent::postUpdate */
             void postUpdate() override;
 
-            /** @copydoc BaseComponent::awake */
-            void awake() override;
-
-            /** @brief Play mode function for Renderer */
-            void play();
-
-            /** @brief Edit mode function for Renderer */
-            void edit();
-
             /** @copydoc BaseComponent::getChildObjects */
             Array<SmartPtr<ISharedObject>> getChildObjects() const override;
 
@@ -130,6 +121,8 @@ namespace fb
             /** @brief Sets the graphics node used by the Renderer */
             void setGraphicsNode( SmartPtr<render::ISceneNode> graphicshNode );
 
+            void updateTransform( const Transform3<real_Num> &transform );
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
@@ -154,6 +147,7 @@ namespace fb
 
             static u32 m_idExt;
         };
+
     }  // namespace scene
 }  // end namespace fb
 

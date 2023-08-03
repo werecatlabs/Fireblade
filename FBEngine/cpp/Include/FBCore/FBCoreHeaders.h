@@ -461,6 +461,7 @@
 
 #include <FBCore/System/RttiClassDefinition.h>
 
+#include <FBCore/Scene/Components/AudioEmitter.h>
 #include <FBCore/Scene/Components/Component.h>
 #include <FBCore/Scene/Components/Camera.h>
 #include <FBCore/Scene/Components/Constraint.h>
@@ -477,7 +478,7 @@
 #include <FBCore/Scene/Components/MeshRenderer.h>
 #include <FBCore/Scene/Components/Rigidbody.h>
 #include <FBCore/Scene/Components/Skybox.h>
-#include <FBCore/Scene/Components/Transform.h>
+
 #include <FBCore/Scene/Components/Terrain/TerrainSystem.h>
 #include <FBCore/Scene/Components/Terrain/TerrainLayer.h>
 #include <FBCore/Scene/Components/Terrain/TerrainBlendMap.h>
@@ -497,6 +498,7 @@
 #include <FBCore/Scene/CameraManager.h>
 #include <FBCore/Scene/SceneManager.h>
 #include <FBCore/Scene/Scene.h>
+#include <FBCore/Scene/Transform.h>
 
 #include <FBCore/Script/ScriptEvent.h>
 #include <FBCore/Script/ScriptClass.h>

@@ -63,6 +63,8 @@ namespace fb
 
             void setZOrder( u32 zOrder );
 
+            void updateTransform( const Transform3<real_Num> &transform );
+
             FB_CLASS_REGISTER_DECL;
 
         protected:

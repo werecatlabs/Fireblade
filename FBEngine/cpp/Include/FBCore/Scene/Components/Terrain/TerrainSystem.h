@@ -85,6 +85,7 @@ namespace fb
              * rendered to the screen.
              */
             void createTerrain();
+            void updateVisibility() override;
 
             SmartPtr<TerrainSharedObjectListener> m_terrainListener;
 

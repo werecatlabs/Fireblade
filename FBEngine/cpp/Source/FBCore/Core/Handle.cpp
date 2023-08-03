@@ -45,7 +45,7 @@ namespace fb
 
     void Handle::setName( const String &name )
     {
-        FB_ASSERT(name.size() <= m_name.capacity());
+        FB_ASSERT( name.size() <= m_name.capacity() );
 
         m_name = name;
         m_hash = StringUtil::getHash( name );
@@ -75,11 +75,6 @@ namespace fb
     void Handle::setId( u32 id )
     {
         m_id = id;
-    }
-
-    u32 Handle::getInstanceId() const
-    {
-        return m_instanceId;
     }
 
     void Handle::setInstanceId( u32 instanceId )

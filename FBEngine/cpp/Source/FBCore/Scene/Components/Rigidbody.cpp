@@ -3,7 +3,7 @@
 #include <FBCore/Scene/Components/RigidbodyListener.h>
 #include <FBCore/Scene/SceneManager.h>
 #include <FBCore/Scene/Components/Collision.h>
-#include <FBCore/Scene/Components/Transform.h>
+#include <FBCore/Scene/Transform.h>
 #include <FBCore/Interface/Physics/IPhysicsManager.h>
 #include <FBCore/Interface/Physics/IPhysicsScene3.h>
 #include <FBCore/Interface/Physics/IPhysicsBody3.h>
@@ -337,7 +337,17 @@ namespace fb
                 case State::Edit:
                 case State::Play:
                 {
-                    createRigidbodyObject();
+                    auto actor = getActor();
+                    auto enabled = isEnabled() && actor->isEnabledInScene();
+
+                    if( enabled )
+                    {
+                        createRigidbodyObject();
+                    }
+                    else
+                    {
+                        destroyRigidbodyObject();
+                    }
                 }
                 break;
                 default:
@@ -823,6 +833,21 @@ namespace fb
             {
                 m_rigidDynamic->setMassSpaceInertiaTensor( m_massSpaceInertiaTensor );
             }
+        }
+
+        fb::Transform3<fb::real_Num> Rigidbody::getTransform() const
+        {
+            if( m_rigidDynamic )
+            {
+                return m_rigidDynamic->getTransform();
+            }
+
+            if( m_rigidStatic )
+            {
+                return m_rigidStatic->getTransform();
+            }
+
+            return Transform3<real_Num>();
         }
 
     }  // namespace scene

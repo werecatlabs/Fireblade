@@ -81,12 +81,6 @@ namespace fb
         /** Set a smart pointer to the mesh object. */
         virtual void setMesh( SmartPtr<IMesh> mesh ) = 0;
 
-        /** Get the path to the mesh file. */
-        virtual String getMeshPath() const = 0;
-
-        /** Set the path to the mesh file. */
-        virtual void setMeshPath( const String &meshPath ) = 0;
-
         FB_CLASS_REGISTER_DECL;
     };
 

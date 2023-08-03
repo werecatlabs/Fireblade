@@ -4,6 +4,7 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/ISceneManager.h>
 #include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Atomics/AtomicFloat.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/UnorderedMap.h>
 #include <FBCore/Core/UtilityTypes.h>
@@ -139,10 +140,36 @@ namespace fb
 
             String getComponentFactoryType( const String &type ) const;
 
+            void addTransformState( u32 id, time_interval time, const Transform3<real_Num> &transform );
+
+            bool getTransformState( u32 id, time_interval t, Transform3<real_Num> &transform );
+
+            SharedPtr<Array<SmartPtr<IComponent>>> getRegisteredComponents( Thread::UpdateState state,
+                                                                            Thread::Task task ) const;
+
+            void registerComponentUpdate( Thread::Task task, Thread::UpdateState state,
+                                          SmartPtr<IComponent> component );
+
+            void unregisterComponentUpdate( Thread::Task task, Thread::UpdateState state,
+                                            SmartPtr<IComponent> component );
+
+            void unregisterAllComponent( SmartPtr<IComponent> component );
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
+            void updateTransformStatesSize();
+
             s32 getLoadPriority( SmartPtr<ISharedObject> obj );
+
+            mutable SpinRWMutex m_transformMutex;
+            atomic_f64 m_nextTransformSizeTime;
+            Array<Array<time_interval>> m_transformTimes;
+            Array<Array<Transform3<real_Num>>> m_transformStates;
+
+            mutable RecursiveMutex m_updateMutex;
+            Array<Array<bool>> m_updateObjects;
+            Array<Array<SharedPtr<Array<SmartPtr<IComponent>>>>> m_updateComponents;
 
             SmartPtr<IFSMManager> m_fsmManager;
 

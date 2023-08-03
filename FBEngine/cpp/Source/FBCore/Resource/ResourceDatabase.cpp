@@ -6,7 +6,6 @@
 
 namespace fb
 {
-
     FB_CLASS_REGISTER_DERIVED( fb, ResourceDatabase, SharedObject<IResourceDatabase> );
 
     ResourceDatabase::ResourceDatabase()
@@ -26,6 +25,12 @@ namespace fb
 
             auto databaseManager = fb::make_ptr<AssetDatabaseManager>();
             setDatabaseManager( databaseManager );
+
+            auto textureTypes = Array<String>( { ".png", ".jpg", ".jpeg", ".dds", ".tif" } );
+            setTextureTypes( textureTypes );
+
+            auto audioTypes = Array<String>( { ".wav", ".mp3", ".ogg" } );
+            setAudioTypes( audioTypes );
 
             setLoadingState( LoadingState::Loaded );
         }
@@ -140,20 +145,6 @@ namespace fb
                     {
                         auto path = file.filePath;
 
-#ifdef _DEBUG
-                        if( StringUtil::contains( path, "Materials/BackgroundUI.mat" ) )
-                        {
-                            int stop = 0;
-                            stop = 0;
-                        }
-
-                        if( StringUtil::contains( path, "Media/DefaultSkybox.mat" ) )
-                        {
-                            int stop = 0;
-                            stop = 0;
-                        }
-#endif
-
                         auto pMaterial = materialManager->createOrRetrieve( path );
                         auto material = fb::static_pointer_cast<render::IMaterial>( pMaterial.first );
                         if( material )
@@ -167,7 +158,7 @@ namespace fb
                 }
             }
 
-            auto textureTypes = Array<String>( { ".png", ".jpg", ".jpeg", ".dds", ".tif" } );
+            auto textureTypes = getTextureTypes();
             for( auto textureType : textureTypes )
             {
                 auto textureFiles = fileSystem->getFilesWithExtension( textureType );
@@ -193,6 +184,32 @@ namespace fb
                             }
                         }
                     }
+                }
+            }
+
+            auto audioTypes = getAudioTypes();
+            for(auto audioType : audioTypes)
+            {
+                auto audioFiles = fileSystem->getFilesWithExtension( audioType );
+                if( !audioFiles.empty() )
+                {
+                        auto audioManager = applicationManager->getSoundManager();
+
+                        for( auto &file : audioFiles )
+                        {
+                            auto path = file.filePath;
+
+                            auto audioResult = audioManager->createOrRetrieve( path );
+                            auto audio =
+                                fb::static_pointer_cast<ISound>( audioResult.first );
+                            if( audio )
+                            {
+                                if( !assetDatabaseManager->hasResourceEntry( audio ) )
+                                {
+                                    assetDatabaseManager->addResourceEntry( audio );
+                                }
+                            }
+                        }
                 }
             }
         }
@@ -300,7 +317,7 @@ namespace fb
     }
 
     SmartPtr<IResource> ResourceDatabase::cloneResource( u32 type, SmartPtr<IResource> resource,
-                                                          const String &path )
+                                                         const String &path )
     {
         auto applicationManager = core::IApplicationManager::instance();
         FB_ASSERT( applicationManager );
@@ -344,7 +361,7 @@ namespace fb
             {
                 FB_LOG( "Importing: " + folderListing->getFolderName() );
 
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto projectPath = applicationManager->getProjectPath();
@@ -656,8 +673,8 @@ namespace fb
 
                     for( size_t i = 0; i < numFields; ++i )
                     {
-                        auto fieldName = query->getFieldName( (u32)i );
-                        auto fieldValue = query->getFieldValue( (u32)i );
+                        auto fieldName = query->getFieldName( static_cast<u32>( i ) );
+                        auto fieldValue = query->getFieldValue( static_cast<u32>( i ) );
 
                         directorProperties->setProperty( fieldName, fieldValue );
                     }
@@ -814,13 +831,13 @@ namespace fb
             assetDatabaseManager->addResourceEntry( materialResult.first );
             return materialResult.first;
         }
-        else if( ext == ".jpg" || ext == ".jpeg" || ext == ".tiff" || ext == ".png" )
+        if( ext == ".jpg" || ext == ".jpeg" || ext == ".tiff" || ext == ".png" )
         {
             auto textureResult = textureManager->createOrRetrieve( path );
             assetDatabaseManager->addResourceEntry( textureResult.first );
             return textureResult.first;
         }
-        else if( ext == ".resource" )
+        if( ext == ".resource" )
         {
             //auto jsonStr = fileSystem->readAllText( path );
 
@@ -902,7 +919,7 @@ namespace fb
             auto materialResult = materialManager->createOrRetrieve( uuid, path, type );
             return materialResult.first;
         }
-        else if( type == "Texture" )
+        if( type == "Texture" )
         {
             auto textureResult = textureManager->createOrRetrieve( uuid, path, type );
             return textureResult.first;
@@ -942,11 +959,11 @@ namespace fb
             static const auto materialType = render::IMaterial::typeInfo();
 
             auto typeManager = TypeManager::instance();
-            if( typeManager->isDerived( (u32)type, fontType ) )
+            if( typeManager->isDerived( static_cast<u32>( type ), fontType ) )
             {
                 return fontManager->createOrRetrieve( path );
             }
-            else if( typeManager->isDerived( (u32)type, materialType ) )
+            if( typeManager->isDerived( static_cast<u32>( type ), materialType ) )
             {
                 return materialManager->createOrRetrieve( path );
             }
@@ -960,7 +977,7 @@ namespace fb
     }
 
     Pair<SmartPtr<IResource>, bool> ResourceDatabase::createOrRetrieve( hash_type type,
-                                                                         const String &path )
+                                                                        const String &path )
     {
         try
         {
@@ -1000,7 +1017,7 @@ namespace fb
                 auto typeManager = TypeManager::instance();
                 FB_ASSERT( typeManager );
 
-                if( typeManager->isDerived( (u32)type, materialType ) )
+                if( typeManager->isDerived( static_cast<u32>( type ), materialType ) )
                 {
                     if( materialManager )
                     {
@@ -1008,7 +1025,7 @@ namespace fb
                     }
                 }
 
-                if( typeManager->isDerived( (u32)type, meshResourceType ) )
+                if( typeManager->isDerived( static_cast<u32>( type ), meshResourceType ) )
                 {
                     if( meshManager )
                     {
@@ -1082,7 +1099,7 @@ namespace fb
                         auto materialResult = materialManager->createOrRetrieve( uuid, path, type );
                         return materialResult.first;
                     }
-                    else if( type == "Texture" )
+                    if( type == "Texture" )
                     {
                         auto graphicsSystem = applicationManager->getGraphicsSystem();
                         auto textureManager = graphicsSystem->getTextureManager();
@@ -1100,7 +1117,7 @@ namespace fb
     }
 
     void ResourceDatabase::getSceneObjects( SmartPtr<scene::IActor> actor,
-                                             Array<SmartPtr<ISharedObject>> &objects ) const
+                                            Array<SmartPtr<ISharedObject>> &objects ) const
     {
         objects.push_back( actor );
 
@@ -1178,6 +1195,30 @@ namespace fb
     void ResourceDatabase::setInstancesPtr( SharedPtr<Array<SmartPtr<IResource>>> instances )
     {
         m_instances = instances;
+    }
+
+    Array<String> ResourceDatabase::getTextureTypes() const
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        return m_textureTypes;
+    }
+
+    void ResourceDatabase::setTextureTypes( const Array<String> &textureTypes )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_textureTypes = textureTypes;
+    }
+
+    Array<String> ResourceDatabase::getAudioTypes() const
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        return m_audioTypes;
+    }
+
+    void ResourceDatabase::setAudioTypes( const Array<String> &audioTypes )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_audioTypes = audioTypes;
     }
 
 }  // end namespace fb

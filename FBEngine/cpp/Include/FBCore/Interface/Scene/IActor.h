@@ -180,32 +180,12 @@ namespace fb
              * @param orientation The world orientation to set.
              */
             virtual void setOrientation( const Quaternion<real_Num> &orientation ) = 0;
-
-            /**
-             * Called when the actor is awakened.
-             */
-            virtual void awake() = 0;
-
-            /**
-             * Called when the actor is played.
-             */
-            virtual void play() = 0;
-
-            /**
-             * Called when the actor is edited.
-             */
-            virtual void edit() = 0;
-
+            
             /**
              * Called when the level is loaded.
              * @param scene The loaded scene.
              */
             virtual void levelWasLoaded( SmartPtr<IScene> scene ) = 0;
-
-            /**
-             * Called when the actor is reset.
-             */
-            virtual void reset() = 0;
 
             /**
              * Called when the hierarchy changes.
@@ -279,25 +259,6 @@ namespace fb
 
             /** Gets the sibling index. */
             virtual s32 getSiblingIndex() const = 0;
-
-            /** Marks a component as dirty so it can be updated. */
-            virtual void addDirtyComponent( Thread::Task taskId, Thread::UpdateState updateType,
-                                            SmartPtr<IComponent> component ) = 0;
-
-            /** To know if component is dirty. */
-            virtual bool isComponentDirty( Thread::Task taskId, Thread::UpdateState updateType,
-                                           SmartPtr<IComponent> component ) = 0;
-
-            /** Register the component for updates. */
-            virtual void registerComponentUpdate( Thread::Task taskId, Thread::UpdateState updateType,
-                                                  SmartPtr<scene::IComponent> object ) = 0;
-
-            /** Unregister the component for updates. */
-            virtual void unregisterComponentUpdate( Thread::Task taskId, Thread::UpdateState updateType,
-                                                    SmartPtr<scene::IComponent> object ) = 0;
-
-            /** Unregister the component for updates. */
-            virtual void unregisterAllComponent( SmartPtr<scene::IComponent> object ) = 0;
 
             /** Unregister the component for updates. */
             virtual void triggerEnter( SmartPtr<scene::IComponent> collision ) = 0;

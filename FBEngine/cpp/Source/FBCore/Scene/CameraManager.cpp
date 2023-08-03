@@ -13,20 +13,29 @@ namespace fb
 
         CameraManager::~CameraManager()
         {
+            unload( nullptr );
         }
 
         void CameraManager::load( SmartPtr<ISharedObject> data )
         {
+            setLoadingState( LoadingState::Loading );
+
+            m_cameras.reserve( 12 );
+
+            setLoadingState( LoadingState::Loaded );
         }
 
         void CameraManager::unload( SmartPtr<ISharedObject> data )
         {
+            setLoadingState( LoadingState::Unloading );
+
             m_editorTexture = nullptr;
 
             m_cameras.clear();
-            m_editorCameras.clear();
 
             m_selectedCamera = nullptr;
+
+            setLoadingState( LoadingState::Unloaded );
         }
 
         void CameraManager::update()
@@ -35,67 +44,16 @@ namespace fb
             {
             case Thread::Task::Application:
             {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                if( applicationManager->isPlaying() )
+                if( auto selectedCamera = getCurrentCamera() )
                 {
-                    //auto selectedCamera = getCurrentCamera();
-                    //if( selectedCamera )
-                    //{
-                    //    if( !selectedCamera->getFlag( scene::IActor::ActorFlagIsEditor ) )
-                    //    {
-                    //        selectedCamera->update();
-                    //    }
-                    //}
-
-                    auto cameras = getCameras();
-                    for( auto &camera : cameras )
-                    {
-                        if( camera )
-                        {
-                            if( !camera->getFlag( IActor::ActorFlagIsEditor ) )
-                            {
-                                camera->update();
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    auto cameras = getCameras();
-                    for( auto &camera : cameras )
-                    {
-                        if( camera )
-                        {
-                            if( camera->getFlag( IActor::ActorFlagIsEditor ) )
-                            {
-                                camera->update();
-                            }
-                        }
-                    }
+                    selectedCamera->update();
                 }
             }
             break;
             default:
             {
-                int stop = 0;
-                stop = 0;
             }
             }
-        }
-
-        void CameraManager::addEditorCamera( SmartPtr<IActor> camera )
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-            m_editorCameras.push_back( camera );
-        }
-
-        bool CameraManager::removeEditorCamera( SmartPtr<IActor> camera )
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-            m_editorCameras.erase( std::find( m_editorCameras.begin(), m_editorCameras.end(), camera ) );
-            return true;
         }
 
         void CameraManager::addCamera( SmartPtr<IActor> camera )
@@ -146,11 +104,6 @@ namespace fb
             return true;
         }
 
-        bool CameraManager::removeCamera( const String &name )
-        {
-            return true;
-        }
-
         SmartPtr<IActor> CameraManager::findCamera( const String &name ) const
         {
             auto cameras = getCameras();
@@ -189,9 +142,9 @@ namespace fb
 
         void CameraManager::setCurrentCamera( SmartPtr<IActor> camera )
         {
-            for( auto selectedCamera : m_cameras )
+            for( auto camera : m_cameras )
             {
-                auto cameraController = selectedCamera->getComponent<Camera>();
+                auto cameraController = camera->getComponent<Camera>();
                 if( cameraController )
                 {
                     cameraController->setActive( false );
@@ -238,15 +191,6 @@ namespace fb
         Array<SmartPtr<IActor>> CameraManager::getCameras() const
         {
             return m_cameras;
-        }
-
-        void CameraManager::setFlag( u32 flag, bool value )
-        {
-        }
-
-        bool CameraManager::getFlag( u32 flag ) const
-        {
-            return false;
         }
 
         void CameraManager::play()

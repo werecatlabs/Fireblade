@@ -116,6 +116,8 @@ namespace fb
 
         virtual u32 getEventType() const = 0;
         virtual void setEventType( u32 eventType ) = 0;
+
+        FB_CLASS_REGISTER_DECL;
     };
 }  // end namespace fb
 

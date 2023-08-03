@@ -102,21 +102,6 @@ namespace fb
             /** @copydoc IComponent::actorUnload */
             void actorUnload() override;
 
-            /** @copydoc IComponent::reset */
-            void reset() override;
-
-            /** @copydoc IComponent::awake */
-            void awake() override;
-
-            /** @copydoc IComponent::destroy */
-            void destroy() override;
-
-            /** @copydoc IComponent::start */
-            void play();
-
-            /** @copydoc IComponent::edit */
-            void edit();
-
             /** @copydoc IComponent::levelWasLoaded */
             void levelWasLoaded( s32 level ) override;
 
@@ -179,9 +164,6 @@ namespace fb
             /** @copydoc IComponent::isEnabled */
             bool isEnabled() const override;
 
-            /** @copydoc IComponent::setupUpdateRegistration */
-            void setupUpdateRegistration() override;
-
             /** @copydoc IComponent::isDirty */
             bool isDirty() const;
 
@@ -205,6 +187,8 @@ namespace fb
 
             /** @copydoc IComponent::updateTransform */
             void updateTransform() override;
+
+            void updateTransform( const Transform3<real_Num> &transform ) override;
 
             /** @copydoc IComponent::updateVisibility */
             void updateVisibility() override;

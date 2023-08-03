@@ -47,6 +47,10 @@ namespace fb
              */
             virtual void setParentWindow( SmartPtr<ui::IUIWindow> parentWindow ) = 0;
 
+            virtual SmartPtr<ui::IUIWindow> getDebugWindow() const = 0;
+
+            virtual void setDebugWindow( SmartPtr<ui::IUIWindow> debugWindow ) = 0;
+
             /**
              * @brief Checks if the window is visible.
              *

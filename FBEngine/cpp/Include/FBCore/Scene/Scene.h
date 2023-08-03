@@ -15,6 +15,7 @@ namespace fb
 {
     namespace scene
     {
+
         /** Scene implementation. */
         class Scene : public SharedObject<IScene>
         {

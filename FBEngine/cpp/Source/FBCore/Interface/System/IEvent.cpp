@@ -14,6 +14,8 @@ namespace fb
 
     const hash_type IEvent::handleTreeSelectionActivated =
         StringUtil::getHash( "handleTreeSelectionActivated" );
+    const hash_type IEvent::handleTreeSelectionRelease =
+        StringUtil::getHash( "handleTreeSelectionRelease" );
     const hash_type IEvent::handleTreeNodeDoubleClicked =
         StringUtil::getHash( "handleTreeNodeDoubleClicked" );
 
@@ -21,6 +23,7 @@ namespace fb
     const hash_type IEvent::handleValueChanged = StringUtil::getHash( "handleValueChanged" );
 
     const hash_type IEvent::handleMouseClicked = StringUtil::getHash( "handleMouseClicked" );
+    const hash_type IEvent::handleMouseReleased = StringUtil::getHash( "handleMouseReleased" );
 
     const hash_type IEvent::handleSelection = StringUtil::getHash( "handleSelection" );
 
@@ -60,6 +63,7 @@ namespace fb
 
     const hash_type IEvent::GAIN_FOCUS_HASH = StringUtil::getHash( "gainFocus" );
     const hash_type IEvent::LOST_FOCUS_HASH = StringUtil::getHash( "lostFocus" );
+    const hash_type IEvent::childChangedState = StringUtil::getHash( "childChangedState" );
 
     const hash_type IEvent::materialSetup = StringUtil::getHash( "materialSetup" );
     const hash_type IEvent::contactStart = StringUtil::getHash( "contactStart" );

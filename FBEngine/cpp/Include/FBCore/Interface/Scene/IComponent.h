@@ -85,12 +85,7 @@ namespace fb
              * @param stateObject The state object to associate with this component.
              */
             void setStateObject( SmartPtr<IStateContext> stateObject ) override = 0;
-
-            /**
-             * Sets up the component registration.
-             */
-            virtual void setupUpdateRegistration() = 0;
-
+            
             /**
              * Gets the data associated with the component as a properties object.
              * @return The data associated with the component as a properties object.
@@ -107,6 +102,11 @@ namespace fb
              * Updates the component using the actor transform.
              */
             virtual void updateTransform() = 0;
+
+            /**
+             * Updates the component using the transform passed.
+             */
+            virtual void updateTransform(const Transform3<real_Num>& transform) = 0;
 
             /**
              * Updates the component visibility.
@@ -140,22 +140,7 @@ namespace fb
 
             /** Called when the actor is unloaded. */
             virtual void actorUnload() = 0;
-
-            /** Called when the component is reset.  */
-            virtual void reset() = 0;
-
-            /** Called when the component is created. */
-            virtual void awake() = 0;
-
-            /** Called when the component is destroyed. */
-            virtual void destroy() = 0;
-
-            /** Called when entering play mode. */
-            virtual void play() = 0;
-
-            /** Called when entering edit mode. */
-            virtual void edit() = 0;
-
+            
             /** Called when the level was loaded.
             @param level An id of the level loaded.
             */

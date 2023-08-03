@@ -7,10 +7,11 @@
 namespace fb
 {
 
+    /** Interface for a project. */
     class IProject : public ISharedObject
     {
     public:
-        /** */
+        /** Destructor. */
         ~IProject() override = default;
 
         /** */

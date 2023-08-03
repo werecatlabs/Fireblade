@@ -24,6 +24,8 @@ namespace fb
         FactoryUtil::addFactory<scene::SceneManager>();
         FactoryUtil::addFactory<scene::Transform>();
 
+        FactoryUtil::addFactory<scene::AudioEmitter>();
+
         FactoryUtil::addFactory<scene::LayoutTransform>();
         FactoryUtil::addFactory<scene::Layout>();
         FactoryUtil::addFactory<scene::Image>();
@@ -37,12 +39,13 @@ namespace fb
         FactoryUtil::addFactory<WindowMessageData>();
 
         factoryManager->setPoolSizeByType<scene::Actor>( 32 );
+        factoryManager->setPoolSizeByType<scene::AudioEmitter>( 4 );
 
         factoryManager->setPoolSizeByType<EventJob>( 32 );
         factoryManager->setPoolSizeByType<Properties>( 32 );
         factoryManager->setPoolSizeByType<StateQueueStandard>( 32 );
         factoryManager->setPoolSizeByType<StateContextStandard>( 32 );
-        factoryManager->setPoolSizeByType<WorkerThread>( 8 );
+        factoryManager->setPoolSizeByType<WorkerThread>( 8 );        
 
         factoryManager->setPoolSizeByType<SceneNodeState>( 32 );
         factoryManager->setPoolSizeByType<TextureState>( 32 );

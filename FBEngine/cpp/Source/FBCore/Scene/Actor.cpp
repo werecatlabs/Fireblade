@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Actor.h>
 #include <FBCore/Scene/SceneManager.h>
-#include <FBCore/Scene/Components/Transform.h>
+#include <FBCore/Scene/Transform.h>
 #include <FBCore/Scene/Components/Component.h>
 #include <FBCore/Math/MathUtil.h>
 #include <FBCore/Core/LogManager.h>
@@ -225,45 +225,6 @@ namespace fb
             }
         }
 
-        void Actor::awake()
-        {
-            try
-            {
-                auto components = getComponents();
-                for( auto component : components )
-                {
-                    if( component )
-                    {
-                        auto c = fb::static_pointer_cast<Component>( component );
-                        c->awake();
-                    }
-                }
-
-                if( auto p = getChildrenPtr() )
-                {
-                    auto &children = *p;
-                    for( auto &child : children )
-                    {
-                        child->awake();
-                    }
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void Actor::play()
-        {
-            setState( IActor::State::Play );
-        }
-
-        void Actor::edit()
-        {
-            setState( IActor::State::Edit );
-        }
-
         void Actor::levelWasLoaded( SmartPtr<IScene> scene )
         {
             try
@@ -292,36 +253,7 @@ namespace fb
                 FB_LOG_EXCEPTION( e );
             }
         }
-
-        void Actor::reset()
-        {
-            try
-            {
-                auto components = getComponents();
-                for( auto component : components )
-                {
-                    if( component )
-                    {
-                        auto c = fb::static_pointer_cast<Component>( component );
-                        c->reset();
-                    }
-                }
-
-                if( auto p = getChildrenPtr() )
-                {
-                    auto &children = *p;
-                    for( auto &child : children )
-                    {
-                        child->reset();
-                    }
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
+        
         void Actor::hierarchyChanged()
         {
             try
@@ -534,8 +466,6 @@ namespace fb
                     auto &components = *p;
                     components.push_back( component );
                 }
-
-                component->awake();
             }
             catch( std::exception &e )
             {
@@ -1453,176 +1383,6 @@ namespace fb
             m_scene = scene;
         }
 
-        bool Actor::isRegistered( Thread::Task taskId, Thread::UpdateState updateType ) const
-        {
-            // return m_updateObjects[(int)updateType][(int)taskId] ? true : false;
-            return false;
-        }
-
-        void Actor::registerUpdate( Thread::Task taskId, Thread::UpdateState updateType )
-        {
-            // m_updateObjects[(int)updateType][(int)taskId] = true;
-
-            // if (m_scene)
-            //{
-            //	auto pThis = getSharedFromThis<CActor>();
-            //	m_scene->refreshRegistration(pThis);
-            // }
-        }
-
-        void Actor::unregisterUpdate( Thread::Task taskId, Thread::UpdateState updateType )
-        {
-            // m_updateObjects[(int)updateType][(int)taskId] = false;
-
-            // if (m_scene)
-            //{
-            //	auto pThis = getSharedFromThis<CActor>();
-            //	m_scene->refreshRegistration(pThis);
-            // }
-        }
-
-        void Actor::unregisterAll()
-        {
-            // for (u32 x = 0; x < int(Thread::UpdateState::Count); ++x)
-            //{
-            //	for (u32 y = 0; y < int(Thread::Task::Count); ++y)
-            //	{
-            //		m_updateObjects[x][y] = false;
-            //	}
-            // }
-
-            // if (m_scene)
-            //{
-            //	auto pThis = getSharedFromThis<CActor>();
-            //	m_scene->refreshRegistration(pThis);
-            // }
-        }
-
-        void Actor::registerComponentUpdate( Thread::Task taskId, Thread::UpdateState updateType,
-                                             SmartPtr<IComponent> object )
-        {
-            auto p = getRegisteredComponents( updateType, taskId );
-            if( p )
-            {
-                auto updateObjects = *p;
-                auto it = std::find( updateObjects.begin(), updateObjects.end(), object );
-                if( it == updateObjects.end() )
-                {
-                    updateObjects.push_back( object );
-
-                    auto data = boost::make_shared<ConcurrentArray<SmartPtr<IComponent>>>();
-                    std::sort( updateObjects.begin(), updateObjects.end() );
-                    *data = updateObjects;
-                    setRegisteredComponents( updateType, taskId, data );
-                }
-
-                FB_ASSERT( std::unique( updateObjects.begin(), updateObjects.end() ) ==
-                           updateObjects.end() );
-            }
-
-            // if (object)
-            //{
-            //	object->OnRegisterUpdate(taskId, updateType);
-            // }
-        }
-
-        void Actor::unregisterComponentUpdate( Thread::Task taskId, Thread::UpdateState updateType,
-                                               SmartPtr<IComponent> object )
-        {
-            auto p = getRegisteredComponents( updateType, taskId );
-            if( p )
-            {
-                ConcurrentArray<SmartPtr<IComponent>> &updateObjects = *p;
-
-                Array<SmartPtr<IComponent>> newObjects( updateObjects.begin(), updateObjects.end() );
-                auto it = std::find( newObjects.begin(), newObjects.end(), object );
-                if( it != newObjects.end() )
-                {
-                    newObjects.erase( it );
-
-                    std::sort( newObjects.begin(), newObjects.end() );
-                    boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> newArray(
-                        new ConcurrentArray<SmartPtr<IComponent>>( newObjects.begin(),
-                                                                   newObjects.end() ) );
-                    setRegisteredComponents( updateType, taskId, newArray );
-                }
-            }
-        }
-
-        void Actor::unregisterAllComponent( SmartPtr<IComponent> object )
-        {
-            try
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                auto factoryManager = applicationManager->getFactoryManager();
-
-                for( u32 x = 0; x < static_cast<int>( Thread::UpdateState::Count ); ++x )
-                {
-                    for( u32 y = 0; y < static_cast<int>( Thread::Task::Count ); ++y )
-                    {
-                        ConcurrentArray<SmartPtr<IComponent>> updateObjects;
-
-                        if( x < static_cast<int>( Thread::UpdateState::Count ) &&
-                            y < static_cast<int>( Thread::Task::Count ) )
-                        {
-                            auto p = getRegisteredComponents( static_cast<Thread::UpdateState>( x ),
-                                                              static_cast<Thread::Task>( y ) );
-                            if( p )
-                            {
-                                updateObjects = *p;
-                            }
-                        }
-
-                        auto hasElement = false;
-                        auto it = updateObjects.begin();
-                        for( ; it != updateObjects.end(); ++it )
-                        {
-                            if( ( *it ).get() == object.get() )
-                            {
-                                hasElement = true;
-                                break;
-                            }
-                        }
-
-                        if( hasElement )
-                        {
-                            ConcurrentArray<SmartPtr<IComponent>> newArray;
-                            for( size_t i = 0; i < updateObjects.size(); ++i )
-                            {
-                                if( object.get() != updateObjects[i].get() )
-                                {
-                                    newArray.push_back( updateObjects[i] );
-                                }
-                            }
-
-                            if( x < static_cast<int>( Thread::UpdateState::Count ) &&
-                                y < static_cast<int>( Thread::Task::Count ) )
-                            {
-                                auto p = boost::make_shared<ConcurrentArray<SmartPtr<IComponent>>>();
-                                *p = newArray;
-
-                                setRegisteredComponents( static_cast<Thread::UpdateState>( x ),
-                                                         static_cast<Thread::Task>( y ), p );
-                            }
-                        }
-                    }
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void Actor::handleEvent( const String &data )
-        {
-        }
-
-        String Actor::getGraphicsDataAsJSON() const
-        {
-            return "";
-        }
-
         void Actor::triggerEnter( SmartPtr<IComponent> collision )
         {
             // boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> p =
@@ -1699,85 +1459,6 @@ namespace fb
             }
 
             return -1;
-        }
-
-        void Actor::addDirtyComponent( Thread::Task taskId, Thread::UpdateState updateType,
-                                       SmartPtr<IComponent> component )
-        {
-            // auto dirtyComponent = m_lastDirtyComponent[(int)updateType][(int)taskId];
-            // if (!dirtyComponent)
-            //{
-            //	m_dirtyComponent[(int)updateType][(int)taskId] = component;
-            //	m_lastDirtyComponent[(int)updateType][(int)taskId] = component;
-            // }
-            // else
-            //{
-            //	if (!isComponentDirty(taskId, updateType, component))
-            //	{
-            //		//dirtyComponent->setDirtySibling(updateType, taskId, component);
-            //		m_lastDirtyComponent[(int)updateType][(int)taskId] = component;
-            //	}
-            // }
-        }
-
-        bool Actor::isComponentSiblingDirty( SmartPtr<IComponent> sibling, Thread::Task taskId,
-                                             Thread::UpdateState updateType,
-                                             SmartPtr<IComponent> component )
-        {
-            // if (sibling == component)
-            //{
-            //	return true;
-            // }
-
-            // if (sibling)
-            //{
-            //	//auto dirtySibling = sibling->getDirtySibling(updateType, taskId);
-            //	//if (dirtySibling)
-            //	//{
-            //	//	return isComponentSiblingDirty(dirtySibling, taskId, updateType, component);
-            //	//}
-            // }
-
-            return false;
-        }
-
-        bool Actor::isComponentDirty( Thread::Task taskId, Thread::UpdateState updateType,
-                                      SmartPtr<IComponent> component )
-        {
-            // auto dirtyComponent = m_dirtyComponent[(int)updateType][(int)taskId];
-            // if (dirtyComponent == component)
-            //{
-            //	return true;
-            // }
-
-            // if (dirtyComponent)
-            //{
-            //	//auto dirtySibling = dirtyComponent->getDirtySibling(updateType, taskId);
-            //	//if (dirtySibling)
-            //	//{
-            //	//	return isComponentSiblingDirty(dirtySibling, taskId, updateType, component);
-            //	//}
-            // }
-
-            return false;
-        }
-
-        boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> Actor::getRegisteredComponents(
-            Thread::UpdateState updateState, Thread::Task task ) const
-        {
-            // return m_updateComponents[(int)updateState][(int)task];
-            return nullptr;
-        }
-
-        void Actor::setRegisteredComponents( Thread::UpdateState updateState, Thread::Task task,
-                                             boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> p )
-        {
-            // FB_ASSERT((size_t)updateState < m_updateComponents.size());
-            // FB_ASSERT((size_t)task < m_updateComponents[(int)updateState].size());
-            // FB_ASSERT(p);
-
-            // auto& components = m_updateComponents[(int)updateState][(int)task];
-            // components = p;
         }
 
         void Actor::addChild( SmartPtr<IActor> child )
@@ -2262,7 +1943,7 @@ namespace fb
             properties->getPropertyValue( "label", name );
             setName( name );
 
-            if (name == "Vehicle")
+            if( name == "Vehicle" )
             {
                 int a = 0;
                 a = 0;
@@ -2417,27 +2098,30 @@ namespace fb
 
         void Actor::setState( State state )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-            FB_ASSERT( sceneManager );
-
-            auto handle = getHandle();
-            auto id = handle->getInstanceId();
-            auto fsm = sceneManager->getFSM( id );
-            if( fsm )
+            if( getState() != state )
             {
-                fsm->setState<State>( state );
-            }
+                auto applicationManager = core::IApplicationManager::instance();
+                FB_ASSERT( applicationManager );
 
-            if( auto p = getChildrenPtr() )
-            {
-                auto &children = *p;
-                for( auto &child : children )
+                auto pSceneManager = applicationManager->getSceneManager();
+                auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
+                FB_ASSERT( sceneManager );
+
+                auto handle = getHandle();
+                auto id = handle->getInstanceId();
+                auto fsm = sceneManager->getFSM( id );
+                if( fsm )
                 {
-                    child->setState( state );
+                    fsm->setState<State>( state );
+                }
+
+                if( auto p = getChildrenPtr() )
+                {
+                    auto &children = *p;
+                    for( auto &child : children )
+                    {
+                        child->setState( state );
+                    }
                 }
             }
         }

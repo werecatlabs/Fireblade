@@ -113,20 +113,8 @@ namespace fb
             /** @copydoc IActor::setOrientation */
             void setOrientation( const Quaternion<real_Num> &orientation ) override;
 
-            /** @copydoc IActor::awake */
-            void awake() override;
-
-            /** @copydoc IActor::start */
-            void play() override;
-
-            /** @copydoc IActor::edit */
-            void edit() override;
-
             /** @copydoc IActor::levelWasLoaded */
             void levelWasLoaded( SmartPtr<IScene> scene ) override;
-
-            /** @copydoc IActor::reset */
-            void reset() override;
 
             /** @copydoc IActor::hierarchyChanged */
             void hierarchyChanged() override;
@@ -199,35 +187,6 @@ namespace fb
             /** @copydoc IActor::setScene */
             void setScene( SmartPtr<IScene> scene ) override;
 
-            /** @copydoc IActor::isRegistered */
-            bool isRegistered( Thread::Task taskId, Thread::UpdateState updateType ) const;
-
-            /** @copydoc IActor::registerUpdate */
-            void registerUpdate( Thread::Task taskId, Thread::UpdateState updateType );
-
-            /** @copydoc IActor::unregisterUpdate */
-            void unregisterUpdate( Thread::Task taskId, Thread::UpdateState updateType );
-
-            /** @copydoc IActor::unregisterAll */
-            void unregisterAll();
-
-            /** @copydoc IActor::registerComponentUpdate */
-            void registerComponentUpdate( Thread::Task taskId, Thread::UpdateState updateType,
-                                          SmartPtr<IComponent> object ) override;
-
-            /** @copydoc IActor::unregisterComponentUpdate */
-            void unregisterComponentUpdate( Thread::Task taskId, Thread::UpdateState updateType,
-                                            SmartPtr<IComponent> object ) override;
-
-            /** @copydoc IActor::unregisterAllComponent */
-            void unregisterAllComponent( SmartPtr<IComponent> object ) override;
-
-            /** @copydoc IActor::handleEvent */
-            void handleEvent( const String &data );
-
-            /** @copydoc IActor::getGraphicsDataAsJSON */
-            String getGraphicsDataAsJSON() const;
-
             /** @copydoc IActor::triggerEnter */
             void triggerEnter( SmartPtr<IComponent> collision ) override;
 
@@ -242,28 +201,7 @@ namespace fb
             u32 getNumChildren() const;
 
             s32 getSiblingIndex() const;
-
-            /** @copydoc IActor::addDirtyComponent */
-            void addDirtyComponent( Thread::Task taskId, Thread::UpdateState updateType,
-                                    SmartPtr<IComponent> component ) override;
-
-            /** @copydoc IActor::isComponentSiblingDirty */
-            bool isComponentSiblingDirty( SmartPtr<IComponent> sibling, Thread::Task taskId,
-                                          Thread::UpdateState updateType,
-                                          SmartPtr<IComponent> component );
-
-            /** @copydoc IActor::isComponentDirty */
-            bool isComponentDirty( Thread::Task taskId, Thread::UpdateState updateType,
-                                   SmartPtr<IComponent> component ) override;
-
-            /** @copydoc IActor::getRegisteredComponents */
-            SharedPtr<ConcurrentArray<SmartPtr<IComponent>>> getRegisteredComponents(
-                Thread::UpdateState updateState, Thread::Task task ) const;
-
-            /** @copydoc IActor::setRegisteredComponents */
-            void setRegisteredComponents( Thread::UpdateState updateState, Thread::Task task,
-                                          boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> p );
-
+            
             /** Adds a child to this actor. */
             void addChild( SmartPtr<IActor> child ) override;
 

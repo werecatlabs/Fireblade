@@ -200,11 +200,6 @@ namespace fb
         return false;
     }
 
-    bool ISharedObject::isAlive() const
-    {
-        return ( *m_flags & GC_FLAG_OBJECT_ALIVE ) != 0;
-    }
-
     void ISharedObject::setPoolElement( bool poolElement )
     {
         if( poolElement )

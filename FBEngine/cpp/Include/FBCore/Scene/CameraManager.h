@@ -25,13 +25,8 @@ namespace fb
 
             void update() override;
 
-            void addEditorCamera( SmartPtr<IActor> camera ) override;
-
-            bool removeEditorCamera( SmartPtr<IActor> camera ) override;
-
             void addCamera( SmartPtr<IActor> camera ) override;
             bool removeCamera( SmartPtr<IActor> camera ) override;
-            bool removeCamera( const String &name ) override;
 
             SmartPtr<IActor> findCamera( const String &name ) const override;
             void setCurrentCamera( const String &name );
@@ -40,9 +35,6 @@ namespace fb
             SmartPtr<IActor> getCurrentCamera() const override;
 
             Array<SmartPtr<IActor>> getCameras() const override;
-
-            void setFlag( u32 flag, bool value ) override;
-            bool getFlag( u32 flag ) const override;
 
             /** @copydoc ICameraManager::play */
             void play() override;
@@ -68,9 +60,6 @@ namespace fb
 
             /** The scene cameras. */
             Array<SmartPtr<IActor>> m_cameras;
-
-            /** The editor cameras. */
-            Array<SmartPtr<IActor>> m_editorCameras;
 
             /** The current camera. */
             AtomicSmartPtr<IActor> m_selectedCamera;

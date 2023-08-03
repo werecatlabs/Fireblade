@@ -66,7 +66,7 @@ namespace fb
             //    fileSystem->writeAllText( fileInfo.filePath.c_str(), dataStr );
             //}
         }
-        catch(std::exception &e)
+        catch( std::exception &e )
         {
             FB_LOG_EXCEPTION( e );
         }
@@ -85,15 +85,15 @@ namespace fb
             auto resourceDatabase = applicationManager->getResourceDatabase();
             FB_ASSERT( resourceDatabase );
 
-            auto meshPath = getMeshPath();
+            auto meshPath = getFilePath();
             FB_ASSERT( !StringUtil::isNullOrEmpty( meshPath ) );
 
-            if(!StringUtil::isNullOrEmpty( meshPath ))
+            if( !StringUtil::isNullOrEmpty( meshPath ) )
             {
                 resourceDatabase->importFile( meshPath );
             }
         }
-        catch(std::exception &e)
+        catch( std::exception &e )
         {
             FB_LOG_EXCEPTION( e );
         }
@@ -112,19 +112,25 @@ namespace fb
             auto meshManager = applicationManager->getMeshManager();
             FB_ASSERT( meshManager );
 
-            auto meshPath = getMeshPath();
-            if(!StringUtil::isNullOrEmpty( meshPath ))
+            auto meshPath = getFilePath();
+            if( !StringUtil::isNullOrEmpty( meshPath ) )
             {
-                if(fileSystem->isExistingFile( meshPath ))
+                auto isExistingFile = fileSystem->isExistingFile( meshPath, false, true );
+                if( !isExistingFile )
+                {
+                    isExistingFile = fileSystem->isExistingFile( meshPath, true, true );
+                }
+
+                if( isExistingFile )
                 {
                     auto meshLoader = applicationManager->getMeshLoader();
                     FB_ASSERT( meshLoader );
 
-                    if(meshLoader)
+                    if( meshLoader )
                     {
                         m_mesh = meshLoader->loadMesh( this );
 
-                        if(m_mesh)
+                        if( m_mesh )
                         {
                             m_mesh->setName( meshPath );
                         }
@@ -136,7 +142,7 @@ namespace fb
                 }
             }
         }
-        catch(std::exception &e)
+        catch( std::exception &e )
         {
             FB_LOG_EXCEPTION( e );
         }
@@ -149,7 +155,7 @@ namespace fb
             unload( nullptr );
             load( nullptr );
         }
-        catch(std::exception &e)
+        catch( std::exception &e )
         {
             FB_LOG_EXCEPTION( e );
         }
@@ -159,13 +165,13 @@ namespace fb
     {
         try
         {
-            if(m_mesh)
+            if( m_mesh )
             {
                 m_mesh->unload( nullptr );
                 m_mesh = nullptr;
             }
         }
-        catch(std::exception &e)
+        catch( std::exception &e )
         {
             FB_LOG_EXCEPTION( e );
         }
@@ -198,19 +204,19 @@ namespace fb
         properties->getPropertyValue( "lights", m_lights );
         properties->getPropertyValue( "lightmapUVs", m_lightmapUVs );
 
-        if(properties->hasProperty( "Save" ))
+        if( properties->hasProperty( "Save" ) )
         {
             auto &resetButton = properties->getPropertyObject( "Save" );
-            if(resetButton.getAttribute( "click" ) == "true")
+            if( resetButton.getAttribute( "click" ) == "true" )
             {
                 save();
             }
         }
 
-        if(properties->hasProperty( "Import" ))
+        if( properties->hasProperty( "Import" ) )
         {
             auto &resetButton = properties->getPropertyObject( "Import" );
-            if(resetButton.getAttribute( "click" ) == "true")
+            if( resetButton.getAttribute( "click" ) == "true" )
             {
                 save();
                 import();
@@ -323,13 +329,4 @@ namespace fb
         m_mesh = val;
     }
 
-    String MeshResource::getMeshPath() const
-    {
-        return m_meshPath;
-    }
-
-    void MeshResource::setMeshPath( const String &val )
-    {
-        m_meshPath = StringUtil::cleanupPath( val );
-    }
-} // end namespace fb
+}  // namespace fb

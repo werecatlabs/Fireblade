@@ -15,6 +15,8 @@
 #include <FBCore/Core/BitUtil.h>
 #include <FBCore/Core/LogManager.h>
 
+#include "FBCore/Interface/Scene/ISceneManager.h"
+
 namespace fb
 {
     namespace scene
@@ -58,28 +60,28 @@ namespace fb
                         auto visible = isEnabled() && actor->isEnabledInScene();
                         if( visible )
                         {
-                            if( m_meshNode )
+                            if( m_graphicshNode )
                             {
-                                auto parent = m_meshNode->getParent();
+                                auto parent = m_graphicshNode->getParent();
                                 if( !parent )
                                 {
-                                    rootNode->addChild( m_meshNode );
+                                    rootNode->addChild( m_graphicshNode );
                                 }
 
-                                m_meshNode->setVisible( true );
+                                m_graphicshNode->setVisible( true );
                             }
                         }
                         else
                         {
-                            if( m_meshNode )
+                            if( m_graphicshNode )
                             {
-                                auto parent = m_meshNode->getParent();
+                                auto parent = m_graphicshNode->getParent();
                                 if( parent )
                                 {
-                                    parent->removeChild( m_meshNode );
+                                    parent->removeChild( m_graphicshNode );
                                 }
 
-                                m_meshNode->setVisible( false );
+                                m_graphicshNode->setVisible( false );
                             }
                         }
                     }
@@ -89,28 +91,28 @@ namespace fb
                         auto visible = isEnabled() && actor->isEnabledInScene();
                         if( visible )
                         {
-                            if( m_meshNode )
+                            if( m_graphicshNode )
                             {
-                                auto parent = m_meshNode->getParent();
+                                auto parent = m_graphicshNode->getParent();
                                 if( !parent )
                                 {
-                                    rootNode->addChild( m_meshNode );
+                                    rootNode->addChild( m_graphicshNode );
                                 }
 
-                                m_meshNode->setVisible( true );
+                                m_graphicshNode->setVisible( true );
                             }
                         }
                         else
                         {
-                            if( m_meshNode )
+                            if( m_graphicshNode )
                             {
-                                auto parent = m_meshNode->getParent();
+                                auto parent = m_graphicshNode->getParent();
                                 if( parent )
                                 {
-                                    parent->removeChild( m_meshNode );
+                                    parent->removeChild( m_graphicshNode );
                                 }
 
-                                m_meshNode->setVisible( false );
+                                m_graphicshNode->setVisible( false );
                             }
                         }
                     }
@@ -124,7 +126,13 @@ namespace fb
             {
                 setLoadingState( LoadingState::Loading );
 
+                auto applicationManager = core::IApplicationManager::instance();
+                auto sceneManager = applicationManager->getSceneManager();
+
                 Component::load( data );
+
+                sceneManager->registerComponentUpdate( Thread::Task::Render,
+                                                       Thread::UpdateState::Transform, this );
 
                 setLoadingState( LoadingState::Loaded );
             }
@@ -145,6 +153,8 @@ namespace fb
 
                     auto applicationManager = core::IApplicationManager::instance();
                     FB_ASSERT( applicationManager );
+
+                    auto sceneManager = applicationManager->getSceneManager();
 
                     auto graphicsSystem = applicationManager->getGraphicsSystem();
                     if( graphicsSystem )
@@ -172,6 +182,8 @@ namespace fb
                         }
                     }
 
+                    sceneManager->unregisterAllComponent( this );
+
                     Component::unload( data );
 
                     setLoadingState( LoadingState::Unloaded );
@@ -189,7 +201,7 @@ namespace fb
             objects.reserve( 4 );
 
             objects.push_back( m_meshObject );
-            objects.push_back( m_meshNode );
+            objects.push_back( m_graphicshNode );
             objects.push_back( m_sharedMaterial );
             return objects;
         }
@@ -419,7 +431,7 @@ namespace fb
             if( auto actor = getActor() )
             {
                 auto visisble = actor->isVisible();
-                m_meshNode->setVisible( visisble );
+                m_graphicshNode->setVisible( visisble );
             }
         }
 
@@ -447,11 +459,11 @@ namespace fb
                     auto actorOrientation = actorTransform->getOrientation();
                     auto actorScale = actorTransform->getScale();
 
-                    if( m_meshNode )
+                    if( m_graphicshNode )
                     {
-                        m_meshNode->setPosition( actorPosition );
-                        m_meshNode->setOrientation( actorOrientation );
-                        m_meshNode->setScale( actorScale );
+                        m_graphicshNode->setPosition( actorPosition );
+                        m_graphicshNode->setOrientation( actorOrientation );
+                        m_graphicshNode->setScale( actorScale );
                     }
                 }
             }
@@ -469,12 +481,12 @@ namespace fb
 
         SmartPtr<render::ISceneNode> MeshRenderer::getMeshNode() const
         {
-            return m_meshNode;
+            return m_graphicshNode;
         }
 
         void MeshRenderer::setMeshNode( SmartPtr<render::ISceneNode> meshNode )
         {
-            m_meshNode = meshNode;
+            m_graphicshNode = meshNode;
         }
     }  // namespace scene
 }  // end namespace fb

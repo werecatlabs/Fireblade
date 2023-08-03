@@ -8,10 +8,15 @@
 namespace fb
 {
 
+    /** Data oriented implementation of the FSMManager class is responsible for managing FSMs.
+    */
     class FSMManager : public SharedObject<IFSMManager>
     {
     public:
+        /** Constructor. */
         FSMManager();
+
+        /** Destructor. */
         ~FSMManager() override;
 
         /** @copydoc ISharedObject::load */
@@ -29,15 +34,22 @@ namespace fb
         /** @copydoc IFSMManager::destroyFSM */
         void destroyFSM( SmartPtr<IFSM> fsm ) override;
 
+        /** @copydoc IFSMManager::getStateChangeTime */
         f64 getStateChangeTime( u32 id ) const override;
+
+        /** @copydoc IFSMManager::setStateChangeTime */
         void setStateChangeTime( u32 id, const f64 &stateChangeTime ) override;
 
+        /** @copydoc IFSMManager::getPreviousState */
         u8 getPreviousState( u32 id ) const override;
 
+        /** @copydoc IFSMManager::getCurrentState */
         u8 getCurrentState( u32 id ) const override;
 
+        /** @copydoc IFSMManager::getNewState */
         u8 getNewState( u32 id ) const override;
 
+        /** @copydoc IFSMManager::setNewState */
         void setNewState( u32 id, s32 state, bool changeNow = false ) override;
 
         void stateOverride( u32 id, s32 state );

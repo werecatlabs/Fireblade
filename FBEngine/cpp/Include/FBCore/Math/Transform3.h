@@ -56,7 +56,13 @@ namespace fb
          * Returns the position of the transformation.
          * \return The position of the transformation.
          */
-        Vector3<T> getPosition() const;
+        Vector3<T> &getPosition();
+
+        /**
+         * Returns the position of the transformation.
+         * \return The position of the transformation.
+         */
+        const Vector3<T> &getPosition() const;
 
         /**
          * Sets the position of the transformation.
@@ -68,7 +74,8 @@ namespace fb
          * Returns the scale of the transformation.
          * \return The scale of the transformation.
          */
-        Vector3<T> getScale() const;
+        Vector3<T> &getScale();
+        const Vector3<T> &getScale() const;
 
         /**
          * Sets the scale of the transformation.
@@ -78,9 +85,15 @@ namespace fb
 
         /**
          * Returns the orientation of the transformation.
-         * \return The orientation of the transformation.
+         * @return The orientation of the transformation.
          */
-        Quaternion<T> getOrientation() const;
+        Quaternion<T> &getOrientation();
+
+        /**
+         * Returns the orientation of the transformation.
+         * @return The orientation of the transformation.
+         */
+        const Quaternion<T> &getOrientation() const;
 
         /**
          * Sets the orientation of the transformation.
@@ -318,7 +331,14 @@ namespace fb
     }
 
     template <class T>
-    Vector3<T> Transform3<T>::getPosition() const
+    Vector3<T> &Transform3<T>::getPosition()
+    {
+        FB_ASSERT( isSane() );
+        return m_position;
+    }
+
+    template <class T>
+    const Vector3<T> &Transform3<T>::getPosition() const
     {
         FB_ASSERT( isSane() );
         return m_position;
@@ -333,7 +353,14 @@ namespace fb
     }
 
     template <class T>
-    Vector3<T> Transform3<T>::getScale() const
+    Vector3<T> &Transform3<T>::getScale()
+    {
+        FB_ASSERT( isSane() );
+        return m_scale;
+    }
+
+    template <class T>
+    const Vector3<T> &Transform3<T>::getScale() const
     {
         FB_ASSERT( isSane() );
         return m_scale;
@@ -348,7 +375,14 @@ namespace fb
     }
 
     template <class T>
-    Quaternion<T> Transform3<T>::getOrientation() const
+    Quaternion<T> &Transform3<T>::getOrientation()
+    {
+        FB_ASSERT( isSane() );
+        return m_orientation;
+    }
+
+    template <class T>
+    const Quaternion<T> &Transform3<T>::getOrientation() const
     {
         FB_ASSERT( isSane() );
         return m_orientation;
@@ -360,6 +394,7 @@ namespace fb
         FB_ASSERT( isSane() );
         FB_ASSERT( orientation.isSane() );
         m_orientation = orientation;
+        FB_ASSERT( isSane() );
     }
 
     template <class T>
@@ -564,7 +599,8 @@ namespace fb
     }
 
     template <class T>
-    Quaternion<T> Transform3<T>::convertWorldToLocalOrientation( const Quaternion<T> &worldOrientation ) const
+    Quaternion<T> Transform3<T>::convertWorldToLocalOrientation(
+        const Quaternion<T> &worldOrientation ) const
     {
         auto rot = getOrientation();
         return rot.inverse() * worldOrientation;
@@ -581,7 +617,8 @@ namespace fb
     }
 
     template <class T>
-    Quaternion<T> Transform3<T>::convertLocalToWorldOrientation( const Quaternion<T> &localOrientation ) const
+    Quaternion<T> Transform3<T>::convertLocalToWorldOrientation(
+        const Quaternion<T> &localOrientation ) const
     {
         auto rot = getOrientation();
         return rot * localOrientation;

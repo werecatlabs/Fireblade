@@ -223,7 +223,7 @@ namespace fb
             void setProperties( SmartPtr<Properties> val );
 
             SmartPtr<IVehicleManager> getVehicleManager() const override;
-            void setVehicleManager( SmartPtr<IVehicleManager> val ) override;
+            void setVehicleManager( SmartPtr<IVehicleManager> vehicleManager ) override;
 
             SmartPtr<IMeshManager> getMeshManager() const override;
             void setMeshManager( SmartPtr<IMeshManager> val ) override;

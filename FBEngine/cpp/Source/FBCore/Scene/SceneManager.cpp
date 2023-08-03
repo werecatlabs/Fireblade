@@ -11,16 +11,21 @@
 #include <FBCore/Interface/System/ITaskLock.h>
 #include <FBCore/Interface/System/ITaskManager.h>
 #include <FBCore/Interface/System/IThreadPool.h>
+#include <FBCore/Interface/System/ITimer.h>
 #include <FBCore/Core/Path.h>
 #include <FBCore/Core/LogManager.h>
 
+#include <FBCore/Scene/Components/Camera.h>
 #include <FBCore/Scene/Components/CollisionBox.h>
 #include <FBCore/Scene/Components/Mesh.h>
 #include <FBCore/Scene/Components/MeshRenderer.h>
-#include <FBCore/Scene/Components/Transform.h>
+#include <FBCore/Scene/Transform.h>
 #include <FBCore/Scene/Components/Rigidbody.h>
 #include <FBCore/Scene/Components/UserComponent.h>
 #include <FBCore/Scene/Components/UI/LayoutTransform.h>
+
+#include <FBApplication/Camera/SphericalCameraController.h>
+#include <FBApplication/Camera/VehicleCameraController.h>
 
 namespace fb
 {
@@ -70,13 +75,22 @@ namespace fb
 
                 //m_meshComponents.resize( size );
                 //m_meshRenderers.resize( size );
-                //m_transforms.resize( size );
+                m_transforms.resize( size );
 
                 m_actorPreviousFlags.resize( size );
                 m_actorCurrentFlags.resize( size );
                 m_actorNewFlags.resize( size );
 
                 m_actors.resize( size );
+
+                m_transformTimes.resize( size );
+                m_transformStates.resize( size );
+
+                m_updateComponents.resize( (s32)Thread::UpdateState::Count );
+                for( auto &v : m_updateComponents )
+                {
+                    v.resize( (s32)Thread::Task::Count );
+                }
 
                 // auto transformStateData = fb::make_ptr<TransformStateData>();
                 // stateManager->setStateDataByType(transformStateData);
@@ -152,6 +166,8 @@ namespace fb
             {
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
+
+                auto timer = applicationManager->getTimer();
 
                 if( m_scene )
                 {
@@ -270,6 +286,64 @@ namespace fb
                     {
                         fsmManager->update();
                     }
+
+                    RecursiveMutex::ScopedLock lock( m_updateMutex );
+
+                    auto p = getRegisteredComponents( Thread::UpdateState::PreUpdate, task );
+                    if( p )
+                    {
+                        auto &components = *p;
+                        for( auto component : components )
+                        {
+                            if( component )
+                            {
+                                component->preUpdate();
+                            }
+                        }
+                    }
+                }
+
+                auto transformTime = timer->getTime() - ( 1.0 / 30.0 );
+
+                RecursiveMutex::ScopedLock lock( m_updateMutex );
+
+                auto p = getRegisteredComponents( Thread::UpdateState::PreUpdate, task );
+                if( p )
+                {
+                    auto &components = *p;
+                    for( auto component : components )
+                    {
+                        if( component )
+                        {
+                            component->preUpdate();
+                        }
+                    }
+                }
+
+                auto pTransformComponents =
+                    getRegisteredComponents( Thread::UpdateState::Transform, task );
+                if( pTransformComponents )
+                {
+                    auto &components = *pTransformComponents;
+
+                    auto renderTransform = Transform3<real_Num>();
+                    for( auto component : components )
+                    {
+                        if( component )
+                        {
+                            if( auto actor = component->getActor() )
+                            {
+                                auto transform = actor->getTransform();
+                                auto handle = transform->getHandle();
+                                auto id = handle->getInstanceId();
+
+                                if( getTransformState( id, transformTime, renderTransform ) )
+                                {
+                                    component->updateTransform( renderTransform );
+                                }
+                            }
+                        }
+                    }
                 }
             }
             catch( std::exception &e )
@@ -297,6 +371,8 @@ namespace fb
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
+            auto timer = applicationManager->getTimer();
+
             if( m_scene )
             {
                 m_scene->update();
@@ -318,6 +394,20 @@ namespace fb
                 //Rigidbody::updateComponents();
                 //LayoutTransform::updateComponents();
             }
+
+            RecursiveMutex::ScopedLock lock( m_updateMutex );
+            auto p = getRegisteredComponents( Thread::UpdateState::Update, task );
+            if( p )
+            {
+                auto &components = *p;
+                for( auto component : components )
+                {
+                    if( component )
+                    {
+                        component->update();
+                    }
+                }
+            }
         }
 
         void SceneManager::postUpdate()
@@ -325,9 +415,47 @@ namespace fb
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
+            auto timer = applicationManager->getTimer();
+            auto t = timer->getTime();
+            auto dt = timer->getDeltaTime();
+
             if( m_scene )
             {
                 m_scene->postUpdate();
+            }
+
+            auto sceneTask = getStateTask();
+            auto task = Thread::getCurrentTask();
+            if( task == sceneTask )
+            {
+                for( auto transform : m_transforms )
+                {
+                    if( transform )
+                    {
+                        transform->updateTransform();
+
+                        auto handle = transform->getHandle();
+                        auto id = handle->getInstanceId();
+                        auto worldTransform = transform->getWorldTransform();
+                        auto frameTime = transform->getFrameTime();
+
+                        addTransformState( id, frameTime, worldTransform );
+                    }
+                }
+            }
+
+            RecursiveMutex::ScopedLock lock( m_updateMutex );
+            auto p = getRegisteredComponents( Thread::UpdateState::PostUpdate, task );
+            if( p )
+            {
+                auto &components = *p;
+                for( auto component : components )
+                {
+                    if( component )
+                    {
+                        component->postUpdate();
+                    }
+                }
             }
         }
 
@@ -685,7 +813,14 @@ namespace fb
             auto &transforms = getTransforms();
 
             transforms.push_back( transformComponent );
-            return static_cast<u32>( transforms.size() - 1 );
+            auto id = static_cast<u32>( transforms.size() - 1 );
+
+            if( auto handle = transformComponent->getHandle() )
+            {
+                handle->setInstanceId( id );
+            }
+
+            return id;
         }
 
         u32 SceneManager::addComponent( SmartPtr<IComponent> component )
@@ -713,20 +848,29 @@ namespace fb
             }
 
             auto &components = m_components[typeInfo];
-            components.push_back( component );
+            if( components.size() < size )
+            {
+                components.resize( size );
+            }
 
-            auto id = systemId != 0 ? systemId : static_cast<u32>( components.size() - 1 );
+            auto componentIt = std::find( components.begin(), components.end(), nullptr );
+            auto pos = std::distance( components.begin(), componentIt );
+
+            components[pos] = component;
 
             if( handle )
             {
-                handle->setInstanceId( id );
+                handle->setInstanceId( pos );
             }
 
-            return id;
+            return pos;
         }
 
         u32 SceneManager::removeComponent( SmartPtr<IComponent> component )
         {
+            auto handle = component->getHandle();
+            auto pos = handle->getInstanceId();
+
             auto typeInfo = component->getTypeInfo();
 
             auto it = m_systems.find( typeInfo );
@@ -740,11 +884,7 @@ namespace fb
             if( itComponent != m_components.end() )
             {
                 auto &components = itComponent->second;
-                auto componentIt = std::find( components.begin(), components.end(), component );
-                if( componentIt != components.end() )
-                {
-                    components.erase( componentIt );
-                }
+                components[pos] = nullptr;
             }
 
             return 0;
@@ -828,8 +968,19 @@ namespace fb
 
             transform->load( nullptr );
 
+            auto it = std::find( m_transforms.begin(), m_transforms.end(), nullptr );
+            auto pos = std::distance( m_transforms.begin(), it );
+
             auto &transforms = getTransforms();
-            transforms.push_back( transform );
+            transforms[pos] = transform;
+
+            if( auto handle = transform->getHandle() )
+            {
+                handle->setInstanceId( pos );
+            }
+
+            //FB_ASSERT( pos != 0 );
+
             return transform;
         }
 
@@ -837,12 +988,17 @@ namespace fb
         {
             if( transform )
             {
-                transform->unload( nullptr );
-
                 auto &transforms = getTransforms();
+
+                auto handle = transform->getHandle();
+                auto pos = handle->getInstanceId();
+
+                transform->unload( nullptr );
 
                 transforms.erase( std::remove( transforms.begin(), transforms.end(), transform ),
                                   transforms.end() );
+
+                transforms[pos] = nullptr;
             }
         }
 
@@ -1104,11 +1260,265 @@ namespace fb
             return "";
         }
 
+        void SceneManager::addTransformState( u32 id, time_interval time,
+                                              const Transform3<real_Num> &transform )
+        {
+            SpinRWMutex::ScopedLock lock( m_transformMutex, true );
+
+            const auto maxElementCount = 12;
+
+            auto &times = m_transformTimes[id];
+            auto &transforms = m_transformStates[id];
+
+            if( times.capacity() < maxElementCount )
+                times.reserve( maxElementCount * 2 );
+
+            if( transforms.capacity() < maxElementCount )
+                transforms.reserve( maxElementCount * 2 );
+
+            //m_transformTimes[id].push_back( time );
+            //m_transformStates[id].push_back( transform );
+
+            times.insert( times.begin(), time );
+            transforms.insert( transforms.begin(), transform );
+
+            //FB_ASSERT( Util::areAllValuesUnique( m_transformTimes[id] ) );
+
+            if( times.size() > maxElementCount )
+            {
+                times.erase( times.begin() + maxElementCount, times.end() );
+            }
+
+            if( transforms.size() > maxElementCount )
+            {
+                transforms.erase( transforms.begin() + maxElementCount, transforms.end() );
+            }
+        }
+
+        bool SceneManager::getTransformState( u32 id, time_interval t, Transform3<real_Num> &transform )
+        {
+            SpinRWMutex::ScopedLock lock( m_transformMutex, false );
+
+            auto &times = m_transformTimes[id];
+            auto &transforms = m_transformStates[id];
+
+            if( times.empty() )
+            {
+                return false;
+            }
+
+            if( transforms.empty() )
+            {
+                return false;
+            }
+
+            if( times.front() < t )
+            {
+                if( times.size() >= 2 )
+                {
+                    const auto &time0 = times[0];
+                    const auto &time1 = times[1];
+
+                    auto diff = time0 - time1;
+
+                    const auto &transform0 = transforms[0];
+                    const auto &transform1 = transforms[1];
+
+                    const auto &position0 = transform0.getPosition();
+                    const auto &position1 = transform1.getPosition();
+
+                    const auto &orientation0 = transform0.getOrientation();
+                    const auto &orientation1 = transform1.getOrientation();
+
+                    if( diff > 0.0 )
+                    {
+                        auto diffFrame = t - time0;
+                        auto delta = diffFrame / diff;
+
+                        auto vel = ( position0 - position1 ) / static_cast<real_Num>( delta );
+                        auto position = position0 + vel * static_cast<real_Num>( delta );
+
+                        auto orientation = Quaternion<real_Num>::slerp(
+                            static_cast<real_Num>( 1.0 + delta ), orientation1, orientation0, true );
+                        orientation.normalise();
+
+                        auto &scale = transform0.getScale();
+
+                        transform = Transform3<real_Num>( position, orientation, scale );
+                    }
+                    else
+                    {
+                        transform = transforms.front();
+                    }
+                }
+                else
+                {
+                    transform = transforms.front();
+                }
+
+                return true;
+            }
+            auto cur = 0;
+            for( auto &time : times )
+            {
+                if( time < t )
+                {
+                    auto next = Math<s32>::clamp( cur - 1, 0, times.size() - 1 );
+
+                    auto &transform0 = transforms[next];
+                    auto &transform1 = transforms[cur];
+
+                    auto &position0 = transform0.getPosition();
+                    auto &position1 = transform1.getPosition();
+
+                    auto &orientation0 = transform0.getOrientation();
+                    auto &orientation1 = transform1.getOrientation();
+
+                    auto &time0 = times[next];
+                    auto &time1 = times[cur];
+
+                    auto diff = time0 - time1;
+                    if( diff > 0.0 )
+                    {
+                        auto diffFrame = t - time1;
+                        auto delta = Math<f64>::clamp( diffFrame / diff, 0.0, 1.0 );
+
+                        auto position =
+                            position1 + ( position0 - position1 ) * static_cast<real_Num>( delta );
+
+                        auto orientation = Quaternion<real_Num>::slerp(
+                            static_cast<real_Num>( delta ), orientation1, orientation0, true );
+                        orientation.normalise();
+
+                        auto &scale = transform1.getScale();
+
+                        transform = Transform3<real_Num>( position, orientation, scale );
+                        return true;
+                    }
+                }
+
+                ++cur;
+            }
+
+            if( !transforms.empty() )
+            {
+                transform = transforms.front();
+                return true;
+            }
+
+            transform = transforms.front();
+            return true;
+        }
+
+        SharedPtr<Array<SmartPtr<IComponent>>> SceneManager::getRegisteredComponents(
+            Thread::UpdateState state, Thread::Task task ) const
+        {
+            RecursiveMutex::ScopedLock lock( m_updateMutex );
+            if( (s32)state < m_updateComponents.size() )
+            {
+                auto &updateComponents = m_updateComponents[static_cast<s32>( state )];
+                if( (s32)task < updateComponents.size() )
+                {
+                    return updateComponents[static_cast<s32>( task )];
+                }
+            }
+
+            return nullptr;
+        }
+
+        void SceneManager::registerComponentUpdate( Thread::Task task, Thread::UpdateState state,
+                                                    SmartPtr<IComponent> component )
+        {
+            RecursiveMutex::ScopedLock lock( m_updateMutex );
+
+            auto p = getRegisteredComponents( state, task );
+            if( !p )
+            {
+                p = fb::make_shared<Array<SmartPtr<IComponent>>>();
+                m_updateComponents[static_cast<s32>( state )][static_cast<s32>( task )] = p;
+            }
+
+            if( p )
+            {
+                auto &updateObjects = *p;
+                auto it = std::find( updateObjects.begin(), updateObjects.end(), component );
+                if( it == updateObjects.end() )
+                {
+                    updateObjects.push_back( component );
+                }
+
+                FB_ASSERT( std::unique( updateObjects.begin(), updateObjects.end() ) ==
+                           updateObjects.end() );
+            }
+        }
+
+        void SceneManager::unregisterComponentUpdate( Thread::Task task, Thread::UpdateState state,
+                                                      SmartPtr<IComponent> component )
+        {
+            RecursiveMutex::ScopedLock lock( m_updateMutex );
+
+            auto p = getRegisteredComponents( state, task );
+            if( p )
+            {
+                auto &updateObjects = *p;
+                updateObjects.erase(
+                    std::remove( updateObjects.begin(), updateObjects.end(), component ),
+                    updateObjects.end() );
+            }
+        }
+
+        void SceneManager::unregisterAllComponent( SmartPtr<IComponent> component )
+        {
+            RecursiveMutex::ScopedLock lock( m_updateMutex );
+
+            for( u32 i = 0; i < static_cast<u32>( Thread::UpdateState::Count ); ++i )
+            {
+                for( u32 j = 0; j < static_cast<u32>( Thread::Task::Count ); ++j )
+                {
+                    unregisterComponentUpdate( static_cast<Thread::Task>( j ),
+                                               static_cast<Thread::UpdateState>( i ), component );
+                }
+            }
+        }
+
+        void SceneManager::updateTransformStatesSize()
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            auto timer = applicationManager->getTimer();
+            if( m_nextTransformSizeTime < timer->getTime() )
+            {
+                SpinRWMutex::ScopedLock lock( m_transformMutex, true );
+
+                const auto maxElementCount = 32;
+
+                for( auto transformTimes : m_transformTimes )
+                {
+                    if( transformTimes.size() >= maxElementCount )
+                    {
+                        auto it = transformTimes.begin();
+                        std::advance( it, maxElementCount );
+                        transformTimes.erase( it, transformTimes.end() );
+                    }
+                }
+
+                for( auto transformStates : m_transformStates )
+                {
+                    if( transformStates.size() >= maxElementCount )
+                    {
+                        auto it = transformStates.begin();
+                        std::advance( it, maxElementCount );
+                        transformStates.erase( it, transformStates.end() );
+                    }
+                }
+
+                m_nextTransformSizeTime = timer->getTime() + ( 1.0 / 30.0 );
+            }
+        }
+
         void SceneManager::setComponentFactoryIgnoreList( const Array<String> &ignoreList )
         {
             RecursiveMutex::ScopedLock lock( m_mutex );
             m_componentFactoryIgnoreList = ignoreList;
         }
-
     }  // namespace scene
 }  // end namespace fb

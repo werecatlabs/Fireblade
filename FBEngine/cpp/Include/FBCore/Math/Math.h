@@ -115,7 +115,11 @@ namespace fb
         static T max( T a, T b );
 
         //! Linearly interpolates between two values.
-        static T lerp( T a, T b, T t );
+        template <class B>
+        static B lerp( const B a, const B b, const T t )
+        {
+            return a + t * ( b - a );
+        }
 
         //! Calculates the inverse linear interpolation of a value.
         static T inverseLerp( T a, T b, T t );
@@ -411,6 +415,19 @@ namespace fb
         return val;
     }
 
+
+
+    template <class T>
+    T Math<T>::inverseLerp( const T a, const T b, const T t )
+    {
+        if( Abs( b - a ) < epsilon() )
+        {
+            return a;
+        }
+
+        return ( t - a ) / ( b - a );
+    }
+
     using MathI = Math<s32>;
     using MathF = Math<f32>;
     using MathD = Math<f64>;
@@ -426,9 +443,8 @@ namespace fb
     // template<> bool Math<f32>::isFinite(f32 value);
     // template<> bool Math<f64>::isFinite(f64 value);
 
-
 }  // end namespace fb
 
-#define FB_BREAK_NOT_FINITE( x ) FB_ASSERT( fb::MathF::isFinite( x ) );  
+#define FB_BREAK_NOT_FINITE( x ) FB_ASSERT( fb::MathF::isFinite( x ) );
 
 #endif

@@ -2,7 +2,7 @@
 #define _ISOUNDMANAGER_H
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Interface/Memory/ISharedObject.h>
+#include <FBCore/Interface/Resource/IResourceManager.h>
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Math/Vector3.h>
 
@@ -12,7 +12,7 @@ namespace fb
     /**
      * @brief An interface for a sound manager.
      */
-    class ISoundManager : public ISharedObject
+    class ISoundManager : public IResourceManager
     {
     public:
         /**

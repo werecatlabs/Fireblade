@@ -103,38 +103,6 @@ namespace fb
         {
         }
 
-        void Layout::awake()
-        {
-        }
-
-        void Layout::play()
-        {
-            if( auto actor = getActor() )
-            {
-                auto visible = isEnabled() && actor->isEnabledInScene();
-
-                auto layout = getLayout();
-                if( layout )
-                {
-                    layout->setVisible( visible );
-                }
-            }
-        }
-
-        void Layout::edit()
-        {
-            if( auto actor = getActor() )
-            {
-                auto visible = isEnabled() && actor->isEnabledInScene();
-
-                auto layout = getLayout();
-                if( layout )
-                {
-                    layout->setVisible( visible );
-                }
-            }
-        }
-
         SmartPtr<ui::IUILayout> Layout::getLayout() const
         {
             return m_layout;

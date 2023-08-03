@@ -1,14 +1,14 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/CollisionMesh.h>
-#include <FBCore/Scene/Components/Mesh.h>
 #include <FBCore/Scene/Components/Rigidbody.h>
+#include <FBCore/Scene/Components/Mesh.h>
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/Core/Exception.h>
 #include <FBCore/Core/Path.h>
 #include <FBCore/Interface/Physics/IPhysicsManager.h>
 #include <FBCore/Interface/Physics/IPhysicsMaterial3.h>
-#include <FBCore/Interface/Physics/IPhysicsShape3.h>
 #include <FBCore/Interface/Physics/IMeshShape.h>
+#include <FBCore/Interface/Physics/IRigidbody3.h>
 #include <FBCore/Interface/Mesh/IMeshResource.h>
 #include <FBCore/Interface/Resource/IMeshManager.h>
 
@@ -58,15 +58,6 @@ namespace fb
             {
                 FB_LOG_EXCEPTION( e );
             }
-        }
-
-        void CollisionMesh::awake()
-        {
-            // setupMesh();
-        }
-
-        void CollisionMesh::play()
-        {
         }
 
         SmartPtr<Properties> CollisionMesh::getProperties() const
@@ -136,39 +127,6 @@ namespace fb
         {
             return m_meshResource;
         }
-
-        /*
-
-        void CollisionMesh::setupMesh()
-        {
-            auto shape = getShape();
-            FB_ASSERT(fb::dynamic_pointer_cast<physics::IMeshShape>(shape));
-
-            auto meshShape = fb::static_pointer_cast<physics::IMeshShape>(shape);
-            if (meshShape)
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT(applicationManager);
-
-                auto meshManager = applicationManager->getMeshManager();
-                FB_ASSERT(meshManager);
-
-                auto resource = meshManager->loadFromFile(m_meshPath);
-                FB_ASSERT(fb::dynamic_pointer_cast<IMeshResource>(resource));
-
-                auto meshResource = fb::static_pointer_cast<IMeshResource>(resource);
-                if (meshResource)
-                {
-                    auto mesh = meshResource->getMesh();
-                    if (mesh)
-                    {
-                        meshShape->setMesh(mesh);
-                        setMesh(mesh);
-                    }
-                }
-            }
-        }
-        */
 
         void CollisionMesh::setupMesh()
         {
@@ -244,6 +202,11 @@ namespace fb
                             setupMesh();
 
                             auto mesh = getMeshResource();
+                            if( !mesh->isLoaded() )
+                            {
+                                mesh->load( nullptr );
+                            }
+
                             auto shape =
                                 physicsManager->createCollisionShape<physics::IMeshShape>( mesh );
                             FB_ASSERT( shape );

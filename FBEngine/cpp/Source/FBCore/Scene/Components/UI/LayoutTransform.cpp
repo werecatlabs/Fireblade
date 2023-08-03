@@ -3,7 +3,7 @@
 #include <FBCore/Scene/Components/UI/UIComponent.h>
 #include <FBCore/Scene/Components/UI/UIComponentUtil.h>
 #include <FBCore/Scene/Components/UI/Layout.h>
-#include <FBCore/Scene/Components/Transform.h>
+#include <FBCore/Scene/Transform.h>
 #include <FBCore/Scene/SceneManager.h>
 #include <FBCore/Scene/Components/UI/Text.h>
 #include <FBCore/Interface/Scene/IActor.h>

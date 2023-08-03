@@ -50,6 +50,8 @@ namespace fb
 
         /** Sets a boolean indicating whether the control key is pressed. */
         virtual void setControlPressed( bool controlPressed ) = 0;
+
+        FB_CLASS_REGISTER_DECL;
     };
 
 }  // end namespace fb

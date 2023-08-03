@@ -80,9 +80,6 @@ namespace fb
 
             ///< The mesh object.
             SmartPtr<render::IGraphicsMesh> m_meshObject;
-
-            ///< The mesh scene node.
-            SmartPtr<render::ISceneNode> m_meshNode;
         };
 
     }  // namespace scene

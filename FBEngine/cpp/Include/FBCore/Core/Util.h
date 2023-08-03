@@ -243,6 +243,25 @@ namespace fb
         static void sortByName( Array<SmartPtr<T>> &vector );
 
         static int CalculateNearest2Pow( int input );
+
+        template <class T>
+        static bool areAllValuesUnique( const std::vector<T> &vec )
+        {
+            std::set<int> uniqueElements;
+
+            for( int num : vec )
+            {
+                // If the element is already in the set, it's not unique
+                if( uniqueElements.count( num ) > 0 )
+                {
+                    return false;
+                }
+                uniqueElements.insert( num );
+            }
+
+            // If the size of the set is equal to the size of the vector, all values are unique
+            return uniqueElements.size() == vec.size();
+        }
     };
 
     template <class T>

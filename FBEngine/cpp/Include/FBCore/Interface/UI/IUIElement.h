@@ -246,6 +246,24 @@ namespace fb
              */
             virtual void setStateListener( SmartPtr<IStateListener> stateListener ) = 0;
 
+            //
+            // Events
+            //
+
+            virtual void onAddChild( IUIElement *child ) = 0;
+            virtual void onRemoveChild( IUIElement *child ) = 0;
+            virtual void onChangedState() = 0;
+            virtual void onChildChangedState( IUIElement *child ) = 0;
+            virtual void onToggleEnabled() = 0;
+            virtual void onToggleVisibility() = 0;
+            virtual void onToggleHighlight() = 0;
+            virtual void onActivate( SmartPtr<IUIElement> element ) = 0;
+            virtual void onDeactivate() = 0;
+            virtual void onSelect() = 0;
+            virtual void onDeselect() = 0;
+            virtual void onGainFocus() = 0;
+            virtual void onLostFocus() = 0;
+
             /** Gets a pointer to the underlying scene node object. This is dependent on the graphics
              * library used. */
             virtual void _getObject( void **ppObject ) const = 0;

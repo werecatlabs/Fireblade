@@ -28,12 +28,14 @@ namespace fb
         static const hash_type handlePropertyButtonClick;
 
         static const hash_type handleTreeSelectionActivated;
+        static const hash_type handleTreeSelectionRelease;
         static const hash_type handleTreeNodeDoubleClicked;
 
         static const hash_type handlePropertyChanged;
         static const hash_type handleValueChanged;
 
         static const hash_type handleMouseClicked;
+        static const hash_type handleMouseReleased;
 
         static const hash_type handleSelection;
 
@@ -72,6 +74,7 @@ namespace fb
 
         static const hash_type GAIN_FOCUS_HASH;
         static const hash_type LOST_FOCUS_HASH;
+        static const hash_type childChangedState;
 
         static const hash_type materialSetup;
         static const hash_type contactStart;

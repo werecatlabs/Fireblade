@@ -407,6 +407,11 @@ namespace fb
         return *m_references;
     }
 
+    inline bool ISharedObject::isAlive() const
+    {
+        return ( *m_flags & GC_FLAG_OBJECT_ALIVE ) != 0;
+    }
+
     template <class B>
     const SmartPtr<B> ISharedObject::getSharedFromThis() const
     {

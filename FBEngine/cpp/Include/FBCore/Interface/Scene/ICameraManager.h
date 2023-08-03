@@ -40,18 +40,6 @@ namespace fb
              */
             ~ICameraManager() override = default;
 
-            /** Adds a camera to the camera manager.
-             * @param camera The camera to add.
-             */
-            virtual void addEditorCamera( SmartPtr<IActor> camera ) = 0;
-
-            /**
-             * @brief Removes a camera from the camera manager.
-             * @param camera The camera to remove.
-             * @return True if the camera is successfully removed, false if not.
-             */
-            virtual bool removeEditorCamera( SmartPtr<IActor> camera ) = 0;
-
             /**
              * @brief Adds a camera to the camera manager.
              * @param camera The camera to add.
@@ -64,13 +52,6 @@ namespace fb
              * @return True if the camera is successfully removed, false if not.
              */
             virtual bool removeCamera( SmartPtr<IActor> camera ) = 0;
-
-            /**
-             * @brief Removes a camera from the camera manager.
-             * @param name The name of the camera to remove.
-             * @return True if the camera is successfully removed, false if not.
-             */
-            virtual bool removeCamera( const String &name ) = 0;
 
             /**
              * @brief Finds a camera with the given name.
@@ -102,20 +83,6 @@ namespace fb
              * @return An array of cameras.
              */
             virtual Array<SmartPtr<IActor>> getCameras() const = 0;
-
-            /**
-             * @brief Sets the value of a flag.
-             * @param flag The flag to set.
-             * @param value The value to set the flag to.
-             */
-            virtual void setFlag( u32 flag, bool value ) = 0;
-
-            /**
-             * @brief Gets the value of a flag.
-             * @param flag The flag to get the value of.
-             * @return The value of the flag.
-             */
-            virtual bool getFlag( u32 flag ) const = 0;
 
             /**
              * @brief Triggers the play event, transitioning the camera manager state to play mode.

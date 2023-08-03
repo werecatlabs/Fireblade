@@ -22,15 +22,6 @@ namespace fb
 
             void update() override;
 
-            /** @copydoc IComponent::awake */
-            void awake() override;
-
-            /** @copydoc IComponent::start */
-            void play();
-
-            /** @copydoc IComponent::edit */
-            void edit();
-
             SmartPtr<ui::IUILayout> getLayout() const;
             void setLayout( SmartPtr<ui::IUILayout> val );
 

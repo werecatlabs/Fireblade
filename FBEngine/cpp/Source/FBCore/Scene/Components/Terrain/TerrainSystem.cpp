@@ -48,8 +48,7 @@ namespace fb
         {
             try
             {
-                const auto &loadingState = getLoadingState();
-                if( loadingState != LoadingState::Unloaded )
+                if( isLoaded() )
                 {
                     setLoadingState( LoadingState::Unloading );
 
@@ -94,51 +93,29 @@ namespace fb
                 FB_ASSERT( applicationManager );
 
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
+
                 if( graphicsSystem )
                 {
                     auto smgr = graphicsSystem->getGraphicsScene();
                     FB_ASSERT( smgr );
 
                     auto rootNode = smgr->getRootSceneNode();
+                    auto visible = isEnabled() && actor->isEnabledInScene();
 
                     if( BitUtil::getFlagValue( flags, IActor::ActorFlagInScene ) !=
                         BitUtil::getFlagValue( oldFlags, IActor::ActorFlagInScene ) )
                     {
-                        auto visible = BitUtil::getFlagValue( flags, IActor::ActorFlagInScene );
-
-                        auto applicationManager = core::IApplicationManager::instance();
-                        FB_ASSERT( applicationManager );
-
-                        auto graphicsSystem = applicationManager->getGraphicsSystem();
-                        if( graphicsSystem )
+                        if( m_terrain )
                         {
-                            auto smgr = graphicsSystem->getGraphicsScene();
-                            FB_ASSERT( smgr );
-
-                            if( m_terrain )
-                            {
-                                m_terrain->setVisible( visible );
-                            }
+                            m_terrain->setVisible( visible );
                         }
                     }
                     else if( BitUtil::getFlagValue( flags, IActor::ActorFlagEnabled ) !=
                              BitUtil::getFlagValue( oldFlags, IActor::ActorFlagEnabled ) )
                     {
-                        auto visible = BitUtil::getFlagValue( flags, IActor::ActorFlagEnabled );
-
-                        auto applicationManager = core::IApplicationManager::instance();
-                        FB_ASSERT( applicationManager );
-
-                        auto graphicsSystem = applicationManager->getGraphicsSystem();
-                        if( graphicsSystem )
+                        if( m_terrain )
                         {
-                            auto smgr = graphicsSystem->getGraphicsScene();
-                            FB_ASSERT( smgr );
-
-                            if( m_terrain )
-                            {
-                                m_terrain->setVisible( visible );
-                            }
+                            m_terrain->setVisible( visible );
                         }
                     }
                 }
@@ -171,6 +148,8 @@ namespace fb
 
             //    m_diffuseColour = diffuseColour;
             //}
+
+            updateVisibility();
         }
 
         void TerrainSystem::updateTransform()
@@ -189,14 +168,9 @@ namespace fb
                     }
                 }
 #endif
-
-                auto actorTransform = actor->getTransform();
-                if( actorTransform )
+                
+                if( auto actorTransform = actor->getTransform() )
                 {
-                    auto actorPosition = actorTransform->getPosition();
-                    auto actorOrientation = actorTransform->getOrientation();
-                    auto actorScale = actorTransform->getScale();
-
                     auto worldTransform = actorTransform->getWorldTransform();
 
                     if( m_terrain )
@@ -246,8 +220,19 @@ namespace fb
             FB_ASSERT( m_terrain );
 
             m_terrain->addObjectListener( m_terrainListener );
+        }
 
-            graphicsSystem->loadObject( m_terrain );
+        void TerrainSystem::updateVisibility()
+        {
+            if( auto actor = getActor() )
+            {
+                auto visible = isEnabled() && actor->isEnabledInScene();
+
+                if( m_terrain )
+                {
+                    m_terrain->setVisible( visible );
+                }
+            }
         }
 
         IFSM::ReturnType TerrainSystem::handleComponentEvent( u32 state, IFSM::Event eventType )
@@ -265,6 +250,7 @@ namespace fb
                 case State::Play:
                 {
                     createTerrain();
+                    updateVisibility();
                 }
                 break;
                 default:

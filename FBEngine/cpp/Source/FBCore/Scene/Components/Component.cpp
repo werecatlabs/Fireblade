@@ -164,10 +164,6 @@ namespace fb
             return m_enabled;
         }
 
-        void Component::destroy()
-        {
-        }
-
         IFSM::ReturnType Component::handleComponentEvent( u32 state, IFSM::Event eventType )
         {
             switch( eventType )
@@ -290,24 +286,6 @@ namespace fb
             m_stateObject = stateObject;
         }
 
-        void Component::reset()
-        {
-        }
-
-        void Component::awake()
-        {
-        }
-
-        void Component::play()
-        {
-            setState( IComponent::State::Play );
-        }
-
-        void Component::edit()
-        {
-            setState( IComponent::State::Edit );
-        }
-
         void Component::levelWasLoaded( s32 level )
         {
         }
@@ -367,10 +345,6 @@ namespace fb
         void Component::actorUnload()
         {
             setActor( nullptr );
-        }
-
-        void Component::setupUpdateRegistration()
-        {
         }
 
         SmartPtr<ISharedObject> Component::toData() const
@@ -632,6 +606,11 @@ namespace fb
 
         void Component::updateTransform()
         {
+        }
+
+        void Component::updateTransform(const Transform3<real_Num>& transform)
+        {
+            
         }
 
         void Component::updateVisibility()

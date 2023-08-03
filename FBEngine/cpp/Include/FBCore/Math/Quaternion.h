@@ -6,7 +6,8 @@
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Matrix3.h>
 #include <FBCore/Core/StringTypes.h>
-#include <FBCore/Memory/SmartPtr.h>
+#include <cmath>
+#include <complex>
 
 namespace fb
 {
@@ -99,6 +100,19 @@ namespace fb
         //! Multiplication operator.
         Quaternion operator*( T s ) const;
 
+        /**
+         * Multiplies the given scalar to the given quaternion, returning a new quaternion.
+         *
+         * @tparam T The type of the quaternion and scalar.
+         * @param scalar The scalar to multiply to the quaternion.
+         * @param rkQ The quaternion to be multiplied.
+         * @return The new quaternion obtained after multiplying the given scalar to the given quaternion.
+         */
+        friend Quaternion<T> operator*( T fScalar, const Quaternion<T> &rkQ )
+        {
+            return Quaternion( fScalar * rkQ.w, fScalar * rkQ.x, fScalar * rkQ.y, fScalar * rkQ.z );
+        }
+
         //! Multiplication operator.
         Quaternion &operator*=( T s );
 
@@ -180,7 +194,12 @@ namespace fb
          *
          * @return A reference to this quaternion, after normalization.
          */
-        Quaternion &normalise();
+        void normalise();
+
+        /**
+         * Normalizes a copy of this quaternion and returns it.
+         */
+        Quaternion normaliseCopy() const;
 
         /**
          * @brief Sets the components of the quaternion.
@@ -218,18 +237,18 @@ namespace fb
 
         /**
          * @brief Interpolates between two quaternions based on a given time parameter.
-         * @param fT The time parameter, in the range [0, 1].
-         * @param rkP The starting quaternion.
-         * @param rkQ The ending quaternion.
+         * @param t The time parameter, in the range [0, 1].
+         * @param q1 The starting quaternion.
+         * @param q2 The ending quaternion.
          * @param shortestPath Whether to choose the shortest path between the quaternions.
          * @return The interpolated quaternion.
          */
-        static Quaternion slerp( T fT, const Quaternion &rkP, const Quaternion &rkQ,
+        static Quaternion slerp( T t, const Quaternion &q1, const Quaternion &q2,
                                  bool shortestPath = false );
 
         /**
          * @brief Performs spherical quadratic interpolation between four quaternions based on a given time parameter.
-         * @param fT The time parameter, in the range [0, 1].
+         * @param t The time parameter, in the range [0, 1].
          * @param rkP The starting quaternion.
          * @param rkA The first control quaternion.
          * @param rkB The second control quaternion.
@@ -569,7 +588,7 @@ namespace fb
     template <typename T>
     Quaternion<T> Quaternion<T>::operator*( T s ) const
     {
-        return Quaternion( s * x, s * y, s * z, s * w );
+        return Quaternion<T>( s * w, s * x, s * y, s * z );
     }
 
     template <typename T>
@@ -592,13 +611,13 @@ namespace fb
     template <typename T>
     Quaternion<T> Quaternion<T>::operator+( const Quaternion &other ) const
     {
-        return Quaternion( X() + other.X(), Y() + other.Y(), Z() + other.Z(), W() + other.W() );
+        return Quaternion<T>( w + other.w, x + other.x, y + other.y, z + other.z );
     }
 
     template <typename T>
     Quaternion<T> Quaternion<T>::operator-( const Quaternion &other ) const
     {
-        return Quaternion( X() - other.X(), Y() - other.Y(), Z() - other.Z(), W() - other.W() );
+        return Quaternion<T>( w - other.w, x - other.x, y - other.y, z - other.z );
     }
 
     template <typename T>
@@ -617,14 +636,14 @@ namespace fb
     }
 
     template <typename T>
-    Quaternion<T> &Quaternion<T>::normalise()
+    void Quaternion<T>::normalise()
     {
         auto n = x * x + y * y + z * z + w * w;
 
         if( Math<T>::equals( n, T( 1.0 ) ) )
         {
             // The quaternion is already normalized
-            return *this;
+            return;
         }
 
         // Calculate the inverse square root of n to normalize the quaternion
@@ -633,8 +652,14 @@ namespace fb
         y *= n;
         z *= n;
         w *= n;
+    }
 
-        return *this;
+    template <typename T>
+    Quaternion<T> Quaternion<T>::normaliseCopy() const
+    {
+        auto ret = *this;
+        ret.normalise();
+        return ret;
     }
 
     template <typename T>
@@ -671,13 +696,13 @@ namespace fb
     template <typename T>
     Quaternion<T>::operator const T *() const
     {
-        return &x;
+        return &w;
     }
 
     template <typename T>
     Quaternion<T>::operator T *()
     {
-        return &x;
+        return &w;
     }
 
     template <typename T>
@@ -866,44 +891,32 @@ namespace fb
     }
 
     template <typename T>
-    Quaternion<T> Quaternion<T>::slerp( T fT, const Quaternion<T> &rkP, const Quaternion<T> &rkQ,
+    Quaternion<T> Quaternion<T>::slerp( T t, const Quaternion<T> &q1, const Quaternion<T> &q2,
                                         bool shortestPath )
     {
-        auto fCos = rkP.dotProduct( rkQ );
-        Quaternion<T> rkT;
+        auto cosTheta = q1.dotProduct( q2 );
 
-        // Check if we need to invert the rotation
-        if( fCos < T( 0.0 ) && shortestPath )
+        // Adjust the sign of q2 to take the shortest path
+        auto q2Adjusted = q2;
+        if( shortestPath && cosTheta < T( 0 ) )
         {
-            fCos = -fCos;
-            rkT = -rkQ;
-        }
-        else
-        {
-            rkT = rkQ;
+            q2Adjusted = -q2;
+            cosTheta = -cosTheta;
         }
 
-        if( Math<T>::Abs( fCos ) < T( 1.0 ) - Math<T>::epsilon() )
+        auto theta = std::acos( cosTheta );
+        auto sinTheta = std::sin( theta );
+
+        if( sinTheta < std::numeric_limits<T>::epsilon() )
         {
-            // Standard case (slerp)
-            auto fSin = Math<T>::Sqrt( T( 1 ) - Math<T>::Sqr( fCos ) );
-            auto fAngle = Math<T>::ATan2( fSin, fCos );
-            auto fInvSin = T( 1 ) / fSin;
-            auto fCoeff0 = Math<T>::Sin( ( T( 1 ) - fT ) * fAngle ) * fInvSin;
-            auto fCoeff1 = Math<T>::Sin( fT * fAngle ) * fInvSin;
-            return fCoeff0 * rkP + fCoeff1 * rkT;
+            // Quaternions are very close, use linear interpolation
+            return Math<T>::lerp( q1, q2Adjusted, t );
         }
 
-        // There are two situations:
-        // 1. "rkP" and "rkQ" are very close (fCos ~= +1), so we can do a linear
-        //    interpolation safely.
-        // 2. "rkP" and "rkQ" are almost inverse of each other (fCos ~= -1), there
-        //    are an infinite number of possibilities for interpolation, but we don't
-        //    have a method to fix this case, so we just use linear interpolation here.
-        auto t = ( T( 1 ) - fT ) * rkP + fT * rkT;
-        // Taking the complement requires renormalisation
-        t.normalise();
-        return t;
+        auto coeff1 = std::sin( ( 1 - t ) * theta ) / sinTheta;
+        auto coeff2 = std::sin( t * theta ) / sinTheta;
+
+        return coeff1 * q1 + coeff2 * q2Adjusted;
     }
 
     template <typename T>
@@ -1167,7 +1180,7 @@ namespace fb
     template <typename T>
     Quaternion<T> Quaternion<T>::getConjugate() const
     {
-        return Quaternion<T>( -X(), -Y(), -Z(), W() );
+        return Quaternion<T>( W(), -X(), -Y(), -Z() );
     }
 
     template <typename T>
@@ -1196,7 +1209,7 @@ namespace fb
         constexpr auto defaultTolerance = std::numeric_limits<T>::epsilon();
         constexpr auto defaultMagnitude = T( 1.0 );
 
-        auto tolerance = defaultTolerance * T( 10.0 );  // Adjust as needed
+        auto tolerance = defaultTolerance * T( 1000.0 );  // Adjust as needed
 
         return isFinite() && Math<T>::Abs( magnitude() - defaultMagnitude ) < tolerance;
     }
@@ -1227,20 +1240,6 @@ namespace fb
         Quaternion<T> q( b, axis.X(), axis.Y(), axis.Z() );
         q.normalise();
         return q;
-    }
-
-    /**
-     * Multiplies the given scalar to the given quaternion, returning a new quaternion.
-     *
-     * @tparam T The type of the quaternion and scalar.
-     * @param scalar The scalar to multiply to the quaternion.
-     * @param rkQ The quaternion to be multiplied.
-     * @return The new quaternion obtained after multiplying the given scalar to the given quaternion.
-     */
-    template <typename T>
-    Quaternion<T> operator*( T scalar, const Quaternion<T> &rkQ )
-    {
-        return rkQ * scalar;
     }
 
     /// A 3D quaternion with single-precision floating-point components.

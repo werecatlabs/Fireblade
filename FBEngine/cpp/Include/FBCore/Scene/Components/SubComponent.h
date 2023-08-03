@@ -2,16 +2,8 @@
 #define __BaseSubComponent_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Interface/Scene/IComponent.h>
+#include <FBCore/Interface/Scene/ISubComponent.h>
 #include <FBCore/Interface/Scene/IActor.h>
-#include <FBCore/Core/FSMListener.h>
-#include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Interface/System/IStateContext.h>
-#include <FBCore/Atomics/Atomics.h>
-#include <FBCore/Core/DataUtil.h>
-#include <FBCore/Core/Properties.h>
-#include <FBCore/Memory/SharedObject.h>
-#include <FBCore/Memory/Data.h>
 #include <FBCore/Resource/Resource.h>
 
 namespace fb

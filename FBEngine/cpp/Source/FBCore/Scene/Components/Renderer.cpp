@@ -35,38 +35,6 @@ namespace fb
             unload( nullptr );
         }
 
-        void Renderer::awake()
-        {
-            // if (!m_meshObject)
-            //{
-            //	updateMesh();
-            //	updateMaterials();
-            //	updateTransform();
-            // }
-        }
-
-        void Renderer::play()
-        {
-            auto graphicsObject = getGraphicsObject();
-            if( !graphicsObject )
-            {
-                updateMesh();
-                updateMaterials();
-                updateTransform();
-            }
-        }
-
-        void Renderer::edit()
-        {
-            auto graphicsObject = getGraphicsObject();
-            if( !graphicsObject )
-            {
-                updateMesh();
-                updateMaterials();
-                updateTransform();
-            }
-        }
-
         void Renderer::updateDirty( u32 flags, u32 oldFlags )
         {
             auto actor = getActor();
@@ -413,36 +381,33 @@ namespace fb
 
         void Renderer::updateTransform()
         {
-            auto actor = getActor();
-            if( actor )
+            switch( auto task = Thread::getCurrentTask() )
             {
-#if _DEBUG
-                auto handle = actor->getHandle();
-                if( handle )
+            case Thread::Task::Application:
+            {
+                if( auto actor = getActor() )
                 {
-                    auto name = handle->getName();
-                    if( name == "F40f40" )
-                    {
-                        int stop = 0;
-                        stop = 0;
-                    }
-                }
-#endif
+                    //auto actorTransform = actor->getTransform();
+                    //if( actorTransform )
+                    //{
+                    //    auto actorPosition = actorTransform->getPosition();
+                    //    auto actorOrientation = actorTransform->getOrientation();
+                    //    auto actorScale = actorTransform->getScale();
 
-                auto actorTransform = actor->getTransform();
-                if( actorTransform )
-                {
-                    auto actorPosition = actorTransform->getPosition();
-                    auto actorOrientation = actorTransform->getOrientation();
-                    auto actorScale = actorTransform->getScale();
-
-                    if( auto node = getGraphicsNode() )
-                    {
-                        node->setPosition( actorPosition );
-                        node->setOrientation( actorOrientation );
-                        node->setScale( actorScale );
-                    }
+                    //    if( auto node = getGraphicsNode() )
+                    //    {
+                    //        node->setPosition( actorPosition );
+                    //        node->setOrientation( actorOrientation );
+                    //        node->setScale( actorScale );
+                    //    }
+                    //}
                 }
+            }
+            break;
+            default:
+            {
+            }
+            break;
             }
         }
 
@@ -465,5 +430,18 @@ namespace fb
         {
             m_graphicshNode = graphicshNode;
         }
+        
+        void Renderer::updateTransform( const Transform3<real_Num> &transform )
+        {
+            if( m_graphicshNode )
+            {
+                auto &p = transform.getPosition();
+                auto &r = transform.getOrientation();
+
+                m_graphicshNode->setPosition( p );
+                m_graphicshNode->setOrientation( r );
+            }
+        }
+
     }  // namespace scene
 }  // end namespace fb

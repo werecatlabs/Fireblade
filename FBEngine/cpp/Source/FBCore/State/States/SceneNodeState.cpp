@@ -28,6 +28,7 @@ namespace fb
 
     Vector3<real_Num> SceneNodeState::getPosition() const
     {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_localTransform.getPosition();
     }
 
@@ -43,61 +44,73 @@ namespace fb
 
     void SceneNodeState::setLookAt( const Vector3<real_Num> &lookAt )
     {
+        SpinRWMutex::ScopedLock lock( m_mutex );
         m_lookAt = lookAt;
     }
 
     Vector3<real_Num> SceneNodeState::getAbsolutePosition() const
     {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_absolutePosition;
     }
 
     void SceneNodeState::setAbsolutePosition( const Vector3<real_Num> &val )
     {
+        SpinRWMutex::ScopedLock lock( m_mutex );
         m_absolutePosition = val;
     }
 
     Vector3<real_Num> SceneNodeState::getAbsoluteScale() const
     {
+        SpinRWMutex::ScopedLock lock( m_mutex );
         return m_absoluteScale;
     }
 
     void SceneNodeState::setAbsoluteScale( const Vector3<real_Num> &scale )
     {
+        SpinRWMutex::ScopedLock lock( m_mutex );
         m_absoluteScale = scale;
     }
 
     Quaternion<real_Num> SceneNodeState::getAbsoluteOrientation() const
     {
+        SpinRWMutex::ScopedLock lock( m_mutex );
         return m_absoluteOrientation;
     }
 
     void SceneNodeState::setAbsoluteOrientation( const Quaternion<real_Num> &orientation )
     {
+        SpinRWMutex::ScopedLock lock( m_mutex );
         m_absoluteOrientation = orientation;
     }
 
     AABB3<real_Num> SceneNodeState::getLocalAABB() const
     {
+        SpinRWMutex::ScopedLock lock( m_mutex );
         return m_localAABB;
     }
 
     void SceneNodeState::setLocalAABB( const AABB3<real_Num> &localAABB )
     {
+        SpinRWMutex::ScopedLock lock( m_mutex );
         m_localAABB = localAABB;
     }
 
     AABB3<real_Num> SceneNodeState::getWorldAABB() const
     {
+        SpinRWMutex::ScopedLock lock( m_mutex );
         return m_worldAABB;
     }
 
     void SceneNodeState::setWorldAABB( const AABB3<real_Num> &worldAABB )
     {
+        SpinRWMutex::ScopedLock lock( m_mutex );
         m_worldAABB = worldAABB;
     }
 
     void SceneNodeState::setPosition( const Vector3<real_Num> &position )
     {
+        SpinRWMutex::ScopedLock lock( m_mutex );
         if( !MathUtil<real_Num>::equals( m_localTransform.getPosition(), position ) )
         {
             m_localTransform.setPosition( position );
@@ -107,11 +120,14 @@ namespace fb
 
     Vector3<real_Num> SceneNodeState::getScale() const
     {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_localTransform.getScale();
     }
 
     void SceneNodeState::setScale( const Vector3<real_Num> &scale )
     {
+        SpinRWMutex::ScopedLock lock( m_mutex );
+
         if( !MathUtil<real_Num>::equals( m_localTransform.getScale(), scale ) )
         {
             m_localTransform.setScale( scale );
@@ -121,11 +137,13 @@ namespace fb
 
     Quaternion<real_Num> SceneNodeState::getOrientation() const
     {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_localTransform.getOrientation();
     }
 
     void SceneNodeState::setOrientation( const Quaternion<real_Num> &orientation )
     {
+        SpinRWMutex::ScopedLock lock( m_mutex );
         if( !MathUtil<real_Num>::equals( m_localTransform.getOrientation(), orientation ) )
         {
             m_localTransform.setOrientation( orientation );
@@ -135,6 +153,7 @@ namespace fb
 
     Vector3<real_Num> SceneNodeState::getLookAt() const
     {
+        SpinRWMutex::ScopedLock lock( m_mutex );
         return m_lookAt;
     }
 
@@ -156,7 +175,7 @@ namespace fb
         auto sceneNodeScale = getScale();
         auto sceneNodeOrientation = getOrientation();
 
-        Euler<real_Num> euler(sceneNodeOrientation);
+        Euler<real_Num> euler( sceneNodeOrientation );
         Vector3<real_Num> localRotation = euler.toDegrees();
 
         properties->setProperty( "sceneNodePosition", sceneNodePosition );

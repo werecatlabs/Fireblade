@@ -19,12 +19,6 @@ namespace fb
             /** @copydoc IObject::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IComponent::awake */
-            void awake() override;
-
-            /** @copydoc IComponent::start */
-            void play();
-
             /** @copydoc IComponent::getProperties */
             SmartPtr<Properties> getProperties() const override;
 

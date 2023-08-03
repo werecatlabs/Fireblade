@@ -7,12 +7,11 @@
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Interface/System/IStateManager.h>
 #include <FBCore/System/Prototype.h>
-#include <FBCore/Memory/SharedObject.h>
-#include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Core/Properties.h>
 
 namespace fb
 {
+
     template <class T>
     class Resource : public core::Prototype<T>
     {

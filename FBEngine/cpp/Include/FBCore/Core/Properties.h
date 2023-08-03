@@ -314,6 +314,7 @@ namespace fb
         void setProperty( const String &name, SmartPtr<render::ITexture> value, bool readOnly = false );
         void setProperty( const String &name, SmartPtr<scene::IComponent> value, bool readOnly = false );
         void setProperty( const String &name, SmartPtr<IMeshResource> value, bool readOnly = false );
+        void setProperty( const String &name, SmartPtr<ISound> value, bool readOnly = false );
 
         /** Gets a property value. Returns true if the property was found.
         @param name The name of the property.
@@ -417,6 +418,7 @@ namespace fb
         bool getPropertyValue( const String &name, SmartPtr<render::ITexture> &value ) const;
         bool getPropertyValue( const String &name, SmartPtr<scene::IComponent> &value ) const;
         bool getPropertyValue( const String &name, SmartPtr<IMeshResource> &value ) const;
+        bool getPropertyValue( const String &name, SmartPtr<ISound> &value ) const;
 
         /** Gets a property value. Returns true if the property was found.
         @param name The name of the property.

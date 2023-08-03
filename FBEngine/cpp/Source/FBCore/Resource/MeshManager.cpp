@@ -153,7 +153,7 @@ namespace fb
 
                 meshResource->setFileSystemId( fileId );
                 meshResource->setSettingsFileSystemId( fileInfo.fileId );
-                meshResource->setMeshPath( sFilePath );
+                meshResource->setFilePath( sFilePath );
 
                 m_meshResources.push_back( meshResource );
                 return Pair<SmartPtr<IResource>, bool>( meshResource, true );
@@ -196,7 +196,7 @@ namespace fb
 
             meshResource->setFileSystemId( fileId );
             meshResource->setSettingsFileSystemId( fileInfo.fileId );
-            meshResource->setMeshPath( sFilePath );
+            meshResource->setFilePath( sFilePath );
 
             m_meshResources.push_back( meshResource );
             return Pair<SmartPtr<IResource>, bool>( meshResource, true );
@@ -280,7 +280,7 @@ namespace fb
                         meshResource->setFileSystemId( fileId );
                         meshResource->setSettingsFileSystemId( fileInfo.fileId );
                         meshResource->setProperties( meshData );
-                        meshResource->setMeshPath( sFilePath );
+                        meshResource->setFilePath( sFilePath );
                         meshResource->load( nullptr );
 
                         m_meshResources.push_back( meshResource );
@@ -302,7 +302,7 @@ namespace fb
                         auto meshResource = fb::make_ptr<MeshResource>();
                         meshResource->setFileSystemId( fileId );
                         meshResource->setSettingsFileSystemId( fileInfo.fileId );
-                        meshResource->setMeshPath( sFilePath );
+                        meshResource->setFilePath( sFilePath );
                         meshResource->load( nullptr );
 
                         m_meshResources.push_back( meshResource );
@@ -311,7 +311,7 @@ namespace fb
                     auto meshResource = fb::make_ptr<MeshResource>();
                     meshResource->setFileSystemId( fileId );
                     // meshResource->setSettingsFileSystemId( fileInfo.fileId );
-                    meshResource->setMeshPath( sFilePath );
+                    meshResource->setFilePath( sFilePath );
                     meshResource->load( nullptr );
 
                     m_meshResources.push_back( meshResource );

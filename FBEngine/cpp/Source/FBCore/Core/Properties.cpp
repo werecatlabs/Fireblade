@@ -13,6 +13,7 @@
 #include <FBCore/Interface/Mesh/IMeshResource.h>
 #include <FBCore/Interface/Resource/IResource.h>
 #include <FBCore/Interface/Resource/IResourceDatabase.h>
+#include <FBCore/Interface/Sound/ISound.h>
 #include <rttr/registration>
 #include <rttr/detail/type/type_converter.h>
 
@@ -715,6 +716,28 @@ namespace fb
         }
     }
 
+    void Properties::setProperty( const String &name, SmartPtr<ISound> value, bool readOnly )
+    {
+        if( value )
+        {
+            auto handle = value->getHandle();
+            auto uuid = handle->getUUID();
+            setProperty( name, uuid, "resource", false );
+
+            auto resourceTypeName = value->getResourceTypeByName();
+
+            auto &property = getPropertyObject( name );
+            property.setAttribute( "resourceType", resourceTypeName );
+        }
+        else
+        {
+            setProperty( name, "", "resource", false );
+
+            auto &property = getPropertyObject( name );
+            property.setAttribute( "resourceType", "Component" );
+        }
+    }
+
     bool Properties::getPropertyValue( const String &name, String &value ) const
     {
         if( hasProperty( name ) )
@@ -1049,6 +1072,27 @@ namespace fb
     }
 
     bool Properties::getPropertyValue( const String &name, SmartPtr<IMeshResource> &value ) const
+    {
+        if( hasProperty( name ) )
+        {
+            const auto &property = getPropertyObject( name );
+            auto uuid = property.getValue();
+
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto resourceDatabase = applicationManager->getResourceDatabase();
+            FB_ASSERT( resourceDatabase );
+
+            value = resourceDatabase->getObject( uuid );
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool Properties::getPropertyValue( const String &name, SmartPtr<ISound> &value ) const
     {
         if( hasProperty( name ) )
         {

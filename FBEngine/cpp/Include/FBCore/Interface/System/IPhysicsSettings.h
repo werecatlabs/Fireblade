@@ -11,6 +11,8 @@ namespace fb
     public:
         /** Virtual destructor. */
         ~IPhysicsSettings() override = default;
+
+        FB_CLASS_REGISTER_DECL;
     };
 
 }  // namespace fb

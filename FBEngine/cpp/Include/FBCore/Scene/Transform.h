@@ -4,6 +4,7 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/Scene/ITransform.h>
+#include <FBCore/Atomics/AtomicFloat.h>
 
 namespace fb
 {
@@ -87,10 +88,23 @@ namespace fb
 
             static void registerClass();
 
+            time_interval getFrameTime() const;
+
+            void setFrameTime( time_interval frameTime );
+
+            time_interval getFrameDeltaTime() const;
+
+            void setFrameDeltaTime( time_interval frameDeltaTime );
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
+            void updateFrameTime();
+
             mutable SpinRWMutex m_mutex;
+
+            atomic_f64 m_frameTime = 0.0;
+            atomic_f64 m_frameDeltaTime = 0.0;
 
             // SmartPtr<TransformState> m_state;
 

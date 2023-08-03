@@ -1,7 +1,7 @@
 #ifndef _FB_ISound_H
 #define _FB_ISound_H
 
-#include <FBCore/Interface/Memory/ISharedObject.h>
+#include <FBCore/Interface/Resource/IResource.h>
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Core/Array.h>
 
@@ -9,7 +9,7 @@ namespace fb
 {
 
     /** An interface for a sound. */
-    class ISound : public ISharedObject
+    class ISound : public IResource
     {
     public:
         /** Virtual destructor. */

@@ -1,7 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/CollisionBox.h>
 #include <FBCore/Scene/Components/Rigidbody.h>
-#include <FBCore/Scene/Components/Rigidbody.h>
 #include <FBCore/Interface/Physics/IPhysicsManager.h>
 #include <FBCore/Interface/Physics/IPhysicsMaterial3.h>
 #include <FBCore/Interface/Physics/IBoxShape3.h>

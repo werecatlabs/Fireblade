@@ -12,6 +12,7 @@
 namespace fb
 {
 
+
     class ResourceDatabase : public SharedObject<IResourceDatabase>
     {
     public:
@@ -24,14 +25,15 @@ namespace fb
         void build() override;
         void refresh() override;
 
-        bool hasResource( SmartPtr<IResource> resource );
-        void addResource( SmartPtr<IResource> resource );
-        void removeResource( SmartPtr<IResource> resource );
+        bool hasResource( SmartPtr<IResource> resource ) override;
+        void addResource( SmartPtr<IResource> resource ) override;
+        void removeResource( SmartPtr<IResource> resource ) override;
 
         void removeResourceFromPath( const String &path );
 
         SmartPtr<IResource> findResource( u32 type, const String &path ) override;
-        SmartPtr<IResource> cloneResource( u32 type, SmartPtr<IResource> resource, const String &path );
+        SmartPtr<IResource>
+        cloneResource( u32 type, SmartPtr<IResource> resource, const String &path ) override;
 
         void importFolder( SmartPtr<IFolderExplorer> folderListing );
         void importFile( const String &filePath ) override;
@@ -39,7 +41,7 @@ namespace fb
         void importAssets() override;
         void reimportAssets() override;
 
-        Array<SmartPtr<scene::IDirector>> getResourceData() const;
+        Array<SmartPtr<scene::IDirector>> getResourceData() const override;
 
         Array<SmartPtr<IResource>> getResources() const override;
 
@@ -65,10 +67,18 @@ namespace fb
 
         Array<SmartPtr<ISharedObject>> getSceneObjects() const;
 
-        SmartPtr<ISharedObject> getObjectByFileId( const String &fileId ) const;
+        SmartPtr<ISharedObject> getObjectByFileId( const String &fileId ) const override;
 
         SharedPtr<Array<SmartPtr<IResource>>> getInstancesPtr() const;
         void setInstancesPtr( SharedPtr<Array<SmartPtr<IResource>>> instances );
+
+        Array<String> getTextureTypes() const;
+
+        void setTextureTypes( const Array<String> &textureTypes );
+
+        Array<String> getAudioTypes() const;
+
+        void setAudioTypes( const Array<String> &audioTypes );
 
         FB_CLASS_REGISTER_DECL;
 
@@ -80,8 +90,13 @@ namespace fb
         SharedPtr<Array<SmartPtr<IResource>>> m_instances;
         Array<SmartPtr<ISharedObject>> m_objects;
 
+        Array<String> m_textureTypes;
+        Array<String> m_audioTypes;
+
         SmartPtr<IDatabaseManager> m_databaseManager;
+
+        mutable RecursiveMutex m_mutex;
     };
-}  // end namespace fb
+} // end namespace fb
 
 #endif  // CResourceDatabase_h__

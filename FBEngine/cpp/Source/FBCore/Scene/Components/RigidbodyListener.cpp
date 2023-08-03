@@ -4,6 +4,8 @@
 #include <FBCore/Scene/SceneManager.h>
 #include <FBCore/Interface/Scene/ITransform.h>
 
+#include "FBCore/Interface/System/ITimer.h"
+
 namespace fb
 {
     namespace scene
@@ -19,17 +21,34 @@ namespace fb
         {
             if( eventValue == IEvent::transform )
             {
-                auto t = Transform3<real_Num>( arguments[0].getVector3(), arguments[1].getQuaternion() );
-                handleTransform( t );
+                if( m_owner )
+                {
+                    if( auto actor = m_owner->getActor() )
+                    {
+                        auto actorTransform = actor->getTransform();
+
+                        auto position = arguments[0].getVector3();
+                        auto orientation = arguments[1].getQuaternion();
+                        orientation.normalise();
+
+                        auto scale = actorTransform->getScale();
+
+                        auto t = Transform3<real_Num>( position, orientation, scale );
+                        handleTransform( t );
+                    }
+                }
             }
 
             return Parameter();
         }
-        
+
         void RigidbodyListener::handleTransform( const Transform3<real_Num> &t )
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
+
+            auto timer = applicationManager->getTimer();
+            auto time = timer->getTime();
 
             auto pSceneManager = applicationManager->getSceneManager();
             auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
@@ -38,6 +57,9 @@ namespace fb
             FB_ASSERT( m_owner );
             if( auto actor = m_owner->getActor() )
             {
+                auto id = actor->getTransform()->getHandle()->getInstanceId();
+                sceneManager->addTransformState( id, time, t );
+
                 auto position = t.getPosition();
                 auto orientation = t.getOrientation();
 
