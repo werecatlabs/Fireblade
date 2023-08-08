@@ -1,5 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Resource/ResourceReference.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {

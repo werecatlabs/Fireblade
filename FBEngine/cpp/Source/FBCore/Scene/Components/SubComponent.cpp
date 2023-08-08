@@ -27,6 +27,17 @@ namespace fb
             m_parent = parent;
         }
 
+        SmartPtr<ISharedObject> SubComponent::toData() const
+        {
+            auto data = Resource<ISubComponent>::toData();
+            return data;
+        }
+
+        void SubComponent::fromData( SmartPtr<ISharedObject> data )
+        {
+            Resource<ISubComponent>::fromData( data );
+        }
+
         SmartPtr<Properties> SubComponent::getProperties() const
         {
             auto properties = fb::make_ptr<Properties>();
@@ -36,5 +47,6 @@ namespace fb
         void SubComponent::setProperties( SmartPtr<Properties> properties )
         {
         }
-    }  // namespace scene
-}  // namespace fb
+
+    } // namespace scene
+}     // namespace fb

@@ -1124,7 +1124,7 @@ namespace fb
         SmartPtr<ITransform> Actor::getTransform() const
         {
             auto p = m_transform.load();
-            return p.lock();
+            return p;
         }
 
         void Actor::setTransform( SmartPtr<ITransform> transform )
@@ -2380,7 +2380,7 @@ namespace fb
             using namespace fb;
             using namespace rttr;
 
-            registration::class_<Actor>( "Actor" ).property( "transform", &Actor::m_transform );
+            //registration::class_<Actor>( "Actor" ).property( "transform", &Actor::m_transform );
         }
 
         template <class T>

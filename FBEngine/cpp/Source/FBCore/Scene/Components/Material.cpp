@@ -214,7 +214,10 @@ namespace fb
                         filePath = material->getFilePath();
                     }
 
-                    material->loadFromFile( filePath );
+                    if( !material->isLoaded() )
+                    {
+                        material->loadFromFile( filePath );
+                    }
 
                     if( !material->isLoaded() )
                     {

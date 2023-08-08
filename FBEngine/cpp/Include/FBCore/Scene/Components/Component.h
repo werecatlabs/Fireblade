@@ -1,7 +1,6 @@
-#ifndef __BaseComponent_h__
-#define __BaseComponent_h__
+#ifndef __FB_Component_h__
+#define __FB_Component_h__
 
-#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/IComponent.h>
 #include <FBCore/Interface/Scene/IActor.h>
 #include <FBCore/Core/FSMListener.h>
@@ -18,7 +17,9 @@ namespace fb
 {
     namespace scene
     {
-        /** Base class for a component object. */
+        /** Implementation of the IComponent component interface.
+         *  Base class for a component object.
+         */
         class Component : public Resource<IComponent>
         {
         public:
@@ -188,27 +189,16 @@ namespace fb
             /** @copydoc IComponent::updateTransform */
             void updateTransform() override;
 
+            /** @copydoc IComponent::updateTransform */
             void updateTransform( const Transform3<real_Num> &transform ) override;
 
             /** @copydoc IComponent::updateVisibility */
             void updateVisibility() override;
 
-            /** @copydoc IComponent::compareTag */
-            bool compareTag( const String &tag ) const;
-
-            /** @copydoc IComponent::handleActorReparent */
-            void handleActorReparent();
-
-            /**
-             * Sets the state of the component.
-             * @param state The state to set.
-             */
+            /** @copydoc IComponent::setState */
             void setState( State state ) override;
 
-            /**
-             * Gets the state of the component.
-             * @return The state of the component.
-             */
+            /** @copydoc IComponent::getState */
             State getState() const override;
 
             /**
@@ -231,62 +221,57 @@ namespace fb
              */
             void setDataPtr( void *data );
 
-            /**
-             * Gets the list of events associated with the component.
-             * @return The list of events.
-             */
+            /** @copydoc IComponent::getEvents */
             Array<SmartPtr<IComponentEvent>> getEvents() const override;
 
-            /**
-             * Sets the list of events associated with the component.
-             * @param events The list of events to set.
-             */
+            /** @copydoc IComponent::setEvents */
             void setEvents( Array<SmartPtr<IComponentEvent>> events ) override;
 
-            /**
-             * Adds an event to the list of events associated with the component.
-             * @param event The event to add.
-             */
+            /** @copydoc IComponent::addEvent */
             void addEvent( SmartPtr<IComponentEvent> event ) override;
 
-            /**
-             * Removes an event from the list of events associated with the component.
-             * @param event The event to remove.
-             */
+            /** @copydoc IComponent::removeEvent */
             void removeEvent( SmartPtr<IComponentEvent> event ) override;
 
-            /** @copydoc BaseComponent::addChild */
+            /** @copydoc IComponent::addSubComponent */
             void addSubComponent( SmartPtr<ISubComponent> child ) override;
 
-            /** @copydoc BaseComponent::removeChild */
+            /** @copydoc IComponent::removeSubComponent */
             void removeSubComponent( SmartPtr<ISubComponent> child ) override;
 
+            /** @copydoc IComponent::removeSubComponentByIndex */
             void removeSubComponentByIndex( u32 index ) override;
 
+            /** @copydoc IComponent::getNumSubComponents */
             u32 getNumSubComponents() const override;
 
-            /** @copydoc BaseComponent::getChildren */
+            /** @copydoc IComponent::getSubComponents */
             Array<SmartPtr<ISubComponent>> getSubComponents() const override;
 
-            /** @copydoc BaseComponent::setChildren */
+            /** @copydoc IComponent::setSubComponents */
             void setSubComponents( Array<SmartPtr<ISubComponent>> children ) override;
 
-            /** @copydoc BaseComponent::getChildrenPtr */
+            /** @copydoc IComponent::getSubComponentsPtr */
             SharedPtr<ConcurrentArray<SmartPtr<ISubComponent>>> getSubComponentsPtr() const override;
 
-            /** @copydoc BaseComponent::setChildrenPtr */
+            /** @copydoc IComponent::setSubComponentsPtr */
             void setSubComponentsPtr(
                 SharedPtr<ConcurrentArray<SmartPtr<ISubComponent>>> children ) override;
 
+            /** @copydoc IComponent::getDirector */
             SmartPtr<IDirector> getDirector() const override;
 
+            /** @copydoc IComponent::setDirector */
             void setDirector( SmartPtr<IDirector> director ) override;
 
-            SmartPtr<IState> &getComponentState();
+            /** @copydoc IComponent::getComponentState */
+            SmartPtr<IState> &getComponentState() override;
 
-            const SmartPtr<IState> &getComponentState() const;
+            /** @copydoc IComponent::getComponentState */
+            const SmartPtr<IState> &getComponentState() const override;
 
-            void setComponentState( SmartPtr<IState> state );
+            /** @copydoc IComponent::setComponentState */
+            void setComponentState( SmartPtr<IState> state ) override;
 
             FB_CLASS_REGISTER_DECL;
 
@@ -433,10 +418,9 @@ namespace fb
         template <class T>
         T *Component::getDataPtrByType() const
         {
-            return static_cast<T *>( m_dataPtr );
+            return static_cast<T *>(m_dataPtr);
         }
-
-    }  // namespace scene
-}  // namespace fb
+    } // namespace scene
+}     // namespace fb
 
 #endif  // BaseComponent_h__

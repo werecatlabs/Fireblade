@@ -560,13 +560,24 @@ namespace fb
                 auto fsmManager = getFsmManager();
                 FB_ASSERT( fsmManager );
 
+                auto newId = 0;
+                for( auto actor : m_actors )
+                {
+                    if( !actor )
+                    {
+                        break;
+                    }
+
+                    newId++;
+                }
+
                 auto actor = factoryManager->make_ptr<Actor>();
 
                 if( auto handle = actor->getHandle() )
                 {
-                    handle->setInstanceId( m_numActors );
+                    handle->setInstanceId( newId );
 
-                    handle->setId( m_numActors );
+                    handle->setId( newId );
 
                     auto uuid = StringUtil::getUUID();
                     handle->setUUID( uuid );
@@ -577,20 +588,20 @@ namespace fb
 
                 actor->load( nullptr );
 
-                FB_ASSERT( m_actors[m_numActors] == nullptr );
-                m_actors[m_numActors] = actor;
+                FB_ASSERT( m_actors[newId] == nullptr );
+                m_actors[newId] = actor;
 
                 auto fsm = fsmManager->createFSM();
                 auto gameFSM = fsmManager->createFSM();
 
-                m_fsms[m_numActors] = fsm;
-                m_gameFSMs[m_numActors] = gameFSM;
+                m_fsms[newId] = fsm;
+                m_gameFSMs[newId] = gameFSM;
 
                 auto actorFsmListener = factoryManager->make_ptr<Actor::ActorFsmListener>();
                 auto actorGameFsmListener = factoryManager->make_ptr<Actor::ActorGameFsmListener>();
 
-                m_fsmListeners[m_numActors] = actorFsmListener;
-                m_gameFsmListeners[m_numActors] = actorGameFsmListener;
+                m_fsmListeners[newId] = actorFsmListener;
+                m_gameFsmListeners[newId] = actorGameFsmListener;
 
                 actorFsmListener->setOwner( actor.get() );
                 fsm->addListener( actorFsmListener );
@@ -599,7 +610,7 @@ namespace fb
                 gameFSM->addListener( actorGameFsmListener );
 
                 auto flags = IActor::ActorFlagEnabled;
-                m_actorCurrentFlags[m_numActors] = flags;
+                m_actorCurrentFlags[newId] = flags;
 
                 ++m_numActors;
                 return actor;
@@ -627,31 +638,42 @@ namespace fb
                 auto fsmManager = getFsmManager();
                 FB_ASSERT( fsmManager );
 
+                auto newId = 0;
+                for(auto actor : m_actors)
+                {
+                    if (!actor)
+                    {
+                        break;
+                    }
+
+                    newId++;
+                }
+
                 auto actor = factoryManager->make_ptr<Actor>();
 
                 auto handle = actor->getHandle();
                 if( handle )
                 {
-                    handle->setInstanceId( m_numActors );
+                    handle->setInstanceId( newId );
                     handle->setName( "Dummy" );
                 }
 
                 actor->setFlag( IActor::ActorFlagDummy, true );
                 actor->load( nullptr );
 
-                m_actors[m_numActors] = actor;
+                m_actors[newId] = actor;
 
                 auto fsm = fsmManager->createFSM();
                 auto gameFSM = fsmManager->createFSM();
 
-                m_fsms[m_numActors] = fsm;
-                m_gameFSMs[m_numActors] = gameFSM;
+                m_fsms[newId] = fsm;
+                m_gameFSMs[newId] = gameFSM;
 
                 auto actorFsmListener = factoryManager->make_ptr<Actor::ActorFsmListener>();
                 auto actorGameFsmListener = factoryManager->make_ptr<Actor::ActorGameFsmListener>();
 
-                m_fsmListeners[m_numActors] = actorFsmListener;
-                m_gameFsmListeners[m_numActors] = actorGameFsmListener;
+                m_fsmListeners[newId] = actorFsmListener;
+                m_gameFsmListeners[newId] = actorGameFsmListener;
 
                 actorFsmListener->setOwner( actor.get() );
                 fsm->addListener( actorFsmListener );
@@ -660,7 +682,7 @@ namespace fb
                 gameFSM->addListener( actorGameFsmListener );
 
                 auto flags = IActor::ActorFlagEnabled;
-                m_actorCurrentFlags[m_numActors] = flags;
+                m_actorCurrentFlags[newId] = flags;
 
                 ++m_numActors;
                 return actor;
@@ -701,6 +723,9 @@ namespace fb
                     {
                         actorId = handle->getInstanceId();
                     }
+
+                    auto pChildren = actor->getChildrenPtr();
+                    auto children = *pChildren;
 
                     auto fsm = m_fsms[actorId];
                     auto gameFSM = m_gameFSMs[actorId];
@@ -750,6 +775,16 @@ namespace fb
 
                     removeDirty( actor );
                     actor = nullptr;
+
+                    for(auto child : children)
+                    {
+                        if ( child )
+                        {
+                            destroyActor( child );
+                        }
+                    }
+
+                    --m_numActors;
                 }
             }
             catch( std::exception &e )
@@ -860,10 +895,10 @@ namespace fb
 
             if( handle )
             {
-                handle->setInstanceId( pos );
+                handle->setInstanceId( (u32)pos );
             }
 
-            return pos;
+            return (u32)pos;
         }
 
         u32 SceneManager::removeComponent( SmartPtr<IComponent> component )
@@ -976,7 +1011,7 @@ namespace fb
 
             if( auto handle = transform->getHandle() )
             {
-                handle->setInstanceId( pos );
+                handle->setInstanceId( (u32)pos );
             }
 
             //FB_ASSERT( pos != 0 );
@@ -1358,12 +1393,13 @@ namespace fb
 
                 return true;
             }
+
             auto cur = 0;
             for( auto &time : times )
             {
                 if( time < t )
                 {
-                    auto next = Math<s32>::clamp( cur - 1, 0, times.size() - 1 );
+                    auto next = Math<s32>::clamp( cur - 1, 0, (s32)(times.size() - 1) );
 
                     auto &transform0 = transforms[next];
                     auto &transform1 = transforms[cur];

@@ -161,6 +161,7 @@ namespace fb
 
             properties->setProperty( "diffuseColour", diffuseColour );
             properties->setProperty( "specularColour", specularColour );
+            properties->setProperty( "lightType", (u32)m_lightType );
 
             return properties;
         }
@@ -173,6 +174,9 @@ namespace fb
             properties->getPropertyValue( "diffuseColour", diffuseColour );
             properties->getPropertyValue( "specularColour", specularColour );
 
+            u32 lightType = (u32)m_lightType;
+            properties->getPropertyValue( "lightType", lightType );
+
             m_diffuseColour = diffuseColour;
             m_specularColour = specularColour;
 
@@ -180,6 +184,15 @@ namespace fb
             {
                 light->setDiffuseColour( diffuseColour );
                 light->setSpecularColour( specularColour );
+
+                if( lightType < (u32)render::ILight::LightTypes::Count )
+                {
+                    if( lightType != (u32)m_lightType )
+                    {
+                        m_lightType = (render::ILight::LightTypes)lightType;
+                        light->setType( m_lightType );
+                    }
+                }
             }
         }
 
@@ -193,11 +206,11 @@ namespace fb
                     auto actorOrientation = actorTransform->getOrientation();
                     auto actorScale = actorTransform->getScale();
 
-                    if( m_sceneNode )
+                    if( auto sceneNode = getSceneNode() )
                     {
-                        m_sceneNode->setPosition( actorPosition );
-                        m_sceneNode->setOrientation( actorOrientation );
-                        m_sceneNode->setScale( actorScale );
+                        sceneNode->setPosition( actorPosition );
+                        sceneNode->setOrientation( actorOrientation );
+                        sceneNode->setScale( actorScale );
                     }
                 }
             }

@@ -365,9 +365,12 @@ namespace fb
             auto subComponents = getSubComponents();
             for( auto &subComponent : subComponents )
             {
-                auto subComponentData = fb::static_pointer_cast<Properties>( subComponent->toData() );
-                subComponentData->setName( "subComponent" );
-                componentData->addChild( subComponentData );
+                if( auto subComponentData =
+                        fb::static_pointer_cast<Properties>( subComponent->toData() ) )
+                {
+                    subComponentData->setName( "subComponent" );
+                    componentData->addChild( subComponentData );
+                }
             }
 
             auto events = getEvents();
@@ -608,21 +611,11 @@ namespace fb
         {
         }
 
-        void Component::updateTransform(const Transform3<real_Num>& transform)
+        void Component::updateTransform( const Transform3<real_Num> &transform )
         {
-            
         }
 
         void Component::updateVisibility()
-        {
-        }
-
-        bool Component::compareTag( const String &tag ) const
-        {
-            return false;
-        }
-
-        void Component::handleActorReparent()
         {
         }
 

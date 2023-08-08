@@ -8,11 +8,25 @@ namespace fb
     namespace scene
     {
 
+        FB_CLASS_REGISTER_DERIVED( fb::scene, Cubemap, Component );
+
         Cubemap::Cubemap() : m_cameraDistance( 0.0f ), m_distanceTheshold( 0.0f )
         {
         }
 
         Cubemap::~Cubemap()
+        {
+        }
+
+        void Cubemap::load( SmartPtr<ISharedObject> data )
+        {
+        }
+
+        void Cubemap::reload( SmartPtr<ISharedObject> data )
+        {
+        }
+
+        void Cubemap::unload( SmartPtr<ISharedObject> data )
         {
         }
 

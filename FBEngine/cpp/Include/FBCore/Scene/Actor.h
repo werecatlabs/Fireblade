@@ -360,7 +360,7 @@ namespace fb
 
             AtomicWeakPtr<IActor> m_parent;
 
-            AtomicWeakPtr<Transform> m_transform;
+            AtomicSmartPtr<ITransform> m_transform;
 
             SharedPtr<ConcurrentArray<SmartPtr<IComponent>>> m_components;
 

@@ -904,8 +904,8 @@ namespace fb
             cosTheta = -cosTheta;
         }
 
-        auto theta = std::acos( cosTheta );
-        auto sinTheta = std::sin( theta );
+        auto theta = Math<T>::ACos( cosTheta );
+        auto sinTheta = Math<T>::Sin( theta );
 
         if( sinTheta < std::numeric_limits<T>::epsilon() )
         {
@@ -913,8 +913,8 @@ namespace fb
             return Math<T>::lerp( q1, q2Adjusted, t );
         }
 
-        auto coeff1 = std::sin( ( 1 - t ) * theta ) / sinTheta;
-        auto coeff2 = std::sin( t * theta ) / sinTheta;
+        auto coeff1 = Math<T>::Sin( ( 1 - t ) * theta ) / sinTheta;
+        auto coeff2 = Math<T>::Sin( t * theta ) / sinTheta;
 
         return coeff1 * q1 + coeff2 * q2Adjusted;
     }

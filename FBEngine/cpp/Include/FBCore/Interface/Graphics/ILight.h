@@ -19,12 +19,15 @@ namespace fb
              */
             enum class LightTypes
             {
-                LT_POINT =
-                    0,  ///< Point light sources give off light equally in all directions, so require only position not direction
-                LT_DIRECTIONAL =
-                    1,  ///< Directional lights simulate parallel light beams from a distant source, hence have direction but no position
-                LT_SPOTLIGHT =
-                    2  ///< Spotlights simulate a cone of light from a source so require position and direction, plus extra values for falloff
+                ///< Point light sources give off light equally in all directions, so require only position not direction
+                LT_POINT = 0,
+                ///< Directional lights simulate parallel light beams from a distant source, hence have direction but no position
+                LT_DIRECTIONAL = 1,
+
+                ///< Spotlights simulate a cone of light from a source so require position and direction, plus extra values for falloff
+                LT_SPOTLIGHT = 2,
+
+                Count
             };
 
             /**

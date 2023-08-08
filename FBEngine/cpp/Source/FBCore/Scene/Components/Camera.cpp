@@ -737,6 +737,11 @@ namespace fb
                 }
             }
 #else
+            if( m_camera )
+            {
+                m_camera->setVisible( active );
+            }
+
             if( m_viewport )
             {
                 m_viewport->setActive( active );

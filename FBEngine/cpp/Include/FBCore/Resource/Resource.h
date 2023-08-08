@@ -51,6 +51,9 @@ namespace fb
         /** Sets the id of the resource settings stored in the system. */
         void setSettingsFileSystemId( hash64 id ) override;
 
+        SmartPtr<ISharedObject> toData() const override;
+        void fromData( SmartPtr<ISharedObject> data ) override;
+
         /** @copydoc IResource::getProperties */
         SmartPtr<Properties> getProperties() const override;
 
@@ -195,6 +198,28 @@ namespace fb
     void Resource<T>::setSettingsFileSystemId( hash64 id )
     {
         m_settingsFileSystemId = id;
+    }
+
+    template <class T>
+    SmartPtr<ISharedObject> Resource<T>::toData() const
+    {
+        auto p = fb::dynamic_pointer_cast<ISharedObject>( getProperties() );
+        if( p )
+        {
+            return p;
+        }
+
+        return nullptr;
+    }
+
+    template <class T>
+    void Resource<T>::fromData( SmartPtr<ISharedObject> data )
+    {
+        auto properties = fb::dynamic_pointer_cast<Properties>( data );
+        if( properties )
+        {
+            setProperties( properties );
+        }
     }
 
     template <class T>

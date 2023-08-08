@@ -188,20 +188,20 @@ namespace fb
             }
 
             auto audioTypes = getAudioTypes();
-            for(auto audioType : audioTypes)
+            for( auto audioType : audioTypes )
             {
                 auto audioFiles = fileSystem->getFilesWithExtension( audioType );
                 if( !audioFiles.empty() )
                 {
-                        auto audioManager = applicationManager->getSoundManager();
-
+                    auto audioManager = applicationManager->getSoundManager();
+                    if( audioManager )
+                    {
                         for( auto &file : audioFiles )
                         {
                             auto path = file.filePath;
 
                             auto audioResult = audioManager->createOrRetrieve( path );
-                            auto audio =
-                                fb::static_pointer_cast<ISound>( audioResult.first );
+                            auto audio = fb::static_pointer_cast<ISound>( audioResult.first );
                             if( audio )
                             {
                                 if( !assetDatabaseManager->hasResourceEntry( audio ) )
@@ -210,6 +210,7 @@ namespace fb
                                 }
                             }
                         }
+                    }
                 }
             }
         }
@@ -361,7 +362,7 @@ namespace fb
             {
                 FB_LOG( "Importing: " + folderListing->getFolderName() );
 
-                auto applicationManager = IApplicationManager::instance();
+                auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto projectPath = applicationManager->getProjectPath();
@@ -788,6 +789,11 @@ namespace fb
         FB_ASSERT( fileSystem );
 
         auto graphicsSystem = applicationManager->getGraphicsSystem();
+        if( !graphicsSystem )
+        {
+            return nullptr;
+        }
+
         auto materialManager = graphicsSystem->getMaterialManager();
 
         auto textureManager = graphicsSystem->getTextureManager();

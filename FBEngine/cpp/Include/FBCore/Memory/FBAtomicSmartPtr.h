@@ -121,7 +121,7 @@ namespace fb
     template <class T>
     FBSmartPtr<T> FBAtomicSmartPtr<T>::load() const
     {
-        return m_pointer;
+        return m_pointer.load();
     }
 
     template <class T>

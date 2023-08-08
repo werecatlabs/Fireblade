@@ -49,22 +49,20 @@ namespace fb
             auto fileSystem = applicationManager->getFileSystem();
             FB_ASSERT( fileSystem );
 
-            auto data = toData();
+            auto data = fb::static_pointer_cast<Properties>( toData() );
             FB_ASSERT( data );
 
-            //auto materialData = data->getDataAsType<data::mesh_importer_data>();
+            auto dataStr = DataUtil::toString( data.get(), true );
+            FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );
 
-            //auto dataStr = DataUtil::toString( materialData, true );
-            //FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );
+            auto fileId = getSettingsFileSystemId();
+            FB_ASSERT( fileId != 0 );
 
-            //auto fileId = getSettingsFileSystemId();
-            //FB_ASSERT( fileId != 0 );
-
-            //FileInfo fileInfo;
-            //if(fileSystem->findFileInfo( fileId, fileInfo ))
-            //{
-            //    fileSystem->writeAllText( fileInfo.filePath.c_str(), dataStr );
-            //}
+            FileInfo fileInfo;
+            if( fileSystem->findFileInfo( fileId, fileInfo ) )
+            {
+                fileSystem->writeAllText( fileInfo.filePath.c_str(), dataStr );
+            }
         }
         catch( std::exception &e )
         {
@@ -218,7 +216,6 @@ namespace fb
             auto &resetButton = properties->getPropertyObject( "Import" );
             if( resetButton.getAttribute( "click" ) == "true" )
             {
-                save();
                 import();
             }
         }

@@ -175,6 +175,24 @@ namespace fb
             */
             virtual void childRemovedInHierarchy( SmartPtr<IActor> child ) = 0;
 
+            /** */
+            virtual void visibilityChanged() = 0;
+
+            /** */
+            virtual void enable() = 0;
+
+            /** */
+            virtual void disable() = 0;
+
+            /** */
+            virtual void triggerEnter( SmartPtr<IComponent> collision ) = 0;
+
+            /** */
+            virtual void triggerLeave( SmartPtr<IComponent> collision ) = 0;
+
+            /** */
+            virtual void componentLoaded( SmartPtr<IComponent> component ) = 0;
+
             /** Gets the component events.
             @return The component events.
             */

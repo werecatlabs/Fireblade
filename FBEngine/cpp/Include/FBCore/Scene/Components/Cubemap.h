@@ -14,6 +14,10 @@ namespace fb
             Cubemap();
             ~Cubemap() override;
 
+            void load( SmartPtr<ISharedObject> data ) override;
+            void reload( SmartPtr<ISharedObject> data ) override;
+            void unload( SmartPtr<ISharedObject> data ) override;
+
             void update() override;
 
             SmartPtr<render::ICubemap> getCubemapGenerator() const;
@@ -24,6 +28,8 @@ namespace fb
 
             f32 getEnableDistanceTheshold() const;
             void setEnableDistanceTheshold( f32 distanceTheshold );
+
+            FB_CLASS_REGISTER_DECL;
 
         protected:
             SmartPtr<render::ICubemap> m_cubemapGenerator;

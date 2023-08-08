@@ -1,7 +1,6 @@
-#ifndef __BaseSubComponent_h__
-#define __BaseSubComponent_h__
+#ifndef __SubComponent_h__
+#define __SubComponent_h__
 
-#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/ISubComponent.h>
 #include <FBCore/Interface/Scene/IActor.h>
 #include <FBCore/Resource/Resource.h>
@@ -34,6 +33,10 @@ namespace fb
              */
             void setParent( SmartPtr<IComponent> parent ) override;
 
+            SmartPtr<ISharedObject> toData() const override;
+
+            void fromData(SmartPtr<ISharedObject> data) override;
+
             /**
              * Gets the data associated with the component as a properties object.
              * @return The data associated with the component as a properties object.
@@ -56,7 +59,8 @@ namespace fb
              */
             static u32 m_idExt;
         };
-    }  // namespace scene
-}  // end namespace fb
 
-#endif  // BaseComponent_h__
+    }  // namespace scene
+}  // namespace fb
+
+#endif  // SubComponent_h__
