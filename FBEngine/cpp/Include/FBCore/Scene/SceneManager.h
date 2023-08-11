@@ -155,6 +155,8 @@ namespace fb
 
             void unregisterAllComponent( SmartPtr<IComponent> component );
 
+            s32 getNumActors() const;
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
@@ -210,7 +212,7 @@ namespace fb
             Array<u32> m_actorCurrentFlags;
             Array<u32> m_actorNewFlags;
 
-            atomic_u32 m_numActors = 0;
+            atomic_s32 m_numActors = 0;
 
             Array<String> m_componentFactoryIgnoreList;
             Map<String, String> m_componentFactoryMap;

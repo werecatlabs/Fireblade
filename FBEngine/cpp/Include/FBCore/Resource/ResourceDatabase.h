@@ -12,7 +12,6 @@
 namespace fb
 {
 
-
     class ResourceDatabase : public SharedObject<IResourceDatabase>
     {
     public:
@@ -32,8 +31,8 @@ namespace fb
         void removeResourceFromPath( const String &path );
 
         SmartPtr<IResource> findResource( u32 type, const String &path ) override;
-        SmartPtr<IResource>
-        cloneResource( u32 type, SmartPtr<IResource> resource, const String &path ) override;
+        SmartPtr<IResource> cloneResource( u32 type, SmartPtr<IResource> resource,
+                                           const String &path ) override;
 
         void importFolder( SmartPtr<IFolderExplorer> folderListing );
         void importFile( const String &filePath ) override;
@@ -97,6 +96,6 @@ namespace fb
 
         mutable RecursiveMutex m_mutex;
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif  // CResourceDatabase_h__

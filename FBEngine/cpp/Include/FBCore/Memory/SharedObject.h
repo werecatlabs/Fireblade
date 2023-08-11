@@ -19,8 +19,6 @@
 
 #include <sstream>
 
-
-
 namespace fb
 {
 
@@ -75,21 +73,6 @@ namespace fb
 
         /** @copydoc ISharedObject::setLoadingState */
         virtual void setLoadingState( const Atomic<LoadingState> &state ) override;
-
-        /** @copydoc ISharedObject::isLoading */
-        virtual bool isLoading() const override;
-
-        /** @copydoc ISharedObject::isLoadingQueued */
-        virtual bool isLoadingQueued() const override;
-
-        /** @copydoc ISharedObject::isLoaded */
-        virtual bool isLoaded() const override;
-
-        /** @copydoc ISharedObject::isThreadSafe */
-        virtual bool isThreadSafe() const override;
-
-        /** @copydoc ISharedObject::isAlive */
-        bool isAlive() const override;
 
         virtual void setPoolElement( bool poolElement );
         virtual bool isPoolElement() const;

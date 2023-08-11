@@ -1,5 +1,5 @@
 #include <FBCore/FBCorePCH.h>
-#include <FBCore/Scene/Systems/UI/CanvasTransformSystem.h>
+#include <FBCore/Scene/Systems/UI/LayoutTransformSystem.h>
 #include <FBCore/Scene/Components/UI/LayoutTransform.h>
 #include <FBCore/Scene/Components/UI/Layout.h>
 #include <FBCore/Scene/Components/UI/UIComponent.h>
@@ -13,17 +13,17 @@ namespace fb
     namespace scene
     {
 
-        CanvasTransformSystem::CanvasTransformSystem()
+        LayoutTransformSystem::LayoutTransformSystem()
         {
             auto typeInfo = UITransformState::typeInfo();
             setStateType( typeInfo );
         }
 
-        CanvasTransformSystem::~CanvasTransformSystem()
+        LayoutTransformSystem::~LayoutTransformSystem()
         {
         }
 
-        Vector2F CanvasTransformSystem::calculateElementPosition(
+        Vector2F LayoutTransformSystem::calculateElementPosition(
             const Vector2F &parentPosition, const Vector2F &parentSize, const Vector2F &position,
             const Vector2F &size, const Vector2F &anchor, const Vector2F &anchorMin,
             const Vector2F &anchorMax )
@@ -46,7 +46,7 @@ namespace fb
             return elementPosition;
         }
 
-        void CanvasTransformSystem::calculateElementPositionAndSize(
+        void LayoutTransformSystem::calculateElementPositionAndSize(
             const Vector2F &parentPosition, const Vector2F &parentSize, const Vector2F &position,
             const Vector2F &size, const Vector2F &anchor, const Vector2F &anchorMin,
             const Vector2F &anchorMax, f32 &left, f32 &right, f32 &top, f32 &bottom )
@@ -68,7 +68,7 @@ namespace fb
             bottom = elementPosition.y + ( ( 1.0f - anchor.y ) * relativeSize.y );
         }
 
-        void CanvasTransformSystem::calculateElementPositionAndSize(
+        void LayoutTransformSystem::calculateElementPositionAndSize(
             const Vector2F &parentPosition, const Vector2F &parentSize, const Vector2F &position,
             const Vector2F &size, const Vector2F &anchor, const Vector2F &anchorMin,
             const Vector2F &anchorMax, Vector2F &elementPosition, Vector2F &elementSize )
@@ -86,7 +86,7 @@ namespace fb
             elementPosition.y -= elementSize.y * anchor.y;
         }
 
-        void CanvasTransformSystem::calculateElementPositionAndSize(
+        void LayoutTransformSystem::calculateElementPositionAndSize(
             const Vector2F &position, const Vector2F &size, const Vector2F &anchor,
             const Vector2F &anchorMin, const Vector2F &anchorMax, Vector2F &elementPosition,
             Vector2F &elementSize )
@@ -100,7 +100,7 @@ namespace fb
             elementSize.y = ( anchorMax.y - anchorMin.y ) * size.y;
         }
 
-        void CanvasTransformSystem::update()
+        void LayoutTransformSystem::update()
         {
             RecursiveMutex::ScopedLock lock( m_mutex );
 

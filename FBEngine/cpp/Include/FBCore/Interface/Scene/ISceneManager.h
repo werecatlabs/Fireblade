@@ -197,6 +197,8 @@ namespace fb
 
             virtual void unregisterAllComponent( SmartPtr<IComponent> component ) = 0;
 
+            virtual s32 getNumActors() const = 0;
+
             /**
              * Returns an array of all components of the specified type attached to the actors in the current scene.
              * @tparam T The type of component to search for.

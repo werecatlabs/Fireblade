@@ -295,9 +295,9 @@ namespace fb
                         setObjectsScene( nullptr );
                     }
 
-                    if( auto physicsManager3 = getPhysicsManager() )
+                    if( auto physicsManager = getPhysicsManager() )
                     {
-                        physicsManager3->unload( nullptr );
+                        physicsManager->unload( nullptr );
                         setPhysicsManager( nullptr );
                     }
 
@@ -341,7 +341,6 @@ namespace fb
                     {
                         stateManager->unload( nullptr );
                         setStateManager( nullptr );
-                        stateManager = nullptr;
                     }
 
                     for( auto plugin : m_plugins )
@@ -354,7 +353,7 @@ namespace fb
                     if( auto fsmManager = getFsmManager() )
                     {
                         fsmManager->unload( nullptr );
-                        setFsmManager( fsmManager );
+                        setFsmManager( nullptr );
                     }
 
                     gc.update();

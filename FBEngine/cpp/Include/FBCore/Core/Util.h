@@ -6,6 +6,7 @@
 #include <FBCore/Core/Set.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Quaternion.h>
+#include <FBCore/Math/Transform3.h>
 #include <deque>
 #include <algorithm>
 #include <xmmintrin.h>
@@ -245,22 +246,22 @@ namespace fb
         static int CalculateNearest2Pow( int input );
 
         template <class T>
-        static bool areAllValuesUnique( const std::vector<T> &vec )
-        {
-            std::set<int> uniqueElements;
+        static bool areAllValuesUnique( const std::vector<T> &vec );
 
-            for( int num : vec )
+        template <class T>
+        static Vector3<T> getAverageVelocity( std::vector<Transform3<T>> positions, std::vector<f64> times )
+        {
+            auto averageVelocity = Vector3<T>( 0.0, 0.0, 0.0 );
+            for( size_t i = 0; i < positions.size() - 1; i++ )
             {
-                // If the element is already in the set, it's not unique
-                if( uniqueElements.count( num ) > 0 )
-                {
-                    return false;
-                }
-                uniqueElements.insert( num );
+                auto p0 = positions[i].getPosition();
+                auto p1 = positions[i + 1].getPosition();
+                auto velocity = ( p1 - p0 ) / ( times[i + 1] - times[i] );
+                averageVelocity += velocity;
             }
 
-            // If the size of the set is equal to the size of the vector, all values are unique
-            return uniqueElements.size() == vec.size();
+            averageVelocity /= positions.size() - 1;
+            return averageVelocity;
         }
     };
 
@@ -508,6 +509,15 @@ namespace fb
     {
         std::sort( vector.begin(), vector.end(),
                    []( SmartPtr<T> a, SmartPtr<T> b ) -> bool { return a->getName() < b->getName(); } );
+    }
+
+    template <class T>
+    bool Util::areAllValuesUnique( const std::vector<T> &vec )
+    {
+        const auto uniqueElements = std::set<T>( vec.begin(), vec.end() );
+
+        // If the size of the set is equal to the size of the vector, all values are unique
+        return uniqueElements.size() == vec.size();
     }
 
     template <class T>

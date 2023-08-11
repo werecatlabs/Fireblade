@@ -21,6 +21,14 @@ namespace fb
         ~ISoundManager() override = default;
 
         /**
+         * @brief Adds a sound to the sound manager.
+         * @param name The name of the sound resource (can also be a file path).
+         * @param loop A boolean indicating whether the sound loops.
+         * @return A shared pointer to the sound.
+         */
+        virtual SmartPtr<ISound> addSound( const String &name, bool loop = true ) = 0;
+
+        /**
          * @brief Adds a 2D sound to the sound manager.
          * @param name The name of the sound (can also be a file path).
          * @param loop A boolean indicating whether the sound loops.

@@ -4,6 +4,7 @@
 #include <FBCore/Interface/Resource/IResource.h>
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Core/Array.h>
+#include <FBCore/Math/Vector3.h>
 
 namespace fb
 {
@@ -67,6 +68,30 @@ namespace fb
         This will depend on the sound library used.
         */
         virtual void getSpectrum( Array<f32> &spectrum, u32 numValues ) const = 0;
+
+        /**
+         * @brief Sets the pan of the sound.
+         * @param pan The new pan of the sound.
+         */
+        virtual void setPan( f32 pan ) = 0;
+
+        /** Sets the position of the sound.
+        @param
+        position The position of the 3d sound.
+        */
+        virtual void setPosition( const Vector3F &position ) = 0;
+
+        /** Return the position of the sound.
+        @return
+        Returns the position of the 3d sound.
+        */
+        virtual Vector3F getPosition() const = 0;
+
+        /** Sets the minimum and maximum distance of the sound. */
+        virtual void setMinMaxDistance( f32 minDistance, f32 maxDistance ) = 0;
+
+        /** Gets the minimum and maximum distance of the sound. */
+        virtual void getMinMaxDistance( f32 &minDistance, f32 &maxDistance ) = 0;
     };
 }  // end namespace fb
 

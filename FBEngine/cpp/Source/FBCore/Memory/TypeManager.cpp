@@ -15,6 +15,7 @@
 #include <FBCore/Interface/IO/IArchive.h>
 #include <FBCore/Interface/IO/IStream.h>
 
+#include <FBCore/Interface/System/IJob.h>
 #include <FBCore/Interface/System/ILogManager.h>
 #include <FBCore/Interface/System/IStateManager.h>
 #include <FBCore/Interface/System/IStateContext.h>
@@ -267,7 +268,11 @@ namespace fb
     {
         auto index = TypeGroups::Application;
 
-        if( isDerived( typeInfo, render::ISceneNode::typeInfo() ) )
+        if( isDerived( typeInfo, IJob::typeInfo() ) )
+        {
+            index = TypeGroups::Jobs;
+        }
+        else if( isDerived( typeInfo, render::ISceneNode::typeInfo() ) )
         {
             index = TypeGroups::RenderNodes;
         }

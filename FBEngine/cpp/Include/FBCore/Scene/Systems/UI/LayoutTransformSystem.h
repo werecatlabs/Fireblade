@@ -10,11 +10,11 @@ namespace fb
     namespace scene
     {
 
-        class CanvasTransformSystem : public ComponentSystem
+        class LayoutTransformSystem : public ComponentSystem
         {
         public:
-            CanvasTransformSystem();
-            ~CanvasTransformSystem();
+            LayoutTransformSystem();
+            ~LayoutTransformSystem();
 
             void update() override;
 

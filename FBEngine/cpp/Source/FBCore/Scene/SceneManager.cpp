@@ -24,9 +24,6 @@
 #include <FBCore/Scene/Components/UserComponent.h>
 #include <FBCore/Scene/Components/UI/LayoutTransform.h>
 
-#include <FBApplication/Camera/SphericalCameraController.h>
-#include <FBApplication/Camera/VehicleCameraController.h>
-
 namespace fb
 {
     namespace scene
@@ -583,9 +580,6 @@ namespace fb
                     handle->setUUID( uuid );
                 }
 
-                //auto entity = (u32)m_registry->create();
-                //actor->setEntity( entity );
-
                 actor->load( nullptr );
 
                 FB_ASSERT( m_actors[newId] == nullptr );
@@ -639,9 +633,9 @@ namespace fb
                 FB_ASSERT( fsmManager );
 
                 auto newId = 0;
-                for(auto actor : m_actors)
+                for( auto actor : m_actors )
                 {
-                    if (!actor)
+                    if( !actor )
                     {
                         break;
                     }
@@ -733,6 +727,14 @@ namespace fb
                     auto actorFsmListener = m_fsmListeners[actorId];
                     auto actorGameFsmListener = m_gameFsmListeners[actorId];
 
+                    for( auto child : children )
+                    {
+                        if( child )
+                        {
+                            destroyActor( child );
+                        }
+                    }
+
                     actor->unload( nullptr );
 
                     if( fsm )
@@ -775,14 +777,6 @@ namespace fb
 
                     removeDirty( actor );
                     actor = nullptr;
-
-                    for(auto child : children)
-                    {
-                        if ( child )
-                        {
-                            destroyActor( child );
-                        }
-                    }
 
                     --m_numActors;
                 }
@@ -1013,8 +1007,6 @@ namespace fb
             {
                 handle->setInstanceId( (u32)pos );
             }
-
-            //FB_ASSERT( pos != 0 );
 
             return transform;
         }
@@ -1305,34 +1297,46 @@ namespace fb
             auto &times = m_transformTimes[id];
             auto &transforms = m_transformStates[id];
 
-            if( times.capacity() < maxElementCount )
-                times.reserve( maxElementCount * 2 );
-
-            if( transforms.capacity() < maxElementCount )
-                transforms.reserve( maxElementCount * 2 );
-
-            //m_transformTimes[id].push_back( time );
-            //m_transformStates[id].push_back( transform );
-
-            times.insert( times.begin(), time );
-            transforms.insert( transforms.begin(), transform );
-
-            //FB_ASSERT( Util::areAllValuesUnique( m_transformTimes[id] ) );
-
-            if( times.size() > maxElementCount )
+            auto it = std::find( times.begin(), times.end(), time );
+            if( it == times.end() )
             {
-                times.erase( times.begin() + maxElementCount, times.end() );
-            }
+                if( times.capacity() < maxElementCount )
+                    times.reserve( maxElementCount * 2 );
 
-            if( transforms.size() > maxElementCount )
-            {
-                transforms.erase( transforms.begin() + maxElementCount, transforms.end() );
+                if( transforms.capacity() < maxElementCount )
+                    transforms.reserve( maxElementCount * 2 );
+
+                //m_transformTimes[id].push_back( time );
+                //m_transformStates[id].push_back( transform );
+
+                FB_ASSERT( Util::areAllValuesUnique( times ) == true );
+
+                times.insert( times.begin(), time );
+                transforms.insert( transforms.begin(), transform );
+
+                FB_ASSERT( Util::areAllValuesUnique( times ) == true );
+
+                if( times.size() > maxElementCount )
+                {
+                    times.erase( times.begin() + maxElementCount, times.end() );
+                }
+
+                if( transforms.size() > maxElementCount )
+                {
+                    transforms.erase( transforms.begin() + maxElementCount, transforms.end() );
+                }
             }
         }
+
+
 
         bool SceneManager::getTransformState( u32 id, time_interval t, Transform3<real_Num> &transform )
         {
             SpinRWMutex::ScopedLock lock( m_transformMutex, false );
+
+            auto applicationManager = core::IApplicationManager::instance();
+            auto timer = applicationManager->getTimer();
+            auto dt = timer->getSmoothDeltaTime(Thread::Task::Render);
 
             auto &times = m_transformTimes[id];
             auto &transforms = m_transformStates[id];
@@ -1347,59 +1351,21 @@ namespace fb
                 return false;
             }
 
-            if( times.front() < t )
+            for( size_t i = 1; i < times.size(); ++i )
             {
-                if( times.size() >= 2 )
-                {
-                    const auto &time0 = times[0];
-                    const auto &time1 = times[1];
-
-                    auto diff = time0 - time1;
-
-                    const auto &transform0 = transforms[0];
-                    const auto &transform1 = transforms[1];
-
-                    const auto &position0 = transform0.getPosition();
-                    const auto &position1 = transform1.getPosition();
-
-                    const auto &orientation0 = transform0.getOrientation();
-                    const auto &orientation1 = transform1.getOrientation();
-
-                    if( diff > 0.0 )
-                    {
-                        auto diffFrame = t - time0;
-                        auto delta = diffFrame / diff;
-
-                        auto vel = ( position0 - position1 ) / static_cast<real_Num>( delta );
-                        auto position = position0 + vel * static_cast<real_Num>( delta );
-
-                        auto orientation = Quaternion<real_Num>::slerp(
-                            static_cast<real_Num>( 1.0 + delta ), orientation1, orientation0, true );
-                        orientation.normalise();
-
-                        auto &scale = transform0.getScale();
-
-                        transform = Transform3<real_Num>( position, orientation, scale );
-                    }
-                    else
-                    {
-                        transform = transforms.front();
-                    }
-                }
-                else
-                {
-                    transform = transforms.front();
-                }
-
-                return true;
-            }
-
-            auto cur = 0;
-            for( auto &time : times )
-            {
+                auto &time = times[i];
                 if( time < t )
                 {
-                    auto next = Math<s32>::clamp( cur - 1, 0, (s32)(times.size() - 1) );
+                    auto cur = i;
+                    auto next = Math<s32>::clamp( cur - 1, 0, (s32)( times.size() - 1 ) );
+
+                    auto &time0 = times[next];
+                    auto &time1 = times[cur];
+
+                    if( t > time0 || t < time1 )
+                    {
+                        continue;
+                    }
 
                     auto &transform0 = transforms[next];
                     auto &transform1 = transforms[cur];
@@ -1410,18 +1376,14 @@ namespace fb
                     auto &orientation0 = transform0.getOrientation();
                     auto &orientation1 = transform1.getOrientation();
 
-                    auto &time0 = times[next];
-                    auto &time1 = times[cur];
-
                     auto diff = time0 - time1;
                     if( diff > 0.0 )
                     {
                         auto diffFrame = t - time1;
-                        auto delta = Math<f64>::clamp( diffFrame / diff, 0.0, 1.0 );
-
-                        auto position =
-                            position1 + ( position0 - position1 ) * static_cast<real_Num>( delta );
-
+                        auto delta = diffFrame / diff;
+                        
+                        auto position = Math<real_Num>::lerp( position1, position0, delta );
+                        
                         auto orientation = Quaternion<real_Num>::slerp(
                             static_cast<real_Num>( delta ), orientation1, orientation0, true );
                         orientation.normalise();
@@ -1432,8 +1394,6 @@ namespace fb
                         return true;
                     }
                 }
-
-                ++cur;
             }
 
             if( !transforms.empty() )
@@ -1515,6 +1475,11 @@ namespace fb
                                                static_cast<Thread::UpdateState>( i ), component );
                 }
             }
+        }
+
+        s32 SceneManager::getNumActors() const
+        {
+            return m_numActors;
         }
 
         void SceneManager::updateTransformStatesSize()

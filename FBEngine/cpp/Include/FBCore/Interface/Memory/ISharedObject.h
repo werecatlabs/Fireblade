@@ -189,7 +189,7 @@ namespace fb
         /** Gets if the object is loaded.
         @returns
             Returns true if the object was loaded.*/
-        virtual bool isLoaded() const;
+        bool isLoaded() const;
 
         /** Gets if a function call is thread safe.
         @returns
@@ -199,7 +199,7 @@ namespace fb
         /** Gets if the object is allocated.
         @returns
             Returns true if the object is allocated.*/
-        virtual bool isAlive() const;
+        bool isAlive() const;
 
         /**
          * Sets if the object is a pool element.
@@ -334,6 +334,8 @@ namespace fb
         FB_CLASS_REGISTER_DECL;
 
     protected:
+        void destroySharedObject();
+
         SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> getObjectListenersPtr() const;
 
         void setObjectListenersPtr( SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> p );
@@ -395,6 +397,29 @@ namespace fb
 #endif
     }
 
+    inline bool ISharedObject::removeReference()
+    {
+#if FB_TRACK_REFERENCES
+#    if FB_TRACK_STRONG_REFERENCES
+        auto address = (void *)this;
+        const c8 *file = __FILE__;
+        const u32 line = __LINE__;
+        const c8 *func = __FUNCTION__;
+
+        auto &objectTracker = ObjectTracker::instance();
+        objectTracker.removeRef( this, address, file, line, func );
+#    endif
+#endif
+
+        if( --( *m_references ) == 0 )
+        {
+            destroySharedObject();
+            return true;
+        }
+
+        return false;
+    }
+
     inline s32 ISharedObject::getWeakReferences() const
     {
         FB_ASSERT( m_weakReferences );
@@ -410,6 +435,11 @@ namespace fb
     inline bool ISharedObject::isAlive() const
     {
         return ( *m_flags & GC_FLAG_OBJECT_ALIVE ) != 0;
+    }
+
+    inline bool ISharedObject::isLoaded() const
+    {
+        return *m_loadingState == LoadingState::Loaded;
     }
 
     template <class B>

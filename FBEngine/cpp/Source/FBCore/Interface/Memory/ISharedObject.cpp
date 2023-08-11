@@ -88,36 +88,19 @@ namespace fb
 
         if( --( *m_references ) == 0 )
         {
-            auto typeInfo = getTypeInfo();
-            auto &gc = GarbageCollector::instance();
-            gc.destroyObject( typeInfo, m_objectId );
-        }
-
-        return *m_references == 0;
-    }
-
-    bool ISharedObject::removeReference()
-    {
-#if FB_TRACK_REFERENCES
-#    if FB_TRACK_STRONG_REFERENCES
-        auto address = (void *)this;
-        const c8 *file = __FILE__;
-        const u32 line = __LINE__;
-        const c8 *func = __FUNCTION__;
-
-        auto &objectTracker = ObjectTracker::instance();
-        objectTracker.removeRef( this, address, file, line, func );
-#    endif
-#endif
-
-        if( --( *m_references ) == 0 )
-        {
-            auto &gc = GarbageCollector::instance();
-            gc.destroyObject( getTypeInfo(), m_objectId );
+            destroySharedObject();
             return true;
         }
 
         return false;
+    }
+
+    void ISharedObject::destroySharedObject()
+    {
+        auto &gc = GarbageCollector::instance();
+
+        auto typeInfo = getTypeInfo();
+        gc.destroyObject( typeInfo, m_objectId );
     }
 
     s32 ISharedObject::addReference( void *address, const c8 *file, const u32 line, const c8 *func )
@@ -188,11 +171,6 @@ namespace fb
     bool ISharedObject::isLoadingQueued() const
     {
         return *m_loadingState == LoadingState::LoadingQueued;
-    }
-
-    bool ISharedObject::isLoaded() const
-    {
-        return *m_loadingState == LoadingState::Loaded;
     }
 
     bool ISharedObject::isThreadSafe() const

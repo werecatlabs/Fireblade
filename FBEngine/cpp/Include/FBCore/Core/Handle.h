@@ -115,7 +115,7 @@ namespace fb
         hash64 m_hash = std::numeric_limits<hash64>::max();
 
         /** The name of the handle. */
-        FixedString<1024> m_name;
+        FixedString<256> m_name;
 
         /** The UUID of the handle. */
         FixedString<128> m_uuid;

@@ -258,9 +258,6 @@ namespace fb
                         //}
 
                         renderUI->removeElement( m_image );
-
-                        m_image->unload( nullptr );
-                        m_image = nullptr;
                     }
 
                     UIComponent::unload( data );

@@ -148,6 +148,8 @@ namespace fb
         IOArchive,
         IOStream,
 
+        Jobs,
+
         Count
     };
 

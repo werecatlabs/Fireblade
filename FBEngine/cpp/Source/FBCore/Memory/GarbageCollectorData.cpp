@@ -29,7 +29,7 @@ namespace fb
         auto currentSize = getSize();
         if( currentSize != size )
         {
-            //auto oldObjects = Array<Atomic<ISharedObject *>>( m_objects.begin(), m_objects.end() );
+            auto oldObjects = Array<Atomic<ISharedObject *>>( m_objects.begin(), m_objects.end() );
             //for( auto &obj : oldObjects )
             //{
             //    auto object = obj.load();
@@ -76,12 +76,11 @@ namespace fb
                 m_objects[i] = nullptr;
             }
 
-            for( size_t i = 0; i < currentSize; ++i )
+            for( auto object : oldObjects )
             {
-                auto object = m_objects[i].load();
                 if( object )
                 {
-                    object->setupGarbageCollectorData();
+                    object.load()->setupGarbageCollectorData();
                 }
             }
 
@@ -141,8 +140,6 @@ namespace fb
         {
             setLoadingState( LoadingState::Loading );
 
-            //const auto size =
-            //    FB_GC_MAX_SHARED_OBJECTS;  // todo work around to reduce resizing this can crash
             const auto size = 128;
             reserve( size );
 
@@ -152,6 +149,8 @@ namespace fb
 
     void GarbageCollectorData::unload()
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         auto state = getLoadingState();
         if( state == LoadingState::Loaded )
         {
@@ -159,45 +158,6 @@ namespace fb
 
             m_objects.clear();
             m_objectNames.clear();
-            // if (m_objectNames)
-            //{
-            //	delete[] m_objectNames;
-            //	m_objectNames = nullptr;
-            // }
-
-            //if(m_loadingStates)
-            //{
-            //    delete[] m_loadingStates;
-            //    m_loadingStates = nullptr;
-            //}
-
-            //if( m_listeners )
-            //{
-            //    delete[] m_listeners;
-            //    m_listeners = nullptr;
-            //}
-
-            //if( m_handles )
-            //{
-            //    delete[] m_handles;
-            //    m_handles = nullptr;
-            //}
-
-            //m_creatorData.clear();
-            //m_userData.clear();
-            //m_factoryData.clear();
-
-            //if( m_references )
-            //{
-            //    delete[] m_references;
-            //    m_references = nullptr;
-            //}
-
-            //if( m_flags )
-            //{
-            //    delete[] m_flags;
-            //    m_flags = nullptr;
-            //}
 
             setLoadingState( LoadingState::Unloaded );
         }
@@ -546,14 +506,6 @@ namespace fb
 
                     if( references == zero )
                     {
-#ifdef _DEBUG
-                        if( id == 49 )
-                        {
-                            int stop = 0;
-                            stop = 0;
-                        }
-#endif
-
                         setReferences( id, -1 );
                         setFlag( id, GC_FLAG_OBJECT_ALIVE, false );
 
@@ -729,6 +681,8 @@ namespace fb
 
     ISharedObject **GarbageCollectorData::getObjectPtr( u32 id ) const
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         FB_ASSERT( isValid() );
 
         FB_ASSERT( id < getSize() );
@@ -737,6 +691,8 @@ namespace fb
 
     ISharedObject *GarbageCollectorData::getObject( u32 id ) const
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         FB_ASSERT( isValid() );
 
         FB_ASSERT( id < getSize() );
@@ -848,14 +804,6 @@ namespace fb
         RecursiveMutex::ScopedLock lock( m_mutex );
 
         FB_ASSERT( isValid() );
-
-#if _DEBUG
-        if( id == 0 && getTypeGroup() == TypeGroups::UI )
-        {
-            int stop = 0;
-            stop = 0;
-        }
-#endif
 
         FB_ASSERT( id < getSize() );
 

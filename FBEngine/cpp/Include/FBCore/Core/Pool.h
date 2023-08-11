@@ -65,7 +65,6 @@ namespace fb
         for( auto &element : m_elements )
         {
             element->unload( nullptr );
-            element = nullptr;
         }
 
         m_elements.clear();

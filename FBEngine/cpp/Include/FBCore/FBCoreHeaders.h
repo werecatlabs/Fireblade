@@ -492,7 +492,7 @@
 #include <FBCore/Scene/Components/UI/Layout.h>
 #include <FBCore/Scene/Components/UI/LayoutTransform.h>
 
-#include <FBCore/Scene/Systems/UI/CanvasTransformSystem.h>
+#include <FBCore/Scene/Systems/UI/LayoutTransformSystem.h>
 
 #include <FBCore/Scene/Actor.h>
 #include <FBCore/Scene/CameraManager.h>

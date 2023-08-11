@@ -50,6 +50,7 @@ namespace fb
                 setLoadingState( LoadingState::Unloading );
 
                 m_resourceMap.clear();
+                setDatabaseManager( nullptr );
 
                 setLoadingState( LoadingState::Unloaded );
             }

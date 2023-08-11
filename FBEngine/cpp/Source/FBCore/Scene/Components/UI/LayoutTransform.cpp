@@ -10,7 +10,7 @@
 #include <FBCore/Interface/UI/IUIElement.h>
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/Math/MathUtil.h>
-#include <FBCore/Scene/Systems/UI/CanvasTransformSystem.h>
+#include <FBCore/Scene/Systems/UI/LayoutTransformSystem.h>
 #include <FBCore/Scene/Components/UI/UIComponent.h>
 #include <FBCore/State/States/UITransformState.h>
 

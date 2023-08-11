@@ -61,10 +61,13 @@ namespace fb
 
         void Prefab::load( SmartPtr<ISharedObject> data )
         {
+            setLoadingState( LoadingState::Loaded );
         }
 
         void Prefab::unload( SmartPtr<ISharedObject> data )
         {
+            setLoadingState( LoadingState::Unloading );
+
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
@@ -74,8 +77,12 @@ namespace fb
             if( auto actor = getActor() )
             {
                 sceneManager->destroyActor( actor );
-                setActor( nullptr );
             }
+
+            setActor( nullptr );
+            setData( nullptr );
+
+            setLoadingState( LoadingState::Unloaded );
         }
 
         hash64 Prefab::getFileSystemId() const
@@ -96,16 +103,6 @@ namespace fb
 
         void Prefab::setProperties( SmartPtr<Properties> properties )
         {
-        }
-
-        SmartPtr<IStateContext> Prefab::getStateObject() const
-        {
-            return m_stateObject;
-        }
-
-        void Prefab::setStateObject( SmartPtr<IStateContext> stateObject )
-        {
-            m_stateObject = stateObject;
         }
 
         void Prefab::_getObject( void **ppObject ) const

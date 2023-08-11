@@ -38,10 +38,6 @@ namespace fb
 
             void setProperties( SmartPtr<Properties> properties ) override;
 
-            SmartPtr<IStateContext> getStateObject() const override;
-
-            void setStateObject( SmartPtr<IStateContext> stateObject ) override;
-
             void _getObject( void **ppObject ) const override;
 
             SmartPtr<ISharedObject> getData() const;
@@ -53,7 +49,6 @@ namespace fb
             hash64 m_fileId = 0;
             WeakPtr<IActor> m_actor;
             SmartPtr<ISharedObject> m_data;
-            SmartPtr<IStateContext> m_stateObject;
         };
 
     }  // namespace scene

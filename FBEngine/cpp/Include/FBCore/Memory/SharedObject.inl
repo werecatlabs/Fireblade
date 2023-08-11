@@ -133,39 +133,6 @@ namespace fb
     }
 
     template <class T>
-    bool SharedObject<T>::isLoading() const
-    {
-        const auto &loadingState = getLoadingState();
-        return loadingState == LoadingState::Loading;
-    }
-
-    template <class T>
-    bool SharedObject<T>::isLoadingQueued() const
-    {
-        const auto &loadingState = getLoadingState();
-        return loadingState == LoadingState::LoadingQueued;
-    }
-
-    template <class T>
-    bool SharedObject<T>::isLoaded() const
-    {
-        const auto &loadingState = getLoadingState();
-        return loadingState == LoadingState::Loaded;
-    }
-
-    template <class T>
-    bool SharedObject<T>::isThreadSafe() const
-    {
-        return false;
-    }
-
-    template <class T>
-    bool SharedObject<T>::isAlive() const
-    {
-        return ( *T::m_flags & GC_FLAG_OBJECT_ALIVE ) != 0;
-    }
-
-    template <class T>
     void SharedObject<T>::setPoolElement( bool poolElement )
     {
         if( poolElement )
