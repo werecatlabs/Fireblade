@@ -250,6 +250,12 @@ namespace fb
         void CMaterialOgre::setCubicTexture( Array<SmartPtr<render::ITexture>> textures,
                                              u32 layerIdx /*= 0 */ )
         {
+            if (textures.size() < (u32)IMaterial::SkyboxTextureTypes::Count)
+            {
+                FB_LOG_ERROR( "Invalid texture array size" );
+                return;
+            }
+
             auto applicationManager = core::IApplicationManager::instance();
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             auto factoryManager = applicationManager->getFactoryManager();
@@ -301,20 +307,6 @@ namespace fb
                             texture->setTextureType( ITexture::TextureType::TEX_TYPE_CUBE_MAP );
                             texture->load( nullptr );
 
-#if 0
-                            textureNames[0] = "Sky_Cartoon_Airbrush_Day_NoSun_Cam_0_Front+Z.png";
-                            textureNames[1] = "Sky_Cartoon_Airbrush_Day_NoSun_Cam_1_Back-Z.png";
-                            textureNames[2] = "Sky_Cartoon_Airbrush_Day_NoSun_Cam_2_Left+X.png";
-                            textureNames[3] = "Sky_Cartoon_Airbrush_Day_NoSun_Cam_3_Right-X.png";
-                            textureNames[4] = "Sky_Cartoon_Airbrush_Day_NoSun_Cam_4_Up+Y.png";
-                            textureNames[5] = "Sky_Cartoon_Airbrush_Day_NoSun_Cam_5_Down-Y.png";
-
-                            for( size_t i = 0; i < 6; ++i )
-                            {
-                                textureNames[i] = "checker.png";
-                            }
-#endif
-
                             auto tex = texture->getTexture();
                             if( tex )
                             {
@@ -323,9 +315,6 @@ namespace fb
 
                                 textureUnitState->setTexture( tex );
                             }
-
-                            //textureUnitState->setLayerArrayNames( Ogre::TEX_TYPE_CUBE_MAP,
-                            //                                      textureNames );
                         }
                     }
                 }
@@ -619,7 +608,7 @@ namespace fb
                     {
                     case MaterialType::Standard:
                     {
-                        //auto result = materialManager->load( "glTF2/PBR", resourceGroup );
+                        //auto result = materialManager->load( "Standard", resourceGroup );
                         //auto pbrBase = Ogre::dynamic_pointer_cast<Ogre::Material>( result );
                         //if( pbrBase )
                         //{
@@ -705,19 +694,6 @@ namespace fb
                 FB_LOG_EXCEPTION( e );
             }
         }
-
-        //
-        // SmartPtr<render::IMaterialTechnique> CMaterial::createTechnique()
-        //{
-        //	auto applicationManager = core::IApplicationManager::instance();
-        //	FB_ASSERT(applicationManager);
-
-        //	auto factoryManager = applicationManager->getFactoryManager();
-        //	auto technique = factoryManager->make_ptr<CMaterialTechnique>();
-        //	technique->setOwner(this);
-        //	m_techniques.push_back(technique);
-        //	return technique;
-        //}
 
         Array<SmartPtr<ISharedObject>> CMaterialOgre::getChildObjects() const
         {

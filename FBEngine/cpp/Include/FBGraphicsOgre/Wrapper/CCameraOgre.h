@@ -171,12 +171,12 @@ namespace fb
 
             void setupStateObject() override;
 
-            WeakPtr<ITexture> m_targetTexture;
+            SmartPtr<ITexture> m_targetTexture;
 
-            WeakPtr<ITexture> m_editorTexture;
+            SmartPtr<ITexture> m_editorTexture;
 
             /// The viewport this camera belongs to.
-            WeakPtr<IViewport> m_viewport;
+            SmartPtr<IViewport> m_viewport;
 
             /// The ogre camera.
             Ogre::Camera *m_camera = nullptr;

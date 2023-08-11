@@ -1124,7 +1124,7 @@ namespace fb
                 Euler<real_Num> euler(sceneNodeOrientation);
                 Vector3<real_Num> localRotation = euler.toDegrees();
 
-                Euler<real_Num> euler2(sceneNodeOrientation.normalise());
+                Euler<real_Num> euler2(sceneNodeOrientation.normaliseCopy());
                 localRotation = euler2.toDegrees();
 
                 Euler<real_Num> euler3(m_state->getOrientation());

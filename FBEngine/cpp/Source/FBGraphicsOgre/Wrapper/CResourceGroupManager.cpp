@@ -90,7 +90,7 @@ namespace fb
                 // load scripts
                 // parseScripts( Ogre::GpuProgramManager::getSingletonPtr(), ".cg", defaultGrp );
                 //parseScripts( Ogre::GpuProgramManager::getSingletonPtr(), ".hlsl", defaultGrp );
-                parseScripts( Ogre::GpuProgramManager::getSingletonPtr(), ".glsl", defaultGrp );
+                //parseScripts( Ogre::GpuProgramManager::getSingletonPtr(), ".glsl", defaultGrp );
 
                 parseScripts( Ogre::MaterialManager::getSingletonPtr(), ".program", defaultGrp );
                 parseScripts( Ogre::MaterialManager::getSingletonPtr(), ".material", defaultGrp );
@@ -341,6 +341,14 @@ namespace fb
                     if( !data )
                     {
                         data = fileSystem->open( fileName, true, false, false, true );
+                    }
+
+                    FB_LOG( fileName );
+
+                    if (StringUtil::contains( fileName, "pbr-vert.glsl" ))
+                    {
+                        int a = 0;
+                        a++;
                     }
 
                     if( data )

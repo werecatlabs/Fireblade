@@ -4,7 +4,7 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Memory/SharedObject.h>
-#include <FBGraphics/Wrapper/CMaterial.h>
+#include <FBCore/Graphics/CMaterial.h>
 #include <OgreMaterial.h>
 #include <OgreRenderTargetListener.h>
 

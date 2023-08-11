@@ -1607,6 +1607,14 @@ namespace fb
 
         void CGraphicsSystemOgre::unloadObject( SmartPtr<ISharedObject> graphicsObject, bool forceQueue )
         {
+#if 0
+            ScopeLock lock( this );
+
+            if( graphicsObject->isLoaded() )
+            {
+                graphicsObject->unload( nullptr );
+            }
+#else
             FB_ASSERT( graphicsObject );
 
             auto applicationManager = core::IApplicationManager::instance();
@@ -1621,8 +1629,9 @@ namespace fb
                 }
                 else
                 {
-                    auto stateTask = getStateTask();
-                    if( forceQueue || stateTask != Thread::Task::Primary )
+                    auto renderTask = getRenderTask();
+                    auto currentTask = Thread::getCurrentTask();
+                    if( forceQueue || currentTask != renderTask )
                     {
                         const auto &loadingState = graphicsObject->getLoadingState();
                         if( loadingState != LoadingState::Unloaded )
@@ -1640,6 +1649,7 @@ namespace fb
             {
                 graphicsObject->unload( nullptr );
             }
+#endif
         }
 
         Array<SmartPtr<IWindow>> CGraphicsSystemOgre::getWindows() const

@@ -3,7 +3,7 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IMaterialTexture.h>
-#include <FBGraphics/Wrapper/CMaterialTexture.h>
+#include <FBCore/Graphics/CMaterialTexture.h>
 
 namespace fb
 {

@@ -3,7 +3,6 @@
 #include <FBGraphicsOgre/Deferred/DeferredShading.h>
 #include <FBGraphicsOgre/Deferred/SharedData.h>
 #include <FBGraphicsOgre/Ogre/MaterialListener.h>
-#include <FBGraphicsOgre/Templates/DeferredShadingSystemTemplate.h>
 #include <FBCore/FBCore.h>
 
 namespace fb
@@ -278,19 +277,19 @@ namespace fb
 
         void CDeferredShadingSystem::initialise( SmartPtr<scene::IDirector> objectTemplate )
         {
-            SmartPtr<DeferredShadingSystemTemplate> pTemplate;  // = objectTemplate;
-            mSystem->setGBufferCompositorName( pTemplate->getGBufferCompositorName().c_str() );
-            mSystem->setShowLightingCompositorName( pTemplate->getShowLightingCompositorName().c_str() );
-            mSystem->setShowNormalsCompositorName( pTemplate->getShowNormalsCompositorName().c_str() );
-            mSystem->setShowDepthSpecularCompositorName(
-                pTemplate->getShowDepthSpecularCompositorName().c_str() );
-            mSystem->setShowColourCompositorName( pTemplate->getShowColourCompositorName().c_str() );
+            //SmartPtr<DeferredShadingSystemTemplate> pTemplate;  // = objectTemplate;
+            //mSystem->setGBufferCompositorName( pTemplate->getGBufferCompositorName().c_str() );
+            //mSystem->setShowLightingCompositorName( pTemplate->getShowLightingCompositorName().c_str() );
+            //mSystem->setShowNormalsCompositorName( pTemplate->getShowNormalsCompositorName().c_str() );
+            //mSystem->setShowDepthSpecularCompositorName(
+            //    pTemplate->getShowDepthSpecularCompositorName().c_str() );
+            //mSystem->setShowColourCompositorName( pTemplate->getShowColourCompositorName().c_str() );
 
-            mSystem->setLightCompositionPassName( pTemplate->getLightCompositionPassName().c_str() );
+            //mSystem->setLightCompositionPassName( pTemplate->getLightCompositionPassName().c_str() );
 
-            mSystem->setRenderTargetName( pTemplate->getRenderTargetName().c_str() );
+            //mSystem->setRenderTargetName( pTemplate->getRenderTargetName().c_str() );
 
-            mSystem->initialize();
+            //mSystem->initialize();
         }
 
         void CDeferredShadingSystem::initialise( SmartPtr<scene::IDirector> objectTemplate,

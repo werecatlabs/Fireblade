@@ -1,7 +1,7 @@
 #ifndef _CSceneManager_H_
 #define _CSceneManager_H_
 
-#include <FBGraphics/Wrapper/CGraphicsScene.h>
+#include <FBCore/Graphics/CGraphicsScene.h>
 #include <FBCore/Interface/Graphics/ISceneNode.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/ConcurrentArray.h>
@@ -314,6 +314,8 @@ namespace fb
             SmartPtr<SkyboxStateListener> m_skyboxMaterialListener;
 
             atomic_bool m_enableSkybox = false;
+
+            SpinRWMutex m_terrainsMutex;
 
             /// Value used to generate a unique entity name.
             static u32 m_nextGeneratedNameExt;

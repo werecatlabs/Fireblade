@@ -3,7 +3,7 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Video/IVideoTexture.h>
-#include <FBGraphics/Wrapper/CResourceGraphics.h>
+#include <FBCore/Graphics/CResourceGraphics.h>
 #include <FBCore/Core/Handle.h>
 #include <OgreTexture.h>
 

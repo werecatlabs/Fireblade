@@ -151,41 +151,33 @@ namespace fb
                 auto renderTask = graphicsSystem->getRenderTask();
                 auto task = Thread::getCurrentTask();
 
-                if( task == renderTask )
+                FB_ASSERT( task == renderTask );
+
+                setLoadingState( LoadingState::Loading );
+
+                auto ogreSceneManager = getOgreSceneManager();
+
+                auto cameraName = String( "TerrainCamera_" ) + StringUtil::toString( m_ext++ );
+                auto terrainCamera = ogreSceneManager->createCamera( cameraName );
+                auto terrainCameraSceneNode =
+                    ogreSceneManager->getRootSceneNode()->createChildSceneNode();
+                terrainCameraSceneNode->attachObject( terrainCamera );
+
+                setTerrainCamera( terrainCamera );
+                setTerrainCameraSceneNode( terrainCameraSceneNode );
+
+                loadTerrain();
+                loadTrees();
+
+                auto message = fb::make_ptr<StateMessageUIntValue>();
+                message->setType( StringUtil::getHash( "loadComplete" ) );
+
+                if( auto stateContext = getStateObject() )
                 {
-                    setLoadingState( LoadingState::Loading );
-
-                    auto ogreSceneManager = getOgreSceneManager();
-
-                    auto cameraName = String( "TerrainCamera_" ) + StringUtil::toString( m_ext++ );
-                    auto terrainCamera = ogreSceneManager->createCamera( cameraName );
-                    auto terrainCameraSceneNode =
-                        ogreSceneManager->getRootSceneNode()->createChildSceneNode();
-                    terrainCameraSceneNode->attachObject( terrainCamera );
-
-                    setTerrainCamera( terrainCamera );
-                    setTerrainCameraSceneNode( terrainCameraSceneNode );
-
-                    initialise2();
-                    loadTrees();
-
-                    auto message = fb::make_ptr<StateMessageUIntValue>();
-                    message->setType( StringUtil::getHash( "loadComplete" ) );
-
-                    if( auto stateContext = getStateObject() )
-                    {
-                        stateContext->addMessage( renderTask, message );
-                    }
-
-                    setLoadingState( LoadingState::Loaded );
+                    stateContext->addMessage( renderTask, message );
                 }
-                else
-                {
-                    // SmartPtr<StateMessageLoad> message( new StateMessageLoad );
-                    // m_stateObject->addMessage( renderTask, message );
 
-                    graphicsSystem->loadObject( this );
-                }
+                setLoadingState( LoadingState::Loaded );
             }
             catch( std::exception &e )
             {
@@ -197,16 +189,24 @@ namespace fb
         {
             try
             {
-                const auto &loadingState = getLoadingState();
-                if( loadingState != LoadingState::Unloaded )
+                if( isLoaded() )
                 {
                     setLoadingState( LoadingState::Unloading );
+
+                    auto applicationManager = core::IApplicationManager::instance();
+                    FB_ASSERT( applicationManager );
+
+                    auto graphicsSystem = applicationManager->getGraphicsSystem();
+                    auto stateManager = applicationManager->getStateManager();
+
+                    FB_ASSERT( Thread::getCurrentTask() == graphicsSystem->getRenderTask() );
 
                     // m_terrainTemplate.setNull();
                     // m_stateObject.setNull();
                     // m_stateListener.setNull();
 
                     m_blendLayers.clear();
+
                     FB_SAFE_DELETE( mTerrainGroup );
 
                     if( m_trees )
@@ -214,11 +214,6 @@ namespace fb
                         delete m_trees;
                         m_trees = nullptr;
                     }
-
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto stateManager = applicationManager->getStateManager();
 
                     if( auto stateObject = getStateObject() )
                     {
@@ -249,139 +244,7 @@ namespace fb
             }
         }
 
-        //
-        // void CTerrain::initialise( SmartPtr<scene::IDirector> objectTemplate )
-        //{
-        //     auto applicationManager = core::IApplicationManager::instance();
-        //     auto graphicsSystem = applicationManager->getGraphicsSystem();
-        //     auto factoryManager = applicationManager->getFactoryManager();
-        //     auto renderTask = graphicsSystem->getRenderTask();
-        //     auto task = Thread::getCurrentTask();
-
-        //    const auto &loadingState = getLoadingState();
-        //    if( loadingState == LoadingState::Loaded && task == renderTask )
-        //    {
-        //        initialise();
-        //        loadTrees();
-
-        //        m_isLoaded = true;
-
-        //        SmartPtr<StateMessageUIntValue> message( new StateMessageUIntValue );
-        //        message->setType( StringUtil::getHash( "loadComplete" ) );
-        //        m_stateObject->addMessage( renderTask, message );
-        //    }
-        //    else
-        //    {
-        //        SmartPtr<StateMessageLoad> message( new StateMessageLoad );
-        //        m_stateObject->addMessage( Thread::Task::Render, message );
-        //    }
-        //}
-
-        void CTerrainOgre::initialise()
-        {
-            try
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                auto graphicsSystem = applicationManager->getGraphicsSystem();
-                bool deferredEnabled = false;  // = graphicsSystem->isDeferredShadingSystemEnabled();
-
-                bool blankTerrain = false;
-                blankTerrain = true;  // initial terrain
-
-                // mSceneMgr->setFog(Ogre::FOG_EXP, Ogre::ColourValue::Red);
-
-                Ogre::LogManager::getSingleton().setLogDetail( Ogre::LL_BOREME );
-
-                Ogre::Vector3 lightdir( 0.55, -0.3, 0.75 );
-                lightdir.normalise();
-
-                // Ogre::Light* l = mSceneMgr->createLight("Light0");
-                // l->setType(Ogre::Light::LT_DIRECTIONAL);
-                // l->setDirection(lightdir);
-                // l->setDiffuseColour(Ogre::ColourValue::White);
-                // l->setSpecularColour(Ogre::ColourValue(0.4, 0.4, 0.4));
-
-                //mSceneMgr->setAmbientLight( Ogre::ColourValue( 0.2, 0.2, 0.2 ) );
-
-                auto terrainGlobals = Ogre::TerrainGlobalOptions::getSingletonPtr();
-
-                // mTerrainGlobals->setCompositeMapDistance(100.0f);
-
-                if( !deferredEnabled )
-                {
-                    auto matProfile = static_cast<Ogre::TerrainMaterialGeneratorA::SM2Profile *>(
-                        terrainGlobals->getDefaultMaterialGenerator()->getActiveProfile() );
-                    matProfile->setCompositeMapEnabled( false );
-                    matProfile->setGlobalColourMapEnabled( true );
-                }
-                else
-                {
-                    /*
-                    Ogre::TerrainMaterialGeneratorDeferredPtr terrainMaterialGenerator(
-                        new Ogre::TerrainMaterialGeneratorDeferred );
-                    mTerrainGlobals->setDefaultMaterialGenerator( terrainMaterialGenerator );
-                    Ogre::TerrainGlobalOptions::getSingleton().setCastsDynamicShadows( true );
-                    auto matProfile = static_cast<Ogre::TerrainMaterialGeneratorDeferred::SM2Profile *>(
-                        terrainMaterialGenerator->getActiveProfile() );
-                    matProfile->setCompositeMapEnabled( false );
-                    matProfile->setLightmapEnabled( false );
-                    matProfile->setGlobalColourMapEnabled( false );
-                     */
-                }
-
-                // mTerrainGlobals->setVisibilityFlags(render::IGraphicsSceneManager::VIEWPORT_MASK_TERRAIN);
-
-                //mTerrainGroup = OGRE_NEW Ogre::TerrainGroup( mSceneMgr );
-
-                //mTerrainGroup->loadLegacyTerrain("terrain.cfg");
-
-                auto ogreSceneManager = getOgreSceneManager();
-                mTerrainGroup = loadLegacyTerrain( "terrain.cfg", ogreSceneManager );
-                // mTerrainGroup->setFilenameConvention(TERRAIN_FILE_PREFIX, TERRAIN_FILE_SUFFIX);
-                mTerrainGroup->setAutoUpdateLod(
-                    Ogre::TerrainAutoUpdateLodFactory::getAutoUpdateLod( Ogre::BY_DISTANCE ) );
-
-                // Vector3F position = Vector3F::zero();
-                // if (m_terrainTemplate)
-                //{
-                //	position = m_terrainTemplate->getPosition();
-                // }
-
-                // mTerrainPos = Ogre::Vector3(position.X(), position.Y(), position.Z());
-                // mTerrainGroup->setOrigin(mTerrainPos);
-
-                // configureTerrainDefaults(l);
-
-                // for (long x = TERRAIN_PAGE_MIN_X; x <= TERRAIN_PAGE_MAX_X; ++x)
-                //	for (long y = TERRAIN_PAGE_MIN_Y; y <= TERRAIN_PAGE_MAX_Y; ++y)
-                //		defineTerrain(x, y, blankTerrain);
-
-                // sync load since we want everything in place when we start
-                mTerrainGroup->loadAllTerrains( true );
-
-                ////if (mTerrainsImported)
-                //{
-                // Ogre::TerrainGroup::TerrainIterator ti = mTerrainGroup->getTerrainIterator();
-                // while (ti.hasMoreElements())
-                //{
-                //	Ogre::Terrain* t = ti.getNext()->instance;
-                //	initBlendMaps(t);
-                //}
-                //}
-
-                mTerrainGroup->updateGeometry();
-                mTerrainGroup->updateDerivedData( true );
-                mTerrainGroup->update( true );
-
-                mTerrainGroup->freeTemporaryResources();
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void CTerrainOgre::initialise2()
+        void CTerrainOgre::loadTerrain()
         {
             try
             {
@@ -446,8 +309,8 @@ namespace fb
 
                 //mTerrainGroup->loadLegacyTerrain("terrain.cfg");
 
-                mTerrainGroup = OGRE_NEW Ogre::TerrainGroup( ogreSceneManager,
-                                                             Ogre::Terrain::ALIGN_X_Z, 129, 512.0f );
+                mTerrainGroup = OGRE_NEW Ogre::TerrainGroup( ogreSceneManager, Ogre::Terrain::ALIGN_X_Z,
+                                                             129, 512.0f );
 
                 //mTerrainGroup = loadLegacyTerrain( "terrain.cfg", ogreSceneManager );
                 // mTerrainGroup->setFilenameConvention(TERRAIN_FILE_PREFIX, TERRAIN_FILE_SUFFIX);

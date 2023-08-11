@@ -8,7 +8,7 @@
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Core/Parameter.h>
-#include <FBGraphics/Wrapper/CSceneNode.h>
+#include <FBCore/Graphics/CSceneNode.h>
 #include <OgreNode.h>
 
 namespace fb

@@ -1250,6 +1250,8 @@ namespace fb
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+
             auto factoryManager = applicationManager->getFactoryManager();
             FB_ASSERT( factoryManager );
 
@@ -1257,7 +1259,11 @@ namespace fb
             FB_ASSERT( terrain );
 
             terrain->setSceneManager( this );
+
+            SpinRWMutex::ScopedLock lock( m_terrainsMutex );
             m_terrains.push_back( terrain );
+
+            graphicsSystem->loadObject( terrain );
 
             return terrain;
         }
@@ -1273,11 +1279,9 @@ namespace fb
             {
                 graphicsSystem->unloadObject( terrain );
 
-                auto it = std::find( m_terrains.begin(), m_terrains.end(), terrain );
-                if( it != m_terrains.end() )
-                {
-                    m_terrains.erase( it );
-                }
+                SpinRWMutex::ScopedLock lock( m_terrainsMutex );
+                m_terrains.erase( std::remove( m_terrains.begin(), m_terrains.end(), terrain ),
+                                  m_terrains.end() );
             }
         }
 

@@ -2,9 +2,8 @@
 #define __CTerrainOgre_h__
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBGraphics/Wrapper/CTerrain.h>
+#include <FBCore/Graphics/CTerrain.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Interface/Graphics/ITerrain.h>
 #include <FBCore/Memory/SharedObject.h>
 #include <OgreVector3.h>
 #include <OgreRenderTargetListener.h>
@@ -14,7 +13,6 @@ namespace fb
 {
     namespace render
     {
-
         /**
          * Represents a terrain object that can be rendered.
          */
@@ -48,9 +46,9 @@ namespace fb
              */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            virtual Transform3<real_Num> getWorldTransform() const;
+            Transform3<real_Num> getWorldTransform() const override;
 
-            virtual void setWorldTransform( const Transform3<real_Num> &worldTransform );
+            void setWorldTransform( const Transform3<real_Num> &worldTransform ) override;
 
             /**
              * Gets the position of the terrain.
@@ -165,7 +163,7 @@ namespace fb
             f32 getTerrainWorldSize() const;
             void setTerrainWorldSize( f32 terrainWorldSize );
 
-            void setTextureLayer( s32 layer, const String &textureName );
+            void setTextureLayer( s32 layer, const String &textureName ) override;
 
             FB_CLASS_REGISTER_DECL;
 
@@ -174,7 +172,7 @@ namespace fb
             {
             public:
                 TerrainStateListener() = default;
-                ~TerrainStateListener() = default;
+                ~TerrainStateListener() override = default;
 
                 void unload( SmartPtr<ISharedObject> data ) override;
 
@@ -207,9 +205,8 @@ namespace fb
                 float *data = nullptr;
                 u32 m_nextUpdate = 0;
             };
-
-            void initialise();
-            void initialise2();
+            
+            void loadTerrain();
             void loadTrees();
 
             void setTreeMask( Ogre::SceneNode *node );
@@ -242,7 +239,7 @@ namespace fb
 
             static u32 m_ext;
         };
-    }  // end namespace render
-}  // end namespace fb
+    } // end namespace render
+}     // end namespace fb
 
 #endif  // CTerrain_h__

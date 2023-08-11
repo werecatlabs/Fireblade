@@ -85,18 +85,18 @@ namespace fb
                         }
                     }
 
-                    if( m_viewport )
+                    if( auto viewport = getViewport())
                     {
-                        m_viewport->setCamera( nullptr );
+                        viewport->setCamera( nullptr );
                     }
 
                     m_targetTexture = nullptr;
                     m_editorTexture = nullptr;
 
-                    if( m_viewport )
+                    if( auto viewport = getViewport() )
                     {
-                        m_viewport->unload( nullptr );
-                        m_viewport = nullptr;
+                        viewport->unload( nullptr );
+                        setViewport( nullptr );
                     }
 
                     registerForUpdates( false );
@@ -187,7 +187,7 @@ namespace fb
 
         SmartPtr<IViewport> CCameraOgre::getViewport() const
         {
-            return m_viewport.lock();
+            return m_viewport;
         }
 
         void CCameraOgre::setMaterialName( const String &materialName, s32 index )
@@ -633,7 +633,7 @@ namespace fb
 
         SmartPtr<ITexture> CCameraOgre::getTargetTexture() const
         {
-            return m_targetTexture.lock();
+            return m_targetTexture;
         }
 
         void CCameraOgre::setTargetTexture( SmartPtr<ITexture> targetTexture )
@@ -643,7 +643,7 @@ namespace fb
 
         SmartPtr<ITexture> CCameraOgre::getEditorTexture() const
         {
-            return m_editorTexture.lock();
+            return m_editorTexture;
         }
 
         void CCameraOgre::setEditorTexture( SmartPtr<ITexture> editorTexture )

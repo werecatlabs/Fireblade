@@ -2,7 +2,7 @@
 #define CGraphicsObjectOgre_h__
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBGraphics/Wrapper/CGraphicsObject.h>
+#include <FBCore/Graphics/CGraphicsObject.h>
 #include <FBCore/Interface/Graphics/IGraphicsObject.h>
 #include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/BitUtil.h>

@@ -5,7 +5,7 @@
 #include <FBCore/Interface/Graphics/IFont.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Memory/SharedObject.h>
-#include <FBGraphics/Wrapper/CResourceGraphics.h>
+#include <FBCore/Graphics/CResourceGraphics.h>
 #include <OgreFont.h>
 #include <OgreRenderTargetListener.h>
 

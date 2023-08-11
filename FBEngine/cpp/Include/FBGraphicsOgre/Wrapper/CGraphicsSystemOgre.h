@@ -2,7 +2,7 @@
 #define _CGraphicsSystem_H
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBGraphics/Wrapper/CGraphicsSystem.h>
+#include <FBCore/Graphics/CGraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Memory/SharedObject.h>
 #include <OgreWindowEventUtilities.h>

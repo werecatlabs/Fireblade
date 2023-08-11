@@ -253,7 +253,6 @@ namespace fb
                 {
                     auto size = m_renderTarget->getNumViewports();
                     FB_ASSERT( size <= m_viewports.size() );
-                    FB_ASSERT( size <= 1 );
 
                     for( size_t i = 0; i < size; ++i )
                     {

@@ -5,7 +5,7 @@
 #include <FBCore/Interface/Graphics/ITexture.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Memory/SharedObject.h>
-#include <FBGraphics/Wrapper/CTexture.h>
+#include <FBCore/Graphics/CTexture.h>
 #include <OgreTexture.h>
 
 namespace fb

@@ -47,20 +47,18 @@ namespace fb
 {
     namespace render
     {
-
         class FBGraphicsOgre : public SharedObject<ISharedObject>
         {
         public:
             FBGraphicsOgre() = default;
-            ~FBGraphicsOgre() = default;
+            ~FBGraphicsOgre() override = default;
 
             void load( SmartPtr<ISharedObject> data ) override;
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            static SmartPtr<render::IGraphicsSystem> createGraphicsOgre();
+            static SmartPtr<IGraphicsSystem> createGraphicsOgre();
         };
-
-    }  // end namespace render
-}  // end namespace fb
+    } // end namespace render
+}     // end namespace fb
 
 #endif

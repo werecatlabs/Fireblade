@@ -8,6 +8,11 @@ namespace fb
     {
         LRESULT CALLBACK _WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
         {
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto factoryManager = applicationManager->getFactoryManager();
+
             if( uMsg == WM_CREATE )
             {  // Store pointer to Win32Window in user data area
                 auto pLParam = (LPCREATESTRUCT)lParam;
@@ -22,17 +27,21 @@ namespace fb
                 return DefWindowProc( hWnd, uMsg, wParam, lParam );
             }
 
-            auto renderWindow = win->getRenderWindow();
-            if( renderWindow )
+            if( applicationManager->isRunning() )
             {
-                auto listeners = renderWindow->getListeners();
-                for( auto listener : listeners )
+                auto e = factoryManager->make_ptr<WindowMessageData>();
+                e->setMessage( uMsg );
+                e->setWParam( wParam );
+                e->setLParam( lParam );
+
+                auto renderWindow = win->getRenderWindow();
+                if( renderWindow )
                 {
-                    auto e = fb::make_ptr<fb::WindowMessageData>();
-                    e->setMessage( uMsg );
-                    e->setWParam( wParam );
-                    e->setLParam( lParam );
-                    listener->handleEvent( e );
+                    auto listeners = renderWindow->getListeners();
+                    for( auto listener : listeners )
+                    {
+                        listener->handleEvent( e );
+                    }
                 }
             }
 
@@ -42,14 +51,14 @@ namespace fb
             {
                 bool close = true;
 
-                if( renderWindow )
+                if( auto renderWindow = win->getRenderWindow() )
                 {
                     auto listeners = renderWindow->getListeners();
                     for( auto listener : listeners )
                     {
-                        auto retValue = listener->handleEvent( IEvent::Type::Window,
-                                                               IWindowListener::windowClosingHash,
-                                                               Array<Parameter>(), nullptr, nullptr,nullptr );
+                        auto retValue = listener->handleEvent(
+                            IEvent::Type::Window, IWindowListener::windowClosingHash, Array<Parameter>(),
+                            nullptr, nullptr, nullptr );
 
                         if( !retValue.getBool() )
                         {
@@ -62,9 +71,6 @@ namespace fb
                 {
                     return 0;
                 }
-
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
 
                 applicationManager->setQuit( true );
             }
@@ -80,6 +86,7 @@ namespace fb
                 // log->logMessage("WM_MOVE");
                 win->windowMovedOrResized();
 
+                auto renderWindow = win->getRenderWindow();
                 auto listeners = renderWindow->getListeners();
                 for( auto listener : listeners )
                 {
@@ -95,6 +102,7 @@ namespace fb
             {
                 win->windowMovedOrResized();
 
+                auto renderWindow = win->getRenderWindow();
                 auto listeners = renderWindow->getListeners();
                 for( auto listener : listeners )
                 {
@@ -111,6 +119,7 @@ namespace fb
                 // log->logMessage("WM_SIZE");
                 win->windowMovedOrResized();
 
+                auto renderWindow = win->getRenderWindow();
                 auto listeners = renderWindow->getListeners();
                 for( auto listener : listeners )
                 {
@@ -381,7 +390,7 @@ namespace fb
 
         void WindowWin32::windowMovedOrResized()
         {
-            if (auto renderWindow = getRenderWindow())
+            if( auto renderWindow = getRenderWindow() )
             {
                 renderWindow->windowMovedOrResized();
             }

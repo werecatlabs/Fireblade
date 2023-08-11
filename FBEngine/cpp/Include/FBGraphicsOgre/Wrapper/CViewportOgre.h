@@ -2,7 +2,7 @@
 #define __CViewportOgre_H
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBGraphics/Wrapper/CViewport.h>
+#include <FBCore/Graphics/CViewport.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Memory/SharedObject.h>
 

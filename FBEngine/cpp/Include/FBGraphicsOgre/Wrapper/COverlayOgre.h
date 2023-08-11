@@ -4,7 +4,7 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IOverlay.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBGraphics/Wrapper/CSharedGraphicsObject.h>
+#include <FBCore/Graphics/CSharedGraphicsObject.h>
 
 namespace fb
 {

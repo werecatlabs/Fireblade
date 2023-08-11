@@ -3,7 +3,7 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IOverlayElement.h>
-#include <FBGraphics/Wrapper/COverlayElement.h>
+#include <FBCore/Graphics/COverlayElement.h>
 #include <FBCore/Memory/SharedObject.h>
 
 namespace fb

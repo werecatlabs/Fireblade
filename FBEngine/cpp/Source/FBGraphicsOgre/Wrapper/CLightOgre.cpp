@@ -420,43 +420,45 @@ namespace fb
         {
             try
             {
-	            if( auto owner = getOwner() )
-	            {
-	                auto lightState = fb::static_pointer_cast<LightState>( state );
-	                if( lightState )
-	                {
-	                    auto visible = lightState->isVisible();
+                if( auto owner = getOwner() )
+                {
+                    auto lightState = fb::static_pointer_cast<LightState>( state );
+                    if( lightState )
+                    {
+                        auto visible = lightState->isVisible();
 
                         auto d = lightState->getDiffuseColour();
-                        FB_ASSERT(d.isValid());
-	                    auto diffuse = OgreUtil::convertToOgre( d );
+                        FB_ASSERT( d.isValid() );
+                        auto diffuse = OgreUtil::convertToOgre( d );
 
                         auto s = lightState->getSpecularColour();
-                        FB_ASSERT(s.isValid());
-	                    auto specular = OgreUtil::convertToOgre( s );
+                        FB_ASSERT( s.isValid() );
+                        auto specular = OgreUtil::convertToOgre( s );
 
-	                    auto lightType = lightState->getLightType();
-	                    auto renderQueue = lightState->getRenderQueueGroup();
-	
-	                    if( auto light = owner->getLight() )
-	                    {
-	                        light->setVisible( visible );
-	                        light->setRenderQueueGroup( renderQueue );
+                        auto lightType = lightState->getLightType();
+                        auto renderQueue = lightState->getRenderQueueGroup();
 
-	                        light->setDiffuseColour( diffuse );
-	                        light->setSpecularColour( specular );
+                        if( auto light = owner->getLight() )
+                        {
+                            light->setVisible( visible );
+                            light->setRenderQueueGroup( renderQueue );
 
-                            FB_ASSERT(lightType < 3);
-	                        light->setType( (Ogre::Light::LightTypes)lightType );
-	
-	                        lightState->setDirty( false );
-	                    }
-	                }
-	            }
+                            light->setDiffuseColour( diffuse );
+                            light->setSpecularColour( specular );
+
+                            if( lightType < 3 )
+                            {
+                                light->setType( (Ogre::Light::LightTypes)lightType );
+                            }
+
+                            lightState->setDirty( false );
+                        }
+                    }
+                }
             }
-            catch (std::exception& e)
+            catch( std::exception &e )
             {
-            	FB_LOG_EXCEPTION( e );
+                FB_LOG_EXCEPTION( e );
             }
         }
 

@@ -4,7 +4,7 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IMaterialPass.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBGraphics/Wrapper/CMaterialPass.h>
+#include <FBCore/Graphics/CMaterialPass.h>
 #include <FBCore/Core/Array.h>
 #include <OgrePass.h>
 

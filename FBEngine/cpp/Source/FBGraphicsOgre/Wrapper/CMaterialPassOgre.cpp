@@ -158,6 +158,8 @@ namespace fb
             auto factoryManager = applicationManager->getFactoryManager();
             FB_ASSERT( factoryManager );
 
+            auto resourceDatabase = applicationManager->getResourceDatabase();
+
             if( auto parent = getParent() )
             {
                 auto technique = fb::static_pointer_cast<CMaterialTechniqueOgre>( parent );
@@ -171,40 +173,82 @@ namespace fb
                         {
                         case IMaterial::MaterialType::Standard:
                         {
-                            auto numSlots = static_cast<size_t>(
-                                IMaterial::PbsTextureTypes::NUM_PBSM_TEXTURE_TYPES );
-                            if( numSlots != getNumTexturesNodes() )
+                            if (m_pass)
                             {
-                                auto textures = Array<SmartPtr<IMaterialTexture>>();
-                                textures.resize( numSlots );
-
-                                for( size_t i = 0; i < textures.size(); ++i )
+                                auto ogreTextureUnitStates = m_pass->getTextureUnitStates();
+                                if( ogreTextureUnitStates.empty() )
                                 {
-                                    auto &texture = textures[i];
-                                    if( !texture )
+                                    auto numSlots = static_cast<size_t>(
+                                        IMaterial::PbsTextureTypes::NUM_PBSM_TEXTURE_TYPES );
+                                    if( numSlots != getNumTexturesNodes() )
                                     {
-                                        auto pTexture = factoryManager->make_ptr<CMaterialTextureOgre>();
-                                        pTexture->setParent( this );
-                                        pTexture->setEnabled( i == 0 );  // todo temp while no PBR
-                                        texture = pTexture;
+                                        auto textures = Array<SmartPtr<IMaterialTexture>>();
+                                        textures.resize( numSlots );
 
-                                        auto textureType = static_cast<IMaterial::PbsTextureTypes>( i );
-                                        auto textureTypeStr =
-                                            GraphicsUtil::getPbsTextureType( textureType );
-
-                                        texture->setTextureType( (u32)i );
-
-                                        texture->setMaterial( material );
-
-                                        auto textureHandle = texture->getHandle();
-                                        if( textureHandle )
+                                        for( size_t i = 0; i < textures.size(); ++i )
                                         {
-                                            textureHandle->setName( textureTypeStr );
+                                            auto &texture = textures[i];
+                                            if( !texture )
+                                            {
+                                                auto pTexture =
+                                                    factoryManager->make_ptr<CMaterialTextureOgre>();
+                                                pTexture->setParent( this );
+                                                pTexture->setEnabled( i ==
+                                                                      0 );  // todo temp while no PBR
+                                                texture = pTexture;
+
+                                                auto textureType =
+                                                    static_cast<IMaterial::PbsTextureTypes>( i );
+                                                auto textureTypeStr =
+                                                    GraphicsUtil::getPbsTextureType( textureType );
+
+                                                texture->setTextureType( (u32)i );
+
+                                                texture->setMaterial( material );
+
+                                                auto textureHandle = texture->getHandle();
+                                                if( textureHandle )
+                                                {
+                                                    textureHandle->setName( textureTypeStr );
+                                                }
+                                            }
                                         }
+
+                                        setTextureUnits( textures );
                                     }
                                 }
+                                else
+                                {
+                                    auto numSlots = static_cast<size_t>(
+                                        IMaterial::PbsTextureTypes::NUM_PBSM_TEXTURE_TYPES );
 
-                                setTextureUnits( textures );
+                                    auto textures = Array<SmartPtr<IMaterialTexture>>();
+                                    textures.reserve( numSlots );
+
+                                    for( auto textureUnitState : ogreTextureUnitStates )
+                                    {
+                                        auto pTexture = factoryManager->make_ptr<CMaterialTextureOgre>();
+                                        pTexture->setTextureUnitState( textureUnitState );
+                                        pTexture->setMaterial( material );
+
+                                        auto textureHandle = pTexture->getHandle();
+                                        if( textureHandle )
+                                        {
+                                            textureHandle->setName( textureUnitState->getName() );
+                                        }
+
+                                        auto textureName = textureUnitState->getTextureName();
+                                        if( auto tex = resourceDatabase->loadResourceByType<ITexture>(
+                                                textureName ) )
+                                        {
+                                            pTexture->setTexture( tex );
+                                        }
+
+                                        textures.push_back( pTexture );
+                                    }
+
+                                    setTextureUnits( textures );
+                                }
                             }
                         }
                         break;
@@ -1138,7 +1182,7 @@ namespace fb
                         //pass->setTint( tint );
                         //pass->setDiffuse( diffuse );
 
-                        pass->setLightingEnabled(lightingEnabled);
+                        pass->setLightingEnabled( lightingEnabled );
                     }
 
                     state->setDirty( false );
