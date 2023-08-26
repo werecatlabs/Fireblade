@@ -1,15 +1,13 @@
 #ifndef VertexElement_h__
 #define VertexElement_h__
 
-#include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/Mesh/IVertexElement.h>
 #include <FBCore/Interface/Mesh/IVertexDeclaration.h>
 
 namespace fb
 {
-    //---------------------------------------------
-    class VertexElement : public SharedObject<IVertexElement>
+    
+    class VertexElement : public IVertexElement
     {
     public:
         VertexElement();

@@ -43,8 +43,7 @@ namespace fb
                 void setConstraint( SmartPtr<Constraint> val );
 
             private:
-                physics::ConstraintFlag::Enum m_flag =
-                    static_cast<physics::ConstraintFlag::Enum>( 0 );
+                physics::ConstraintFlag::Enum m_flag = static_cast<physics::ConstraintFlag::Enum>( 0 );
                 SmartPtr<Constraint> m_constraint = nullptr;
                 bool m_flagValue = false;
             };
@@ -139,8 +138,7 @@ namespace fb
 
             void setDrive( physics::D6Drive::Enum index, SmartPtr<physics::IConstraintDrive> drive );
 
-            void setLocalPosition( physics::JointActorIndex::Enum actor,
-                                   const Vector3<real_Num> &pos );
+            void setLocalPosition( physics::JointActorIndex::Enum actor, const Vector3<real_Num> &pos );
 
             Transform3<real_Num> getLocalPose( physics::JointActorIndex::Enum actor ) const;
             void setLocalPose( physics::JointActorIndex::Enum actor,

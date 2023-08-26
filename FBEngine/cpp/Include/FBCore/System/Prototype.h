@@ -1,18 +1,18 @@
 #ifndef Prototype_h__
 #define Prototype_h__
 
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/IPrototype.h>
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
 #include <FBCore/Core/Properties.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
     namespace core
     {
         template <class T>
-        class Prototype : public SharedObject<T>
+        class Prototype : public T
         {
         public:
             Prototype() = default;
@@ -84,7 +84,7 @@ namespace fb
             SmartPtr<IPrototype> m_parentPrototype;
         };
 
-        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, Prototype, T, SharedObject<T> );
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, Prototype, T, T );
     }  // namespace core
 }  // namespace fb
 

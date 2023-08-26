@@ -7,7 +7,7 @@
 
 #include <FBCore/Interface/Physics/IRigidStatic3.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Physics/CRigidBody3.h>
 
 namespace fb

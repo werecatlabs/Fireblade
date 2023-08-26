@@ -3,7 +3,6 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Resource/IResourceDatabase.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/System/Job.h>
 #include <FBCore/Core/UtilityTypes.h>
 #include <FBCore/Core/Map.h>
@@ -12,7 +11,7 @@
 namespace fb
 {
 
-    class ResourceDatabase : public SharedObject<IResourceDatabase>
+    class ResourceDatabase : public IResourceDatabase
     {
     public:
         ResourceDatabase();
@@ -44,6 +43,8 @@ namespace fb
 
         Array<SmartPtr<IResource>> getResources() const override;
 
+	    void createActor( SmartPtr<scene::IActor> parent, SmartPtr<Properties> properties );
+        SmartPtr<IResource> loadResource( hash64 id ) override;
         SmartPtr<IResource> loadResource( const String &path ) override;
         SmartPtr<IResource> loadResourceById( const String &uuid ) override;
 
@@ -64,6 +65,7 @@ namespace fb
 
         SmartPtr<ISharedObject> getObject( const String &uuid ) override;
 
+	    SmartPtr<Properties> loadAssetNode( SmartPtr<IDatabaseManager> db, SmartPtr<Properties> parent, hash64 id );
         Array<SmartPtr<ISharedObject>> getSceneObjects() const;
 
         SmartPtr<ISharedObject> getObjectByFileId( const String &fileId ) const override;
@@ -82,6 +84,8 @@ namespace fb
         FB_CLASS_REGISTER_DECL;
 
     protected:
+        SmartPtr<Properties> loadAssetProperties(hash64 id);
+
         void getSceneObjects( SmartPtr<scene::IActor> actor,
                               Array<SmartPtr<ISharedObject>> &objects ) const;
 

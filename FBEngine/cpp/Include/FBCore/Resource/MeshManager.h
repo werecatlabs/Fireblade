@@ -4,13 +4,12 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Resource/IMeshManager.h>
 #include <FBCore/Interface/Mesh/IMesh.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/Array.h>
 
 namespace fb
 {
 
-    class MeshManager : public SharedObject<IMeshManager>
+    class MeshManager : public IMeshManager
     {
     public:
         MeshManager();

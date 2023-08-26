@@ -2,14 +2,14 @@
 #define __Plugin_h__
 
 #include <FBCore/Interface/System/IPlugin.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
     namespace core
     {
         
-        class Plugin : public SharedObject<IPlugin>
+        class Plugin : public IPlugin
         {
         public:
             Plugin() = default;

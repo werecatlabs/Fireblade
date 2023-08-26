@@ -123,20 +123,6 @@ namespace fb
         virtual Array<SmartPtr<IScriptBreakpoint>> getBreakpoints() const = 0;
 
         /**
-         * Adds a script binding.
-         *
-         * @param scriptBinding The script binding to add.
-         */
-        virtual void addScriptBinding( SmartPtr<IScriptBind> scriptBinding ) = 0;
-
-        /**
-         * Removes a script binding.
-         *
-         * @param scriptBinding The script binding to remove.
-         */
-        virtual void removeScriptBinding( SmartPtr<IScriptBind> scriptBinding ) = 0;
-
-        /**
          * Performs garbage collection.
          */
         virtual void garbageCollect() = 0;

@@ -1,5 +1,5 @@
-#ifndef _IGUITEXT_H
-#define _IGUITEXT_H
+#ifndef _IUITEXT_H
+#define _IUITEXT_H
 
 #include <FBCore/Interface/UI/IUIElement.h>
 

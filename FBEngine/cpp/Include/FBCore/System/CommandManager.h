@@ -3,14 +3,13 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/ICommandManager.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/Array.h>
 
 namespace fb
 {
 
     /** A standard implementation of the command manager. Runs the commands from the primary thread. */
-    class CommandManager : public SharedObject<ICommandManager>
+    class CommandManager : public ICommandManager
     {
     public:
         CommandManager();

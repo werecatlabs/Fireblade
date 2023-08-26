@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IStateManager.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Core/ConcurrentQueue.h>
 #include <FBCore/Core/HashTable.h>
@@ -12,7 +12,7 @@
 namespace fb
 {
     /** Implementation for a state manager. */
-    class StateManagerStandard : public SharedObject<IStateManager>
+    class StateManagerStandard : public IStateManager
     {
     public:
         /** Constructor. */

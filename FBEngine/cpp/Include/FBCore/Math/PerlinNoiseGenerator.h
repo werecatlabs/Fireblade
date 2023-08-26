@@ -1,14 +1,14 @@
 #ifndef PerlinNoiseGenerator_h__
 #define PerlinNoiseGenerator_h__
 
-#include <FBCore/Memory/SharedObject.h>
-#include <FBCore/FBCoreTypes.h>
+
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Array.h>
 
 namespace fb
 {
     template <class T>
-    class PerlinNoiseGenerator : public SharedObject<ISharedObject>
+    class PerlinNoiseGenerator : public ISharedObject
     {
     public:
         PerlinNoiseGenerator() = default;

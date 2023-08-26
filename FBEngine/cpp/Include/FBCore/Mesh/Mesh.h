@@ -3,14 +3,14 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Mesh/IMesh.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Core/Array.h>
 
 namespace fb
 {
     
     /// Implementation of a mesh.
-    class Mesh : public SharedObject<IMesh>
+    class Mesh : public IMesh
     {
     public:
         Mesh();

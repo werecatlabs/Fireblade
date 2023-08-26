@@ -1,17 +1,19 @@
 #ifndef FB_POOL_H
 #define FB_POOL_H
 
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Core/ConcurrentQueue.h>
-#include <FBCore/Memory/PoolAllocatorAligned.h>
 #include <FBCore/Core/PoolData.h>
+#include <FBCore/Memory/PoolAllocatorAligned.h>
+#include <FBCore/System/RttiClass.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
     /** Pool class to allocate memory. */
     template <class T, class A = std::allocator<T>>
-    class Pool : public SharedObject<ISharedObject>
+    class Pool : public ISharedObject
     {
     public:
         /** Default constructor. */
@@ -38,6 +40,8 @@ namespace fb
         /** Sets the next size. */
         void setNextSize( size_t nextSize );
 
+        FB_CLASS_REGISTER_TEMPLATE_PAIR_DECL( Pool, T, A );
+
     private:
         /// The Array storing the data.
         ConcurrentArray<SmartPtr<PoolData<T, A>>, A> m_elements;
@@ -48,6 +52,8 @@ namespace fb
         /// Num of elements.
         size_t m_nextSize = 32;
     };
+
+    FB_CLASS_REGISTER_DERIVED_TEMPLATE_PAIR( fb, Pool, T, A, ISharedObject );
 
     template <class T, class A>
     Pool<T, A>::Pool()

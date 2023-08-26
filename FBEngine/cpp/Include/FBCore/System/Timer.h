@@ -2,7 +2,6 @@
 #define __Timer_h__
 
 #include <FBCore/Interface/System/ITimer.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Atomics/AtomicFloat.h>
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Core/FixedArray.h>
@@ -11,7 +10,7 @@ namespace fb
 {
 
     /** Stub implementation of the timer interface. */
-    class Timer : public SharedObject<ITimer>
+    class Timer : public ITimer
     {
     public:
         Timer();

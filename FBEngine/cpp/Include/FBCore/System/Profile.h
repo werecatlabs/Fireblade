@@ -1,7 +1,7 @@
 #ifndef Profile_h__
 #define Profile_h__
 
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Thread/Threading.h>
 #include <FBCore/Interface/System/IProfile.h>
 #include <FBCore/Core/Array.h>
@@ -15,7 +15,7 @@ namespace fb
      * This class represents profiling data for a piece of code execution, including start and end times,
      * total time taken, and average time taken over multiple executions.
      */
-    class Profile : public SharedObject<IProfile>
+    class Profile : public IProfile
     {
     public:
         /** The default number of samples for calculating the average time taken. */

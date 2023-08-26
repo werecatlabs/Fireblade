@@ -134,29 +134,15 @@ namespace fb
 
         /** Gets the latest object. */
         template <class T>
-        SmartPtr<T> getLatestOutputStateByType() const
-        {
-            auto state = getLatestOutputState();
-            FB_ASSERT( fb::dynamic_pointer_cast<T>( state ) );
-            return fb::static_pointer_cast<T>( state );
-        }
+        SmartPtr<T> getLatestOutputStateByType() const;
 
         /** Gets the latest object. */
         template <class T>
-        SmartPtr<T> getLatestOutputStateByType( time_interval time ) const
-        {
-            auto state = getOutputState( time );
-            FB_ASSERT( fb::dynamic_pointer_cast<T>( state ) );
-            return fb::static_pointer_cast<T>( state );
-        }
+        SmartPtr<T> getLatestOutputStateByType( time_interval time ) const;
 
         /** Gets the state by type. */
         template <class T>
-        SmartPtr<T> getStateByType() const
-        {
-            auto state = getState();
-            return fb::static_pointer_cast<T>( state );
-        }
+        SmartPtr<T> getStateByType() const;
 
         /** Handles a event.
         @param eventType The event type.
@@ -171,6 +157,30 @@ namespace fb
 
         FB_CLASS_REGISTER_DECL;
     };
+
+    template <class T>
+    SmartPtr<T> IStateContext::getLatestOutputStateByType() const
+    {
+        auto state = getLatestOutputState();
+        FB_ASSERT( fb::dynamic_pointer_cast<T>( state ) );
+        return fb::static_pointer_cast<T>( state );
+    }
+
+    template <class T>
+    SmartPtr<T> IStateContext::getLatestOutputStateByType( time_interval time ) const
+    {
+        auto state = getOutputState( time );
+        FB_ASSERT( fb::dynamic_pointer_cast<T>( state ) );
+        return fb::static_pointer_cast<T>( state );
+    }
+
+    template <class T>
+    SmartPtr<T> IStateContext::getStateByType() const
+    {
+        auto state = getState();
+        return fb::static_pointer_cast<T>( state );
+    }
+
 }  // end namespace fb
 
 #endif

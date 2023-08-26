@@ -35,7 +35,7 @@ namespace fb
 
             SmartPtr<ISharedObject> toData() const override;
 
-            void fromData(SmartPtr<ISharedObject> data) override;
+            void fromData( SmartPtr<ISharedObject> data ) override;
 
             /**
              * Gets the data associated with the component as a properties object.

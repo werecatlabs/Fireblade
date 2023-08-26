@@ -2,6 +2,7 @@
 #define UITransformState_h__
 
 #include <FBCore/State/States/BaseState.h>
+#include "FBCore/Math/Vector2.h"
 
 namespace fb
 {

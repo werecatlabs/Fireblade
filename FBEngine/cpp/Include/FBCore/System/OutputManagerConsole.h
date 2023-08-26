@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IOutputManager.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
@@ -13,7 +13,7 @@ namespace fb
      *
      * This class is an implementation of the output manager interface that writes output to the console.
      */
-    class OutputManagerConsole : public SharedObject<IOutputManager>
+    class OutputManagerConsole : public IOutputManager
     {
     public:
         /** Constructor. */

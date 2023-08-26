@@ -1,15 +1,14 @@
 #ifndef LinearSpline4_h__
 #define LinearSpline4_h__
 
-#include <FBCore/FBCoreTypes.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Math/Vector4.h>
 
 namespace fb
 {
     
     template <class T>
-    class LinearSpline4 : public SharedObject<ISharedObject>
+    class LinearSpline4 : public ISharedObject
     {
     public:
         LinearSpline4()

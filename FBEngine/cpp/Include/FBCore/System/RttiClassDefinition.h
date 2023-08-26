@@ -154,9 +154,7 @@
     } \
 \
     template <class T, class U> \
-    u32 TEMPLATE_CLASS<T, U>::m_typeInfo = 0; \
-    template <class T, class U> \
-    ObjectSetup<TEMPLATE_CLASS<TYPE, SECOND_TYPE> > TEMPLATE_CLASS<T, U>::objectSetupTemplate##TYPE##SECOND_TYPE;
+    u32 TEMPLATE_CLASS<T, U>::m_typeInfo = 0; 
 
 #define FB_CLASS_REGISTER_DERIVED_TEMPLATE_SPECIALISE( NAMESPACE, TEMPLATE_CLASS, TYPE, BASE_TYPE ) \
     template <> \

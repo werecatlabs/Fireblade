@@ -1,13 +1,12 @@
 #ifndef RegistryManager_h__
 #define RegistryManager_h__
 
-#include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/StringTypes.h>
 
 namespace fb
 {
-    class RegistrySettings : public SharedObject<ISharedObject>
+    class RegistrySettings : public ISharedObject
     {
     public:
         RegistrySettings();

@@ -3,7 +3,6 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/ITaskManager.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Core/FixedArray.h>
 #include <FBCore/System/Task.h>
@@ -11,11 +10,11 @@
 namespace fb
 {
     /** Default task manager implementation.  */
-    class TaskManager : public SharedObject<ITaskManager>
+    class TaskManager : public ITaskManager
     {
     public:
         /* Used to lock all the tasks. */
-        class Lock : public SharedObject<ISharedObject>
+        class Lock : public ISharedObject
         {
         public:
             Lock();
@@ -123,20 +122,30 @@ namespace fb
 
         Atomic<State> m_state = State::None;
 
-        FixedArray<Task, static_cast<u32>(Thread::Task::Count)> m_tasks;
-        FixedArray<atomic_u32, static_cast<u32>(Thread::Task::Count)> m_affinity;
-        FixedArray<atomic_u32, static_cast<u32>(Thread::Task::Count)> m_taskFlags;
-        FixedArray<atomic_f64, static_cast<u32>(Thread::Task::Count)> m_targetfps;
-        FixedArray<atomic_f64, static_cast<u32>(Thread::Task::Count)> m_nextUpdateTimes;
-        FixedArray<Thread::Task, static_cast<u32>(Thread::Task::Count)> m_taskIds;
-        FixedArray<ITask::State, static_cast<u32>(Thread::Task::Count)> m_states;
-        FixedArray<SmartPtr<ISharedObject>, static_cast<u32>(Thread::Task::Count)> m_owners;
-        FixedArray<atomic_u32, static_cast<u32>(Thread::Task::Count)> m_threadHint;
+        Array<SmartPtr<Task>> m_tasks;
+        Array<atomic_u32> m_affinity;
+        Array<atomic_u32> m_taskFlags;
+        Array<atomic_f64> m_targetfps;
+        Array<atomic_f64> m_nextUpdateTimes;
+        Array<Thread::Task> m_taskIds;
+        Array<ITask::State> m_states;
+        Array<SmartPtr<ISharedObject>> m_owners;
+        Array<atomic_u32> m_threadHint;
 
         u32 m_idCount = 0;
 
         static u32 m_idExt;
     };
+
+    inline bool TaskManager::getFlags( u32 id, u32 flag ) const
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+
+        FB_ASSERT( id < m_taskFlags.size() );
+        const auto &flags = m_taskFlags[id].load();
+        return ( flags & flag ) != 0;
+    }
+
 } // end namespace fb
 
 #endif  // TaskManager_h__

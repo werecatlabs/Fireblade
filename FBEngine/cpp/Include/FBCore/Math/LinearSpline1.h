@@ -1,7 +1,7 @@
 #ifndef __LinearSpline1_h__
 #define __LinearSpline1_h__
 
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/UtilityTypes.h>
 #include <FBCore/Math/Matrix4.h>
@@ -10,7 +10,7 @@ namespace fb
 {
 
     template <class T>
-    class LinearSpline1 : public SharedObject<ISharedObject>
+    class LinearSpline1 : public ISharedObject
     {
     public:
         LinearSpline1();

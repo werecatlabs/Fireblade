@@ -395,10 +395,26 @@ namespace fb
          *  @param bufferSize The size of the destination buffer.
          */
         static void toBuffer( const T &src, void *dst, size_t bufferSize );
+
+        static std::string longestCommonSubsequence( const std::string &str1, const std::string &str2 );
+
+        static size_t numCommonSubsequence( const std::string &str1, const std::string &str2 );
+
+        static int countMatchingCharacters( const std::string &str, char target );
+
+        static int countMatchingCharacters( const std::string &a, const std::string &b );
+
+        // Tokenize the input sentence
+        static std::vector<std::string> tokenize( const std::string &input );
+
+        // Extract named entities using a simple keyword approach
+        static std::vector<std::string> extractNamedEntities( const std::vector<std::string> &tokens,
+                                                              const std::vector<std::string> &entities );
     };
 
     using StringUtil = StringUtility<String>;
     using StringUtilW = StringUtility<StringW>;
+
 }  // end namespace fb
 
 #endif

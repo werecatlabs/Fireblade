@@ -3,7 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/IDirector.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Resource/Resource.h>
 
 namespace fb

@@ -2,13 +2,12 @@
 #define CObjectYield_h__
 
 #include <FBCore/Interface/Memory/IObjectYield.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Memory/RawPtr.h>
 
 namespace fb
 {
 
-    class ObjectYield : public SharedObject<IObjectYield>
+    class ObjectYield : public IObjectYield
     {
     public:
         ObjectYield();

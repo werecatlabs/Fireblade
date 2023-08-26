@@ -97,18 +97,6 @@ namespace fb
          */
         virtual void setListenerPriority( u32 id, u32 priority ) = 0;
 
-        /** Gets the readiness of a specific id.
-            @param id The id of the state machine.
-            @return A boolean indicating whether the state machine is ready.
-         */
-        virtual bool isReady( u32 id ) const = 0;
-
-        /** Sets the readiness of a specific id.
-            @param id The id of the state machine.
-            @param ready A boolean indicating whether the state machine is ready.
-         */
-        virtual void setReady( u32 id, bool ready ) = 0;
-
         virtual u32 *getFlagsPtr( u32 id ) const = 0;
 
         /** Gets an array of listeners for a specific id.

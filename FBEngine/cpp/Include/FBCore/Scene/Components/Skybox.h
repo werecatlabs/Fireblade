@@ -1,6 +1,7 @@
 #ifndef SkyboxComponent_h__
 #define SkyboxComponent_h__
 
+#include <FBCore/Interface/System/IEventListener.h>
 #include <FBCore/Scene/Components/Component.h>
 #include <FBCore/Interface/System/IStateListener.h>
 
@@ -128,11 +129,11 @@ namespace fb
             /**
              * @brief Set the texture at a specific index in the Skybox.
              */
-            void setTextureByName( const String& textureName, u8 index );
+            void setTextureByName( const String &textureName, u8 index );
 
             void updateMaterials();
 
-	        bool getSwapLeftRight() const;
+            bool getSwapLeftRight() const;
 
             void setSwapLeftRight( bool swapLeftRight );
 
@@ -148,7 +149,7 @@ namespace fb
              * This class listens to events related to the material used by the Skybox component.
              * It implements the IEventListener interface to handle such events.
              */
-            class MaterialSharedListener : public SharedObject<IEventListener>
+            class MaterialSharedListener : public IEventListener
             {
             public:
                 /**

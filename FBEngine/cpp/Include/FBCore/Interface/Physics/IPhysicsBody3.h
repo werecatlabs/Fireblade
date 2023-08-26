@@ -106,6 +106,8 @@ namespace fb
             /** Sets the state object. */
             virtual void setStateObject( SmartPtr<IStateContext> stateObject ) = 0;
 
+            virtual void _getObject( void** object ) const = 0;
+
             FB_CLASS_REGISTER_DECL;
         };
     }  // end namespace physics

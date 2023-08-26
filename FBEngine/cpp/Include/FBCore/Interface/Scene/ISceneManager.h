@@ -41,6 +41,12 @@ namespace fb
              */
             virtual void setFsmManager( SmartPtr<IFSMManager> fsmManager ) = 0;
 
+            /**  */
+            virtual SmartPtr<IFSMManager> getComponentFsmManager( u32 typeId ) = 0;
+
+            /**  */
+            virtual void setComponentFsmManager( u32 typeId, SmartPtr<IFSMManager> fsmManager ) = 0;
+
             /**
              * Gets the current scene.
              * @return The current scene object. Can be null.

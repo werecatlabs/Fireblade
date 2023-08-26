@@ -2,7 +2,7 @@
 #define BaseStateTest_h__
 
 #include <FBCore/Atomics/AtomicFloat.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Core/Properties.h>
@@ -10,7 +10,7 @@
 namespace fb
 {
     template <class T>
-    class BaseStateT : public SharedObject<T>
+    class BaseStateT : public T
     {
     public:
         BaseStateT();

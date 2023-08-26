@@ -4,11 +4,10 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IState.h>
 #include <FBCore/Atomics/AtomicFloat.h>
-#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
-    class BaseState : public SharedObject<IState>
+    class BaseState : public IState
     {
     public:
         BaseState();

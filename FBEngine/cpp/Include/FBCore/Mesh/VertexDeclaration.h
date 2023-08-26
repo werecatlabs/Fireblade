@@ -1,15 +1,12 @@
 #ifndef CVertexDeclaration_h__
 #define CVertexDeclaration_h__
 
-#include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/FBCoreTypes.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/Mesh/IVertexDeclaration.h>
 
 namespace fb
 {
     
-    class VertexDeclaration : public SharedObject<IVertexDeclaration>
+    class VertexDeclaration : public IVertexDeclaration
     {
     public:
         VertexDeclaration();

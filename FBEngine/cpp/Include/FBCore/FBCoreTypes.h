@@ -140,9 +140,12 @@ namespace fb
         UIWindows,
         State,
         StateQueues,
+        StateMessages,
+        StateListeners,
         Factories,
         Directors,
         Resources,
+        Properties,
 
         IO,
         IOArchive,

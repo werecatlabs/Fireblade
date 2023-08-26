@@ -1,21 +1,20 @@
 #ifndef __CData_h__
 #define __CData_h__
 
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/Memory/IData.h>
 
 namespace fb
 {
 
     template <class T>
-    class Data : public SharedObject<IData>
+    class Data : public IData
     {
     public:
-        Data() : SharedObject<IData>()
+        Data()
         {
         }
 
-        Data( const T &data ) : SharedObject<IData>()
+        Data( const T &data )
         {
             m_data = data;
         }

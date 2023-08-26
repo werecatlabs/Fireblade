@@ -1,10 +1,7 @@
-#ifndef _CPrefabManager_H
-#define _CPrefabManager_H
+#ifndef __PrefabManager_H
+#define __PrefabManager_H
 
-#include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Interface/Resource/IResourceGroupManager.h>
 #include <FBCore/Interface/Scene/IPrefabManager.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/StringTypes.h>
 
 namespace fb
@@ -12,7 +9,7 @@ namespace fb
     namespace scene
     {
         /** Prefab manager implementation. */
-        class PrefabManager : public SharedObject<IPrefabManager>
+        class PrefabManager : public IPrefabManager
         {
         public:
             PrefabManager() = default;

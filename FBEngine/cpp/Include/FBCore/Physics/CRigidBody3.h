@@ -161,7 +161,7 @@ namespace fb
             SmartPtr<IStateListener> m_stateListener;
         };
 
-        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, CRigidBody3, T, SharedObject<T> );
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, CRigidBody3, T, T );
 
         template <class T>
         SmartPtr<IStateContext> CRigidBody3<T>::getStateObject() const

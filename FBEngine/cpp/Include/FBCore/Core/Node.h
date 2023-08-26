@@ -1,15 +1,16 @@
 #ifndef INode_h__
 #define INode_h__
 
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Core/Array.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
     template <class T>
-    class Node : public SharedObject<T>
+    class Node : public T
     {
     public:
         using NodeList = Array<SmartPtr<Node<T>>>;
@@ -62,7 +63,7 @@ namespace fb
             child->remove();  // remove from current parent
             m_children.push_back( child );
 
-            auto pThisNode = SharedObject<T>::template getSharedFromThis<Node<T>>();
+            auto pThisNode = T::template getSharedFromThis<Node<T>>();
             child->m_parent = pThisNode;
         }
 
@@ -96,7 +97,7 @@ namespace fb
         {
             if( m_parent )
             {
-                auto pThisNode = SharedObject<T>::template getSharedFromThis<Node<T>>();
+                auto pThisNode = T::template getSharedFromThis<Node<T>>();
                 m_parent->removeChild( pThisNode );
             }
         }
@@ -136,7 +137,7 @@ namespace fb
         mutable RecursiveMutex m_mutex;  
     };
 
-    FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, Node, T, SharedObject<T> );
+    FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, Node, T, T );
 
 }  // end namespace fb
 

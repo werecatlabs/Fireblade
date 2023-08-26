@@ -45,8 +45,7 @@ public: \
     static u32 typeInfo(); \
     static void setupTypeInfo(); \
     virtual u32 getTypeInfo() const override; \
-    static u32 m_typeInfo; \
-    static ObjectSetup<TEMPLATE_CLASS<TYPE, SECOND_TYPE>> objectSetupTemplate##TYPE##SECOND_TYPE;
+    static u32 m_typeInfo; 
 
 #define FB_REGISTER_FACTORY_DECL \
 public: \

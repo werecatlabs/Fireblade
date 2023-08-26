@@ -1,7 +1,6 @@
 #ifndef RunCommandJob_h__
 #define RunCommandJob_h__
 
-#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/System/Job.h>
 
 namespace fb
@@ -18,7 +17,7 @@ namespace fb
         void setCommand( SmartPtr<ICommand> command );
 
     protected:
-        SmartPtr<ICommand> m_command;
+        AtomicSmartPtr<ICommand> m_command;
     };
 }  // end namespace fb
 

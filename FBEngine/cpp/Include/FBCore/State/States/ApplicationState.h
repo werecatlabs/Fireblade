@@ -2,7 +2,7 @@
 #define ApplicationState_h__
 
 #include <FBCore/State/States/BaseState.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {

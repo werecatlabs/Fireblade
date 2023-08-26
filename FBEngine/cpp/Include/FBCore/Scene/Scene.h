@@ -1,9 +1,7 @@
 #ifndef __FB_Scene_h__
 #define __FB_Scene_h__
 
-#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/IScene.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/Scene/IActor.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/ConcurrentArray.h>
@@ -17,7 +15,7 @@ namespace fb
     {
 
         /** Scene implementation. */
-        class Scene : public SharedObject<IScene>
+        class Scene : public IScene
         {
         public:
             /** Constructor. */
@@ -80,7 +78,6 @@ namespace fb
             void unregisterUpdate( Thread::Task taskId, Thread::UpdateState updateType,
                                    SmartPtr<IActor> object ) override;
             void unregisterAll( SmartPtr<IActor> object ) override;
-            void refreshRegistration( SmartPtr<IActor> object );
 
             SharedPtr<ConcurrentArray<SmartPtr<IActor>>> getRegisteredObjects(
                 Thread::UpdateState updateState, Thread::Task task ) const;

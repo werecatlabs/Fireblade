@@ -495,7 +495,6 @@ namespace fb
     // script
     class IScript;
     class IScriptClass;
-    class IScriptBind;
     class IScriptBreakpoint;
     class IScriptData;
     class IScriptEvent;
@@ -602,6 +601,8 @@ namespace fb
 
 namespace fb
 {
+    class MLP;
+
     class StateMessageBuffer;
     class StateMessageJobStatus;
     class StateMessageProperties;

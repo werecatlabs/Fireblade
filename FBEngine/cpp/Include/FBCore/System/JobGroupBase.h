@@ -3,13 +3,12 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IJobGroup.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Atomics/Atomics.h>
 
 namespace fb
 {
     
-    class JobGroupBase : public SharedObject<IJobGroup>
+    class JobGroupBase : public IJobGroup
     {
     public:
         JobGroupBase();

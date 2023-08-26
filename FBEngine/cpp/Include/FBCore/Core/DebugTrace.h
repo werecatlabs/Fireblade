@@ -3,7 +3,6 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Memory/RawPtr.h>
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Core/List.h>
@@ -14,7 +13,7 @@
 namespace fb
 {
     /** Used to check race conditions and heap corruption. */
-    class DebugTrace : public SharedObject<ISharedObject>
+    class DebugTrace : public ISharedObject
     {
     public:
         class DebugCheckFunction

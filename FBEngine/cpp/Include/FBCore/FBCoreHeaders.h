@@ -1,6 +1,8 @@
 #ifndef FBCoreHeaders_h__
 #define FBCoreHeaders_h__
 
+#include "FBCore/Animation/InterpolateAnimator.h"
+
 #include <FBCore/Core/BitUtil.h>
 #include <FBCore/Core/ColourF.h>
 #include <FBCore/Core/Util.h>
@@ -336,7 +338,6 @@
 
 // script
 #include <FBCore/Interface/Script/IScript.h>
-#include <FBCore/Interface/Script/IScriptBind.h>
 #include <FBCore/Interface/Script/IScriptBreakpoint.h>
 #include <FBCore/Interface/Script/IScriptClass.h>
 #include <FBCore/Interface/Script/IScriptData.h>
@@ -454,6 +455,9 @@
 #include <FBCore/Memory/FactoryTemplate.h>
 #include <FBCore/Memory/FactoryUtil.h>
 #include <FBCore/Memory/MemoryTracker.h>
+#include <FBCore/Memory/ObjectTracker.h>
+
+#include <FBCore/Physics/CRaycastHit.h>
 
 #include <FBCore/Resource/MeshManager.h>
 #include <FBCore/Resource/PrefabManager.h>
@@ -478,6 +482,7 @@
 #include <FBCore/Scene/Components/MeshRenderer.h>
 #include <FBCore/Scene/Components/Rigidbody.h>
 #include <FBCore/Scene/Components/Skybox.h>
+#include <FBCore/Scene/Components/SubComponent.h>
 
 #include <FBCore/Scene/Components/Terrain/TerrainSystem.h>
 #include <FBCore/Scene/Components/Terrain/TerrainLayer.h>
@@ -582,6 +587,7 @@
 #include <FBCore/System/DebugUtil.h>
 #include <FBCore/System/EventJob.h>
 #include <FBCore/System/FactoryManager.h>
+#include <FBCore/System/FileSelection.h>
 #include <FBCore/System/FrameStatistics.h>
 #include <FBCore/System/Job.h>
 #include <FBCore/System/JobQueue.h>

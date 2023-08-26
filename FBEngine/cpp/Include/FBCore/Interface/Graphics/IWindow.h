@@ -22,6 +22,13 @@ namespace fb
             /** Virtual destructor. */
             ~IWindow() override = default;
 
+            /**
+             * Handles the window event.
+             *
+             * @param event The window event.
+             */
+            virtual void handleEvent( SmartPtr<IWindowEvent> event ) = 0;
+
             /** Gets the window title.
              *  @return The title of the window as a string.
              */

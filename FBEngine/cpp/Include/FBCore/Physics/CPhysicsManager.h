@@ -6,13 +6,13 @@
 #define FB_CPHYSICSMANAGER_H
 
 #include <FBCore/Interface/Physics/IPhysicsManager.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
     namespace physics
     {
-        class CPhysicsManager : public SharedObject<IPhysicsManager>
+        class CPhysicsManager : public IPhysicsManager
         {
         public:
             CPhysicsManager();

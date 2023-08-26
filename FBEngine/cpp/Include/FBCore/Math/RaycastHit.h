@@ -1,15 +1,14 @@
 #ifndef RaycastHit_h__
 #define RaycastHit_h__
 
-#include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Math/Vector2.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Memory/SmartPtr.h>
 
 namespace fb
 {
-    class RaycastHit : public SharedObject<ISharedObject>
+    class RaycastHit : public ISharedObject
     {
     public:
         SmartPtr<scene::IComponent> rigidbody;

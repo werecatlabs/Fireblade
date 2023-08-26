@@ -393,10 +393,10 @@ namespace fb
                 const auto colour = getColour();
                 properties->setProperty( "colour", colour );
 
-                const auto position = getPosition();
+                auto position = getPosition();
                 properties->setProperty( "position", position );
 
-                const auto size = getSize();
+                auto size = getSize();
                 properties->setProperty( "size", size );
 
                 const auto zorder = getZOrder();
@@ -447,7 +447,7 @@ namespace fb
             FB_CLASS_REGISTER_TEMPLATE_DECL( COverlayElement, T );
 
         protected:
-            class ElementStateListener : public SharedObject<IStateListener>
+            class ElementStateListener : public IStateListener
             {
             public:
                 ElementStateListener() = default;
@@ -502,7 +502,7 @@ namespace fb
             SmartPtr<IStateListener> m_stateListener;
         };
 
-        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, COverlayElement, T, SharedObject<T> );
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, COverlayElement, T, T );
     } // end namespace render
 }     // end namespace fb
 

@@ -1,7 +1,6 @@
 #ifndef IAnimationInterface_h__
 #define IAnimationInterface_h__
 
-#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb

@@ -2,11 +2,10 @@
 #define __FiniteStateMachineListener_h__
 
 #include <FBCore/Interface/FSM/IFSMListener.h>
-#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
-    class FSMListener : public SharedObject<IFSMListener>
+    class FSMListener : public IFSMListener
     {
     public:
         FSMListener() = default;

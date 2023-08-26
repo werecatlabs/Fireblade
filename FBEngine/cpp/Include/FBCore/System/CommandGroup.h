@@ -2,13 +2,13 @@
 #define _CommandGroup_H
 
 #include <FBCore/Interface/System/ICommand.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
     
     // Executes group of commands as a single command
-    class CommandGroup : public SharedObject<ICommand>
+    class CommandGroup : public ICommand
     {
     public:
         CommandGroup();

@@ -94,12 +94,10 @@ namespace fb
 
             FB_CLASS_REGISTER_DECL;
 
-
-
         protected:
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType );
 
-                        /**
+            /**
              * @brief Sets up the canvas for the UIComponent.
              *
              * This method is responsible for initializing the canvas for the UIComponent.

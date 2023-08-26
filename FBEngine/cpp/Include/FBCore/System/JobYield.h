@@ -8,7 +8,7 @@ namespace fb
     namespace core
     {
 
-        class JobYield : public SharedObject<ObjectYield>
+        class JobYield : public ObjectYield
         {
         public:
             JobYield() = default;

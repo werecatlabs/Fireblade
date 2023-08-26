@@ -2,7 +2,7 @@
 #define FactoryRegistration_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {

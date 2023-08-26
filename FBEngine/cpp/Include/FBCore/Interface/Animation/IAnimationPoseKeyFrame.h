@@ -2,7 +2,7 @@
 #define IAnimationPoseKeyFrame_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include "FBCore/Interface/Animation/IAnimationKeyFrame.h"
+#include <FBCore/Interface/Animation/IAnimationKeyFrame.h>
 
 namespace fb
 {

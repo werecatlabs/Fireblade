@@ -4,12 +4,11 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IStateMessage.h>
 #include <FBCore/Interface/System/IStateContext.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Atomics/Atomics.h>
 
 namespace fb
 {
-    class StateMessage : public SharedObject<IStateMessage>
+    class StateMessage : public IStateMessage
     {
     public:
         static const hash_type SET_OBJECT;

@@ -85,6 +85,8 @@ namespace fb
          */
         virtual void importFile( const String &filePath ) = 0;
 
+        virtual SmartPtr<IResource> loadResource( hash64 id ) = 0;
+
         /**
          * @brief Loads a resource with the given path.
          * @param path The path of the resource to load.

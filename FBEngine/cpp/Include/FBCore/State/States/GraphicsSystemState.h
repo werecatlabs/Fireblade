@@ -4,6 +4,7 @@
 #include <FBCore/State/States/BaseState.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Atomics/Atomics.h>
+#include "FBCore/Core/ConcurrentQueue.h"
 #include <FBCore/Math/AABB3.h>
 
 namespace fb
@@ -161,7 +162,7 @@ namespace fb
             ///
             atomic_bool m_isUpdating = false;
         };
-    } // namespace render
-}     // namespace fb
+    }  // namespace render
+}  // namespace fb
 
 #endif  // GraphicsSystemState_h__

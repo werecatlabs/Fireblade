@@ -1,9 +1,8 @@
-#ifndef __CPrefab_h__
-#define __CPrefab_h__
+#ifndef __Prefab_h__
+#define __Prefab_h__
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/IPrefab.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Resource/Resource.h>
 
 namespace fb

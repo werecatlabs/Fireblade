@@ -3,7 +3,6 @@
 
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/IApplicationClient.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/ConcurrentQueue.h>
 
 namespace fb
@@ -12,7 +11,7 @@ namespace fb
     {
 
         /** Implementation of the IApplicationManager interface. */
-        class ApplicationManagerMT : public SharedObject<IApplicationManager>
+        class ApplicationManagerMT : public IApplicationManager
         {
         public:
             /** Constructor. */
@@ -118,6 +117,9 @@ namespace fb
             SmartPtr<IFSMManager> getFsmManager() const override;
             void setFsmManager( SmartPtr<IFSMManager> fsmManager ) override;
 
+            SmartPtr<IFSMManager> getFsmManagerByTask( Thread::Task task ) const;
+            void setFsmManagerByTask( Thread::Task task, SmartPtr<IFSMManager> fsmManager );
+
             SmartPtr<procedural::IProceduralEngine> getProceduralEngine() const override;
             void setProceduralEngine( SmartPtr<procedural::IProceduralEngine> val ) override;
 
@@ -132,6 +134,10 @@ namespace fb
 
             SmartPtr<render::IGraphicsSystem> getGraphicsSystem() const override;
             void setGraphicsSystem( SmartPtr<render::IGraphicsSystem> graphicsSystem ) override;
+
+            SmartPtr<IVideoManager> getVideoManager() const;
+
+            void setVideoManager( SmartPtr<IVideoManager> videoManager );
 
             SmartPtr<ITaskManager> getTaskManager() const override;
             void setTaskManager( SmartPtr<ITaskManager> taskManager ) override;
@@ -274,7 +280,12 @@ namespace fb
 
             FB_CLASS_REGISTER_DECL;
 
+
+
         protected:
+            SharedPtr<Array<SmartPtr<IFSMManager>>> getFSMManagersPtr() const;
+            void setFSMManagersPtr( SharedPtr<Array<SmartPtr<IFSMManager>>> fsmManagers );
+
             String m_settingsCachePath;
             String m_cachePath;
             String m_projectPath;
@@ -290,6 +301,7 @@ namespace fb
             AtomicSmartPtr<Properties> m_playerSettings;
 
             AtomicSmartPtr<IFSMManager> m_fsmManager;
+            AtomicSharedPtr<Array<SmartPtr<IFSMManager>>> m_fsmManagers;
 
             AtomicSmartPtr<IFactoryManager> m_factoryManager;
 
@@ -334,6 +346,7 @@ namespace fb
             AtomicSmartPtr<IJobQueue> m_jobQueue;
             AtomicSmartPtr<ITaskManager> m_taskManager;
             AtomicSmartPtr<render::IGraphicsSystem> m_graphicsSystem;
+            AtomicSmartPtr<IVideoManager> m_videoManager;
             AtomicSmartPtr<IFileSystem> m_fileSystem;
             AtomicSmartPtr<IApplicationClient> m_application;
 
@@ -372,16 +385,6 @@ namespace fb
 
             mutable RecursiveMutex m_mutex;
         };
-
-        inline SmartPtr<ILogManager> ApplicationManagerMT::getLogManager() const
-        {
-            return m_logManager;
-        }
-
-        inline SmartPtr<IFactoryManager> ApplicationManagerMT::getFactoryManager() const
-        {
-            return m_factoryManager;
-        }
 
     }  // namespace core
 }  // namespace fb

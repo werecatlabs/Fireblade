@@ -39,15 +39,6 @@ namespace fb
             /** @copydoc IComponent::hierarchyChanged */
             void hierarchyChanged() override;
 
-            /** @copydoc IComponent::childAdded */
-            void childAdded( SmartPtr<IActor> child ) override;
-
-            /** @copydoc IComponent::childRemoved */
-            void childRemoved( SmartPtr<IActor> child ) override;
-
-            /** @copydoc UIComponent::updateDimensions */
-            void updateDimensions() override;
-
             /** @copydoc UIComponent::updateMaterials */
             void updateMaterials() override;
 

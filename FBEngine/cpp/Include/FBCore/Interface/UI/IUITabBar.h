@@ -14,6 +14,9 @@ namespace fb
             /** Destructor. */
             ~IUITabBar() override = default;
 
+            virtual SmartPtr<IUITabItem> addTabItem() = 0;
+            virtual void removeTabItem(SmartPtr<IUITabItem> tabItem) = 0;
+
             FB_CLASS_REGISTER_DECL;
         };
 

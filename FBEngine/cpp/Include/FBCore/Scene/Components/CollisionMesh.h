@@ -44,6 +44,8 @@ namespace fb
         protected:
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType ) override;
 
+            void createPhysicsShape();
+
             void setupMesh();
 
             bool m_isConvex = false;

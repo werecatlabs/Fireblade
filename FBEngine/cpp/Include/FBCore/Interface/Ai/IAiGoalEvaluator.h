@@ -35,14 +35,14 @@ namespace fb
          *
          * @return SmartPtr<scene::IActor> A smart pointer to the owner actor.
          */
-        virtual SmartPtr<scene::IActor> getOwner() const = 0;
+        virtual SmartPtr<ISharedObject> getOwner() const = 0;
 
         /**
          * @brief Set the owner of the AI goal evaluator.
          *
          * @param owner A smart pointer to the owner actor.
          */
-        virtual void setOwner( SmartPtr<scene::IActor> owner ) = 0;
+        virtual void setOwner( SmartPtr<ISharedObject> owner ) = 0;
 
         /**
          * @brief Get the bias value of the AI goal evaluator.

@@ -17,7 +17,11 @@ namespace fb
         class IGraphicsObject : public ISharedObject
         {
         public:
-            enum class RenderQueueGroupID
+            /**
+             * @enum RenderQueueGroupID
+             * @brief Defines the IDs for different render queue groups.
+             */
+            enum RenderQueueGroupID
             {
                 /// Use this queue for objects which must be rendered first e.g. backgrounds
                 RENDER_QUEUE_BACKGROUND = 0,
@@ -40,8 +44,7 @@ namespace fb
                 /// Use this queue for objects which must be rendered last e.g. overlays
                 RENDER_QUEUE_OVERLAY = 100,
                 /// Final possible render queue, don't exceed this
-                RENDER_QUEUE_MAX = 105,
-                RENDER_QUEUE_COUNT
+                RENDER_QUEUE_MAX = 105
             };
 
             /// To get all the properties of a GraphicsObject.

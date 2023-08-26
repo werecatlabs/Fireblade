@@ -1,8 +1,8 @@
 #ifndef TerrainSystem_h__
 #define TerrainSystem_h__
 
-#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Scene/Components/Component.h>
+#include <FBCore/Interface/System/IEventListener.h>
 
 namespace fb
 {
@@ -41,6 +41,12 @@ namespace fb
             s32 calculateNumLayers() const;
             s32 getNumLayers() const;
 
+            SmartPtr<TerrainLayer> addLayer();
+
+            void removeLayer( s32 index );
+
+            void removeLayer( SmartPtr<TerrainLayer> layer );
+
             void setNumLayers( s32 numLayers );
 
             void resizeLayermap();
@@ -50,7 +56,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class TerrainSharedObjectListener : public SharedObject<IEventListener>
+            class TerrainSharedObjectListener : public IEventListener
             {
             public:
                 TerrainSharedObjectListener();

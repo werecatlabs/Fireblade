@@ -2,14 +2,13 @@
 #define __ApplicationManager_h__
 
 #include <FBCore/Interface/IApplicationManager.h>
-#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     namespace core
     {
 
-        class ApplicationManager : public SharedObject<IApplicationManager>
+        class ApplicationManager : public IApplicationManager
         {
         public:
             ApplicationManager();
@@ -94,6 +93,9 @@ namespace fb
             SmartPtr<IFactoryManager> getFactoryManager() const override;
             void setFactoryManager( SmartPtr<IFactoryManager> factoryManager ) override;
 
+            SmartPtr<IFSMManager> getFsmManagerByTask( Thread::Task task ) const;
+            void setFsmManagerByTask( Thread::Task task, SmartPtr<IFSMManager> fsmManager );
+
             SmartPtr<IProcessManager> getProcessManager() const override;
             void setProcessManager( SmartPtr<IProcessManager> processManager ) override;
 
@@ -123,6 +125,10 @@ namespace fb
 
             SmartPtr<render::IGraphicsSystem> getGraphicsSystem() const override;
             void setGraphicsSystem( SmartPtr<render::IGraphicsSystem> graphicsSystem ) override;
+
+            SmartPtr<IVideoManager> getVideoManager() const;
+
+            void setVideoManager( SmartPtr<IVideoManager> videoManager );
 
             SmartPtr<ITaskManager> getTaskManager() const override;
             void setTaskManager( SmartPtr<ITaskManager> val ) override;
@@ -255,6 +261,8 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
+            SharedPtr<Array<SmartPtr<IFSMManager>>> getFSMManagersPtr() const;
+
             String m_settingsCachePath;
             String m_cachePath;
             String m_projectPath;
@@ -267,6 +275,7 @@ namespace fb
             SmartPtr<IStateContext> m_stateObject;
 
             SmartPtr<IFSMManager> m_fsmManager;
+            SharedPtr<Array<SmartPtr<IFSMManager>>> m_fsmManagers;
 
             SmartPtr<IFactoryManager> m_factoryManager;
 
@@ -311,6 +320,7 @@ namespace fb
             SmartPtr<IJobQueue> m_jobQueue;
             SmartPtr<ITaskManager> m_taskManager;
             SmartPtr<render::IGraphicsSystem> m_graphicsSystem;
+            SmartPtr<IVideoManager> m_videoManager;
             SmartPtr<IFileSystem> m_fileSystem;
             SmartPtr<IApplicationClient> m_application;
 

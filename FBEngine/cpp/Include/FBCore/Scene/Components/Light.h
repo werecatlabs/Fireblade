@@ -72,9 +72,6 @@ namespace fb
              */
             void setSpecularColour( const ColourF &specularColour );
 
-            FB_CLASS_REGISTER_DECL;
-
-        protected:
             /**
              * Gets the light object used by this component.
              */
@@ -99,6 +96,9 @@ namespace fb
              */
             void setSceneNode( SmartPtr<render::ISceneNode> sceneNode );
 
+            FB_CLASS_REGISTER_DECL;
+
+        protected:
             /** The diffuse color of the light. */
             ColourF m_diffuseColour = ColourF::White;
 

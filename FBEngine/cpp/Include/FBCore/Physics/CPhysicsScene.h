@@ -6,13 +6,13 @@
 #define FB_CPHYSICSSCENE_H
 
 #include <FBCore/Interface/Physics/IPhysicsScene3.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
     namespace physics
     {
-        class CPhysicsScene : public SharedObject<IPhysicsScene3>
+        class CPhysicsScene : public IPhysicsScene3
         {
         public:
             CPhysicsScene();

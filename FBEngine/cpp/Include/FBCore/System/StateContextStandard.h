@@ -3,7 +3,6 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IStateContext.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/System/StateQueueStandard.h>
 #include <FBCore/System/Job.h>
 #include <FBCore/Core/ConcurrentArray.h>
@@ -12,7 +11,7 @@ namespace fb
 {
 
     /** Standard implementation of the IStateObject interface. */
-    class StateContextStandard : public SharedObject<IStateContext>
+    class StateContextStandard : public IStateContext
     {
     public:
         /** Default constructor. */

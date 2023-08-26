@@ -3,7 +3,6 @@
 
 #include <FBCore/Interface/Graphics/IMaterial.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Graphics/CResourceGraphics.h>
 
 namespace fb
@@ -101,7 +100,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class MaterialStateListener : public SharedObject<IStateListener>
+            class MaterialStateListener : public IStateListener
             {
             public:
                 MaterialStateListener();

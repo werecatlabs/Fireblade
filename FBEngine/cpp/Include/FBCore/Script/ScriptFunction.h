@@ -2,14 +2,14 @@
 #define ScriptFunction_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Interface/Script/IScriptFunction.h>
 
 namespace fb
 {
 
     /** */
-    class ScriptFunction : public SharedObject<IScriptFunction>
+    class ScriptFunction : public IScriptFunction
     {
     public:
         ScriptFunction();

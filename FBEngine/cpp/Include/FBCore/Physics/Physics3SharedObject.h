@@ -1,13 +1,14 @@
 #ifndef FBPhysics3SharedObject_h__
 #define FBPhysics3SharedObject_h__
 
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/Physics/IPhysicsManager.h>
 #include <FBCore/Interface/System/IStateManager.h>
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Interface/System/IState.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
@@ -15,7 +16,7 @@ namespace fb
     {
 
         template <typename T>
-        class Physics3SharedObject : public SharedObject<T>
+        class Physics3SharedObject : public T
         {
         public:
             Physics3SharedObject() = default;
@@ -34,7 +35,7 @@ namespace fb
 
                 auto task = Thread::getCurrentTask();
 
-                const auto &loadingState = SharedObject<T>::getLoadingState();
+                const auto &loadingState = T::getLoadingState();
 
                 return loadingState == LoadingState::Loaded && task == physicsTask;
             }
@@ -146,7 +147,7 @@ namespace fb
             m_stateListener = stateListener;
         }
 
-        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb::physics, Physics3SharedObject, T, SharedObject<T> );
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb::physics, Physics3SharedObject, T, T );
 
     }  // namespace physics
 }  // namespace fb

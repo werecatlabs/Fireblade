@@ -2,12 +2,12 @@
 #define CSoundManager_h__
 
 #include <FBCore/Interface/Sound/ISoundManager.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
 
-    class CSoundManager : public SharedObject<ISoundManager>
+    class CSoundManager : public ISoundManager
     {
     public:
         CSoundManager();

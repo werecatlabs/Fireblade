@@ -161,9 +161,11 @@ namespace fb
             void setProperties( SmartPtr<Properties> properties ) override;
 
         protected:
-            AtomicWeakPtr<IGraphicsScene>
-                m_creator;                      /**< The scene manager that created this node. */
-            AtomicWeakPtr<ISceneNode> m_parent; /**< The parent scene node. */
+            /**< The scene manager that created this node. */
+            AtomicWeakPtr<IGraphicsScene> m_creator;
+
+            /**< The parent scene node. */
+            AtomicWeakPtr<ISceneNode> m_parent;
         };
 
     }  // namespace render

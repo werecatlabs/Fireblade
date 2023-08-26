@@ -1,7 +1,7 @@
 #ifndef PoolData_h__
 #define PoolData_h__
 
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Core/Deque.h>
 
@@ -9,7 +9,7 @@ namespace fb
 {
     /** Pool data to allocate memory. */
     template <class T, class A>
-    class PoolData : public SharedObject<ISharedObject>
+    class PoolData : public ISharedObject
     {
     public:
         /** Default constructor. */

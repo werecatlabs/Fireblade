@@ -5,6 +5,7 @@
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/System/RttiClass.h>
 #include <FBCore/Memory/TypeManager.h>
+#include <FBCore/Core/Handle.h>
 
 namespace fb
 {
@@ -40,11 +41,16 @@ namespace fb
          */
         virtual void postUpdate();
 
+        void setObjectFlag( u8 flag, bool value );
+
+        bool getObjectFlag( u8 flag ) const;
+
         /**
          * Returns a pointer to the `Handle` object associated with this object.
          * @return A pointer to the `Handle` object.
          */
-        virtual Handle *getHandle() const;
+        Handle *getHandle();
+        const Handle *getHandle() const;
 
         /**
          * Checks if the object is valid.
@@ -140,36 +146,10 @@ namespace fb
 #if FB_CPP_STANDARD >= FB_CPP_2020
         template <class B>
             requires requires { B::typeInfo(); } bool
-        isDerived() const
-        {
-            auto typeInfo = getTypeInfo();
-            if( typeInfo != 0 )
-            {
-                auto typeManager = TypeManager::instance();
-                FB_ASSERT( typeManager );
-
-                auto otherTypeInfo = B::typeInfo();
-                return typeManager->isDerived( typeInfo, otherTypeInfo );
-            }
-
-            return false;
-        }
+        isDerived() const;
 #else
         template <class B>
-        bool isDerived() const
-        {
-            auto typeInfo = getTypeInfo();
-            if( typeInfo != 0 )
-            {
-                auto typeManager = TypeManager::instance();
-                FB_ASSERT( typeManager );
-
-                auto otherTypeInfo = B::typeInfo();
-                return typeManager->isDerived( typeInfo, otherTypeInfo );
-            }
-
-            return false;
-        }
+        bool isDerived() const;
 #endif
 
         /**
@@ -180,36 +160,10 @@ namespace fb
 #if FB_CPP_STANDARD >= FB_CPP_2020
         template <class B>
             requires requires { B::typeInfo(); } bool
-        isExactly() const
-        {
-            auto typeInfo = getTypeInfo();
-            if( typeInfo != 0 )
-            {
-                auto typeManager = TypeManager::instance();
-                FB_ASSERT( typeManager );
-
-                auto otherTypeInfo = B::typeInfo();
-                return typeManager->isExactly( typeInfo, otherTypeInfo );
-            }
-
-            return false;
-        }
+        isExactly() const;
 #else
         template <class B>
-        bool isExactly() const
-        {
-            auto typeInfo = getTypeInfo();
-            if( typeInfo != 0 )
-            {
-                auto typeManager = TypeManager::instance();
-                FB_ASSERT( typeManager );
-
-                auto otherTypeInfo = B::typeInfo();
-                return typeManager->isExactly( typeInfo, otherTypeInfo );
-            }
-
-            return false;
-        }
+        bool isExactly() const;
 #endif
 
 #if FB_USE_CUSTOM_NEW_DELETE
@@ -233,9 +187,103 @@ namespace fb
         FB_OBJECT_CLASS_REGISTER_DECL;
 
     protected:
-        Handle *m_handle = nullptr;
-        atomic_u8 *m_flags = nullptr;
+        std::atomic<Handle *> m_handle;
+        atomic_u8 m_objectFlags = std::numeric_limits<u8>::max();
     };
+
+    inline void IObject::setObjectFlag( u8 flag, bool value )
+    {
+        if( value )
+            m_objectFlags = m_objectFlags | flag;
+        else
+            m_objectFlags = m_objectFlags & ~flag;
+    }
+
+    inline bool IObject::getObjectFlag( u8 flag ) const
+    {
+        return ( m_objectFlags & flag ) != 0;
+    }
+
+    inline Handle *IObject::getHandle()
+    {
+        return m_handle.load();
+    }
+
+    inline const Handle *IObject::getHandle() const
+    {
+        return m_handle.load();
+    }
+
+#if FB_CPP_STANDARD >= FB_CPP_2020
+    template <class B>
+        requires requires { B::typeInfo(); }
+    bool IObject::isDerived() const
+    {
+        auto typeInfo = getTypeInfo();
+        if( typeInfo != 0 )
+        {
+            auto typeManager = TypeManager::instance();
+            FB_ASSERT( typeManager );
+
+            auto otherTypeInfo = B::typeInfo();
+            return typeManager->isDerived( typeInfo, otherTypeInfo );
+        }
+
+        return false;
+    }
+#else
+    template <class B>
+    bool IObject::isDerived() const
+    {
+        auto typeInfo = getTypeInfo();
+        if( typeInfo != 0 )
+        {
+            auto typeManager = TypeManager::instance();
+            FB_ASSERT( typeManager );
+
+            auto otherTypeInfo = B::typeInfo();
+            return typeManager->isDerived( typeInfo, otherTypeInfo );
+        }
+
+        return false;
+    }
+#endif
+
+#if FB_CPP_STANDARD >= FB_CPP_2020
+    template <class B>
+        requires requires { B::typeInfo(); } bool
+    IObject::isExactly() const
+    {
+        auto typeInfo = getTypeInfo();
+        if( typeInfo != 0 )
+        {
+            auto typeManager = TypeManager::instance();
+            FB_ASSERT( typeManager );
+
+            auto otherTypeInfo = B::typeInfo();
+            return typeManager->isExactly( typeInfo, otherTypeInfo );
+        }
+
+        return false;
+    }
+#else
+    template <class B>
+    bool IObject::isExactly() const
+    {
+        auto typeInfo = getTypeInfo();
+        if( typeInfo != 0 )
+        {
+            auto typeManager = TypeManager::instance();
+            FB_ASSERT( typeManager );
+
+            auto otherTypeInfo = B::typeInfo();
+            return typeManager->isExactly( typeInfo, otherTypeInfo );
+        }
+
+        return false;
+    }
+#endif
+
 }  // end namespace fb
 
 #endif  // __FB_IObject_h__

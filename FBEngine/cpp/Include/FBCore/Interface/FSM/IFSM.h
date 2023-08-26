@@ -37,6 +37,7 @@ namespace fb
             Cancel,         ///< Cancel return.
             Ignore,         ///< Ignore return.
             WaitForChange,  ///< Wait for state change return.
+            NotLoaded,      ///< Not loaded return.
 
             Count  ///< Total number of return types.
         };

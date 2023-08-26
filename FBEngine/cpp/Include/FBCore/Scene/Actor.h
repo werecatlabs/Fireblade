@@ -362,9 +362,9 @@ namespace fb
 
             AtomicSmartPtr<ITransform> m_transform;
 
-            SharedPtr<ConcurrentArray<SmartPtr<IComponent>>> m_components;
+            AtomicSharedPtr<ConcurrentArray<SmartPtr<IComponent>>> m_components;
 
-            SharedPtr<ConcurrentArray<SmartPtr<IActor>>> m_children;
+            AtomicSharedPtr<ConcurrentArray<SmartPtr<IActor>>> m_children;
 
             AtomicWeakPtr<IFactoryManager> m_factoryManager;
 

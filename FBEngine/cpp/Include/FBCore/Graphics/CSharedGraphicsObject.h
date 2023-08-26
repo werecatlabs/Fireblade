@@ -1,7 +1,7 @@
 #ifndef CSharedGraphicsObject_h__
 #define CSharedGraphicsObject_h__
 
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/System/RttiClassDefinition.h>
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/System/IStateManager.h>
@@ -14,39 +14,17 @@ namespace fb
     namespace render
     {
         template <typename T>
-        class CSharedGraphicsObject : public SharedObject<T>
+        class CSharedGraphicsObject : public T
         {
         public:
             CSharedGraphicsObject() = default;
-            ~CSharedGraphicsObject() = default;
+            virtual ~CSharedGraphicsObject() = default;
 
-            void unload( SmartPtr<ISharedObject> data )
-            {
-                destroyStateContext();
-            }
+            void unload( SmartPtr<ISharedObject> data );
 
-            bool isThreadSafe() const
-            {           
-                auto applicationManager = core::IApplicationManager::instance();
-                auto graphicsSystem = applicationManager->getGraphicsSystem();
+            bool isThreadSafe() const;
 
-                auto renderTask = graphicsSystem->getRenderTask();
-                auto task = Thread::getCurrentTask();
-
-                return CSharedGraphicsObject<T>::isLoaded() && task == renderTask;
-            }
-
-            void addMessage( SmartPtr<IStateMessage> message )
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                auto graphicsSystem = applicationManager->getGraphicsSystem();
-
-                if( auto stateObject = CSharedGraphicsObject<T>::getStateObject() )
-                {
-                    const auto stateTask = graphicsSystem->getStateTask();
-                    stateObject->addMessage( stateTask, message );
-                }
-            }
+            void addMessage( SmartPtr<IStateMessage> message );
 
             /**
              * @brief Gets the state object associated with this scene node.
@@ -75,42 +53,7 @@ namespace fb
             FB_CLASS_REGISTER_TEMPLATE_DECL( CSharedGraphicsObject, T );
 
         protected:
-            void destroyStateContext()
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-
-                if( auto stateManager = applicationManager->getStateManager() )
-                {
-                    if( auto stateObject = getStateObject() )
-                    {
-                        if( auto state = stateObject->getState() )
-                        {
-                            state->unload( nullptr );
-                            stateObject->setState( nullptr );
-                        }
-
-                        if( auto stateListener = CSharedGraphicsObject<T>::getStateListener() )
-                        {
-                            stateObject->removeStateListener( stateListener );
-                        }
-
-                        stateObject->unload( nullptr );
-
-                        if( stateManager )
-                        {
-                            stateManager->removeStateObject( stateObject );
-                        }
-
-                        setStateObject( nullptr );
-                    }
-
-                    if( auto stateListener = CSharedGraphicsObject<T>::getStateListener() )
-                    {
-                        stateListener->unload( nullptr );
-                        CSharedGraphicsObject<T>::setStateListener( nullptr );
-                    }
-                }
-            }
+            void destroyStateContext();
 
             /**< The state object associated with this scene node. */
             AtomicSmartPtr<IStateContext> m_stateObject;
@@ -118,6 +61,37 @@ namespace fb
             /**< The state listener associated with this scene node. */
             AtomicSmartPtr<IStateListener> m_stateListener;
         };
+
+        template <typename T>
+        void CSharedGraphicsObject<T>::unload( SmartPtr<ISharedObject> data )
+        {
+            destroyStateContext();
+        }
+
+        template <typename T>
+        bool CSharedGraphicsObject<T>::isThreadSafe() const
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+
+            auto renderTask = graphicsSystem->getRenderTask();
+            auto task = Thread::getCurrentTask();
+
+            return CSharedGraphicsObject<T>::isLoaded() && task == renderTask;
+        }
+
+        template <typename T>
+        void CSharedGraphicsObject<T>::addMessage( SmartPtr<IStateMessage> message )
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+
+            if( auto stateObject = CSharedGraphicsObject<T>::getStateObject() )
+            {
+                const auto stateTask = graphicsSystem->getStateTask();
+                stateObject->addMessage( stateTask, message );
+            }
+        }
 
         template <typename T>
         SmartPtr<IStateContext> CSharedGraphicsObject<T>::getStateObject() const
@@ -143,7 +117,45 @@ namespace fb
             m_stateListener = stateListener;
         }
 
-        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb::render, CSharedGraphicsObject, T, SharedObject<T> );
+        template <typename T>
+        void CSharedGraphicsObject<T>::destroyStateContext()
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+
+            if( auto stateManager = applicationManager->getStateManager() )
+            {
+                if( auto stateObject = getStateObject() )
+                {
+                    if( auto state = stateObject->getState() )
+                    {
+                        state->unload( nullptr );
+                        stateObject->setState( nullptr );
+                    }
+
+                    if( auto stateListener = CSharedGraphicsObject<T>::getStateListener() )
+                    {
+                        stateObject->removeStateListener( stateListener );
+                    }
+
+                    stateObject->unload( nullptr );
+
+                    if( stateManager )
+                    {
+                        stateManager->removeStateObject( stateObject );
+                    }
+
+                    setStateObject( nullptr );
+                }
+
+                if( auto stateListener = CSharedGraphicsObject<T>::getStateListener() )
+                {
+                    stateListener->unload( nullptr );
+                    CSharedGraphicsObject<T>::setStateListener( nullptr );
+                }
+            }
+        }
+
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb::render, CSharedGraphicsObject, T, T );
 
     }  // namespace render
 }  // namespace fb

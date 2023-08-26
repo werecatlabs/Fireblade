@@ -3,13 +3,13 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/ICommandManager.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
     
     /** A multi threaded implementation of the command manager. */
-    class CommandManagerMT : public SharedObject<ICommandManager>
+    class CommandManagerMT : public ICommandManager
     {
     public:
         CommandManagerMT();

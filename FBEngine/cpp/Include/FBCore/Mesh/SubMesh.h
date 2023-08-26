@@ -3,12 +3,11 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Mesh/ISubMesh.h>
-#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
-    
-    class SubMesh : public SharedObject<ISubMesh>
+
+    class SubMesh : public ISubMesh
     {
     public:
         SubMesh();
@@ -45,6 +44,6 @@ namespace fb
         bool m_useSharedVertices = false;
         String m_materialName;
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif

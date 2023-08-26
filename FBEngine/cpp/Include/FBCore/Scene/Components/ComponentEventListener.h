@@ -2,15 +2,18 @@
 #define ComponentEventListener_h__
 
 #include <FBCore/Interface/Scene/IComponentEventListener.h>
-#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     namespace scene
     {
-        class ComponentEventListener : public SharedObject<IComponentEventListener>
+        class ComponentEventListener : public IComponentEventListener
         {
         public:
+            static const String actorStr;
+            static const String functionStr;
+            static const String componentStr;
+
             ComponentEventListener();
             ~ComponentEventListener() override;
 
@@ -44,6 +47,7 @@ namespace fb
 
         protected:
             WeakPtr<IComponentEvent> m_event;
+            SmartPtr<IActor> m_actor;
             SmartPtr<IComponent> m_component;
             String m_function;
         };

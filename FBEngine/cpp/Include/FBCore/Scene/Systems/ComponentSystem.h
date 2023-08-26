@@ -2,14 +2,14 @@
 #define ComponentSystem_h__
 
 #include <FBCore/Interface/Scene/ISystem.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
     namespace scene
     {
 
-        class ComponentSystem : public SharedObject<ISystem>
+        class ComponentSystem : public ISystem
         {
         public:
             ComponentSystem();

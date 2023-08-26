@@ -60,9 +60,9 @@ namespace fb
 
             s32 getZOrder( SmartPtr<IActor> obj );
 
-            FB_CLASS_REGISTER_DECL;
-
             void levelWasLoaded( s32 level ) override;
+
+            FB_CLASS_REGISTER_DECL;
 
         protected:
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType ) override;

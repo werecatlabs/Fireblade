@@ -65,6 +65,9 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
+            virtual void createPhysicsShape();
+            virtual void updateRigidBody();
+
             ///
             Vector3<real_Num> m_extents = Vector3<real_Num>::unit();
 

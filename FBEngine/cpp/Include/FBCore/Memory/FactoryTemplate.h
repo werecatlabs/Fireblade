@@ -1,9 +1,9 @@
 #ifndef FactoryInstanceAdaptor_h__
 #define FactoryInstanceAdaptor_h__
 
-#include <FBCore/FBCoreTypes.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObjectListener.h>
 #include <FBCore/Interface/System/IFactory.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Memory/Memory.h>
 #include <FBCore/Memory/RawPtr.h>
 #include <FBCore/Memory/PoolAllocator.h>
@@ -19,14 +19,14 @@
 namespace fb
 {
     template <class T>
-    class FactoryTemplate : public SharedObject<IFactory>
+    class FactoryTemplate : public IFactory
     {
     public:
         using type = T;
 
         /** Constructor
          */
-        FactoryTemplate() : SharedObject<IFactory>(), m_listener( this )
+        FactoryTemplate() : IFactory(), m_listener( this )
         {
         }
 

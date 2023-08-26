@@ -119,7 +119,7 @@ namespace fb
 
                 auto task = Thread::getCurrentTask();
 
-                const auto &loadingState = SharedObject<T>::getLoadingState();
+                const auto &loadingState = T::getLoadingState();
 
                 return loadingState == LoadingState::Loaded && task == renderTask;
             }

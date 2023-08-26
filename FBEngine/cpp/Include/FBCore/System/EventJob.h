@@ -4,7 +4,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IStateContext.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/System/StateQueueStandard.h>
 #include <FBCore/System/Job.h>
 #include <FBCore/Core/ConcurrentArray.h>

@@ -1,11 +1,11 @@
 #ifndef TerrainData_h__
 #define TerrainData_h__
 
-#include <FBCore/Memory/SharedObject.h>
+#include "FBCore/Interface/Memory/ISharedObject.h"
 
 namespace fb
 {
-    class TerrainData : public SharedObject<ISharedObject>
+    class TerrainData : public ISharedObject
     {
     public:
         TerrainData();

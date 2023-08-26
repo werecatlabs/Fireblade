@@ -2,14 +2,14 @@
 #define __FSM_h__
 
 #include <FBCore/Interface/FSM/IFSM.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
     /**
      * Data oriented implementation.
      */
-    class FSM : public SharedObject<IFSM>
+    class FSM : public IFSM
     {
     public:
         FSM();
@@ -116,16 +116,6 @@ namespace fb
          * @copydoc IFSM::setAllowStateChange
          */
         void setAllowStateChange( bool allowStateChange );
-
-        /**
-         * @copydoc IFSM::isReady
-         */
-        bool isReady() const;
-
-        /**
-         * @copydoc IFSM::setReady
-         */
-        void setReady( bool ready );
 
         /**
          * @copydoc IFSM::getAutoTriggerEnterStateComplete

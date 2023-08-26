@@ -1,16 +1,13 @@
 #ifndef __FBVertexBuffer__H
 #define __FBVertexBuffer__H
 
-#include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/FBCoreTypes.h>
-#include <FBCore/Memory/SharedObject.h>
-#include <FBCore/Core/Array.h>
 #include <FBCore/Interface/Mesh/IVertexBuffer.h>
+#include <FBCore/Core/Array.h>
 
 namespace fb
 {
 
-    class VertexBuffer : public SharedObject<IVertexBuffer>
+    class VertexBuffer : public IVertexBuffer
     {
     public:
         VertexBuffer();

@@ -2,14 +2,14 @@
 #define __CSELECTIONMANAGER_H_INCLUDED__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Core/Array.h>
 #include <FBCore/Interface/System/ISelectionManager.h>
 
 namespace fb
 {
     
-    class SelectionManager : public SharedObject<ISelectionManager>
+    class SelectionManager : public ISelectionManager
     {
     public:
         SelectionManager();

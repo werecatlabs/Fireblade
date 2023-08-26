@@ -2,14 +2,13 @@
 #define __DatabaseManager_h__
 
 #include <FBCore/Interface/Database/IDatabaseManager.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Thread/Threading.h>
 #include <FBCore/System/Job.h>
 
 namespace fb
 {
 
-    class DatabaseManager : public SharedObject<IDatabaseManager>
+    class DatabaseManager : public IDatabaseManager
     {
     public:
         DatabaseManager();

@@ -9,7 +9,6 @@
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Core/DataUtil.h>
 #include <FBCore/Core/Properties.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Memory/Data.h>
 #include <FBCore/Resource/Resource.h>
 
@@ -280,7 +279,7 @@ namespace fb
              * BaseComponentStateListener is a class that serves as a base implementation for an IStateListener.
              * It provides functionality for handling state change messages and queries.
              */
-            class BaseComponentStateListener : public SharedObject<IStateListener>
+            class BaseComponentStateListener : public IStateListener
             {
             public:
                 /**
@@ -418,9 +417,9 @@ namespace fb
         template <class T>
         T *Component::getDataPtrByType() const
         {
-            return static_cast<T *>(m_dataPtr);
+            return static_cast<T *>( m_dataPtr );
         }
-    } // namespace scene
-}     // namespace fb
+    }  // namespace scene
+}  // namespace fb
 
 #endif  // BaseComponent_h__

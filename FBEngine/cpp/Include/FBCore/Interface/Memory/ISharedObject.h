@@ -5,7 +5,8 @@
 #include <FBCore/Memory/SmartPtr.h>
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Core/Array.h>
-#include <FBCore/Memory/GarbageCollector.h>
+#include <FBCore/Core/ConcurrentArray.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 #if FB_TRACK_REFERENCES
 #    include <FBCore/Memory/ObjectTracker.h>
@@ -62,7 +63,7 @@ namespace fb
             SmartPtr<ISharedObject> m_sharedObject;
         };
 
-        ISharedObject() = default;
+        ISharedObject();
 
         /**
          * Virtual destructor for the `ISharedObject` class.
@@ -71,7 +72,7 @@ namespace fb
          *
          * @see IObject
          */
-        ~ISharedObject() override = default;
+        ~ISharedObject() override;
 
         /**
          * Adds a weak reference to the shared object and increments the reference counter.
@@ -288,24 +289,18 @@ namespace fb
         */
         virtual void setGarbageCollected( bool garbageCollected );
 
-        /** The object id. */
-        virtual u32 getObjectId() const;
-
         /**
          * Gets script data associated with this object.
          * @return A pointer to the script data.
          */
-        virtual SmartPtr<ISharedObject> getScriptData() const;
+        SmartPtr<ISharedObject> getScriptData() const;
 
         /**
          * Sets the script data associated with this object.
          * Script data is a `SmartPtr` to a shared object that can be used to store arbitrary data related to the object's behavior in a script.
          * @param data A `SmartPtr` to the shared object containing the script data.
          */
-        virtual void setScriptData( SmartPtr<ISharedObject> data );
-
-        /** Sets up the garbage collector data. */
-        virtual void setupGarbageCollectorData();
+        void setScriptData( SmartPtr<ISharedObject> data );
 
         /** Locks the object for thread safety. */
         virtual void lock();
@@ -340,11 +335,10 @@ namespace fb
 
         void setObjectListenersPtr( SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> p );
 
-        atomic_u32 m_objectId = std::numeric_limits<u32>::max();
-        atomic_s32 *m_references = nullptr;
-        atomic_s32 *m_weakReferences = nullptr;
+        atomic_s32 m_references = 1;
+        atomic_s32 m_weakReferences = 0;
 
-        Atomic<LoadingState> *m_loadingState = nullptr;
+        Atomic<LoadingState> m_loadingState;
 
         SmartPtr<ISharedObject> m_scriptData;
 
@@ -366,15 +360,15 @@ namespace fb
 #    endif
 #endif
 
-        return ++( *m_weakReferences );
+        return ++m_weakReferences;
     }
 
     inline s32 ISharedObject::addReference()
     {
 #if FB_TRACK_REFERENCES
 #    if FB_TRACK_STRONG_REFERENCES
-        auto &gc = GarbageCollector::instance();
-        auto references = gc.addReference( SharedObject<T>::typeInfo(), m_objectId );
+        
+        auto references = gc.addReference( T::typeInfo(), m_objectId );
 
         // FB_ASSERT( isGarbageCollected() && references > 0 );
         FB_ASSERT( references < 1e10 );
@@ -389,11 +383,11 @@ namespace fb
 
         return references;
 #    else
-        auto &gc = GarbageCollector::instance();
-        return gc.addReference( SharedObject<T>::typeInfo(), m_objectId );
+        
+        return gc.addReference( T::typeInfo(), m_objectId );
 #    endif
 #else
-        return ++( *m_references );
+        return ++m_references;
 #endif
     }
 
@@ -411,7 +405,7 @@ namespace fb
 #    endif
 #endif
 
-        if( --( *m_references ) == 0 )
+        if( --m_references == 0 )
         {
             destroySharedObject();
             return true;
@@ -422,24 +416,32 @@ namespace fb
 
     inline s32 ISharedObject::getWeakReferences() const
     {
-        FB_ASSERT( m_weakReferences );
-        return *m_weakReferences;
+        return m_weakReferences;
     }
 
     inline s32 ISharedObject::getReferences() const
     {
-        FB_ASSERT( m_references );
-        return *m_references;
+        return m_references;
     }
 
     inline bool ISharedObject::isAlive() const
     {
-        return ( *m_flags & GC_FLAG_OBJECT_ALIVE ) != 0;
+        return ( m_objectFlags & GC_FLAG_OBJECT_ALIVE ) != 0;
     }
 
     inline bool ISharedObject::isLoaded() const
     {
-        return *m_loadingState == LoadingState::Loaded;
+        return m_loadingState == LoadingState::Loaded;
+    }
+
+    inline SmartPtr<ISharedObject> ISharedObject::getScriptData() const
+    {
+        return m_scriptData;
+    }
+
+    inline void ISharedObject::setScriptData( SmartPtr<ISharedObject> data )
+    {
+        m_scriptData = data;
     }
 
     template <class B>

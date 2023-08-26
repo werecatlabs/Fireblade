@@ -67,7 +67,7 @@ namespace fb
                 UserComponent *owner = nullptr;
             };
 
-            class ScriptReceiver : public SharedObject<IScriptReceiver>
+            class ScriptReceiver : public IScriptReceiver
             {
             public:
                 ScriptReceiver();
@@ -107,6 +107,7 @@ namespace fb
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType ) override;
 
             void createScriptData();
+            void destroyScriptData();
 
             bool m_updateInEditMode = false;
 

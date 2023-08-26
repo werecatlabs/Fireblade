@@ -3,12 +3,11 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Mesh/IIndexBuffer.h>
-#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
-    
-    class IndexBuffer : public SharedObject<IIndexBuffer>
+
+    class IndexBuffer : public IIndexBuffer
     {
     public:
         IndexBuffer();
@@ -39,6 +38,6 @@ namespace fb
         u32 m_indexSize = 0;
         void *m_indexData = nullptr;
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif

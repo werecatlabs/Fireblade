@@ -2,15 +2,14 @@
 #define FSMManager_h__
 
 #include <FBCore/Interface/FSM/IFSMManager.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/Array.h>
 
 namespace fb
 {
 
     /** Data oriented implementation of the FSMManager class is responsible for managing FSMs.
-    */
-    class FSMManager : public SharedObject<IFSMManager>
+     */
+    class FSMManager : public IFSMManager
     {
     public:
         /** Constructor. */
@@ -43,8 +42,12 @@ namespace fb
         /** @copydoc IFSMManager::getPreviousState */
         u8 getPreviousState( u32 id ) const override;
 
+        void setPreviousState( u32 id, s32 state );
+
         /** @copydoc IFSMManager::getCurrentState */
         u8 getCurrentState( u32 id ) const override;
+
+        void setCurrentState( u32 id, s32 state );
 
         /** @copydoc IFSMManager::getNewState */
         u8 getNewState( u32 id ) const override;
@@ -99,6 +102,8 @@ namespace fb
 
         void setStateTime( u32 id, time_interval stateTime );
 
+        void addStateTime( u32 id, time_interval stateTime );
+
         bool isValid() const;
 
         size_t getSize() const;
@@ -109,6 +114,18 @@ namespace fb
 
         void setGrowSize( size_t growSize );
 
+        SharedPtr<Array<atomic_u8>> getPreviousStates() const;
+
+        void setPreviousStates( SharedPtr<Array<atomic_u8>> previousStates );
+
+        SharedPtr<Array<atomic_u8>> getCurrentStates() const;
+
+        void setCurrentStates( SharedPtr<Array<atomic_u8>> currentStates );
+
+        SharedPtr<Array<atomic_u8>> getNewStates() const;
+
+        void setNewStates( SharedPtr<Array<atomic_u8>> newStates );
+
         FB_CLASS_REGISTER_DECL;
 
     protected:
@@ -116,31 +133,36 @@ namespace fb
 
         u32 createNewId();
 
+        void changeState();
         void changeState( u32 id );
+
+        SharedPtr<Array<SharedPtr<Array<SmartPtr<IFSMListener>>>>> getListenersPtr() const;
+
+        void setListenersPtr( SharedPtr<Array<SharedPtr<Array<SmartPtr<IFSMListener>>>>> listeners );
 
         Array<u32> m_flags;
 
         /// The previous state of the fsm.
-        Array<u8> m_previousStates;
+        AtomicSharedPtr<Array<atomic_u8>> m_previousStates;
 
         /// The current state of the fsm.
-        Array<u8> m_currentStates;
+        AtomicSharedPtr<Array<atomic_u8>> m_currentStates;
 
         /// The new state of the fsm.
-        Array<u8> m_newStates;
+        AtomicSharedPtr<Array<atomic_u8>> m_newStates;
 
         Array<time_interval> m_stateChangeTimes;
         Array<time_interval> m_stateTimes;
         Array<atomic_bool> m_ready;
 
-        Array<SharedPtr<Array<SmartPtr<IFSMListener>>>> m_listeners;
+        AtomicSharedPtr<Array<SharedPtr<Array<SmartPtr<IFSMListener>>>>> m_listeners;
 
         Array<SmartPtr<IFSM>> m_fsms;
 
         u32 m_idCount = 0;
 
         size_t m_size = 0;
-        size_t m_growSize = 128;
+        size_t m_growSize = 12;
 
         mutable RecursiveMutex m_mutex;
 

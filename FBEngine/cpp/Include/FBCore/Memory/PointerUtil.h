@@ -52,6 +52,26 @@ namespace fb
 #endif
     }
 
+    template <class T>
+    SharedPtr<Array<T>> make_shared_array( size_t size, SharedPtr<Array<T>> data, const T &defaultValue )
+    {
+        auto p = fb::make_shared<Array<T>>();
+        auto &newArray = *p;
+        newArray.resize( size, defaultValue );
+
+        if( data )
+        {
+            auto& dataArray = *data;
+
+            for( size_t i = 0; i < size && i < dataArray.size(); ++i )
+            {
+                newArray[i] = dataArray[i];
+            }
+        }
+
+        return p;
+    }
+
     template <class T, class B>
     SmartPtr<T> static_pointer_cast( SmartPtr<B> obj )
     {

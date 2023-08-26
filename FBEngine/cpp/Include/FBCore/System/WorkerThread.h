@@ -3,7 +3,6 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IWorkerThread.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Atomics/Atomics.h>
@@ -16,7 +15,7 @@
 namespace fb
 {
     
-    class WorkerThread : public SharedObject<IWorkerThread>
+    class WorkerThread : public IWorkerThread
     {
     public:
         /** Constructor */

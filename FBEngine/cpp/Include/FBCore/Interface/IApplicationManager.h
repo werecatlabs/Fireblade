@@ -295,6 +295,10 @@ namespace fb
              */
             virtual void setGraphicsSystem( SmartPtr<render::IGraphicsSystem> graphicsSystem ) = 0;
 
+            virtual SmartPtr<IVideoManager> getVideoManager() const = 0;
+
+            virtual void setVideoManager( SmartPtr<IVideoManager> videoManager ) = 0;
+
             /**
              * Gets a pointer to the task manager for the application.
              * @return A SmartPtr to the task manager.
@@ -338,6 +342,16 @@ namespace fb
              * Sets the finite state machine manager.
              */
             virtual void setFsmManager( SmartPtr<IFSMManager> fsmManager ) = 0;
+
+            /**
+             * Gets the finite state machine manager.
+             */
+            virtual SmartPtr<IFSMManager> getFsmManagerByTask( Thread::Task task ) const = 0;
+
+            /**
+             * Sets the finite state machine manager.
+             */
+            virtual void setFsmManagerByTask( Thread::Task task, SmartPtr<IFSMManager> fsmManager ) = 0;
 
             /**
              * Gets the procedural engine used by the application.

@@ -2,13 +2,12 @@
 #define ComponentEvent_h__
 
 #include <FBCore/Interface/Scene/IComponentEvent.h>
-#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {
     namespace scene
     {
-        class ComponentEvent : public SharedObject<IComponentEvent>
+        class ComponentEvent : public IComponentEvent
         {
         public:
             ComponentEvent();

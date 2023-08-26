@@ -7,13 +7,12 @@
 #include <FBCore/Core/Array.h>
 #include <FBCore/Atomics/AtomicFloat.h>
 #include <FBCore/Core/ConcurrentQueue.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Thread/SpinRWMutex.h>
 
 namespace fb
 {
     /** Default task implementation.  */
-    class Task : public SharedObject<ITask>
+    class Task : public ITask
     {
     public:
         class Flags
@@ -35,7 +34,7 @@ namespace fb
         Task() = default;
 
         /** Copy constructor */
-        Task( const Task &other ) = delete;
+        Task( const Task &other );
 
         /** Destructor */
         ~Task() override = default;

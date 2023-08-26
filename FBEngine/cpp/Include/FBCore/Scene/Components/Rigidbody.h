@@ -30,7 +30,7 @@ namespace fb
 
             /** @brief Invoked when a component is loaded */
             void componentLoaded( SmartPtr<IComponent> component );
-            
+
             /** @brief Updates all Rigidbody components */
             static void updateComponents();
 
@@ -156,10 +156,16 @@ namespace fb
 
             Transform3<real_Num> getTransform() const;
 
+            void updateShapes();
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
             void createRigidbodyObject();
+
+            void removeFromScene();
+            void addToScene();
+
             void destroyRigidbodyObject();
 
             void attachShape();

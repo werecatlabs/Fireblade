@@ -2,7 +2,6 @@
 #define _FBPropertyGroup_H
 
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Core/Property.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/StringUtil.h>
@@ -12,7 +11,7 @@ namespace fb
 {
 
     /** Stores and manages properties. */
-    class FBCore_API Properties : public SharedObject<ISharedObject>
+    class FBCore_API Properties : public ISharedObject
     {
     public:
         /** Default constructor. */
@@ -309,9 +308,10 @@ namespace fb
         @param readOnly Sets whether or not the property is read only.
         @return Returns true if the property was found. Returns false if the property was not found.
         */
-        void setProperty( const String &name, SmartPtr<ISharedObject> value, bool readOnly = false );
+        void setProperty( const String &name, SmartPtr<ISharedObject> value, bool readOnly = false );        
         void setProperty( const String &name, SmartPtr<render::IMaterial> value, bool readOnly = false );
         void setProperty( const String &name, SmartPtr<render::ITexture> value, bool readOnly = false );
+        void setProperty( const String &name, SmartPtr<scene::IActor> value, bool readOnly = false );
         void setProperty( const String &name, SmartPtr<scene::IComponent> value, bool readOnly = false );
         void setProperty( const String &name, SmartPtr<IMeshResource> value, bool readOnly = false );
         void setProperty( const String &name, SmartPtr<ISound> value, bool readOnly = false );
@@ -416,6 +416,7 @@ namespace fb
         bool getPropertyValue( const String &name, SmartPtr<ISharedObject> &value ) const;
         bool getPropertyValue( const String &name, SmartPtr<render::IMaterial> &value ) const;
         bool getPropertyValue( const String &name, SmartPtr<render::ITexture> &value ) const;
+        bool getPropertyValue( const String &name, SmartPtr<scene::IActor> &value ) const;
         bool getPropertyValue( const String &name, SmartPtr<scene::IComponent> &value ) const;
         bool getPropertyValue( const String &name, SmartPtr<IMeshResource> &value ) const;
         bool getPropertyValue( const String &name, SmartPtr<ISound> &value ) const;

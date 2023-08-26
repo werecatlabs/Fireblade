@@ -3,12 +3,12 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/ISceneManager.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Atomics/AtomicFloat.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/UnorderedMap.h>
 #include <FBCore/Core/UtilityTypes.h>
 #include <FBCore/State/States/TransformState.h>
+#include "FBCore/Core/ConcurrentQueue.h"
 
 namespace fb
 {
@@ -19,7 +19,7 @@ namespace fb
         @author	Zane Desir
         @version 1.0
         */
-        class SceneManager : public SharedObject<ISceneManager>
+        class SceneManager : public ISceneManager
         {
         public:
             SceneManager();
@@ -47,6 +47,12 @@ namespace fb
 
             /** @copydoc ISceneManager::setFsmManager */
             void setFsmManager( SmartPtr<IFSMManager> fsmManager ) override;
+
+            /** @copydoc ISceneManager::getFsmManager */
+            SmartPtr<IFSMManager> getComponentFsmManager(u32 typeId);
+
+            /** @copydoc ISceneManager::setFsmManager */
+            void setComponentFsmManager( u32 typeId, SmartPtr<IFSMManager> fsmManager );
 
             /** @copydoc ISceneManager::getCurrentScene */
             SmartPtr<IScene> getCurrentScene() const override;
@@ -174,6 +180,7 @@ namespace fb
             Array<Array<SharedPtr<Array<SmartPtr<IComponent>>>>> m_updateComponents;
 
             SmartPtr<IFSMManager> m_fsmManager;
+            Map<u32, SmartPtr<IFSMManager>> m_componentFsmManagers;
 
             SmartPtr<IScene> m_scene;
 

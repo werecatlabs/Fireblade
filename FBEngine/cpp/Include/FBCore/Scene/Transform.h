@@ -2,7 +2,7 @@
 #define __FB_Transformation_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Interface/Scene/ITransform.h>
 #include <FBCore/Atomics/AtomicFloat.h>
 
@@ -11,7 +11,7 @@ namespace fb
     namespace scene
     {
 
-        class Transform : public SharedObject<ITransform>
+        class Transform : public ITransform
         {
         public:
             static const hash_type TRANSFORMATION_POSITION_HASH;

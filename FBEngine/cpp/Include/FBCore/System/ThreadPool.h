@@ -4,7 +4,7 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IThreadPool.h>
 #include <FBCore/Core/FSMListener.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Core/FixedArray.h>
 #include <FBCore/System/WorkerThread.h>
 
@@ -12,7 +12,7 @@ namespace fb
 {
 
     /** Standard thread pool implementation. */
-    class ThreadPool : public SharedObject<IThreadPool>
+    class ThreadPool : public IThreadPool
     {
     public:
         /** Constructor */

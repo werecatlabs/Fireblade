@@ -2,6 +2,7 @@
 #define UIComponent_h__
 
 #include <FBCore/Scene/Components/Component.h>
+#include <FBCore/Interface/System/IEventListener.h>
 
 namespace fb
 {
@@ -155,7 +156,7 @@ namespace fb
              * and its owner (a UIComponent). The class provides methods to set and get the owner, as well as
              * handling events.
              */
-            class UIElementListener : public SharedObject<IEventListener>
+            class UIElementListener : public IEventListener
             {
             public:
                 /**

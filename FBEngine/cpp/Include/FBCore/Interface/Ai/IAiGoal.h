@@ -16,12 +16,15 @@ namespace fb
         /**
          * @brief Enum representing the possible states of an AI goal.
          */
-        enum class AiGoalState
+        enum class State
         {
-            AGS_READY,
-            AGS_EXECUTING,
-            AGS_FINISHED,
-            AGS_FAILED
+            None,
+            Ready,
+            Executing,
+            Finished,
+            Failed,
+
+            Count
         };
 
         /**
@@ -38,6 +41,9 @@ namespace fb
          * @brief Finish the AI goal. Called when the goal has been completed or terminated.
          */
         virtual void finish() = 0;
+
+        virtual const SmartPtr<IFSM> getFSM() const = 0;
+        virtual void setFSM( SmartPtr<IFSM> fsm ) = 0;
 
         /**
          * @brief Set the state of the AI goal.
