@@ -1,11 +1,13 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Graphics/CWindow.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Graphics/ICamera.h>
+#include <FBCore/Interface/Graphics/IViewport.h>
 
 namespace fb
 {
     namespace render
     {
+
         CWindow::CWindow()
         {
         }
@@ -73,9 +75,10 @@ namespace fb
             return 0;
         }
 
-        SmartPtr<IViewport> CWindow::addViewport(
-            hash32 id, SmartPtr<ICamera> camera, s32 ZOrder /*= 0*/, f32 left /*= 0.0f*/,
-            f32 top /*= 0.0f*/, f32 width /*= 1.0f*/, f32 height /*= 1.0f */ )
+        SmartPtr<IViewport> CWindow::addViewport( hash32 id, SmartPtr<ICamera> camera,
+                                                  s32 ZOrder /*= 0*/, f32 left /*= 0.0f*/,
+                                                  f32 top /*= 0.0f*/, f32 width /*= 1.0f*/,
+                                                  f32 height /*= 1.0f */ )
         {
             return SmartPtr<IViewport>();
         }
@@ -111,5 +114,6 @@ namespace fb
         {
             return IRenderTarget::RenderTargetStats();
         }
-    } // namespace render
-}     // namespace fb
+
+    }  // namespace render
+}  // namespace fb

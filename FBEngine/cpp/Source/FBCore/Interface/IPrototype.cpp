@@ -1,7 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/IPrototype.h>
 #include <FBCore/System/RttiClassDefinition.h>
-#include <FBCore/Memory/SharedObject.h>
 
 namespace fb
 {

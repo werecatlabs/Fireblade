@@ -4,9 +4,7 @@
 
 namespace fb
 {
-    VertexBuffer::VertexBuffer() :
-        m_vertexData( 0 ),
-        m_numVerticies( 0 )
+    VertexBuffer::VertexBuffer() : m_vertexData( 0 ), m_numVerticies( 0 )
     {
     }
 
@@ -17,10 +15,10 @@ namespace fb
 
     void VertexBuffer::unload( SmartPtr<ISharedObject> data )
     {
-        for(u32 i = 0; i < m_vertexData.size(); ++i)
+        for( u32 i = 0; i < m_vertexData.size(); ++i )
         {
             u8 *data = m_vertexData[i];
-            if(data)
+            if( data )
             {
                 delete[] data;
                 m_vertexData[i] = nullptr;
@@ -29,7 +27,7 @@ namespace fb
 
         m_vertexData.clear();
 
-        if(m_vertexDeclaration)
+        if( m_vertexDeclaration )
         {
             m_vertexDeclaration->unload( nullptr );
             m_vertexDeclaration = nullptr;
@@ -58,15 +56,15 @@ namespace fb
 
     void *VertexBuffer::createVertexData( s32 index )
     {
-        if(m_vertexDeclaration)
+        if( m_vertexDeclaration )
         {
             auto newSize = index + 1;
-            if(newSize >= static_cast<s32>(m_vertexData.size()))
+            if( newSize >= static_cast<s32>( m_vertexData.size() ) )
             {
                 auto copy = m_vertexData;
                 m_vertexData.resize( newSize );
 
-                for(u32 i = 0; i < copy.size(); ++i)
+                for( u32 i = 0; i < copy.size(); ++i )
                 {
                     m_vertexData[i] = copy[i];
                 }
@@ -107,11 +105,11 @@ namespace fb
 
     bool VertexBuffer::compare( SmartPtr<IVertexBuffer> other ) const
     {
-        if(m_numVerticies != other->getNumVerticies())
+        if( m_numVerticies != other->getNumVerticies() )
         {
             return false;
         }
 
         return m_vertexDeclaration->compare( other->getVertexDeclaration() );
     }
-} // end namespace fb
+}  // end namespace fb

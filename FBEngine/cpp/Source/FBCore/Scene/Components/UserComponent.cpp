@@ -57,19 +57,6 @@ namespace fb
                 auto pSceneManager = applicationManager->getSceneManager();
                 auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
 
-                /*
-                if( auto actor = getActor() )
-                {
-                    auto entity = static_cast<entt::registry::entity_type>( actor->getEntity() );
-
-                    auto registry = sceneManager->getRegistry();
-                    auto &component = registry->emplace<usercomponent_data>( entity );
-                    component.owner = this;
-
-                    setDataPtr( &component );
-                }
-                */
-
                 createScriptData();
 
                 setLoadingState( LoadingState::Loaded );
@@ -90,6 +77,9 @@ namespace fb
                 FB_ASSERT( applicationManager );
                 FB_ASSERT( applicationManager->isValid() );
 
+                auto pSceneManager = applicationManager->getSceneManager();
+                auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
+
                 if( auto scriptManager = applicationManager->getScriptManager() )
                 {
                     scriptManager->destroyObject( this );
@@ -97,19 +87,6 @@ namespace fb
 
                 setInvoker( nullptr );
                 setReceiver( nullptr );
-
-                auto pSceneManager = applicationManager->getSceneManager();
-                auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-
-                /*
-                if( auto actor = getActor() )
-                {
-                    auto entity = static_cast<entt::registry::entity_type>( actor->getEntity() );
-
-                    auto registry = sceneManager->getRegistry();
-                    registry->remove<usercomponent_data>( entity );
-                }
-                */
 
                 setLoadingState( LoadingState::Unloaded );
             }
@@ -137,17 +114,6 @@ namespace fb
 
             auto pSceneManager = applicationManager->getSceneManager();
             auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-
-            /*
-            auto registry = sceneManager->getRegistry();
-
-            auto view = registry->view<usercomponent_data>();
-
-            view.each( []( const auto entity, auto &t ) {
-                auto &data = static_cast<usercomponent_data &>( t );
-                data.owner->update();
-            } );
-            */
         }
 
         void UserComponent::update()
@@ -195,7 +161,13 @@ namespace fb
             auto className = String( "" );
             properties->getPropertyValue( "className", className );
             properties->getPropertyValue( "updateInEditMode", m_updateInEditMode );
-            m_className = className;
+
+            if( className != m_className )
+            {
+                destroyScriptData();
+                m_className = className;
+                createScriptData();
+            }
         }
 
         bool UserComponent::getUpdateInEditMode() const
@@ -328,6 +300,16 @@ namespace fb
                 {
                     scriptManager->createObject( m_className, this );
                 }
+            }
+        }
+
+        void UserComponent::destroyScriptData()
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+
+            if( auto scriptManager = applicationManager->getScriptManager() )
+            {
+                scriptManager->destroyObject( this );
             }
         }
 

@@ -6,7 +6,7 @@ namespace fb
 {
     namespace render
     {
-        FB_CLASS_REGISTER_DERIVED( fb, CViewport, SharedObject<IViewport> );
+        FB_CLASS_REGISTER_DERIVED( fb, CViewport, IViewport );
 
         CViewport::CViewport()
         {

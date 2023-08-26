@@ -432,11 +432,9 @@ namespace fb
 
         void Material::updateImageComponent()
         {
-            auto material = getMaterial();
-            if( material )
+            if( auto material = getMaterial() )
             {
-                auto actor = getActor();
-                if( actor )
+                if( auto actor = getActor() )
                 {
                     auto imageComponent = actor->getComponent<Image>();
                     if( imageComponent )

@@ -4,7 +4,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, TimerChrono, SharedObject<Timer> );
+    FB_CLASS_REGISTER_DERIVED( fb, TimerChrono, Timer );
 
     TimerChrono::TimerChrono()
     {

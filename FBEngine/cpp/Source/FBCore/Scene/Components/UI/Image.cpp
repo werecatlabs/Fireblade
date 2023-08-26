@@ -336,14 +336,6 @@ namespace fb
             }
         }
 
-        void Image::childAdded( SmartPtr<scene::IActor> child )
-        {
-        }
-
-        void Image::childRemoved( SmartPtr<scene::IActor> child )
-        {
-        }
-
         SmartPtr<ui::IUIImage> Image::getImage() const
         {
             return m_image;
@@ -352,10 +344,6 @@ namespace fb
         void Image::setImage( SmartPtr<ui::IUIImage> image )
         {
             m_image = image;
-        }
-
-        void Image::updateDimensions()
-        {
         }
 
         void Image::updateMaterials()
@@ -394,7 +382,8 @@ namespace fb
 
             static const auto imagePathStr = String( "Texture" );
 
-            properties->setProperty( imagePathStr, m_texture );
+            auto texture = getTexture();
+            properties->setProperty( imagePathStr, texture );
 
             //auto &materialPathProperty = properties->getPropertyObject( imagePathStr );
             //materialPathProperty.setType( "file" );

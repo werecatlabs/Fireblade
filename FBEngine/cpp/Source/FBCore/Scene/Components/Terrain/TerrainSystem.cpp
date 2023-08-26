@@ -168,7 +168,7 @@ namespace fb
                     }
                 }
 #endif
-                
+
                 if( auto actorTransform = actor->getTransform() )
                 {
                     auto worldTransform = actorTransform->getWorldTransform();
@@ -190,6 +190,36 @@ namespace fb
         s32 TerrainSystem::getNumLayers() const
         {
             return m_numLayers;
+        }
+
+        SmartPtr<TerrainLayer> TerrainSystem::addLayer()
+        {
+            auto numLayers = calculateNumLayers();
+            auto newNumLayers = numLayers + 1;
+
+            setNumLayers( newNumLayers );
+            resizeLayermap();
+
+            auto layers = getSubComponentsByType<TerrainLayer>();
+            return layers[numLayers];
+        }
+
+        void TerrainSystem::removeLayer( s32 index )
+        {
+            if( index < 0 || index >= m_numLayers )
+                return;
+
+            m_layers.erase( m_layers.begin() + index );
+        }
+
+        void TerrainSystem::removeLayer( SmartPtr<TerrainLayer> layer )
+        {
+            auto layers = getSubComponentsByType<TerrainLayer>();
+            auto it = std::find( layers.begin(), layers.end(), layer );
+            if( it != layers.end() )
+            {
+                layers.erase( it );
+            }
         }
 
         void TerrainSystem::setNumLayers( s32 numLayers )

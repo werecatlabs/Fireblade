@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, ResourceDatabase, SharedObject<IResourceDatabase> );
+    FB_CLASS_REGISTER_DERIVED( fb, ResourceDatabase, IResourceDatabase );
 
     ResourceDatabase::ResourceDatabase()
     {
@@ -775,6 +775,141 @@ namespace fb
         return resources;
     }
 
+    void ResourceDatabase::createActor( SmartPtr<scene::IActor> parent, SmartPtr<Properties> properties )
+    {
+        auto applicationManager = core::IApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto sceneManager = applicationManager->getSceneManager();
+        FB_ASSERT( sceneManager );
+
+        auto actor = sceneManager->createActor();
+        FB_ASSERT( actor );
+
+        parent->addChild( actor );
+
+        auto name = properties->getProperty( "name" );
+        actor->setName( name );
+
+        auto children = properties->getChildren();
+        for( auto child : children )
+        {
+            createActor( actor, child );
+        }
+    }
+
+    SmartPtr<IResource> ResourceDatabase::loadResource( hash64 id )
+    {
+        auto applicationManager = core::IApplicationManager::instance();
+        auto sceneManager = applicationManager->getSceneManager();
+        auto scene = sceneManager->getCurrentScene();
+
+        auto graphicsSystem = applicationManager->getGraphicsSystem();
+
+        auto prefabManager = applicationManager->getPrefabManager();
+
+        auto materialManager = graphicsSystem->getMaterialManager();
+        auto textureManager = graphicsSystem->getTextureManager();
+
+        auto properties = loadAssetProperties( id );
+
+        auto uuid = properties->getProperty( "uuid" );
+        if( StringUtil::isNullOrEmpty( uuid ) )
+        {
+            uuid = StringUtil::getUUID();
+        }
+
+        auto type = properties->getProperty( "asset_type" );
+        if( type == "material" )
+        {
+        }
+        else if( type == "texture" )
+        {
+        }
+        else if( type == "prefab" )
+        {
+            auto result = prefabManager->createOrRetrieve( uuid, "", type );
+            return result.first;
+        }
+        else if( type == "scene" )
+        {
+        }
+        else if( type == "shader" )
+        {
+        }
+        else if( type == "mesh" )
+        {
+        }
+        else if( type == "model" )
+        {
+            //auto result = prefabManager->createOrRetrieve( uuid, "", type );
+            //return result.first;
+
+            auto actor = sceneManager->createActor();
+            createActor( actor, properties );
+
+            SmartPtr<scene::IPrefab> prefab = prefabManager->create( uuid );
+            prefab->setActor( actor );
+            return prefab;
+        }
+        else if( type == "animation" )
+        {
+        }
+        else if( type == "audio" )
+        {
+        }
+        else if( type == "font" )
+        {
+        }
+        else if( type == "script" )
+        {
+        }
+        else if( type == "script_class" )
+        {
+        }
+        else if( type == "script_function" )
+        {
+        }
+        else if( type == "script_module" )
+        {
+        }
+        else if( type == "script_property" )
+        {
+        }
+        else if( type == "script_variable" )
+        {
+        }
+        else if( type == "shader" )
+        {
+        }
+        else if( type == "shader_program" )
+        {
+        }
+        else if( type == "shader_variable" )
+        {
+        }
+        else if( type == "shader_variable_block" )
+        {
+        }
+        else if( type == "shader_variable_sampler" )
+        {
+        }
+        else if( type == "shader_variable_texture" )
+        {
+        }
+        else if( type == "shader_variable_uniform" )
+        {
+        }
+        else if( type == "vehicle" )
+        {
+        }
+        else
+        {
+        }
+
+        return nullptr;
+    }
+
     SmartPtr<IResource> ResourceDatabase::loadResource( const String &path )
     {
         auto applicationManager = core::IApplicationManager::instance();
@@ -1121,6 +1256,83 @@ namespace fb
         }
 
         return nullptr;
+    }
+
+    SmartPtr<Properties> ResourceDatabase::loadAssetNode( SmartPtr<IDatabaseManager> db,
+                                                          SmartPtr<Properties> parent, hash64 id )
+    {
+        auto applicationManager = core::IApplicationManager::instance();
+
+        auto properties = fb::make_ptr<Properties>();
+        parent->addChild( properties );
+
+        auto sAssetId = StringUtil::toString( id );
+        String sql = "select * from configured_models where id = '" + sAssetId + "'";
+
+        if( auto query = db->executeQuery( sql ) )
+        {
+            while( !query->eof() )
+            {
+                auto numFields = query->getNumFields();
+                for( size_t i = 0; i < numFields; ++i )
+                {
+                    auto name = query->getFieldName( (u32)i );
+                    auto value = query->getFieldValue( (u32)i );
+
+                    properties->setProperty( name, value );
+                }
+
+                query->nextRow();
+            }
+        }
+
+        String parentSql = "select * from configured_models where parent_id = '" + sAssetId + "'";
+        if( auto query = db->executeQuery( parentSql ) )
+        {
+            while( !query->eof() )
+            {
+                auto id = query->getFieldValue( "id" );
+                auto iId = StringUtil::parseInt( id );
+                loadAssetNode( db, properties, iId );
+                query->nextRow();
+            }
+        }
+
+        return properties;
+    }
+
+    SmartPtr<Properties> ResourceDatabase::loadAssetProperties( hash64 id )
+    {
+        auto applicationManager = core::IApplicationManager::instance();
+        auto databaseManager = fb::make_ptr<AssetDatabaseManager>();
+
+        auto mediaPath = applicationManager->getMediaPath();
+        //databaseManager->loadFromFile( mediaPath + "/AssetDatabase.db" );
+        databaseManager->loadFromFile( "C:/dev/fireblade/Bin/Media/AssetDatabase.db" );
+
+        auto properties = fb::make_ptr<Properties>();
+        properties->setName( "asset" );
+        properties->setProperty( String( "asset_type" ), String( "model" ) );
+
+        loadAssetNode( databaseManager, properties, id );
+
+        auto sAssetId = StringUtil::toString( id );
+        String sql = "select * from attribs where model_id = '" + sAssetId + "'";
+
+        if( auto query = databaseManager->executeQuery( sql ) )
+        {
+            while( query->eof() )
+            {
+                auto name = query->getFieldValue( "title" );
+                auto value = query->getFieldValue( "value" );
+
+                properties->setProperty( name, value );
+
+                query->nextRow();
+            }
+        }
+
+        return properties;
     }
 
     void ResourceDatabase::getSceneObjects( SmartPtr<scene::IActor> actor,

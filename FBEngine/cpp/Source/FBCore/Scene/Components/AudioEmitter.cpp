@@ -19,6 +19,7 @@ namespace fb
 
         void AudioEmitter::load( SmartPtr<ISharedObject> data )
         {
+            Component::load( data );
         }
 
         void AudioEmitter::unload( SmartPtr<ISharedObject> data )

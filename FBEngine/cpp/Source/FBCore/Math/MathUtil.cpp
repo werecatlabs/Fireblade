@@ -144,9 +144,9 @@ namespace fb
                                                             bool bYawFixed,
                                                             const Vector3<T> &yawFixedAxis )
     {
-        FB_ASSERT(vec.isValid());
-        FB_ASSERT(localDirectionVector.isValid());
-        FB_ASSERT(yawFixedAxis.isValid());
+        FB_ASSERT( vec.isValid() );
+        FB_ASSERT( localDirectionVector.isValid() );
+        FB_ASSERT( yawFixedAxis.isValid() );
 
         // Do nothing if given a zero vector
         if( vec == Vector3<T>::zero() )

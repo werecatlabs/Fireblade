@@ -2,6 +2,7 @@
 #include <FBCore/State/Messages/StateMessage.h>
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/Core/StringUtil.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {

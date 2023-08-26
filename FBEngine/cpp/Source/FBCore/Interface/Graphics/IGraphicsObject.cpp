@@ -1,6 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/Graphics/IGraphicsObject.h>
 #include <FBCore/Core/StringUtil.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {

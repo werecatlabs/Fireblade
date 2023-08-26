@@ -1,12 +1,13 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/TimerWin32.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 #ifdef FB_PLATFORM_WIN32
 #    include <WTypes.h>
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, TimerWin32, SharedObject<Timer> );
+    FB_CLASS_REGISTER_DERIVED( fb, TimerWin32, Timer );
 
     TimerWin32::TimerWin32() : HighPerformanceTimerSupport( FALSE ), MultiCore( FALSE )
     {

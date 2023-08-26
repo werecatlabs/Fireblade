@@ -9,6 +9,8 @@ namespace fb
 
     Handle::Handle() : m_hash( 0 )
     {
+        constexpr auto size = sizeof( Handle );
+
         m_id = m_nameExt++;
         m_hash = m_id;
     }
@@ -40,20 +42,18 @@ namespace fb
 
     String Handle::getName() const
     {
-        return String( m_name.data(), m_name.size() );
+        return m_name;
     }
 
     void Handle::setName( const String &name )
     {
-        FB_ASSERT( name.size() <= m_name.capacity() );
-
         m_name = name;
         m_hash = StringUtil::getHash( name );
     }
 
     String Handle::getUUID() const
     {
-        return String( m_uuid.data(), m_uuid.size() );
+        return m_uuid;
     }
 
     void Handle::setUUID( const String &uuid )
@@ -102,7 +102,7 @@ namespace fb
 
     String Handle::getClassId() const
     {
-        return String( m_classId.data(), m_classId.size() );
+        return m_classId;
     }
 
     void Handle::setClassId( const String &classId )
@@ -112,7 +112,7 @@ namespace fb
 
     String Handle::getFileId() const
     {
-        return String( m_fileId.data(), m_fileId.size() );
+        return m_fileId;
     }
 
     void Handle::setFileId( const String &fileId )

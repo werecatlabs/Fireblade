@@ -7,6 +7,7 @@
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/System/IFactory.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
+#include <FBCore/Interface/Scene/IActor.h>
 #include <FBCore/Interface/Scene/IComponent.h>
 #include <FBCore/Interface/Graphics/IMaterial.h>
 #include <FBCore/Interface/Graphics/ITexture.h>
@@ -14,12 +15,13 @@
 #include <FBCore/Interface/Resource/IResource.h>
 #include <FBCore/Interface/Resource/IResourceDatabase.h>
 #include <FBCore/Interface/Sound/ISound.h>
+#include <FBCore/System/RttiClassDefinition.h>
 #include <rttr/registration>
 #include <rttr/detail/type/type_converter.h>
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, Properties, SharedObject<ISharedObject> );
+    FB_CLASS_REGISTER_DERIVED( fb, Properties, ISharedObject );
 
     static u32 NumPropertyGroups = 0;
 
@@ -672,6 +674,28 @@ namespace fb
         }
     }
 
+    void Properties::setProperty( const String &name, SmartPtr<scene::IActor> value, bool readOnly )
+    {
+        if( value )
+        {
+            auto handle = value->getHandle();
+            auto uuid = handle->getUUID();
+            setProperty( name, uuid, "resource", false );
+
+            auto resourceTypeName = value->getResourceTypeByName();
+
+            auto &property = getPropertyObject( name );
+            property.setAttribute( "resourceType", resourceTypeName );
+        }
+        else
+        {
+            setProperty( name, "", "resource", false );
+
+            auto &property = getPropertyObject( name );
+            property.setAttribute( "resourceType", "Component" );
+        }
+    }
+
     void Properties::setProperty( const String &name, SmartPtr<scene::IComponent> value, bool readOnly )
     {
         if( value )
@@ -1030,6 +1054,27 @@ namespace fb
     }
 
     bool Properties::getPropertyValue( const String &name, SmartPtr<render::ITexture> &value ) const
+    {
+        if( hasProperty( name ) )
+        {
+            const auto &property = getPropertyObject( name );
+            auto uuid = property.getValue();
+
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto resourceDatabase = applicationManager->getResourceDatabase();
+            FB_ASSERT( resourceDatabase );
+
+            value = resourceDatabase->getObject( uuid );
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool Properties::getPropertyValue( const String &name, SmartPtr<scene::IActor> &value ) const
     {
         if( hasProperty( name ) )
         {

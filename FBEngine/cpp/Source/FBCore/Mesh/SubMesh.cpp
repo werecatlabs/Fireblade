@@ -5,6 +5,7 @@
 #include <FBCore/Interface/Mesh/IIndexBuffer.h>
 #include <FBCore/Interface/Mesh/IVertexDeclaration.h>
 #include <FBCore/Interface/Mesh/IVertexElement.h>
+#include "FBCore/Memory/PointerUtil.h"
 
 namespace fb
 {

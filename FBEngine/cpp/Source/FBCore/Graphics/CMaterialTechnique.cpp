@@ -74,7 +74,10 @@ namespace fb
                     auto &passes = *p;
                     for( auto pass : passes )
                     {
-                        pass->unload( nullptr );
+                        if( pass )
+                        {
+                            pass->unload( nullptr );
+                        }
                     }
                 }
 
@@ -210,7 +213,6 @@ namespace fb
             m_passes = ptr;
         }
 
-        
         SmartPtr<ISharedObject> CMaterialTechnique::toData() const
         {
             auto data = fb::make_ptr<Properties>();
@@ -238,7 +240,6 @@ namespace fb
             {
                 auto pPass = SmartPtr<IMaterialPass>();
 
-                
                 if( count < currentPasses.size() )
                 {
                     pPass = currentPasses[count];

@@ -1,6 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/Task.h>
 #include <FBCore/System/TaskManager.h>
+#include <FBCore/System/RttiClassDefinition.h>
 #include <FBCore/Core/DebugTrace.h>
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/Interface/IApplicationManager.h>
@@ -10,10 +11,15 @@
 #include <FBCore/Interface/System/ITimer.h>
 #include <FBCore/Interface/FSM/IFSM.h>
 #include <FBCore/Interface/FSM/IFSMManager.h>
+#include <FBCore/Core/FSMManager.h>
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, Task, SharedObject<ITask> );
+    FB_CLASS_REGISTER_DERIVED( fb, Task, ITask );
+
+    Task::Task( const Task &other )
+    {
+    }
 
     void Task::load( SmartPtr<ISharedObject> data )
     {
@@ -22,11 +28,14 @@ namespace fb
         auto applicationManager = core::IApplicationManager::instance();
         auto taskManager = fb::static_pointer_cast<TaskManager>( applicationManager->getTaskManager() );
 
-        auto fsmManager = taskManager->getFSMManager();
+        auto taskId = getTask();
+
+        auto fsmManager = fb::make_ptr<FSMManager>();
+        fsmManager->load( data );
+        applicationManager->setFsmManagerByTask( taskId, fsmManager );
         m_fsm = fsmManager->createFSM();
 
-        auto taskId = static_cast<u32>( getTask() );
-        m_taskFlags = taskManager->getFlagsPtr( taskId );
+        m_taskFlags = taskManager->getFlagsPtr( (u32)taskId );
         setLoadingState( LoadingState::Loaded );
     }
 
@@ -48,7 +57,7 @@ namespace fb
 
             if( taskManager )
             {
-                if( auto fsmManager = taskManager->getFSMManager() )
+                if( auto fsmManager = applicationManager->getFsmManagerByTask( getTask() ) )
                 {
                     fsmManager->destroyFSM( m_fsm );
                 }
@@ -67,10 +76,18 @@ namespace fb
     {
         try
         {
-            Flags flags( this );
+            auto applicationManager = core::IApplicationManager::instance();
+
+            auto task = getTask();
+            if( auto fsmManager = applicationManager->getFsmManagerByTask( task ) )
+            {
+                fsmManager->update();
+            }
 
             if( auto fsm = getFSM() )
             {
+                Flags flags( this );
+
                 auto eState = static_cast<State>( fsm->getCurrentState() );
                 switch( eState )
                 {
@@ -88,7 +105,6 @@ namespace fb
                 break;
                 case State::Executing:
                 {
-                    auto applicationManager = core::IApplicationManager::instance();
                     auto timer = applicationManager->getTimer();
 
                     auto profile = getProfile();
@@ -128,9 +144,6 @@ namespace fb
                                 FB_LOG_EXCEPTION( e );
                             }
                         }
-
-                        auto &gc = GarbageCollector::instance();
-                        gc.update();
 
                         auto nextUpdateTime = getNextUpdateTime();
                         auto targetFPS = getTargetFPS();
@@ -473,7 +486,8 @@ namespace fb
     {
         if( auto fsm = getFSM() )
         {
-            fsm->setNewState( static_cast<u8>( state ) );
+            auto iState = static_cast<u8>( state );
+            fsm->setNewState( iState );
         }
     }
 
@@ -481,7 +495,8 @@ namespace fb
     {
         if( auto fsm = getFSM() )
         {
-            return static_cast<State>( fsm->getCurrentState() );
+            auto iState = fsm->getCurrentState();
+            return static_cast<State>( iState );
         }
 
         return State::None;

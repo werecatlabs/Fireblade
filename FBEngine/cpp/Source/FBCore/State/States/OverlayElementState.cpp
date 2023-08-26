@@ -3,6 +3,7 @@
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/Interface/Graphics/IMaterial.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
@@ -17,8 +18,11 @@ namespace fb
     void OverlayElementState::setPosition( const Vector2F &position )
     {
         SpinRWMutex::ScopedLock lock( m_mutex, true );
-        m_position = position;
-        setDirty( true );
+        if( m_position != position )
+        {
+            m_position = position;
+            setDirty( true );
+        }
     }
 
     Vector2F OverlayElementState::getSize() const
@@ -30,8 +34,11 @@ namespace fb
     void OverlayElementState::setSize( const Vector2F &size )
     {
         SpinRWMutex::ScopedLock lock( m_mutex, true );
-        m_size = size;
-        setDirty( true );
+        if( m_size != size )
+        {
+            m_size = size;
+            setDirty( true );
+        }
     }
 
     String OverlayElementState::getName() const
@@ -43,13 +50,16 @@ namespace fb
     void OverlayElementState::setName( const String &name )
     {
         SpinRWMutex::ScopedLock lock( m_mutex, true );
-        m_name = name;
-        setDirty( true );
+        if( m_name != name )
+        {
+            m_name = name;
+            setDirty( true );
+        }
     }
 
     void OverlayElementState::setMetricsMode( [[maybe_unused]] u8 metricsMode )
     {
-        if(m_metricsMode != metricsMode)
+        if( m_metricsMode != metricsMode )
         {
             m_metricsMode = metricsMode;
             setDirty( true );
@@ -63,8 +73,11 @@ namespace fb
 
     void OverlayElementState::setHorizontalAlignment( [[maybe_unused]] u8 gha )
     {
-        m_gha = gha;
-        setDirty( true );
+        if( m_gha != gha )
+        {
+            m_gha = gha;
+            setDirty( true );
+        }
     }
 
     u8 OverlayElementState::getHorizontalAlignment() const
@@ -74,8 +87,11 @@ namespace fb
 
     void OverlayElementState::setVerticalAlignment( [[maybe_unused]] u8 gva )
     {
-        m_gva = gva;
-        setDirty( true );
+        if( m_gva != gva )
+        {
+            m_gva = gva;
+            setDirty( true );
+        }
     }
 
     u8 OverlayElementState::getVerticalAlignment() const
@@ -90,15 +106,21 @@ namespace fb
 
     void OverlayElementState::setMaterial( SmartPtr<render::IMaterial> material )
     {
-        m_material = material;
-        setDirty( true );
+        if( m_material != material )
+        {
+            m_material = material;
+            setDirty( true );
+        }
     }
 
     void OverlayElementState::setCaption( [[maybe_unused]] const String &text )
     {
         SpinRWMutex::ScopedLock lock( m_mutex, true );
-        m_caption = text;
-        setDirty( true );
+        if( m_caption != text )
+        {
+            m_caption = text;
+            setDirty( true );
+        }
     }
 
     String OverlayElementState::getCaption() const
@@ -109,8 +131,11 @@ namespace fb
 
     void OverlayElementState::setVisible( [[maybe_unused]] bool visible )
     {
-        m_visible = visible;
-        setDirty( true );
+        if( m_visible != visible )
+        {
+            m_visible = visible;
+            setDirty( true );
+        }
     }
 
     bool OverlayElementState::isVisible() const
@@ -125,15 +150,21 @@ namespace fb
 
     void OverlayElementState::setZOrder( u32 zOrder )
     {
-        m_zOrder = zOrder;
-        setDirty( true );
+        if( m_zOrder != zOrder )
+        {
+            m_zOrder = zOrder;
+            setDirty( true );
+        }
     }
 
     void OverlayElementState::setColour( const ColourF &colour )
     {
         SpinRWMutex::ScopedLock lock( m_mutex, true );
-        m_colour = colour;
-        setDirty( true );
+        if( m_colour != colour )
+        {
+            m_colour = colour;
+            setDirty( true );
+        }
     }
 
     ColourF OverlayElementState::getColour() const
@@ -141,4 +172,4 @@ namespace fb
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_colour;
     }
-} // end namespace fb
+}  // end namespace fb

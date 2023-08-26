@@ -1,6 +1,8 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/CommandManager.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Memory/PointerUtil.h>
+#include <FBCore/Interface/System/ICommand.h>
+#include <FBCore/Interface/System/ICommandManagerListener.h>
 #include <algorithm>
 
 namespace fb

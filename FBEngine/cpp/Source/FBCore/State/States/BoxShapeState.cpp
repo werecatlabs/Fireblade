@@ -25,7 +25,7 @@ namespace fb
     {
         if( !MathUtil<real_Num>::equals( m_extents, extents ) )
         {
-            SpinRWMutex::ScopedLock lock( m_mutex, true);
+            SpinRWMutex::ScopedLock lock( m_mutex, true );
             m_extents = extents;
             setDirty( true );
         }

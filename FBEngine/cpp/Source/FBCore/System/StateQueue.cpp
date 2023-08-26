@@ -3,12 +3,13 @@
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/Interface/System/IState.h>
 #include <FBCore/Interface/System/IStateMessage.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, StateQueue, SharedObject<IStateQueue> );
+    FB_CLASS_REGISTER_DERIVED( fb, StateQueue, IStateQueue );
 
-    StateQueue::StateQueue() : SharedObject<IStateQueue>()
+    StateQueue::StateQueue() : IStateQueue()
     {
     }
 

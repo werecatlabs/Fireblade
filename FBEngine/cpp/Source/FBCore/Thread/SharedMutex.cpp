@@ -42,8 +42,7 @@ namespace fb
         writeCondition_.notify_one();
     }
 
-    SharedMutex::ScopedLock::ScopedLock( SharedMutex &m, bool write ) 
-        : m_mutex( m )
+    SharedMutex::ScopedLock::ScopedLock( SharedMutex &m, bool write ) : m_mutex( m )
     {
         if( write )
         {

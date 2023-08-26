@@ -28,7 +28,7 @@ namespace fb
     CollisionMesh::CollisionMesh( const SmartPtr<IMesh> &mesh, const Matrix4F &transform )
     {
         auto subMeshes = mesh->getSubMeshes();
-        for(auto subMesh : subMeshes)
+        for( auto subMesh : subMeshes )
         {
             SmartPtr<CollisionSubMesh> collisionSubMesh(
                 new CollisionSubMesh( mesh, subMesh, transform ) );
@@ -46,27 +46,24 @@ namespace fb
         return m_hitDistance;
     }
 
-    CollisionMesh::HitData::HitData( float distance ) :
-        m_hitDistance( distance )
+    CollisionMesh::HitData::HitData( float distance ) : m_hitDistance( distance )
     {
     }
 
-    CollisionMesh::HitData::HitData() :
-        m_hitDistance( 0.0f )
+    CollisionMesh::HitData::HitData() : m_hitDistance( 0.0f )
     {
     }
 
-    bool CollisionMesh::rayCast( const Vector3F &origin, const Vector3F &dir,
-                                 Array<HitData> &hits )
+    bool CollisionMesh::rayCast( const Vector3F &origin, const Vector3F &dir, Array<HitData> &hits )
     {
         bool retValue = false;
 
-        for(auto &subMesh : m_subMeshes)
+        for( auto &subMesh : m_subMeshes )
         {
             Array<float> distances;
             retValue = subMesh->rayCast( origin, dir, distances );
 
-            if(retValue)
+            if( retValue )
             {
                 hits.push_back( HitData( distances[0] ) );
                 return true;
@@ -80,10 +77,10 @@ namespace fb
     {
         bool retValue = false;
 
-        for(auto &subMesh : m_subMeshes)
+        for( auto &subMesh : m_subMeshes )
         {
             retValue = subMesh->rayCast( origin, dir, hits );
-            if(retValue)
+            if( retValue )
             {
                 return true;
             }
@@ -91,4 +88,5 @@ namespace fb
 
         return retValue;
     }
-} // end namespace fb
+
+}  // end namespace fb

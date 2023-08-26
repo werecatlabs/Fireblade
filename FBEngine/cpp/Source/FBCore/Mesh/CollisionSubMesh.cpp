@@ -38,7 +38,7 @@ namespace fb
     CollisionSubMesh::CollisionSubMesh( const SmartPtr<IMesh> mesh, SmartPtr<ISubMesh> subMesh,
                                         Matrix4F transform )
     {
-        if(mesh)
+        if( mesh )
         {
             return;
         }
@@ -278,8 +278,7 @@ namespace fb
     }
 
     //--------------------------------------------
-    bool CollisionSubMesh::rayCast( const Vector3F &origin, const Vector3F &dir,
-                                    Array<float> &hits )
+    bool CollisionSubMesh::rayCast( const Vector3F &origin, const Vector3F &dir, Array<float> &hits )
     {
         // IceMaths::Ray worldRay;
         // worldRay.mOrig.x = origin.x;
@@ -329,4 +328,4 @@ namespace fb
     {
         m_userData = val;
     }
-} // namespace fb
+}  // namespace fb

@@ -11,11 +11,6 @@ namespace fb
 
     void SpinRWMutex::lock_read()
     {
-        while( write_request.load( std::memory_order_acquire ) )
-        {
-            std::this_thread::yield();
-        }
-
         // Spin until there are no active writers
         while( writers.load( std::memory_order_acquire ) > 0 )
         {
@@ -47,12 +42,12 @@ namespace fb
 
         // Increment the writers count
         writers.fetch_add( 1, std::memory_order_acquire );
+        write_request.store( false, std::memory_order_release );
     }
 
     void SpinRWMutex::unlock_write()
     {
         writers.fetch_sub( 1, std::memory_order_release );
-        write_request.store( false, std::memory_order_release );
     }
 
     SpinRWMutex::ScopedLock::ScopedLock( SpinRWMutex &m, bool write /*= true */ ) :

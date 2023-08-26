@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/RunCommandJob.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/System/ICommand.h>
 
 namespace fb
 {
@@ -14,9 +14,9 @@ namespace fb
 
     void RunCommandJob::execute()
     {
-        if( m_command )
+        if( auto command = getCommand() )
         {
-            m_command->execute();
+            command->execute();
         }
     }
 

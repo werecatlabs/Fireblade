@@ -48,5 +48,5 @@ namespace fb
         {
         }
 
-    } // namespace scene
-}     // namespace fb
+    }  // namespace scene
+}  // namespace fb

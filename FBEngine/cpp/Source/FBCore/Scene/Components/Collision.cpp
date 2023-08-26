@@ -239,5 +239,21 @@ namespace fb
             }
         }
 
+        void Collision::createPhysicsShape()
+        {
+        }
+
+        void Collision::updateRigidBody()
+        {
+            if( auto actor = getActor() )
+            {
+                auto rigidBodies = actor->getComponentsByType<Rigidbody>();
+                for( auto rigidBody : rigidBodies )
+                {
+                    rigidBody->updateShapes();
+                }
+            }
+        }
+
     }  // namespace scene
 }  // end namespace fb

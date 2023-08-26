@@ -14,7 +14,7 @@
 #include <FBCore/Interface/System/ITimer.h>
 #include <FBCore/Core/Path.h>
 #include <FBCore/Core/LogManager.h>
-
+#include <FBCore/Core/Util.h>
 #include <FBCore/Scene/Components/Camera.h>
 #include <FBCore/Scene/Components/CollisionBox.h>
 #include <FBCore/Scene/Components/Mesh.h>
@@ -28,7 +28,7 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, SceneManager, SharedObject<fb::scene::ISceneManager> );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, SceneManager, fb::scene::ISceneManager );
         constexpr auto size = 32768;
 
         SceneManager::SceneManager()
@@ -56,6 +56,7 @@ namespace fb
                 FB_ASSERT( factoryManager );
 
                 auto fsmManager = factoryManager->make_ptr<FSMManager>();
+                fsmManager->setGrowSize( 1024 );
                 fsmManager->load( nullptr );
                 setFsmManager( fsmManager );
 
@@ -119,16 +120,11 @@ namespace fb
                     m_dirtyTransforms.clear();
                     m_dirtyActorTransforms.clear();
 
-                    auto &gc = GarbageCollector::instance();
-                    gc.update();
-
                     if( m_scene )
                     {
                         m_scene->unload( nullptr );
                         m_scene = nullptr;
                     }
-
-                    gc.update();
 
                     m_components.clear();
                     //m_collisionBoxes.clear();
@@ -145,8 +141,6 @@ namespace fb
                         fsmManager->unload( nullptr );
                         setFsmManager( nullptr );
                     }
-
-                    gc.update();
 
                     setLoadingState( LoadingState::Unloaded );
                 }
@@ -280,6 +274,11 @@ namespace fb
                     }
 
                     if( auto fsmManager = getFsmManager() )
+                    {
+                        fsmManager->update();
+                    }
+
+                    for( auto &[id, fsmManager] : m_componentFsmManagers )
                     {
                         fsmManager->update();
                     }
@@ -514,6 +513,26 @@ namespace fb
         void SceneManager::setFsmManager( SmartPtr<IFSMManager> fsmManager )
         {
             m_fsmManager = fsmManager;
+        }
+
+        SmartPtr<IFSMManager> SceneManager::getComponentFsmManager( u32 typeId )
+        {
+            auto it = m_componentFsmManagers.find( typeId );
+            if( it != m_componentFsmManagers.end() )
+            {
+                return it->second;
+            }
+
+            auto fsmManager = fb::make_ptr<FSMManager>();
+            fsmManager->setGrowSize( 1024 );
+            fsmManager->load( nullptr );
+            m_componentFsmManagers[typeId] = fsmManager;
+            return fsmManager;
+        }
+
+        void SceneManager::setComponentFsmManager( u32 typeId, SmartPtr<IFSMManager> fsmManager )
+        {
+            m_componentFsmManagers[typeId] = fsmManager;
         }
 
         SmartPtr<IScene> SceneManager::getCurrentScene() const
@@ -1309,12 +1328,12 @@ namespace fb
                 //m_transformTimes[id].push_back( time );
                 //m_transformStates[id].push_back( transform );
 
-                FB_ASSERT( Util::areAllValuesUnique( times ) == true );
+                //FB_ASSERT( Util::areAllValuesUnique( times ) == true );
 
                 times.insert( times.begin(), time );
                 transforms.insert( transforms.begin(), transform );
 
-                FB_ASSERT( Util::areAllValuesUnique( times ) == true );
+                //FB_ASSERT( Util::areAllValuesUnique( times ) == true );
 
                 if( times.size() > maxElementCount )
                 {
@@ -1328,15 +1347,13 @@ namespace fb
             }
         }
 
-
-
         bool SceneManager::getTransformState( u32 id, time_interval t, Transform3<real_Num> &transform )
         {
             SpinRWMutex::ScopedLock lock( m_transformMutex, false );
 
             auto applicationManager = core::IApplicationManager::instance();
             auto timer = applicationManager->getTimer();
-            auto dt = timer->getSmoothDeltaTime(Thread::Task::Render);
+            auto dt = timer->getSmoothDeltaTime( Thread::Task::Render );
 
             auto &times = m_transformTimes[id];
             auto &transforms = m_transformStates[id];
@@ -1357,7 +1374,7 @@ namespace fb
                 if( time < t )
                 {
                     auto cur = i;
-                    auto next = Math<s32>::clamp( cur - 1, 0, (s32)( times.size() - 1 ) );
+                    auto next = Math<s32>::clamp( (s32)( cur - 1 ), 0, (s32)( times.size() - 1 ) );
 
                     auto &time0 = times[next];
                     auto &time1 = times[cur];
@@ -1381,9 +1398,9 @@ namespace fb
                     {
                         auto diffFrame = t - time1;
                         auto delta = diffFrame / diff;
-                        
-                        auto position = Math<real_Num>::lerp( position1, position0, delta );
-                        
+
+                        auto position = Math<real_Num>::lerp( position1, position0, (real_Num)delta );
+
                         auto orientation = Quaternion<real_Num>::slerp(
                             static_cast<real_Num>( delta ), orientation1, orientation0, true );
                         orientation.normalise();

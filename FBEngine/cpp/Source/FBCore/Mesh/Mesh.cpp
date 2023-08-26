@@ -14,14 +14,14 @@ namespace fb
 
     void Mesh::unload( SmartPtr<ISharedObject> data )
     {
-        for(auto subMesh : m_subMeshes)
+        for( auto subMesh : m_subMeshes )
         {
             subMesh->unload( nullptr );
         }
 
         m_subMeshes.clear();
 
-        if(m_animationInterface)
+        if( m_animationInterface )
         {
             m_animationInterface->unload( nullptr );
             m_animationInterface = nullptr;
@@ -36,7 +36,7 @@ namespace fb
     void Mesh::removeSubMesh( SmartPtr<ISubMesh> subMesh )
     {
         auto it = std::find( m_subMeshes.begin(), m_subMeshes.end(), subMesh );
-        if(it != m_subMeshes.end())
+        if( it != m_subMeshes.end() )
         {
             m_subMeshes.erase( it );
         }
@@ -54,9 +54,9 @@ namespace fb
 
     void Mesh::setName( const String &name )
     {
-        if (auto handle = getHandle())
+        if( auto handle = getHandle() )
         {
-            handle->setName(name);
+            handle->setName( name );
         }
     }
 
@@ -72,7 +72,7 @@ namespace fb
 
     void Mesh::updateAABB( bool forceSubMeshUpdate )
     {
-        if(m_subMeshes.size() > 0)
+        if( m_subMeshes.size() > 0 )
         {
             m_aabb.setMinimum( Vector3F( 1e10, 1e10, 1e10 ) );
             m_aabb.setMaximum( Vector3F( -1e10, -1e10, -1e10 ) );
@@ -82,9 +82,9 @@ namespace fb
             m_aabb.reset( Vector3F::zero() );
         }
 
-        for(auto &subMesh : m_subMeshes)
+        for( auto &subMesh : m_subMeshes )
         {
-            if(forceSubMeshUpdate)
+            if( forceSubMeshUpdate )
             {
                 subMesh->updateAABB();
             }
@@ -108,7 +108,7 @@ namespace fb
     {
         SmartPtr<IMesh> newMesh = fb::make_ptr<Mesh>();
         Array<SmartPtr<ISubMesh>> subMeshes = getSubMeshes();
-        for(auto &subMesh : subMeshes)
+        for( auto &subMesh : subMeshes )
         {
             SmartPtr<ISubMesh> newSubMesh = subMesh->clone();
             FB_ASSERT( newSubMesh );
@@ -173,14 +173,14 @@ namespace fb
     {
         auto subMeshes = getSubMeshes();
         auto otherSubMeshes = other->getSubMeshes();
-        if(subMeshes.size() != otherSubMeshes.size())
+        if( subMeshes.size() != otherSubMeshes.size() )
         {
             return false;
         }
 
-        for(auto subMesh : subMeshes)
+        for( auto subMesh : subMeshes )
         {
-            for(auto otherSubMesh : otherSubMeshes)
+            for( auto otherSubMesh : otherSubMeshes )
             {
             }
         }
@@ -188,4 +188,4 @@ namespace fb
         return true;
     }
 
-} // end namespace fb
+}  // end namespace fb

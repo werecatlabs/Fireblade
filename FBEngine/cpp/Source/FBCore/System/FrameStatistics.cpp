@@ -1,10 +1,18 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/FrameStatistics.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Core/StringUtil.h>
+#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/Interface/Graphics/IGraphicsSystem.h>
+#include <FBCore/Interface/Graphics/IOverlay.h>
+#include <FBCore/Interface/Graphics/IOverlayElement.h>
+#include <FBCore/Interface/Graphics/IOverlayElementText.h>
+#include <FBCore/Interface/Graphics/IOverlayManager.h>
+#include <FBCore/Interface/System/ITimer.h>
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, FrameStatistics, SharedObject<IFrameStatistics> );
+    FB_CLASS_REGISTER_DERIVED( fb, FrameStatistics, IFrameStatistics );
 
     FrameStatistics::FrameStatistics()
     {

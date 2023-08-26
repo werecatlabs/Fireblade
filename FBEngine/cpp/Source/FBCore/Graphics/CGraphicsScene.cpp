@@ -1,6 +1,5 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Graphics/CGraphicsScene.h>
-#include <FBCore/FBCore.h>
 
 namespace fb
 {

@@ -12,8 +12,7 @@ namespace fb
     {
     }
 
-    ScriptInvoker::ScriptInvoker( SmartPtr<ISharedObject> scriptObject ) :
-        m_object( scriptObject )
+    ScriptInvoker::ScriptInvoker( SmartPtr<ISharedObject> scriptObject ) : m_object( scriptObject )
     {
     }
 
@@ -51,7 +50,7 @@ namespace fb
     }
 
     void ScriptInvoker::callObjectMember( const String &functionName, const Parameters &params,
-                                                  Parameters &results )
+                                          Parameters &results )
     {
         auto applicationManager = core::IApplicationManager::instance();
         auto scriptManager = applicationManager->getScriptManager();

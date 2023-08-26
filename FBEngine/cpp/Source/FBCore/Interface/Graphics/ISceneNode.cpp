@@ -20,12 +20,9 @@ namespace fb
         const hash_type ISceneNode::STATE_MESSAGE_REMOVE = StringUtil::getHash( "remove" );
 
         const hash_type ISceneNode::STATE_MESSAGE_ADD_CHILD = StringUtil::getHash( "addChild" );
-        const hash_type ISceneNode::STATE_MESSAGE_REMOVE_CHILD =
-            StringUtil::getHash( "removeChild" );
-        const hash_type ISceneNode::STATE_MESSAGE_ATTACH_OBJECT =
-            StringUtil::getHash( "attachObject" );
-        const hash_type ISceneNode::STATE_MESSAGE_DETACH_OBJECT =
-            StringUtil::getHash( "detachObject" );
+        const hash_type ISceneNode::STATE_MESSAGE_REMOVE_CHILD = StringUtil::getHash( "removeChild" );
+        const hash_type ISceneNode::STATE_MESSAGE_ATTACH_OBJECT = StringUtil::getHash( "attachObject" );
+        const hash_type ISceneNode::STATE_MESSAGE_DETACH_OBJECT = StringUtil::getHash( "detachObject" );
         const hash_type ISceneNode::STATE_MESSAGE_DETACH_ALL_OBJECTS =
             StringUtil::getHash( "detachAllObject" );
     }  // end namespace render

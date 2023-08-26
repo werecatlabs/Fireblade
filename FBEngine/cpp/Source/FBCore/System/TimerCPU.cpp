@@ -5,7 +5,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, TimerCPU, SharedObject<ITimer> );
+    FB_CLASS_REGISTER_DERIVED( fb, TimerCPU, ITimer );
 
     TimerCPU::TimerCPU()
     {

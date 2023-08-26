@@ -7,4 +7,3 @@ namespace fb
     FB_CLASS_REGISTER_DERIVED( fb, IKeyboardState, ISharedObject );
 
 }  // end namespace fb
-

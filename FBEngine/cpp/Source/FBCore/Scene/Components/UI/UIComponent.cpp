@@ -5,7 +5,6 @@
 #include <FBCore/Scene/SceneManager.h>
 #include <FBCore/Interface/Graphics/IMaterial.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
-#include <FBCore/Interface/Graphics/ITexture.h>
 #include <FBCore/Interface/Scene/ITransform.h>
 #include <FBCore/Interface/UI/IUILayout.h>
 #include <FBCore/Interface/UI/IUIManager.h>
@@ -199,39 +198,38 @@ namespace fb
         {
             if( auto actor = getActor() )
             {
+                auto enabled = isEnabled() && actor->isEnabledInScene();
+                auto visible = actor->isVisible();
+
                 if( BitUtil::getFlagValue( flags, IActor::ActorFlagInScene ) !=
                     BitUtil::getFlagValue( oldFlags, IActor::ActorFlagInScene ) )
                 {
-                    auto visible = isEnabled() && actor->isEnabledInScene();
-
                     if( m_element )
                     {
+                        m_element->setEnabled( enabled );
                         m_element->setVisible( visible );
                     }
                 }
                 else if( BitUtil::getFlagValue( flags, IActor::ActorFlagEnabled ) !=
                          BitUtil::getFlagValue( oldFlags, IActor::ActorFlagEnabled ) )
                 {
-                    auto visible = isEnabled() && actor->isEnabledInScene();
-
                     if( m_element )
                     {
+                        m_element->setEnabled( enabled );
                         m_element->setVisible( visible );
                     }
                 }
                 else if( BitUtil::getFlagValue( flags, IActor::ActorFlagEnabledInScene ) !=
                          BitUtil::getFlagValue( oldFlags, IActor::ActorFlagEnabledInScene ) )
                 {
-                    auto visible = isEnabled() && actor->isEnabledInScene();
-
                     if( m_element )
                     {
+                        m_element->setEnabled( enabled );
                         m_element->setVisible( visible );
                     }
                 }
 
-                auto eState = getState();
-                switch( eState )
+                switch( auto eState = getState() )
                 {
                 case State::Edit:
                 case State::Play:
@@ -506,11 +504,13 @@ namespace fb
         {
             if( auto actor = getActor() )
             {
-                auto enabled = actor->isEnabledInScene();
+                auto enabled = isEnabled() && actor->isEnabledInScene();
+                auto visible = actor->isVisible();
 
                 if( auto element = getElement() )
                 {
-                    element->setVisible( enabled, false );
+                    element->setEnabled( enabled, false );
+                    element->setVisible( visible, false );
                 }
             }
 

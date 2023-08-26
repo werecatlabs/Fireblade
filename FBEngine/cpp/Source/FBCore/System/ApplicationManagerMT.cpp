@@ -1,5 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/ApplicationManagerMT.h>
+#include <FBCore/Core/DebugTrace.h>
 #include <FBCore/Core/Path.h>
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/Memory/PointerUtil.h>
@@ -51,10 +52,10 @@
 #include <FBCore/Interface/UI/IUIManager.h>
 #include <FBCore/Interface/UI/IUIWindow.h>
 #include <FBCore/Interface/Vehicle/IVehicleManager.h>
+#include <FBCore/Interface/Video/IVideoManager.h>
+#include <FBCore/System/RttiClassDefinition.h>
 #include <algorithm>
 #include <cstdio>
-
-#include "FBCore/Core/DebugTrace.h"
 
 namespace fb
 {
@@ -76,6 +77,11 @@ namespace fb
             try
             {
                 setLoadingState( LoadingState::Loading );
+
+                auto numTasks = (size_t)Thread::Task::Count;
+                auto fsmManagers = fb::make_shared<Array<SmartPtr<IFSMManager>>>();
+                fsmManagers->resize( numTasks );
+                m_fsmManagers = fsmManagers;
 
 #if defined FB_PLATFORM_WIN32
                 setProjectPath( "" );
@@ -114,9 +120,6 @@ namespace fb
                 if( loadingState != LoadingState::Unloaded )
                 {
                     setLoadingState( LoadingState::Unloading );
-
-                    auto &gc = GarbageCollector::instance();
-                    gc.update();
 
                     setApplication( nullptr );
 
@@ -188,8 +191,6 @@ namespace fb
                         setSceneManager( nullptr );
                     }
 
-                    gc.update();
-
                     if( auto database = getDatabase() )
                     {
                         database->unload( nullptr );
@@ -243,8 +244,6 @@ namespace fb
                         meshManager->unload( nullptr );
                         setMeshManager( nullptr );
                     }
-
-                    gc.update();
 
                     if( auto ui = getUI() )
                     {
@@ -301,8 +300,6 @@ namespace fb
                         setPhysicsManager( nullptr );
                     }
 
-                    gc.update();
-
                     if( auto fileSystem = getFileSystem() )
                     {
                         fileSystem->unload( nullptr );
@@ -314,8 +311,6 @@ namespace fb
                         graphicsSystem->unload( nullptr );
                         setGraphicsSystem( nullptr );
                     }
-
-                    gc.update();
 
                     ITransformRoot::setInstance( nullptr );
 
@@ -356,15 +351,11 @@ namespace fb
                         setFsmManager( nullptr );
                     }
 
-                    gc.update();
-
                     if( auto factoryManager = getFactoryManager() )
                     {
                         factoryManager->unload( nullptr );
                         setFactoryManager( nullptr );
                     }
-
-                    gc.update();
 
                     setLoadingState( LoadingState::Unloaded );
                 }
@@ -390,9 +381,19 @@ namespace fb
             m_playerSettings = properties;
         }
 
+        SmartPtr<ILogManager> ApplicationManagerMT::getLogManager() const
+        {
+            return m_logManager;
+        }
+
         void ApplicationManagerMT::setLogManager( SmartPtr<ILogManager> logManager )
         {
             m_logManager = logManager;
+        }
+
+        SmartPtr<IFactoryManager> ApplicationManagerMT::getFactoryManager() const
+        {
+            return m_factoryManager;
         }
 
         void ApplicationManagerMT::setFactoryManager( SmartPtr<IFactoryManager> factoryManager )
@@ -448,6 +449,40 @@ namespace fb
         void ApplicationManagerMT::setFsmManager( SmartPtr<IFSMManager> fsmManager )
         {
             m_fsmManager = fsmManager;
+        }
+
+        SmartPtr<IFSMManager> ApplicationManagerMT::getFsmManagerByTask( Thread::Task task ) const
+        {
+            if( auto p = getFSMManagersPtr() )
+            {
+                auto &fsmManagers = *p;
+                return fsmManagers[(u32)task];
+            }
+
+            return nullptr;
+        }
+
+        void ApplicationManagerMT::setFsmManagerByTask( Thread::Task task,
+                                                        SmartPtr<IFSMManager> fsmManager )
+        {
+            auto p = getFSMManagersPtr();
+            if( !p )
+            {
+                p = fb::make_shared<Array<SmartPtr<IFSMManager>>>();
+
+                auto numTasks = (size_t)Thread::Task::Count;
+                p->resize( numTasks );
+
+                setFSMManagersPtr( p );
+            }
+
+            if( p )
+            {
+                auto &fsmManagers = *p;
+
+                auto iTask = (u32)task;
+                fsmManagers[iTask] = fsmManager;
+            }
         }
 
         SmartPtr<procedural::IProceduralEngine> ApplicationManagerMT::getProceduralEngine() const
@@ -584,6 +619,16 @@ namespace fb
         void ApplicationManagerMT::setGraphicsSystem( SmartPtr<render::IGraphicsSystem> graphicsSystem )
         {
             m_graphicsSystem = graphicsSystem;
+        }
+
+        SmartPtr<IVideoManager> ApplicationManagerMT::getVideoManager() const
+        {
+            return m_videoManager;
+        }
+
+        void ApplicationManagerMT::setVideoManager( SmartPtr<IVideoManager> videoManager )
+        {
+            m_videoManager = videoManager;
         }
 
         SmartPtr<ITaskManager> ApplicationManagerMT::getTaskManager() const
@@ -1153,6 +1198,17 @@ namespace fb
             }
 
             return Parameter();
+        }
+
+        SharedPtr<Array<SmartPtr<IFSMManager>>> ApplicationManagerMT::getFSMManagersPtr() const
+        {
+            return m_fsmManagers;
+        }
+
+        void ApplicationManagerMT::setFSMManagersPtr(
+            SharedPtr<Array<SmartPtr<IFSMManager>>> fsmManagers )
+        {
+            m_fsmManagers = fsmManagers;
         }
 
     }  // namespace core

@@ -32,7 +32,7 @@ namespace fb
         return m_state;
     }
 
-    void JobGroupBase::setState( JobState state )
+    void JobGroupBase::setState( IJob::JobState state )
     {
         m_state = state;
     }

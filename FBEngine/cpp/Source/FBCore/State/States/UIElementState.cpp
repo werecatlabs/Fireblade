@@ -2,6 +2,8 @@
 #include <FBCore/State/States/UIElementState.h>
 #include <FBCore/Interface/Graphics/IMaterial.h>
 #include <FBCore/Interface/Graphics/ITexture.h>
+#include "FBCore/Memory/PointerUtil.h"
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
@@ -23,7 +25,7 @@ namespace fb
 
     void UIElementState::setPosition( const Vector2F &position )
     {
-        if(getPosition() != position)
+        if( getPosition() != position )
         {
             SpinRWMutex::ScopedLock lock( m_mutex, true );
             m_position = position;
@@ -39,7 +41,7 @@ namespace fb
 
     void UIElementState::setSize( const Vector2F &size )
     {
-        if(getSize() != size)
+        if( getSize() != size )
         {
             SpinRWMutex::ScopedLock lock( m_mutex, true );
             m_size = size;
@@ -49,8 +51,11 @@ namespace fb
 
     void UIElementState::setVisible( bool visible )
     {
-        m_visible = visible;
-        setDirty( true );
+        if( m_visible != visible )
+        {
+            m_visible = visible;
+            setDirty( true );
+        }
     }
 
     bool UIElementState::isVisible() const
@@ -65,8 +70,11 @@ namespace fb
 
     void UIElementState::setMaterial( SmartPtr<render::IMaterial> material )
     {
-        m_material = material;
-        setDirty( true );
+        if( getMaterial() != material )
+        {
+            m_material = material;
+            setDirty( true );
+        }
     }
 
     SmartPtr<render::ITexture> UIElementState::getTexture() const
@@ -76,8 +84,11 @@ namespace fb
 
     void UIElementState::setTexture( SmartPtr<render::ITexture> texture )
     {
-        m_texture = texture;
-        setDirty( true );
+        if( getTexture() != texture )
+        {
+            m_texture = texture;
+            setDirty( true );
+        }
     }
 
     String UIElementState::getCaption() const
@@ -89,8 +100,11 @@ namespace fb
     void UIElementState::setCaption( const String &caption )
     {
         SpinRWMutex::ScopedLock lock( m_mutex, true );
-        m_caption = caption;
-        setDirty( true );
+        if( m_caption != caption )
+        {
+            m_caption = caption;
+            setDirty( true );
+        }
     }
 
     ColourF UIElementState::getColour() const
@@ -102,8 +116,12 @@ namespace fb
     void UIElementState::setColour( const ColourF &colour )
     {
         SpinRWMutex::ScopedLock lock( m_mutex, true );
-        m_colour = colour;
-        setDirty( true );
+
+        if( m_colour != colour )
+        {
+            m_colour = colour;
+            setDirty( true );
+        }
     }
 
     u32 UIElementState::getTextSize() const
@@ -126,7 +144,7 @@ namespace fb
     void UIElementState::setZOrder( u32 zOrder )
     {
         SpinRWMutex::ScopedLock lock( m_mutex, true );
-        if(m_zOrder != zOrder)
+        if( m_zOrder != zOrder )
         {
             m_zOrder = zOrder;
             setDirty( true );
@@ -142,7 +160,7 @@ namespace fb
     void UIElementState::setHandleInputEvents( bool handleInputEvents )
     {
         SpinRWMutex::ScopedLock lock( m_mutex, true );
-        if(m_handleInputEvents != handleInputEvents)
+        if( m_handleInputEvents != handleInputEvents )
         {
             m_handleInputEvents = handleInputEvents;
             setDirty( true );
@@ -176,4 +194,4 @@ namespace fb
 
         return state;
     }
-} // namespace fb
+}  // namespace fb

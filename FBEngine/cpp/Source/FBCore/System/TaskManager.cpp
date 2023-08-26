@@ -1,5 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/TaskManager.h>
+#include <FBCore/System/RttiClassDefinition.h>
 #include <FBCore/Core/BitUtil.h>
 #include <FBCore/Core/DebugTrace.h>
 #include <FBCore/Core/LogManager.h>
@@ -10,12 +11,12 @@
 #include <FBCore/Interface/System/ITimer.h>
 #include <FBCore/Interface/FSM/IFSM.h>
 #include <FBCore/System/Task.h>
-#include "FBCore/Core/FSMManager.h"
-#include "FBCore/System/TaskLock.h"
+#include <FBCore/Core/FSMManager.h>
+#include <FBCore/System/TaskLock.h>
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb::render, TaskManager, SharedObject<ITaskManager> );
+    FB_CLASS_REGISTER_DERIVED( fb, TaskManager, ITaskManager );
     u32 TaskManager::m_idExt = 0;
 
     TaskManager::TaskManager()
@@ -34,17 +35,30 @@ namespace fb
         {
             setLoadingState( LoadingState::Loading );
 
+            auto numTasks = static_cast<u32>( Thread::Task::Count );
+
+            m_tasks.resize( numTasks );
+            m_affinity.resize( numTasks );
+            m_taskFlags.resize( numTasks );
+            m_targetfps.resize( numTasks );
+            m_nextUpdateTimes.resize( numTasks );
+            m_taskIds.resize( numTasks );
+            m_states.resize( numTasks );
+            m_owners.resize( numTasks );
+            m_threadHint.resize( numTasks );
+
             auto fsmManager = fb::make_ptr<FSMManager>();
+            fsmManager->setGrowSize( numTasks );
             fsmManager->load( nullptr );
             setFSMManager( fsmManager );
 
             auto count = 0;
             for( auto &task : m_tasks )
             {
+                task = fb::make_ptr<Task>();
                 auto eTask = static_cast<Thread::Task>( count );
-                task.setTask( eTask );
-                task.load( nullptr );
-                task.addReference();
+                task->setTask( eTask );
+                task->load( nullptr );
 
                 count++;
             }
@@ -59,12 +73,13 @@ namespace fb
                 nextUpdateTime = 0.0;
             }
 
-            for( size_t i = 0; i < static_cast<size_t>( Thread::Task::Count ); ++i )
+            for( size_t i = 0; i < numTasks; ++i )
             {
-                m_taskIds[i] = static_cast<Thread::Task>( i );
+                auto eTask = static_cast<Thread::Task>( i );
+                m_taskIds[i] = eTask;
             }
 
-            for( u32 i = 0; i < static_cast<u32>( Thread::Task::Count ); ++i )
+            for( u32 i = 0; i < numTasks; ++i )
             {
                 setFlags( i, Task::enabled_flag, true );
                 setFlags( i, Task::executing_flag, false );
@@ -92,7 +107,7 @@ namespace fb
 
             for( auto &task : m_tasks )
             {
-                task.unload( nullptr );
+                task->unload( nullptr );
             }
 
             setLoadingState( LoadingState::Unloaded );
@@ -174,7 +189,7 @@ namespace fb
                                     auto &pTask = m_tasks[i];
                                     // if( m_nextUpdateTimes[i] < t )
                                     {
-                                        pTask.update();
+                                        pTask->update();
                                     }
                                 }
                             }
@@ -197,7 +212,7 @@ namespace fb
 
                                         if( m_nextUpdateTimes[i] < t )
                                         {
-                                            pTask.update();
+                                            pTask->update();
                                         }
                                     }
                                 }
@@ -225,7 +240,7 @@ namespace fb
 
                                         if( m_nextUpdateTimes[i] < t )
                                         {
-                                            pTask.update();
+                                            pTask->update();
                                         }
                                     }
                                 }
@@ -250,7 +265,7 @@ namespace fb
 
                                 if( m_nextUpdateTimes[i] < t )
                                 {
-                                    pTask.update();
+                                    pTask->update();
                                 }
                             }
                         }
@@ -288,8 +303,7 @@ namespace fb
         if( isLoaded() )
         {
             auto iTaskIndex = static_cast<size_t>( taskId );
-            auto task = (ITask *)&m_tasks[iTaskIndex];
-            return SmartPtr<ITask>( task );
+            return m_tasks[iTaskIndex];
         }
 
         return nullptr;
@@ -336,15 +350,6 @@ namespace fb
         FB_ASSERT( id < m_taskFlags.size() );
         const auto &flags = m_taskFlags[id].load();
         m_taskFlags[id] = BitUtil::setFlagValue( flags, flag, value );
-    }
-
-    bool TaskManager::getFlags( u32 id, u32 flag ) const
-    {
-        SpinRWMutex::ScopedLock lock( m_mutex, false );
-
-        FB_ASSERT( id < m_taskFlags.size() );
-        const auto &flags = m_taskFlags[id].load();
-        return BitUtil::getFlagValue( flags, flag );
     }
 
     atomic_u32 *TaskManager::getFlagsPtr( u32 id ) const
@@ -446,7 +451,7 @@ namespace fb
     {
         for( auto &t : m_tasks )
         {
-            while( !( t.getState() == ITask::State::None || t.getState() == ITask::State::Idle ) )
+            while( !( t->getState() == ITask::State::None || t->getState() == ITask::State::Idle ) )
             {
                 Thread::yield();
             }
@@ -457,7 +462,7 @@ namespace fb
     {
         for( auto &t : m_tasks )
         {
-            t.stop();
+            t->stop();
         }
     }
 
@@ -465,7 +470,7 @@ namespace fb
     {
         for( auto &t : m_tasks )
         {
-            t.reset();
+            t->reset();
         }
     }
 

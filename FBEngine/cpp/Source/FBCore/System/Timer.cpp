@@ -3,7 +3,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, Timer, SharedObject<ITimer> );
+    FB_CLASS_REGISTER_DERIVED( fb, Timer, ITimer );
 
     Timer::Timer() : m_minDeltaTime( 0.0 ), m_maxDeltaTime( 1e10 ), m_enableSmoothing( false )
     {

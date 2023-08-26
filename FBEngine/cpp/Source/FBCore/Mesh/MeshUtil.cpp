@@ -24,7 +24,7 @@ namespace fb
         auto cleanMesh = fb::make_ptr<Mesh>();
 
         auto subMeshes = mesh->getSubMeshes();
-        for(auto subMesh : subMeshes)
+        for( auto subMesh : subMeshes )
         {
             auto cleanSubMesh = clean( subMesh, weldTolerance );
             FB_ASSERT( cleanSubMesh );
@@ -57,7 +57,7 @@ namespace fb
             IVertexDeclaration::VertexElementSemantic::VES_POSITION );
 
         u32 fbVertexSize = fbVertexDeclaration->getSize();
-        auto fbVertexDataPtr = static_cast<u8 *>(vertexBuffer->getVertexData());
+        auto fbVertexDataPtr = static_cast<u8 *>( vertexBuffer->getVertexData() );
 
         f32 *fbElementData = nullptr;
         f32 *fbElementData2 = nullptr;
@@ -68,18 +68,18 @@ namespace fb
         Array<std::pair<u32, u32>> weldedVertices;
         weldedVertices.reserve( vertexCount );
 
-        for(u32 x = 0; x < vertexCount; ++x, fbVertexDataPtr += fbVertexSize)
+        for( u32 x = 0; x < vertexCount; ++x, fbVertexDataPtr += fbVertexSize )
         {
             auto wasWelded = false;
-            for(auto p : weldedVertices)
+            for( auto p : weldedVertices )
             {
-                if(p.first == x)
+                if( p.first == x )
                 {
                     wasWelded = true;
                 }
             }
 
-            if(wasWelded)
+            if( wasWelded )
             {
                 continue;
             }
@@ -88,11 +88,11 @@ namespace fb
             auto vertexPosition1 = Vector3F( fbElementData[0], fbElementData[1], fbElementData[2] );
 
             auto welded = false;
-            auto fbVertexDataPtr2 = static_cast<u8 *>(vertexBuffer->getVertexData());
+            auto fbVertexDataPtr2 = static_cast<u8 *>( vertexBuffer->getVertexData() );
 
-            for(u32 y = 0; y < vertexCount; ++y, fbVertexDataPtr2 += fbVertexSize)
+            for( u32 y = 0; y < vertexCount; ++y, fbVertexDataPtr2 += fbVertexSize )
             {
-                if(x == y)
+                if( x == y )
                 {
                     continue;
                 }
@@ -102,7 +102,7 @@ namespace fb
                     Vector3F( fbElementData2[0], fbElementData2[1], fbElementData2[2] );
 
                 auto diff = ( vertexPosition2 - vertexPosition1 ).length();
-                if(diff < weldTolerance)
+                if( diff < weldTolerance )
                 {
                     auto weldedPair = std::make_pair( y, x );
                     weldedVertices.push_back( weldedPair );
@@ -117,14 +117,14 @@ namespace fb
         auto cleanIndexBuffer = cleanSubMesh->getIndexBuffer();
 
         auto numCleanVertices = cleanVertices.size();
-        cleanVertexBuffer->setNumVerticies( static_cast<u32>(numCleanVertices) );
+        cleanVertexBuffer->setNumVerticies( static_cast<u32>( numCleanVertices ) );
 
-        auto cleanVertexDataPtr = static_cast<f32 *>(vertexBuffer->getVertexData());
+        auto cleanVertexDataPtr = static_cast<f32 *>( vertexBuffer->getVertexData() );
 
-        fbVertexDataPtr = static_cast<u8 *>(vertexBuffer->getVertexData());
-        for(u32 x = 0; x < vertexCount; ++x, fbVertexDataPtr += fbVertexSize)
+        fbVertexDataPtr = static_cast<u8 *>( vertexBuffer->getVertexData() );
+        for( u32 x = 0; x < vertexCount; ++x, fbVertexDataPtr += fbVertexSize )
         {
-            if(std::find( cleanVertices.begin(), cleanVertices.end(), x ) != cleanVertices.end())
+            if( std::find( cleanVertices.begin(), cleanVertices.end(), x ) != cleanVertices.end() )
             {
                 posElem->getElementData( fbVertexDataPtr, &fbElementData );
                 auto vertexPosition1 = Vector3F( fbElementData[0], fbElementData[1], fbElementData[2] );
@@ -142,25 +142,25 @@ namespace fb
 
         // bool useWords = (vertexCount >= std::numeric_limits<u16>::max()) ? false : true;
 
-        if(indexBuffer->getIndexType() == IIndexBuffer::Type::IT_32BIT)
+        if( indexBuffer->getIndexType() == IIndexBuffer::Type::IT_32BIT )
         {
-            const u32 *fbIndexData = reinterpret_cast<u32 *>(indexBuffer->getIndexData());
+            const u32 *fbIndexData = reinterpret_cast<u32 *>( indexBuffer->getIndexData() );
 
-            for(u32 i = 0; i < indexCount; ++i)
+            for( u32 i = 0; i < indexCount; ++i )
             {
                 auto index = fbIndexData[i];
 
                 auto wasWelded = false;
-                for(auto p : weldedVertices)
+                for( auto p : weldedVertices )
                 {
-                    if(p.first == index)
+                    if( p.first == index )
                     {
                         index = p.second;
                         wasWelded = true;
                     }
                 }
 
-                if(wasWelded)
+                if( wasWelded )
                 {
                     continue;
                 }
@@ -169,10 +169,10 @@ namespace fb
             }
 
             auto numCleanIndices = cleanIndices.size();
-            cleanIndexBuffer->setNumIndices( static_cast<u32>(numCleanIndices) );
+            cleanIndexBuffer->setNumIndices( static_cast<u32>( numCleanIndices ) );
 
-            auto cleanIndexData = reinterpret_cast<u32 *>(cleanIndexBuffer->getIndexData());
-            for(u32 i = 0; i < numCleanIndices; ++i)
+            auto cleanIndexData = reinterpret_cast<u32 *>( cleanIndexBuffer->getIndexData() );
+            for( u32 i = 0; i < numCleanIndices; ++i )
             {
                 auto index = cleanIndices[i];
                 *cleanIndexData++ = index;
@@ -180,23 +180,23 @@ namespace fb
         }
         else
         {
-            const u16 *fbIndexData = reinterpret_cast<u16 *>(indexBuffer->getIndexData());
+            const u16 *fbIndexData = reinterpret_cast<u16 *>( indexBuffer->getIndexData() );
 
-            for(u32 i = 0; i < indexCount; ++i)
+            for( u32 i = 0; i < indexCount; ++i )
             {
                 auto index = fbIndexData[i];
 
                 auto wasWelded = false;
-                for(auto p : weldedVertices)
+                for( auto p : weldedVertices )
                 {
-                    if(p.first == index)
+                    if( p.first == index )
                     {
-                        index = static_cast<u16>(p.second);
+                        index = static_cast<u16>( p.second );
                         wasWelded = true;
                     }
                 }
 
-                if(wasWelded)
+                if( wasWelded )
                 {
                     continue;
                 }
@@ -205,13 +205,13 @@ namespace fb
             }
 
             auto numCleanIndices = cleanIndices.size();
-            cleanIndexBuffer->setNumIndices( static_cast<u32>(numCleanIndices) );
+            cleanIndexBuffer->setNumIndices( static_cast<u32>( numCleanIndices ) );
 
-            auto cleanIndexData = reinterpret_cast<u16 *>(cleanIndexBuffer->getIndexData());
-            for(u32 i = 0; i < numCleanIndices; ++i)
+            auto cleanIndexData = reinterpret_cast<u16 *>( cleanIndexBuffer->getIndexData() );
+            for( u32 i = 0; i < numCleanIndices; ++i )
             {
                 auto index = cleanIndices[i];
-                *cleanIndexData++ = static_cast<u16>(index);
+                *cleanIndexData++ = static_cast<u16>( index );
             }
         }
 
@@ -248,10 +248,10 @@ namespace fb
             IVertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES, 1 );
 
         u32 fbVertexSize = fbVertexDeclaration->getSize();
-        auto fbVertexDataPtr = static_cast<u8 *>(fbVertexBuffer->getVertexData());
+        auto fbVertexDataPtr = static_cast<u8 *>( fbVertexBuffer->getVertexData() );
         f32 *fbElementData = nullptr;
 
-        for(u32 vertIdx = 0; vertIdx < fbVertexCount; ++vertIdx, fbVertexDataPtr += fbVertexSize)
+        for( u32 vertIdx = 0; vertIdx < fbVertexCount; ++vertIdx, fbVertexDataPtr += fbVertexSize )
         {
             posElem->getElementData( fbVertexDataPtr, &fbElementData );
 
@@ -298,12 +298,12 @@ namespace fb
 
         // bool useWords = (fbVertexCount >= std::numeric_limits<u16>::max()) ? false : true;
 
-        if(fbIndexBuffer->getIndexType() == IIndexBuffer::Type::IT_32BIT)
+        if( fbIndexBuffer->getIndexType() == IIndexBuffer::Type::IT_32BIT )
         {
-            const u32 *fbIndexData = reinterpret_cast<u32 *>(fbIndexBuffer->getIndexData());
+            const u32 *fbIndexData = reinterpret_cast<u32 *>( fbIndexBuffer->getIndexData() );
 
             // for (s32 i = (s32)fbIndexCount - 1; i >= 0; --i)
-            for(u32 i = 0; i < fbIndexCount; ++i)
+            for( u32 i = 0; i < fbIndexCount; ++i )
             {
                 auto index = fbIndexData[i];
                 indices.push_back( index );
@@ -311,9 +311,9 @@ namespace fb
         }
         else
         {
-            const u16 *fbIndexData = reinterpret_cast<u16 *>(fbIndexBuffer->getIndexData());
+            const u16 *fbIndexData = reinterpret_cast<u16 *>( fbIndexBuffer->getIndexData() );
             // for (s32 i = (s32)fbIndexCount - 1; i >= 0; --i)
-            for(u32 i = 0; i < fbIndexCount; ++i)
+            for( u32 i = 0; i < fbIndexCount; ++i )
             {
                 auto index = fbIndexData[i];
                 indices.push_back( index );
@@ -355,21 +355,21 @@ namespace fb
         vertexDeclaration->addElement( 0, sizeof( Vector3F ),
                                        VertexDeclaration::VertexElementSemantic::VES_NORMAL,
                                        IVertexElement::VertexElementType::VET_FLOAT3 );
-        vertexDeclaration->addElement(
-            0, sizeof( Vector2F ), VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
-            IVertexElement::VertexElementType::VET_FLOAT2, 0 );
-        vertexDeclaration->addElement(
-            0, sizeof( Vector2F ), VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
-            IVertexElement::VertexElementType::VET_FLOAT2, 1 );
+        vertexDeclaration->addElement( 0, sizeof( Vector2F ),
+                                       VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
+                                       IVertexElement::VertexElementType::VET_FLOAT2, 0 );
+        vertexDeclaration->addElement( 0, sizeof( Vector2F ),
+                                       VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
+                                       IVertexElement::VertexElementType::VET_FLOAT2, 1 );
 
         SmartPtr<IVertexBuffer> vertexBuffer( new VertexBuffer );
         vertexBuffer->setVertexDeclaration( vertexDeclaration );
 
-        vertexBuffer->setNumVerticies( static_cast<u32>(numVertices) );
-        auto vertexData = static_cast<f32 *>(vertexBuffer->createVertexData());
+        vertexBuffer->setNumVerticies( static_cast<u32>( numVertices ) );
+        auto vertexData = static_cast<f32 *>( vertexBuffer->createVertexData() );
         f32 *vertexDataPtr = vertexData;
 
-        for(u32 vertIdx = 0; vertIdx < numVertices; ++vertIdx)
+        for( u32 vertIdx = 0; vertIdx < numVertices; ++vertIdx )
         {
             Vector3F position = positions[vertIdx];
             *vertexDataPtr++ = position.X();
@@ -392,10 +392,10 @@ namespace fb
 
         auto numIndices = positions.size();
         SmartPtr<IIndexBuffer> indexBuffer( new IndexBuffer );
-        indexBuffer->setNumIndices( static_cast<u32>(numIndices) );
-        auto indexDataPtr = static_cast<u32 *>(indexBuffer->createIndexData());
+        indexBuffer->setNumIndices( static_cast<u32>( numIndices ) );
+        auto indexDataPtr = static_cast<u32 *>( indexBuffer->createIndexData() );
 
-        for(u32 indexIdx = 0; indexIdx < numIndices; ++indexIdx)
+        for( u32 indexIdx = 0; indexIdx < numIndices; ++indexIdx )
         {
             *indexDataPtr++ = indexIdx;
         }
@@ -420,21 +420,21 @@ namespace fb
         vertexDeclaration->addElement( 0, sizeof( Vector3F ),
                                        VertexDeclaration::VertexElementSemantic::VES_NORMAL,
                                        IVertexElement::VertexElementType::VET_FLOAT3 );
-        vertexDeclaration->addElement(
-            0, sizeof( Vector2F ), VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
-            IVertexElement::VertexElementType::VET_FLOAT2, 0 );
-        vertexDeclaration->addElement(
-            0, sizeof( Vector2F ), VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
-            IVertexElement::VertexElementType::VET_FLOAT2, 1 );
+        vertexDeclaration->addElement( 0, sizeof( Vector2F ),
+                                       VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
+                                       IVertexElement::VertexElementType::VET_FLOAT2, 0 );
+        vertexDeclaration->addElement( 0, sizeof( Vector2F ),
+                                       VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
+                                       IVertexElement::VertexElementType::VET_FLOAT2, 1 );
 
         SmartPtr<IVertexBuffer> vertexBuffer( new VertexBuffer );
         vertexBuffer->setVertexDeclaration( vertexDeclaration );
 
-        vertexBuffer->setNumVerticies( static_cast<u32>(numVertices) );
-        auto vertexData = static_cast<f32 *>(vertexBuffer->createVertexData());
+        vertexBuffer->setNumVerticies( static_cast<u32>( numVertices ) );
+        auto vertexData = static_cast<f32 *>( vertexBuffer->createVertexData() );
         f32 *vertexDataPtr = vertexData;
 
-        for(u32 vertIdx = 0; vertIdx < numVertices; ++vertIdx)
+        for( u32 vertIdx = 0; vertIdx < numVertices; ++vertIdx )
         {
             Vector3F position = positions[vertIdx];
             *vertexDataPtr++ = position.X();
@@ -457,10 +457,10 @@ namespace fb
 
         auto numIndices = positions.size();
         SmartPtr<IIndexBuffer> indexBuffer( new IndexBuffer );
-        indexBuffer->setNumIndices( static_cast<u32>(numIndices) );
-        auto indexDataPtr = static_cast<u32 *>(indexBuffer->createIndexData());
+        indexBuffer->setNumIndices( static_cast<u32>( numIndices ) );
+        auto indexDataPtr = static_cast<u32 *>( indexBuffer->createIndexData() );
 
-        for(u32 indexIdx = 0; indexIdx < numIndices; ++indexIdx)
+        for( u32 indexIdx = 0; indexIdx < numIndices; ++indexIdx )
         {
             *indexDataPtr++ = indexIdx;
         }
@@ -474,13 +474,13 @@ namespace fb
     {
         SmartPtr<IMesh> newMesh( new Mesh );
 
-        for(u32 meshIdx = 0; meshIdx < meshTransformData.size(); ++meshIdx)
+        for( u32 meshIdx = 0; meshIdx < meshTransformData.size(); ++meshIdx )
         {
             const MeshTransformData &transformData = meshTransformData[meshIdx];
             const SmartPtr<IMesh> &curMesh = transformData.Mesh;
 
             const Array<SmartPtr<ISubMesh>> subMeshes = curMesh->getSubMeshes();
-            for(u32 subMeshIdx = 0; subMeshIdx < subMeshes.size(); ++subMeshIdx)
+            for( u32 subMeshIdx = 0; subMeshIdx < subMeshes.size(); ++subMeshIdx )
             {
                 SmartPtr<ISubMesh> subMesh = subMeshes[subMeshIdx];
 
@@ -507,10 +507,10 @@ namespace fb
                         VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES, 1 );
 
                 u32 fbVertexSize = vertexBuffer->getVertexDeclaration()->getSize();
-                auto fbVertexDataPtr = static_cast<u8 *>(vertexBuffer->getVertexData());
+                auto fbVertexDataPtr = static_cast<u8 *>( vertexBuffer->getVertexData() );
                 f32 *fbElementData = nullptr;
 
-                for(u32 j = 0; j < vertexCount; ++j, fbVertexDataPtr += fbVertexSize)
+                for( u32 j = 0; j < vertexCount; ++j, fbVertexDataPtr += fbVertexSize )
                 {
                     posElem->getElementData( fbVertexDataPtr, &fbElementData );
                     Vector3F position( fbElementData[0], fbElementData[1], fbElementData[2] );
@@ -532,7 +532,7 @@ namespace fb
                     fbElementData[1] = normal.Y();
                     fbElementData[2] = normal.Z();
 
-                    if(texCoordElem0)
+                    if( texCoordElem0 )
                     {
                         texCoordElem0->getElementData( fbVertexDataPtr, &fbElementData );
                         Vector2F texCoord0( fbElementData[0], fbElementData[1] );
@@ -542,16 +542,16 @@ namespace fb
                         fbElementData[1] += transformData.UVOffsets[0].Y();
                     }
 
-                    if(texCoordElem1)
+                    if( texCoordElem1 )
                     {
                         texCoordElem1->getElementData( fbVertexDataPtr, &fbElementData );
                         Vector2F texCoord1( fbElementData[0], fbElementData[1] );
                         texCoord1.X() = MathF::Mod( texCoord1.X(), 1.0f );
                         texCoord1.Y() = MathF::Mod( texCoord1.Y(), 1.0f );
-                        if(texCoord1.X() < 0.0f)
+                        if( texCoord1.X() < 0.0f )
                             texCoord1.X() = 1.0f + texCoord1.X();
 
-                        if(texCoord1.Y() < 0.0f)
+                        if( texCoord1.Y() < 0.0f )
                             texCoord1.Y() = 1.0f + texCoord1.Y();
 
                         fbElementData[0] = texCoord1.X() * transformData.UVScaleData[1].X();
@@ -573,12 +573,12 @@ namespace fb
     {
         SmartPtr<IMesh> newMesh( new Mesh );
 
-        for(u32 meshIdx = 0; meshIdx < meshes.size(); ++meshIdx)
+        for( u32 meshIdx = 0; meshIdx < meshes.size(); ++meshIdx )
         {
             const SmartPtr<IMesh> &curMesh = meshes[meshIdx];
 
             const Array<SmartPtr<ISubMesh>> subMeshes = curMesh->getSubMeshes();
-            for(u32 subMeshIdx = 0; subMeshIdx < subMeshes.size(); ++subMeshIdx)
+            for( u32 subMeshIdx = 0; subMeshIdx < subMeshes.size(); ++subMeshIdx )
             {
                 SmartPtr<ISubMesh> subMesh = subMeshes[subMeshIdx];
 
@@ -599,10 +599,10 @@ namespace fb
                         VertexDeclaration::VertexElementSemantic::VES_NORMAL );
 
                 u32 fbVertexSize = vertexBuffer->getVertexDeclaration()->getSize();
-                auto fbVertexDataPtr = static_cast<u8 *>(vertexBuffer->getVertexData());
+                auto fbVertexDataPtr = static_cast<u8 *>( vertexBuffer->getVertexData() );
                 f32 *fbElementData = nullptr;
 
-                for(u32 j = 0; j < vertexCount; ++j, fbVertexDataPtr += fbVertexSize)
+                for( u32 j = 0; j < vertexCount; ++j, fbVertexDataPtr += fbVertexSize )
                 {
                     posElem->getElementData( fbVertexDataPtr, &fbElementData );
                     Vector3F position( fbElementData[0], fbElementData[1], fbElementData[2] );
@@ -621,19 +621,19 @@ namespace fb
     {
         SmartPtr<IMesh> newMesh( new Mesh );
 
-        if(meshes.size() != transformations.size())
+        if( meshes.size() != transformations.size() )
         {
             // MessageBoxUtil::show("MeshUtil::mergeMeshes - error transformations do not match the
             // number of meshes");
         }
 
-        for(u32 meshIdx = 0; meshIdx < meshes.size() && meshIdx < transformations.size(); ++meshIdx)
+        for( u32 meshIdx = 0; meshIdx < meshes.size() && meshIdx < transformations.size(); ++meshIdx )
         {
             const SmartPtr<IMesh> &curMesh = meshes[meshIdx];
             const Matrix4F &transformation = transformations[meshIdx];
 
             const Array<SmartPtr<ISubMesh>> subMeshes = curMesh->getSubMeshes();
-            for(u32 subMeshIdx = 0; subMeshIdx < subMeshes.size(); ++subMeshIdx)
+            for( u32 subMeshIdx = 0; subMeshIdx < subMeshes.size(); ++subMeshIdx )
             {
                 SmartPtr<ISubMesh> subMesh = subMeshes[subMeshIdx];
 
@@ -653,10 +653,10 @@ namespace fb
                 // vertexBuffer->getVertexDeclaration()->findElementBySemantic(fb::VertexDeclaration::VES_NORMAL);
 
                 u32 fbVertexSize = vertexBuffer->getVertexDeclaration()->getSize();
-                auto fbVertexDataPtr = static_cast<u8 *>(vertexBuffer->getVertexData());
+                auto fbVertexDataPtr = static_cast<u8 *>( vertexBuffer->getVertexData() );
                 f32 *fbElementData = nullptr;
 
-                for(u32 j = 0; j < vertexCount; ++j, fbVertexDataPtr += fbVertexSize)
+                for( u32 j = 0; j < vertexCount; ++j, fbVertexDataPtr += fbVertexSize )
                 {
                     posElem->getElementData( fbVertexDataPtr, &fbElementData );
                     Vector3F position( fbElementData[0], fbElementData[1], fbElementData[2] );
@@ -679,7 +679,7 @@ namespace fb
 
         // sort sub meshes by material name
         Array<SmartPtr<ISubMesh>> subMeshList = mesh->getSubMeshes();
-        for(u32 i = 0; i < subMeshList.size(); ++i)
+        for( u32 i = 0; i < subMeshList.size(); ++i )
         {
             SmartPtr<ISubMesh> subMesh = subMeshList[i];
             String materialName = subMesh->getMaterialName();
@@ -690,13 +690,13 @@ namespace fb
         SmartPtr<IMesh> newMesh( new Mesh );
 
         auto it = matMeshMap.begin();
-        for(; it != matMeshMap.end(); ++it)
+        for( ; it != matMeshMap.end(); ++it )
         {
             u32 numTotalIndices = 0;
             u32 numTotalVertices = 0;
 
             const Array<SmartPtr<ISubMesh>> &matSubMeshList = it->second;
-            for(u32 i = 0; i < matSubMeshList.size(); ++i)
+            for( u32 i = 0; i < matSubMeshList.size(); ++i )
             {
                 SmartPtr<ISubMesh> subMesh = matSubMeshList[i];
                 SmartPtr<IVertexBuffer> vertexBuffer = subMesh->getVertexBuffer();
@@ -739,7 +739,7 @@ namespace fb
                 vertexBuffer->setVertexDeclaration( vertexDeclaration );
 
                 vertexBuffer->setNumVerticies( numTotalVertices );
-                auto newVertexData = static_cast<f32 *>(vertexBuffer->createVertexData());
+                auto newVertexData = static_cast<f32 *>( vertexBuffer->createVertexData() );
                 newVertexDataPtr = newVertexData;
             }
 
@@ -753,31 +753,31 @@ namespace fb
                 subMesh->setIndexBuffer( indexBuffer );
 
                 indexBuffer->setNumIndices( numTotalIndices );
-                newIndexDataPtr = static_cast<u32 *>(indexBuffer->createIndexData());
+                newIndexDataPtr = static_cast<u32 *>( indexBuffer->createIndexData() );
             }
 
             // populate new vertex buffer
-            for(u32 i = 0; i < matSubMeshList.size(); ++i)
+            for( u32 i = 0; i < matSubMeshList.size(); ++i )
             {
                 SmartPtr<ISubMesh> subMesh = matSubMeshList[i];
 
                 SmartPtr<IVertexBuffer> vertexBuffer = subMesh->getVertexBuffer();
-                auto vertexData = static_cast<f32 *>(vertexBuffer->getVertexData());
+                auto vertexData = static_cast<f32 *>( vertexBuffer->getVertexData() );
                 u32 numVerts = vertexBuffer->getNumVerticies();
                 u32 vertSize = vertexBuffer->getVertexDeclaration()->getSize();
                 // u32 totalVertexDataSize = numVerts * vertSize;
 
                 u32 numFloats = numVerts * vertSize / sizeof( f32 );
-                for(u32 vertIdx = 0; vertIdx < numFloats; ++vertIdx)
+                for( u32 vertIdx = 0; vertIdx < numFloats; ++vertIdx )
                 {
                     *newVertexDataPtr++ = vertexData[vertIdx];
                 }
 
                 SmartPtr<IIndexBuffer> indexBuffer = subMesh->getIndexBuffer();
-                auto indexData = static_cast<u32 *>(indexBuffer->getIndexData());
+                auto indexData = static_cast<u32 *>( indexBuffer->getIndexData() );
                 u32 numIndices = indexBuffer->getNumIndices();
 
-                for(u32 idx = 0; idx < numIndices; ++idx)
+                for( u32 idx = 0; idx < numIndices; ++idx )
                 {
                     u32 indexValue = indexData[idx] + indexOffset;
                     // FB_ASSERT_TRUE(!(indexValue < numTotalVertices));
@@ -795,7 +795,7 @@ namespace fb
     bool MeshUtil::isMeshValid( SmartPtr<IMesh> mesh )
     {
         const Array<SmartPtr<ISubMesh>> subMeshes = mesh->getSubMeshes();
-        for(u32 subMeshIdx = 0; subMeshIdx < subMeshes.size(); ++subMeshIdx)
+        for( u32 subMeshIdx = 0; subMeshIdx < subMeshes.size(); ++subMeshIdx )
         {
             SmartPtr<ISubMesh> subMesh = subMeshes[subMeshIdx];
 
@@ -823,10 +823,10 @@ namespace fb
                     VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES, 1 );
 
             u32 fbVertexSize = vertexBuffer->getVertexDeclaration()->getSize();
-            auto fbVertexDataPtr = static_cast<u8 *>(vertexBuffer->getVertexData());
+            auto fbVertexDataPtr = static_cast<u8 *>( vertexBuffer->getVertexData() );
             f32 *fbElementData = nullptr;
 
-            for(u32 j = 0; j < numVerts; ++j, fbVertexDataPtr += fbVertexSize)
+            for( u32 j = 0; j < numVerts; ++j, fbVertexDataPtr += fbVertexSize )
             {
                 Vertex vertex;
 
@@ -838,14 +838,14 @@ namespace fb
                 Vector3F normal( fbElementData[0], fbElementData[1], fbElementData[2] );
                 vertex.Normal = normal;
 
-                if(texCoordElem0)
+                if( texCoordElem0 )
                 {
                     texCoordElem0->getElementData( fbVertexDataPtr, &fbElementData );
                     Vector2F texCoord0( fbElementData[0], fbElementData[1] );
                     vertex.TexCoord0 = texCoord0;
                 }
 
-                if(texCoordElem1)
+                if( texCoordElem1 )
                 {
                     texCoordElem1->getElementData( fbVertexDataPtr, &fbElementData );
                     Vector2F texCoord1( fbElementData[0], fbElementData[1] );
@@ -856,10 +856,10 @@ namespace fb
             }
 
             // check if vertices are finite
-            for(u32 i = 0; i < vertices.size(); ++i)
+            for( u32 i = 0; i < vertices.size(); ++i )
             {
                 Vertex &vertex = vertices[i];
-                if(!vertex.isFinite())
+                if( !vertex.isFinite() )
                 {
                     // FB_ASSERT_TRUE(true);
                     FB_LOG_MESSAGE( "MeshUtil", "Error" );
@@ -867,18 +867,18 @@ namespace fb
             }
 
             SmartPtr<IIndexBuffer> indexBuffer = subMesh->getIndexBuffer();
-            const u32 *fbIndexData = reinterpret_cast<u32 *>(indexBuffer->getIndexData());
-            for(u32 i = 0; i < indexBuffer->getNumIndices(); ++i)
+            const u32 *fbIndexData = reinterpret_cast<u32 *>( indexBuffer->getIndexData() );
+            for( u32 i = 0; i < indexBuffer->getNumIndices(); ++i )
             {
                 u32 index = fbIndexData[i];
-                if(index >= vertices.size())
+                if( index >= vertices.size() )
                 {
                     // FB_ASSERT_TRUE(true);
                     FB_LOG_MESSAGE( "MeshUtil", "Error" );
                 }
 
                 Vertex &vertex = vertices[index];
-                if(!vertex.isFinite())
+                if( !vertex.isFinite() )
                 {
                     // FB_ASSERT_TRUE(true);
                     FB_LOG_MESSAGE( "MeshUtil", "Error" );
@@ -889,7 +889,6 @@ namespace fb
         return false;
     }
 
-    
     SmartPtr<IMesh> MeshUtil::getMesh( const Array<f32> &heightData, f32 worldScale, f32 heightScale,
                                        u32 tileSize )
     {
@@ -914,14 +913,14 @@ namespace fb
         u32 numVerticies = tileSize * tileSize;
 
         vertexBuffer->setNumVerticies( numVerticies );
-        auto vertexData = static_cast<f32 *>(vertexBuffer->createVertexData());
+        auto vertexData = static_cast<f32 *>( vertexBuffer->createVertexData() );
         f32 *vertexDataPtr = vertexData;
 
         u32 numVerticiesAdded = 0;
-        const f32 tdSize = 1.0f / static_cast<f32>(tileSize - 1);
-        for(s32 x = 0; x < static_cast<s32>(tileSize); ++x)
+        const f32 tdSize = 1.0f / static_cast<f32>( tileSize - 1 );
+        for( s32 x = 0; x < static_cast<s32>( tileSize ); ++x )
         {
-            for(s32 z = 0; z < static_cast<s32>(tileSize); ++z)
+            for( s32 z = 0; z < static_cast<s32>( tileSize ); ++z )
             {
                 // s32 indexZ = -z;
 
@@ -931,9 +930,9 @@ namespace fb
                 f32 height = heightData[x + z * tileSize];
 
                 Vector3F position;
-                position.X() = static_cast<f32>(x);
+                position.X() = static_cast<f32>( x );
                 position.Y() = height * heightScale;
-                position.Z() = static_cast<f32>(z);
+                position.Z() = static_cast<f32>( z );
                 position = position * worldScale;
 
                 *vertexDataPtr++ = position.X();
@@ -966,7 +965,7 @@ namespace fb
         SmartPtr<IIndexBuffer> indexBuffer( new IndexBuffer );
         indexBuffer->setNumIndices( numIndices );
         indexBuffer->setIndexType( IndexBuffer::Type::IT_32BIT );
-        auto indexDataPtr = static_cast<u32 *>(indexBuffer->createIndexData());
+        auto indexDataPtr = static_cast<u32 *>( indexBuffer->createIndexData() );
 
         u32 index11;
         u32 index21;
@@ -975,9 +974,9 @@ namespace fb
         s32 step = 6;
 
         u32 numIndicesSet = 0;
-        for(s32 z = 0; z < static_cast<s32>(tileSize) - 1; z += step)
+        for( s32 z = 0; z < static_cast<s32>( tileSize ) - 1; z += step )
         {
-            for(s32 x = 0; x < static_cast<s32>(tileSize) - 1; x += step)
+            for( s32 x = 0; x < static_cast<s32>( tileSize ) - 1; x += step )
             {
                 index11 = getIndex( tileSize, x, z );
                 index21 = getIndex( tileSize, x + step, z );
@@ -1090,7 +1089,7 @@ namespace fb
 
     u16 MeshUtil::getTypeCount( IVertexElement::VertexElementType etype )
     {
-        switch(etype)
+        switch( etype )
         {
         case IVertexElement::VertexElementType::VET_FLOAT1:
         case IVertexElement::VertexElementType::VET_SHORT1:
@@ -1138,21 +1137,21 @@ namespace fb
     IVertexElement::VertexElementType MeshUtil::multiplyTypeCount(
         IVertexElement::VertexElementType baseType, u16 count )
     {
-        FB_ASSERT( count > 0 && count < 5 ); // Count out of range
+        FB_ASSERT( count > 0 && count < 5 );  // Count out of range
 
-        switch(baseType)
+        switch( baseType )
         {
         case IVertexElement::VertexElementType::VET_FLOAT1:
         case IVertexElement::VertexElementType::VET_DOUBLE1:
         case IVertexElement::VertexElementType::VET_INT1:
         case IVertexElement::VertexElementType::VET_UINT1:
             // evil enumeration arithmetic
-            return static_cast<IVertexElement::VertexElementType>(static_cast<u16>(baseType) + count -
-                                                                  1);
+            return static_cast<IVertexElement::VertexElementType>( static_cast<u16>( baseType ) + count -
+                                                                   1 );
 
         case IVertexElement::VertexElementType::VET_SHORT1:
         case IVertexElement::VertexElementType::VET_SHORT2:
-            if(count <= 2)
+            if( count <= 2 )
             {
                 return IVertexElement::VertexElementType::VET_SHORT2;
             }
@@ -1160,21 +1159,21 @@ namespace fb
 
         case IVertexElement::VertexElementType::VET_USHORT1:
         case IVertexElement::VertexElementType::VET_USHORT2:
-            if(count <= 2)
+            if( count <= 2 )
             {
                 return IVertexElement::VertexElementType::VET_USHORT2;
             }
             return IVertexElement::VertexElementType::VET_USHORT4;
 
         case IVertexElement::VertexElementType::VET_SHORT2_NORM:
-            if(count <= 2)
+            if( count <= 2 )
             {
                 return IVertexElement::VertexElementType::VET_SHORT2_NORM;
             }
             return IVertexElement::VertexElementType::VET_SHORT4_NORM;
 
         case IVertexElement::VertexElementType::VET_USHORT2_NORM:
-            if(count <= 2)
+            if( count <= 2 )
             {
                 return IVertexElement::VertexElementType::VET_USHORT2_NORM;
             }
@@ -1190,13 +1189,13 @@ namespace fb
         }
 
         FB_LOG_ERROR( "VertexElement::multiplyTypeCount: Invalid base type" );
-        return static_cast<IVertexElement::VertexElementType>(0);
+        return static_cast<IVertexElement::VertexElementType>( 0 );
     }
 
     IVertexElement::VertexElementType MeshUtil::getBaseType(
         IVertexElement::VertexElementType multiType )
     {
-        switch(multiType)
+        switch( multiType )
         {
         case IVertexElement::VertexElementType::VET_FLOAT1:
         case IVertexElement::VertexElementType::VET_FLOAT2:
@@ -1257,7 +1256,7 @@ namespace fb
     void MeshUtil::convertColourValue( IVertexElement::VertexElementType srcType,
                                        IVertexElement::VertexElementType dstType, u32 *ptr )
     {
-        if(srcType == dstType)
+        if( srcType == dstType )
         {
             return;
         }
@@ -1270,4 +1269,4 @@ namespace fb
     {
         return IVertexElement::VertexElementType::VET_UBYTE4_NORM;
     }
-} // end namespace fb
+}  // end namespace fb

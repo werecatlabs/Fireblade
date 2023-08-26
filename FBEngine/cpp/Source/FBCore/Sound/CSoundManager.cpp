@@ -133,4 +133,4 @@ namespace fb
     void CSoundManager::_getObject( void **ppObject ) const
     {
     }
-} // namespace fb
+}  // namespace fb

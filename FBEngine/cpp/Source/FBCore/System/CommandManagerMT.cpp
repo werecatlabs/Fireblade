@@ -1,7 +1,11 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/CommandManagerMT.h>
+#include <FBCore/Memory/PointerUtil.h>
+#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/Interface/System/ICommand.h>
+#include <FBCore/Interface/System/ICommandManagerListener.h>
+#include <FBCore/Interface/System/IJobQueue.h>
 #include <FBCore/System/RunCommandJob.h>
-#include <FBCore/FBCore.h>
 #include <algorithm>
 
 namespace fb
@@ -81,15 +85,15 @@ namespace fb
         auto applicationManager = core::IApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
-        //auto jobQueue = applicationManager->getJobQueue();
-        //if( jobQueue )
-        //{
-        //    auto job = fb::make_ptr<RunCommandJob>();
-        //    job->setCommand( command );
+        auto jobQueue = applicationManager->getJobQueue();
+        if( jobQueue )
+        {
+            auto job = fb::make_ptr<RunCommandJob>();
+            job->setCommand( command );
 
-        //    jobQueue->queueJob( job );
-        //}
-        //else
+            jobQueue->addJob( job );
+        }
+        else
         {
             command->execute();
         }

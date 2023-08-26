@@ -8,4 +8,3 @@ namespace fb
     FB_CLASS_REGISTER_DERIVED( fb, IScriptReceiver, ISharedObject );
 
 }  // namespace fb
-

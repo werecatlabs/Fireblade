@@ -37,7 +37,7 @@ namespace fb
         return m_functions;
     }
 
-    void ScriptClass::setFunctions( const Array<SmartPtr<IScriptFunction>>& functions )
+    void ScriptClass::setFunctions( const Array<SmartPtr<IScriptFunction>> &functions )
     {
         m_functions = functions;
     }
@@ -47,7 +47,7 @@ namespace fb
         return m_parentClasses;
     }
 
-    void ScriptClass::setParentClasses( const Array<String>& parentClasses )
+    void ScriptClass::setParentClasses( const Array<String> &parentClasses )
     {
         m_parentClasses = parentClasses;
     }

@@ -17,12 +17,15 @@
 #include <FBCore/Memory/Data.h>
 #include <FBCore/Core/Path.h>
 #include <FBCore/Core/LogManager.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, Scene, SharedObject<IScene> );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, Scene, IScene );
+
+        static bool isSceneLoaded = false;  // todo remove to use a fsm
 
         Scene::Scene()
         {
@@ -114,6 +117,8 @@ namespace fb
 
                 applicationManager->triggerEvent( IEvent::Type::Scene, IEvent::loadScene,
                                                   Array<Parameter>(), this, this, nullptr );
+
+                isSceneLoaded = true;
             }
             catch( std::exception &e )
             {
@@ -238,9 +243,6 @@ namespace fb
                 }
 
                 clearCache();
-
-                auto &gc = GarbageCollector::instance();
-                gc.update();
 
                 setLoadingState( LoadingState::Unloaded );
             }
@@ -394,6 +396,17 @@ namespace fb
                 }
 
                 FB_ASSERT( isValid() );
+
+                if( isSceneLoaded )
+                {
+                    auto actors = getActors();
+                    for( auto actor : actors )
+                    {
+                        actor->levelWasLoaded( this );
+                    }
+
+                    isSceneLoaded = false;
+                }
             }
             break;
             default:
@@ -514,7 +527,7 @@ namespace fb
 
             if( auto pActors = getActorsPtr() )
             {
-                auto& actors = *pActors;
+                auto &actors = *pActors;
                 actors.clear();
             }
         }
@@ -654,16 +667,15 @@ namespace fb
         {
             FB_ASSERT( isValid() );
 
-            // for (u32 x = 0; x < Tasks::E_UPDATE_STATE_COUNT; ++x)
-            //{
-            //	for (u32 y = 0; y < Tasks::ET_COUNT; ++y)
-            //	{
-            //		boost::shared_ptr<ConcurrentArray<SmartPtr<scene::IActor>>> p =
-            // getRegisteredObjects((Thread::EUpdateState)x, (Tasks::TaskIds)y);
-            //		ConcurrentArray<SmartPtr<scene::IActor>>& updateObjects = *p;
-            //		std::sort(updateObjects.begin(), updateObjects.end());
-            //	}
-            // }
+            for( u32 x = 0; x < (u32)Thread::UpdateState::Count; ++x )
+            {
+                for( u32 y = 0; y < (u32)Thread::Task::Count; ++y )
+                {
+                    auto p = getRegisteredObjects( (Thread::UpdateState)x, (Thread::Task)y );
+                    ConcurrentArray<SmartPtr<scene::IActor>> &updateObjects = *p;
+                    std::sort( updateObjects.begin(), updateObjects.end() );
+                }
+            }
         }
 
         void Scene::unregisterUpdate( Thread::Task taskId, Thread::UpdateState updateType,
@@ -740,30 +752,6 @@ namespace fb
             }
 
             sortObjects();
-        }
-
-        void Scene::refreshRegistration( SmartPtr<IActor> object )
-        {
-            // FB_ASSERT(isValid());
-
-            // if (object)
-            //{
-            //	unregisterAll(object);
-
-            //	for (u32 x = 0; x < int(Thread::EUpdateState::E_UPDATE_STATE_COUNT); ++x)
-            //	{
-            //		for (u32 y = 0; y < int(Thread::Task::Count); ++y)
-            //		{
-            //			bool bRegister = object->isRegistered((Thread::Task)y, (Thread::EUpdateState)x);
-            //			if (bRegister)
-            //			{
-            //				registerUpdate((Thread::Task)y, (Thread::EUpdateState)x, object);
-            //			}
-            //		}
-            //	}
-
-            //	sortObjects();
-            //}
         }
 
         boost::shared_ptr<ConcurrentArray<SmartPtr<IActor>>> Scene::getRegisteredObjects(
@@ -905,6 +893,7 @@ namespace fb
 
         void Scene::setState( State state )
         {
+            m_state = state;
         }
 
         IScene::State Scene::getState() const

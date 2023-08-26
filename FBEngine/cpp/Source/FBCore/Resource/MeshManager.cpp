@@ -9,9 +9,9 @@
 #include <FBCore/Core/DataUtil.h>
 #include <FBCore/Core/Path.h>
 #include <FBCore/Memory/Data.h>
-#include <FBCore/Mesh/Mesh.h> 
-#include <FBCore/Mesh/MeshResource.h> 
-#include <FBCore/Mesh/MeshSerializer.h> 
+#include <FBCore/Mesh/Mesh.h>
+#include <FBCore/Mesh/MeshResource.h>
+#include <FBCore/Mesh/MeshSerializer.h>
 
 namespace fb
 {
@@ -127,8 +127,8 @@ namespace fb
     }
 
     Pair<SmartPtr<IResource>, bool> MeshManager::createOrRetrieve( const String &uuid,
-                                                                    const String &path,
-                                                                    const String &type )
+                                                                   const String &path,
+                                                                   const String &type )
     {
         try
         {

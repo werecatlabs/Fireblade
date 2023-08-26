@@ -1,6 +1,8 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Graphics/CCamera.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Graphics/ICamera.h>
+#include <FBCore/Interface/Graphics/ITexture.h>
+#include <FBCore/Interface/Graphics/IViewport.h>
 
 namespace fb
 {
@@ -122,7 +124,6 @@ namespace fb
 
         void CCamera::setViewport( SmartPtr<IViewport> val )
         {
-            
         }
 
         Matrix4F CCamera::getViewMatrix() const
@@ -187,8 +188,7 @@ namespace fb
             return false;
         }
 
-        Vector3F CCamera::getDirection( const Vector2F &screenPosition,
-                                        Vector3F &worldPosition ) const
+        Vector3F CCamera::getDirection( const Vector2F &screenPosition, Vector3F &worldPosition ) const
         {
             return Vector3F();
         }
@@ -197,5 +197,5 @@ namespace fb
         {
             return Vector3F();
         }
-    } // namespace render
-}     // namespace fb
+    }  // namespace render
+}  // namespace fb

@@ -7,6 +7,7 @@
 #include <FBCore/Interface/FSM/IFSMManager.h>
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/System/ITimer.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
@@ -278,32 +279,6 @@ namespace fb
     void FSM::setAllowStateChange( bool allowStateChange )
     {
         BitUtil::setFlagValue( *m_flags, IFSM::allowStateChangeFlag, allowStateChange );
-    }
-
-    bool FSM::isReady() const
-    {
-        auto fsmManager = getFsmManager();
-        FB_ASSERT( fsmManager );
-
-        auto handle = getHandle();
-        FB_ASSERT( handle );
-
-        auto id = handle->getInstanceId();
-
-        return fsmManager->isReady( id );
-    }
-
-    void FSM::setReady( bool ready )
-    {
-        auto fsmManager = getFsmManager();
-        FB_ASSERT( fsmManager );
-
-        auto handle = getHandle();
-        FB_ASSERT( handle );
-
-        auto id = handle->getInstanceId();
-
-        return fsmManager->setReady( id, ready );
     }
 
     bool FSM::getAutoTriggerEnterStateComplete() const

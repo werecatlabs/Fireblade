@@ -8,6 +8,7 @@
 #include <FBCore/Core/StringUtil.h>
 #include <FBCore/Math/MathUtil.h>
 #include <FBCore/Math/Euler.h>
+#include <FBCore/System/RttiClassDefinition.h>
 #include <rttr/registration>
 
 namespace fb

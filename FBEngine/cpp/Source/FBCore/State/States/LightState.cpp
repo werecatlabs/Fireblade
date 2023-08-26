@@ -15,26 +15,26 @@ namespace fb
 
     ColourF LightState::getDiffuseColour() const
     {
-        SpinRWMutex::ScopedLock lock(m_mutex, false);
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_diffuseColour;
     }
 
     void LightState::setDiffuseColour( const ColourF &diffuseColour )
     {
-        SpinRWMutex::ScopedLock lock(m_mutex, true);
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
         m_diffuseColour = diffuseColour;
         setDirty( true );
     }
 
     ColourF LightState::getSpecularColour() const
     {
-        SpinRWMutex::ScopedLock lock(m_mutex, false);
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_specularColour;
     }
 
     void LightState::setSpecularColour( const ColourF &specularColour )
     {
-        SpinRWMutex::ScopedLock lock(m_mutex, true);
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
         m_specularColour = specularColour;
         setDirty( true );
     }
@@ -51,13 +51,13 @@ namespace fb
 
     Vector4F LightState::getAttenuation() const
     {
-        SpinRWMutex::ScopedLock lock(m_mutex, false);
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_attenuation;
     }
 
     void LightState::setAttenuation( const Vector4F &attenuation )
     {
-        SpinRWMutex::ScopedLock lock(m_mutex, true);
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
         m_attenuation = attenuation;
         setDirty( true );
     }

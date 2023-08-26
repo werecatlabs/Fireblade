@@ -9,4 +9,3 @@ namespace fb
         FB_CLASS_REGISTER_DERIVED( fb, IViewport, ISharedObject );
     }  // end namespace render
 }  // end namespace fb
-

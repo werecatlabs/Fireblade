@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/TaskLock.h>
-#include "FBCore/Core/DebugTrace.h"
-#include "FBCore/Core/LogManager.h"
+#include <FBCore/Core/DebugTrace.h>
+#include <FBCore/Core/LogManager.h>
 #include <FBCore/Interface/System/ITask.h>
 
 namespace fb

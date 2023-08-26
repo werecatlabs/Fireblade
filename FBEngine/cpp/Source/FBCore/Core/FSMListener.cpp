@@ -1,9 +1,9 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Core/FSMListener.h>
-
+#include <FBCore/System/RttiClassDefinition.h>
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, FSMListener, SharedObject<IFSMListener> );
+    FB_CLASS_REGISTER_DERIVED( fb, FSMListener, IFSMListener );
 
     FSMListener::~FSMListener()
     {

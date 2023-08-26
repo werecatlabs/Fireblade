@@ -45,7 +45,7 @@ namespace fb
         factoryManager->setPoolSizeByType<Properties>( 32 );
         factoryManager->setPoolSizeByType<StateQueueStandard>( 32 );
         factoryManager->setPoolSizeByType<StateContextStandard>( 32 );
-        factoryManager->setPoolSizeByType<WorkerThread>( 8 );        
+        factoryManager->setPoolSizeByType<WorkerThread>( 8 );
 
         factoryManager->setPoolSizeByType<SceneNodeState>( 32 );
         factoryManager->setPoolSizeByType<TextureState>( 32 );

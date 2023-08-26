@@ -1562,6 +1562,164 @@ namespace fb
 #endif
     }
 
+    template <class T>
+    std::vector<std::string> fb::StringUtility<T>::extractNamedEntities(
+        const std::vector<std::string> &tokens, const std::vector<std::string> &entities )
+    {
+        std::vector<std::string> namedEntities;
+        for( const auto &token : tokens )
+        {
+            // Check if the token is a named entity (e.g., "home")
+            for( const std::string &entity : entities )
+            {
+                if( token == entity )
+                {
+                    namedEntities.push_back( token );
+                }
+            }
+        }
+
+        return namedEntities;
+    }
+
+    template <class T>
+    std::vector<std::string> fb::StringUtility<T>::tokenize( const std::string &input )
+    {
+        std::vector<std::string> tokens;
+        std::istringstream iss( input );
+        std::string token;
+        while( iss >> token )
+        {
+            tokens.push_back( token );
+        }
+        return tokens;
+    }
+
+    template <class T>
+    int fb::StringUtility<T>::countMatchingCharacters( const std::string &a, const std::string &b )
+    {
+        int count = 0;
+        for( char cB : b )
+        {
+            count += countMatchingCharacters( a, cB );
+        }
+
+        return count;
+    }
+
+    template <class T>
+    int fb::StringUtility<T>::countMatchingCharacters( const std::string &str, char target )
+    {
+        int count = 0;
+        for( char c : str )
+        {
+            if( c == target )
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    template <class T>
+    size_t fb::StringUtility<T>::numCommonSubsequence( const std::string &str1, const std::string &str2 )
+    {
+        auto len1 = str1.length();
+        auto len2 = str2.length();
+
+        // Create a 2D DP table to store lengths of longest common subsequences
+        std::vector<std::vector<int>> dp( len1 + 1, std::vector<int>( len2 + 1, 0 ) );
+
+        // Fill the DP table
+        for( int i = 1; i <= len1; ++i )
+        {
+            for( int j = 1; j <= len2; ++j )
+            {
+                if( str1[i - 1] == str2[j - 1] )
+                {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                }
+                else
+                {
+                    dp[i][j] = std::max( dp[i - 1][j], dp[i][j - 1] );
+                }
+            }
+        }
+
+        // Reconstruct the longest common subsequence
+        auto i = len1, j = len2;
+        std::string result;
+        while( i > 0 && j > 0 )
+        {
+            if( str1[i - 1] == str2[j - 1] )
+            {
+                result = str1[i - 1] + result;
+                i--;
+                j--;
+            }
+            else if( dp[i - 1][j] > dp[i][j - 1] )
+            {
+                i--;
+            }
+            else
+            {
+                j--;
+            }
+        }
+
+        return result.size();
+    }
+
+    template <class T>
+    std::string fb::StringUtility<T>::longestCommonSubsequence( const std::string &str1,
+                                                                const std::string &str2 )
+    {
+        auto len1 = str1.length();
+        auto len2 = str2.length();
+
+        // Create a 2D DP table to store lengths of longest common subsequences
+        std::vector<std::vector<int>> dp( len1 + 1, std::vector<int>( len2 + 1, 0 ) );
+
+        // Fill the DP table
+        for( int i = 1; i <= len1; ++i )
+        {
+            for( int j = 1; j <= len2; ++j )
+            {
+                if( str1[i - 1] == str2[j - 1] )
+                {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                }
+                else
+                {
+                    dp[i][j] = std::max( dp[i - 1][j], dp[i][j - 1] );
+                }
+            }
+        }
+
+        // Reconstruct the longest common subsequence
+        auto i = len1, j = len2;
+        std::string result;
+        while( i > 0 && j > 0 )
+        {
+            if( str1[i - 1] == str2[j - 1] )
+            {
+                result = str1[i - 1] + result;
+                i--;
+                j--;
+            }
+            else if( dp[i - 1][j] > dp[i][j - 1] )
+            {
+                i--;
+            }
+            else
+            {
+                j--;
+            }
+        }
+
+        return result;
+    }
+
     template class StringUtility<std::string>;
     template std::string StringUtility<std::string>::toString<s32>( const Vector2I & );
     template std::string StringUtility<std::string>::toString<f32>( const Vector2F & );

@@ -32,7 +32,7 @@ namespace fb
         void LayoutTransform::load( SmartPtr<ISharedObject> data )
         {
             setLoadingState( LoadingState::Loading );
-
+            Component::load( data );
             setLoadingState( LoadingState::Loaded );
         }
 
@@ -45,6 +45,7 @@ namespace fb
 
             setDataPtr( nullptr );
 
+            Component::unload( data );
             setLoadingState( LoadingState::Unloaded );
         }
 

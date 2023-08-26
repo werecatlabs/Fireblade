@@ -5,6 +5,6 @@
 
 namespace fb
 {
-	FB_CLASS_REGISTER_DERIVED( fb, CameraState, BaseState );
+    FB_CLASS_REGISTER_DERIVED( fb, CameraState, BaseState );
 
 }  // namespace fb

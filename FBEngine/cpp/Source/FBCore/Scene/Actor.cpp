@@ -253,7 +253,7 @@ namespace fb
                 FB_LOG_EXCEPTION( e );
             }
         }
-        
+
         void Actor::hierarchyChanged()
         {
             try
@@ -477,15 +477,19 @@ namespace fb
         {
             FB_ASSERT( component );
 
-            auto components = getComponents();
-            auto it = std::find( components.begin(), components.end(), component );
-            if( it != components.end() )
+            if( auto p = getComponentsPtr() )
             {
-                components.erase( it );
-            }
+                auto components = Array<SmartPtr<IComponent>>( p->begin(), p->end() );
+                auto it = std::find( components.begin(), components.end(), component );
+                if( it != components.end() )
+                {
+                    components.erase( it );
+                }
 
-            *m_components =
-                ConcurrentArray<SmartPtr<IComponent>>( components.begin(), components.end() );
+                auto newComponents = fb::make_shared<ConcurrentArray<SmartPtr<IComponent>>>(
+                    components.begin(), components.end() );
+                m_components = newComponents;
+            }
 
             component->unload( nullptr );
 
@@ -1236,7 +1240,11 @@ namespace fb
                             children.clear();
                         }
 
-                        m_components->clear();
+                        if( auto p = getComponentsPtr() )
+                        {
+                            auto &components = *p;
+                            components.clear();
+                        }
 
                         // for (u32 x = 0; x < int(Thread::UpdateState::Count); ++x)
                         //{
@@ -1519,9 +1527,8 @@ namespace fb
                     childrenArray.erase( it );
                 }
 
-                *m_children =
-                    ConcurrentArray<SmartPtr<IActor>>( childrenArray.begin(), childrenArray.end() );
-
+                m_children = fb::make_shared<ConcurrentArray<SmartPtr<IActor>>>( childrenArray.begin(),
+                                                                                 childrenArray.end() );
                 child->setParent( nullptr );
             }
 

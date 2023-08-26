@@ -62,7 +62,7 @@ namespace fb
     {
         try
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );  
+            RecursiveMutex::ScopedLock lock( m_mutex );
 
             if( m_database )
             {
@@ -176,8 +176,7 @@ namespace fb
             filePath = String( "scene" );
         }
 
-        if( object->isDerived<scene::IActor>() || 
-            object->isDerived<scene::IComponent>())
+        if( object->isDerived<scene::IActor>() || object->isDerived<scene::IComponent>() )
         {
             auto uuidSql = String( "select * from resources where uuid = '" ) + handle->getUUID() + "'";
             auto uuidQuery = executeQuery( uuidSql );
@@ -219,7 +218,7 @@ namespace fb
     {
         try
         {
-            if ( !object )
+            if( !object )
             {
                 return;
             }

@@ -1,6 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/State/Messages/StateMessageMaterial.h>
 #include <FBCore/Interface/Graphics/IMaterial.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {

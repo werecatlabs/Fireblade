@@ -5,7 +5,6 @@
 #include <FBCore/Interface/Memory/IData.h>
 #include <FBCore/Memory/Memory.h>
 #include <FBCore/Memory/ObjectTracker.h>
-#include <FBCore/Memory/GarbageCollector.h>
 #include <FBCore/Memory/TypeManager.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/System/RttiClassDefinition.h>
@@ -14,10 +13,12 @@
 #include <FBCore/Core/Handle.h>
 #include <FBCore/Interface/System/IEventListener.h>
 #include <FBCore/Interface/IApplicationManager.h>
+#include <boost/pool/singleton_pool.hpp>
 
 namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, ISharedObject, IObject );
+    typedef boost::singleton_pool<Handle, sizeof( Handle )> HandlePool;
 
     ISharedObject::ScopedLock::ScopedLock( SmartPtr<ISharedObject> sharedObject ) :
         m_sharedObject( sharedObject )
@@ -36,6 +37,37 @@ namespace fb
         }
     }
 
+    ISharedObject::ISharedObject()
+    {
+#if _DEBUG
+        constexpr auto basesize = sizeof( IObject );
+        constexpr auto size = sizeof( ISharedObject );
+        constexpr auto handleSize = sizeof( Handle );
+#endif
+
+        auto pHandle = HandlePool::malloc();
+        m_handle = new( pHandle ) Handle;
+        m_objectFlags = GC_FLAG_OBJECT_ALIVE | GC_FLAG_GARBAGE_COLLECTED;
+        m_loadingState = LoadingState::Allocated;
+
+#if FB_TRACK_REFERENCES
+        setEnableReferenceTracking( true );
+#endif
+    }
+
+    ISharedObject::~ISharedObject()
+    {
+        if( auto handle = m_handle.load() )
+        {
+            handle->~Handle();
+            HandlePool::free( handle );
+            m_handle = nullptr;
+        }
+
+        //FB_ASSERT( m_references == 0 );
+        //FB_ASSERT( m_weakReferences == 0 );
+    }
+
     s32 ISharedObject::addWeakReference( void *address, const c8 *file, u32 line, const c8 *func )
     {
 #if FB_TRACK_REFERENCES
@@ -45,7 +77,7 @@ namespace fb
 #    endif
 #endif
 
-        return ++( *m_weakReferences );
+        return ++m_weakReferences;
     }
 
     bool ISharedObject::removeWeakReference()
@@ -62,7 +94,7 @@ namespace fb
 #    endif
 #endif
 
-        return --( *m_weakReferences ) == 0;
+        return --m_weakReferences == 0;
     }
 
     bool ISharedObject::removeWeakReference( void *address, const c8 *file, u32 line, const c8 *func )
@@ -76,7 +108,7 @@ namespace fb
 #endif
 
         // Decrement the weak reference count and return true if the count is now 0.
-        return --( *m_weakReferences ) == 0;
+        return --m_weakReferences == 0;
     }
 
     bool ISharedObject::removeReference( void *address, const c8 *file, const u32 line, const c8 *func )
@@ -86,7 +118,7 @@ namespace fb
         objectTracker.removeRef( this, address, file, line, func );
 #endif
 
-        if( --( *m_references ) == 0 )
+        if( --m_references == 0 )
         {
             destroySharedObject();
             return true;
@@ -97,10 +129,23 @@ namespace fb
 
     void ISharedObject::destroySharedObject()
     {
-        auto &gc = GarbageCollector::instance();
+        m_loadingState = LoadingState::Unallocated;
+        setObjectFlag( GC_FLAG_OBJECT_ALIVE, false );
 
-        auto typeInfo = getTypeInfo();
-        gc.destroyObject( typeInfo, m_objectId );
+        bool destroyed = false;
+
+        if( auto listener = getSharedObjectListener() )
+        {
+            destroyed = listener->destroy( this );
+        }
+
+        if( !destroyed )
+        {
+            if( !isPoolElement() )
+            {
+                delete this;
+            }
+        }
     }
 
     s32 ISharedObject::addReference( void *address, const c8 *file, const u32 line, const c8 *func )
@@ -118,7 +163,7 @@ namespace fb
 
         return references;
 #else
-        return ++( *m_references );
+        return ++m_references;
 #endif
     }
 
@@ -136,18 +181,17 @@ namespace fb
 
     const Atomic<LoadingState> &ISharedObject::getLoadingState() const
     {
-        return *m_loadingState;
+        return m_loadingState;
     }
 
     void ISharedObject::setLoadingState( const Atomic<LoadingState> &state )
     {
         auto applicationManager = core::IApplicationManager::instance();
-        auto &gc = GarbageCollector::instance();
 
-        auto oldState = gc.getLoadingState( getTypeInfo(), m_objectId );
+        auto oldState = getLoadingState();
         if( oldState != state )
         {
-            *m_loadingState = state;
+            m_loadingState = state;
 
             auto args = Array<Parameter>();
             args.resize( 2 );
@@ -165,12 +209,12 @@ namespace fb
 
     bool ISharedObject::isLoading() const
     {
-        return *m_loadingState == LoadingState::Loading;
+        return m_loadingState == LoadingState::Loading;
     }
 
     bool ISharedObject::isLoadingQueued() const
     {
-        return *m_loadingState == LoadingState::LoadingQueued;
+        return m_loadingState == LoadingState::LoadingQueued;
     }
 
     bool ISharedObject::isThreadSafe() const
@@ -182,17 +226,17 @@ namespace fb
     {
         if( poolElement )
         {
-            ( *m_flags ) = *m_flags | GC_FLAG_POOL_ELEMENT;
+            m_objectFlags = m_objectFlags | GC_FLAG_POOL_ELEMENT;
         }
         else
         {
-            ( *m_flags ) = *m_flags & ~GC_FLAG_POOL_ELEMENT;
+            m_objectFlags = m_objectFlags & ~GC_FLAG_POOL_ELEMENT;
         }
     }
 
     bool ISharedObject::isPoolElement() const
     {
-        return ( *m_flags & GC_FLAG_POOL_ELEMENT ) != 0;
+        return ( m_objectFlags & GC_FLAG_POOL_ELEMENT ) != 0;
     }
 
     SmartPtr<ISharedObject> ISharedObject::toData() const
@@ -301,65 +345,35 @@ namespace fb
 
     bool ISharedObject::getEnableReferenceTracking() const
     {
-        return ( ( *m_flags ) & GC_FLAG_ENABLE_REFERENCE_TRACKING ) != 0;
+        return ( m_objectFlags & GC_FLAG_ENABLE_REFERENCE_TRACKING ) != 0;
     }
 
     void ISharedObject::setEnableReferenceTracking( bool referenceTracking )
     {
         if( referenceTracking )
         {
-            ( *m_flags ).fetch_or( GC_FLAG_ENABLE_REFERENCE_TRACKING );
+            m_objectFlags.fetch_or( GC_FLAG_ENABLE_REFERENCE_TRACKING );
         }
         else
         {
-            ( *m_flags ).fetch_and( ~GC_FLAG_ENABLE_REFERENCE_TRACKING );
+            m_objectFlags.fetch_and( ~GC_FLAG_ENABLE_REFERENCE_TRACKING );
         }
     }
 
     bool ISharedObject::isGarbageCollected() const
     {
-        return ( ( *m_flags ) & GC_FLAG_GARBAGE_COLLECTED ) != 0;
+        return ( m_objectFlags & GC_FLAG_GARBAGE_COLLECTED ) != 0;
     }
 
     void ISharedObject::setGarbageCollected( bool garbageCollected )
     {
         if( garbageCollected )
         {
-            ( *m_flags ).fetch_or( GC_FLAG_GARBAGE_COLLECTED );
+            m_objectFlags.fetch_or( GC_FLAG_GARBAGE_COLLECTED );
         }
         else
         {
-            ( *m_flags ).fetch_and( ~GC_FLAG_GARBAGE_COLLECTED );
-        }
-    }
-
-    u32 ISharedObject::getObjectId() const
-    {
-        return m_objectId;
-    }
-
-    SmartPtr<ISharedObject> ISharedObject::getScriptData() const
-    {
-        return m_scriptData;
-    }
-
-    void ISharedObject::setScriptData( SmartPtr<ISharedObject> data )
-    {
-        m_scriptData = data;
-    }
-
-    void ISharedObject::setupGarbageCollectorData()
-    {
-        if( m_objectId != std::numeric_limits<u32>::max() )
-        {
-            auto &gc = GarbageCollector::instance();
-
-            auto typeInfo = getTypeInfo();
-            m_references = gc.getReferencesPtr( typeInfo, m_objectId );
-            m_weakReferences = gc.getWeakReferencesPtr( typeInfo, m_objectId );
-            m_flags = gc.getFlagPtr( typeInfo, m_objectId );
-            m_handle = gc.getHandle( typeInfo, m_objectId );
-            m_loadingState = gc.getLoadingStatePtr( typeInfo, m_objectId );
+            m_objectFlags.fetch_and( ~GC_FLAG_GARBAGE_COLLECTED );
         }
     }
 
@@ -380,4 +394,5 @@ namespace fb
     {
         m_sharedEventListeners = p;
     }
+
 }  // end namespace fb

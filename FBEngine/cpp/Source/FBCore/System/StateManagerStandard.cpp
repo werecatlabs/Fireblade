@@ -12,8 +12,6 @@
 #include <FBCore/System/StateQueueStandard.h>
 #include <FBCore/System/StateContextStandard.h>
 
-#include "FBCore/Interface/IApplicationClient.h"
-
 namespace fb
 {
     StateManagerStandard::StateManagerStandard()

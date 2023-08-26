@@ -11,6 +11,5 @@ namespace fb
 
         const hash_type ITexture::STATE_MESSAGE_TEXTURE_SIZE = StringUtil::getHash( "textureSize" );
 
-
     }  // end namespace render
 }  // end namespace fb

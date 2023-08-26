@@ -15,11 +15,14 @@
 #include <FBCore/Interface/IO/IArchive.h>
 #include <FBCore/Interface/IO/IStream.h>
 
+#include <FBCore/Interface/Memory/IData.h>
+
 #include <FBCore/Interface/System/IJob.h>
 #include <FBCore/Interface/System/ILogManager.h>
 #include <FBCore/Interface/System/IStateManager.h>
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/Interface/System/IStateQueue.h>
+#include <FBCore/Interface/System/IStateMessage.h>
 #include <FBCore/Interface/System/ITimer.h>
 #include <FBCore/Interface/System/ITaskManager.h>
 #include <FBCore/Interface/System/IThreadPool.h>
@@ -373,9 +376,13 @@ namespace fb
         {
             index = TypeGroups::StateQueues;
         }
+        else if( isDerived( typeInfo, IStateMessage::typeInfo() ) )
+        {
+            index = TypeGroups::StateMessages;
+        }
         else if( isDerived( typeInfo, IStateListener::typeInfo() ) )
         {
-            index = TypeGroups::StateQueues;
+            index = TypeGroups::StateListeners;
         }
         else if( isDerived( typeInfo, scene::IDirector::typeInfo() ) )
         {

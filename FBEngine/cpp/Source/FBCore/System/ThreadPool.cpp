@@ -19,7 +19,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, ThreadPool, SharedObject<IThreadPool> );
+    FB_CLASS_REGISTER_DERIVED( fb, ThreadPool, IThreadPool );
 
     ThreadPool::ThreadPool()
     {
@@ -305,7 +305,15 @@ namespace fb
 
     IFSM::ReturnType ThreadPool::ThreadPoolFSMListener::handleEvent( u32 state, IFSM::Event eventType )
     {
-        return m_owner->handleEvent( state, eventType );
+        if( auto owner = getOwner() )
+        {
+            if( owner->isLoaded() )
+            {
+                return m_owner->handleEvent( state, eventType );
+            }
+        }
+
+        return IFSM::ReturnType::NotLoaded;
     }
 
     ThreadPool *ThreadPool::ThreadPoolFSMListener::getOwner() const

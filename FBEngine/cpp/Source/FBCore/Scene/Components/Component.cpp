@@ -17,6 +17,15 @@ namespace fb
 
         Component::Component()
         {
+        }
+
+        Component::~Component()
+        {
+            unload( nullptr );
+        }
+
+        void Component::load( SmartPtr<ISharedObject> data )
+        {
             try
             {
                 auto applicationManager = core::IApplicationManager::instance();
@@ -28,7 +37,7 @@ namespace fb
                 auto sceneManager = applicationManager->getSceneManager();
                 FB_ASSERT( sceneManager );
 
-                auto fsmManager = sceneManager->getFsmManager();
+                auto fsmManager = sceneManager->getComponentFsmManager( getTypeInfo() );
                 FB_ASSERT( fsmManager );
 
                 m_componentFSM = fsmManager->createFSM();
@@ -47,15 +56,6 @@ namespace fb
             }
         }
 
-        Component::~Component()
-        {
-            unload( nullptr );
-        }
-
-        void Component::load( SmartPtr<ISharedObject> data )
-        {
-        }
-
         void Component::unload( SmartPtr<ISharedObject> data )
         {
             try
@@ -68,7 +68,7 @@ namespace fb
 
                     if( auto sceneManager = applicationManager->getSceneManager() )
                     {
-                        if( auto fsmManager = sceneManager->getFsmManager() )
+                        if( auto fsmManager = sceneManager->getComponentFsmManager( getTypeInfo() ) )
                         {
                             if( m_componentFSM )
                             {

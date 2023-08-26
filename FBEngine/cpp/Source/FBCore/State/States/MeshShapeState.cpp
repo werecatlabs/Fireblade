@@ -16,4 +16,4 @@ namespace fb
         m_meshResource = meshResource;
     }
 
-} // namespace fb
+}  // namespace fb

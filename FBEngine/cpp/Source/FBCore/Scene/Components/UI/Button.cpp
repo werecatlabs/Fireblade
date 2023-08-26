@@ -99,20 +99,16 @@ namespace fb
                                        const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
                                        SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
         {
-            if( eventValue == IEvent::ACTIVATE_HASH )
+            if( object == getButton() )
             {
-            }
-            else if( eventValue == IEvent::TOGGLE_HIGHLIGHT_HASH )
-            {
-            }
-
-            auto events = getEvents();
-            for( auto &event : events )
-            {
-                auto listeners = event->getListeners();
-                for( auto &listener : listeners )
+                auto events = getEvents();
+                for( auto &event : events )
                 {
-                    listener->handleEvent( eventType, eventValue, arguments, sender, object, event );
+                    auto listeners = event->getListeners();
+                    for( auto &listener : listeners )
+                    {
+                        listener->handleEvent( eventType, eventValue, arguments, sender, object, event );
+                    }
                 }
             }
 

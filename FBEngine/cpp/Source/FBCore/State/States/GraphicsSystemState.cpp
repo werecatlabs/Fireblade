@@ -158,7 +158,7 @@ namespace fb
         }
 
         SmartPtr<IGraphicsScene> GraphicsSystemState::addSceneManager( const String &type,
-                                                                      const String &name )
+                                                                       const String &name )
         {
             auto graphicsSystem = getGraphicsSystem();
             return graphicsSystem->addGraphicsScene( type, name );

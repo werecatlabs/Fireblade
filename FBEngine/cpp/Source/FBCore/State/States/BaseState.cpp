@@ -11,11 +11,10 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, BaseState, SharedObject<IState> );
+    FB_CLASS_REGISTER_DERIVED( fb, BaseState, IState );
 
     BaseState::BaseState()
     {
-        
     }
 
     BaseState::~BaseState()

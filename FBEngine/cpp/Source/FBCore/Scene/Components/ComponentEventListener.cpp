@@ -11,6 +11,11 @@ namespace fb
 {
     namespace scene
     {
+
+        const String ComponentEventListener::actorStr = String( "actor" );
+        const String ComponentEventListener::functionStr = String( "function" );
+        const String ComponentEventListener::componentStr = String( "component" );
+
         ComponentEventListener::ComponentEventListener()
         {
         }
@@ -29,34 +34,35 @@ namespace fb
             {
                 if( eventValue == event->getEventHash() )
                 {
-                    ////todo hack
-                    //auto applicationManager = core::IApplicationManager::instance();
-                    //FB_ASSERT( applicationManager );
-
-                    //applicationManager->getSceneManager()->loadScene( "Workshop.fbscene" );
-
                     if( auto component = getComponent() )
                     {
                         if( component->isDerived<UserComponent>() )
                         {
-                            auto userComponent = fb::static_pointer_cast<UserComponent>( component );
-                            if( userComponent->getState() == IComponent::State::Edit )
+                            if( auto actor = component->getActor() )
                             {
-                                if( userComponent->getUpdateInEditMode() )
+                                if( actor->isEnabledInScene() )
                                 {
-                                    if( auto invoker = userComponent->getInvoker() )
+                                    auto userComponent =
+                                        fb::static_pointer_cast<UserComponent>( component );
+                                    if( userComponent->getState() == IComponent::State::Edit )
                                     {
-                                        const auto functionName = getFunction();
-                                        invoker->callObjectMember( functionName );
+                                        if( userComponent->getUpdateInEditMode() )
+                                        {
+                                            if( auto invoker = userComponent->getInvoker() )
+                                            {
+                                                const auto functionName = getFunction();
+                                                invoker->callObjectMember( functionName );
+                                            }
+                                        }
                                     }
-                                }
-                            }
-                            else
-                            {
-                                if( auto invoker = userComponent->getInvoker() )
-                                {
-                                    const auto functionName = getFunction();
-                                    invoker->callObjectMember( functionName );
+                                    else
+                                    {
+                                        if( auto invoker = userComponent->getInvoker() )
+                                        {
+                                            const auto functionName = getFunction();
+                                            invoker->callObjectMember( functionName );
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -101,9 +107,7 @@ namespace fb
             auto properties = fb::make_ptr<Properties>();
             FB_ASSERT( properties );
 
-            static const auto functionStr = String( "function" );
-            static const auto componentStr = String( "component" );
-
+            properties->setProperty( actorStr, m_actor );
             properties->setProperty( componentStr, m_component );
             properties->setProperty( functionStr, m_function );
 
@@ -112,14 +116,28 @@ namespace fb
 
         void ComponentEventListener::setProperties( SmartPtr<Properties> properties )
         {
-            static const auto functionStr = String( "function" );
-            static const auto componentStr = String( "component" );
-
             SmartPtr<IComponent> component;
+
+            SmartPtr<IActor> actor;
+            properties->getPropertyValue( actorStr, actor );
+
             properties->getPropertyValue( componentStr, component );
             properties->getPropertyValue( functionStr, m_function );
 
-            m_component = component;
+            if( m_actor != actor )
+            {
+                m_actor = actor;
+
+                if( m_actor )
+                {
+                    auto userComponent = m_actor->getComponent<UserComponent>();
+                    m_component = userComponent;
+                }
+            }
+            else
+            {
+                m_component = component;
+            }
         }
 
         SmartPtr<IComponentEvent> ComponentEventListener::getEvent() const

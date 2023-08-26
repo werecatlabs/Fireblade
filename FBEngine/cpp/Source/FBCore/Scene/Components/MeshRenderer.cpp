@@ -9,13 +9,12 @@
 #include <FBCore/Interface/Graphics/IGraphicsScene.h>
 #include <FBCore/Interface/Graphics/IMaterial.h>
 #include <FBCore/Interface/Graphics/ISceneNode.h>
+#include <FBCore/Interface/Scene/ISceneManager.h>
 #include <FBCore/Interface/System/ITaskManager.h>
 #include <FBCore/State/Messages/StateMessageLoad.h>
 #include <FBCore/Interface/Scene/ITransform.h>
 #include <FBCore/Core/BitUtil.h>
 #include <FBCore/Core/LogManager.h>
-
-#include "FBCore/Interface/Scene/ISceneManager.h"
 
 namespace fb
 {

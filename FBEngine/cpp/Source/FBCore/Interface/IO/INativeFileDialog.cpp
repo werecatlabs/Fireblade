@@ -6,4 +6,3 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, INativeFileDialog, ISharedObject );
 }  // end namespace fb
-

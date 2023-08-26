@@ -3,7 +3,6 @@
 #include <FBCore/System/RttiClassDefinition.h>
 #include <FBCore/Memory/Memory.h>
 #include <FBCore/Memory/ObjectTracker.h>
-#include <FBCore/Memory/GarbageCollector.h>
 #include <FBCore/Memory/TypeManager.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/System/RttiClassDefinition.h>
@@ -23,7 +22,6 @@ namespace fb
 {
     FB_CLASS_REGISTER( fb, IObject );
 
-
     void IObject::preUpdate()
     {
     }
@@ -42,11 +40,6 @@ namespace fb
 
     void IObject::setUserData( void *data )
     {
-    }
-
-    Handle *IObject::getHandle() const
-    {
-        return m_handle;
     }
 
     bool IObject::isValid() const
@@ -314,4 +307,4 @@ namespace fb
 #    endif
     }
 #endif
-} // end namespace fb
+}  // end namespace fb

@@ -140,7 +140,7 @@ namespace fb
                 {
                 }
                 break;
-                }                
+                }
             }
         }
 
@@ -190,9 +190,9 @@ namespace fb
                 Transform3<real_Num> transformA;
                 Transform3<real_Num> transformB;
 
-                m_positionJoint = physicsManager->addJointD6(
-                    bodyA ? bodyA->getRigidDynamic() : nullptr, transformA,
-                    bodyB ? bodyB->getRigidDynamic() : nullptr, transformB );
+                m_positionJoint =
+                    physicsManager->addJointD6( bodyA ? bodyA->getRigidDynamic() : nullptr, transformA,
+                                                bodyB ? bodyB->getRigidDynamic() : nullptr, transformB );
 
                 m_positionJoint->setMotion( physics::D6Axis::eX, physics::D6Motion::eLOCKED );
                 m_positionJoint->setMotion( physics::D6Axis::eY, physics::D6Motion::eFREE );
@@ -383,7 +383,7 @@ namespace fb
 
             m_positionJoint =
                 physics->addJointD6( bodyA ? bodyA->getRigidDynamic() : nullptr, transformA,
-                                        bodyB ? bodyB->getRigidDynamic() : nullptr, transformB );
+                                     bodyB ? bodyB->getRigidDynamic() : nullptr, transformB );
 
             m_positionJoint->setMotion( physics::D6Axis::eX, physics::D6Motion::eLOCKED );
             m_positionJoint->setMotion( physics::D6Axis::eY, physics::D6Motion::eFREE );
@@ -475,7 +475,7 @@ namespace fb
         void Constraint::setBrokenState( bool bBroken )
         {
         }
-        
+
         void Constraint::setBreakState( bool state )
         {
         }
@@ -773,7 +773,7 @@ namespace fb
                 {
                     rYield->stop();
                 }
-                }
+            }
         }
 
         physics::ConstraintFlag::Enum Constraint::FlagSetJob::getFlag() const

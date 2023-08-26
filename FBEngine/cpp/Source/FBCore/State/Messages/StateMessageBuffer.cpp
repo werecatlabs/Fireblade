@@ -1,5 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include "FBCore/State/Messages/StateMessageBuffer.h"
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {

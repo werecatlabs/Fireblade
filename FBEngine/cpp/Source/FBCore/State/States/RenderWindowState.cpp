@@ -2,19 +2,20 @@
 #include <FBCore/State/States/RenderWindowState.h>
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/Memory/PointerUtil.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, RenderWindowState, BaseState );
-    
+
     RenderWindowState::RenderWindowState()
     {
     }
-    
+
     RenderWindowState::~RenderWindowState()
     {
     }
-    
+
     SmartPtr<IState> RenderWindowState::clone() const
     {
         auto state = fb::make_ptr<RenderWindowState>();
@@ -94,4 +95,4 @@ namespace fb
         m_windowHandle = windowHandle;
         setDirty( true );
     }
-} // end namespace fb
+}  // end namespace fb

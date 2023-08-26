@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/SelectionManager.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/System/IEventListener.h>
 
 namespace fb
 {
@@ -23,10 +23,15 @@ namespace fb
     {
         m_selection.push_back( object );
 
-        //for( auto listener : m_listeners )
-        //{
-        //    listener->addSelectedObject();
-        //}
+        auto objectListeners = getObjectListeners();
+        for( auto listener : objectListeners )
+        {
+            if( listener )
+            {
+                listener->handleEvent( IEvent::Type::Scene, IEvent::addSelectedObject, {}, nullptr,
+                                       object, nullptr );
+            }
+        }
     }
 
     void SelectionManager::removeSelectedObject( SmartPtr<ISharedObject> object )
@@ -37,20 +42,30 @@ namespace fb
             m_selection.erase( it );
         }
 
-        //for( auto listener : m_listeners )
-        //{
-        //    listener->deselectObjects();
-        //}
+        auto objectListeners = getObjectListeners();
+        for( auto listener : objectListeners )
+        {
+            if( listener )
+            {
+                listener->handleEvent( IEvent::Type::Scene, IEvent::deselectObjects, {}, nullptr, object,
+                                       nullptr );
+            }
+        }
     }
 
     void SelectionManager::clearSelection()
     {
         m_selection.clear();
 
-        //for( auto listener : m_listeners )
-        //{
-        //    listener->deselectAll();
-        //}
+        auto objectListeners = getObjectListeners();
+        for( auto listener : objectListeners )
+        {
+            if( listener )
+            {
+                listener->handleEvent( IEvent::Type::Scene, IEvent::deselectAll, {}, nullptr, nullptr,
+                                       nullptr );
+            }
+        }
     }
 
     Array<SmartPtr<ISharedObject>> SelectionManager::getSelection() const

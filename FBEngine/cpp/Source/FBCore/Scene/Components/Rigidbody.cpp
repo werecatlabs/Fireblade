@@ -181,16 +181,51 @@ namespace fb
                 }
 
                 body->setMass( m_mass );
+            }
+        }
 
-                attachShape();
+        void Rigidbody::updateShapes()
+        {
+            removeFromScene();
+            attachShape();
+            addToScene();
+        }
 
-                auto physicsScene = applicationManager->getPhysicsScene();
-                //FB_ASSERT( physicsScene );
+        void Rigidbody::removeFromScene()
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
 
-                if( physicsScene )
-                {
-                    physicsScene->addActor( body );
-                }
+            auto physicsScene = applicationManager->getPhysicsScene();
+            //FB_ASSERT( physicsScene );
+
+            if( auto rigidDynamic = getRigidDynamic() )
+            {
+                physicsScene->removeActor( rigidDynamic );
+            }
+
+            if( auto rigidStatic = getRigidStatic() )
+            {
+                physicsScene->removeActor( rigidStatic );
+            }
+        }
+
+        void Rigidbody::addToScene()
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto physicsScene = applicationManager->getPhysicsScene();
+            //FB_ASSERT( physicsScene );
+
+            if( auto rigidDynamic = getRigidDynamic() )
+            {
+                physicsScene->addActor( rigidDynamic );
+            }
+
+            if( auto rigidStatic = getRigidStatic() )
+            {
+                physicsScene->addActor( rigidStatic );
             }
         }
 
@@ -241,8 +276,7 @@ namespace fb
         {
             try
             {
-                auto actor = getActor();
-                if( actor )
+                if( auto actor = getActor() )
                 {
                     auto collision = actor->getComponent<Collision>();
                     FB_ASSERT( collision );  // no collision
@@ -250,7 +284,7 @@ namespace fb
                     if( collision )
                     {
                         auto shape = collision->getShape();
-                        FB_ASSERT( shape );
+                        //FB_ASSERT( shape );
 
                         if( shape )
                         {
@@ -314,6 +348,24 @@ namespace fb
                             destroyRigidbodyObject();
                         }
                     }
+
+                    attachShape();
+
+                    if( m_rigidDynamic )
+                    {
+                        if( m_rigidDynamic->getNumShapes() > 0 )
+                        {
+                            addToScene();
+                        }
+                    }
+
+                    if( m_rigidStatic )
+                    {
+                        if( m_rigidStatic->getNumShapes() > 0 )
+                        {
+                            addToScene();
+                        }
+                    }
                 }
                 break;
                 default:
@@ -343,6 +395,23 @@ namespace fb
                     if( enabled )
                     {
                         createRigidbodyObject();
+                        attachShape();
+
+                        if( m_rigidDynamic )
+                        {
+                            if( m_rigidDynamic->getNumShapes() > 0 )
+                            {
+                                addToScene();
+                            }
+                        }
+
+                        if( m_rigidStatic )
+                        {
+                            if( m_rigidStatic->getNumShapes() > 0 )
+                            {
+                                addToScene();
+                            }
+                        }
                     }
                     else
                     {

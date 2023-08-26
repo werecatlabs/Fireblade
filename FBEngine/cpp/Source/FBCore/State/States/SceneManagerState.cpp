@@ -60,7 +60,7 @@ namespace fb
         }
     }
 
-bool SceneManagerState::getEnableShadows() const
+    bool SceneManagerState::getEnableShadows() const
     {
         return m_enableShadows;
     }

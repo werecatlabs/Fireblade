@@ -187,32 +187,18 @@ namespace fb
                         auto factory = applicationManager->getFactoryManager();
                         FB_ASSERT( factory );
 
-                        auto physicsManager = applicationManager->getPhysicsManager();
-                        if( physicsManager )
+                        if( auto actor = getActor() )
                         {
-                            if( auto actor = getActor() )
+                            if( auto meshComponent = actor->getComponent<Mesh>() )
                             {
-                                if( auto meshComponent = actor->getComponent<Mesh>() )
-                                {
-                                    auto meshPath = meshComponent->getMeshPath();
-                                    setMeshPath( meshPath );
-                                }
+                                auto meshPath = meshComponent->getMeshPath();
+                                setMeshPath( meshPath );
                             }
-
-                            setupMesh();
-
-                            auto mesh = getMeshResource();
-                            if( !mesh->isLoaded() )
-                            {
-                                mesh->load( nullptr );
-                            }
-
-                            auto shape =
-                                physicsManager->addCollisionShape<physics::IMeshShape>( mesh );
-                            FB_ASSERT( shape );
-
-                            setShape( shape );
                         }
+
+                        setupMesh();
+                        createPhysicsShape();
+                        updateRigidBody();
                     }
                     catch( std::exception &e )
                     {
@@ -270,5 +256,25 @@ namespace fb
         {
             return Collision::isValid();
         }
+
+        void CollisionMesh::createPhysicsShape()
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            auto physicsManager = applicationManager->getPhysicsManager();
+            if( physicsManager )
+            {
+                auto mesh = getMeshResource();
+                if( !mesh->isLoaded() )
+                {
+                    mesh->load( nullptr );
+                }
+
+                auto shape = physicsManager->addCollisionShape<physics::IMeshShape>( mesh );
+                FB_ASSERT( shape );
+
+                setShape( shape );
+            }
+        }
+
     }  // namespace scene
 }  // end namespace fb

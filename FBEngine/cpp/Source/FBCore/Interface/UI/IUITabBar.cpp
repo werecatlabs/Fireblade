@@ -10,4 +10,3 @@ namespace fb
         FB_CLASS_REGISTER_DERIVED( fb, IUITabBar, IUIElement );
     }  // end namespace ui
 }  // end namespace fb
-

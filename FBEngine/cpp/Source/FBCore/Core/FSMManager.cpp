@@ -7,6 +7,7 @@
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
 #include <FBCore/Interface/System/ITimer.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
@@ -103,7 +104,7 @@ namespace fb
 
             setLoadingState( LoadingState::Loading );
 
-            constexpr auto growSize = 32;
+            auto growSize = getGrowSize();
             auto size = getSize() + growSize;
             resize( size );
 
@@ -123,30 +124,24 @@ namespace fb
         if( currentSize != size )
         {
             m_fsms.resize( size );
-            m_previousStates.resize( size );
-            m_currentStates.resize( size );
-            m_newStates.resize( size );
-            m_listeners.resize( size );
+
+            auto pNewPreviousStates = fb::make_shared_array<atomic_u8>( size, getPreviousStates(), 0 );
+            setPreviousStates( pNewPreviousStates );
+
+            auto pNewCurrentStates = fb::make_shared_array<atomic_u8>( size, getCurrentStates(), 0 );
+            setCurrentStates( pNewCurrentStates );
+
+            auto pNewNewStates = fb::make_shared_array<atomic_u8>( size, getNewStates(), 0 );
+            setNewStates( pNewNewStates );
+
+            auto pNewListeners = fb::make_shared_array<SharedPtr<Array<SmartPtr<IFSMListener>>>>(
+                size, m_listeners, nullptr );
+            m_listeners = pNewListeners;
 
             m_stateChangeTimes.resize( size );
             m_stateTimes.resize( size );
             m_flags.resize( size );
             m_ready.resize( size );
-
-            for( size_t i = currentSize; i < m_previousStates.size(); ++i )
-            {
-                m_previousStates[i] = 0;
-            }
-
-            for( size_t i = currentSize; i < m_currentStates.size(); ++i )
-            {
-                m_currentStates[i] = 0;
-            }
-
-            for( size_t i = currentSize; i < m_newStates.size(); ++i )
-            {
-                m_newStates[i] = 0;
-            }
 
             setSize( size );
         }
@@ -171,14 +166,14 @@ namespace fb
                     }
                 }
 
-                for( auto pListeners : m_listeners )
+                if( auto p = getListenersPtr() )
                 {
-                    if( pListeners )
+                    auto &pListeners = *p;
+                    for( auto listeners : pListeners )
                     {
-                        auto &listeners = *pListeners;
-                        for( auto listener : listeners )
+                        if( listeners )
                         {
-                            if( listener )
+                            for( auto listener : *listeners )
                             {
                                 listener->unload( nullptr );
                             }
@@ -186,7 +181,7 @@ namespace fb
                     }
                 }
 
-                m_listeners.clear();
+                m_listeners = nullptr;
                 m_fsms.clear();
 
                 setLoadingState( LoadingState::Unloaded );
@@ -198,63 +193,148 @@ namespace fb
         }
     }
 
-    void FSMManager::changeState( u32 i )
+    void FSMManager::changeState()
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );
+        auto currentStates = getCurrentStates();
+        auto newStates = getNewStates();
 
-        auto &previousState = m_previousStates[i];
-        auto &currentState = m_currentStates[i];
-        auto &newState = m_newStates[i];
-
-        if( currentState != newState )
+        auto size = getSize();
+        for( size_t i = 0; i < size; ++i )
         {
-            auto pListeners = getListeners( i );
-            if( pListeners )
+            if( m_fsms[i] != nullptr )
             {
-                const auto &fsmListeners = *pListeners;
-                if( !fsmListeners.empty() )
+                const auto &currentState = ( *currentStates )[i];
+                const auto &newState = ( *newStates )[i];
+
+                if( currentState != newState )
                 {
-                    for( auto listener : fsmListeners )
+                    auto pListeners = getListeners( (u32)i );
+                    if( pListeners )
                     {
-                        if( listener )
+                        const auto &fsmListeners = *pListeners;
+                        if( !fsmListeners.empty() )
                         {
-                            listener->handleEvent( currentState, IFSM::Event::Leave );
-                        }
-
-                        currentState = newState;
-
-                        if( listener )
-                        {
-                            listener->handleEvent( currentState, IFSM::Event::Enter );
-                        }
-
-                        if( listener )
-                        {
-                            const auto result =
-                                listener->handleEvent( currentState, IFSM::Event::Complete );
-                            if( result != IFSM::ReturnType::Ok )
+                            for( auto listener : fsmListeners )
                             {
-                                auto stateStr = StringUtil::toString( currentState );
-                                FB_LOG( "State change complete not ok: " + stateStr );
+                                if( listener )
+                                {
+                                    auto leaveReturn =
+                                        listener->handleEvent( currentState, IFSM::Event::Leave );
+                                    if( leaveReturn != IFSM::ReturnType::Ok )
+                                    {
+                                        continue;
+                                    }
+
+                                    auto enterReturn =
+                                        listener->handleEvent( newState, IFSM::Event::Enter );
+                                    if( enterReturn != IFSM::ReturnType::Ok )
+                                    {
+                                        continue;
+                                    }
+
+                                    setPreviousState( (u32)i, (s32)currentState );
+                                    setCurrentState( (u32)i, (s32)newState );
+
+                                    const auto result =
+                                        listener->handleEvent( newState, IFSM::Event::Complete );
+                                    if( result != IFSM::ReturnType::Ok )
+                                    {
+                                        auto stateStr = StringUtil::toString( newState );
+                                        FB_LOG( "State change complete not ok: " + stateStr );
+                                    }
+                                }
                             }
                         }
+                        else
+                        {
+                            setCurrentState( (u32)i, (s32)newState );
+                        }
+                    }
+                    else
+                    {
+                        setCurrentState( (u32)i, (s32)newState );
+                    }
+
+                    auto applicationManager = core::IApplicationManager::instance();
+                    auto timer = applicationManager->getTimer();
+                    auto t = timer->getTime();
+                    setStateChangeTime( (u32)i, t );
+                }
+            }
+        }
+    }
+
+    void FSMManager::changeState( u32 i )
+    {
+        if( m_fsms[i] != nullptr )
+        {
+            auto currentStates = getCurrentStates();
+            auto newStates = getNewStates();
+
+            auto currentState = ( *currentStates )[i];
+            auto newState = ( *newStates )[i];
+
+            if( currentState != newState )
+            {
+                auto pListeners = getListeners( i );
+                if( pListeners )
+                {
+                    const auto &fsmListeners = *pListeners;
+                    if( !fsmListeners.empty() )
+                    {
+                        for( auto listener : fsmListeners )
+                        {
+                            if( listener )
+                            {
+                                listener->handleEvent( currentState, IFSM::Event::Leave );
+                            }
+
+                            setCurrentState( i, newState );
+
+                            if( listener )
+                            {
+                                listener->handleEvent( newState, IFSM::Event::Enter );
+                            }
+
+                            if( listener )
+                            {
+                                const auto result =
+                                    listener->handleEvent( newState, IFSM::Event::Complete );
+                                if( result != IFSM::ReturnType::Ok )
+                                {
+                                    auto stateStr = StringUtil::toString( newState );
+                                    FB_LOG( "State change complete not ok: " + stateStr );
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        setCurrentState( i, newState );
                     }
                 }
                 else
                 {
-                    currentState = newState;
+                    setCurrentState( i, newState );
                 }
-            }
-            else
-            {
-                currentState = newState;
-            }
 
-            auto applicationManager = core::IApplicationManager::instance();
-            auto timer = applicationManager->getTimer();
-            auto t = timer->getTime();
-            setStateChangeTime( i, t );
+                auto applicationManager = core::IApplicationManager::instance();
+                auto timer = applicationManager->getTimer();
+                auto t = timer->getTime();
+                setStateChangeTime( i, t );
+            }
         }
+    }
+
+    SharedPtr<Array<SharedPtr<Array<SmartPtr<IFSMListener>>>>> FSMManager::getListenersPtr() const
+    {
+        return m_listeners;
+    }
+
+    void FSMManager::setListenersPtr(
+        SharedPtr<Array<SharedPtr<Array<SmartPtr<IFSMListener>>>>> listeners )
+    {
+        m_listeners = listeners;
     }
 
     void FSMManager::update()
@@ -273,15 +353,14 @@ namespace fb
 
             for( size_t i = 0; i < size; ++i )
             {
-                auto &stateTime = m_stateTimes[i];
-                stateTime += dt;
+                if( m_fsms[i] != nullptr )
+                {
+                    addStateTime( (u32)i, dt );
+                }
             }
         }
 
-        for( size_t i = 0; i < size; ++i )
-        {
-            changeState( (u32)i );
-        }
+        changeState();
     }
 
     f64 FSMManager::getStateChangeTime( u32 id ) const
@@ -298,30 +377,80 @@ namespace fb
 
     u8 FSMManager::getPreviousState( u32 id ) const
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-        FB_ASSERT( id < m_previousStates.size() );
-        return m_previousStates[id];
+        if( auto p = getPreviousStates() )
+        {
+            auto &previousStates = *p;
+            if( id < previousStates.size() )
+            {
+                return previousStates[id];
+            }
+        }
+
+        return 0;
+    }
+
+    void FSMManager::setPreviousState( u32 id, s32 state )
+    {
+        if( auto p = getPreviousStates() )
+        {
+            auto &previousStates = *p;
+            if( id < previousStates.size() )
+            {
+                previousStates[id] = state;
+            }
+        }
     }
 
     u8 FSMManager::getCurrentState( u32 id ) const
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-        FB_ASSERT( id < m_currentStates.size() );
-        return m_currentStates[id];
+        if( auto p = getCurrentStates() )
+        {
+            auto &currentStates = *p;
+            if( id < currentStates.size() )
+            {
+                return currentStates[id];
+            }
+        }
+
+        return 0;
+    }
+
+    void FSMManager::setCurrentState( u32 id, s32 state )
+    {
+        if( auto p = getCurrentStates() )
+        {
+            auto &currentStates = *p;
+            if( id < currentStates.size() )
+            {
+                currentStates[id] = state;
+            }
+        }
     }
 
     u8 FSMManager::getNewState( u32 id ) const
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-        FB_ASSERT( id < m_newStates.size() );
-        return m_newStates[id];
+        if( auto p = getNewStates() )
+        {
+            auto &newStates = *p;
+            if( id < newStates.size() )
+            {
+                return newStates[id];
+            }
+        }
+
+        return 0;
     }
 
     void FSMManager::setNewState( u32 id, s32 state, bool changeNow )
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-        FB_ASSERT( id < m_newStates.size() );
-        m_newStates[id] = state;
+        if( auto p = getNewStates() )
+        {
+            auto &newStates = *p;
+            if( id < newStates.size() )
+            {
+                newStates[id] = state;
+            }
+        }
 
         if( changeNow )
         {
@@ -349,29 +478,18 @@ namespace fb
 
     void FSMManager::addListener( u32 id, SmartPtr<IFSMListener> listener )
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-
-        if( const auto pOldListeners = getListeners( id ) )
+        auto p = getListeners( id );
+        if( !p )
         {
-            auto &oldListeners = *pOldListeners;
-
-            auto pNewListeners = fb::make_shared<Array<SmartPtr<IFSMListener>>>();
-            auto &listeners = *pNewListeners;
-            listeners.reserve( oldListeners.size() + 1 );
-
-            listeners = Array<SmartPtr<IFSMListener>>( oldListeners.begin(), oldListeners.end() );
-            listeners.push_back( listener );
-
-            setListeners( id, pNewListeners );
+            p = fb::make_shared<Array<SmartPtr<IFSMListener>>>();
+            setListeners( id, p );
         }
-        else
+
+        if( p )
         {
-            auto pNewListeners = fb::make_shared<Array<SmartPtr<IFSMListener>>>();
-            auto &listeners = *pNewListeners;
+            auto &listeners = *p;
             listeners.reserve( 1 );
             listeners.push_back( listener );
-
-            setListeners( id, pNewListeners );
         }
     }
 
@@ -497,16 +615,35 @@ namespace fb
 
     void FSMManager::setListeners( u32 id, SharedPtr<Array<SmartPtr<IFSMListener>>> listeners )
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-        FB_ASSERT( id < m_listeners.size() );
-        m_listeners[id] = listeners;
+        auto p = getListenersPtr();
+        if( !p )
+        {
+            p = fb::make_shared<Array<SharedPtr<Array<SmartPtr<IFSMListener>>>>>();
+            setListenersPtr( p );
+        }
+
+        if( p )
+        {
+            auto &listenerArray = *p;
+            if( id < listenerArray.size() )
+            {
+                listenerArray[id] = listeners;
+            }
+        }
     }
 
     SharedPtr<Array<SmartPtr<IFSMListener>>> FSMManager::getListeners( u32 id ) const
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-        FB_ASSERT( id < m_listeners.size() );
-        return m_listeners[id];
+        if( auto p = getListenersPtr() )
+        {
+            auto &listeners = *p;
+            if( id < listeners.size() )
+            {
+                return listeners[id];
+            }
+        }
+
+        return nullptr;
     }
 
     time_interval FSMManager::getStateTime( u32 id ) const
@@ -524,21 +661,31 @@ namespace fb
         m_stateTimes[id] = stateTime;
     }
 
-    bool FSMManager::isValid() const
+    void FSMManager::addStateTime( u32 id, time_interval stateTime )
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
-        if( getLoadingState() == LoadingState::Loaded )
+
+        if( id < m_stateTimes.size() )
         {
-            auto size = getSize();
-
-            const auto statesAllocated = m_previousStates.size() == size &&
-                                         m_currentStates.size() == size && m_newStates.size() == size;
-            const auto timesAllocated = m_stateChangeTimes.size() == size && m_stateTimes.size() == size;
-            const auto fsmsAllocated =
-                m_ready.size() == size && m_listeners.size() == size && m_fsms.size() == size;
-
-            return statesAllocated && timesAllocated && fsmsAllocated;
+            m_stateTimes[id] += stateTime;
         }
+    }
+
+    bool FSMManager::isValid() const
+    {
+        //RecursiveMutex::ScopedLock lock( m_mutex );
+        //if( getLoadingState() == LoadingState::Loaded )
+        //{
+        //    auto size = getSize();
+
+        //    const auto statesAllocated = m_previousStates.size() == size &&
+        //                                 m_currentStates.size() == size && m_newStates.size() == size;
+        //    const auto timesAllocated = m_stateChangeTimes.size() == size && m_stateTimes.size() == size;
+        //    const auto fsmsAllocated =
+        //        m_ready.size() == size && m_listeners.size() == size && m_fsms.size() == size;
+
+        //    return statesAllocated && timesAllocated && fsmsAllocated;
+        //}
 
         return true;
     }
@@ -567,4 +714,33 @@ namespace fb
         m_growSize = growSize;
     }
 
+    SharedPtr<Array<atomic_u8>> FSMManager::getPreviousStates() const
+    {
+        return m_previousStates;
+    }
+
+    void FSMManager::setPreviousStates( SharedPtr<Array<atomic_u8>> previousStates )
+    {
+        m_previousStates = previousStates;
+    }
+
+    SharedPtr<Array<atomic_u8>> FSMManager::getCurrentStates() const
+    {
+        return m_currentStates;
+    }
+
+    void FSMManager::setCurrentStates( SharedPtr<Array<atomic_u8>> currentStates )
+    {
+        m_currentStates = currentStates;
+    }
+
+    SharedPtr<Array<atomic_u8>> FSMManager::getNewStates() const
+    {
+        return m_newStates;
+    }
+
+    void FSMManager::setNewStates( SharedPtr<Array<atomic_u8>> newStates )
+    {
+        m_newStates = newStates;
+    }
 }  // end namespace fb

@@ -71,4 +71,4 @@ namespace fb
     void CSound::getMinMaxDistance( f32 &minDistance, f32 &maxDistance )
     {
     }
-} // namespace fb
+}  // namespace fb

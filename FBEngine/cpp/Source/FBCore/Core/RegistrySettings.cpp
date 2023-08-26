@@ -5,7 +5,7 @@
 #include <iostream>
 
 #ifdef FB_PLATFORM_WIN32
-#include <windows.h>
+#    include <windows.h>
 #endif
 
 namespace fb

@@ -3,15 +3,15 @@
 #include <FBCore/Scene/Components/Rigidbody.h>
 #include <FBCore/Scene/SceneManager.h>
 #include <FBCore/Interface/Scene/ITransform.h>
-
 #include "FBCore/Interface/System/ITimer.h"
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
     namespace scene
     {
 
-        FB_CLASS_REGISTER_DERIVED( fb::scene, RigidbodyListener, SharedObject<IEventListener> );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, RigidbodyListener, IEventListener );
 
         Parameter RigidbodyListener::handleEvent( IEvent::Type eventType, hash_type eventValue,
                                                   const Array<Parameter> &arguments,

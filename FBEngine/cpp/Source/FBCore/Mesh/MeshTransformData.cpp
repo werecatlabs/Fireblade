@@ -24,4 +24,4 @@ namespace fb
         UVScaleData[0] = Vector2F::UNIT;
         UVScaleData[1] = Vector2F::UNIT;
     }
-} // namespace fb
+}  // namespace fb

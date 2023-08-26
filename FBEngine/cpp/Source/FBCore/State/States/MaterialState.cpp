@@ -2,6 +2,7 @@
 #include <FBCore/State/States/MaterialState.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Interface/System/IStateContext.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
@@ -22,10 +23,10 @@ namespace fb
 
     void MaterialState::setMaterialType( render::IMaterial::MaterialType materialType )
     {
-        if(m_materialType != materialType)
+        if( m_materialType != materialType )
         {
             m_materialType = materialType;
             setDirty( true );
         }
     }
-} // namespace fb
+}  // namespace fb

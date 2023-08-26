@@ -2,12 +2,13 @@
 #include <FBCore/Scene/Systems/ComponentSystem.h>
 #include <FBCore/Interface/Scene/IComponent.h>
 #include <FBCore/Interface/System/IState.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb, ComponentSystem, SharedObject<ISystem> );
+        FB_CLASS_REGISTER_DERIVED( fb, ComponentSystem, ISystem );
 
         ComponentSystem::ComponentSystem()
         {
@@ -20,12 +21,12 @@ namespace fb
         void ComponentSystem::load( SmartPtr<ISharedObject> data )
         {
             reserve( 12 );
-            SharedObject<ISystem>::setLoadingState( LoadingState::Loaded );
+            ISystem::setLoadingState( LoadingState::Loaded );
         }
 
         void ComponentSystem::unload( SmartPtr<ISharedObject> data )
         {
-            SharedObject<ISystem>::setLoadingState( LoadingState::Loaded );
+            ISystem::setLoadingState( LoadingState::Loaded );
         }
 
         u32 ComponentSystem::addComponent( SmartPtr<IComponent> component )

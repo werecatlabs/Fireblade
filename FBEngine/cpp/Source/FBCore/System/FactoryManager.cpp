@@ -1,12 +1,15 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/FactoryManager.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Core/Exception.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Interface/System/IState.h>
+#include <FBCore/Interface/System/IStateContext.h>
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, FactoryManager, SharedObject<IFactoryManager> );
+    FB_CLASS_REGISTER_DERIVED( fb, FactoryManager, IFactoryManager );
 
-    FactoryManager::FactoryManager() : SharedObject<IFactoryManager>()
+    FactoryManager::FactoryManager() : IFactoryManager()
     {
         auto factories = fb::make_shared<ConcurrentArray<SmartPtr<IFactory>>>();
         factories->reserve( 1024 );
@@ -74,6 +77,8 @@ namespace fb
         try
         {
             auto objectType = factory->getObjectType();
+            //FB_ASSERT( hasFactory( objectType ) == false );
+
             if( !hasFactory( objectType ) )
             {
                 auto factories = getFactoriesArray();

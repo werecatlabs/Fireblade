@@ -12,7 +12,6 @@ namespace fb
 
         CSceneNode::~CSceneNode()
         {
-            unload( nullptr );
         }
 
         void CSceneNode::load( SmartPtr<ISharedObject> data )

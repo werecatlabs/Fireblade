@@ -54,9 +54,9 @@ namespace fb
 
         bool CTerrain::isVisible() const
         {
-            if(auto stateContext = getStateObject())
+            if( auto stateContext = getStateObject() )
             {
-                if(auto state = stateContext->getStateByType<TerrainState>())
+                if( auto state = stateContext->getStateByType<TerrainState>() )
                 {
                     return state->isVisible();
                 }
@@ -67,9 +67,9 @@ namespace fb
 
         void CTerrain::setVisible( bool visible )
         {
-            if(auto stateContext = getStateObject())
+            if( auto stateContext = getStateObject() )
             {
-                if(auto state = stateContext->getStateByType<TerrainState>())
+                if( auto state = stateContext->getStateByType<TerrainState>() )
                 {
                     state->setVisible( visible );
                 }
@@ -130,5 +130,5 @@ namespace fb
         void CTerrain::setTextureLayer( s32 layer, const String &textureName )
         {
         }
-    } // namespace render
-}     // namespace fb
+    }  // namespace render
+}  // namespace fb

@@ -1,13 +1,12 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/Profiler.h>
-#include <FBCore/Thread/Threading.h>
 #include <FBCore/Core/StringUtil.h>
-#include <FBCore/System/Timer.h>
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/System/IProfile.h>
-
-#include "FBCore/System/Profile.h"
+#include <FBCore/System/Timer.h>
+#include <FBCore/System/Profile.h>
+#include <FBCore/Thread/Threading.h>
 
 namespace fb
 {

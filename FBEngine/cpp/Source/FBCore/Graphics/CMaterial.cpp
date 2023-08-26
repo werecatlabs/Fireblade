@@ -1114,12 +1114,6 @@ namespace fb
                             if( !StringUtil::isNullOrEmpty( uuid ) )
                             {
                                 auto tex = resourceDatabase->loadResourceById( uuid );
-
-                                if( !tex->isLoaded() )
-                                {
-                                    tex->load( nullptr );
-                                }
-
                                 textures[textureCount++] = tex;
                             }
                         }

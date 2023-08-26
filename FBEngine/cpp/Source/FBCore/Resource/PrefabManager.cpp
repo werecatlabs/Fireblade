@@ -298,15 +298,31 @@ namespace fb
         }
 
         Pair<SmartPtr<IResource>, bool> PrefabManager::createOrRetrieve( const String &uuid,
-                                                                          const String &path,
-                                                                          const String &type )
+                                                                         const String &path,
+                                                                         const String &type )
         {
-            return Pair<SmartPtr<IResource>, bool>();
+            if( auto prefabResource = getById( uuid ) )
+            {
+                return std::pair<SmartPtr<IResource>, bool>( prefabResource, false );
+            }
+
+            auto prefab = create( uuid, path );
+            FB_ASSERT( prefab );
+
+            return Pair<SmartPtr<IResource>, bool>( prefab, true );
         }
 
         Pair<SmartPtr<IResource>, bool> PrefabManager::createOrRetrieve( const String &path )
         {
-            return Pair<SmartPtr<IResource>, bool>();
+            if( auto prefabResource = getByName( path ) )
+            {
+                return std::pair<SmartPtr<IResource>, bool>( prefabResource, false );
+            }
+
+            auto prefab = create( path );
+            FB_ASSERT( prefab );
+
+            return Pair<SmartPtr<IResource>, bool>( prefab, true );
         }
 
         void PrefabManager::savePrefab( const String &filePath, SmartPtr<IActor> prefab )

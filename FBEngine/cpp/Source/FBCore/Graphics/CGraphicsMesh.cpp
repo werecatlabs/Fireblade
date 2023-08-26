@@ -1,6 +1,7 @@
 #include <FBCore/FBCorePCH.h>
-#include "FBCore/Graphics/CGraphicsMesh.h"
-#include <FBCore/FBCore.h>
+#include <FBCore/Graphics/CGraphicsMesh.h>
+#include <FBCore/Interface/Graphics/IAnimationController.h>
+#include <FBCore/Interface/Graphics/IMaterial.h>
 
 namespace fb
 {
@@ -55,5 +56,5 @@ namespace fb
         {
         }
 
-    } // namespace render
-}     // namespace fb
+    }  // namespace render
+}  // namespace fb

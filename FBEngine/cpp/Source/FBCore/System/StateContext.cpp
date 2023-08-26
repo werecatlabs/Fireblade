@@ -105,10 +105,10 @@ namespace fb
     {
     }
 
-    fb::Parameter StateContext::triggerEvent( IEvent::Type eventType, hash_type eventValue,
-                                              const Array<Parameter> &arguments,
-                                              SmartPtr<ISharedObject> sender,
-                                              SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
+    Parameter StateContext::triggerEvent( IEvent::Type eventType, hash_type eventValue,
+                                          const Array<Parameter> &arguments,
+                                          SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object,
+                                          SmartPtr<IEvent> event )
     {
         if( auto pEventListeners = getEventListeners() )
         {

@@ -1,6 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include "FBCore/State/Messages/StateMessageJobStatus.h"
 #include <FBCore/Interface/System/IJob.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {

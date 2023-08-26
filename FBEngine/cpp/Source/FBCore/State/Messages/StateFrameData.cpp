@@ -1,5 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/State/Messages/StateFrameData.h>
+#include <FBCore/System/RttiClassDefinition.h>
 #include <memory>
 
 namespace fb

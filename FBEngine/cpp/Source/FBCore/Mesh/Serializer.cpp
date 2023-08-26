@@ -54,7 +54,7 @@ namespace fb
     {
         FB_ASSERT( stream->tell() == 0 );
 
-        if(stream->tell() != 0)
+        if( stream->tell() != 0 )
         {
             FB_LOG_ERROR( "Can only determine the endianness of the input stream if it " );
         }
@@ -63,18 +63,18 @@ namespace fb
         // read header id manually (no conversion)
         auto actually_read = stream->read( &dest, sizeof( u16 ) );
         // skip back
-        stream->seek( 0 - static_cast<long>(actually_read) );
-        if(actually_read != sizeof( u16 ))
+        stream->seek( 0 - static_cast<long>( actually_read ) );
+        if( actually_read != sizeof( u16 ) )
         {
             // end of file?
             FB_LOG_ERROR( "Couldn't read 16 bit header value from input stream." );
         }
 
-        if(dest == HEADER_STREAM_ID)
+        if( dest == HEADER_STREAM_ID )
         {
             mFlipEndian = false;
         }
-        else if(dest == OTHER_ENDIAN_HEADER_STREAM_ID)
+        else if( dest == OTHER_ENDIAN_HEADER_STREAM_ID )
         {
             mFlipEndian = true;
         }
@@ -87,7 +87,7 @@ namespace fb
     //---------------------------------------------------------------------
     void Serializer::determineEndianness( u32 requestedEndian )
     {
-        switch(requestedEndian)
+        switch( requestedEndian )
         {
         case ENDIAN_NATIVE:
             mFlipEndian = false;
@@ -131,9 +131,9 @@ namespace fb
     //---------------------------------------------------------------------
     void Serializer::writeFloats( const float *const pFloat, u32 count )
     {
-        if(mFlipEndian)
+        if( mFlipEndian )
         {
-            auto pFloatToWrite = static_cast<float *>(malloc( sizeof( float ) * count ));
+            auto pFloatToWrite = static_cast<float *>( malloc( sizeof( float ) * count ) );
             memcpy( pFloatToWrite, pFloat, sizeof( float ) * count );
 
             flipToLittleEndian( pFloatToWrite, sizeof( float ), count );
@@ -153,11 +153,11 @@ namespace fb
         // Convert to float, then write
         // float* tmp = OGRE_ALLOC_T(float, count, MEMCATEGORY_GENERAL);
         auto tmp = new float[count];
-        for(unsigned int i = 0; i < count; ++i)
+        for( unsigned int i = 0; i < count; ++i )
         {
-            tmp[i] = static_cast<float>(pDouble[i]);
+            tmp[i] = static_cast<float>( pDouble[i] );
         }
-        if(mFlipEndian)
+        if( mFlipEndian )
         {
             flipToLittleEndian( tmp, sizeof( float ), count );
             writeData( tmp, sizeof( float ), count );
@@ -173,10 +173,10 @@ namespace fb
     //---------------------------------------------------------------------
     void Serializer::writeShorts( const u16 *const pShort, u32 count = 1 )
     {
-        if(mFlipEndian)
+        if( mFlipEndian )
         {
-            auto pShortToWrite = static_cast<unsigned short *>(
-                malloc( sizeof( unsigned short ) * count ));
+            auto pShortToWrite =
+                static_cast<unsigned short *>( malloc( sizeof( unsigned short ) * count ) );
             memcpy( pShortToWrite, pShort, sizeof( unsigned short ) * count );
 
             flipToLittleEndian( pShortToWrite, sizeof( unsigned short ), count );
@@ -193,9 +193,9 @@ namespace fb
     //---------------------------------------------------------------------
     void Serializer::writeInts( const u32 *const pInt, u32 count = 1 )
     {
-        if(mFlipEndian)
+        if( mFlipEndian )
         {
-            auto pIntToWrite = static_cast<unsigned *>(malloc( sizeof( unsigned int ) * count ));
+            auto pIntToWrite = static_cast<unsigned *>( malloc( sizeof( unsigned int ) * count ) );
             memcpy( pIntToWrite, pInt, sizeof( unsigned int ) * count );
 
             flipToLittleEndian( pIntToWrite, sizeof( unsigned int ), count );
@@ -216,8 +216,8 @@ namespace fb
         // no endian flipping for 1-byte bools
         // XXX Nasty Hack to convert to 1-byte bools
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
-        auto pCharToWrite = static_cast<char *>(malloc( sizeof( char ) * count ));
-        for(unsigned int i = 0; i < count; i++)
+        auto pCharToWrite = static_cast<char *>( malloc( sizeof( char ) * count ) );
+        for( unsigned int i = 0; i < count; i++ )
         {
             *( pCharToWrite + i ) = *(bool *)( pBool + i );
         }
@@ -254,11 +254,11 @@ namespace fb
         // Read header ID
         readShorts( stream, &headerID, 1 );
 
-        if(headerID == HEADER_STREAM_ID)
+        if( headerID == HEADER_STREAM_ID )
         {
             // Read version
             String ver = readString( stream );
-            if(ver != mVersion)
+            if( ver != mVersion )
             {
                 FB_LOG_ERROR(
                     "Serializer::readFileHeader:Invalid file: version incompatible, file reports " +
@@ -286,9 +286,9 @@ namespace fb
     {
         // XXX Nasty Hack to convert 1 byte bools to 4 byte bools
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
-        auto pTemp = static_cast<char *>(malloc( 1 * count )); // to hold 1-byte bools
+        auto pTemp = static_cast<char *>( malloc( 1 * count ) );  // to hold 1-byte bools
         stream->read( pTemp, 1 * count );
-        for(unsigned int i = 0; i < count; i++)
+        for( unsigned int i = 0; i < count; i++ )
             *( pDest + i ) = *( pTemp + i );
 
         free( pTemp );
@@ -315,7 +315,7 @@ namespace fb
         stream->read( tmp, sizeof( float ) * count );
         flipFromLittleEndian( tmp, sizeof( float ), count );
         // Convert to doubles (no cast required)
-        while(count--)
+        while( count-- )
         {
             *pDest++ = *ptmp++;
         }
@@ -390,7 +390,7 @@ namespace fb
 
     void Serializer::flipToLittleEndian( void *pData, u32 size, u32 count )
     {
-        if(mFlipEndian)
+        if( mFlipEndian )
         {
             flipEndian( pData, size, count );
         }
@@ -398,7 +398,7 @@ namespace fb
 
     void Serializer::flipFromLittleEndian( void *pData, u32 size, u32 count )
     {
-        if(mFlipEndian)
+        if( mFlipEndian )
         {
             flipEndian( pData, size, count );
         }
@@ -406,21 +406,21 @@ namespace fb
 
     void Serializer::flipEndian( void *pData, u32 size, u32 count )
     {
-        for(unsigned int index = 0; index < count; index++)
+        for( unsigned int index = 0; index < count; index++ )
         {
-            flipEndian( (void *)( reinterpret_cast<size_t>(pData) + ( index * size ) ), size );
+            flipEndian( (void *)( reinterpret_cast<size_t>( pData ) + ( index * size ) ), size );
         }
     }
 
     void Serializer::flipEndian( void *pData, u32 size )
     {
         char swapByte;
-        for(unsigned int byteIndex = 0; byteIndex < size / 2; byteIndex++)
+        for( unsigned int byteIndex = 0; byteIndex < size / 2; byteIndex++ )
         {
-            swapByte = *(char *)( reinterpret_cast<size_t>(pData) + byteIndex );
-            *(char *)( reinterpret_cast<size_t>(pData) + byteIndex ) =
-                *(char *)( reinterpret_cast<size_t>(pData) + size - byteIndex - 1 );
-            *(char *)( reinterpret_cast<size_t>(pData) + size - byteIndex - 1 ) = swapByte;
+            swapByte = *(char *)( reinterpret_cast<size_t>( pData ) + byteIndex );
+            *(char *)( reinterpret_cast<size_t>( pData ) + byteIndex ) =
+                *(char *)( reinterpret_cast<size_t>( pData ) + size - byteIndex - 1 );
+            *(char *)( reinterpret_cast<size_t>( pData ) + size - byteIndex - 1 ) = swapByte;
         }
     }
-} // namespace fb
+}  // namespace fb

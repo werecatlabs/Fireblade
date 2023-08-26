@@ -11,4 +11,3 @@ namespace fb
     const u32 IMouseState::MOUSE_MIDDLE_BUTTON = ( 1 << 2 );
 
 }  // end namespace fb
-

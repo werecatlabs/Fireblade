@@ -1102,8 +1102,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void MeshSerializerImpl::readSubMeshOperation( SmartPtr<IStream> &stream, Mesh *pMesh,
-                                                   SubMesh *sm )
+    void MeshSerializerImpl::readSubMeshOperation( SmartPtr<IStream> &stream, Mesh *pMesh, SubMesh *sm )
     {
         // unsigned short operationType;
         unsigned short opType;
@@ -3481,8 +3480,7 @@ namespace fb
     //---------------------------------------------------------------------
     void MeshSerializerImpl_v1_2::readGeometryTexCoords( unsigned short bindIdx,
                                                          SmartPtr<IStream> &stream, Mesh *pMesh,
-                                                         VertexBuffer *dest,
-                                                         unsigned short texCoordSet )
+                                                         VertexBuffer *dest, unsigned short texCoordSet )
     {
         //     float *pFloat = 0;
         //     HardwareVertexBufferSharedPtr vbuf;
@@ -3525,8 +3523,7 @@ namespace fb
     //---------------------------------------------------------------------
     void MeshSerializerImpl_v1_1::readGeometryTexCoords( unsigned short bindIdx,
                                                          SmartPtr<IStream> &stream, Mesh *pMesh,
-                                                         VertexBuffer *dest,
-                                                         unsigned short texCoordSet )
+                                                         VertexBuffer *dest, unsigned short texCoordSet )
     {
         //     float *pFloat = 0;
         //     HardwareVertexBufferSharedPtr vbuf;

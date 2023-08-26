@@ -430,7 +430,7 @@ namespace fb
         {
             m_graphicshNode = graphicshNode;
         }
-        
+
         void Renderer::updateTransform( const Transform3<real_Num> &transform )
         {
             if( m_graphicshNode )

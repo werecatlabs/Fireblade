@@ -76,7 +76,7 @@ namespace fb
         auto properties = fb::make_ptr<Properties>();
 
         properties->setProperty( "Position", m_position );
-        
+
         //auto rotation = getRotation();
         //properties->setProperty( "Rotation", rotation );
 
@@ -153,7 +153,7 @@ namespace fb
             parentTransform.convertWorldToLocalOrientation( worldTransform.getOrientation() );
         m_scale = worldTransform.getScale();
     }
-    
+
     template class Transform3<f32>;
     template class Transform3<f64>;
 

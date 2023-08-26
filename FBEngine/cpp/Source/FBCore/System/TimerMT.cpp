@@ -4,7 +4,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, TimerMT, SharedObject<Timer> );
+    FB_CLASS_REGISTER_DERIVED( fb, TimerMT, Timer );
 
     TimerMT::TimerMT() : m_bStarted( false )
     {

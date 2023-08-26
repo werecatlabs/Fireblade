@@ -349,7 +349,9 @@ namespace fb
             case IFSM::Event::Pending:
                 break;
             case IFSM::Event::Complete:
-                break;
+            {
+            }
+            break;
             case IFSM::Event::NewState:
                 break;
             case IFSM::Event::WaitForChange:
@@ -541,6 +543,40 @@ namespace fb
 
         void Layout::levelWasLoaded( s32 level )
         {
+            if( auto actor = getActor() )
+            {
+                auto visible = isEnabled() && actor->isEnabledInScene();
+
+                if( auto layout = getLayout() )
+                {
+                    layout->setVisible( visible );
+
+                    if( auto stateContext = layout->getStateObject() )
+                    {
+                        stateContext->setDirty( true );
+                    }
+                }
+
+                if( auto element = getElement() )
+                {
+                    if( auto stateContext = element->getStateObject() )
+                    {
+                        stateContext->setDirty( true );
+                    }
+                }
+
+                auto children = actor->getAllComponentsInChildren<UIComponent>();
+                for( auto child : children )
+                {
+                    if( auto element = child->getElement() )
+                    {
+                        if( auto stateContext = element->getStateObject() )
+                        {
+                            stateContext->setDirty( true );
+                        }
+                    }
+                }
+            }
         }
 
         void Layout::setZOrder( u32 zOrder )

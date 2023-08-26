@@ -9,4 +9,3 @@ namespace fb
         FB_CLASS_REGISTER_DERIVED( fb::scene, ISubComponent, IResource );
     }  // end namespace scene
 }  // end namespace fb
-

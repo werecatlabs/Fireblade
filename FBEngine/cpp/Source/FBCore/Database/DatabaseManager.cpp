@@ -112,7 +112,7 @@ namespace fb
     {
         try
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );  
+            RecursiveMutex::ScopedLock lock( m_mutex );
 
             FB_ASSERT( !StringUtilW::isNullOrEmpty( filePath ) );
             FB_LOG( L"Database::load: " + filePath );
@@ -153,7 +153,7 @@ namespace fb
     {
         try
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );  
+            RecursiveMutex::ScopedLock lock( m_mutex );
 
             if( m_database )
             {
@@ -171,7 +171,7 @@ namespace fb
     {
         try
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );  
+            RecursiveMutex::ScopedLock lock( m_mutex );
 
             FB_ASSERT( !StringUtil::isNullOrEmpty( filePath ) );
 
@@ -217,7 +217,7 @@ namespace fb
     {
         try
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );  
+            RecursiveMutex::ScopedLock lock( m_mutex );
 
             FB_ASSERT( !StringUtilW::isNullOrEmpty( filePath ) );
             FB_LOG( L"Database::load: " + filePath );
@@ -266,7 +266,7 @@ namespace fb
     {
         try
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );  
+            RecursiveMutex::ScopedLock lock( m_mutex );
             FB_LOG( "SQL: " + queryStr );
             return m_database->query( queryStr );
         }
@@ -303,7 +303,7 @@ namespace fb
     {
         try
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );  
+            RecursiveMutex::ScopedLock lock( m_mutex );
             FB_LOG( "SQL: " + dml );
             m_database->queryDML( dml );
         }
@@ -319,7 +319,7 @@ namespace fb
     {
         try
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );  
+            RecursiveMutex::ScopedLock lock( m_mutex );
             FB_LOG( "SQL: " + StringUtil::toStringC( dml ) );
             m_database->queryDML( dml );
         }
@@ -381,7 +381,7 @@ namespace fb
 
     void DatabaseManager::setSetting( const String &name, const String &value )
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );  
+        RecursiveMutex::ScopedLock lock( m_mutex );
 
         auto sql = String( "select * from settings where param = '" ) + name + "'";
         auto queryResult = executeQuery( sql );
@@ -567,7 +567,7 @@ namespace fb
 
     void DatabaseManager::optimise()
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );  
+        RecursiveMutex::ScopedLock lock( m_mutex );
 
         executeQuery( "PRAGMA foreign_keys = ON;" );
         executeQuery( "PRAGMA count_changes = OFF;" );

@@ -4,6 +4,6 @@
 namespace fb
 {
 
-	FB_CLASS_REGISTER_DERIVED( fb, MaterialTechniqueState, BaseState );
+    FB_CLASS_REGISTER_DERIVED( fb, MaterialTechniqueState, BaseState );
 
 }  // namespace fb

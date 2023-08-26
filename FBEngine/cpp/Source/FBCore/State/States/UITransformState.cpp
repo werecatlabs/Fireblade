@@ -1,5 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/State/States/UITransformState.h>
+#include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
@@ -133,4 +134,4 @@ namespace fb
         m_horizontalAlignment = horizontalAlignment;
         setDirty( true );
     }
-} // namespace fb
+}  // namespace fb
