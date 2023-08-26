@@ -92,6 +92,8 @@ namespace fb
 
         void reloadScripts() override;
 
+        bool reloadPending() const override;
+
         void clearStack();
 
         String getDebugInfo() override;
@@ -169,9 +171,6 @@ namespace fb
                                const Parameters &parameters );
 
         void errorObjectNotFound();
-
-        void _executeFunction( const String &functionNameStr, const Parameters &parameters,
-                               Parameters &results );
 
         void createLuaState();
 

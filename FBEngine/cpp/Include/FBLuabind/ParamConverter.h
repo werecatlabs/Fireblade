@@ -7,138 +7,6 @@
 #include <luabind/operator.hpp>
 #include <typeinfo>
 
-/*
-#include <luabind/config.hpp>
-#include <luabind/detail/policy.hpp>
-#include <boost/ref.hpp>
-
-#include <boost/mpl/apply_wrap.hpp>
-
-*/
-
-/*
-#define LUA_TNIL		0
-#define LUA_TBOOLEAN		1
-#define LUA_TLIGHTUSERDATA	2
-#define LUA_TNUMBER		3
-#define LUA_TSTRING		4
-#define LUA_TTABLE		5
-#define LUA_TFUNCTION		6
-#define LUA_TUSERDATA		7
-#define LUA_TTHREAD		8
-*/
-/*
-namespace luabind { namespace detail
-{
-template<class T>
-T convert_to_cpp(lua_State* L, const T& v)
-{
-typedef typename mpl::apply_wrap1<
-unwrap_ref<boost::is_reference_wrapper<T>::value>
-, T
->::type value_type;
-
-typename mpl::apply_wrap2<default_policy,value_type,lua_to_cpp>::type converter;
-
-converter.apply(L, unwrap_ref<boost::is_reference_wrapper<T>::value>::get(v));
-}
-}}*/
-
-/*
-namespace luabind {
-
-    template <>
-    struct default_converter<__int64>
-        : native_converter_base<__int64>
-    {
-        static int compute_score(lua_State* L, int index)
-        {
-            return -1;//lua_isinteger(L, index) ? 0 : -1;
-        }
-
-        __int64 from(lua_State* L, int index)
-        {
-            return (__int64)lua_tointeger(L, index);
-        }
-
-        void to(lua_State* L, __int64 value)
-        {
-            lua_pushinteger(L, value);
-        }
-    };
-
-} // namespace luabind
-*/
-
-// String converter
-namespace luabind
-{
-
-    //template <>
-    //struct default_converter<fb::String> : native_converter_base<fb::String>
-    //{
-    //	static int compute_score(lua_State* L, int index)
-    //	{
-    //		return lua_isstring(L, index) ? 0 : -1;
-    //	}
-
-    //	fb::String from(lua_State* L, int index)
-    //	{
-    //		return fb::String(lua_tostring(L, index));
-    //	}
-
-    //	void to(lua_State* L, const fb::String& value)
-    //	{
-    //		lua_pushstring(L, value.c_str());
-    //	}
-    //};
-
-    //template <>
-    //struct default_converter< const fb::String > : default_converter< fb::String >
-    //{ };
-
-    //template <>
-    //struct default_converter< const fb::String & > : default_converter< fb::String >
-    //{ };
-
-}  // namespace luabind
-
-/*
-namespace luabind
-{
-    using namespace fb;
-
-    template <>
-    struct default_converter<IScriptObject* >
-        : default_converter<IScriptObject>
-    {
-        typedef boost::mpl::false_ is_native;
-
-        template <class U>
-        int match(lua_State* L, U, int index)
-        {
-            return -1;
-        }
-
-        template <class U>
-        IScriptObject* apply(lua_State* L, U, int index)
-        {
-            IScriptObject* raw_ptr = default_converter<IScriptObject*>::apply(L, LUABIND_DECORATE_TYPE(IScriptObject*), index);
-            return (IScriptObject*)(raw_ptr);
-        }
-
-        void apply(lua_State* L, IScriptObject* const& p)
-        {
-            detail::value_converter().apply(L, p);
-        }
-
-        template <class U>
-        void converter_postcall(lua_State*, U const&, int)
-        {
-        }
-    };
-}*/
-
 namespace luabind
 {
 
@@ -147,7 +15,7 @@ namespace luabind
     {
         static int compute_score( lua_State *L, int index )
         {
-            int type = lua_type( L, index );
+            auto type = lua_type( L, index );
             switch( type )
             {
             case LUA_TSTRING:
@@ -167,7 +35,7 @@ namespace luabind
                 }
                 else
                 {
-                    luabind::detail::object_rep *obj = luabind::detail::get_instance( L, index );
+                    auto obj = luabind::detail::get_instance( L, index );
                     if( obj == 0 )
                         return -1;
 
@@ -332,7 +200,7 @@ namespace luabind
             {
                 //lua_pushstring( L, static_cast<char *>( param.data.pData ) );
 
-                auto& str = param.str;
+                auto &str = param.str;
                 luabind::detail::convert_to_lua( L, str );
             }
             break;
@@ -340,18 +208,42 @@ namespace luabind
             {
                 if( !param.data.pData )
                 {
-                    luabind::detail::convert_to_lua( L, NULL );
+                    lua_pushnil(L);
                     return;
                 }
 
-                fb::IScriptObject *scriptObj = static_cast<fb::IScriptObject *>( param.data.pData );
-                fb::ScriptObjectUtil::toLua( L, scriptObj );
+                auto scriptObj = static_cast<fb::ISharedObject *>( param.data.pData );
+                bool hasCast = fb::ScriptObjectUtil::toLua( L, scriptObj );
+                if( !hasCast )
+                {
+                    detail::convert_to_lua( L, static_cast<ISharedObject *>( param.data.pData ) );
+                }
+            }
+            break;
+            case Parameter::ParameterType::PARAM_TYPE_OBJECT:
+            {
+                if( !param.object )
+                {
+                    lua_pushnil(L);
+                    return;
+                }
+
+                bool hasCast = ScriptObjectUtil::toLua( L, param.object.get() );
+                if( !hasCast )
+                {
+                    detail::convert_to_lua( L, static_cast<ISharedObject *>( param.object.get() ) );
+                }
             }
             break;
             case Parameter::ParameterType::PARAM_TYPE_ARRAY:
             {
                 auto &scriptArray = param.array;
                 luabind::detail::convert_to_lua( L, scriptArray );
+            }
+            break;
+            default:
+            {
+                FB_ASSERT( false );  // unhandled case
             }
             break;
             };
@@ -362,11 +254,6 @@ namespace luabind
     struct default_converter<fb::Parameter const &> : default_converter<fb::Parameter>
     {
     };
-
-}  // namespace luabind
-
-namespace luabind
-{
 
     template <class T>
     struct default_converter<fb::WeakPtr<T> > : default_converter<T *>

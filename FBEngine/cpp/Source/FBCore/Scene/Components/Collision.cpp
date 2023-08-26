@@ -53,7 +53,7 @@ namespace fb
                     auto shape = getShape();
                     if( shape )
                     {
-                        physicsManager->destroyCollisionShape( shape );
+                        physicsManager->removeCollisionShape( shape );
                         setShape( nullptr );
                     }
                 }

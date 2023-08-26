@@ -4,10 +4,8 @@
 #include "FBLuabind/SmartPtrConverter.h"
 #include "FBLuabind/ParamConverter.h"
 #include <FBCore/FBCore.h>
-#include "FBLuabind/FBLuaScriptError.h"
 #include "FBLuabind/ScriptObjectFunctions.h"
 #include "FBLuabind/Bindings/PropertiesBinding.h"
-
 #include "FBLuabind/Wrappers/StandardGameObjectWrapper.h"
 #include <luabind/operator.hpp>
 

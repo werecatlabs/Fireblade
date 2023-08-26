@@ -44,9 +44,9 @@ namespace fb
     template <class T>
     int PointToWatch( const Vector2<T> &vec )
     {
-        auto engine = core::IApplicationManager::instance();
-        LuaManagerPtr luaMgr = engine->getScriptManager();
-        lua_State *L = luaMgr->getLuaState();
+        auto applicationManager = core::IApplicationManager::instance();
+        auto luaMgr = fb::static_pointer_cast<LuaManager>( applicationManager->getScriptManager() ); 
+        auto L = luaMgr->getLuaState();
 
         lua_newtable( L );
         int table = lua_gettop( L );

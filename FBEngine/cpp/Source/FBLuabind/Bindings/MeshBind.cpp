@@ -1,11 +1,8 @@
-#include "FBLuabind/FBLuabindPCH.h"
-#include "FBLuabind/Bindings/MeshBind.h"
-#include <luabind/luabind.hpp>
-#include "FBLuabind/SmartPtrConverter.h"
-#include "FBLuabind/ParamConverter.h"
+#include <FBLuabind/FBLuabindPCH.h>
+#include <FBLuabind/Bindings/MeshBind.h>
+#include <FBLuabind/SmartPtrConverter.h>
+#include <FBLuabind/ParamConverter.h>
 #include <FBCore/FBCore.h>
-#include "FBLuabind/ArrayFunctions.h"
-#include <FBApplication/FBApplication.h>
 #include <luabind/luabind.hpp>
 #include <luabind/class.hpp>
 

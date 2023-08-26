@@ -50,7 +50,7 @@ namespace luabind
         {
             if( !ptr )
             {
-                luabind::detail::convert_to_lua( L, NULL );
+                lua_pushnil(L);
                 return;
             }
 

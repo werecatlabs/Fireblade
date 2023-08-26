@@ -49,30 +49,30 @@ namespace fb
         {
         }
 
-        SmartPtr<IPhysicsMaterial3> CPhysicsManager::createMaterial()
+        SmartPtr<IPhysicsMaterial3> CPhysicsManager::addMaterial()
         {
             return nullptr;
         }
 
-        void CPhysicsManager::destroyMaterial( SmartPtr<IPhysicsMaterial3> material )
+        void CPhysicsManager::removeMaterial( SmartPtr<IPhysicsMaterial3> material )
         {
         }
 
-        SmartPtr<IPhysicsScene3> CPhysicsManager::createScene()
+        SmartPtr<IPhysicsScene3> CPhysicsManager::addScene()
         {
             return nullptr;
         }
 
-        void CPhysicsManager::destroyScene( SmartPtr<IPhysicsScene3> scene )
+        void CPhysicsManager::removeScene( SmartPtr<IPhysicsScene3> scene )
         {
         }
 
-        bool CPhysicsManager::destroyCollisionShape( SmartPtr<IPhysicsShape3> collisionShape )
+        bool CPhysicsManager::removeCollisionShape( SmartPtr<IPhysicsShape3> collisionShape )
         {
             return false;
         }
 
-        bool CPhysicsManager::destroyPhysicsBody( SmartPtr<IRigidBody3> body )
+        bool CPhysicsManager::removePhysicsBody( SmartPtr<IRigidBody3> body )
         {
             return false;
         }
@@ -82,25 +82,24 @@ namespace fb
             return nullptr;
         }
 
-        SmartPtr<IRigidStatic3> CPhysicsManager::createRigidStatic(
-            const Transform3<real_Num> &transform )
+        SmartPtr<IRigidStatic3> CPhysicsManager::addRigidStatic( const Transform3<real_Num> &transform )
         {
             return nullptr;
         }
 
-        SmartPtr<IRigidStatic3> CPhysicsManager::createRigidStatic(
+        SmartPtr<IRigidStatic3> CPhysicsManager::addRigidStatic(
             SmartPtr<IPhysicsShape3> collisionShape )
         {
             return nullptr;
         }
 
-        SmartPtr<IRigidStatic3> CPhysicsManager::createRigidStatic(
-            SmartPtr<IPhysicsShape3> collisionShape, SmartPtr<Properties> properties )
+        SmartPtr<IRigidStatic3> CPhysicsManager::addRigidStatic( SmartPtr<IPhysicsShape3> collisionShape,
+                                                                 SmartPtr<Properties> properties )
         {
             return nullptr;
         }
 
-        SmartPtr<IPhysicsSoftBody3> CPhysicsManager::createSoftBody( const String &filePath )
+        SmartPtr<IPhysicsSoftBody3> CPhysicsManager::addSoftBody( const String &filePath )
         {
             return nullptr;
         }
@@ -117,7 +116,7 @@ namespace fb
             return nullptr;
         }
 
-        bool CPhysicsManager::destroyVehicle( SmartPtr<IPhysicsVehicle3> vehicle )
+        bool CPhysicsManager::removeVehicle( SmartPtr<IPhysicsVehicle3> vehicle )
         {
             return false;
         }
@@ -138,34 +137,39 @@ namespace fb
             return false;
         }
 
-        SmartPtr<IConstraintD6> CPhysicsManager::d6JointCreate( SmartPtr<IPhysicsBody3> actor0,
-                                                                const Transform3<real_Num> &localFrame0,
-                                                                SmartPtr<IPhysicsBody3> actor1,
-                                                                const Transform3<real_Num> &localFrame1 )
+        SmartPtr<IConstraintD6> CPhysicsManager::addJointD6( SmartPtr<IPhysicsBody3> actor0,
+                                                             const Transform3<real_Num> &localFrame0,
+                                                             SmartPtr<IPhysicsBody3> actor1,
+                                                             const Transform3<real_Num> &localFrame1 )
         {
             return nullptr;
         }
 
-        SmartPtr<IConstraintFixed3> CPhysicsManager::fixedJointCreate(
+        SmartPtr<IConstraintFixed3> CPhysicsManager::addFixedJoint(
             SmartPtr<IPhysicsBody3> actor0, const Transform3<real_Num> &localFrame0,
             SmartPtr<IPhysicsBody3> actor1, const Transform3<real_Num> &localFrame1 )
         {
             return nullptr;
         }
 
-        SmartPtr<IConstraintDrive> CPhysicsManager::createConstraintDrive()
+        SmartPtr<IConstraintDrive> CPhysicsManager::addConstraintDrive()
         {
             return nullptr;
         }
 
-        SmartPtr<IConstraintLinearLimit> CPhysicsManager::createConstraintLinearLimit(real_Num extent, real_Num contactDist)
-        {            
+        SmartPtr<IConstraintLinearLimit> CPhysicsManager::addConstraintLinearLimit(
+            real_Num extent, real_Num contactDist )
+        {
             return nullptr;
         }
 
-        SmartPtr<IRaycastHit> CPhysicsManager::createRaycastHitData()
+        SmartPtr<IRaycastHit> CPhysicsManager::addRaycastHitData()
         {
             return nullptr;
+        }
+
+        void CPhysicsManager::removeRaycastHitData( SmartPtr<IRaycastHit> raycastHitData )
+        {
         }
 
         Thread::Task CPhysicsManager::getStateTask() const
@@ -187,7 +191,7 @@ namespace fb
         {
         }
 
-        SmartPtr<IRigidDynamic3> CPhysicsManager::createRigidDynamic(
+        SmartPtr<IRigidDynamic3> CPhysicsManager::addRigidDynamic(
             const Transform3<real_Num> &transform )
         {
             return nullptr;

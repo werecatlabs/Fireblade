@@ -93,7 +93,7 @@ namespace fb
                 {
                     d6joint->setMotion( physics::D6Axis::eX, physics::D6Motion::eLIMITED );
                     d6joint->setLinearLimit(
-                        physicsManager->createConstraintLinearLimit( tLimits.x, tLimits.y ) );
+                        physicsManager->addConstraintLinearLimit( tLimits.x, tLimits.y ) );
                 }
                 break;
                 }
@@ -109,7 +109,7 @@ namespace fb
                 case 'R':
                     d6joint->setMotion( physics::D6Axis::eY, physics::D6Motion::eLIMITED );
                     d6joint->setLinearLimit(
-                        physicsManager->createConstraintLinearLimit( tLimits.x, tLimits.y ) );
+                        physicsManager->addConstraintLinearLimit( tLimits.x, tLimits.y ) );
                     break;
                 }
 
@@ -124,7 +124,7 @@ namespace fb
                 case 'R':
                     d6joint->setMotion( physics::D6Axis::eZ, physics::D6Motion::eLIMITED );
                     d6joint->setLinearLimit(
-                        physicsManager->createConstraintLinearLimit( tLimits.x, tLimits.y ) );
+                        physicsManager->addConstraintLinearLimit( tLimits.x, tLimits.y ) );
                     break;
                 }
 
@@ -190,7 +190,7 @@ namespace fb
                 Transform3<real_Num> transformA;
                 Transform3<real_Num> transformB;
 
-                m_positionJoint = physicsManager->d6JointCreate(
+                m_positionJoint = physicsManager->addJointD6(
                     bodyA ? bodyA->getRigidDynamic() : nullptr, transformA,
                     bodyB ? bodyB->getRigidDynamic() : nullptr, transformB );
 
@@ -382,7 +382,7 @@ namespace fb
             Transform3<real_Num> tB;
 
             m_positionJoint =
-                physics->d6JointCreate( bodyA ? bodyA->getRigidDynamic() : nullptr, transformA,
+                physics->addJointD6( bodyA ? bodyA->getRigidDynamic() : nullptr, transformA,
                                         bodyB ? bodyB->getRigidDynamic() : nullptr, transformB );
 
             m_positionJoint->setMotion( physics::D6Axis::eX, physics::D6Motion::eLOCKED );

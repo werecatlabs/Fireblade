@@ -2,7 +2,6 @@
 #define ScriptObjectFunctions_h__
 
 #include "FBLuabind/FBLuabindTypes.h"
-#include "FBLuabind/FBLuaScriptError.h"
 #include <FBCore/Core/Parameter.h>
 #include <FBCore/FBCore.h>
 

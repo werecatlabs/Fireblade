@@ -8,8 +8,6 @@
 #include <stdarg.h>
 #include <iostream>
 
-#include "luabind/class_info.hpp"
-
 extern "C" {
 #include <lua.h>
 #include <lualib.h>
@@ -22,6 +20,7 @@ extern "C" {
 #include <luabind/adopt_policy.hpp>
 #include <luabind/detail/class_rep.hpp>
 #include <luabind/function_introspection.hpp>
+#include "luabind/class_info.hpp"
 
 namespace luabind
 {
@@ -54,7 +53,7 @@ namespace fb
         lua_pop( luaState, 1 );
 
         auto applicationManager = core::IApplicationManager::instance();
-        LuaManagerPtr scriptMgr = applicationManager->getScriptManager();
+        SmartPtr<LuaManager> scriptMgr = applicationManager->getScriptManager();
         if( scriptMgr )
         {
             debugStr = scriptMgr->getDebugInfo();
@@ -128,7 +127,7 @@ namespace fb
         }
 
         auto engine = core::IApplicationManager::instance();
-        LuaManagerPtr scriptMgr = engine->getScriptManager();
+        SmartPtr<LuaManager> scriptMgr = engine->getScriptManager();
         scriptMgr->setError( true );
 
         FB_LOG_MESSAGE( "LuaScriptMgr", debugStr.c_str() );
@@ -167,7 +166,7 @@ namespace fb
         }
 
         auto engine = core::IApplicationManager::instance();
-        LuaManagerPtr scriptMgr = engine->getScriptManager();
+        SmartPtr<LuaManager> scriptMgr = engine->getScriptManager();
         scriptMgr->setError( true );
 
         FB_LOG_MESSAGE( "LuaScriptMgr", debugStr.c_str() );
@@ -184,6 +183,8 @@ namespace fb
 
     void LuaManager::load( SmartPtr<ISharedObject> data )
     {
+        setLoadingState( LoadingState::Loading );
+
         RecursiveMutex::ScopedLock lock( m_scriptMutex );
 
         //m_nullScriptObject = new NullScriptObject;
@@ -192,10 +193,14 @@ namespace fb
 
         m_timeTaken = 0.0f;
         m_callCounter = 0;
+
+        setLoadingState( LoadingState::Loaded );
     }
 
     void LuaManager::unload( SmartPtr<ISharedObject> data )
     {
+        setLoadingState( LoadingState::Unloading );
+
         RecursiveMutex::ScopedLock lock( m_scriptMutex );
 
         //for(u32 i=0; i<m_objectData.size(); ++i)
@@ -225,6 +230,8 @@ namespace fb
         //lua_close(m_luaState);
 
         //FB_SAFE_DELETE(m_nullScriptObject);
+
+        setLoadingState( LoadingState::Unloaded );
     }
 
     void LuaManager::loadScript( const String &filename )
@@ -993,11 +1000,14 @@ namespace fb
 
     void LuaManager::callFunction( const String &functionName )
     {
-        RecursiveMutex::ScopedLock lock( m_scriptMutex );
+        if( isLoaded() )
+        {
+            RecursiveMutex::ScopedLock lock( m_scriptMutex );
 
-        Parameters parameters;
-        Parameters results;
-        callFunction( functionName, parameters, results );
+            Parameters parameters;
+            Parameters results;
+            callFunction( functionName, parameters, results );
+        }
     }
 
     void LuaManager::callFunction( const String &functionName, const Parameters &parameters )
@@ -1014,7 +1024,6 @@ namespace fb
         try
         {
             RecursiveMutex::ScopedLock lock( m_scriptMutex );
-            _executeFunction( functionNameStr, parameters, results );
         }
         catch( std::exception &e )
         {
@@ -1142,151 +1151,160 @@ namespace fb
 
     void LuaManager::callObjectMember( SmartPtr<ISharedObject> object, const String &functionName )
     {
-        try
+        if( isLoaded() )
         {
-            _callObjectMember( object, functionName );
-        }
-        catch( ScriptException &e )
-        {
-            String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
-                         functionName + String( " lua exception: " ) + String( e.what() ) +
-                         String( " Lua Debug: " ) + getDebugInfo();
+            try
+            {
+                _callObjectMember( object, functionName );
+            }
+            catch( ScriptException &e )
+            {
+                String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
+                             functionName + String( " lua exception: " ) + String( e.what() ) +
+                             String( " Lua Debug: " ) + getDebugInfo();
 
-            FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
+                FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
 
-            std::stringstream strStream;
-            //strStream << e.getFullDescription().c_str();
+                std::stringstream strStream;
+                //strStream << e.getFullDescription().c_str();
 
-            strStream << DebugUtil::getStackTraceForException( e );
-            FB_LOG_MESSAGE( "LuaScriptMgr", strStream.str().c_str() );
+                strStream << DebugUtil::getStackTraceForException( e );
+                FB_LOG_MESSAGE( "LuaScriptMgr", strStream.str().c_str() );
 
-            throw;
-        }
-        catch( std::exception &e )
-        {
-            String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
-                         functionName + String( " lua exception: " ) + String( e.what() ) +
-                         String( " Lua Debug: " ) + getDebugInfo();
+                throw;
+            }
+            catch( std::exception &e )
+            {
+                String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
+                             functionName + String( " lua exception: " ) + String( e.what() ) +
+                             String( " Lua Debug: " ) + getDebugInfo();
 
-            FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
+                FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
 
-            std::stringstream strStream;
+                std::stringstream strStream;
 
-            strStream << DebugUtil::getStackTraceForException( e );
-            FB_LOG_MESSAGE( "LuaScriptMgr", strStream.str().c_str() );
+                strStream << DebugUtil::getStackTraceForException( e );
+                FB_LOG_MESSAGE( "LuaScriptMgr", strStream.str().c_str() );
 
-            throw;
-        }
-        catch( ... )
-        {
-            String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
-                         functionName + String( " Lua Debug: " ) + getDebugInfo();
+                throw;
+            }
+            catch( ... )
+            {
+                String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
+                             functionName + String( " Lua Debug: " ) + getDebugInfo();
 
-            FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
+                FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
 
-            throw;
+                throw;
+            }
         }
     }
 
     void LuaManager::callObjectMember( SmartPtr<ISharedObject> object, const String &functionName,
                                        const Parameters &parameters )
     {
-        m_callCounter++;
-
-        try
+        if( isLoaded() )
         {
-            _callObjectMember( object, functionName, parameters );
+            m_callCounter++;
+
+            try
+            {
+                _callObjectMember( object, functionName, parameters );
+            }
+            catch( ScriptException &e )
+            {
+                String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
+                             functionName + String( " lua exception: " ) + String( e.what() ) +
+                             String( " Lua Debug: " ) + getDebugInfo();
+
+                FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
+
+                std::stringstream strStream;
+                //strStream << e.getFullDescription().c_str();
+
+                strStream << DebugUtil::getStackTraceForException( e );
+                FB_LOG_MESSAGE( "LuaScriptMgr", strStream.str().c_str() );
+
+                throw;
+            }
+            catch( std::exception &e )
+            {
+                String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
+                             functionName + String( " lua exception: " ) + String( e.what() ) +
+                             String( " Lua Debug: " ) + getDebugInfo();
+
+                FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
+
+                std::stringstream strStream;
+
+                strStream << DebugUtil::getStackTraceForException( e );
+                FB_LOG_MESSAGE( "LuaScriptMgr", strStream.str().c_str() );
+
+                throw;
+            }
+            catch( ... )
+            {
+                String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
+                             functionName + String( " Lua Debug: " ) + getDebugInfo();
+
+                FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
+
+                throw;
+            }
+
+            --m_callCounter;
         }
-        catch( ScriptException &e )
-        {
-            String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
-                         functionName + String( " lua exception: " ) + String( e.what() ) +
-                         String( " Lua Debug: " ) + getDebugInfo();
-
-            FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
-
-            std::stringstream strStream;
-            //strStream << e.getFullDescription().c_str();
-
-            strStream << DebugUtil::getStackTraceForException( e );
-            FB_LOG_MESSAGE( "LuaScriptMgr", strStream.str().c_str() );
-
-            throw;
-        }
-        catch( std::exception &e )
-        {
-            String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
-                         functionName + String( " lua exception: " ) + String( e.what() ) +
-                         String( " Lua Debug: " ) + getDebugInfo();
-
-            FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
-
-            std::stringstream strStream;
-
-            strStream << DebugUtil::getStackTraceForException( e );
-            FB_LOG_MESSAGE( "LuaScriptMgr", strStream.str().c_str() );
-
-            throw;
-        }
-        catch( ... )
-        {
-            String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
-                         functionName + String( " Lua Debug: " ) + getDebugInfo();
-
-            FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
-
-            throw;
-        }
-
-        --m_callCounter;
     }
 
     void LuaManager::callObjectMember( SmartPtr<ISharedObject> object, const String &functionName,
                                        const Parameters &parameters, Parameters &results )
     {
-        try
+        if( isLoaded() )
         {
-            _callObjectMember( object, functionName, parameters, results );
-        }
-        catch( ScriptException &e )
-        {
-            String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
-                         functionName + String( " lua exception: " ) + String( e.what() ) +
-                         String( " Lua Debug: " ) + getDebugInfo();
+            try
+            {
+                _callObjectMember( object, functionName, parameters, results );
+            }
+            catch( ScriptException &e )
+            {
+                String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
+                             functionName + String( " lua exception: " ) + String( e.what() ) +
+                             String( " Lua Debug: " ) + getDebugInfo();
 
-            FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
+                FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
 
-            std::stringstream strStream;
-            //strStream << e.getFullDescription().c_str();
+                std::stringstream strStream;
+                //strStream << e.getFullDescription().c_str();
 
-            strStream << DebugUtil::getStackTraceForException( e );
-            FB_LOG_MESSAGE( "LuaScriptMgr", strStream.str().c_str() );
+                strStream << DebugUtil::getStackTraceForException( e );
+                FB_LOG_MESSAGE( "LuaScriptMgr", strStream.str().c_str() );
 
-            throw;
-        }
-        catch( std::exception &e )
-        {
-            String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
-                         functionName + String( " lua exception: " ) + String( e.what() ) +
-                         String( " Lua Debug: " ) + getDebugInfo();
+                throw;
+            }
+            catch( std::exception &e )
+            {
+                String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
+                             functionName + String( " lua exception: " ) + String( e.what() ) +
+                             String( " Lua Debug: " ) + getDebugInfo();
 
-            FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
+                FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
 
-            std::stringstream strStream;
+                std::stringstream strStream;
 
-            strStream << DebugUtil::getStackTraceForException( e );
-            FB_LOG_MESSAGE( "LuaScriptMgr", strStream.str().c_str() );
+                strStream << DebugUtil::getStackTraceForException( e );
+                FB_LOG_MESSAGE( "LuaScriptMgr", strStream.str().c_str() );
 
-            throw;
-        }
-        catch( ... )
-        {
-            String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
-                         functionName + String( " Lua Debug: " ) + getDebugInfo();
+                throw;
+            }
+            catch( ... )
+            {
+                String msg = String( "Error calling function: " ) + m_curClass + String( ":" ) +
+                             functionName + String( " Lua Debug: " ) + getDebugInfo();
 
-            FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
+                FB_LOG_MESSAGE( "LuaScriptMgr", msg.c_str() );
 
-            throw;
+                throw;
+            }
         }
     }
 
@@ -1295,22 +1313,15 @@ namespace fb
         m_bReload = true;
     }
 
+    bool LuaManager::reloadPending() const
+    {
+        return m_bReload;
+    }
+
     void LuaManager::clearStack()
     {
         auto luaState = getLuaState();
-        lua_settop(luaState, 0);
-    }
-
-    void LuaManager::_executeFunction( const String &functionNameStr, const Parameters &parameters,
-                                       Parameters &results )
-    {
-    }
-
-    void _getLuaInstance( LuaObjectData *data )
-    {
-        /*		Engine* engine = Engine::getSingletonPtr();
-                LuaManagerPtr mgr = engine->getScriptManager();
-                data->getObject().push(mgr->getLuaState());*/
+        lua_settop( luaState, 0 );
     }
 
     void LuaManager::createLuaState()
@@ -1359,8 +1370,6 @@ namespace fb
         bindEntity( luaState );
 
         bindSColorf( luaState );
-        bindSpecialFx( luaState );
-        bindGame( luaState );
         bindInput( luaState );
         //bindFlash( luaState );
         bindVideo( luaState );
@@ -1375,15 +1384,15 @@ namespace fb
         bindProcedural( luaState );
         bindObjectTemplates( luaState );
 
-        {
-            using namespace luabind;
+        //{
+        //    using namespace luabind;
 
-            module( luaState )[class_<IScriptData, SmartPtr<IScriptData>>( "IScriptData" )];
+        //    module( luaState )[class_<IScriptData, SmartPtr<IScriptData>>( "IScriptData" )];
 
-            module(
-                luaState )[class_<LuaObjectData, IScriptData, SmartPtr<IScriptData>>( "LuaObjectData" )
-                               .def( "getInstance", _getLuaInstance )];
-        }
+        //    module(
+        //        luaState )[class_<LuaObjectData, IScriptData, SmartPtr<IScriptData>>( "LuaObjectData" )
+        //                       .def( "getInstance", _getLuaInstance )];
+        //}
 
         setLuaState( luaState );
 

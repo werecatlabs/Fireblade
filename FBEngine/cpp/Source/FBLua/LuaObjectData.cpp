@@ -38,7 +38,7 @@ namespace fb
 
     String LuaObjectData::getClassName() const
     {
-        return m_className;
+        return String( m_className.c_str() );
     }
 
     void LuaObjectData::setClassName( const String &className )
@@ -58,9 +58,9 @@ namespace fb
         return m_object;
     }
 
-    void LuaObjectData::setObject(luabind::object &object)
+    void LuaObjectData::setObject( luabind::object &object )
     {
         m_object = object;
     }
 
-} // end namespace fb
+}  // end namespace fb

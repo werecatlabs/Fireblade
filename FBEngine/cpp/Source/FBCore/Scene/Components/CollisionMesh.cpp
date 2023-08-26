@@ -208,7 +208,7 @@ namespace fb
                             }
 
                             auto shape =
-                                physicsManager->createCollisionShape<physics::IMeshShape>( mesh );
+                                physicsManager->addCollisionShape<physics::IMeshShape>( mesh );
                             FB_ASSERT( shape );
 
                             setShape( shape );

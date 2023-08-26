@@ -28,39 +28,39 @@ namespace fb
 
             void setEnableDebugDraw( bool enableDebugDraw ) override;
 
-            SmartPtr<IPhysicsMaterial3> createMaterial() override;
+            SmartPtr<IPhysicsMaterial3> addMaterial() override;
 
-            void destroyMaterial( SmartPtr<IPhysicsMaterial3> material ) override;
+            void removeMaterial( SmartPtr<IPhysicsMaterial3> material ) override;
 
-            SmartPtr<IPhysicsScene3> createScene() override;
+            SmartPtr<IPhysicsScene3> addScene() override;
 
-            void destroyScene( SmartPtr<IPhysicsScene3> scene ) override;
+            void removeScene( SmartPtr<IPhysicsScene3> scene ) override;
 
-            bool destroyCollisionShape( SmartPtr<IPhysicsShape3> collisionShape ) override;
+            bool removeCollisionShape( SmartPtr<IPhysicsShape3> collisionShape ) override;
 
-            bool destroyPhysicsBody( SmartPtr<IRigidBody3> body ) override;
+            bool removePhysicsBody( SmartPtr<IRigidBody3> body ) override;
 
             SmartPtr<ICharacterController3> addCharacter() override;
 
-            SmartPtr<IRigidStatic3> createRigidStatic( const Transform3<real_Num> &transform ) override;
+            SmartPtr<IRigidStatic3> addRigidStatic( const Transform3<real_Num> &transform ) override;
 
-            SmartPtr<IRigidDynamic3> createRigidDynamic(
+            SmartPtr<IRigidDynamic3> addRigidDynamic(
                 const Transform3<real_Num> &transform ) override;
 
-            SmartPtr<IRigidStatic3> createRigidStatic(
+            SmartPtr<IRigidStatic3> addRigidStatic(
                 SmartPtr<IPhysicsShape3> collisionShape ) override;
 
-            SmartPtr<IRigidStatic3> createRigidStatic( SmartPtr<IPhysicsShape3> collisionShape,
+            SmartPtr<IRigidStatic3> addRigidStatic( SmartPtr<IPhysicsShape3> collisionShape,
                                                        SmartPtr<Properties> properties ) override;
 
-            SmartPtr<IPhysicsSoftBody3> createSoftBody( const String &filePath ) override;
+            SmartPtr<IPhysicsSoftBody3> addSoftBody( const String &filePath ) override;
 
             SmartPtr<IPhysicsVehicle3> addVehicle( SmartPtr<IRigidBody3> chassis,
                                                    const SmartPtr<Properties> &properties ) override;
 
-            SmartPtr<IPhysicsVehicle3> addVehicle( SmartPtr<scene::IDirector> vehicleTemplate ) override;
+            SmartPtr<IPhysicsVehicle3> addVehicle( SmartPtr<scene::IDirector> vehicleTemplate );
 
-            bool destroyVehicle( SmartPtr<IPhysicsVehicle3> vehicle ) override;
+            bool removeVehicle( SmartPtr<IPhysicsVehicle3> vehicle ) override;
 
             bool rayTest( const Vector3<real_Num> &start, const Vector3<real_Num> &direction,
                           Vector3<real_Num> &hitPos, Vector3<real_Num> &hitNormal, u32 collisionType = 0,
@@ -71,20 +71,22 @@ namespace fb
                              SmartPtr<ISharedObject> &object, u32 collisionType = 0,
                              u32 collisionMask = 0 ) override;
 
-            SmartPtr<IConstraintD6> d6JointCreate( SmartPtr<IPhysicsBody3> actor0,
+            SmartPtr<IConstraintD6> addJointD6( SmartPtr<IPhysicsBody3> actor0,
                                                    const Transform3<real_Num> &localFrame0,
                                                    SmartPtr<IPhysicsBody3> actor1,
                                                    const Transform3<real_Num> &localFrame1 ) override;
 
-            SmartPtr<IConstraintFixed3> fixedJointCreate(
+            SmartPtr<IConstraintFixed3> addFixedJoint(
                 SmartPtr<IPhysicsBody3> actor0, const Transform3<real_Num> &localFrame0,
                 SmartPtr<IPhysicsBody3> actor1, const Transform3<real_Num> &localFrame1 ) override;
 
-            SmartPtr<IConstraintDrive> createConstraintDrive() override;
+            SmartPtr<IConstraintDrive> addConstraintDrive() override;
 
-            SmartPtr<IConstraintLinearLimit> createConstraintLinearLimit(real_Num extent, real_Num contactDist = real_Num(-1.0)) override;
+            SmartPtr<IConstraintLinearLimit> addConstraintLinearLimit(real_Num extent, real_Num contactDist = real_Num(-1.0)) override;
 
-            SmartPtr<IRaycastHit> createRaycastHitData() override;
+            SmartPtr<IRaycastHit> addRaycastHitData() override;
+
+            void removeRaycastHitData(SmartPtr<IRaycastHit> raycastHitData) override;
 
             Thread::Task getStateTask() const override;
 

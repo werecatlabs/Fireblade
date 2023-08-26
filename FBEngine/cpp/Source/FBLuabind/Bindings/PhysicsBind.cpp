@@ -3,12 +3,8 @@
 #include <luabind/luabind.hpp>
 #include "FBLuabind/SmartPtrConverter.h"
 #include "FBLuabind/ParamConverter.h"
-#include <FBCore/FBCore.h>
-
 #include "FBLuabind/Helpers/PhysicsHelper3.h"
-
-#include <FBPhysics2/CRigidBody2.h>
-#include <FBPhysics2/Particle2.h>
+#include <FBCore/FBCore.h>
 
 namespace fb
 {
@@ -173,7 +169,9 @@ namespace fb
 
     void bindPhysics( lua_State *L )
     {
-        //using namespace luabind;
+        using namespace luabind;
+        using namespace fb;
+        using namespace fb::physics;
 
         //module( L )[class_<IPhysicsBody2, IScriptObject, boost::shared_ptr<IObject>>( "IPhysicsBody2" )
         //                .def( "setPosition", &IPhysicsBody2::setPosition )
@@ -380,22 +378,9 @@ namespace fb
         //            .def( "setCollisionMask", _setCollisionMask<IPhysicsTerrain> )
         //            .def( "getCollisionMask", _getCollisionMask<IPhysicsTerrain> )];
 
-        //module( L )[class_<IPhysicsManager3, IScriptObject, boost::shared_ptr<IObject>>(
-        //                "PhysicsManager3" )
-        //                .def( "addCharacter", &IPhysicsManager3::addCharacter )
-        //                .def( "createTerrain", &IPhysicsManager3::createTerrain )
-        //                .def( "createTerrain", _createTerrain )
-
-        //                .def( "createCollisionShape", PhysicsHelper3::createCollisionShape )
-
-        //                .def( "createRigidBody", PhysicsHelper3::createRigidBody1 )
-        //                .def( "createRigidBody", PhysicsHelper3::createRigidBody2 )
-
-        //                .def( "createRigidStatic", PhysicsHelper3::createRigidStatic1 )
-        //                .def( "createRigidStatic", PhysicsHelper3::createRigidStatic2 )
-
-        //                .def( "getEnableDebugDraw", &IPhysicsManager3::getEnableDebugDraw )
-        //                .def( "setEnableDebugDraw", &IPhysicsManager3::setEnableDebugDraw )];
+        module(
+            L )[class_<IPhysicsManager, IScriptObject, boost::shared_ptr<IObject>>( "PhysicsManager3" )
+                    .def( "addCharacter", &IPhysicsManager::addCharacter )];
     }
 
 }  // end namespace fb

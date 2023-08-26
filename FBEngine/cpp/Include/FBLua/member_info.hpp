@@ -3,11 +3,6 @@
 
 #include <luabind/luabind.hpp>
 #include <luabind/adopt_policy.hpp>
-
-#include <luabind/detail/object_rep.hpp>
-#include <luabind/detail/stack_utils.hpp>
-
-#include <luabind/luabind.hpp>
 #include <luabind/detail/object_rep.hpp>
 #include <luabind/detail/stack_utils.hpp>
 

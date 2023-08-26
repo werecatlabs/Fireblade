@@ -32,7 +32,7 @@ namespace fb
 
                 auto applicationManager = core::IApplicationManager::instance();
                 auto physicsManager = applicationManager->getPhysicsManager();
-                m_material = physicsManager->createMaterial();
+                m_material = physicsManager->addMaterial();
 
                 setLoadingState( LoadingState::Loaded );
             }

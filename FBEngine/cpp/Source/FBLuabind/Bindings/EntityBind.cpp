@@ -3,16 +3,13 @@
 #include <luabind/luabind.hpp>
 #include "FBLuabind/SmartPtrConverter.h"
 #include "FBLuabind/ParamConverter.h"
-#include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
-#include <FBVehicle/FBVehicle.h>
 #include "FBLua/LuaManager.h"
 #include "FBLua/LuaObjectData.h"
-#include "FBLuabind/FBLuaScriptError.h"
 #include "FBLuabind/ScriptObjectFunctions.h"
 #include "FBLuaBind/Helpers/Projectile3Helper.h"
 #include "FBLuabind/Wrappers/StandardGameObjectWrapper.h"
 #include "FBLuabind/Wrappers/GameObjectWrapper.h"
+#include <FBCore/FBCore.h>
 
 namespace fb
 {
@@ -350,6 +347,8 @@ namespace fb
                         .def( "setParent", &IEditor::setParent )
                         .def( "getParentWindow", &IEditor::getParentWindow )
                         .def( "setParentWindow", &IEditor::setParentWindow )
+                        .def( "getDebugWindow", &IEditor::getDebugWindow )
+                        .def( "setDebugWindow", &IEditor::setDebugWindow )
                         .def( "isWindowVisible", &IEditor::isWindowVisible )
                         .def( "setWindowVisible", &IEditor::setWindowVisible )
                         .def( "updateSelection", &IEditor::updateSelection )
@@ -408,11 +407,7 @@ namespace fb
                     .def( "setScale", &IActor::setScale )
                     .def( "getOrientation", &IActor::getOrientation )
                     .def( "setOrientation", &IActor::setOrientation )
-                    .def( "awake", &IActor::awake )
-                    .def( "play", &IActor::play )
-                    .def( "edit", &IActor::edit )
                     .def( "levelWasLoaded", &IActor::levelWasLoaded )
-                    .def( "reset", &IActor::reset )
                     .def( "hierarchyChanged", &IActor::hierarchyChanged )
                     .def( "childAdded", &IActor::childAdded )
                     .def( "childRemoved", &IActor::childRemoved )
@@ -430,12 +425,6 @@ namespace fb
                     .def( "getChildByIndex", &IActor::getChildByIndex )
                     .def( "getNumChildren", &IActor::getNumChildren )
                     .def( "getSiblingIndex", &IActor::getSiblingIndex )
-                    .def( "addDirtyComponent", &IActor::addDirtyComponent )
-                    .def( "isComponentDirty", &IActor::isComponentDirty )
-                    .def( "registerComponentUpdate", &IActor::registerComponentUpdate )
-                    .def( "unregisterComponentUpdate", &IActor::unregisterComponentUpdate )
-
-                    .def( "unregisterAllComponent", &IActor::unregisterAllComponent )
                     .def( "triggerEnter", &IActor::triggerEnter )
                     .def( "triggerLeave", &IActor::triggerLeave )
                     .def( "componentLoaded", &IActor::componentLoaded )

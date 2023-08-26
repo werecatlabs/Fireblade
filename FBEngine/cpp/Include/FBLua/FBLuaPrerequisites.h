@@ -14,8 +14,6 @@ namespace fb
     class LuaManager;
     class LuaObjectData;
 
-    /// smart pointer forward decs
-    using LuaManagerPtr = SmartPtr<LuaManager>;
 } // end namespace fb
 
 #endif  // FBLuaPrerequisites_h__

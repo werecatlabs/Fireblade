@@ -33,18 +33,18 @@ namespace fb
             /** Creates an instance of a physics material.
             @return An instance of a physics material.
             */
-            virtual SmartPtr<IPhysicsMaterial3> createMaterial() = 0;
+            virtual SmartPtr<IPhysicsMaterial3> addMaterial() = 0;
 
             /* Destroy a material.
             @param material A pointer to the material destroy.
             */
-            virtual void destroyMaterial( SmartPtr<IPhysicsMaterial3> material ) = 0;
+            virtual void removeMaterial( SmartPtr<IPhysicsMaterial3> material ) = 0;
 
             /* Create a scene with default properties. */
-            virtual SmartPtr<IPhysicsScene3> createScene() = 0;
+            virtual SmartPtr<IPhysicsScene3> addScene() = 0;
 
             /* Destroy a scene. */
-            virtual void destroyScene( SmartPtr<IPhysicsScene3> scene ) = 0;
+            virtual void removeScene( SmartPtr<IPhysicsScene3> scene ) = 0;
 
             /** Creates a collision from the type provided.
             @remarks Creates a collision shape from the type specified with default properties.
@@ -52,7 +52,7 @@ namespace fb
             @param data The data used to create the shape.
             @return An instance of a collision shape.
             */
-            virtual SmartPtr<IPhysicsShape3> createCollisionShapeByType(
+            virtual SmartPtr<IPhysicsShape3> addCollisionShapeByType(
                 hash64 type, SmartPtr<ISharedObject> data ) = 0;
 
             /** Creates a collision shape from the template type provided.
@@ -60,13 +60,13 @@ namespace fb
             @return An instance of a collision shape.
             */
             template <class T>
-            SmartPtr<T> createCollisionShape( SmartPtr<ISharedObject> data );
+            SmartPtr<T> addCollisionShape( SmartPtr<ISharedObject> data );
 
             /** Destroys a collision shape. */
-            virtual bool destroyCollisionShape( SmartPtr<IPhysicsShape3> collisionShape ) = 0;
+            virtual bool removeCollisionShape( SmartPtr<IPhysicsShape3> collisionShape ) = 0;
 
             /** Destroys a physics body. */
-            virtual bool destroyPhysicsBody( SmartPtr<IRigidBody3> body ) = 0;
+            virtual bool removePhysicsBody( SmartPtr<IRigidBody3> body ) = 0;
 
             /** Adds a character controller. */
             virtual SmartPtr<ICharacterController3> addCharacter() = 0;
@@ -74,36 +74,32 @@ namespace fb
             /** Creates a rigid body.
             @return A rigid body instance.
             */
-            virtual SmartPtr<IRigidStatic3> createRigidStatic(
+            virtual SmartPtr<IRigidStatic3> addRigidStatic(
                 const Transform3<real_Num> &transform ) = 0;
 
             /** Creates a rigid body.
             @return A rigid body instance.
             */
-            virtual SmartPtr<IRigidDynamic3> createRigidDynamic(
+            virtual SmartPtr<IRigidDynamic3> addRigidDynamic(
                 const Transform3<real_Num> &transform ) = 0;
 
             /** Creates a rigid body. */
-            virtual SmartPtr<IRigidStatic3> createRigidStatic(
+            virtual SmartPtr<IRigidStatic3> addRigidStatic(
                 SmartPtr<IPhysicsShape3> collisionShape ) = 0;
 
             /** Creates a rigid body. */
-            virtual SmartPtr<IRigidStatic3> createRigidStatic( SmartPtr<IPhysicsShape3> collisionShape,
+            virtual SmartPtr<IRigidStatic3> addRigidStatic( SmartPtr<IPhysicsShape3> collisionShape,
                                                                SmartPtr<Properties> properties ) = 0;
 
             /** Creates a soft body. */
-            virtual SmartPtr<IPhysicsSoftBody3> createSoftBody( const String &filePath ) = 0;
+            virtual SmartPtr<IPhysicsSoftBody3> addSoftBody( const String &filePath ) = 0;
 
             /** Adds a vehicle. */
             virtual SmartPtr<IPhysicsVehicle3> addVehicle( SmartPtr<IRigidBody3> chassis,
                                                            const SmartPtr<Properties> &properties ) = 0;
 
-            /** Adds a vehicle. */
-            virtual SmartPtr<IPhysicsVehicle3> addVehicle(
-                SmartPtr<scene::IDirector> vehicleTemplate ) = 0;
-
             /** Destroys a vehicle. */
-            virtual bool destroyVehicle( SmartPtr<IPhysicsVehicle3> vehicle ) = 0;
+            virtual bool removeVehicle( SmartPtr<IPhysicsVehicle3> vehicle ) = 0;
 
             /** Performs a ray intersection test. */
             virtual bool rayTest( const Vector3<real_Num> &start, const Vector3<real_Num> &direction,
@@ -125,25 +121,28 @@ namespace fb
                                      u32 collisionMask = 0 ) = 0;
 
             /** Creates a 6 degree of freedom joint. */
-            virtual SmartPtr<IConstraintD6> d6JointCreate( SmartPtr<IPhysicsBody3> actor0,
+            virtual SmartPtr<IConstraintD6> addJointD6( SmartPtr<IPhysicsBody3> actor0,
                                                            const Transform3<real_Num> &localFrame0,
                                                            SmartPtr<IPhysicsBody3> actor1,
                                                            const Transform3<real_Num> &localFrame1 ) = 0;
 
             /** Creates a fixed joint. */
-            virtual SmartPtr<IConstraintFixed3> fixedJointCreate(
+            virtual SmartPtr<IConstraintFixed3> addFixedJoint(
                 SmartPtr<IPhysicsBody3> actor0, const Transform3<real_Num> &localFrame0,
                 SmartPtr<IPhysicsBody3> actor1, const Transform3<real_Num> &localFrame1 ) = 0;
 
             /** Creates a constraint drive. */
-            virtual SmartPtr<IConstraintDrive> createConstraintDrive() = 0;
+            virtual SmartPtr<IConstraintDrive> addConstraintDrive() = 0;
 
             /** Creates a constraint linear limit. */
-            virtual SmartPtr<IConstraintLinearLimit> createConstraintLinearLimit(
+            virtual SmartPtr<IConstraintLinearLimit> addConstraintLinearLimit(
                 real_Num extent, real_Num contactDist = real_Num( -1.0 ) ) = 0;
 
             /** Creates raycast hit data. */
-            virtual SmartPtr<IRaycastHit> createRaycastHitData() = 0;
+            virtual SmartPtr<IRaycastHit> addRaycastHitData() = 0;
+
+            /** Remove raycast hit data. */
+            virtual void removeRaycastHitData(SmartPtr<IRaycastHit> raycastHitData) = 0;
 
             /** The task used to update. */
             virtual Thread::Task getStateTask() const = 0;
@@ -167,7 +166,7 @@ namespace fb
         };
 
         template <class T>
-        SmartPtr<T> IPhysicsManager::createCollisionShape( SmartPtr<ISharedObject> data )
+        SmartPtr<T> IPhysicsManager::addCollisionShape( SmartPtr<ISharedObject> data )
         {
             auto typeInfo = T::typeInfo();
             FB_ASSERT( typeInfo != 0 );
@@ -178,7 +177,7 @@ namespace fb
             auto typeHash = typeManager->getHash( typeInfo );
             FB_ASSERT( typeHash != 0 );
 
-            auto shape = createCollisionShapeByType( typeHash, data );
+            auto shape = addCollisionShapeByType( typeHash, data );
             FB_ASSERT( fb::dynamic_pointer_cast<T>( shape ) );
             return fb::static_pointer_cast<T>( shape );
         }

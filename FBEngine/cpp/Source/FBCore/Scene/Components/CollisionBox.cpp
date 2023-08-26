@@ -39,7 +39,7 @@ namespace fb
 
                 if( auto physicsManager = applicationManager->getPhysicsManager() )
                 {
-                    auto shape = physicsManager->createCollisionShape<physics::IBoxShape3>( nullptr );
+                    auto shape = physicsManager->addCollisionShape<physics::IBoxShape3>( nullptr );
                     FB_ASSERT( shape );
 
                     setShape( shape );
@@ -74,7 +74,7 @@ namespace fb
                     if( physicsManager )
                     {
                         auto shape = getShape();
-                        physicsManager->destroyCollisionShape( shape );
+                        physicsManager->removeCollisionShape( shape );
                         setShape( nullptr );
                         shape = nullptr;
                     }

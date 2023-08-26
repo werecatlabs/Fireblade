@@ -1,7 +1,8 @@
 #include <FBLua/FBLua.h>
 #include <FBCore/Core/LogManager.h>
-#include "FBCore/Memory/FactoryUtil.h"
-#include "FBLua/LuaManager.h"
+#include <FBCore/Memory/FactoryUtil.h>
+#include <FBLua/LuaManager.h>
+#include <FBLua/LuaObjectData.h>
 
 namespace fb
 {
@@ -19,6 +20,9 @@ namespace fb
             FB_ASSERT( factoryManager );
 
             FactoryUtil::addFactory<LuaManager>();
+            FactoryUtil::addFactory<LuaObjectData>();
+
+            factoryManager->setPoolSizeByType<LuaObjectData>(256);
 
             setLoadingState( LoadingState::Loaded );
         }

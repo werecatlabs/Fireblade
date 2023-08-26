@@ -8,6 +8,7 @@
 
 namespace fb
 {
+
     class NullScriptObject : public SharedObject<IScriptObject>, public Singleton<NullScriptObject>
     {
     public:

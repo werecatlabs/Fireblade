@@ -28,11 +28,9 @@ namespace fb
     {
         using namespace luabind;
 
-        module( L )[class_<IUIDragSource, ISharedObject>( "IUIDragSource" )
-                        .def( "handleDrag", &IUIDragSource::handleDrag )];
+        module( L )[class_<IUIDragSource, IEventListener>( "IUIDragSource" )];
 
-        module( L )[class_<IUIDropTarget, ISharedObject>( "IUIDropTarget" )
-                        .def( "handleDrop", &IUIDropTarget::handleDrop )];
+        module( L )[class_<IUIDropTarget, IEventListener>( "IUIDropTarget" )];
 
         module( L )[class_<IUIElement, core::IPrototype, SmartPtr<IUIElement>>( "IUIElement" )
                         .def( "handleEvent", &IUIElement::handleEvent )
@@ -249,7 +247,7 @@ namespace fb
                         .def( "setDocked", &IUIWindow::setDocked )
                         .scope[def( "typeInfo", IUIWindow::typeInfo )]];
 
-        module( L )[class_<IUICharacterSelect, IUIElement, SmartPtr<IUIElement>>( "IGUICharacterSelect" )
+        module( L )[class_<IUICharacterSelect, IUIElement, SmartPtr<IUIElement>>( "IUICharacterSelect" )
                         .def( "setCursorPosition", &IUICharacterSelect::setCursorPosition )
                         .def( "getCursorPosition", &IUICharacterSelect::getCursorPosition )
 

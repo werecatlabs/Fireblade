@@ -1,12 +1,9 @@
 #include "FBLuabind/FBLuabindPCH.h"
 #include "FBLuabind/Bindings/GraphicsSystemBind.h"
-
 #include <luabind/luabind.hpp>
 #include "FBLuabind/ParamConverter.h"
 #include "FBLuabind/SmartPtrConverter.h"
 #include <FBCore/FBCore.h>
-#include "FBLuabind/ArrayFunctions.h"
-
 #include "FBLuabind/Helpers/AnimationControllerHelper.h"
 #include "FBLuabind/Helpers/SceneNodeHelper.h"
 #include "FBLuabind/Helpers/ViewportHelper.h"
@@ -420,7 +417,7 @@ namespace fb
         //                .def( "getCompositorProperties", &ICompositorManager::getCompositorProperties )];
 
         typedef Array<u8> ArrayU8;
-        typedef ArrayFunctions<ArrayU8> ArrayU8Functions;
+        //typedef ArrayFunctions<ArrayU8> ArrayU8Functions;
 
         module( L )[class_<ArrayU8>( "ArrayU8" )
                         .def( constructor<>() )

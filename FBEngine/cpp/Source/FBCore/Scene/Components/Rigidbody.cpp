@@ -79,19 +79,19 @@ namespace fb
                 {
                     if( m_rigidDynamic )
                     {
-                        physicsManager->destroyPhysicsBody( m_rigidDynamic );
+                        physicsManager->removePhysicsBody( m_rigidDynamic );
                         m_rigidDynamic = nullptr;
                     }
 
                     if( m_rigidStatic )
                     {
-                        physicsManager->destroyPhysicsBody( m_rigidStatic );
+                        physicsManager->removePhysicsBody( m_rigidStatic );
                         m_rigidStatic = nullptr;
                     }
 
                     if( m_material )
                     {
-                        physicsManager->destroyMaterial( m_material );
+                        physicsManager->removeMaterial( m_material );
                         m_material = nullptr;
                     }
                 }
@@ -155,7 +155,7 @@ namespace fb
 
                 if( actor->isStatic() )
                 {
-                    body = physicsMgr->createRigidStatic( transform );
+                    body = physicsMgr->addRigidStatic( transform );
 
                     auto listener = fb::make_ptr<RigidbodyListener>();
                     listener->setOwner( this );
@@ -165,7 +165,7 @@ namespace fb
                 }
                 else
                 {
-                    auto rigidDynamic = physicsMgr->createRigidDynamic( transform );
+                    auto rigidDynamic = physicsMgr->addRigidDynamic( transform );
 
                     auto listener = fb::make_ptr<RigidbodyListener>();
                     listener->setOwner( this );
@@ -219,19 +219,19 @@ namespace fb
             {
                 if( m_rigidDynamic )
                 {
-                    physicsManager->destroyPhysicsBody( m_rigidDynamic );
+                    physicsManager->removePhysicsBody( m_rigidDynamic );
                     m_rigidDynamic = nullptr;
                 }
 
                 if( m_rigidStatic )
                 {
-                    physicsManager->destroyPhysicsBody( m_rigidStatic );
+                    physicsManager->removePhysicsBody( m_rigidStatic );
                     m_rigidStatic = nullptr;
                 }
 
                 if( m_material )
                 {
-                    physicsManager->destroyMaterial( m_material );
+                    physicsManager->removeMaterial( m_material );
                     m_material = nullptr;
                 }
             }

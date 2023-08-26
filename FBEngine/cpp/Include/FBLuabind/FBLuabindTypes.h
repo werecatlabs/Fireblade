@@ -1,5 +1,5 @@
-#ifndef FBLuaScriptCommon_h__
-#define FBLuaScriptCommon_h__
+#ifndef FBLuabindTypes_h__
+#define FBLuabindTypes_h__
 
 #include <FBCore/FBCore.h>
 
@@ -11,8 +11,10 @@
     { \
         object g = globals( L ); \
         object table = g[#class];
-#define LUA_CONST( class, name ) table[#name] = class ::name
-#define LUA_CONST_END }
+#define LUA_CONST( class, name ) \
+        table[#name] = class ::name
+#define LUA_CONST_END \
+    }
 
 namespace fb
 {
@@ -22,4 +24,4 @@ namespace fb
 
 }  // end namespace fb
 
-#endif  // FBLuaScriptCommon_h__
+#endif  // FBLuabindTypes_h__

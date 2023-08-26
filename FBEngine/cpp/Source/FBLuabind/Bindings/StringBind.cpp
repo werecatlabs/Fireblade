@@ -4,12 +4,11 @@
 #include "FBLuabind/SmartPtrConverter.h"
 #include "FBLuabind/ParamConverter.h"
 #include <FBCore/FBCore.h>
-#include "FBLuabind/ArrayFunctions.h"
 
 namespace fb
 {
 
-    typedef ArrayFunctions<String> stringc_array_functions;
+    //typedef ArrayFunctions<String> stringc_array_functions;
     //typedef Array<String> StringVector;
 
     //class StringVector : public SharedObject<ISharedObject>

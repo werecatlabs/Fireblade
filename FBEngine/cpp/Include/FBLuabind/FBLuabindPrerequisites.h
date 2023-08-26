@@ -7,6 +7,7 @@ struct lua_State;
 
 namespace boost
 {
+
     template <class T>
     const T *get_pointer( const std::shared_ptr<T> &ptr )
     {
@@ -18,6 +19,7 @@ namespace boost
     {
         return ptr.get();
     }
+
 }  // namespace boost
 
 #endif  // FBLuabindPrerequisites_h__
