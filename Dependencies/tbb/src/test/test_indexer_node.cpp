@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2005-2018 Intel Corporation
+    Copyright (c) 2005-2020 Intel Corporation
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -12,12 +12,13 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-
-
-
-
 */
 
+#if __TBB_CPF_BUILD
+#define TBB_DEPRECATED_FLOW_NODE_EXTRACTION 1
+#endif
+
+#include "harness.h"
 #include "harness_graph.h"
 #include "tbb/flow_graph.h"
 
@@ -29,7 +30,7 @@
     #pragma warning (disable : 4503) //disabling the "decorated name length exceeded" warning for VS2008 and earlier
 #endif
 
-#if TBB_PREVIEW_FLOW_GRAPH_FEATURES
+#if TBB_DEPRECATED_FLOW_NODE_EXTRACTION
 template< typename T >
 class test_indexer_extract {
 protected:
@@ -455,7 +456,7 @@ public:
     typedef INT indexer_node_type;
     typedef typename indexer_node_type::output_type TT;
     typedef typename tbb::flow::tuple_element<ELEM-1,typename INT::tuple_types>::type IT;
-    typedef typename tbb::flow::source_node<IT> my_source_node_type;
+    typedef typename tbb::flow::input_node<IT> my_source_node_type;
     static void print_remark() {
         source_node_helper<ELEM-1,INT>::print_remark();
         REMARK(", %s", name_of<IT>::name());
@@ -464,12 +465,13 @@ public:
         for(int i=0; i < nInputs; ++i) {
             my_source_node_type *new_node = new my_source_node_type(g, source_body<IT>((IT)(ELEM+1), i, nInputs));
             tbb::flow::make_edge(*new_node, tbb::flow::input_port<ELEM-1>(my_indexer));
-#if TBB_PREVIEW_FLOW_GRAPH_FEATURES
+#if TBB_DEPRECATED_FLOW_NODE_EXTRACTION
             ASSERT(new_node->successor_count() == 1, NULL);
 #endif
             all_source_nodes[ELEM-1][i] = (void *)new_node;
+            new_node->activate();
         }
-#if TBB_PREVIEW_FLOW_GRAPH_FEATURES
+#if TBB_DEPRECATED_FLOW_NODE_EXTRACTION
         ASSERT(tbb::flow::input_port<ELEM-1>(my_indexer).predecessor_count() == (size_t)nInputs, NULL);
 #endif
         // add the next source_node
@@ -503,7 +505,7 @@ class source_node_helper<1, INT> {
     typedef INT indexer_node_type;
     typedef typename indexer_node_type::output_type TT;
     typedef typename tbb::flow::tuple_element<0, typename INT::tuple_types>::type IT;
-    typedef typename tbb::flow::source_node<IT> my_source_node_type;
+    typedef typename tbb::flow::input_node<IT> my_source_node_type;
 public:
     static void print_remark() {
         REMARK("Parallel test of indexer_node< %s", name_of<IT>::name());
@@ -513,6 +515,7 @@ public:
             my_source_node_type *new_node = new my_source_node_type(g, source_body<IT>((IT)2, i, nInputs));
             tbb::flow::make_edge(*new_node, tbb::flow::input_port<0>(my_indexer));
             all_source_nodes[0][i] = (void *)new_node;
+            new_node->activate();
         }
     }
     static void check_value(TT &v) {
@@ -657,7 +660,7 @@ void test_one_serial( IType &my_indexer, tbb::flow::graph &g) {
     q3_input_type v;
 
     tbb::flow::make_edge(my_indexer, q3);
-#if TBB_PREVIEW_FLOW_GRAPH_FEATURES
+#if TBB_DEPRECATED_FLOW_NODE_EXTRACTION
     ASSERT(my_indexer.successor_count() == 1, NULL);
     ASSERT(tbb::flow::input_port<0>(my_indexer).predecessor_count() == 0, NULL);
 #endif
@@ -841,6 +844,95 @@ public:
     }
 };
 
+#if __TBB_PREVIEW_FLOW_GRAPH_NODE_SET
+template<typename tagged_msg_t, typename input_t>
+void check_edge(tbb::flow::graph& g,
+                tbb::flow::broadcast_node<input_t>& start,
+                tbb::flow::buffer_node<tagged_msg_t>& buf,
+                input_t input_value) {
+    start.try_put(input_value);
+    g.wait_for_all();
+
+    tagged_msg_t msg;
+    bool is_get_succeeded = buf.try_get(msg);
+
+    ASSERT((is_get_succeeded), "There is no item in the buffer");
+    ASSERT((tbb::flow::cast_to<input_t>(msg) == input_value), "Wrong item value");
+}
+
+void test_follows() {
+    using namespace tbb::flow;
+    using indexer_output_t = indexer_node<int, float, double>::output_type;
+
+    graph g;
+    broadcast_node<continue_msg> start(g);
+
+    broadcast_node<int> start1(g);
+    broadcast_node<float> start2(g);
+    broadcast_node<double> start3(g);
+
+    indexer_node<int, float, double> my_indexer(follows(start1, start2, start3));
+
+    buffer_node<indexer_output_t> buf(g);
+    make_edge(my_indexer, buf);
+
+    check_edge<indexer_output_t, int>(g, start1, buf, 1);
+    check_edge<indexer_output_t, float>(g, start2, buf, 2.2f);
+    check_edge<indexer_output_t, double>(g, start3, buf, 3.3);
+}
+
+void test_precedes() {
+    using namespace tbb::flow;
+
+    using indexer_output_t = indexer_node<int, float, double>::output_type;
+
+    graph g;
+
+    broadcast_node<int> start1(g);
+    broadcast_node<float> start2(g);
+    broadcast_node<double> start3(g);
+
+    buffer_node<indexer_output_t> buf1(g);
+    buffer_node<indexer_output_t> buf2(g);
+    buffer_node<indexer_output_t> buf3(g);
+
+    indexer_node<int, float, double> node(precedes(buf1, buf2, buf3));
+
+    make_edge(start1, input_port<0>(node));
+    make_edge(start2, input_port<1>(node));
+    make_edge(start3, input_port<2>(node));
+
+    check_edge<indexer_output_t, int>(g, start1, buf1, 1);
+    check_edge<indexer_output_t, float>(g, start2, buf2, 2.2f);
+    check_edge<indexer_output_t, double>(g, start3, buf3, 3.3);
+}
+
+void test_follows_and_precedes_api() {
+    test_follows();
+    test_precedes();
+}
+#endif // __TBB_PREVIEW_FLOW_GRAPH_NODE_SET
+
+#if __TBB_CPP17_DEDUCTION_GUIDES_PRESENT
+void test_deduction_guides() {
+    using namespace tbb::flow;
+    graph g;
+
+    broadcast_node<int> b1(g);
+    broadcast_node<double> b2(g);
+    indexer_node<int, double> i0(g);
+
+#if __TBB_PREVIEW_FLOW_GRAPH_NODE_SET
+    indexer_node i1(follows(b1, b2));
+    static_assert(std::is_same_v<decltype(i1), indexer_node<int, double>>);
+#endif
+
+    indexer_node i2(i0);
+    static_assert(std::is_same_v<decltype(i2), indexer_node<int, double>>);
+}
+
+#endif
+
 int TestMain() {
     REMARK("Testing indexer_node, ");
 #if __TBB_USE_TBB_TUPLE
@@ -877,8 +969,14 @@ int TestMain() {
        generate_test<parallel_test, float, double, int, double, double, long, int, float, long>::do_test();
 #endif
    }
-#if TBB_PREVIEW_FLOW_GRAPH_FEATURES
+#if TBB_DEPRECATED_FLOW_NODE_EXTRACTION
    test_indexer_extract<int>().run_tests();
+#endif
+#if __TBB_PREVIEW_FLOW_GRAPH_NODE_SET
+    test_follows_and_precedes_api();
+#endif
+#if __TBB_CPP17_DEDUCTION_GUIDES_PRESENT
+    test_deduction_guides();
 #endif
    return Harness::Done;
 }

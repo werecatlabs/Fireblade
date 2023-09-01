@@ -3,12 +3,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Performance considerations</title>
 <link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
-<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="../../index.html" title="Boost.Optional">
 <link rel="up" href="../../optional/tutorial.html" title="Tutorial">
 <link rel="prev" href="type_requirements.html" title="Type requirements">
 <link rel="next" href="../../optional/reference.html" title="Reference">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table cellpadding="2" width="100%"><tr>
@@ -61,9 +60,9 @@
         defaulted move assignment and constructor). On compilers without defaulted
         functions we still use the direct storage, but <code class="computeroutput"><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code>
         is no longer recognized as trivially-copyable. Apart from scalar types, we
-        leave the programmer a way of customizing her type, so that it is reconized
+        leave the programmer a way of customizing her type, so that it is recognized
         by <code class="computeroutput"><span class="identifier">optional</span></code> as candidate
-        for optimized storage, by specializing type trait <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">opitonal_config</span><span class="special">::</span><span class="identifier">optional_uses_direct_storage_for</span></code>:
+        for optimized storage, by specializing type trait <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional_config</span><span class="special">::</span><span class="identifier">optional_uses_direct_storage_for</span></code>:
       </p>
 <pre class="programlisting"><span class="keyword">struct</span> <span class="identifier">X</span> <span class="comment">// not trivial</span>
 <span class="special">{</span>
@@ -166,7 +165,7 @@
         Sometimes it requires detailed consideration what data we make optional.
         In our case above, if we determine that both minimum and maximum value can
         be provided or not provided together, but one is never provided without the
-        other, we can make only one optional memebr:
+        other, we can make only one optional member:
       </p>
 <pre class="programlisting"><span class="keyword">struct</span> <span class="identifier">Limits</span>
 <span class="special">{</span>
@@ -250,12 +249,14 @@
 <span class="special">}</span>
 </pre>
 </div>
-<div class="copyright-footer">Copyright © 2003-2007 Fernando Luis Cacciola Carballal<br>Copyright © 2014-2022 Andrzej
-      Krzemieński<p>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2003-2007 Fernando Luis Cacciola Carballal<br>Copyright © 2014-2021 Andrzej Krzemieński<p>
         Distributed under the Boost Software License, Version 1.0. (See accompanying
         file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
       </p>
-</div>
+</div></td>
+</tr></table>
 <hr>
 <div class="spirit-nav">
 <a accesskey="p" href="type_requirements.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../optional/tutorial.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../../optional/reference.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>

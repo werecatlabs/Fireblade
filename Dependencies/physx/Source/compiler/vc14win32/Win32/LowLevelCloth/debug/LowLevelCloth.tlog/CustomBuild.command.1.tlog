@@ -1,0 +1,2 @@
+^C:\DEV\FIREBLADE\ADDITIONALLIBRARIES\PHYSX\SOURCE\LOWLEVELCLOTH\SRC\AVX\SWSOLVECONSTRAINTS.CPP
+cl.exe /c /Zi /Ox /MT /arch:AVX /FdC:\dev\fireblade\AdditionalLibraries\physx\Lib\vc14win32\\LowLevelClothDEBUG.pdb /Fo./Win32/LowLevelCloth/debug/avx/SwSolveConstraints.obj ..\..\LowLevelCloth\src\avx\SwSolveConstraints.cpp
