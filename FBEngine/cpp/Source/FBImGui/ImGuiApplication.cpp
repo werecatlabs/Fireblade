@@ -4,7 +4,6 @@
 #include <FBImGui/ImGuiMenuBar.h>
 #include <FBImGui/ImGuiMenu.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
 
 #if 0
 #    include "imgui.h"
@@ -1554,7 +1553,7 @@ namespace fb
                                                 label = "Untitled";
                                             }
 
-                                            if( ImGui::BeginMenu( label.c_str() ) )
+                                            //if( ImGui::BeginMenu( label.c_str() ) )
                                             {
                                                 auto menuItems = contextMenu->getMenuItems();
                                                 for( auto menuItemElement : menuItems )
@@ -1562,7 +1561,7 @@ namespace fb
                                                     createMenuItem( contextMenu, menuItemElement );
                                                 }
 
-                                                ImGui::EndMenu();
+                                                //ImGui::EndMenu();
                                             }
 
                                             ImGui::EndPopup();
@@ -1580,58 +1579,58 @@ namespace fb
                 }
                 else
                 {
-                    if( element->isDerived<IUIButton>() )
-                    {
-                        auto button = fb::static_pointer_cast<IUIButton>( element );
+                    //if( element->isDerived<IUIButton>() )
+                    //{
+                    //    auto button = fb::static_pointer_cast<IUIButton>( element );
 
-                        auto label = button->getLabel();
-                        if( StringUtil::isNullOrEmpty( label ) )
-                        {
-                            label = "Untitled";
-                        }
+                    //    auto label = button->getLabel();
+                    //    if( StringUtil::isNullOrEmpty( label ) )
+                    //    {
+                    //        label = "Untitled";
+                    //    }
 
-                        if( ImGui::Button( label.c_str() ) )
-                        {
-                            if( auto parent = button->getParent() )
-                            {
-                                if( parent->isDerived<IUIToolbar>() )
-                                {
-                                    auto toolbar = fb::static_pointer_cast<IUIToolbar>( parent );
-                                    FB_ASSERT( toolbar );
+                    //    if( ImGui::Button( label.c_str() ) )
+                    //    {
+                    //        if( auto parent = button->getParent() )
+                    //        {
+                    //            if( parent->isDerived<IUIToolbar>() )
+                    //            {
+                    //                auto toolbar = fb::static_pointer_cast<IUIToolbar>( parent );
+                    //                FB_ASSERT( toolbar );
 
-                                    auto listeners = toolbar->getObjectListeners();
-                                    for( auto listener : listeners )
-                                    {
-                                        auto args = Array<Parameter>();
-                                        listener->handleEvent( IEvent::Type::UI, IEvent::handleSelection,
-                                                               args, toolbar, button, nullptr );
-                                    }
-                                }
-                                else
-                                {
-                                    auto listeners = button->getObjectListeners();
-                                    for( auto listener : listeners )
-                                    {
-                                        auto args = Array<Parameter>();
-                                        listener->handleEvent( IEvent::Type::UI, IEvent::handleSelection,
-                                                               args, button, button, nullptr );
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if( element->isDerived<IUIText>() )
-                    {
-                        auto text = fb::static_pointer_cast<IUIText>( element );
-                        auto str = text->getText();
-                        if( StringUtil::isNullOrEmpty( str ) )
-                        {
-                            str = "";
-                        }
+                    //                auto listeners = toolbar->getObjectListeners();
+                    //                for( auto listener : listeners )
+                    //                {
+                    //                    auto args = Array<Parameter>();
+                    //                    listener->handleEvent( IEvent::Type::UI, IEvent::handleSelection,
+                    //                                           args, toolbar, button, nullptr );
+                    //                }
+                    //            }
+                    //            else
+                    //            {
+                    //                auto listeners = button->getObjectListeners();
+                    //                for( auto listener : listeners )
+                    //                {
+                    //                    auto args = Array<Parameter>();
+                    //                    listener->handleEvent( IEvent::Type::UI, IEvent::handleSelection,
+                    //                                           args, button, button, nullptr );
+                    //                }
+                    //            }
+                    //        }
+                    //    }
+                    //}
+                    //else if( element->isDerived<IUIText>() )
+                    //{
+                    //    auto text = fb::static_pointer_cast<IUIText>( element );
+                    //    auto str = text->getText();
+                    //    if( StringUtil::isNullOrEmpty( str ) )
+                    //    {
+                    //        str = "";
+                    //    }
 
-                        ImGui::Text( str.c_str() );
-                    }
-                    else if( element->isDerived<IUITreeCtrl>() )
+                    //    ImGui::Text( str.c_str() );
+                    //}
+                    if( element->isDerived<IUITreeCtrl>() )
                     {
                         ImGuiTreeCtrl::createElement( element );
                     }
@@ -2331,16 +2330,15 @@ namespace fb
                                                 args.push_back( Parameter( data ) );
 
                                                 dropTarget->handleEvent( IEvent::Type::UI,
-                                                                         IEvent::handleDrop, args, window,
-                                                                         window, nullptr );
+                                                                         IEvent::handleDrop, args,
+                                                                         window, window, nullptr );
                                             }
 
                                             ImGui::EndDragDropTarget();
                                         }
                                     }
 
-                                    auto contextMenu = window->getContextMenu();
-                                    if( contextMenu )
+                                    if( auto contextMenu = window->getContextMenu() )
                                     {
                                         if( ImGui::BeginPopupContextWindow(
                                                 label.c_str(), ImGuiPopupFlags_MouseButtonRight ) )
@@ -2353,7 +2351,7 @@ namespace fb
                                                     label = "Untitled";
                                                 }
 
-                                                if( ImGui::BeginMenu( label.c_str() ) )
+                                                //if( ImGui::BeginMenu( label.c_str() ) )
                                                 {
                                                     try
                                                     {
@@ -2369,7 +2367,7 @@ namespace fb
                                                         FB_LOG_EXCEPTION( e );
                                                     }
 
-                                                    ImGui::EndMenu();
+                                                    //ImGui::EndMenu();
                                                 }
                                             }
                                             catch( std::exception &e )
@@ -2471,7 +2469,7 @@ namespace fb
                     //pTexture = renderTexture->getTextureHandle();
 
                     iTexture = renderTexture->getTextureHandle();
-                    auto pTexture = reinterpret_cast<ImTextureID>(&iTexture);
+                    auto pTexture = reinterpret_cast<ImTextureID>( &iTexture );
 
                     if( pTexture )
                     {
@@ -3227,6 +3225,19 @@ namespace fb
 
         void ImGuiApplication::update()
         {
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto ui = applicationManager->getUI();
+            FB_ASSERT( ui );
+
+            auto application = ui->getApplication();
+            FB_ASSERT( application );
+
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+
+            ISharedObject::ScopedLock lock( graphicsSystem );
+
 #if FB_GRAPHICS_SYSTEM_OGRENEXT
             // Start the Dear ImGui frame
 #    if defined FB_PLATFORM_WIN32
@@ -3250,15 +3261,6 @@ namespace fb
 #    endif
 
             ImGui::NewFrame();
-
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto ui = applicationManager->getUI();
-            FB_ASSERT( ui );
-
-            auto application = ui->getApplication();
-            FB_ASSERT( application );
 
             // auto show_demo_window = true;
             // if (show_demo_window)
@@ -3339,15 +3341,6 @@ namespace fb
             //#        endif
 
             // ImGui::NewFrame();
-
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto ui = applicationManager->getUI();
-            FB_ASSERT( ui );
-
-            auto application = ui->getApplication();
-            FB_ASSERT( application );
 
             if( m_overlay )
             {

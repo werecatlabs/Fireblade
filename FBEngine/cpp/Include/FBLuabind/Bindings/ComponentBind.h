@@ -7,7 +7,6 @@ namespace fb
 {
 
     void bindComponent( lua_State *L );
-    void bindCombat( lua_State *L );
 
 }  // end namespace fb
 

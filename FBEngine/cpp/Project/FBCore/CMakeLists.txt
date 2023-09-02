@@ -13,7 +13,6 @@ set(FB_HEADER_REL_PATH "${FB_ROOT}/FBEngine/cpp/Include/FBCore")
 set(FB_SOURCE_REL_PATH "${FB_ROOT}/FBEngine/cpp/Source/FBCore")
 
 add_compile_definitions (ENABLE_PTR_RTTI=0)
-add_compile_definitions (_FB_STATIC_LIB_)
 add_compile_definitions (YAML_CPP_STATIC_DEFINE)
 
 foreach(_source IN ITEMS ${HEADER_FILES})
@@ -34,6 +33,7 @@ if (UNIX)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
+include_directories( ${CMAKE_SOURCE_DIR}/Dependencies )
 include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/boost )
 
 if (FB_USE_ONETBB)
@@ -42,13 +42,23 @@ elseif (FB_USE_TBB)
     include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/tbb/include )
 endif()
 
+include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/nativefiledialog/include )
+include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/rttr/include )
+include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/tinyxml )
 include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/cJSON )
 include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/tinyxml/include )
 include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/utf8/source )
+include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/yaml-cpp/include )
+
+include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/minizip/include )
+include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/zlib/include )
+include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/zzip/include )
+
 include_directories( ${CMAKE_SOURCE_DIR}/FBEngine/cpp/Include )
-include_directories( ${CMAKE_SOURCE_DIR}/FBEngine/cpp/Include/FBCore/Extern )
-include_directories( ${CMAKE_SOURCE_DIR}/FBEngine/cpp/Source/FBCore/Extern )
-include_directories( ${CMAKE_SOURCE_DIR}/AdditionalLibraries )
+
+if (FB_BUILD_FILEWATCHER)
+    include_directories( ${FB_ROOT}/Dependencies/simplefilewatcher/includes )
+endif()
 
 if(APPLE)
     set(CMAKE_MACOSX_RPATH 1)

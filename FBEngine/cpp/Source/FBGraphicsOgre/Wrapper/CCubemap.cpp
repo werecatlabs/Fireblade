@@ -16,7 +16,7 @@ namespace fb
     namespace render
     {
 
-        FB_CLASS_REGISTER_DERIVED( fb, CCubemap, SharedObject<ICubemap> );
+        FB_CLASS_REGISTER_DERIVED( fb, CCubemap, ICubemap );
         u32 CCubemap::m_nameExt = 0;
 
         CCubemap::CCubemap() : m_currentIndex( 0 ), m_enable( false )

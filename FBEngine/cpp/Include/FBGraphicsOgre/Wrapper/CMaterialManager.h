@@ -3,7 +3,7 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IMaterialManager.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/UtilityTypes.h>
 
@@ -12,7 +12,7 @@ namespace fb
     namespace render
     {
 
-        class CMaterialManager : public SharedObject<IMaterialManager>
+        class CMaterialManager : public IMaterialManager
         {
         public:
             CMaterialManager();

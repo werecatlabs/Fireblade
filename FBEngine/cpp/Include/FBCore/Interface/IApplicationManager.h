@@ -263,13 +263,13 @@ namespace fb
              * Gets a pointer to the application client.
              * @return A SmartPtr to the application client.
              */
-            virtual SmartPtr<IApplicationClient> getApplication() const = 0;
+            virtual SmartPtr<IApplication> getApplication() const = 0;
 
             /**
              * Sets the application client.
              * @param application A SmartPtr to the application client.
              */
-            virtual void setApplication( SmartPtr<IApplicationClient> application ) = 0;
+            virtual void setApplication( SmartPtr<IApplication> application ) = 0;
 
             /**
              * Gets a pointer to the job queue for the application.

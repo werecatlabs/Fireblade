@@ -1,8 +1,9 @@
 #include <FBPhysx/FBPhysxPCH.h>
-#include "FBPhysx/FBPhysxPlaneShape.h"
+#include <FBPhysx/FBPhysxPlaneShape.h>
 #include <FBPhysx/FBPhysxMaterial.h>
 #include <FBPhysx/FBPhysxRigidDynamic.h>
 #include <FBPhysx/FBPhysxRigidStatic.h>
+#include <FBPhysx/FBPhysxManager.h>
 #include <FBCore/FBCore.h>
 #include <PxPhysicsAPI.h>
 
@@ -19,24 +20,16 @@ namespace fb
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
-                auto physicsManager = applicationManager->getPhysicsManager();
+                auto physicsManager =
+                    fb::static_pointer_cast<PhysxManager>( applicationManager->getPhysicsManager() );
                 FB_ASSERT( physicsManager );
+
+                auto physics = physicsManager->getPhysics();
+                FB_ASSERT( physics );
 
                 ISharedObject::ScopedLock lock( physicsManager );
 
-                if( m_body->isExactly<PhysxRigidDynamic>() )
-                {
-                    auto rigidDynamic = fb::static_pointer_cast<PhysxRigidDynamic>( m_body );
-                    auto pRigidDynamic = rigidDynamic->getActor();
-                    createShape( pRigidDynamic );
-                }
-
-                if( m_body->isExactly<PhysxRigidStatic>() )
-                {
-                    auto rigidStatic = fb::static_pointer_cast<PhysxRigidStatic>( m_body );
-                    auto pRigidStatic = rigidStatic->getRigidStatic();
-                    createShape( pRigidStatic );
-                }
+                createShape();
 
                 setLoadingState( LoadingState::Loaded );
             }
@@ -55,10 +48,50 @@ namespace fb
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
+                auto stateManager = applicationManager->getStateManager();
+
                 auto physicsManager = applicationManager->getPhysicsManager();
                 FB_ASSERT( physicsManager );
 
                 ISharedObject::ScopedLock lock( physicsManager );
+
+                if( auto stateObject = getStateObject() )
+                {
+                    if( auto state = stateObject->getState() )
+                    {
+                        if( stateObject )
+                        {
+                            stateObject->setState( nullptr );
+                        }
+
+                        state->unload( nullptr );
+                        state = nullptr;
+                    }
+
+                    if( m_stateListener )
+                    {
+                        stateObject->removeStateListener( m_stateListener );
+                    }
+
+                    stateManager->removeStateObject( m_stateObject );
+                    setStateObject( nullptr );
+                }
+
+                if( m_stateListener )
+                {
+                    m_stateListener->unload( nullptr );
+                    m_stateListener = nullptr;
+                }
+
+                if( auto shape = getShape() )
+                {
+                    if( m_pxActor )
+                    {
+                        m_pxActor->detachShape( *shape, false );
+                    }
+                }
+
+                setShape( nullptr );
 
                 PhysxShape<IPlaneShape3>::unload(data);
 
@@ -116,8 +149,20 @@ namespace fb
             return m_plane;
         }
 
-        void PhysxPlaneShape::createShape( void *actor )
+        void PhysxPlaneShape::createShape()
         {
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto physicsManager =
+                fb::static_pointer_cast<PhysxManager>( applicationManager->getPhysicsManager() );
+            FB_ASSERT( physicsManager );
+
+            ScopedLock lock( physicsManager );
+
+            auto physics = physicsManager->getPhysics();
+            FB_ASSERT( physics );
+
             auto n = m_plane.getNormal();
             auto d = m_plane.getDistance();
 
@@ -132,8 +177,7 @@ namespace fb
 
             auto m = physicsMaterial->getMaterial();
 
-            auto pActor = static_cast<physx::PxRigidActor *>( actor );
-            auto planeShape = pActor->createShape( physx::PxPlaneGeometry(), *m );
+            auto planeShape = physics->createShape( physx::PxPlaneGeometry(), *m );
             planeShape->setLocalPose( localTransform );
 
             if( !isTrigger() )
@@ -152,17 +196,16 @@ namespace fb
                 planeShape->setSimulationFilterData( filterData );
                 planeShape->setQueryFilterData( queryFilterData );
             }
-
-            pActor->setActorFlag( physx::PxActorFlag::eVISUALIZATION, true );
         }
 
-        void PhysxPlaneShape::destroyShape( void *actor )
+        void PhysxPlaneShape::destroyShape()
         {
             if( auto shape = getShape() )
             {
-                auto pActor = static_cast<physx::PxRigidActor *>( actor );
-                pActor->detachShape( *shape );
-                shape->release();
+                if( m_pxActor )
+                {
+                    m_pxActor->detachShape( *shape, false );
+                }
             }
         }
     }  // end namespace physics

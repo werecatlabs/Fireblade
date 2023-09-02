@@ -33,7 +33,7 @@ namespace fb
             if( auto scene = sceneManager->getCurrentScene() )
             {
                 auto filePath = scene->getFilePath();
-                if (!StringUtil::isNullOrEmpty(filePath))
+                if( !StringUtil::isNullOrEmpty( filePath ) )
                 {
                     if( Path::isExistingFile( filePath ) )
                     {
@@ -46,7 +46,7 @@ namespace fb
                 }
 
                 filePath = getFilePath();
-                if ( !StringUtil::isNullOrEmpty(filePath) )
+                if( !StringUtil::isNullOrEmpty( filePath ) )
                 {
                     saveScene( filePath );
                 }

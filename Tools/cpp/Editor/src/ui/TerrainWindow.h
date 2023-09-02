@@ -2,7 +2,7 @@
 #define _TerrainFrame_H
 
 #include <GameEditorPrerequisites.h>
-#include "ui/BaseWindow.h"
+#include "ui/EditorWindow.h"
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Interface/System/IEventListener.h>
 
@@ -10,7 +10,7 @@ namespace fb
 {
     namespace editor
     {
-        class TerrainWindow : public BaseWindow
+        class TerrainWindow : public EditorWindow
         {
         public:
             enum class WidgetIds
@@ -43,7 +43,7 @@ namespace fb
             void updateSelection() override;
 
         private:
-            class UIElementListener : public SharedObject<IEventListener>
+            class UIElementListener : public IEventListener
             {
             public:
                 UIElementListener() = default;

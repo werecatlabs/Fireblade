@@ -18,16 +18,13 @@ namespace fb
     namespace render
     {
 
-
         MeshLoader::MeshLoader()
         {
         }
 
-
         MeshLoader::~MeshLoader()
         {
         }
-
 
         void MeshLoader::loadFBMesh( Ogre::MeshPtr meshPtr, SmartPtr<IMesh> mesh )
         {
@@ -45,7 +42,7 @@ namespace fb
                              "Mesh::importV1" );
             }
 
-		    if( !mesh )
+            if( !mesh )
             {
                 return;
             }

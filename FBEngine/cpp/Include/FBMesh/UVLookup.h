@@ -2,7 +2,7 @@
 #define _UVLookup_H
 
 #include <FBMesh/FBMeshPrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include "FBCore/Core/Grid2.h"
 #include "FBCore/Core/StringTypes.h"
 #include "FBCore/Math/Vector2.h"

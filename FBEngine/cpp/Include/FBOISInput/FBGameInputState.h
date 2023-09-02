@@ -3,11 +3,11 @@
 
 #include <FBOISInput/FBOISInputPrerequisites.h>
 #include <FBCore/Interface/Input/IGameInputState.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb
 {
-    class GameInputState : public SharedObject<IGameInputState>
+    class GameInputState : public IGameInputState
     {
     public:
         GameInputState();

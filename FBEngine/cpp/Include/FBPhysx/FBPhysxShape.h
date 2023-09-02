@@ -10,8 +10,11 @@
 #include <FBCore/Core/Properties.h>
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/State/Messages/StateMessage.h>
+#include <FBCore/State/States/ShapeState.h>
 #include <FBCore/Interface/System/IStateMessage.h>
 #include <FBCore/Interface/System/IStateListener.h>
+#include <FBPhysx/FBPhysxManager.h>
+#include <PxPhysicsAPI.h>
 
 namespace fb
 {
@@ -23,6 +26,35 @@ namespace fb
         public:
             PhysxShape() = default;
             ~PhysxShape() override = default;
+
+            void unload( SmartPtr<ISharedObject> data )
+            {
+                auto applicationManager = core::IApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto physicsManager =
+                    fb::static_pointer_cast<PhysxManager>( applicationManager->getPhysicsManager() );
+                FB_ASSERT( physicsManager );
+
+                auto factoryManager = applicationManager->getFactoryManager();
+                FB_ASSERT( factoryManager );
+
+                auto physics = physicsManager->getPhysics();
+                FB_ASSERT( physics );
+
+                if( auto shape = getShape() )
+                {
+                    if( auto actor = getPxActor() )
+                    {
+                        actor->detachShape( *shape, false );
+                    }
+
+                    shape->release();
+                    setShape( nullptr );
+                }
+
+                PhysxSharedObject<T>::unload( data );
+            }
 
             SmartPtr<IPhysicsMaterial3> getMaterial() const override
             {
@@ -39,22 +71,16 @@ namespace fb
                 *ppObject = getShape();
             }
 
-            void setLocalPose( const Transform3<real_Num> &pose ) override
-            {
-                m_localPose = pose;
-            }
+            void setLocalPose( const Transform3<real_Num> &pose ) override;
 
-            Transform3<real_Num> getLocalPose() const override
-            {
-                return m_localPose;
-            }
+            Transform3<real_Num> getLocalPose() const override;
 
-            void setSimulationFilterData( const PxFilterData &data ) override
+            void setSimulationFilterData( const FilterData &data ) override
             {
                 m_filterData = data;
             }
 
-            PxFilterData getSimulationFilterData() const override
+            FilterData getSimulationFilterData() const override
             {
                 return m_filterData;
             }
@@ -62,6 +88,7 @@ namespace fb
             void setActor( SmartPtr<IPhysicsBody3> body ) override
             {
                 m_body = body;
+                m_body->_getObject( (void **)&m_pxActor );
             }
 
             SmartPtr<IPhysicsBody3> getActor() const override
@@ -69,20 +96,20 @@ namespace fb
                 return m_body;
             }
 
-            physx::PxShape* getShape() const
+            physx::PxShape *getShape() const
             {
                 auto p = m_shape.load();
                 return p.get();
             }
 
-            void setShape( physx::PxShape* shape )
+            void setShape( physx::PxShape *shape )
             {
                 m_shape = shape;
             }
 
             virtual bool hasShapeData() const override
             {
-                return getShape() != nullptr;            
+                return getShape() != nullptr;
             }
 
             /** */
@@ -174,7 +201,6 @@ namespace fb
             /** @copydoc IPhysicsShape::setEnabled */
             virtual void setEnabled( bool enabled )
             {
-                
             }
 
             /** @copydoc IPhysicsShape::setEnabled */
@@ -191,7 +217,7 @@ namespace fb
             FB_CLASS_REGISTER_TEMPLATE_DECL( PhysxShape, T );
 
         protected:
-            class ShapeStateListener : public SharedObject<IStateListener>
+            class ShapeStateListener : public IStateListener
             {
             public:
                 ShapeStateListener() = default;
@@ -235,12 +261,9 @@ namespace fb
             {
             }
 
-            virtual void createShape()
-            {
-            }
+            virtual void createShape();
 
-            Transform3<real_Num> m_localPose;
-            PxFilterData m_filterData;
+            FilterData m_filterData;
             SmartPtr<IPhysicsBody3> m_body;
             SmartPtr<IPhysicsMaterial3> m_material;
             AtomicRawPtr<physx::PxShape> m_shape;
@@ -252,6 +275,37 @@ namespace fb
 
             bool m_isTrigger = false;
         };
+
+        template <class T>
+        void PhysxShape<T>::setLocalPose( const Transform3<real_Num> &pose )
+        {
+            if( auto stateContext = getStateObject() )
+            {
+                if( auto state = stateContext->template getStateByType<ShapeState>() )
+                {
+                    state->setLocalPose( pose );
+                }
+            }
+        }
+
+        template <class T>
+        Transform3<real_Num> PhysxShape<T>::getLocalPose() const
+        {
+            if( auto stateContext = getStateObject() )
+            {
+                if( auto state = stateContext->template getStateByType<ShapeState>() )
+                {
+                    return state->getLocalPose();
+                }
+            }
+
+            return Transform3<real_Num>();
+        }
+
+        template <class T>
+        void PhysxShape<T>::createShape()
+        {
+        }
 
         FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, PhysxShape, T, T );
 

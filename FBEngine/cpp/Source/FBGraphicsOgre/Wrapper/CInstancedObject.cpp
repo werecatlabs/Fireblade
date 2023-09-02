@@ -315,12 +315,7 @@ namespace fb
 
             return false;
         }
-
-        bool CInstancedObject::isLoaded() const
-        {
-            return m_instancedEntity;
-        }
-
+        
         void CInstancedObject::setState( SmartPtr<IState> state )
         {
         }

@@ -15,7 +15,7 @@
 #include <FBCore/Interface/Database/IDatabaseManager.h>
 #include <FBCore/Interface/FSM/IFSM.h>
 #include <FBCore/Interface/FSM/IFSMManager.h>
-#include <FBCore/Interface/IApplicationClient.h>
+#include <FBCore/Interface/IApplication.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IWindow.h>
 #include <FBCore/Interface/Input/IInput.h>
@@ -411,12 +411,12 @@ namespace fb
             m_processManager = processManager;
         }
 
-        SmartPtr<IApplicationClient> ApplicationManagerMT::getApplication() const
+        SmartPtr<IApplication> ApplicationManagerMT::getApplication() const
         {
             return m_application;
         }
 
-        void ApplicationManagerMT::setApplication( SmartPtr<IApplicationClient> val )
+        void ApplicationManagerMT::setApplication( SmartPtr<IApplication> val )
         {
             m_application = val;
         }

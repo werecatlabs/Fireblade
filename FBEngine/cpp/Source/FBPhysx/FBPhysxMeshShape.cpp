@@ -42,6 +42,14 @@ namespace fb
 
                 ScopedLock lock( physicsManager );
 
+                if( auto meshResource = getMeshResource() )
+                {
+                    if( meshResource->isLoaded() )
+                    {
+                        meshResource->load( nullptr );
+                    }
+                }
+
                 if( data )
                 {
                     if( data->isDerived<IMeshResource>() )
@@ -254,22 +262,16 @@ namespace fb
 
         String PhysxMeshShape::getMeshCachePath( u32 subMeshIndex ) const
         {
-            // auto meshPath = getMeshPath();
-            // auto path = Path::getFilePath(meshPath);
-            // auto fileName = Path::getFileNameWithoutExtension(meshPath);
-            // auto filePath = path + "/" + fileName + "_" + StringUtil::toString(subMeshIndex) +
-            // ".pxconvexmesh"; return filePath;
-
             auto applicationManager = core::IApplicationManager::instance();
             auto fileSystem = applicationManager->getFileSystem();
 
             auto cachePath = applicationManager->getCachePath();
 
-            auto meshName = String( "" );
-            auto mesh = getMeshResource();
-            if( mesh )
+            auto meshName = String();
+            auto meshResource = getMeshResource();
+            if( meshResource )
             {
-                auto fileSystemId = mesh->getFileSystemId();
+                auto fileSystemId = meshResource->getFileSystemId();
                 if( fileSystemId != 0 )
                 {
                     FileInfo fileInfo;
@@ -283,7 +285,7 @@ namespace fb
 
                 if( StringUtil::isNullOrEmpty( meshName ) )
                 {
-                    meshName = mesh->getFilePath();
+                    meshName = meshResource->getFilePath();
                 }
 
                 if( StringUtil::isNullOrEmpty( meshName ) )
@@ -303,15 +305,12 @@ namespace fb
                 }
             }
 
-            return String( "" );
+            return String();
         }
 
         void PhysxMeshShape::build()
         {
             auto meshResource = getMeshResource();
-            //auto mesh = getMesh();
-            //FB_ASSERT( meshResource );  // todo for temp debugging
-
             if( meshResource )
             {
                 auto applicationManager = core::IApplicationManager::instance();
@@ -397,7 +396,7 @@ namespace fb
                                     shape->setLocalPose( transform );
                                 }
 
-                                m_shape = shape;
+                                setShape( shape );
                             }
 
                             setupCollisionMask( shape );
@@ -412,6 +411,11 @@ namespace fb
                         if( auto dataStream = fileSystem->open( meshPath ) )
                         {
                             const auto size = dataStream->size();
+                            if (size == 0)
+                            {
+                                return;
+                            }
+
                             auto buffer = new u8[size];
                             dataStream->read( buffer, size );
                             MemoryInputData inputStream( buffer, (u32)size );
@@ -449,34 +453,13 @@ namespace fb
                                     shape->setLocalPose( transform );
                                 }
 
-                                m_shape = shape;
+                                setShape( shape );
                             }
 
                             setupCollisionMask( shape );
                         }
                     }
                 }
-
-                // Matrix4f transformMat;
-                // transformMat.makeTransform(worldPosition, Vector3<Real>::unit(), worldOrientation);
-                // bounds.transform(transformMat);
-                // setBounds(bounds);
-
-                // readMeshData();
-
-                // auto it = m_indices.begin();
-                // for (; it != m_indices.end(); ++it)
-                //{
-                //	if (!m_transforms.empty())
-                //	{
-                //		Transform3<real_Num>& transform = m_transforms[it->first];
-                //		buildSubMesh(it->first, it->second, transform);
-                //	}
-                //	else
-                //	{
-                //		buildSubMesh(it->first, it->second, Transform3<real_Num>());
-                //	}
-                // }
             }
         }
 
@@ -488,6 +471,7 @@ namespace fb
             rIndices.reserve( indices.size() );
 
             for( size_t i = 0; i < indices.size(); ++i )
+            //for( s32 i = indices.size() - 1; i >= 0; --i )
             {
                 auto val = indices[i];
                 rIndices.push_back( val );
@@ -496,8 +480,6 @@ namespace fb
 
         void PhysxMeshShape::readMeshData()
         {
-            float *vertexDataBuffer = nullptr;
-
             try
             {
                 auto applicationManager = core::IApplicationManager::instance();
@@ -505,70 +487,49 @@ namespace fb
 
                 auto fileSystem = applicationManager->getFileSystem();
                 FB_ASSERT( fileSystem );
-
-                auto mesh = getMesh();
-                FB_ASSERT( mesh );
-
-                if( mesh->getHasSharedVertexData() )
+                
+                if( auto mesh = getMesh() )
                 {
-                    auto vertices = MeshUtil::getPoints( mesh );
-                    FB_ASSERT( !vertices.empty() );
-                    m_sharedVertices = vertices;
-                }
-                else
-                {
-                    m_vertices.clear();
+                    if( mesh->getHasSharedVertexData() )
+                    {
+                        auto vertices = MeshUtil::getPoints( mesh );
+                        FB_ASSERT( !vertices.empty() );
+                        m_sharedVertices = vertices;
+                    }
+                    else
+                    {
+                        m_vertices.clear();
+                        auto subMeshes = mesh->getSubMeshes();
+
+                        auto numSubMeshes = subMeshes.size();
+                        m_vertices.reserve( numSubMeshes );
+
+                        for( size_t i = 0; i < numSubMeshes; ++i )
+                        {
+                            auto subMesh = subMeshes[i];
+
+                            auto vertices = MeshUtil::getPoints( subMesh );
+                            FB_ASSERT( !vertices.empty() );
+                            m_vertices.push_back( vertices );
+                        }
+                    }
+
                     auto subMeshes = mesh->getSubMeshes();
                     auto numSubMeshes = subMeshes.size();
-                    m_vertices.reserve( numSubMeshes );
+                    m_indices.resize( numSubMeshes );
 
                     for( size_t i = 0; i < numSubMeshes; ++i )
                     {
                         auto subMesh = subMeshes[i];
 
-                        auto vertices = MeshUtil::getPoints( subMesh );
-                        FB_ASSERT( !vertices.empty() );
-                        m_vertices.push_back( vertices );
+                        auto indices = MeshUtil::getIndices( subMesh );
+                        setIndices( static_cast<s32>( i ), indices );
                     }
-                }
-
-                auto subMeshes = mesh->getSubMeshes();
-                auto numSubMeshes = subMeshes.size();
-                m_indices.resize( numSubMeshes );
-
-                for( size_t i = 0; i < numSubMeshes; ++i )
-                {
-                    auto subMesh = subMeshes[i];
-
-                    auto indices = MeshUtil::getIndices( subMesh );
-                    setIndices( static_cast<s32>( i ), indices );
-                }
-
-                if( vertexDataBuffer )
-                {
-                    delete[] vertexDataBuffer;
-                    vertexDataBuffer = nullptr;
                 }
             }
             catch( std::exception &e )
             {
-                if( vertexDataBuffer )
-                {
-                    delete[] vertexDataBuffer;
-                    vertexDataBuffer = nullptr;
-                }
-
                 FB_LOG_EXCEPTION( e );
-            }
-            catch( ... )
-            {
-                if( vertexDataBuffer )
-                {
-                    delete[] vertexDataBuffer;
-                    vertexDataBuffer = nullptr;
-                }
-
-                FB_LOG_ERROR( "Unhandled exception." );
             }
         }
 
@@ -681,41 +642,7 @@ namespace fb
                 }
             }
 
-            // if (shape)
-            //{
-            //	if (!isTrigger())
-            //	{
-            //		RigidbodyComponentPtr rigidbodyComponent = getOwner();
-            //		if (rigidbodyComponent)
-            //		{
-            //			physx::PxFilterData filterData;
-
-            //			physx::PxU32 filterGroup = rigidbodyComponent->getGroupMask();
-            //			physx::PxU32 filterMask = rigidbodyComponent->getCollisionMask();
-            //			filterData.word0 = filterGroup;
-            //			filterData.word1 = filterMask;
-
-            //			physx::PxFilterData queryFilterData;
-            //			FourWheeledVehicle::SetupDrivableShapeQueryFilterData(&queryFilterData);
-
-            //			shape->setSimulationFilterData(filterData);
-            //			shape->setQueryFilterData(queryFilterData);
-            //		}
-            //	}
-            //}
-            // else
-            //{
-            //	DEBUG_LOG("Error creating shape.");
-            //}
-
-            // m_shape = shape;
-
-            // Matrix4f transformMat;
-            // transformMat.makeTransform(worldPosition, Vector3<Real>::unit(), worldOrientation);
-            // bounds.transform(transformMat);
-
             setAABB( bounds );
-            // m_bounds = AABB3<Real>(Vector3<Real>::unit() * -3.0f, Vector3<Real>::unit() * 3.0f);
         }
 
         void PhysxMeshShape::createStateObject()
@@ -741,6 +668,28 @@ namespace fb
 
         void PhysxMeshShape::setupCollisionMask( physx::PxShape *shape )
         {
+            //if( !isTrigger() )
+            //{
+            //    shape->setFlag( physx::PxShapeFlag::eSIMULATION_SHAPE, true );
+            //    shape->setFlag( physx::PxShapeFlag::eTRIGGER_SHAPE, false );
+            //}
+            //else
+            //{
+            //    shape->setFlag( physx::PxShapeFlag::eSIMULATION_SHAPE, false );
+            //    shape->setFlag( physx::PxShapeFlag::eTRIGGER_SHAPE, true );
+            //}
+
+            //u32 GROUP_MASK = std::numeric_limits<u32>::max();
+            //u32 COLLISION_MASK = std::numeric_limits<u32>::max();
+
+            //physx::PxFilterData filterData;
+            //filterData.word0 = GROUP_MASK;
+            //filterData.word1 = COLLISION_MASK;
+
+            //if( shape )
+            //{
+            //    shape->setSimulationFilterData( filterData );
+            //}
         }
 
         void PhysxMeshShape::createShape()
@@ -748,22 +697,19 @@ namespace fb
             try
             {
                 auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
                 auto physicsManager = applicationManager->getPhysicsManager();
-                FB_ASSERT( physicsManager );
+                auto fileSystem = applicationManager->getFileSystem();
 
                 ScopedLock lock( physicsManager );
 
                 if( !m_material )
                 {
-                    m_material = physicsManager->createMaterial();
+                    m_material = physicsManager->addMaterial();
                 }
 
+                readMeshData();
                 cookMesh();
                 build();
-
-                //FB_ASSERT( getShape() ); //todo more advance checks. Check if file exists and mesh is valid.
             }
             catch( std::exception &e )
             {
@@ -853,12 +799,12 @@ namespace fb
 
         String PhysxMeshShape::getMeshPath() const
         {
-            return m_meshPath;
-        }
+            if( auto meshResource = getMeshResource() )
+            {
+                return meshResource->getFilePath();
+            }
 
-        void PhysxMeshShape::setMeshPath( const String &meshPath )
-        {
-            m_meshPath = meshPath;
+            return "";
         }
 
         bool PhysxMeshShape::isValid() const
@@ -888,6 +834,16 @@ namespace fb
             }
 
             return true;
+        }
+
+        physx::PxOutputStream *PhysxMeshShape::getOutputStream() const
+        {
+            return m_outputStream;
+        }
+
+        void PhysxMeshShape::setOutputStream( physx::PxOutputStream *outputStream )
+        {
+            m_outputStream = outputStream;
         }
 
         bool PhysxMeshShape::isConvex() const
@@ -975,8 +931,7 @@ namespace fb
 
                 auto cachePath = applicationManager->getCachePath();
 
-                auto mesh = getMesh();
-                if( mesh )
+                if( auto mesh = getMesh() )
                 {
                     if( mesh->getHasSharedVertexData() )
                     {
@@ -993,7 +948,7 @@ namespace fb
                             meshDesc.triangles.stride = sizeof( u32 ) * 3;
                             meshDesc.points.data = &m_sharedVertices[0];
                             meshDesc.triangles.data = &indices[0];
-                            meshDesc.flags = physx::PxMeshFlag::eFLIPNORMALS;
+                            //meshDesc.flags = physx::PxMeshFlag::eFLIPNORMALS;
 
                             std::string fileName = Path::getFileNameWithoutExtension( path );
                             std::string filePath = cachePath + "/" + fileName + ".pxtrianglemesh";
@@ -1032,7 +987,7 @@ namespace fb
                             meshDesc.triangles.stride = sizeof( u32 ) * 3;
                             meshDesc.points.data = &vertices[0];
                             meshDesc.triangles.data = &indices[0];
-                            meshDesc.flags = physx::PxMeshFlag::eFLIPNORMALS;
+                            //meshDesc.flags = physx::PxMeshFlag::eFLIPNORMALS;
 
                             std::string fileName = Path::getFileNameWithoutExtension( path );
 
@@ -1048,24 +1003,30 @@ namespace fb
 
                             filePath = StringUtil::cleanupPath( filePath );
 
-                            if( !fileSystem->isExistingFile( filePath ) )
+                            auto folderPath = Path::getFilePath( filePath );
+                            if( fileSystem->isExistingFolder( folderPath ) )
                             {
-                                //auto validateResult = cooking->validateTriangleMesh( meshDesc );
-                                //FB_ASSERT( validateResult )
-
-                                //if( validateResult )
+                                if( !fileSystem->isExistingFile( filePath ) )
                                 {
-                                    physx::PxDefaultFileOutputStream outputStream( filePath.c_str() );
-                                    bool success = cooking->cookTriangleMesh( meshDesc, outputStream );
-                                    if( !success )
+                                    //auto validateResult = cooking->validateTriangleMesh( meshDesc );
+                                    //FB_ASSERT( validateResult )
+
+                                    //if( validateResult )
                                     {
-                                        fileSystem->deleteFile( filePath );
+                                        physx::PxDefaultFileOutputStream outputStream(
+                                            filePath.c_str() );
+                                        bool success =
+                                            cooking->cookTriangleMesh( meshDesc, outputStream );
+                                        if( !success )
+                                        {
+                                            fileSystem->deleteFile( filePath );
+                                        }
                                     }
                                 }
-                            }
 
-                            auto refreshPath = Path::getFilePath( filePath );
-                            fileSystem->refreshPath( refreshPath, true );
+                                auto refreshPath = Path::getFilePath( filePath );
+                                fileSystem->refreshPath( refreshPath, true );
+                            }
                         }
                     }
                 }
@@ -1081,46 +1042,138 @@ namespace fb
             try
             {
                 auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
                 auto fileSystem = applicationManager->getFileSystem();
-                FB_ASSERT( fileSystem );
 
+                auto pPhysicsManager = applicationManager->getPhysicsManager();
+                FB_ASSERT( pPhysicsManager );
+
+                auto physicsManager = fb::static_pointer_cast<PhysxManager>( pPhysicsManager );
+                auto physics = physicsManager->getPhysics();
+                FB_ASSERT( physics );
+
+                auto cooking = physicsManager->getCooking();
+                FB_ASSERT( cooking );
+
+                auto path = getMeshPath();
                 auto cachePath = applicationManager->getCachePath();
-
-                auto meshName = String( "" );
-
-                if( auto meshResource = getMeshResource() )
-                {
-                    meshResource->load( nullptr );
-                }
 
                 if( auto mesh = getMesh() )
                 {
-                    meshName = mesh->getName();
-
-                    FB_ASSERT( !StringUtil::isNullOrEmpty( meshName ) );
-
-                    if( StringUtil::isNullOrEmpty( meshName ) )
+                    if( mesh->getHasSharedVertexData() )
                     {
-                        FB_LOG_ERROR( "Mesh has no name. Unable to cook physics mesh." );
+                        auto numSubMeshes = m_indices.size();
+                        for( size_t i = 0; i < numSubMeshes; ++i )
+                        {
+                            auto &indices = m_indices[i];
+
+                            physx::PxTriangleMeshDesc meshDesc;
+
+                            meshDesc.points.count = static_cast<u32>( m_sharedVertices.size() );
+                            meshDesc.triangles.count = static_cast<u32>( indices.size() / 3 );
+                            meshDesc.points.stride = sizeof( Vector3<real_Num> );
+                            meshDesc.triangles.stride = sizeof( u32 ) * 3;
+                            meshDesc.points.data = &m_sharedVertices[0];
+                            meshDesc.triangles.data = &indices[0];
+                            //meshDesc.flags = physx::PxMeshFlag::eFLIPNORMALS;
+
+                            std::string fileName = Path::getFileNameWithoutExtension( path );
+                            std::string filePath = cachePath + "/" + fileName + ".pxtrianglemesh";
+                            filePath = StringUtil::cleanupPath( filePath );
+
+                            if( !fileSystem->isExistingFile( filePath ) )
+                            {
+                                // if (cooking->validateTriangleMesh(meshDesc))
+                                {
+                                    physx::PxDefaultFileOutputStream outputStream( filePath.c_str() );
+                                    bool success = cooking->cookTriangleMesh( meshDesc, outputStream );
+                                    if( !success )
+                                    {
+                                        fileSystem->deleteFile( filePath );
+                                    }
+                                }
+                            }
+
+                            auto refreshPath = Path::getFilePath( filePath );
+                            fileSystem->refreshPath( refreshPath, true );
+                        }
                     }
-
-                    if( !StringUtil::isNullOrEmpty( meshName ) )
+                    else
                     {
-                        String meshPath;
-                        if( !StringUtil::isNullOrEmpty( cachePath ) )
+                        auto numSubMeshes = m_indices.size();
+                        for( size_t i = 0; i < numSubMeshes; ++i )
                         {
-                            meshPath = cachePath + "/" + meshName;
-                        }
-                        else
-                        {
-                            meshPath = meshName;
-                        }
+                            auto &vertices = m_vertices[i];
+                            auto &indices = m_indices[i];
 
-                        meshPath = StringUtil::cleanupPath( meshPath );
+                            physx::PxTriangleMeshDesc meshDesc;
 
-                        cookMesh( meshPath );
+                            meshDesc.points.count = static_cast<u32>( vertices.size() );
+                            meshDesc.triangles.count = static_cast<u32>( indices.size() / 3 );
+                            meshDesc.points.stride = sizeof( Vector3<real_Num> );
+                            meshDesc.triangles.stride = sizeof( u32 ) * 3;
+                            meshDesc.points.data = &vertices[0];
+                            meshDesc.triangles.data = &indices[0];
+                            //meshDesc.flags = physx::PxMeshFlag::eFLIPNORMALS;
+
+                            std::string fileName = Path::getFileNameWithoutExtension( path );
+
+                            std::string filePath;
+                            if( !StringUtil::isNullOrEmpty( cachePath ) )
+                            {
+                                filePath = cachePath + "/" + fileName + ".pxtrianglemesh";
+                            }
+                            else
+                            {
+                                filePath = fileName + ".pxtrianglemesh";
+                            }
+
+                            filePath = StringUtil::cleanupPath( filePath );
+
+                            if (StringUtil::contains( filePath, "grass" ))
+                            {
+                                int a = 0;
+                                a = 0;
+                            }
+
+                            auto folderPath = Path::getFilePath( filePath );
+                            if( fileSystem->isExistingFolder( folderPath ) )
+                            {
+                                if( !fileSystem->isExistingFile( filePath ) )
+                                {
+                                    //auto validateResult = cooking->validateTriangleMesh( meshDesc );
+                                    //FB_ASSERT( validateResult )
+
+                                    //if( validateResult )
+                                    {
+                                        physx::PxOutputStream *outputStream =
+                                            new physx::PxDefaultFileOutputStream( filePath.c_str() );
+                                        bool success =
+                                            cooking->cookTriangleMesh( meshDesc, *outputStream );
+                                        if( !success )
+                                        {
+                                            fileSystem->deleteFile( filePath );
+                                        }
+
+                                        setOutputStream( outputStream );
+                                    }
+                                }
+
+                                auto refreshPath = Path::getFilePath( filePath );
+                                fileSystem->refreshPath( refreshPath, true );
+                            }
+                            else
+                            {
+                                physx::PxOutputStream *outputStream =
+                                    new physx::PxDefaultFileOutputStream( filePath.c_str() );
+                                bool success = cooking->cookTriangleMesh( meshDesc, *outputStream );
+                                if( !success )
+                                {
+                                    fileSystem->deleteFile( filePath );
+                                }
+
+                                setOutputStream( outputStream );
+                            }
+                        }
                     }
                 }
             }

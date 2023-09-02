@@ -32,7 +32,7 @@ namespace fb
 
             void update() override;
 
-	        void handleStateChanged( SmartPtr<IState> &state );
+            void handleStateChanged( SmartPtr<IState> &state );
 
             SmartPtr<IFSM> getFSM() override;
             const SmartPtr<IFSM> &getFSM() const;
@@ -55,6 +55,10 @@ namespace fb
             void setUiWindow( SmartPtr<ui::IUIWindow> uiWindow );
 
             void updateZOrder();
+
+            SmartPtr<Properties> getProperties() const override;
+
+            Array<SmartPtr<ISharedObject>> getChildObjects() const;
 
             FB_CLASS_REGISTER_DECL;
 

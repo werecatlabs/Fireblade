@@ -18,8 +18,14 @@ namespace fb
 
             void update();
 
+            String getLabel() const;
+
+            void setLabel( const String &label );
+
             FB_CLASS_REGISTER_DECL;
-            
+
+        protected:
+            String m_label;
         };
 
     }  // end namespace ui

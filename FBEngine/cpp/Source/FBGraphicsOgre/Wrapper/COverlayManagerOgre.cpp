@@ -18,7 +18,7 @@ namespace fb
 {
     namespace render
     {
-        FB_CLASS_REGISTER_DERIVED( fb::render, COverlayManagerOgre, SharedObject<IOverlayManager> );
+        FB_CLASS_REGISTER_DERIVED( fb::render, COverlayManagerOgre, IOverlayManager );
 
         u32 COverlayManagerOgre::m_nameExt = 0;
 
@@ -54,17 +54,12 @@ namespace fb
 
                     m_overlayElements.clear();
 
-                    auto &gc = GarbageCollector::instance();
-                    gc.update();
-
                     for( auto overlay : m_overlays )
                     {
                         overlay->unload( nullptr );
                     }
 
                     m_overlays.clear();
-
-                    gc.update();
 
                     setLoadingState( LoadingState::Unloaded );
                 }

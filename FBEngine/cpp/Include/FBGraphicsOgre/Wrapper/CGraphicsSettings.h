@@ -3,13 +3,13 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IGraphicsSettings.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
     namespace render
     {
-        class CGraphicsSettings : public SharedObject<IGraphicsSettings>
+        class CGraphicsSettings : public IGraphicsSettings
         {
         public:
             CGraphicsSettings() = default;

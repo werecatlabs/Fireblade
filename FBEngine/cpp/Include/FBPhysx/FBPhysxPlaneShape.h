@@ -31,8 +31,8 @@ namespace fb
 
             Plane3<real_Num> getPlane() const override;
 
-            void createShape( void *actor );
-            void destroyShape( void *data );
+            void createShape();
+            void destroyShape();
 
         protected:
             Vector3<real_Num> m_extents;

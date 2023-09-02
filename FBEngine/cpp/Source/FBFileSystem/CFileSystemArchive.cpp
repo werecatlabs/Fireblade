@@ -9,7 +9,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, CFileSystemArchive, SharedObject<IArchive> );
+    FB_CLASS_REGISTER_DERIVED( fb, CFileSystemArchive, IArchive );
 
     CFileSystemArchive::CFileSystemArchive( const String &path, bool ignoreCase, bool ignorePaths ) :
         m_path( path )
@@ -43,14 +43,6 @@ namespace fb
             m_fileList = factoryManager->make_ptr<CFileList>();
             m_fileList->setPath( path );
             FB_ASSERT( m_fileList->getReferences() == 1 );
-
-#ifdef _DEBUG
-            if( StringUtil::contains( path, "Scripts" ) )
-            {
-                int stop = 0;
-                stop = 0;
-            }
-#endif
 
             auto files = Path::getFiles( path );
 

@@ -184,7 +184,7 @@ namespace fb
         {
         }
 
-        fb::Parameter EventWindow::UIElementListener::handleEvent(
+        Parameter EventWindow::UIElementListener::handleEvent(
             IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
             SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
         {

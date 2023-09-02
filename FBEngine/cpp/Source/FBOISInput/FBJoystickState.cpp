@@ -3,6 +3,8 @@
 
 namespace fb
 {
+    FB_CLASS_REGISTER_DERIVED( fb, JoystickState, IJoystickState );
+
     JoystickState::JoystickState() :
         m_joystick( 0 ),
         m_buttonId( 0 ),

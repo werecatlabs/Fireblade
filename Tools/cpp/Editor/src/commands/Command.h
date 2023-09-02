@@ -3,13 +3,13 @@
 
 #include <GameEditorPrerequisites.h>
 #include <FBCore/Interface/System/ICommand.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb
 {
     namespace editor
     {
-        class Command : public SharedObject<ICommand>
+        class Command : public ICommand
         {
         public:
             Command();
@@ -28,7 +28,7 @@ namespace fb
         protected:
             State m_commandState = State::Allocated;
         };
-    } // namespace editor
-}     // namespace fb
+    }  // namespace editor
+}  // namespace fb
 
 #endif  // Command_h__

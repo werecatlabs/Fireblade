@@ -2,7 +2,7 @@
 #define __ApplicationManagerMT_h__
 
 #include <FBCore/Interface/IApplicationManager.h>
-#include <FBCore/Interface/IApplicationClient.h>
+#include <FBCore/Interface/IApplication.h>
 #include <FBCore/Core/ConcurrentQueue.h>
 
 namespace fb
@@ -105,8 +105,8 @@ namespace fb
             SmartPtr<IProcessManager> getProcessManager() const override;
             void setProcessManager( SmartPtr<IProcessManager> processManager ) override;
 
-            SmartPtr<IApplicationClient> getApplication() const override;
-            void setApplication( SmartPtr<IApplicationClient> val ) override;
+            SmartPtr<IApplication> getApplication() const override;
+            void setApplication( SmartPtr<IApplication> val ) override;
 
             SmartPtr<IFileSystem> getFileSystem() const override;
             void setFileSystem( SmartPtr<IFileSystem> fileSystem ) override;
@@ -348,7 +348,7 @@ namespace fb
             AtomicSmartPtr<render::IGraphicsSystem> m_graphicsSystem;
             AtomicSmartPtr<IVideoManager> m_videoManager;
             AtomicSmartPtr<IFileSystem> m_fileSystem;
-            AtomicSmartPtr<IApplicationClient> m_application;
+            AtomicSmartPtr<IApplication> m_application;
 
             AtomicSmartPtr<ITimer> m_timer;
 

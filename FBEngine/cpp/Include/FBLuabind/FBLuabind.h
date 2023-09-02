@@ -24,7 +24,7 @@
 #include "FBLuabind/Bindings/VideoBind.h"
 #include "FBLuabind/Bindings/SoundBind.h"
 #include "FBLuabind/Bindings/ComponentBind.h"
-#include "FBLuabind/Bindings/GraphicsSystemBind.h"
+#include "FBLuabind/Bindings/GraphicsBind.h"
 #include "FBLuabind/Bindings/UIBind.h"
 #include "FBLuabind/Bindings/DatabaseBind.h"
 #include "FBLuabind/Bindings/PhysicsBind.h"

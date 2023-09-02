@@ -1,6 +1,5 @@
 #include <GameEditorPCH.h>
 #include "ui/AddDialog.h"
-#include "FBWxWidgets/wxGUIUtil.h"
 #include "editor/Project.h"
 #include "editor/EditorManager.h"
 

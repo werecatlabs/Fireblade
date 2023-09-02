@@ -1,7 +1,7 @@
 #ifndef ResourceDatabaseDialog_h__
 #define ResourceDatabaseDialog_h__
 
-#include "ui/BaseWindow.h"
+#include "ui/EditorWindow.h"
 #include <FBCore/Interface/System/IEventListener.h>
 #include <FBCore/Interface/Resource/IResource.h>
 
@@ -12,7 +12,7 @@ namespace fb
         /**
          * @brief The ResourceDatabaseDialog class represents a dialog window that displays a resource tree for a particular resource type.
          */
-        class ResourceDatabaseDialog : public BaseWindow
+        class ResourceDatabaseDialog : public EditorWindow
         {
         public:
             /**
@@ -132,7 +132,7 @@ namespace fb
             void setResourceType( IResource::ResourceType resourceType );
 
         protected:
-            class UIElementListener : public SharedObject<IEventListener>
+            class UIElementListener : public IEventListener
             {
             public:
                 UIElementListener() = default;

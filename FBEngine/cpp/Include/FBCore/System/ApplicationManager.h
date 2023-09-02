@@ -99,8 +99,8 @@ namespace fb
             SmartPtr<IProcessManager> getProcessManager() const override;
             void setProcessManager( SmartPtr<IProcessManager> processManager ) override;
 
-            SmartPtr<IApplicationClient> getApplication() const override;
-            void setApplication( SmartPtr<IApplicationClient> val ) override;
+            SmartPtr<IApplication> getApplication() const override;
+            void setApplication( SmartPtr<IApplication> val ) override;
 
             SmartPtr<IFileSystem> getFileSystem() const override;
             void setFileSystem( SmartPtr<IFileSystem> fileSystem ) override;
@@ -322,7 +322,7 @@ namespace fb
             SmartPtr<render::IGraphicsSystem> m_graphicsSystem;
             SmartPtr<IVideoManager> m_videoManager;
             SmartPtr<IFileSystem> m_fileSystem;
-            SmartPtr<IApplicationClient> m_application;
+            SmartPtr<IApplication> m_application;
 
             SmartPtr<ITimer> m_timer;
 

@@ -3,7 +3,7 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/System/IProfiler.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
@@ -11,7 +11,7 @@ namespace fb
     {
         /** A profiler implementation using the Ogre 3D graphics engine.
          */
-        class CProfilerOgre : public SharedObject<IProfiler>
+        class CProfilerOgre : public IProfiler
         {
         public:
             /** Constructor. */

@@ -2,14 +2,14 @@
 #define EntityWindow_h__
 
 #include <GameEditorPrerequisites.h>
-#include "ui/BaseWindow.h"
+#include "ui/EditorWindow.h"
 #include <FBCore/Interface/System/IStateListener.h>
 
 namespace fb
 {
     namespace editor
     {
-        class ProjectWindow : public BaseWindow
+        class ProjectWindow : public EditorWindow
         {
         public:
             enum
@@ -116,7 +116,7 @@ namespace fb
 
             std::map<String, bool> treeState;
         };
-    } // end namespace editor
-}     // end namespace fb
+    }  // end namespace editor
+}  // end namespace fb
 
 #endif  // EntityWindow_h__

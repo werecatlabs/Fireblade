@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 project(FBPhysics3 C CXX)
 
-add_compile_definitions (_FB_STATIC_LIB_)
+
 
 #add_compile_definitions (GRIDMESH)
 #add_compile_definitions (OCTREEMESH)

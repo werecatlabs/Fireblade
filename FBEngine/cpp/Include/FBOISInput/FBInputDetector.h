@@ -1,11 +1,11 @@
 #ifndef FBInputDetector_h__
 #define FBInputDetector_h__
 
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb
 {
-    class InputDetector : public SharedObject<ISharedObject>
+    class InputDetector : public ISharedObject
     {
     public:
         ~InputDetector() override;

@@ -2,7 +2,7 @@
 #define ProjectAssetsWindow_h__
 
 #include <GameEditorPrerequisites.h>
-#include "ui/BaseWindow.h"
+#include "ui/EditorWindow.h"
 #include <FBCore/Interface/System/IEventListener.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Interface/UI/IUIDragSource.h>
@@ -13,7 +13,7 @@ namespace fb
 {
     namespace editor
     {
-        class ProjectAssetsWindow : public BaseWindow
+        class ProjectAssetsWindow : public EditorWindow
         {
         public:
             enum class MenuId
@@ -54,7 +54,7 @@ namespace fb
             void setTree( SmartPtr<ui::IUITreeCtrl> tree );
 
         protected:
-            class TreeCtrlListener : public SharedObject<IEventListener>
+            class TreeCtrlListener : public IEventListener
             {
             public:
                 TreeCtrlListener() = default;
@@ -71,7 +71,7 @@ namespace fb
                 ProjectAssetsWindow *m_owner = nullptr;
             };
 
-            class WindowListener : public SharedObject<IEventListener>
+            class WindowListener : public IEventListener
             {
             public:
                 WindowListener() = default;
@@ -88,7 +88,7 @@ namespace fb
                 ProjectAssetsWindow *m_owner = nullptr;
             };
 
-            class DragSource : public SharedObject<ui::IUIDragSource>
+            class DragSource : public ui::IUIDragSource
             {
             public:
                 DragSource() = default;
@@ -107,7 +107,7 @@ namespace fb
                 ProjectAssetsWindow *m_owner = nullptr;
             };
 
-            class DropTarget : public SharedObject<ui::IUIDropTarget>
+            class DropTarget : public ui::IUIDropTarget
             {
             public:
                 DropTarget() = default;
@@ -148,7 +148,7 @@ namespace fb
 
             void handleTreeSelectionActivated( SmartPtr<ui::IUITreeNode> node );
             void handleTreeNodeDoubleClicked( SmartPtr<ui::IUITreeNode> node );
-            
+
             void OnActivateItem();
 
             int getItemState( String itemName );
@@ -179,7 +179,7 @@ namespace fb
 
             std::map<String, bool> treeState;
         };
-    } // end namespace editor
-}     // end namespace fb
+    }  // end namespace editor
+}  // end namespace fb
 
 #endif  // EntityWindow_h__

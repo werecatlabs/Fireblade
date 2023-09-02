@@ -2,14 +2,14 @@
 #define AddEntityDialog_h__
 
 #include <GameEditorPrerequisites.h>
-#include "ui/BaseWindow.h"
+#include "ui/EditorWindow.h"
 
 namespace fb
 {
     namespace editor
     {
-        
-        class AddEntityDialog : public BaseWindow
+
+        class AddEntityDialog : public EditorWindow
         {
         public:
             enum

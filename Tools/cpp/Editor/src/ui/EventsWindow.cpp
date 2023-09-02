@@ -14,6 +14,7 @@ namespace fb
 
         EventsWindow::~EventsWindow()
         {
+            unload( nullptr );
         }
 
         void EventsWindow::load( SmartPtr<ISharedObject> data )

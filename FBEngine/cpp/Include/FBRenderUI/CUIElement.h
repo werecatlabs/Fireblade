@@ -8,7 +8,7 @@
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/Properties.h>
@@ -263,7 +263,7 @@ namespace fb
             void addMessage( SmartPtr<IStateMessage> message );
 
         protected:
-            class ElementStateListener : public SharedObject<IStateListener>
+            class ElementStateListener : public IStateListener
             {
             public:
                 ElementStateListener() = default;
@@ -346,7 +346,7 @@ namespace fb
             String m_type;
 
             /// The children of the gui element.
-            SharedPtr<ConcurrentArray<SmartPtr<IUIElement>>> m_children;
+            AtomicSharedPtr<ConcurrentArray<SmartPtr<IUIElement>>> m_children;
 
             /// The number of the next name extension.
             static u32 m_nextGeneratedNameExt;
@@ -361,7 +361,7 @@ namespace fb
 
             auto task = Thread::getCurrentTask();
 
-            const auto &loadingState = SharedObject<T>::getLoadingState();
+            const auto &loadingState = T::getLoadingState();
 
             return loadingState == LoadingState::Loaded && task == renderTask;
         }

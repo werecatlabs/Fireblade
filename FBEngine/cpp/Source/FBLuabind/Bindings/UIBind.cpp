@@ -163,8 +163,13 @@ namespace fb
                         .scope[def( "typeInfo", IUISpinner::typeInfo )]];
 
         module( L )[class_<IUITabBar, IUIElement, SmartPtr<IUITabBar>>( "IUITabBar" )
+                        .def( "addTabItem", &IUITabBar::addTabItem )
+                        .def( "removeTabItem", &IUITabBar::removeTabItem )
                         .scope[def( "typeInfo", IUITabBar::typeInfo )]];
+
         module( L )[class_<IUITabItem, IUIElement, SmartPtr<IUITabItem>>( "IUITabItem" )
+                        .def( "getLabel", &IUITabItem::getLabel )
+                        .def( "setLabel", &IUITabItem::setLabel )
                         .scope[def( "typeInfo", IUITabItem::typeInfo )]];
 
         module( L )[class_<IUIText, IUIElement, SmartPtr<IUIElement>>( "IUIText" )

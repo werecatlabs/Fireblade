@@ -1,11 +1,11 @@
 #include <GameEditorPCH.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
+
 #include <editor/EditorManager.h>
 #include <ui/UIManager.h>
 #include "commands/DragDropActorCmd.h"
 #include "commands/AddActorCmd.h"
-#include <Application.h>
+#include <EditorApplication.h>
 
 #if FB_EDITOR_TESTS
 #    include <boost/test/unit_test.hpp>
@@ -17,7 +17,7 @@ BOOST_AUTO_TEST_CASE( physics_mesh_test )
 {
     try
     {
-        fb::editor::Application app;
+        fb::editor::EditorApplication app;
         app.load( nullptr );
         //app.run();
 

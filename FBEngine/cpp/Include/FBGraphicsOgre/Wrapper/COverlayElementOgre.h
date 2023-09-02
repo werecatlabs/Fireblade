@@ -4,7 +4,7 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IOverlayElement.h>
 #include <FBCore/Graphics/COverlayElement.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
@@ -20,13 +20,13 @@ namespace fb
 
             virtual void _getObject( void **ppObject ) const override
             {
-                *ppObject = nullptr;
+                *ppObject = m_element;
             }
 
             /** @copydoc IObject::isValid */
             bool isValid() const override
             {
-                if( SharedObject<T>::isLoaded() )
+                if( T::isLoaded() )
                 {
                     if( auto parent = COverlayElement<T>::getParent() )
                     {

@@ -3,8 +3,10 @@
 #include <editor/EditorManager.h>
 #include <editor/Project.h>
 #include <ui/UIManager.h>
-#include <FBApplication/FBApplication.h>
+
 #include <FBCore/FBCore.h>
+
+
 
 namespace fb
 {
@@ -152,6 +154,8 @@ namespace fb
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
+            auto application = applicationManager->getApplication();
+
             auto editorManager = EditorManager::getSingletonPtr();
             FB_ASSERT( editorManager );
 
@@ -168,6 +172,9 @@ namespace fb
             {
             case ActorType::Actor:
             {
+                auto sceneManager = applicationManager->getSceneManager();
+                auto scene = sceneManager->getCurrentScene();
+
                 auto filePath = getFilePath();
                 auto fileExt = Path::getFileExtension( filePath );
                 fileExt = StringUtil::make_lower( fileExt );
@@ -175,8 +182,6 @@ namespace fb
                 if( fileExt == ".fbx" || fileExt == ".fbmeshbin" || fileExt == ".prefab" )
                 {
                     auto prefabManager = applicationManager->getPrefabManager();
-                    auto sceneManager = applicationManager->getSceneManager();
-                    auto scene = sceneManager->getCurrentScene();
 
                     auto selectionManager = applicationManager->getSelectionManager();
 
@@ -229,6 +234,22 @@ namespace fb
                         }
                     }
                 }
+                else
+                {
+                    auto actor = sceneManager->createActor();
+                    scene->addActor( actor );
+
+                    if( applicationManager->isPlaying() )
+                    {
+                        actor->setState( IActor::State::Play );
+                    }
+                    else
+                    {
+                        actor->setState( IActor::State::Edit );
+                    }
+
+                    return actor;
+                }
             }
             break;
             case ActorType::Button:
@@ -272,7 +293,8 @@ namespace fb
 
                 if( auto textCanvasTransform = actorText->addComponent<scene::LayoutTransform>() )
                 {
-                    textCanvasTransform->setSize( size );
+                    auto textSize = Vector2F( 100, 20 );
+                    textCanvasTransform->setSize( textSize );
 
                     textCanvasTransform->setHorizontalAlignment(
                         scene::LayoutTransform::HorizontalAlignment::CENTER );
@@ -293,13 +315,13 @@ namespace fb
             break;
             case ActorType::Camera:
             {
-                auto actor = ApplicationUtil::createCamera( false );
+                auto actor = application->createDefaultCamera( false );
                 return actor;
             }
             break;
             case ActorType::Car:
             {
-                auto actor = ApplicationUtil::createDefaultVehicle( false );
+                auto actor = application->createDefaultVehicle( false );
                 return actor;
             }
             break;
@@ -311,37 +333,38 @@ namespace fb
                 actor->setName( name );
 
                 actor->addComponent<scene::Layout>();
+                actor->addComponent<scene::LayoutTransform>();
 
                 return actor;
             }
             break;
             case ActorType::Cube:
             {
-                auto actor = ApplicationUtil::createDefaultCube( false );
+                auto actor = application->createDefaultCube( false );
                 return actor;
             }
             break;
             case ActorType::CubeMesh:
             {
-                auto actor = ApplicationUtil::createDefaultCubeMesh( false );
+                auto actor = application->createDefaultCubeMesh( false );
                 return actor;
             }
             break;
             case ActorType::Cubemap:
             {
-                auto actor = ApplicationUtil::createDefaultCubemap( false );
+                auto actor = application->createDefaultCubemap( false );
                 return actor;
             }
             break;
             case ActorType::CubeGround:
             {
-                auto actor = ApplicationUtil::createDefaultCube( false );
+                auto actor = application->createDefaultCube( false );
                 return actor;
             }
             break;
             case ActorType::DirectionalLight:
             {
-                return ApplicationUtil::createDirectionalLight( false );
+                return application->createDirectionalLight( false );
             }
             break;
             case ActorType::Panel:
@@ -377,7 +400,7 @@ namespace fb
                 auto name = String( "Particle System" );
                 actor->setName( name );
 
-                auto ps = actor->addComponent<scene::ParticleSystemComponent>();
+                auto ps = actor->addComponent<scene::ParticleSystem>();
 
                 return actor;
             }
@@ -389,7 +412,7 @@ namespace fb
                 auto name = String( "Particle System Smoke" );
                 actor->setName( name );
 
-                auto ps = actor->addComponent<scene::ParticleSystemComponent>();
+                auto ps = actor->addComponent<scene::ParticleSystem>();
 
                 return actor;
             }
@@ -401,7 +424,7 @@ namespace fb
                 auto name = String( "Particle System Sand" );
                 actor->setName( name );
 
-                auto ps = actor->addComponent<scene::ParticleSystemComponent>();
+                auto ps = actor->addComponent<scene::ParticleSystem>();
 
                 return actor;
             }
@@ -413,25 +436,25 @@ namespace fb
                 auto name = String( "ProceduralScene" );
                 actor->setName( name );
 
-                auto proceduralScene = actor->addComponent<scene::ProceduralScene>();
-                FB_ASSERT( proceduralScene );
+                //auto proceduralScene = actor->addComponent<scene::ProceduralScene>();
+                //FB_ASSERT( proceduralScene );
 
                 return actor;
             }
             break;
             case ActorType::PointLight:
             {
-                return ApplicationUtil::createPointLight( false );
+                return application->createPointLight( false );
             }
             break;
             case ActorType::PhysicsCube:
             {
-                return ApplicationUtil::createDefaultGround( false );
+                return application->createDefaultGround( false );
             }
             break;
             case ActorType::Skybox:
             {
-                return ApplicationUtil::createDefaultSky( false );
+                return application->createDefaultSky( false );
             }
             break;
             case ActorType::SimpleButton:
@@ -496,7 +519,7 @@ namespace fb
                 auto name = String( "Terrain" );
                 actor->setName( name );
 
-                auto terrainDirector = fb::make_ptr<TerrainDirector>();
+                auto terrainDirector = fb::make_ptr<Director>();
                 terrainDirector->saveToFile( "Terrain.resource" );
 
                 auto terrain = actor->addComponent<scene::TerrainSystem>();
@@ -521,7 +544,7 @@ namespace fb
             break;
             case ActorType::Vehicle:
             {
-                auto actor = ApplicationUtil::createDefaultVehicle( false );
+                auto actor = application->createDefaultVehicle( false );
                 return actor;
             }
             break;

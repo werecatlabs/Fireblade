@@ -58,8 +58,6 @@ namespace fb
 
             void unload();
 
-            bool isLoaded() const override;
-
             void save() override;
 
             hash64 getFileSystemId() const override;

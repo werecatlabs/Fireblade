@@ -31,14 +31,8 @@
 *.out
 *.app
 
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
 /[Hh]oudiniTemp/
-/Assets/AssetStoreTools*
-/FBEngine/lib*
+/libs*
 /cmake-build-debug*
 /cmake-build-release*
 

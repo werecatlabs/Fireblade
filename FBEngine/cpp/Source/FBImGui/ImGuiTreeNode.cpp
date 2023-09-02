@@ -1,7 +1,6 @@
 #include <FBImGui/FBImGuiPCH.h>
 #include <FBImGui/ImGuiTreeNode.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
 #include <imgui.h>
 
 namespace fb
@@ -131,7 +130,7 @@ namespace fb
                 if( element && element->isDerived<IUITreeNode>() )
                 {
                     auto treeNode = fb::static_pointer_cast<IUITreeNode>( element );
-                    auto label = ApplicationUtil::getText( treeNode );
+                    auto label = Util::getText( treeNode );
 
                     if( StringUtil::isNullOrEmpty( label ) )
                     {
@@ -174,8 +173,19 @@ namespace fb
                         {
                             tree->setDragSourceElement( treeNode );
 
-                            static String dragData;
-                            dragData = dragSource->handleDrag( Vector2I::zero(), treeNode );
+                            auto args = Array<Parameter>();
+                            args.resize( 3 );
+
+                            args[0].object = treeNode;
+                            args[1].object = nullptr;
+                            args[2].object = nullptr;
+
+                            auto retValue =
+                                dragSource->handleEvent( IEvent::Type::UI, IEvent::handleDrag, args,
+                                                         treeNode, treeNode, nullptr );
+
+                            auto &dragData = retValue.str;
+
                             if( !StringUtil::isNullOrEmpty( dragData ) )
                             {
                                 ImGui::SetDragDropPayload( "_TREENODE", dragData.c_str(),
@@ -206,13 +216,12 @@ namespace fb
                                         auto dst = tree->getDropDestinationElement();
 
                                         auto args = Array<Parameter>();
-                                        args.reserve(1);
+                                        args.reserve( 1 );
 
-                                        args.push_back(Parameter(data));
+                                        args.push_back( Parameter( data ) );
 
-                                        dropTarget->handleEvent( IEvent::Type::UI,
-																  IEvent::handleDrop, args,
-																  src, dst, nullptr );
+                                        dropTarget->handleEvent( IEvent::Type::UI, IEvent::handleDrop,
+                                                                 args, src, dst, nullptr );
                                     }
                                 }
                             }
@@ -221,7 +230,7 @@ namespace fb
                         }
                     }
 
-                    if( ImGui::IsItemClicked( 0 ) )
+                    if( ImGui::IsMouseReleased( 0 ) && ImGui::IsItemHovered( ImGuiHoveredFlags_None ) )
                     {
                         if( tree->isMultiSelect() )
                         {
@@ -233,7 +242,7 @@ namespace fb
                         }
                     }
 
-                    if( ImGui::IsItemClicked( 0 ) )
+                    if( ImGui::IsMouseClicked( 0 ) && ImGui::IsItemHovered( ImGuiHoveredFlags_None ) )
                     {
                         auto ownerTree = treeNode->getOwnerTree();
                         if( ownerTree )
@@ -268,6 +277,26 @@ namespace fb
                                                            IEvent::handleTreeNodeDoubleClicked, args,
                                                            tree, treeNode, nullptr );
                                 }
+                            }
+                        }
+                    }
+
+                    if( ImGui::IsMouseReleased( 0 ) && ImGui::IsItemHovered( ImGuiHoveredFlags_None ) )
+                    {
+                        auto ownerTree = treeNode->getOwnerTree();
+                        if( ownerTree )
+                        {
+                            auto listeners = ownerTree->getObjectListeners();
+                            for( auto listener : listeners )
+                            {
+                                auto args = Array<Parameter>();
+                                args.resize( 2 );
+
+                                args[0].object = treeNode;
+
+                                listener->handleEvent( IEvent::Type::Object,
+                                                       IEvent::handleTreeSelectionRelease, args, tree,
+                                                       treeNode, nullptr );
                             }
                         }
                     }

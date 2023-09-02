@@ -2,13 +2,13 @@
 #define FBSQLiteQuery_h__
 
 #include <FBCore/Interface/Database/IDatabaseQuery.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Array.h>
 #include <FBSQLite/extern/CppSQLite3.h>
 
 namespace fb
 {
-    class SQLiteQuery : public SharedObject<IDatabaseQuery>
+    class SQLiteQuery : public IDatabaseQuery
     {
     public:
         SQLiteQuery();
@@ -39,6 +39,14 @@ namespace fb
         class Field
         {
         public:
+            Field();
+
+            Field( const String &name, const String &value );
+
+            Field( const Field &other );
+
+            ~Field();
+
             String name;
             String value;
         };
@@ -46,6 +54,12 @@ namespace fb
         class Rows
         {
         public:
+            Rows();
+
+            Rows( const Rows &other );
+
+            ~Rows();
+
             Array<Field> fields;
         };
 

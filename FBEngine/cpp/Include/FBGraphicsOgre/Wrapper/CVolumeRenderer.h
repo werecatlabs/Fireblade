@@ -12,7 +12,7 @@ namespace fb
     namespace render
     {
 
-        class CVolumeRenderer : public SharedObject<IVolumeRenderer>
+        class CVolumeRenderer : public IVolumeRenderer
         {
         public:
             CVolumeRenderer();

@@ -1,28 +1,17 @@
 #ifndef ObjectWindow_h__
 #define ObjectWindow_h__
 
-#include "ui/BaseWindow.h"
+#include "GameEditorTypes.h"
+#include "ui/EditorWindow.h"
 
 namespace fb
 {
     namespace editor
     {
-        class ObjectWindow : public BaseWindow
+        class ObjectWindow : public EditorWindow
         {
         public:
-            enum class ObjectType
-            {
-                None,
-                Actor,
-                Resource,
-                Mesh,
-                Material,
-                MaterialNode,
-                Terrain,
-                FileUnknown,
 
-                Count
-            };
 
             enum
             {
@@ -34,6 +23,7 @@ namespace fb
             ~ObjectWindow() override;
 
             void load( SmartPtr<ISharedObject> data ) override;
+            void reload( SmartPtr<ISharedObject> data );
             void unload( SmartPtr<ISharedObject> data ) override;
 
             SmartPtr<ui::IUIWindow> getWindow() const;

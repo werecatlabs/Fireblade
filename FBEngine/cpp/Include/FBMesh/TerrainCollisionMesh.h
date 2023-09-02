@@ -2,7 +2,7 @@
 #define TerrainCollisionMesh_h__
 
 #include <FBMesh/FBMeshPrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Math/Matrix4.h>
 
 namespace fb

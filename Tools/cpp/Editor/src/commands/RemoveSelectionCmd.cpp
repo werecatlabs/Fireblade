@@ -3,7 +3,7 @@
 #include <editor/EditorManager.h>
 #include <ui/UIManager.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
+
 
 namespace fb
 {
@@ -28,7 +28,7 @@ namespace fb
 
             for( auto selectionData : m_actorData )
             {
-                auto actor = factoryManager->make_ptr<scene::Actor>();
+                auto actor = sceneManager->createActor();
 
                 auto data = selectionData->getActorData();
                 actor->fromData( data );
@@ -64,6 +64,7 @@ namespace fb
                 if( actor )
                 {
                     scene->removeActor( actor );
+
                     auto parent = actor->getParent();
                     if( parent )
                     {
@@ -71,11 +72,11 @@ namespace fb
                         selectionData->setParent( parent );
                     }
 
-                    //auto data = actor->toData();
-                    //if( data )
-                    //{
-                    //    selectionData->setActorData( data );
-                    //}
+                    auto data = actor->toData();
+                    if( data )
+                    {
+                        selectionData->setActorData( data );
+                    }
 
                     actor->unload( nullptr );
                 }
@@ -103,6 +104,7 @@ namespace fb
                 if( actor )
                 {
                     scene->removeActor( actor );
+
                     auto parent = actor->getParent();
                     if( parent )
                     {
@@ -110,14 +112,13 @@ namespace fb
                         selectionData->setParent( parent );
                     }
 
-                    //auto data = actor->toData();
-                    //if( data )
-                    //{
-                    //    selectionData->setActorData( data );
-                    //}
-
-                    actor->unload( 0 );
-                    selectionData->setActor( actor );
+                    auto data = actor->toData();
+                    if( data )
+                    {
+                        selectionData->setActorData( data );
+                    }
+                    
+                    sceneManager->destroyActor( actor );
 
                     m_actorData.push_back( selectionData );
                 }
@@ -156,12 +157,12 @@ namespace fb
             m_actor = val;
         }
 
-        SmartPtr<IData> RemoveSelectionCmd::ActorData::getActorData() const
+        SmartPtr<ISharedObject> RemoveSelectionCmd::ActorData::getActorData() const
         {
             return m_actorData;
         }
 
-        void RemoveSelectionCmd::ActorData::setActorData( SmartPtr<IData> val )
+        void RemoveSelectionCmd::ActorData::setActorData( SmartPtr<ISharedObject> val )
         {
             m_actorData = val;
         }

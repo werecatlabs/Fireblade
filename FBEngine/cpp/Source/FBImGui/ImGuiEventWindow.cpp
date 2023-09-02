@@ -7,7 +7,7 @@ namespace fb
 {
     namespace ui
     {
-        FB_CLASS_REGISTER_DERIVED( fb, ImGuiEventWindow, ImGuiWindow<IUIEventWindow> );
+        FB_CLASS_REGISTER_DERIVED( fb, ImGuiEventWindow, ImGuiWindowT<IUIEventWindow> );
 
         ImGuiEventWindow::ImGuiEventWindow()
         {

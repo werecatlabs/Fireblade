@@ -4,7 +4,7 @@
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBCore/Interface/Physics/IRigidStatic3.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBPhysx/FBPhysxRigidBody3.h>
 
 namespace fb
@@ -79,16 +79,16 @@ namespace fb
             SmartPtr<IPhysicsScene3> getScene() const override;
 
             /** @copydoc IRigidStatic3::setActorFlag */
-            void setActorFlag( PxActorFlag::Enum flag, bool value ) override;
+            void setActorFlag( ActorFlag::Enum flag, bool value ) override;
 
             /** @copydoc IRigidStatic3::getActorFlags */
-            PxActorFlag::Enum getActorFlags() const override;
+            ActorFlag::Enum getActorFlags() const override;
             
             /** @copydoc IRigidStatic3::setRigidBodyFlag */
-            void setRigidBodyFlag( PxRigidBodyFlag::Enum flag, bool value ) override;
+            void setRigidBodyFlag( RigidBodyFlag::Enum flag, bool value ) override;
 
             /** @copydoc IRigidStatic3::getRigidBodyFlags */
-            PxRigidBodyFlag::Enum getRigidBodyFlags() const override;
+            RigidBodyFlag::Enum getRigidBodyFlags() const override;
 
             /** @copydoc IRigidStatic3::getShapes */
             Array<SmartPtr<IPhysicsShape3>> getShapes() const override;
@@ -159,7 +159,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class StateListener : public SharedObject<IStateListener>
+            class StateListener : public IStateListener
             {
             public:
                 StateListener() = default;

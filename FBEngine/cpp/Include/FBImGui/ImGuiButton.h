@@ -15,6 +15,8 @@ namespace fb
             ImGuiButton();
             ~ImGuiButton() override;
 
+            void update() override;
+
             String getLabel() const override;
             void setLabel( const String &label ) override;
 

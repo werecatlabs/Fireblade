@@ -1,7 +1,7 @@
 #ifndef ObjectBrowserDialog_h__
 #define ObjectBrowserDialog_h__
 
-#include "ui/BaseWindow.h"
+#include "ui/EditorWindow.h"
 #include <FBCore/Interface/System/IEventListener.h>
 
 namespace fb
@@ -9,7 +9,7 @@ namespace fb
     namespace editor
     {
 
-        class ObjectBrowserDialog : public BaseWindow
+        class ObjectBrowserDialog : public EditorWindow
         {
         public:
             enum WidgetId
@@ -35,7 +35,7 @@ namespace fb
             void setTree( SmartPtr<ui::IUITreeCtrl> tree );
 
         protected:
-            class UIElementListener : public SharedObject<IEventListener>
+            class UIElementListener : public IEventListener
             {
             public:
                 UIElementListener() = default;

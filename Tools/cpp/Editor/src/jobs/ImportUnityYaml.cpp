@@ -394,7 +394,7 @@ namespace fb
 
                         uiManager->rebuildSceneTree();
 
-                        root->edit();
+                        //root->edit();
                     }
                 }
             }

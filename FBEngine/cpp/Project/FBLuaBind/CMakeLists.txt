@@ -1,6 +1,6 @@
 project(FBLuaBind)
 
-add_compile_definitions (_FB_STATIC_LIB_)
+
 add_compile_definitions (BOOST_BIND_GLOBAL_PLACEHOLDERS)
 
 # define header and source files for the library
@@ -37,7 +37,7 @@ elseif (FB_USE_TBB)
 endif()
 
 include_directories( ${FB_ROOT}/Dependencies/tinybind )
-include_directories( ${FB_ROOT}/Dependencies/tinyxml/include )
+include_directories( ${FB_ROOT}/Dependencies/tinyxml )
 include_directories( ${FB_ROOT}/Dependencies/utf8/source )
 include_directories( ${FB_ROOT}/AdditionalLibraries/wildmagic/SDK/Include )
 include_directories( ../../Include )

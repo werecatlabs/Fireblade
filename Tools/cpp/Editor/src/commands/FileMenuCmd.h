@@ -2,7 +2,7 @@
 #define FileMenuCmd_h__
 
 #include <GameEditorPrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Interface/System/ICommand.h>
 #include "ui/UIManager.h"
 #include <commands/Command.h>

@@ -1,10 +1,9 @@
 #include <GameEditorPCH.h>
 #include "ui/ResourceWindow.h"
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
+
 #include <editor/EditorManager.h>
 #include <editor/Project.h>
-
 #include <editor/EditorManager.h>
 #include <ui/ProjectTreeData.h>
 #include <ui/SceneWindow.h>
@@ -41,7 +40,7 @@ namespace fb
             auto parentWindow = ui->addElementByType<ui::IUIWindow>();
             setParentWindow( parentWindow );
 
-            if(parent)
+            if( parent )
             {
                 parent->addChild( parentWindow );
             }
@@ -81,7 +80,7 @@ namespace fb
                 auto ui = applicationManager->getUI();
                 FB_ASSERT( ui );
 
-                if(m_tree)
+                if( m_tree )
                 {
                     m_tree->removeObjectListener( m_treeListener );
 
@@ -89,36 +88,36 @@ namespace fb
                     m_tree = nullptr;
                 }
 
-                if(m_treeListener)
+                if( m_treeListener )
                 {
                     m_treeListener->unload( nullptr );
                     m_treeListener = nullptr;
                 }
 
-                if(m_propertiesWindow)
+                if( m_propertiesWindow )
                 {
                     m_propertiesWindow->unload( nullptr );
                     m_propertiesWindow = nullptr;
                 }
 
-                if(auto parentWindow = getParentWindow())
+                if( auto parentWindow = getParentWindow() )
                 {
                     ui->removeElement( parentWindow );
                     setParentWindow( nullptr );
                 }
 
-                for(auto data : m_dataArray)
+                for( auto data : m_dataArray )
                 {
                     data->unload( nullptr );
                 }
 
                 m_dataArray.clear();
 
-                BaseWindow::unload( data );
+                EditorWindow::unload( data );
 
                 setLoadingState( LoadingState::Unloaded );
             }
-            catch(std::exception e)
+            catch( std::exception e )
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -128,7 +127,7 @@ namespace fb
         {
             buildTree();
 
-            if(m_propertiesWindow)
+            if( m_propertiesWindow )
             {
                 m_propertiesWindow->updateSelection();
             }
@@ -140,7 +139,7 @@ namespace fb
             {
                 FB_ASSERT( m_tree );
 
-                if(m_tree)
+                if( m_tree )
                 {
                     m_tree->clear();
                 }
@@ -222,7 +221,7 @@ namespace fb
                 }
                  */
             }
-            catch(std::exception &e)
+            catch( std::exception &e )
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -243,7 +242,7 @@ namespace fb
 
                 auto materialHandle = material->getHandle();
                 auto actorName = materialHandle->getName();
-                if(StringUtil::isNullOrEmpty( actorName ))
+                if( StringUtil::isNullOrEmpty( actorName ) )
                 {
                     actorName = "Untitled";
                 }
@@ -251,18 +250,18 @@ namespace fb
                 auto treeNode = m_tree->addNode();
 
                 FB_ASSERT( treeNode );
-                ApplicationUtil::setText( treeNode, actorName );
+                Util::setText( treeNode, actorName );
 
                 treeNode->setNodeUserData( data );
 
-                if(node)
+                if( node )
                 {
                     node->addChild( treeNode );
                 }
 
                 addObjectToTree( material, treeNode );
             }
-            catch(std::exception &e)
+            catch( std::exception &e )
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -273,7 +272,7 @@ namespace fb
         {
             try
             {
-                if(object)
+                if( object )
                 {
                     auto editorManager = EditorManager::getSingletonPtr();
 
@@ -290,7 +289,7 @@ namespace fb
                     FB_ASSERT( typeManager );
 
                     auto className = typeManager->getName( typeinfo );
-                    if(StringUtil::isNullOrEmpty( className ))
+                    if( StringUtil::isNullOrEmpty( className ) )
                     {
                         className = "Untitled";
                     }
@@ -301,39 +300,39 @@ namespace fb
                     }
                     else
                     */
-                    if(object->isDerived<IStateContext>())
+                    if( object->isDerived<IStateContext>() )
                     {
                         className = String( "StateObject" );
                     }
-                    else if(object->isDerived<IStateListener>())
+                    else if( object->isDerived<IStateListener>() )
                     {
                         className = String( "StateListener" );
                     }
-                    else if(object->isDerived<render::IGraphicsScene>())
+                    else if( object->isDerived<render::IGraphicsScene>() )
                     {
                         className = String( "SceneManager" );
                     }
-                    else if(object->isDerived<render::ISceneNode>())
+                    else if( object->isDerived<render::ISceneNode>() )
                     {
                         className = String( "SceneNode" );
                     }
-                    else if(object->isDerived<render::IGraphicsMesh>())
+                    else if( object->isDerived<render::IGraphicsMesh>() )
                     {
                         className = String( "Mesh" );
                     }
-                    else if(object->isDerived<render::IMaterial>())
+                    else if( object->isDerived<render::IMaterial>() )
                     {
                         className = String( "Material" );
                     }
-                    else if(object->isDerived<render::IMaterialTechnique>())
+                    else if( object->isDerived<render::IMaterialTechnique>() )
                     {
                         className = String( "Technique" );
                     }
-                    else if(object->isDerived<render::IMaterialPass>())
+                    else if( object->isDerived<render::IMaterialPass>() )
                     {
                         className = String( "Pass" );
                     }
-                    else if(object->isDerived<render::IMaterialTexture>())
+                    else if( object->isDerived<render::IMaterialTexture>() )
                     {
                         auto textureHandle = object->getHandle();
                         className = textureHandle->getName();
@@ -342,19 +341,19 @@ namespace fb
                     auto treeNode = m_tree->addNode();
 
                     FB_ASSERT( treeNode );
-                    ApplicationUtil::setText( treeNode, className );
+                    Util::setText( treeNode, className );
 
                     treeNode->setNodeUserData( data );
 
-                    if(node)
+                    if( node )
                     {
                         node->addChild( treeNode );
                     }
 
                     auto children = object->getChildObjects();
-                    for(auto child : children)
+                    for( auto child : children )
                     {
-                        if(child)
+                        if( child )
                         {
                             addObjectToTree( child, treeNode );
                         }
@@ -366,7 +365,7 @@ namespace fb
                     // }
                 }
             }
-            catch(std::exception &e)
+            catch( std::exception &e )
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -379,7 +378,6 @@ namespace fb
         ResourceWindow::TreeCtrlListener::~TreeCtrlListener()
         {
         }
-
 
         Parameter ResourceWindow::TreeCtrlListener::handleEvent(
             IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
@@ -397,7 +395,7 @@ namespace fb
             SmartPtr<ui::IUITreeNode> node )
         {
             auto data = fb::static_pointer_cast<ProjectTreeData>( node->getNodeUserData() );
-            if(data)
+            if( data )
             {
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
@@ -427,5 +425,5 @@ namespace fb
         {
             m_owner = owner;
         }
-    } // end namespace editor
-}     // end namespace fb
+    }  // end namespace editor
+}  // end namespace fb

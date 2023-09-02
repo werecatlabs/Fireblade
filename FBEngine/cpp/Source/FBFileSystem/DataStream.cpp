@@ -4,7 +4,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, DataStream, SharedObject<IStream> );
+    FB_CLASS_REGISTER_DERIVED( fb, DataStream, IStream );
 
     template <typename T>
     DataStream &DataStream::operator>>( T &val )

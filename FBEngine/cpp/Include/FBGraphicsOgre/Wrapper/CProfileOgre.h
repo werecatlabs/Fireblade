@@ -3,14 +3,14 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/System/IProfile.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
     namespace render
     {
 
-        class CProfileOgre : public SharedObject<IProfile>
+        class CProfileOgre : public IProfile
         {
         public:
             CProfileOgre();

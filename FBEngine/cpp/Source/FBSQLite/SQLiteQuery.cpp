@@ -23,6 +23,8 @@ namespace fb
                 Rows currentRow;
 
                 int numFields = query.numFields();
+                currentRow.fields.reserve( numFields );
+
                 for( int index = 0; index < numFields; ++index )
                 {
                     const char *pFieldName = query.fieldName( index );
@@ -53,9 +55,11 @@ namespace fb
     {
         if( m_currentRow < m_rows.size() )
         {
-            if( index < m_rows[m_currentRow].fields.size() )
+            auto &row = m_rows[m_currentRow];
+            if( index < row.fields.size() )
             {
-                return m_rows[m_currentRow].fields[index].name;
+                auto &field = row.fields[index];
+                return field.name;
             }
         }
 
@@ -66,9 +70,11 @@ namespace fb
     {
         if( m_currentRow < m_rows.size() )
         {
-            if( index < m_rows[m_currentRow].fields.size() )
+            auto &row = m_rows[m_currentRow];
+            if( index < row.fields.size() )
             {
-                return m_rows[m_currentRow].fields[index].value;
+                auto &field = row.fields[index];
+                return field.value;
             }
         }
 
@@ -178,8 +184,8 @@ namespace fb
             auto resultElem = new TiXmlElement( "result" );
             resultsElem->LinkEndChild( resultElem );
 
-            int numFields = getNumFields();
-            for( int i = 0; i < numFields; ++i )
+            u32 numFields = (u32)getNumFields();
+            for( u32 i = 0; i < numFields; ++i )
             {
                 String fieldName = getFieldName( i );
                 String fieldValue = getFieldValue( i );
@@ -274,6 +280,34 @@ namespace fb
 #endif
 
         return xmltext;
+    }
+
+    SQLiteQuery::Rows::Rows( const Rows &other ) : fields( other.fields )
+    {
+    }
+
+    SQLiteQuery::Rows::Rows()
+    {
+    }
+
+    SQLiteQuery::Rows::~Rows()
+    {
+    }
+
+    SQLiteQuery::Field::Field( const Field &other ) : name( other.name ), value( other.value )
+    {
+    }
+
+    SQLiteQuery::Field::Field( const String &name, const String &value ) : name( name ), value( value )
+    {
+    }
+
+    SQLiteQuery::Field::Field()
+    {
+    }
+
+    SQLiteQuery::Field::~Field()
+    {
     }
 
 }  // end namespace fb

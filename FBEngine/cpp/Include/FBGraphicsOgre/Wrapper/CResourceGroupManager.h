@@ -3,14 +3,14 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Resource/IResourceGroupManager.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Core/Set.h>
 
 namespace fb
 {
     namespace render
     {
-        class CResourceGroupManager : public SharedObject<IResourceGroupManager>
+        class CResourceGroupManager : public IResourceGroupManager
         {
         public:
             static const u32 RGMID_UNLOADRESOURCEGROUP;

@@ -16,7 +16,7 @@ namespace fb
 
             void execute() override;
         };
-    } // namespace editor
-}     // namespace fb
+    }  // namespace editor
+}  // namespace fb
 
-#endif // LeavePlaymodeJob_h__
+#endif  // LeavePlaymodeJob_h__

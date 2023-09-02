@@ -4,7 +4,7 @@
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBCore/Interface/Physics/IMeshShape.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Array.h>
 #include <FBPhysx/FBPhysxShape.h>
 #include <geometry/PxBoxGeometry.h>
@@ -55,9 +55,12 @@ namespace fb
             void setCleanMesh( SmartPtr<IMesh> cleanMesh ) override;
 
             String getMeshPath() const;
-            void setMeshPath( const String &meshPath );
 
             bool isValid() const override;
+
+	        physx::PxOutputStream *getOutputStream() const;
+
+            void setOutputStream( physx::PxOutputStream *outputStream );
 
         protected:
             class MeshShapeStateListener : public ShapeStateListener
@@ -103,6 +106,8 @@ namespace fb
 
             void createStateObject() override;
 
+            physx::PxOutputStream* m_outputStream = nullptr;;
+
             physx::PxRigidDynamic *m_dynamicActor = nullptr;
             physx::PxRigidStatic *m_staticActor = nullptr;
 
@@ -112,10 +117,7 @@ namespace fb
 
             SmartPtr<IMeshResource> m_meshResource;
 
-            //AtomicSmartPtr<IMesh> m_mesh;
             AtomicSmartPtr<IMesh> m_cleanMesh;
-
-            String m_meshPath;
 
             Array<Vector3<real_Num>> m_sharedVertices;
             Array<Array<Vector3<real_Num>>> m_vertices;

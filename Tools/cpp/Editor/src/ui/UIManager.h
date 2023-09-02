@@ -2,7 +2,7 @@
 #define __UIManager_h__
 
 #include <GameEditorPrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/System/Job.h>
 #include <FBCore/Interface/System/IEventListener.h>
 
@@ -12,7 +12,7 @@ namespace fb
     {
 
         /** The editor's ui manager. */
-        class UIManager : public SharedObject<ISharedObject>
+        class UIManager : public ISharedObject
         {
         public:
             /** Widget ids. */
@@ -84,6 +84,7 @@ namespace fb
                 GenerateSkyboxMaterialsId,
 
                 OptimiseDatabasesId,
+                CreateAssetFromDatabasesId,
 
                 SetupMaterialsId,
 
@@ -152,12 +153,6 @@ namespace fb
             void updateActorSelection();
             void updateComponentSelection();
 
-            void showComponentEditWindow();
-            void hideComponentEditWindows() const;
-
-            MeshImportWindow *getMeshImportWindow() const;
-            void setMeshImportWindow( MeshImportWindow *val );
-
             FoliageWindow *getFoliageWindow() const;
             void setFoliageWindow( FoliageWindow *val );
 
@@ -217,7 +212,7 @@ namespace fb
                 void execute() override;
             };
 
-            class CUIMenuBarListener : public SharedObject<IEventListener>
+            class CUIMenuBarListener : public IEventListener
             {
             public:
                 CUIMenuBarListener();
@@ -234,7 +229,7 @@ namespace fb
                 UIManager *m_owner = nullptr;
             };
 
-            class ToolbarListener : public SharedObject<IEventListener>
+            class ToolbarListener : public IEventListener
             {
             public:
                 ToolbarListener() = default;
@@ -252,7 +247,7 @@ namespace fb
                 UIManager *m_owner = nullptr;
             };
 
-            class EventListener : public SharedObject<IEventListener>
+            class EventListener : public IEventListener
             {
             public:
                 EventListener() = default;
@@ -293,7 +288,6 @@ namespace fb
 
             PropertiesWindow *m_propertiesWindow = nullptr;
             ApplicationFrame *m_appFrame = nullptr;
-            MeshImportWindow *m_meshImportWindow = nullptr;
             FoliageWindow *m_foliageWindow = nullptr;
             RoadFrame *m_roadWindow = nullptr;
             HoudiniWindow *m_houdiniWindow = nullptr;

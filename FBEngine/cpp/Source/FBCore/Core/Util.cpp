@@ -1,6 +1,13 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Core/Util.h>
 #include <FBCore/Thread/Threading.h>
+#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/Interface/UI/IUIImage.h>
+#include <FBCore/Interface/UI/IUIManager.h>
+#include <FBCore/Interface/UI/IUIMenu.h>
+#include <FBCore/Interface/UI/IUITreeNode.h>
+#include <FBCore/Interface/UI/IUIText.h>
+#include "FBCore/Memory/PointerUtil.h"
 
 #if defined FB_PLATFORM_WIN32
 #    include <windows.h>
@@ -181,6 +188,120 @@ namespace fb
         if( input <= 2048 )
             return 2048;
         return input;
+    }
+
+    SmartPtr<ui::IUIMenuItem> Util::addMenuItem( SmartPtr<ui::IUIMenu> menu, s32 itemid,
+                                                            const String &text, const String &help,
+                                                            ui::IUIMenuItem::Type type )
+    {
+        auto applicationManager = core::IApplicationManager::instance();
+        auto ui = applicationManager->getUI();
+
+        auto menuItem = ui->addElementByType<ui::IUIMenuItem>();
+        FB_ASSERT( menuItem );
+
+        menuItem->setElementId( itemid );
+        menuItem->setText( text );
+        menuItem->setHelp( help );
+        menuItem->setMenuItemType( type );
+
+        menu->addMenuItem( menuItem );
+
+        return menuItem;
+    }
+
+    SmartPtr<ui::IUIMenuItem> Util::addMenuSeparator( SmartPtr<ui::IUIMenu> menu )
+    {
+        auto applicationManager = core::IApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto ui = applicationManager->getUI();
+        FB_ASSERT( ui );
+
+        auto menuItem = ui->addElementByType<ui::IUIMenuItem>();
+        FB_ASSERT( menuItem );
+
+        auto type = ui::IUIMenuItem::Type::Separator;
+        menuItem->setMenuItemType( type );
+
+        menu->addMenuItem( menuItem );
+
+        return menuItem;
+    }
+
+    SmartPtr<ui::IUIElement> Util::setText( SmartPtr<ui::IUITreeNode> node,
+                                                       const String &text )
+    {
+        if( node )
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            if( auto ui = applicationManager->getUI() )
+            {
+                if( auto textElement = ui->addElementByType<ui::IUIText>() )
+                {
+                    textElement->setText( text );
+                    node->addChild( textElement );
+
+                    return textElement;
+                }
+            }
+        }
+
+        return nullptr;
+    }
+
+    SmartPtr<ui::IUIElement> Util::setImage( SmartPtr<ui::IUITreeNode> node,
+                                                        const String &imagePath )
+    {
+        auto applicationManager = core::IApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto ui = applicationManager->getUI();
+        FB_ASSERT( ui );
+
+        auto imageElement = ui->addElementByType<ui::IUIImage>();
+        FB_ASSERT( imageElement );
+
+        //textElement->setText( text );
+        node->setNodeData( imageElement );
+
+        return imageElement;
+    }
+
+    SmartPtr<ui::IUIElement> Util::getFirstChild( SmartPtr<ui::IUIElement> element )
+    {
+        if( element )
+        {
+            if( auto p = element->getChildren() )
+            {
+                auto &children = *p;
+                if( !children.empty() )
+                {
+                    return children.front();
+                }
+            }
+        }
+        return nullptr;
+    }
+
+    String Util::getText( SmartPtr<ui::IUITreeNode> node )
+    {
+        if( auto p = node->getChildren() )
+        {
+            auto &children = *p;
+            for( auto &child : children )
+            {
+                if( child->isDerived<ui::IUIText>() )
+                {
+                    auto text = fb::static_pointer_cast<ui::IUIText>( child );
+                    return text->getText();
+                }
+            }
+        }
+
+        return String( "" );
     }
 
 }  // end namespace fb

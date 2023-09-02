@@ -2,7 +2,7 @@
 #include <editor/Project.h>
 #include <editor/EditorManager.h>
 #include <ui/UIManager.h>
-#include <FBApplication/FBApplication.h>
+
 #include <FBCore/FBCore.h>
 
 namespace fb
@@ -346,6 +346,7 @@ namespace fb
             try
             {
                 auto applicationManager = core::IApplicationManager::instance();
+                auto resourceDatabase = applicationManager->getResourceDatabase();
 
                 auto sceneManager = applicationManager->getSceneManager();
 
@@ -357,6 +358,7 @@ namespace fb
 
                 sceneManager->loadScene( cleanCurrentScenePath );
 
+                resourceDatabase->refresh();
                 sceneManager->edit();
             }
             catch( std::exception &e )

@@ -5,9 +5,10 @@
 #include <FBCore/Interface/Input/IInputDeviceManager.h>
 #include <FBCore/Interface/Graphics/IWindow.h>
 #include <FBCore/Interface/Graphics/IWindowListener.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Memory/RawPtr.h>
 #include <FBCore/Core/Array.h>
+#include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Core/FixedArray.h>
 #include <FBCore/Core/Map.h>
 #include <FBCore/Core/HashMap.h>
@@ -17,7 +18,7 @@
 
 namespace fb
 {
-    class OISInputManager : public SharedObject<IInputDeviceManager>
+    class OISInputManager : public IInputDeviceManager
     {
     public:
         class KeyListener : public OIS::KeyListener
@@ -180,18 +181,20 @@ namespace fb
         SmartPtr<render::IWindow> getWindow() const override;
         void setWindow( SmartPtr<render::IWindow> window ) override;
 
-        void _getObject(void** ppObject);
+        void _getObject( void **ppObject );
 
         FB_CLASS_REGISTER_DECL;
 
     protected:
-        class WindowListener : public SharedObject<render::IWindowListener>
+        class WindowListener : public render::IWindowListener
         {
         public:
             WindowListener() = default;
             ~WindowListener() override = default;
 
-            Parameter handleEvent( IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
+            Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                   const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                   SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
 
             void handleEvent( SmartPtr<render::IWindowEvent> event ) override;
 
@@ -222,6 +225,10 @@ namespace fb
         void setJoystickIdx( const String &gameInputDeviceName, s32 joystickIdx );
         s32 getJoystickIdx( const String &gameInputDeviceName ) const;
 
+        SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> getListenersPtr() const;
+
+        void setListenersPtr( SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> listeners );
+
         Vector2F m_mousePosition = Vector2F::zero();
         Vector3<real_Num> m_mouseScroll = Vector3<real_Num>::zero();
 
@@ -247,7 +254,7 @@ namespace fb
         ///
         Array<RawPtr<OIS::ForceFeedback>> m_forceFeedbackDevices;
 
-        Array<SmartPtr<IEventListener>> m_listeners;
+        AtomicSharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> m_listeners;
 
         using GameDeviceJoystickMap = std::map<String, s32>;
         GameDeviceJoystickMap m_gameDeviceJoystickMap;

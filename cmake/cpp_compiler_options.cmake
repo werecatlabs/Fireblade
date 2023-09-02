@@ -29,6 +29,10 @@ elseif(WIN32)
    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Qvec-report:2")
    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
    
+   add_compile_options(/wd4251)
+   add_compile_options(/wd4275)
+   add_compile_options(/wd4290)
+   
    if (NOT FB_PLATFORM_X64)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:SSE2")
    endif()
@@ -55,12 +59,22 @@ elseif(WIN32)
         set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MD /MP /Zi /GF /O2 /Ob1 /D NDEBUG /W3 /Zc:__cplusplus /bigobj")
    endif()
 elseif (APPLE)
+	add_compile_options(
+		-Wno-unused-variable
+		-Wno-unused-parameter
+	)
+
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2 -msse3")
     set(CMAKE_CXX_FLAGS_DEBUG "-g -w -allow-multiple-definition")
     set(CMAKE_CXX_FLAGS_MINSIZEREL "-O3 -finline-functions -DNDEBUG")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3 -finline-functions -DNDEBUG")
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g -w -finline-functions -DNDEBUG -allow-multiple-definition")
 else()
+	add_compile_options(
+		-Wno-unused-variable
+		-Wno-unused-parameter
+	)
+
     #set(CMAKE_CXX_FLAGS_INIT "-w")
     #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2 -msse3 -w")
     #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2 -msse3 -Wno-everything")    

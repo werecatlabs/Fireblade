@@ -6,7 +6,7 @@ namespace fb
 {
     namespace render
     {
-        FB_CLASS_REGISTER_DERIVED( fb::render, CDebugText, SharedObject<IDebugText> );
+        FB_CLASS_REGISTER_DERIVED( fb::render, CDebugText, IDebugText );
 
         CDebugText::CDebugText()
         {

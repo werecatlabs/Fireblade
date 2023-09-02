@@ -11,7 +11,7 @@ namespace fb
 {
     namespace render
     {
-        FB_CLASS_REGISTER_DERIVED( fb::render, COverlayOgre, SharedObject<IOverlay> );
+        FB_CLASS_REGISTER_DERIVED( fb::render, COverlayOgre, IOverlay );
 
         COverlayOgre::COverlayOgre()
         {
@@ -85,6 +85,7 @@ namespace fb
                 m_container = panel;
 
                 m_overlay->initialise();
+                m_overlay->show();
 
                 setLoadingState( LoadingState::Loaded );
             }
@@ -378,7 +379,7 @@ namespace fb
             return 0;
         }
 
-        void COverlayOgre::updateZOrder() 
+        void COverlayOgre::updateZOrder()
         {
             if( m_overlay )
             {
@@ -447,10 +448,14 @@ namespace fb
         Array<SmartPtr<ISharedObject>> COverlayOgre::getChildObjects() const
         {
             auto objects = Array<SmartPtr<ISharedObject>>();
+            objects.reserve( m_elements.size() + 12 );
 
             for( auto element : m_elements )
             {
-                objects.push_back( element );
+                if( element )
+                {
+                    objects.push_back( element );
+                }
             }
 
             return objects;
@@ -458,11 +463,37 @@ namespace fb
 
         SmartPtr<Properties> COverlayOgre::getProperties() const
         {
-            return nullptr;
+            auto properties = fb::make_ptr<Properties>();
+
+            auto visible = m_overlay->isVisible();
+            properties->setProperty( "visible", visible );
+
+            properties->setProperty( "name", m_overlay->getName() );
+            properties->setProperty( "zorder", m_overlay->getZOrder() );
+            properties->setProperty( "origin", m_overlay->getOrigin() );
+            properties->setProperty( "zOrder", m_overlay->getZOrder() );
+            properties->setProperty( "scrollX", m_overlay->getScrollX() );
+            properties->setProperty( "scrollY", m_overlay->getScrollY() );
+            properties->setProperty( "scaleX", m_overlay->getScaleX() );
+            properties->setProperty( "scaleY", m_overlay->getScaleY() );
+
+            return properties;
         }
 
         void COverlayOgre::setProperties( SmartPtr<Properties> properties )
         {
+            auto visible = m_overlay->isVisible();
+            auto zorder = (u32)m_overlay->getZOrder();
+
+            properties->getPropertyValue( "visible", visible );
+            properties->getPropertyValue( "zorder", zorder );
+
+            if( m_overlay->isVisible() != visible )
+            {
+                m_overlay->setVisible( visible );
+            }
+
+            m_overlay->setZOrder( zorder );
         }
 
         COverlayOgre::OverlayStateListener::~OverlayStateListener()

@@ -3,12 +3,12 @@
 
 #include <FBOISInput/FBOISInputPrerequisites.h>
 #include <FBCore/Interface/Input/IMouseState.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/HashMap.h>
 
 namespace fb
 {
-    class MouseState : public SharedObject<IMouseState>
+    class MouseState : public IMouseState
     {
     public:
         MouseState();

@@ -7,6 +7,8 @@
 #include <FBCore/Interface/Script/IScriptInvoker.h>
 #include <FBCore/Interface/System/IEvent.h>
 
+#include "FBCore/Core/LogManager.h"
+
 namespace fb
 {
     namespace scene
@@ -44,6 +46,15 @@ namespace fb
                                 {
                                     auto userComponent =
                                         fb::static_pointer_cast<UserComponent>( component );
+
+#if !FB_FINAL
+                                    auto className = userComponent->getClassName();
+                                    if( StringUtil::isNullOrEmpty( className ) )
+                                    {
+                                        FB_LOG( "Class name null." );
+                                    }
+#endif
+
                                     if( userComponent->getState() == IComponent::State::Edit )
                                     {
                                         if( userComponent->getUpdateInEditMode() )

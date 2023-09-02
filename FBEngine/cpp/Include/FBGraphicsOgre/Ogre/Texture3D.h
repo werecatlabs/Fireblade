@@ -2,7 +2,7 @@
 #define Texture3D_h__
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <OgrePixelFormat.h>
 #include <OgreCommon.h>
 #include <OgreTextureUnitState.h>

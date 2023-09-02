@@ -14,33 +14,33 @@ namespace fb
     {
     }
 
-    u32 InputActionData::getPrimaryAction() const
+    hash_type InputActionData::getPrimaryAction() const
     {
         return m_primary;
     }
 
-    void InputActionData::setPrimaryAction( u32 primary )
+    void InputActionData::setPrimaryAction( hash_type primary )
     {
         m_primary = primary;
     }
 
-    u32 InputActionData::getSecondaryAction() const
+    hash_type InputActionData::getSecondaryAction() const
     {
         return m_secondary;
     }
 
-    void InputActionData::setSecondaryAction( u32 secondary )
+    void InputActionData::setSecondaryAction( hash_type secondary )
     {
         m_secondary = secondary;
     }
 
-    u32 InputActionData::getActionId() const
+    hash_type InputActionData::getActionId() const
     {
         return m_actionId;
     }
 
-    void InputActionData::setActionId( u32 actionId )
+    void InputActionData::setActionId( hash_type actionId )
     {
         m_actionId = actionId;
     }
-}  // end namespace fb
+} // end namespace fb

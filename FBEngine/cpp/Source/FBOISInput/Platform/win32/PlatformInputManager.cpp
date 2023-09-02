@@ -1,6 +1,5 @@
 #include "FBOISInput/Platform/win32/PlatformInputManager.h"
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
 #include <FBOISInput/FBInputEvent.h>
 #include <FBOISInput/FBMouseState.h>
 

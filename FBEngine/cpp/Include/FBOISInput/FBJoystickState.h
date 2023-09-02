@@ -3,11 +3,11 @@
 
 #include <FBOISInput/FBOISInputPrerequisites.h>
 #include <FBCore/Interface/Input/IJoystickState.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb
 {
-    class JoystickState : public SharedObject<IJoystickState>
+    class JoystickState : public IJoystickState
     {
     public:
         JoystickState();
@@ -33,6 +33,8 @@ namespace fb
 
         u32 getEventType() const override;
         void setEventType( u32 eventType ) override;
+
+        FB_CLASS_REGISTER_DECL;
 
     protected:
         u32 m_joystick;

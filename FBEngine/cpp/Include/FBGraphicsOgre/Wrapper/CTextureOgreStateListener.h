@@ -4,7 +4,7 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/ITexture.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Graphics/CTexture.h>
 #include <OgreTexture.h>
 
@@ -13,7 +13,7 @@ namespace fb
     namespace render
     {
 
-        class CTextureOgreStateListener : public SharedObject<IStateListener>
+        class CTextureOgreStateListener : public IStateListener
         {
         public:
             CTextureOgreStateListener() = default;

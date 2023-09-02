@@ -22,8 +22,13 @@ namespace fb
 
             void setDst( const StringW &dst );
 
+            bool getPackageTextures() const;
+
+            void setPackageTextures( bool packageTextures );
+
         protected:
             StringW m_dst;
+            bool m_packageTextures = true;
         };
 
     }  // namespace editor

@@ -20,6 +20,7 @@
 #    include "FCDocument/FCDGeometryPolygonsInput.h"
 #endif
 
+/*
 #if FB_GRAPHICS_SYSTEM_OGRENEXT
 #    include "Ogre.h"
 #    include "OgreMesh.h"
@@ -40,12 +41,11 @@
 #    include <OgreStringConverter.h>
 #    include <OgreDefaultHardwareBufferManager.h>
 #endif
+*/
 
 #include <FBCore/Interface/Mesh/IMesh.h>
 #include <FBCore/FBCoreHeaders.h>
 #include <FBMesh/FBMeshHeaders.h>
-
-//#include <irrlicht.h>
 #include <memory>
 
 const int MAX_MESHMAPS = 8;
@@ -730,8 +730,9 @@ namespace fb
     //--------------------------------------------
     Ogre::Mesh *MeshConverter::convertFBMeshToOgreMesh( const String &newMeshName, SmartPtr<IMesh> mesh )
     {
+        
 #if FB_GRAPHICS_SYSTEM_OGRENEXT
-        if( !mesh )
+        /*if( !mesh )
         {
             return nullptr;
         }
@@ -989,19 +990,14 @@ namespace fb
                                                      Ogre::Vector3::UNIT_SCALE * 1.0f ) );
         }
 
-        /*Ogre::Mesh::LodValueList lodList;
-        lodList.push_back(500.0f);
-        lodList.push_back(750.0f);
-        lodList.push_back(900.0f);
-        lodList.push_back(1100.0f);
-        pMesh->generateLodLevels(lodList, Ogre::ProgressiveMesh::VertexReductionQuota::VRQ_PROPORTIONAL, 0.2f);*/
-
         Ogre::v1::MeshSerializer serializer;
         auto fileName = newMeshName + ".mesh";
         serializer.exportMesh( pMesh.get(), fileName );
 
         meshManager->unload( meshName );
+        */
 #elif FB_GRAPHICS_SYSTEM_OGRE
+/*
         if( !mesh )
         {
             return nullptr;
@@ -1261,13 +1257,6 @@ namespace fb
                                                      Ogre::Vector3::UNIT_SCALE * 1.0f ) );
         }
 
-        /*Ogre::Mesh::LodValueList lodList;
-        lodList.push_back(500.0f);
-        lodList.push_back(750.0f);
-        lodList.push_back(900.0f);
-        lodList.push_back(1100.0f);
-        pMesh->generateLodLevels(lodList, Ogre::ProgressiveMesh::VertexReductionQuota::VRQ_PROPORTIONAL, 0.2f);*/
-
         Ogre::MeshSerializer serializer;
         auto fileName = newMeshName + ".mesh";
         serializer.exportMesh( pMesh.get(), fileName );
@@ -1275,6 +1264,8 @@ namespace fb
         meshManager->unload( meshName );
 
         return pMesh.get();
+        */
+        return NULL;
 #else
         return NULL;
 #endif

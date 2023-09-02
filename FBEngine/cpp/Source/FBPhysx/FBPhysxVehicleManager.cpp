@@ -11,6 +11,8 @@
 #include "PxScene.h"
 #include "geometry/PxConvexMesh.h"
 #include "geometry/PxConvexMeshGeometry.h"
+#include <FBCore/FBCore.h>
+
 //#include "FBPhysx/FBPhysxAllocatorSDKClasses.h"
 #ifdef PX_PS3
 #    include "ps3/SampleVehicle_RaycastShader.h"
@@ -178,12 +180,12 @@ namespace fb
             actor->setGlobalPose( startTransform );
         }
 
-        void setupActor( PxRigidDynamic *vehActor, const PxFilterData &vehQryFilterData,
+        void setupActor( PxRigidDynamic *vehActor, const FilterData &vehQryFilterData,
                          const PxGeometry **wheelGeometries, const PxTransform *wheelLocalPoses,
                          const PxU32 numWheelGeometries, const PxMaterial *wheelMaterial,
-                         const PxFilterData &wheelCollFilterData, const PxGeometry **chassisGeometries,
+                         const FilterData &wheelCollFilterData, const PxGeometry **chassisGeometries,
                          const PxTransform *chassisLocalPoses, const PxU32 numChassisGeometries,
-                         const PxMaterial *chassisMaterial, const PxFilterData &chassisCollFilterData,
+                         const PxMaterial *chassisMaterial, const FilterData &chassisCollFilterData,
                          const PxVehicleChassisData &chassisData, PxPhysics *physics )
         {
             ////Add all the wheel shapes to the actor.
@@ -231,7 +233,7 @@ namespace fb
                                                      PxTransform::createIdentity(),
                                                      PxTransform::createIdentity() };
             const PxMaterial &wheelMaterial = material;
-            PxFilterData wheelCollFilterData;
+            FilterData wheelCollFilterData;
             wheelCollFilterData.word0 = COLLISION_FLAG_WHEEL;
             wheelCollFilterData.word1 = COLLISION_FLAG_WHEEL_AGAINST;
 
@@ -240,13 +242,13 @@ namespace fb
             const PxGeometry *chassisGeoms[1] = { &chassisConvexGeom };
             const PxTransform chassisLocalPoses[1] = { PxTransform::createIdentity() };
             const PxMaterial &chassisMaterial = material;
-            PxFilterData chassisCollFilterData;
+            FilterData chassisCollFilterData;
             chassisCollFilterData.word0 = COLLISION_FLAG_CHASSIS;
             chassisCollFilterData.word1 = COLLISION_FLAG_CHASSIS_AGAINST;
 
             //Create a query filter data for the car to ensure that cars
             //do not attempt to drive on themselves.
-            PxFilterData vehQryFilterData;
+            FilterData vehQryFilterData;
             //SampleVehicleSetupVehicleShapeQueryFilterData(&vehQryFilterData);
 
             //Set up the physx rigid body actor with shapes, local poses, and filters.
@@ -504,7 +506,7 @@ namespace fb
             //car->setWheelShapeMapping(3,3);
 
             //Set up the scene query filter data for each suspension line.
-            PxFilterData vehQryFilterData;
+            FilterData vehQryFilterData;
             //SampleVehicleSetupVehicleShapeQueryFilterData(&vehQryFilterData);
             //car->setSceneQueryFilterData(0, vehQryFilterData);
             //car->setSceneQueryFilterData(1, vehQryFilterData);

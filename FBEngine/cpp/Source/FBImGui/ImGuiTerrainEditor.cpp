@@ -1,7 +1,6 @@
 #include <FBImGui/FBImGuiPCH.h>
 #include <FBImGui/ImGuiTerrainEditor.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
 #include <imgui.h>
 
 namespace fb

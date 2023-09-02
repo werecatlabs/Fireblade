@@ -568,7 +568,7 @@ namespace fb
             // pl.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_EXCLUSIVE")));
 #endif
 
-            m_inputManager = InputManager::createInputSystem( pl );
+            m_inputManager = OIS::InputManager::createInputSystem( pl );
 
             // Create all devices (We only catch joystick exceptions here, as, most people have
             // Key/Mouse)
@@ -1009,6 +1009,16 @@ namespace fb
         return -1;
     }
 
+    SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> OISInputManager::getListenersPtr() const
+    {
+        return m_listeners;
+    }
+
+    void OISInputManager::setListenersPtr( SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> listeners )
+    {
+        m_listeners = listeners;
+    }
+
     SmartPtr<IGameInput> OISInputManager::addGameInput( hash32 id )
     {
         try
@@ -1040,7 +1050,6 @@ namespace fb
             return it->second;
         }
 
-        FB_LOG_MESSAGE( "InputManager", "GameInputManager::findGameInput - could not find input\n" );
         return nullptr;
     }
 
@@ -1078,12 +1087,14 @@ namespace fb
         SmartPtr<IJoystickState> joystickState( new JoystickState );
         event->setJoystickState( joystickState );
 
-        auto joyStickData = static_cast<JoyStickData *>( getUserData( (void *)arg.device ) );
+        if( auto joyStickData = static_cast<JoyStickData *>( getUserData( (void *)arg.device ) ) )
+        {
+            event->setGameInputId( joyStickData->m_gameInputId );
+            joystickState->setJoystick( joyStickData->m_joyStickIdx );
+        }
 
-        event->setGameInputId( joyStickData->m_gameInputId );
         joystickState->setEventType( static_cast<u32>( IJoystickState::Type::PovMoved ) );
         joystickState->setPOV( arg.state.mPOV[index].direction );
-        joystickState->setJoystick( joyStickData->m_joyStickIdx );
 
         for( u32 i = 0; i < static_cast<int>( IJoystickState::Axis::NUMBER_OF_AXES ); ++i )
         {
@@ -1200,50 +1211,59 @@ namespace fb
 
     bool OISInputManager::axisMoved( const OIS::JoyStickEvent &arg, int axis )
     {
-        auto applicationManager = core::IApplicationManager::instance();
-        FB_ASSERT( applicationManager );
-
-        auto factoryManager = applicationManager->getFactoryManager();
-        FB_ASSERT( factoryManager );
-
-        auto event = factoryManager->make_ptr<InputEvent>();
-        event->setEventType( IInputEvent::EventType::Joystick );
-
-        auto joystickState = factoryManager->make_ptr<JoystickState>();
-        event->setJoystickState( joystickState );
-
-        auto joyStickData = static_cast<JoyStickData *>( getUserData( (void *)arg.device ) );
-        if( joyStickData )
+        if( isLoaded() )
         {
-            event->setGameInputId( joyStickData->m_gameInputId );
-            joystickState->setJoystick( joyStickData->m_joyStickIdx );
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto factoryManager = applicationManager->getFactoryManager();
+            FB_ASSERT( factoryManager );
+
+            auto event = factoryManager->make_ptr<InputEvent>();
+            event->setEventType( IInputEvent::EventType::Joystick );
+
+            auto joystickState = factoryManager->make_ptr<JoystickState>();
+            event->setJoystickState( joystickState );
+
+            if( arg.device )
+            {
+                auto joyStickData = static_cast<JoyStickData *>( getUserData( (void *)arg.device ) );
+                if( joyStickData )
+                {
+                    event->setGameInputId( joyStickData->m_gameInputId );
+                    joystickState->setJoystick( joyStickData->m_joyStickIdx );
+                }
+
+                joystickState->setEventType( static_cast<u32>( IJoystickState::Type::AxisMoved ) );
+                joystickState->setPOV( 0 );
+
+                for( u32 i = 0; i < static_cast<int>( IJoystickState::Axis::NUMBER_OF_AXES ); ++i )
+                {
+                    joystickState->setAxis( i, static_cast<f32>( arg.state.mAxes[i].abs ) / 32768.0f );
+                }
+
+                //joystickState->setButtonId( button );
+                //joystickState->setPressedDown( true );
+                //joystickState->setButtonPressed( button, true );
+
+                OISGameInputPtr gameInput = findGameInput( event->getGameInputId() );
+                if( gameInput )
+                {
+                    //generate game event
+                    auto gameInputState = factoryManager->make_ptr<GameInputState>();
+                    event->setGameInputState( gameInputState );
+
+                    gameInputState->setEventType(
+                        static_cast<hash32>( IGameInputState::Action::Pressed ) );
+                    //gameInputState->setAction( gameInput->getGameInputMap()->getActionFromButton( button ) );
+                }
+
+                postEvent( event );
+                return true;
+            }
         }
 
-        joystickState->setEventType( static_cast<u32>( IJoystickState::Type::AxisMoved ) );
-        joystickState->setPOV( 0 );
-
-        for( u32 i = 0; i < static_cast<int>( IJoystickState::Axis::NUMBER_OF_AXES ); ++i )
-        {
-            joystickState->setAxis( i, static_cast<f32>( arg.state.mAxes[i].abs ) / 32768.0f );
-        }
-
-        //joystickState->setButtonId( button );
-        //joystickState->setPressedDown( true );
-        //joystickState->setButtonPressed( button, true );
-
-        OISGameInputPtr gameInput = findGameInput( event->getGameInputId() );
-        if( gameInput )
-        {
-            //generate game event
-            auto gameInputState = factoryManager->make_ptr<GameInputState>();
-            event->setGameInputState( gameInputState );
-
-            gameInputState->setEventType( static_cast<hash32>( IGameInputState::Action::Pressed ) );
-            //gameInputState->setAction( gameInput->getGameInputMap()->getActionFromButton( button ) );
-        }
-
-        postEvent( event );
-        return true;
+        return false;
     }
 
     bool OISInputManager::buttonReleased( const OIS::JoyStickEvent &arg, int button )
@@ -1291,13 +1311,16 @@ namespace fb
 
     bool OISInputManager::postEvent( SmartPtr<IInputEvent> event )
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-        for( auto &listener : m_listeners )
+        if( auto p = getListenersPtr() )
         {
-            if( listener )
+            auto &listeners = *p;
+            for( auto listener : listeners )
             {
-                listener->handleEvent( IEvent::Type::Input, IEvent::inputEvent, Array<Parameter>(), this,
-                                       this, event );
+                if( listener )
+                {
+                    listener->handleEvent( IEvent::Type::Input, IEvent::inputEvent, Array<Parameter>(),
+                                           this, this, event );
+                }
             }
         }
 
@@ -1306,17 +1329,34 @@ namespace fb
 
     void OISInputManager::addListener( SmartPtr<IEventListener> listener )
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-        m_listeners.push_back( listener );
+        auto p = getListenersPtr();
+        if( !p )
+        {
+            p = fb::make_shared<ConcurrentArray<SmartPtr<IEventListener>>>();
+            setListenersPtr( p );
+        }
+
+        if( p )
+        {
+            auto &listeners = *p;
+            listeners.push_back( listener );
+        }
     }
 
     void OISInputManager::removeListener( SmartPtr<IEventListener> listener )
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-        auto it = std::find( m_listeners.begin(), m_listeners.end(), listener );
-        if( it != m_listeners.end() )
+        auto p = getListenersPtr();
+        if( p )
         {
-            m_listeners.erase( it );
+            auto listeners = Array<SmartPtr<IEventListener>>(p->begin(), p->end());
+            auto it = std::find( listeners.begin(), listeners.end(), listener );
+            if( it != listeners.end() )
+            {
+                listeners.erase( it );
+            }
+
+            p = fb::make_shared<ConcurrentArray<SmartPtr<IEventListener>>>( listeners.begin(), listeners.end() );
+            setListenersPtr( p );
         }
     }
 
@@ -1628,11 +1668,13 @@ namespace fb
     {
     }
 
-    fb::Parameter OISInputManager::WindowListener::handleEvent(
-        IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
-        SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
+    Parameter OISInputManager::WindowListener::handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                                            const Array<Parameter> &arguments,
+                                                            SmartPtr<ISharedObject> sender,
+                                                            SmartPtr<ISharedObject> object,
+                                                            SmartPtr<IEvent> event )
     {
-        if( eventValue == IWindowListener::windowClosingHash )
+        if( eventValue == windowClosingHash )
         {
             return Parameter( true );
         }

@@ -91,7 +91,7 @@ namespace fb
                                 auto parent = dragSrcActor->getParent();
                                 if( !parent )
                                 {
-                                    FB_ASSERT(dropDstActor->getParent() == nullptr);
+                                    FB_ASSERT( dropDstActor->getParent() == nullptr );
                                     scene->addActor( dropDstActor );
                                 }
                                 else

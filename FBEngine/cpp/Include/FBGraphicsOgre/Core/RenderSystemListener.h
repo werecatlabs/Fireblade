@@ -2,7 +2,7 @@
 #define RenderSystemListener_h__
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <OgreRenderSystem.h>
 
 namespace fb

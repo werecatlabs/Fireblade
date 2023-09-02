@@ -26,14 +26,14 @@ namespace fb
             RawPtr<physx::PxD6Joint> getJoint() const;
             void setJoint( RawPtr<physx::PxD6Joint> joint );
 
-            void setDrive( PxD6Drive::Enum index, SmartPtr<IConstraintDrive> drive ) override;
-            SmartPtr<IConstraintDrive> getDrive( PxD6Drive::Enum index ) const override;
+            void setDrive( D6Drive::Enum index, SmartPtr<IConstraintDrive> drive ) override;
+            SmartPtr<IConstraintDrive> getDrive( D6Drive::Enum index ) const override;
 
             void setLinearLimit( SmartPtr<IConstraintLinearLimit> limit ) override;
             SmartPtr<IConstraintLinearLimit> getLinearLimit() const override;
 
-            void setMotion( PxD6Axis::Enum axis, PxD6Motion::Enum type ) override;
-            PxD6Motion::Enum getMotion( PxD6Axis::Enum axis ) const override;
+            void setMotion( D6Axis::Enum axis, D6Motion::Enum type ) override;
+            D6Motion::Enum getMotion( D6Axis::Enum axis ) const override;
 
         private:
             physx::PxD6Joint *m_joint = nullptr;

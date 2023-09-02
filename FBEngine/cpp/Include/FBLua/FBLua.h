@@ -2,12 +2,12 @@
 #define FBLua_h__
 
 #include <FBCore/FBCoreAutolink.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBLua/FBLuaAutolink.h>
 
 namespace fb
 {
-    class FBLua : public SharedObject<ISharedObject>
+    class FBLua : public ISharedObject
     {
     public:
         FBLua() = default;

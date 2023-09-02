@@ -3,14 +3,14 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IWater.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
     namespace render
     {
 
-        class CWater : public SharedObject<IWater>
+        class CWater : public IWater
         {
         public:
             CWater();

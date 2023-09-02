@@ -164,7 +164,10 @@ namespace fb
             {
                 if( m_overlay )
                 {
-                    m_overlay->setVisible( isVisible() );
+                    auto overlayState = fb::dynamic_pointer_cast<UIElementState>( state );
+
+                    auto visible = overlayState->isVisible();
+                    m_overlay->setVisible( visible );
                 }
 
                 CUIElement<IUILayout>::handleStateChanged( state );
@@ -333,22 +336,19 @@ namespace fb
 
                 return CUIElement<IUILayout>::removeChild( child );
             }
-            else
+            auto applicationManager = core::IApplicationManager::instance();
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            auto factoryManager = applicationManager->getFactoryManager();
+
+            if( !child->isLoaded() )
             {
-                auto applicationManager = core::IApplicationManager::instance();
-                auto graphicsSystem = applicationManager->getGraphicsSystem();
-                auto factoryManager = applicationManager->getFactoryManager();
-
-                if( !child->isLoaded() )
-                {
-                    graphicsSystem->loadObject( child );
-                }
-
-                auto message = factoryManager->make_ptr<StateMessageObject>();
-                message->setType( STATE_MESSAGE_REMOVE_CHILD );
-                message->setObject( child );
-                addMessage( message );
+                graphicsSystem->loadObject( child );
             }
+
+            auto message = factoryManager->make_ptr<StateMessageObject>();
+            message->setType( STATE_MESSAGE_REMOVE_CHILD );
+            message->setObject( child );
+            addMessage( message );
 
             return false;
         }
@@ -363,15 +363,48 @@ namespace fb
             m_uiWindow = uiWindow;
         }
 
-
         void CUILayout::updateZOrder()
         {
             CUIElement<IUILayout>::updateZOrder();
 
-            if (m_overlay)
+            if( m_overlay )
             {
                 m_overlay->updateZOrder();
             }
+        }
+
+        SmartPtr<Properties> CUILayout::getProperties() const
+        {
+            auto properties = CUIElement<IUILayout>::getProperties();
+            properties->setProperty( "Type", "UILayout" );
+            properties->setProperty( "Name", getName() );
+            properties->setProperty( "Visible", isVisible() );
+            properties->setProperty( "Enabled", isEnabled() );
+            properties->setProperty( "Position", getPosition() );
+            properties->setProperty( "Size", getSize() );
+            return properties;
+        }
+
+        Array<SmartPtr<ISharedObject>> CUILayout::getChildObjects() const
+        {
+            auto objects = CUIElement<IUILayout>::getChildObjects();
+
+            if( m_uiWindow )
+            {
+                objects.push_back( m_uiWindow );
+            }
+
+            if( m_overlay )
+            {
+                objects.push_back( m_overlay );
+            }
+
+            if( m_fsm )
+            {
+                objects.push_back( m_fsm );
+            }
+
+            return objects;
         }
 
         void CUILayout::OnEnterIdleState()
@@ -428,8 +461,8 @@ namespace fb
         {
         }
 
-        fb::SmartPtr<fb::IFSM> CUILayout::getFSM()
-{
+        SmartPtr<IFSM> CUILayout::getFSM()
+        {
             return m_fsm;
         }
 

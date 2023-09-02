@@ -3,14 +3,14 @@
 
 #include <GameEditorPrerequisites.h>
 #include <FBCore/Interface/System/IEditorManager.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/HashMap.h>
 
 namespace fb
 {
     namespace editor
     {
-        class EditorManager : public SharedObject<IEditorManager>
+        class EditorManager : public IEditorManager
         {
         public:
             EditorManager();

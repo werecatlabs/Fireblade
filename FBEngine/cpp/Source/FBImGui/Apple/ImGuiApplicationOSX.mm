@@ -21,7 +21,6 @@
 #endif
 
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
 
 #if FB_GRAPHICS_SYSTEM_OGRENEXT
 #include "OgreMetalRenderSystem.h"

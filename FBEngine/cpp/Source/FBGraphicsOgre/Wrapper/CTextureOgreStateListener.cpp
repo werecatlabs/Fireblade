@@ -8,7 +8,7 @@ namespace fb
     namespace render
     {
 
-        FB_CLASS_REGISTER_DERIVED( fb, CTextureOgreStateListener, SharedObject<IStateListener> );
+        FB_CLASS_REGISTER_DERIVED( fb, CTextureOgreStateListener, IStateListener );
 
         void CTextureOgreStateListener::unload( SmartPtr<ISharedObject> data )
         {

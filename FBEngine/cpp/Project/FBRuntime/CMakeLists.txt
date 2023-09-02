@@ -6,6 +6,13 @@ if (UNIX)
     endif()
 endif()
 
+add_compile_definitions( BOOST_ALL_NO_LIB=1 )
+
+add_compile_definitions (PX_PHYSX_STATIC_LIB)
+add_compile_definitions (PX_PHYSX_CORE_STATIC_LIB)
+add_compile_definitions (PX_FOUNDATION_NO_EXPORTS)
+add_compile_definitions (PX_COOKING)
+#add_compile_definitions (PX_CALL_CONV)
 
 # define header and source files for the library
 file(GLOB_RECURSE HEADER_FILES "../../Include/FBRuntime/*.h")
@@ -24,7 +31,6 @@ include_directories( ${FB_ROOT}/Dependencies/utf8/source )
 include_directories( ../../Include )
 include_directories( ../../Include/FBRuntime )
 
-
 if (WIN32)
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FB_ROOT}/Bin/windows/${FB_TOOLSET}/${FB_ARCH}/)
 elseif (APPLE)
@@ -35,7 +41,7 @@ endif ()
 
 if (WIN32)
     link_directories(FBRuntime ${CMAKE_SOURCE_DIR}/libs/windows/${FB_TOOLSET}/${FB_ARCH}/${FB_STATIC_LINK_CRT_TYPE}/${CMAKE_BUILD_TYPE})
-    link_directories(FBRuntime ${CMAKE_SOURCE_DIR}/AdditionalLibraries/lib/windows/${FB_TOOLSET}/${FB_ARCH}/${FB_STATIC_LINK_CRT_TYPE}/physx/)
+    #link_directories(FBRuntime ${CMAKE_SOURCE_DIR}/AdditionalLibraries/lib/windows/${FB_TOOLSET}/${FB_ARCH}/${FB_STATIC_LINK_CRT_TYPE}/physx/)
 
     if (FB_USE_ONETBB)
         link_directories(FBRuntime ${CMAKE_SOURCE_DIR}/Dependencies/lib/windows/${FB_TOOLSET}/${FB_ARCH}/${FB_STATIC_LINK_CRT_TYPE}/oneTBB/)
@@ -102,13 +108,11 @@ set_target_properties (FBRuntime PROPERTIES FOLDER Engine/Cpp)
 
 if (WIN32)
     target_link_libraries(FBRuntime FBCore.lib)
-    target_link_libraries(FBRuntime FBFileSystem.lib)
     target_link_libraries(FBRuntime FBMesh.lib)
     target_link_libraries(FBRuntime FBProcedural.lib)
     target_link_libraries(FBRuntime FBSQLite.lib)
     target_link_libraries(FBRuntime FBVehicle.lib)
     target_link_libraries(FBRuntime FBWxWidgets.lib)
-    target_link_libraries(FBRuntime FBApplication.lib)
     target_link_libraries(FBRuntime FBOISInput.lib)
     target_link_libraries(FBRuntime FBGraphics.lib)
     target_link_libraries(FBRuntime FBCPlusPlus.lib)
@@ -124,7 +128,7 @@ if (WIN32)
     endif()
 
     if (FB_BUILD_OISINPUT)
-        target_link_libraries(FBRuntime debug OIS_d.lib optimized OIS.lib)
+        #target_link_libraries(FBRuntime debug OIS_d.lib optimized OIS.lib)
         target_link_libraries(FBRuntime dinput8.lib)
         target_link_libraries(FBRuntime dxguid.lib)
     endif()
@@ -153,9 +157,9 @@ if (WIN32)
             target_link_libraries(FBRuntime dxguid.lib)
         endif()
 
-        if (FB_PLATFORM_X64)
-            target_link_libraries(FBRuntime amd_ags_x64.lib)
-        endif()
+        #if (FB_PLATFORM_X64)
+        #    target_link_libraries(FBRuntime amd_ags_x64.lib)
+        #endif()
 
         if (FB_CODEC_FREEIMAGE)
             target_link_libraries(FBRuntime debug FreeImage_d.lib
@@ -215,9 +219,9 @@ if (WIN32)
             target_link_libraries(FBRuntime dxguid.lib)
         endif()
 
-        if (FB_PLATFORM_X64)
-            target_link_libraries(FBRuntime amd_ags_x64.lib)
-        endif()
+        #if (FB_PLATFORM_X64)
+        #    target_link_libraries(FBRuntime amd_ags_x64.lib)
+        #endif()
     elseif(FB_BUILD_DX11)
         target_link_libraries(FBRuntime FBGraphicsD3D11.lib)
     endif()
@@ -226,30 +230,20 @@ if (WIN32)
         target_link_libraries(FBRuntime FBPhysx.lib)
 
         if (FB_PLATFORM_X64)
-            target_link_libraries(FBRuntime 
-                        debug PhysX3DEBUG_x64.lib
-                        optimized PhysX3_x64.lib)
-            target_link_libraries(FBRuntime 
-                        debug PhysX3ExtensionsDEBUG.lib
-                        optimized PhysX3Extensions.lib)
-            target_link_libraries(FBRuntime 
-                        debug PhysX3CommonDEBUG_x64.lib 
-                        optimized PhysX3Common_x64.lib)
-            target_link_libraries(FBRuntime 
-                        debug PhysX3VehicleDEBUG.lib 
-                        optimized PhysX3Vehicle.lib)
-            target_link_libraries(FBRuntime 
-                        debug PhysX3CookingDEBUG_x64.lib
-                        optimized PhysX3Cooking_x64.lib)
-            target_link_libraries(FBRuntime 
-                        debug PhysXProfileSDKDEBUG.lib
-                        optimized PhysXProfileSDK.lib)
-            target_link_libraries(FBRuntime 
-                        debug PxTaskDEBUG.lib
-                        optimized PxTask.lib)
-            target_link_libraries(FBRuntime 
-                        debug PhysXVisualDebuggerSDKDEBUG.lib
-                        optimized PhysXVisualDebuggerSDK.lib)
+            target_link_libraries(FBRuntime PhysX3.lib)
+            target_link_libraries(FBRuntime PhysX3Extensions.lib)
+            target_link_libraries(FBRuntime PhysX3Common.lib)
+            target_link_libraries(FBRuntime PhysX3Vehicle.lib)
+            target_link_libraries(FBRuntime PhysX3Cooking.lib)
+            target_link_libraries(FBRuntime PhysXProfileSDK.lib)
+            target_link_libraries(FBRuntime PxTask.lib)
+            target_link_libraries(FBRuntime PhysXVisualDebuggerSDK.lib)
+            target_link_libraries(FBRuntime PhysX3MetaData.lib)
+            target_link_libraries(FBRuntime PhysX3Foundation.lib)
+            target_link_libraries(FBRuntime PxSceneQuery.lib)
+            target_link_libraries(FBRuntime PxSimulationController.lib)
+            target_link_libraries(FBRuntime PhysX3LowLevel.lib)
+            target_link_libraries(FBRuntime PhysX3LowLevelCloth.lib)
         else ()
             target_link_libraries(FBRuntime 
                         debug PhysX3DEBUG_x86.lib
@@ -282,6 +276,29 @@ if (WIN32)
         target_link_libraries(FBRuntime FBPhysics3.lib)
     endif()
 
+    target_link_libraries(FBRuntime bcrypt.lib)
+
+    target_link_libraries(FBRuntime libboost_thread.lib)
+    target_link_libraries(FBRuntime libboost_date_time.lib)
+    target_link_libraries(FBRuntime libboost_chrono.lib)
+    target_link_libraries(FBRuntime libboost_timer.lib)
+    target_link_libraries(FBRuntime libboost_filesystem.lib)
+    target_link_libraries(FBRuntime libboost_json.lib)
+
+    target_link_libraries(FBRuntime nativefiledialog.lib)
+    target_link_libraries(FBRuntime rttr.lib)
+    target_link_libraries(FBRuntime tinyxml.lib)
+    
+    target_link_libraries(FBRuntime yaml-cpp.lib)
+    target_link_libraries(FBRuntime minizip.lib)
+    target_link_libraries(FBRuntime zlib.lib)
+    target_link_libraries(FBRuntime zzip.lib)
+
+    if (FB_USE_TBB)
+        target_link_libraries(FBRuntime tbb_static.lib)
+        target_link_libraries(FBRuntime tbbmalloc_static.lib)
+    endif()
+
     target_link_libraries(FBRuntime dxgi.lib)
     target_link_libraries(FBRuntime dxguid.lib)
 
@@ -291,11 +308,10 @@ if (WIN32)
     target_link_libraries(FBRuntime dxgi.lib)
     target_link_libraries(FBRuntime dxguid.lib)
     #target_link_libraries(FBRuntime amd_ags_x64.lib)
-    target_link_libraries(FBRuntime debug assimp-vc142-mtd.lib optimized assimp-vc142-mt.lib)
+    #target_link_libraries(FBRuntime debug assimp-vc142-mtd.lib optimized assimp-vc142-mt.lib)
 elseif (APPLE)
     # fireblade libraries
     target_link_libraries(FBRuntime libFBCore.a)
-    target_link_libraries(FBRuntime libFBFileSystem.a)
     target_link_libraries(FBRuntime libFBMesh.a)
     target_link_libraries(FBRuntime libFBProcedural.a)
     target_link_libraries(FBRuntime libFBVehicle.a)
@@ -379,7 +395,7 @@ elseif (APPLE)
     set_target_properties(FBRuntime PROPERTIES LINK_FLAGS "-Wl,-F/Library/Frameworks")
 else ()
     target_link_libraries(FBRuntime -Wl,--start-group FBCore.a FBAero.a 
-        FBApplication.a FBFileSystem.a FBMath.a FBState.a FBVehicle.a FBData.a FBMesh.a FBGraphics.a
+        FBApplication.a FBMath.a FBState.a FBVehicle.a FBData.a FBMesh.a FBGraphics.a
         libFBVehicle.a libFBProcedural.a libFBSQLite.a libFBPhysx.a FBAudio.a
         libboost_thread-gcc5-mt-s-x64-1_70.a
         libboost_date_time-gcc5-mt-s-x64-1_70.a
@@ -415,11 +431,11 @@ else ()
 endif ()
 
 if (WIN32)
-    set_property(TARGET FBRuntime PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${FB_ROOT}/Bin/windows/${FB_TOOLSET}/${FB_ARCH}/Debug)
+    set_property(TARGET FBRuntime PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${FB_ROOT}/Bin/windows/${FB_TOOLSET}/${FB_ARCH}/${CMAKE_BUILD_TYPE})
 endif()
 
 
-add_dependencies(FBRuntime FBOISInput FBCPlusPlus FBAero FBAi FBApplication FBAudio FBCore FBFileSystem FBMesh FBProcedural FBSQLite FBVehicle)
+add_dependencies(FBRuntime FBCore)
 
 if (FB_GRAPHICS_SYSTEM_OGRENEXT) 
     add_dependencies(FBRuntime FBGraphicsOgreNext)

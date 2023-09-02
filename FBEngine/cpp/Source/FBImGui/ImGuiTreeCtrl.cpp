@@ -2,7 +2,6 @@
 #include <FBImGui/ImGuiTreeCtrl.h>
 #include "FBImGui/ImGuiTreeNode.h"
 #include <FBCore/FBCore.h>
-#include "FBApplication/FBApplication.h"
 #include <imgui.h>
 #include <imgui_internal.h>
 
@@ -366,7 +365,7 @@ namespace fb
             auto root = treeCtrl->getRoot();
             if( root )
             {
-                auto label = ApplicationUtil::getText( root );
+                auto label = Util::getText( root );
                 if( StringUtil::isNullOrEmpty( label ) )
                 {
                     label = "Untitled";
@@ -387,8 +386,16 @@ namespace fb
                     {
                         if( ImGui::BeginDragDropSource( ImGuiDragDropFlags_None ) )
                         {
-                            static String dataStr;
-                            dataStr = dragSource->handleDrag( Vector2I::zero(), root );
+                            auto args = Array<Parameter>();
+                            args.resize( 1 );
+
+                            args[0].object = treeCtrl;
+
+                            auto retValue =
+                                dragSource->handleEvent( IEvent::Type::UI, IEvent::handleDrag, args,
+                                                         treeCtrl, treeCtrl, nullptr );
+
+                            auto &dataStr = retValue.str;
 
                             ImGui::SetDragDropPayload( "_TREENODE", dataStr.c_str(), dataStr.size() );
                             ImGui::Text( label.c_str() );
@@ -405,7 +412,15 @@ namespace fb
                             {
                                 auto data = String( static_cast<const char *>( payload->Data ),
                                                     payload->DataSize );
-                                dropTarget->handleDrop( Vector2I::zero(), nullptr, nullptr, data );
+
+                                auto args = Array<Parameter>();
+                                args.resize( 2 );
+
+                                args[0].object = treeCtrl;
+                                args[1].str = data;
+
+                                dropTarget->handleEvent( IEvent::Type::UI, IEvent::handleDrop, args,
+                                                         treeCtrl, treeCtrl, nullptr );
                             }
 
                             ImGui::EndDragDropTarget();
@@ -425,9 +440,23 @@ namespace fb
 
                             args[0].object = treeCtrl;
 
-                            listener->handleEvent( IEvent::Type::UI,
-                                                   IEvent::handleMouseClicked, args, treeCtrl,treeCtrl,
-                                                   nullptr );
+                            listener->handleEvent( IEvent::Type::UI, IEvent::handleMouseClicked, args,
+                                                   treeCtrl, treeCtrl, nullptr );
+                        }
+                    }
+
+                    if( is_hovered && ImGui::IsMouseReleased( 0 ) )
+                    {
+                        auto listeners = treeCtrl->getObjectListeners();
+                        for( auto listener : listeners )
+                        {
+                            auto args = Array<Parameter>();
+                            args.resize( 1 );
+
+                            args[0].object = treeCtrl;
+
+                            listener->handleEvent( IEvent::Type::UI, IEvent::handleMouseReleased, args,
+                                                   treeCtrl, treeCtrl, nullptr );
                         }
                     }
 

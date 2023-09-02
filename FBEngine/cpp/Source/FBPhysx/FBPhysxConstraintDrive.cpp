@@ -15,12 +15,12 @@ namespace fb
         {
         }
 
-        PxD6JointDriveFlag::Enum PhysxConstraintDrive::getDriveFlags() const
+        D6JointDriveFlag::Enum PhysxConstraintDrive::getDriveFlags() const
         {
-            return static_cast<PxD6JointDriveFlag::Enum>(0);
+            return static_cast<D6JointDriveFlag::Enum>(0);
         }
 
-        void PhysxConstraintDrive::setDriveFlags( PxD6JointDriveFlag::Enum driveFlags )
+        void PhysxConstraintDrive::setDriveFlags( D6JointDriveFlag::Enum driveFlags )
         {
         }
 

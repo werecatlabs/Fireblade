@@ -8,8 +8,9 @@
 #include <commands/AddActorCmd.h>
 #include <commands/RemoveSelectionCmd.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
 
+
+#include "commands/PromptCmd.h"
 #include "jobs/SceneDropJob.h"
 
 #define TREE_ITEM_STATE_NOT_FOUND 0
@@ -45,7 +46,7 @@ namespace fb
                 window->setHasBorder( true );
                 m_window = window;
 
-                if(parent)
+                if( parent )
                 {
                     parent->addChild( window );
                 }
@@ -58,6 +59,15 @@ namespace fb
                 m_sceneWindow = sceneWindow;
                 sceneWindow->addObjectListener( m_menuListener );
                 window->addChild( sceneWindow );
+
+                auto inputText = ui->addElementByType<ui::IUITextEntry>();
+                sceneWindow->addChild( inputText );
+                m_inputText = inputText;
+
+                auto promptListener = fb::make_ptr<PromptListener>();
+                promptListener->setOwner( this );
+                m_inputText->addObjectListener( promptListener );
+                m_promptListener = promptListener;
 
                 auto treeCtrl = ui->addElementByType<ui::IUITreeCtrl>();
                 treeCtrl->setMultiSelect( true );
@@ -86,83 +96,83 @@ namespace fb
                 m_applicationAddMenu = ui->addElementByType<ui::IUIMenu>();
                 m_applicationAddMenu->setLabel( "Add" );
 
-                ApplicationUtil::addMenuItem(
-                    m_applicationAddMenu, static_cast<s32>(MenuId::ADD_CAMERA), "Camera", "Camera" );
-                ApplicationUtil::addMenuItem( m_applicationAddMenu, static_cast<s32>(MenuId::ADD_CAR),
+                Util::addMenuItem(
+                    m_applicationAddMenu, static_cast<s32>( MenuId::ADD_CAMERA ), "Camera", "Camera" );
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_CAR ),
                                               "Car", "Car" );
-                ApplicationUtil::addMenuItem( m_applicationAddMenu, static_cast<s32>(MenuId::ADD_CUBE),
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_CUBE ),
                                               "Cube", "Cube" );
-                ApplicationUtil::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>(MenuId::ADD_CUBE_MESH), "Cube Mesh",
+                Util::addMenuItem( m_applicationAddMenu,
+                                              static_cast<s32>( MenuId::ADD_CUBE_MESH ), "Cube Mesh",
                                               "Cube Mesh" );
-                ApplicationUtil::addMenuSeparator( m_applicationAddMenu );
-                ApplicationUtil::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>(MenuId::ADD_CUBEMAP), "Cubemap",
+                Util::addMenuSeparator( m_applicationAddMenu );
+                Util::addMenuItem( m_applicationAddMenu,
+                                              static_cast<s32>( MenuId::ADD_CUBEMAP ), "Cubemap",
                                               "Cubemap" );
 
-                ApplicationUtil::addMenuSeparator( m_applicationAddMenu );
+                Util::addMenuSeparator( m_applicationAddMenu );
 
-                ApplicationUtil::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>(MenuId::ADD_DIRECTIONAL_LIGHT),
+                Util::addMenuItem( m_applicationAddMenu,
+                                              static_cast<s32>( MenuId::ADD_DIRECTIONAL_LIGHT ),
                                               "Directional Light", "Directional Light" );
 
-                ApplicationUtil::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>(MenuId::ADD_POINT_LIGHT), "Point Light",
+                Util::addMenuItem( m_applicationAddMenu,
+                                              static_cast<s32>( MenuId::ADD_POINT_LIGHT ), "Point Light",
                                               "Point Light" );
-                ApplicationUtil::addMenuSeparator( m_applicationAddMenu );
+                Util::addMenuSeparator( m_applicationAddMenu );
 
-                ApplicationUtil::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>(MenuId::ADD_PARTICLESYSTEM),
+                Util::addMenuItem( m_applicationAddMenu,
+                                              static_cast<s32>( MenuId::ADD_PARTICLESYSTEM ),
                                               "Particle System", "Particle System" );
 
-                ApplicationUtil::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>(MenuId::ADD_PARTICLESYSTEM_SMOKE),
+                Util::addMenuItem( m_applicationAddMenu,
+                                              static_cast<s32>( MenuId::ADD_PARTICLESYSTEM_SMOKE ),
                                               "Particle System Smoke", "Particle System Smoke" );
 
-                ApplicationUtil::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>(MenuId::ADD_PARTICLESYSTEM_SAND),
+                Util::addMenuItem( m_applicationAddMenu,
+                                              static_cast<s32>( MenuId::ADD_PARTICLESYSTEM_SAND ),
                                               "Particle System Sand", "Particle System Sand" );
 
-                ApplicationUtil::addMenuSeparator( m_applicationAddMenu );
+                Util::addMenuSeparator( m_applicationAddMenu );
 
-                ApplicationUtil::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>(MenuId::ADD_PLANE), "Plane", "Plane" );
+                Util::addMenuItem( m_applicationAddMenu,
+                                              static_cast<s32>( MenuId::ADD_PLANE ), "Plane", "Plane" );
 
-                ApplicationUtil::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>(MenuId::ADD_PHYSICS_CUBE),
+                Util::addMenuItem( m_applicationAddMenu,
+                                              static_cast<s32>( MenuId::ADD_PHYSICS_CUBE ),
                                               "Physics Cube", "Physics Cube" );
 
-                ApplicationUtil::addMenuItem(
-                    m_applicationAddMenu, static_cast<s32>(MenuId::ADD_SKYBOX), "Skybox", "Skybox" );
-                ApplicationUtil::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>(MenuId::ADD_NEW_TERRAIN), "Terrain",
+                Util::addMenuItem(
+                    m_applicationAddMenu, static_cast<s32>( MenuId::ADD_SKYBOX ), "Skybox", "Skybox" );
+                Util::addMenuItem( m_applicationAddMenu,
+                                              static_cast<s32>( MenuId::ADD_NEW_TERRAIN ), "Terrain",
                                               "Terrain" );
-                ApplicationUtil::addMenuSeparator( m_applicationAddMenu );
+                Util::addMenuSeparator( m_applicationAddMenu );
 
-                ApplicationUtil::addMenuItem(
-                    m_applicationAddMenu, static_cast<s32>(MenuId::ADD_BUTTON), "Button", "Button" );
+                Util::addMenuItem(
+                    m_applicationAddMenu, static_cast<s32>( MenuId::ADD_BUTTON ), "Button", "Button" );
 
-                ApplicationUtil::addMenuItem(
-                    m_applicationAddMenu, static_cast<s32>(MenuId::ADD_CANVAS), "Canvas", "Canvas" );
-                ApplicationUtil::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>(MenuId::ADD_PANEL), "Panel", "Panel" );
-                ApplicationUtil::addMenuItem( m_applicationAddMenu, static_cast<s32>(MenuId::ADD_TEXT),
+                Util::addMenuItem(
+                    m_applicationAddMenu, static_cast<s32>( MenuId::ADD_CANVAS ), "Canvas", "Canvas" );
+                Util::addMenuItem( m_applicationAddMenu,
+                                              static_cast<s32>( MenuId::ADD_PANEL ), "Panel", "Panel" );
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_TEXT ),
                                               "Text", "Text" );
 
                 m_applicationMenu->addMenuItem( m_applicationAddMenu );
 
-                ApplicationUtil::addMenuItem( m_applicationMenu,
-                                              static_cast<s32>(MenuId::ADD_NEW_ENTITY), "Add Actor",
+                Util::addMenuItem( m_applicationMenu,
+                                              static_cast<s32>( MenuId::ADD_NEW_ENTITY ), "Add Actor",
                                               "Add Actor" );
-                ApplicationUtil::addMenuItem( m_applicationMenu,
-                                              static_cast<s32>(MenuId::SCENE_REMOVE_ACTOR), "Remove",
+                Util::addMenuItem( m_applicationMenu,
+                                              static_cast<s32>( MenuId::SCENE_REMOVE_ACTOR ), "Remove",
                                               "Remove" );
 
                 m_applicationMenu->addObjectListener( m_menuListener );
 
                 sceneWindow->setContextMenu( m_applicationMenu );
             }
-            catch(std::exception &e)
+            catch( std::exception &e )
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -181,7 +191,7 @@ namespace fb
 
                 setLoadingState( LoadingState::Loaded );
             }
-            catch(std::exception &e)
+            catch( std::exception &e )
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -191,7 +201,7 @@ namespace fb
         {
             try
             {
-                if(getLoadingState() == LoadingState::Loaded)
+                if( getLoadingState() == LoadingState::Loaded )
                 {
                     setLoadingState( LoadingState::Unloading );
 
@@ -201,21 +211,21 @@ namespace fb
                     auto ui = applicationManager->getUI();
                     FB_ASSERT( ui );
 
-                    if(m_window)
+                    if( m_window )
                     {
                         ui->removeElement( m_window );
                         m_window = nullptr;
                     }
 
-                    if(m_sceneWindow)
+                    if( m_sceneWindow )
                     {
                         ui->removeElement( m_sceneWindow );
                         m_sceneWindow = nullptr;
                     }
 
-                    if(m_tree)
+                    if( m_tree )
                     {
-                        if(m_treeListener)
+                        if( m_treeListener )
                         {
                             m_tree->removeObjectListener( m_treeListener );
                             m_treeListener = nullptr;
@@ -225,13 +235,13 @@ namespace fb
                         m_tree = nullptr;
                     }
 
-                    if(m_applicationAddMenu)
+                    if( m_applicationAddMenu )
                     {
                         ui->removeElement( m_applicationAddMenu );
                         m_applicationAddMenu = nullptr;
                     }
 
-                    if(m_applicationMenu)
+                    if( m_applicationMenu )
                     {
                         ui->removeElement( m_applicationMenu );
                         m_applicationMenu = nullptr;
@@ -242,14 +252,14 @@ namespace fb
                     m_selectedObject = nullptr;
                     m_selectedEntity = nullptr;
 
-                    if(auto parentWindow = getParentWindow())
+                    if( auto parentWindow = getParentWindow() )
                     {
                         parentWindow->setContextMenu( nullptr );
                         ui->removeElement( parentWindow );
                         setParentWindow( nullptr );
                     }
 
-                    for(auto data : m_dataArray)
+                    for( auto data : m_dataArray )
                     {
                         data->unload( nullptr );
                     }
@@ -259,7 +269,7 @@ namespace fb
                     setLoadingState( LoadingState::Unloaded );
                 }
             }
-            catch(std::exception &e)
+            catch( std::exception &e )
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -275,12 +285,12 @@ namespace fb
 
                 saveTreeState();
 
-                if(m_tree)
+                if( m_tree )
                 {
                     m_tree->clear();
                 }
 
-                for(auto data : m_dataArray)
+                for( auto data : m_dataArray )
                 {
                     data->unload( nullptr );
                 }
@@ -294,18 +304,18 @@ namespace fb
                 auto currentScene = sceneManager->getCurrentScene();
                 auto project = editorManager->getProject();
 
-                if(currentScene)
+                if( currentScene )
                 {
                     auto sceneName = currentScene->getName();
 
                     auto rootNode = m_tree->addRoot();
-                    if(rootNode)
+                    if( rootNode )
                     {
-                        ApplicationUtil::setText( rootNode, sceneName );
+                        Util::setText( rootNode, sceneName );
                         rootNode->setExpanded( true );
 
                         auto actors = currentScene->getActors();
-                        for(auto actor : actors)
+                        for( auto actor : actors )
                         {
                             addActorToTree( actor, rootNode );
                         }
@@ -316,7 +326,7 @@ namespace fb
 
                 restoreTreeState();
             }
-            catch(std::exception &e)
+            catch( std::exception &e )
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -326,10 +336,10 @@ namespace fb
         {
             try
             {
-                if(actor)
+                if( actor )
                 {
                     auto actorName = actor->getName();
-                    if(StringUtil::isNullOrEmpty( actorName ))
+                    if( StringUtil::isNullOrEmpty( actorName ) )
                     {
                         actorName = "Untitled";
                     }
@@ -339,23 +349,23 @@ namespace fb
 
                     auto node = m_tree->addNode();
                     FB_ASSERT( node );
-                    ApplicationUtil::setText( node, actorName );
+                    Util::setText( node, actorName );
 
                     auto data =
                         factoryManager->make_ptr<ProjectTreeData>( "actor", "actor", actor, actor );
                     node->setNodeUserData( data );
 
-                    if(parentNode)
+                    if( parentNode )
                     {
                         parentNode->addChild( node );
                     }
 
-                    if(auto p = actor->getChildrenPtr())
+                    if( auto p = actor->getChildrenPtr() )
                     {
                         auto &children = *p;
-                        for(auto child : children)
+                        for( auto child : children )
                         {
-                            if(child)
+                            if( child )
                             {
                                 addActorToTree( child, node );
                             }
@@ -365,7 +375,7 @@ namespace fb
                     m_dataArray.push_back( data );
                 }
             }
-            catch(std::exception &e)
+            catch( std::exception &e )
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -393,11 +403,11 @@ namespace fb
             FB_ASSERT( editorManager );
 
             auto data = node->getNodeUserData();
-            if(data)
+            if( data )
             {
                 auto projectTreeData = fb::static_pointer_cast<ProjectTreeData>( data );
                 auto ownerType = projectTreeData->getOwnerType();
-                if(ownerType == "actor")
+                if( ownerType == "actor" )
                 {
                     auto object = projectTreeData->getObjectData();
                     auto pObject = object->getSharedFromThis<ISharedObject>();
@@ -408,7 +418,7 @@ namespace fb
             }
 
             auto uiManager = editorManager->getUI();
-            if(uiManager)
+            if( uiManager )
             {
                 uiManager->updateSelection();
             }
@@ -429,11 +439,11 @@ namespace fb
             auto treeState = fb::make_shared<std::map<String, bool>>();
             setTreeState( treeState );
 
-            if(auto tree = getTree())
+            if( auto tree = getTree() )
             {
-                if(auto root = tree->getRoot())
+                if( auto root = tree->getRoot() )
                 {
-                    if(root->isDerived<ui::IUITreeNode>())
+                    if( root->isDerived<ui::IUITreeNode>() )
                     {
                         saveItemState( nullptr, root );
                     }
@@ -446,13 +456,13 @@ namespace fb
         {
             // make item name
             auto itemName = String();
-            if(auto nodeData = fb::static_pointer_cast<ProjectTreeData>( node->getNodeUserData() ))
+            if( auto nodeData = fb::static_pointer_cast<ProjectTreeData>( node->getNodeUserData() ) )
             {
                 auto ownerData = nodeData->getOwnerData();
-                if(ownerData->isDerived<IActor>())
+                if( ownerData->isDerived<IActor>() )
                 {
                     auto actor = fb::static_pointer_cast<IActor>( ownerData );
-                    if(auto handle = actor->getHandle())
+                    if( auto handle = actor->getHandle() )
                     {
                         auto uuid = handle->getUUID();
                         itemName = uuid;
@@ -462,28 +472,28 @@ namespace fb
 
             // get expanded state
             bool isExpanded = false;
-            if(auto p = node->getChildren())
+            if( auto p = node->getChildren() )
             {
                 auto &children = *p;
-                if(!children.empty())
+                if( !children.empty() )
                 {
                     isExpanded = node->isExpanded();
                 }
             }
 
             // add item to map
-            if(auto p = getTreeState())
+            if( auto p = getTreeState() )
             {
                 auto &treeState = *p;
                 treeState.insert( std::map<String, bool>::value_type( itemName, isExpanded ) );
             }
 
-            if(auto p = node->getChildren())
+            if( auto p = node->getChildren() )
             {
                 auto &children = *p;
-                for(auto &child : children)
+                for( auto &child : children )
                 {
-                    if(child->isDerived<ui::IUITreeNode>())
+                    if( child->isDerived<ui::IUITreeNode>() )
                     {
                         saveItemState( node, child );
                     }
@@ -495,9 +505,9 @@ namespace fb
         {
             RecursiveMutex::ScopedLock lock( m_treeStateMutex );
 
-            if(auto tree = getTree())
+            if( auto tree = getTree() )
             {
-                if(auto root = tree->getRoot())
+                if( auto root = tree->getRoot() )
                 {
                     restoreItemState( nullptr, root, false );
                 }
@@ -510,13 +520,13 @@ namespace fb
             //// make item name
             auto itemName = String();
 
-            if(auto nodeData = fb::dynamic_pointer_cast<ProjectTreeData>( node->getNodeUserData() ))
+            if( auto nodeData = fb::dynamic_pointer_cast<ProjectTreeData>( node->getNodeUserData() ) )
             {
                 auto ownerData = nodeData->getOwnerData();
-                if(ownerData->isDerived<IActor>())
+                if( ownerData->isDerived<IActor>() )
                 {
                     auto actor = fb::static_pointer_cast<IActor>( ownerData );
-                    if(auto handle = actor->getHandle())
+                    if( auto handle = actor->getHandle() )
                     {
                         auto uuid = handle->getUUID();
                         itemName = uuid;
@@ -530,7 +540,7 @@ namespace fb
             auto isExpanded = false;
             auto showItem = false;
 
-            if(state != TREE_ITEM_STATE_NOT_FOUND)
+            if( state != TREE_ITEM_STATE_NOT_FOUND )
             {
                 isExpanded = ( state == TREE_ITEM_STATE_EXPANDED ) ? true : false;
                 parentWasNew = false;
@@ -542,17 +552,17 @@ namespace fb
             }
 
             // set item state
-            if(isExpanded)
+            if( isExpanded )
             {
                 node->setExpanded( true );
             }
 
-            if(auto p = node->getChildren())
+            if( auto p = node->getChildren() )
             {
                 auto &children = *p;
-                for(auto &child : children)
+                for( auto &child : children )
                 {
-                    if(child->isDerived<ui::IUITreeNode>())
+                    if( child->isDerived<ui::IUITreeNode>() )
                     {
                         restoreItemState( node, child, parentWasNew );
                     }
@@ -562,11 +572,11 @@ namespace fb
 
         s32 SceneWindow::getItemState( const String &itemName ) const
         {
-            if(auto p = getTreeState())
+            if( auto p = getTreeState() )
             {
                 auto &treeState = *p;
                 auto it = treeState.find( itemName );
-                if(it != treeState.end())
+                if( it != treeState.end() )
                 {
                     auto value = it->second;
                     return value ? TREE_ITEM_STATE_EXPANDED : TREE_ITEM_STATE_NOT_EXPANDED;
@@ -597,7 +607,7 @@ namespace fb
             auto selectionManager = applicationManager->getSelectionManager();
             FB_ASSERT( selectionManager );
 
-            if(( m_nodeSelectTime + 0.2 ) < timer->now())
+            if( ( m_nodeSelectTime + 0.2 ) < timer->now() )
             {
                 m_tree->clearSelectTreeNodes();
 
@@ -617,12 +627,12 @@ namespace fb
             IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
             SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
         {
-            if(eventValue == IEvent::handleTreeSelectionActivated)
+            if( eventValue == IEvent::handleTreeSelectionRelease )
             {
                 auto node = fb::static_pointer_cast<ui::IUITreeNode>( arguments[0].object );
                 m_owner->handleTreeSelectionChanged( node );
             }
-            else if(eventValue == IEvent::handleTreeNodeDoubleClicked)
+            else if( eventValue == IEvent::handleTreeNodeDoubleClicked )
             {
                 auto applicationManager = core::IApplicationManager::instance();
 
@@ -653,12 +663,12 @@ namespace fb
             auto applicationManager = core::IApplicationManager::instance();
             auto commandManager = applicationManager->getCommandManager();
 
-            if(eventValue == IEvent::handleSelection)
+            if( eventValue == IEvent::handleSelection )
             {
                 auto element = fb::dynamic_pointer_cast<ui::IUIElement>( object );
-                auto menuId = static_cast<MenuId>(element->getElementId());
+                auto menuId = static_cast<MenuId>( element->getElementId() );
 
-                switch(menuId)
+                switch( menuId )
                 {
                 case MenuId::ADD_NEW_ENTITY:
                 {
@@ -811,7 +821,7 @@ namespace fb
                 }
                 }
             }
-            else if(eventValue == IEvent::handleMouseClicked)
+            else if( eventValue == IEvent::handleMouseClicked )
             {
                 m_owner->deselectAll();
             }
@@ -835,7 +845,7 @@ namespace fb
                                                         SmartPtr<ISharedObject> object,
                                                         SmartPtr<IEvent> event )
         {
-            if(eventValue == IEvent::handleDrop)
+            if( eventValue == IEvent::handleDrop )
             {
                 try
                 {
@@ -855,7 +865,7 @@ namespace fb
                     dropJob->setSender( sender );
                     jobQueue->addJob( dropJob );
                 }
-                catch(std::exception &e)
+                catch( std::exception &e )
                 {
                     FB_LOG_EXCEPTION( e );
                 }
@@ -886,7 +896,7 @@ namespace fb
                                                         SmartPtr<ISharedObject> object,
                                                         SmartPtr<IEvent> event )
         {
-            if(eventValue == IEvent::handleDrag)
+            if( eventValue == IEvent::handleDrag )
             {
                 auto dataStr = handleDrag( Vector2I::zero(), sender );
                 return Parameter( dataStr );
@@ -901,13 +911,13 @@ namespace fb
             auto applicationManager = core::IApplicationManager::instance();
             auto selectionManager = applicationManager->getSelectionManager();
 
-            if(element->isDerived<ui::IUITreeNode>())
+            if( element->isDerived<ui::IUITreeNode>() )
             {
                 auto treeNode = fb::static_pointer_cast<ui::IUITreeNode>( element );
-                auto text = ApplicationUtil::getText( treeNode );
+                auto text = Util::getText( treeNode );
 
                 auto userData = treeNode->getNodeUserData();
-                if(userData)
+                if( userData )
                 {
                     auto projectTreeData = fb::static_pointer_cast<ProjectTreeData>( userData );
                     FB_ASSERT( projectTreeData );
@@ -920,9 +930,9 @@ namespace fb
                         fb::static_pointer_cast<ProjectTreeData>( treeNode->getNodeUserData() );
                     auto actor = treeData->getObjectData();
 
-                    if(actor)
+                    if( actor )
                     {
-                        if(auto handle = actor->getHandle())
+                        if( auto handle = actor->getHandle() )
                         {
                             auto uuid = handle->getUUID();
                             data->setProperty( "actorId", handle->getInstanceId() );
@@ -982,5 +992,47 @@ namespace fb
         {
             m_dragDropActorCmd = dragDropActorCmd;
         }
-    } // end namespace editor
-}     // end namespace fb
+
+        SceneWindow::PromptListener::PromptListener()
+        {
+        }
+
+        SceneWindow::PromptListener::~PromptListener()
+        {
+        }
+
+        Parameter SceneWindow::PromptListener::handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                                            const Array<Parameter> &arguments,
+                                                            SmartPtr<ISharedObject> sender,
+                                                            SmartPtr<ISharedObject> object,
+                                                            SmartPtr<IEvent> event )
+        {
+            if( eventValue == IEvent::handlePropertyChanged )
+            {
+                auto str = arguments[0].str;
+
+                if( auto owner = getOwner() )
+                {
+                    auto applicationManager = core::IApplicationManager::instance();
+                    auto commandManager = applicationManager->getCommandManager();
+
+                    auto promptCmd = fb::make_ptr<PromptCmd>();
+                    promptCmd->setPrompt( str );
+                    commandManager->addCommand( promptCmd );
+                }
+            }
+
+            return Parameter();
+        }
+
+        SceneWindow *SceneWindow::PromptListener::getOwner() const
+        {
+            return m_owner;
+        }
+
+        void SceneWindow::PromptListener::setOwner( SceneWindow *owner )
+        {
+            m_owner = owner;
+        }
+    }  // end namespace editor
+}  // end namespace fb

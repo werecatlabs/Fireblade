@@ -2,15 +2,15 @@
 #define EditorCursor_H
 
 #include <GameEditorPrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include "FBCore/Math/Triangle3.h"
 
 namespace fb
 {
     namespace editor
     {
-                
-        class EditorCursor : public SharedObject<ISharedObject>
+
+        class EditorCursor : public ISharedObject
         {
         public:
             enum EditorCursorState

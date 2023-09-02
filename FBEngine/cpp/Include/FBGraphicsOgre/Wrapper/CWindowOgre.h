@@ -5,7 +5,7 @@
 #include <FBGraphicsOgre/Wrapper/CRenderTargetOgre.h>
 #include <FBCore/Interface/Graphics/IWindow.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Core/Array.h>
 #include <OgreWindowEventUtilities.h>
 
@@ -27,6 +27,8 @@ namespace fb
 
             /** @copydoc ISharedObject::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
+
+            void handleEvent( SmartPtr<IWindowEvent> event );
 
             void update() override;
 
@@ -166,7 +168,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class WindowStateListener : public SharedObject<IStateListener>
+            class WindowStateListener : public IStateListener
             {
             public:
                 WindowStateListener() = default;

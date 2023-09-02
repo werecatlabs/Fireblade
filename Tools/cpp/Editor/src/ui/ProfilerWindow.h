@@ -2,13 +2,13 @@
 #define ProfilerWindow_h__
 
 #include <GameEditorPrerequisites.h>
-#include "ui/BaseWindow.h"
+#include "ui/EditorWindow.h"
 
 namespace fb
 {
     namespace editor
     {
-        class ProfilerWindow : public BaseWindow
+        class ProfilerWindow : public EditorWindow
         {
         public:
             ProfilerWindow();

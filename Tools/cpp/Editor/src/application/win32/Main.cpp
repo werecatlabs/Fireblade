@@ -1,5 +1,6 @@
 #include <GameEditorPCH.h>
-#include <Application.h>
+#include <EditorApplication.h>
+#include "FBCore/FBCore.h"
 
 #if !FB_EDITOR_TESTS
 //#ifdef FB_PLATFORM_WIN32
@@ -13,7 +14,7 @@
 //#else
 int main()
 {
-    auto app = fb::make_ptr<fb::editor::Application>();
+    auto app = fb::make_ptr<fb::editor::EditorApplication>();
 
     const auto threads = fb::Thread::hardware_concurrency();
     app->setActiveThreads( threads );

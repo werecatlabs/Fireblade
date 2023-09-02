@@ -17,8 +17,6 @@ namespace fb
             void undo() override;
             void redo() override;
             void execute() override;
-
-
         };
 
     }  // namespace editor

@@ -4,7 +4,7 @@
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBCore/Interface/Physics/IRigidDynamic3.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBPhysx/FBPhysxRigidBody3.h>
 
 namespace fb
@@ -93,8 +93,8 @@ namespace fb
             void *getUserDataById( u32 id ) const override;
             void setUserDataById( u32 id, void *userData ) override;
 
-            void setRigidBodyFlag( PxRigidBodyFlag::Enum flag, bool value ) override;
-            PxRigidBodyFlag::Enum getRigidBodyFlags() const override;
+            void setRigidBodyFlag( RigidBodyFlag::Enum flag, bool value ) override;
+            RigidBodyFlag::Enum getRigidBodyFlags() const override;
 
             void setLinearVelocity( const Vector3<real_Num> &linVel, bool autowake = true ) override;
             Vector3<real_Num> getLinearVelocity() const override;
@@ -111,8 +111,8 @@ namespace fb
             Vector3<real_Num> getMassSpaceInertiaTensor() const override;
             Vector3<real_Num> getMassSpaceInvInertiaTensor() const override;
 
-            void setActorFlag( PxActorFlag::Enum flag, bool value ) override;
-            PxActorFlag::Enum getActorFlags() const override;
+            void setActorFlag( ActorFlag::Enum flag, bool value ) override;
+            ActorFlag::Enum getActorFlags() const override;
             
             void setKinematicTarget( const Transform3<real_Num> &destination ) override;
             bool getKinematicTarget( Transform3<real_Num> &target ) override;
@@ -172,7 +172,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class StateListener : public SharedObject<IStateListener>
+            class StateListener : public IStateListener
             {
             public:
                 StateListener() = default;

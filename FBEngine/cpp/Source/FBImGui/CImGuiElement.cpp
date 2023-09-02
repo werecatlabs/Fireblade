@@ -1063,6 +1063,9 @@ namespace fb
         template class CImGuiElement<IUIVector3>;
         template class CImGuiElement<IUIVector4>;
 
+        template class CImGuiElement<IUITabItem>;
+        template class CImGuiElement<IUITabBar>;
+
         template class CImGuiElement<IUIToolbar>;
         template class CImGuiElement<IUITerrainEditor>;
 

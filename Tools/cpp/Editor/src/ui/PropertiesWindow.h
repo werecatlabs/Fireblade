@@ -2,10 +2,11 @@
 #define __PropertiesWindow_h__
 
 #include <GameEditorPrerequisites.h>
-#include "ui/BaseWindow.h"
-#include <FBCore/Memory/SharedObject.h>
+#include "ui/EditorWindow.h"
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Interface/Resource/IResource.h>
 #include <FBCore/Interface/System/IEventListener.h>
+#include <FBCore/Interface/UI/IUIDropTarget.h>
 #include "FBCore/System/Job.h"
 
 namespace fb
@@ -16,7 +17,7 @@ namespace fb
          * Window for displaying and editing the properties of a selected object.
          * This class extends the BaseWindow class and provides functionality to manage the properties of objects and display them in a property grid.
          */
-        class PropertiesWindow : public BaseWindow
+        class PropertiesWindow : public EditorWindow
         {
         public:
             /** Enumeration for the different IDs that can be assigned to the properties window. */
@@ -82,15 +83,50 @@ namespace fb
              */
             void setSelected( SmartPtr<ISharedObject> selected );
 
+            Array<SmartPtr<ISharedObject>> getSelection() const;
+
+            void setSelection( Array<SmartPtr<ISharedObject>> selection );
+
         protected:
+            class PropertiesDropTarget : public ui::IUIDropTarget
+            {
+            public:
+                PropertiesDropTarget();
+
+                ~PropertiesDropTarget() override;
+
+                Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                       const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
+
+                /**
+                 * @brief Gets the owner of the PropertiesListener.
+                 * @return A pointer to the owning PropertiesWindow.
+                 */
+                PropertiesWindow *getOwner() const;
+
+                /**
+                 * @brief Sets the owner of the PropertiesListener.
+                 * @param owner A pointer to the PropertiesWindow to set as the owner.
+                 */
+                void setOwner( PropertiesWindow *owner );
+
+            private:
+                /**
+                 * @var PropertiesWindow *m_owner
+                 * @brief A pointer to the owning PropertiesWindow.
+                 */
+                PropertiesWindow *m_owner = nullptr;
+            };
+
             class UpdateSelectionJob : public Job
             {
             public:
                 UpdateSelectionJob();
 
-                ~UpdateSelectionJob();
+                ~UpdateSelectionJob() override;
 
-                void execute();
+                void execute() override;
 
                 SmartPtr<PropertiesWindow> getOwner() const;
 
@@ -110,7 +146,7 @@ namespace fb
              * @brief Class for listening to property changes.
              * @extends CSharedObject<IEventListener>
              */
-            class PropertiesListener : public SharedObject<IEventListener>
+            class PropertiesListener : public IEventListener
             {
             public:
                 /**
@@ -190,6 +226,10 @@ namespace fb
              * @brief A smart pointer to the currently selected shared object.
              */
             SmartPtr<ISharedObject> m_selected;
+
+            Array<SmartPtr<ISharedObject>> m_selection;
+
+            SmartPtr<ui::IUIDropTarget> m_dropTarget;
 
             /**
              * @var bool m_isDirty

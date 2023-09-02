@@ -5,7 +5,7 @@
 #include <FBPhysx/FBPhysxSharedObject.h>
 #include <FBCore/Interface/Physics/IPhysicsConstraint3.h>
 #include <FBCore/Interface/Physics/IPhysicsBody3.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb
 {
@@ -59,19 +59,19 @@ namespace fb
                 setDirty( true );
             }
 
-            virtual void setLocalPose( PxJointActorIndex::Enum actor,
+            virtual void setLocalPose( JointActorIndex::Enum actor,
                                        const Transform3<real_Num> &localPose )
             {
                 m_poses[actor] = localPose;
                 setDirty( true );
             }
 
-            virtual Transform3<real_Num> getLocalPose( PxJointActorIndex::Enum actor ) const
+            virtual Transform3<real_Num> getLocalPose( JointActorIndex::Enum actor ) const
             {
                 return m_poses[actor];
             }
 
-            virtual void setConstraintFlag( PxConstraintFlag::Enum flag, bool value )
+            virtual void setConstraintFlag( ConstraintFlag::Enum flag, bool value )
             {
                 if(value)
                     m_flags |= flag;
@@ -81,9 +81,9 @@ namespace fb
                 setDirty( true );
             }
 
-            virtual PxConstraintFlag::Enum getConstraintFlags() const
+            virtual ConstraintFlag::Enum getConstraintFlags() const
             {
-                return static_cast<PxConstraintFlag::Enum>(m_flags);
+                return static_cast<ConstraintFlag::Enum>(m_flags);
             }
 
             virtual void setBreakForce( real_Num force, real_Num torque )
@@ -137,7 +137,7 @@ namespace fb
         protected:
             SmartPtr<IPhysicsBody3> m_bodyA;
             SmartPtr<IPhysicsBody3> m_bodyB;
-            Transform3<real_Num> m_poses[PxJointActorIndex::Enum::COUNT];
+            Transform3<real_Num> m_poses[JointActorIndex::Enum::COUNT];
             real_Num m_force = static_cast<real_Num>(0.0);
             real_Num m_torque = static_cast<real_Num>(0.0);
 

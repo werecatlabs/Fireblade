@@ -16,6 +16,8 @@ namespace fb
             ImGuiText();
             ~ImGuiText() override;
 
+            void update() override;
+
             /** @copydoc IUIText::setText */
             void setText( const String &text ) override;
 
@@ -30,16 +32,10 @@ namespace fb
 
             void setVerticalAlignment( u8 alignment );
             u8 getVerticalAlignment() const;
-
             
-            void setHorizontalAlignment( u8 alignment )
-            {
-            }
+            void setHorizontalAlignment( u8 alignment );
 
-            u8 getHorizontalAlignment() const
-            {
-                return 0;
-            }
+            u8 getHorizontalAlignment() const;
 
             FB_CLASS_REGISTER_DECL;
 
@@ -48,11 +44,6 @@ namespace fb
             String m_text;
             f32 m_textSize = 10.0f;
         };
-
-        inline String ImGuiText::getText() const
-        {
-            return m_text;
-        }
 
     }  // end namespace ui
 }  // end namespace fb

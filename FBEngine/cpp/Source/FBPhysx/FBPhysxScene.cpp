@@ -174,9 +174,6 @@ namespace fb
                         setScene( nullptr );
                     }
 
-                    auto &gc = GarbageCollector::instance();
-                    gc.update();
-
                     setLoadingState( LoadingState::Unloaded );
                 }
             }
@@ -416,7 +413,7 @@ namespace fb
             {
                 auto applicationManager = core::IApplicationManager::instance();
                 auto physicsManager = applicationManager->getPhysicsManager();
-                
+
                 if( auto scene = getScene() )
                 {
                     FB_PXSCENE_WRITE_LOCK( scene );
@@ -527,39 +524,11 @@ namespace fb
         bool PhysxScene::castRay( const Vector3<real_Num> &origin, const Vector3<real_Num> &dir,
                                   Array<SmartPtr<RaycastHit>> &hits )
         {
-#if 1
-            // auto applicationManager = core::IApplicationManager::instance();
-            // PhysicsManagerPtr& physicsManager = applicationManager->getPhysicsManager();
-            // FactoryManagerPtr& factoryManager = applicationManager->getFactoryManager();
-
-            // if (!m_collisionMeshes.empty())
-            //{
-            //	for (uint i = 0; i < m_collisionMeshes.size(); ++i)
-            //	{
-            //		//std::cout << "i: " << i << std::endl;
-
-            //		if (m_collisionMeshes[i]->rayCast(origin, dir, hits))
-            //		{
-            //			if (!hits.empty())
-            //			{
-            //				return true;
-            //			}
-            //		}
-            //	}
-            //}
-
-            // smart_ptr<physics::PxScene>& physicsScene = physicsManager->getRaycastScene();
-            // FB_PXSCENE_READ_LOCK(physicsScene->getScene());
-
             using namespace physx;
 
             auto rorigin = PxVec3( origin.X(), origin.Y(), origin.Z() );  // [in] Ray origin
             auto unitDir = PxVec3( dir.X(), dir.Y(), dir.Z() );  // [in] Normalized ray direction
             PxReal maxDistance = 100000;  //-vec.y;       // [in] Raycast max distance
-
-            // const physx::PxSceneQueryFlags outputFlags = physx::PxSceneQueryFlag::eDISTANCE |
-            // physx::PxSceneQueryFlag::eIMPACT | physx::PxSceneQueryFlag::eNORMAL;
-            // const physx::PxSceneQueryFlags outputFlags = physx::PxSceneQueryFlag::eDISTANCE;
 
             RaycastCallback raycastCallback;
 
@@ -588,64 +557,6 @@ namespace fb
             }
 
             return false;
-#else
-
-            smart_ptr<SpatialPartition2<Vector2i, Vector2f, CollisionMesh>> &spatialPartition =
-                getSpatialPartition();
-            if( spatialPartition )
-            {
-                if( isSpatialPartitionDirty() )
-                {
-                    buildSpatialPartition();
-                    setSpatialPartitionDirty( false );
-                }
-
-                Vector3<Real> rayStart = Vector3<Real>( origin.x, origin.y, origin.z );
-                Vector3<Real> rayEnd =
-                    rayStart + ( Vector3<Real>( dir.x, dir.y, dir.z ) * Scenery::MAX_RAY_LENGTH );
-
-                Vector2i cellStart = spatialPartition->getCell( Vector2f( rayStart.x, rayStart.z ) );
-                Vector2i cellEnd = spatialPartition->getCell( Vector2f( rayEnd.x, rayEnd.z ) );
-
-                Vector2i cellMin = Vector2i( MathF::Min( cellStart.x, cellEnd.x ),
-                                             MathF::Min( cellStart.y, cellEnd.y ) );
-                Vector2i cellMax = Vector2i( MathF::Max( cellStart.x, cellEnd.x ),
-                                             MathF::Max( cellStart.y, cellEnd.y ) );
-
-                std::set<CollisionMeshPtr> collisionMeshes =
-                    spatialPartition->getObjectsByType( cellMin, cellMax );
-                std::set<CollisionMeshPtr>::iterator it = collisionMeshes.begin();
-                for( ; it != collisionMeshes.end(); ++it )
-                {
-                    CollisionMeshPtr collisionMesh = *it;
-
-                    if( collisionMesh->rayCast( origin, dir, hits ) )
-                    {
-                        if( !hits.empty() )
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                for( uint i = 0; i < m_collisionMeshes.size(); ++i )
-                {
-                    // std::cout << "i: " << i << std::endl;
-
-                    if( m_collisionMeshes[i]->rayCast( origin, dir, hits ) )
-                    {
-                        if( !hits.empty() )
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
-#endif
         }
 
         bool PhysxScene::castRay( const Ray3<real_Num> &ray, RaycastHit &hit )
@@ -804,6 +715,29 @@ namespace fb
             return false;
         }
 
+        class QueryFilterCallback : public physx::PxQueryFilterCallback
+        {
+        public:
+            QueryFilterCallback()
+            {
+            }
+            ~QueryFilterCallback()
+            {
+            }
+
+            virtual PxQueryHitType::Enum preFilter( const PxFilterData &filterData, const PxShape *shape,
+                                                    const PxRigidActor *actor, PxHitFlags &queryFlags )
+            {
+                return PxQueryHitType::eBLOCK;
+            }
+
+            virtual PxQueryHitType::Enum postFilter( const PxFilterData &filterData,
+                                                     const PxQueryHit &hit )
+            {
+                return PxQueryHitType::eBLOCK;
+            }
+        };
+
         bool PhysxScene::castRay( const Ray3<real_Num> &ray, SmartPtr<IRaycastHit> &hit )
         {
             if( auto scene = getScene() )
@@ -820,27 +754,25 @@ namespace fb
                 const Vector3<real_Num> &origin = ray.getOrigin();
                 const Vector3<real_Num> &dir = ray.getDirection();
 
-                auto rorigin = PxVec3( origin.X(), origin.Y(), origin.Z() );  // [in] Ray origin
-                auto unitDir = PxVec3( dir.X(), dir.Y(), dir.Z() );  // [in] Normalized ray direction
-                const f32 maxDistance = 100000.0f;  //-vec.y;       // [in] Raycast max distance
-
-                // const PxSceneQueryFlags outputFlags = PxSceneQueryFlag::eDISTANCE |
-                // PxSceneQueryFlag::eIMPACT | PxSceneQueryFlag::eNORMAL; const PxSceneQueryFlags outputFlags
-                // = PxSceneQueryFlag::eDISTANCE;
-
-                // PxSceneQueryFilterData filterData(PxSceneQueryFilterFlag::eSTATIC);
-                // filterData.flags |= PxQueryFlag::eANY_HIT;
+                auto rorigin = PxVec3( origin.X(), origin.Y(), origin.Z() );
+                auto unitDir = PxVec3( dir.X(), dir.Y(), dir.Z() );
+                const f32 maxDistance = 100000.0f;
 
                 PxHitFlags hitFlags( PxHitFlag::eDEFAULT );
+
                 //PxQueryFilterData pxQueryFilterData( PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC );
+                //pxQueryFilterData.flags |= PxQueryFlag::eANY_HIT;
+
                 PxQueryFilterData pxQueryFilterData( PxQueryFlag::eSTATIC );
+
+                QueryFilterCallback queryFilterCallback;
 
                 RaycastCallback raycastCallback;
                 raycastCallback.m_checkStatic = hit->getCheckStatic();
                 raycastCallback.m_checkDynamic = hit->getCheckDynamic();
 
                 bool status = scene->raycast( rorigin, unitDir, maxDistance, raycastCallback, hitFlags,
-                                              pxQueryFilterData );
+                                              pxQueryFilterData, &queryFilterCallback );
                 if( status )
                 {
                     f32 d = raycastCallback.m_hit.distance;

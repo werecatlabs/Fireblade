@@ -1,7 +1,7 @@
 #ifndef CParticleNode_h__
 #define CParticleNode_h__
 
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Interface/Particle/IParticleNode.h>
 
 namespace fb
@@ -10,7 +10,7 @@ namespace fb
     {
 
         template <class T>
-        class CParticleNode : public SharedObject<T>
+        class CParticleNode : public T
         {
         public:
             CParticleNode()

@@ -29,12 +29,9 @@ namespace fb
 {
     namespace physics
     {
-        FB_CLASS_REGISTER_DERIVED( fb, PhysxManager, SharedObject<IPhysicsManager> );
+        FB_CLASS_REGISTER_DERIVED( fb, PhysxManager, IPhysicsManager );
 
         PxVehicleTelemetryData *mTelemetryData4W;
-
-        SharedPtr<PxAllocatorCallback> PhysxManager::m_allocator;
-        SharedPtr<PxErrorCallback> PhysxManager::m_errorOutput;
 
         ///////////////////////////////////////////////////////////////////////////////
 
@@ -44,9 +41,9 @@ namespace fb
         };
 
         PxFilterFlags SampleVehicleFilterShader( PxFilterObjectAttributes attributes0,
-                                                 PxFilterData filterData0,
+                                                 FilterData filterData0,
                                                  PxFilterObjectAttributes attributes1,
-                                                 PxFilterData filterData1, PxPairFlags &pairFlags,
+                                                 FilterData filterData1, PxPairFlags &pairFlags,
                                                  const void *constantBlock, PxU32 constantBlockSize )
         {
             // let triggers through
@@ -98,18 +95,12 @@ namespace fb
             {
                 setLoadingState( LoadingState::Loading );
 
-                if( !m_allocator )
-                {
-                    m_allocator = fb::make_shared<PhysxAllocator>();
+                m_allocator = fb::make_shared<PhysxAllocator>();
 
-                    // Create a custom allocator callback object with a pool size of 512 MB
-                    //m_allocator = fb::make_shared<PhysxPoolAllocator>( 512 * 1024 * 1024 );
-                }
+                // Create a custom allocator callback object with a pool size of 512 MB
+                //m_allocator = fb::make_shared<PhysxPoolAllocator>( 512 * 1024 * 1024 );
 
-                if( !m_errorOutput )
-                {
-                    m_errorOutput = fb::make_shared<PhysxErrorOutput>();
-                }
+                m_errorOutput = fb::make_shared<PhysxErrorOutput>();
 
                 m_foundation = PxCreateFoundation( PX_PHYSICS_VERSION, *m_allocator, *m_errorOutput );
                 if( !m_foundation )
@@ -214,8 +205,7 @@ namespace fb
         {
             try
             {
-                const auto &loadingState = getLoadingState();
-                if( loadingState == LoadingState::Loaded )
+                if( isLoaded() )
                 {
                     setLoadingState( LoadingState::Unloading );
 
@@ -311,8 +301,8 @@ namespace fb
                         m_foundation = nullptr;
                     }
 
-                    auto &gc = GarbageCollector::instance();
-                    gc.update();
+                    m_allocator = nullptr;
+                    m_errorOutput = nullptr;
 
                     setLoadingState( LoadingState::Unloaded );
                 }
@@ -325,15 +315,8 @@ namespace fb
 
         void PhysxManager::initialise( const SmartPtr<Properties> &properties )
         {
-            if( !m_allocator )
-            {
-                m_allocator = fb::make_shared<PhysxAllocator>();
-            }
-
-            if( !m_errorOutput )
-            {
-                m_errorOutput = fb::make_shared<PhysxErrorOutput>();
-            }
+            m_allocator = fb::make_shared<PhysxAllocator>();
+            m_errorOutput = fb::make_shared<PhysxErrorOutput>();
 
             m_foundation = PxCreateFoundation( PX_PHYSICS_VERSION, *m_allocator, *m_errorOutput );
             if( !m_foundation )
@@ -498,7 +481,7 @@ namespace fb
             m_cooker = cooker;
         }
 
-        SmartPtr<IPhysicsMaterial3> PhysxManager::createMaterial()
+        SmartPtr<IPhysicsMaterial3> PhysxManager::addMaterial()
         {
             auto material = fb::make_ptr<PhysxMaterial>();
 
@@ -511,7 +494,7 @@ namespace fb
             return material;
         }
 
-        void PhysxManager::destroyMaterial( SmartPtr<IPhysicsMaterial3> material )
+        void PhysxManager::removeMaterial( SmartPtr<IPhysicsMaterial3> material )
         {
         }
 
@@ -529,7 +512,7 @@ namespace fb
 
                 auto sphere = factoryManager->make_ptr<PhysxSphereShape>();
 
-                auto material = createMaterial();
+                auto material = addMaterial();
                 sphere->setMaterial( material );
 
                 m_sphereShapes.push_back( sphere );
@@ -557,7 +540,7 @@ namespace fb
 
                 auto box = factoryManager->make_ptr<PhysxBoxShape>();
 
-                auto material = createMaterial();
+                auto material = addMaterial();
                 box->setMaterial( material );
 
                 m_boxShapes.push_back( box );
@@ -585,7 +568,7 @@ namespace fb
 
                 auto plane = factoryManager->make_ptr<PhysxPlaneShape>();
 
-                auto material = createMaterial();
+                auto material = addMaterial();
                 plane->setMaterial( material );
 
                 m_planeShapes.push_back( plane );
@@ -715,7 +698,7 @@ namespace fb
         {
         }
 
-        SmartPtr<IPhysicsScene3> PhysxManager::createScene()
+        SmartPtr<IPhysicsScene3> PhysxManager::addScene()
         {
             try
             {
@@ -733,7 +716,7 @@ namespace fb
             return nullptr;
         }
 
-        void PhysxManager::destroyScene( SmartPtr<IPhysicsScene3> scene )
+        void PhysxManager::removeScene( SmartPtr<IPhysicsScene3> scene )
         {
             if( scene )
             {
@@ -752,7 +735,7 @@ namespace fb
             m_enableDebugDraw = enableDebugDraw;
         }
 
-        SmartPtr<IPhysicsShape3> PhysxManager::createCollisionShapeByType( hash64 type,
+        SmartPtr<IPhysicsShape3> PhysxManager::addCollisionShapeByType( hash64 type,
                                                                            SmartPtr<ISharedObject> data )
         {
             auto typeManager = TypeManager::instance();
@@ -874,13 +857,13 @@ namespace fb
             return rigidBody;
         }
 
-        SmartPtr<IRigidStatic3> PhysxManager::createRigidStatic(
+        SmartPtr<IRigidStatic3> PhysxManager::addRigidStatic(
             SmartPtr<IPhysicsShape3> collisionShape )
         {
-            return createRigidStatic( collisionShape, nullptr );
+            return addRigidStatic( collisionShape, nullptr );
         }
 
-        SmartPtr<IRigidStatic3> PhysxManager::createRigidStatic( SmartPtr<IPhysicsShape3> collisionShape,
+        SmartPtr<IRigidStatic3> PhysxManager::addRigidStatic( SmartPtr<IPhysicsShape3> collisionShape,
                                                                  SmartPtr<Properties> properties )
         {
             ISharedObject::ScopedLock lock( this );
@@ -926,7 +909,7 @@ namespace fb
             return nullptr;
         }
 
-        SmartPtr<IRigidStatic3> PhysxManager::createRigidStatic( const Transform3<real_Num> &transform )
+        SmartPtr<IRigidStatic3> PhysxManager::addRigidStatic( const Transform3<real_Num> &transform )
         {
             auto rigidStatic = fb::make_ptr<PhysxRigidStatic>();
 
@@ -936,7 +919,7 @@ namespace fb
             return rigidStatic;
         }
 
-        SmartPtr<IRigidDynamic3> PhysxManager::createRigidDynamic(
+        SmartPtr<IRigidDynamic3> PhysxManager::addRigidDynamic(
             const Transform3<real_Num> &transform )
         {
             auto rigidDynamic = fb::make_ptr<PhysxRigidDynamic>();
@@ -953,7 +936,7 @@ namespace fb
         //	return nullptr;
         // }
 
-        SmartPtr<IPhysicsSoftBody3> PhysxManager::createSoftBody( const String &filePath )
+        SmartPtr<IPhysicsSoftBody3> PhysxManager::addSoftBody( const String &filePath )
         {
             return nullptr;
         }
@@ -1125,7 +1108,7 @@ namespace fb
             return nullptr;
         }
 
-        bool PhysxManager::destroyCollisionShape( SmartPtr<IPhysicsShape3> collisionShape )
+        bool PhysxManager::removeCollisionShape( SmartPtr<IPhysicsShape3> collisionShape )
         {
             if( collisionShape )
             {
@@ -1154,12 +1137,12 @@ namespace fb
             return false;
         }
 
-        bool PhysxManager::destroyPhysicsBody( SmartPtr<IRigidBody3> body )
+        bool PhysxManager::removePhysicsBody( SmartPtr<IRigidBody3> body )
         {
             return false;
         }
 
-        bool PhysxManager::destroyVehicle( SmartPtr<IPhysicsVehicle3> vehicle )
+        bool PhysxManager::removeVehicle( SmartPtr<IPhysicsVehicle3> vehicle )
         {
             return false;
         }
@@ -1236,7 +1219,7 @@ namespace fb
             PhysxMutex.unlock();
         }
 
-        SmartPtr<IConstraintD6> PhysxManager::d6JointCreate( SmartPtr<IPhysicsBody3> actor0,
+        SmartPtr<IConstraintD6> PhysxManager::addJointD6( SmartPtr<IPhysicsBody3> actor0,
                                                              const Transform3<real_Num> &localFrame0,
                                                              SmartPtr<IPhysicsBody3> actor1,
                                                              const Transform3<real_Num> &localFrame1 )
@@ -1269,7 +1252,7 @@ namespace fb
             return j;
         }
 
-        SmartPtr<IConstraintFixed3> PhysxManager::fixedJointCreate(
+        SmartPtr<IConstraintFixed3> PhysxManager::addFixedJoint(
             SmartPtr<IPhysicsBody3> actor0, const Transform3<real_Num> &localFrame0,
             SmartPtr<IPhysicsBody3> actor1, const Transform3<real_Num> &localFrame1 )
         {
@@ -1302,18 +1285,18 @@ namespace fb
             return j;
         }
 
-        SmartPtr<IConstraintDrive> PhysxManager::createConstraintDrive()
+        SmartPtr<IConstraintDrive> PhysxManager::addConstraintDrive()
         {
             return nullptr;
         }
 
-        SmartPtr<IConstraintLinearLimit> PhysxManager::createConstraintLinearLimit(real_Num extent, real_Num contactDist)
+        SmartPtr<IConstraintLinearLimit> PhysxManager::addConstraintLinearLimit(
+            real_Num extent, real_Num contactDist )
         {
-            physx::PxJointLinearLimit;
             return nullptr;
         }
 
-        SmartPtr<IRaycastHit> PhysxManager::createRaycastHitData()
+        SmartPtr<IRaycastHit> PhysxManager::addRaycastHitData()
         {
             return nullptr;
         }

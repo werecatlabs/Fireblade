@@ -4,7 +4,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, CFileList, SharedObject<IFileList> );
+    FB_CLASS_REGISTER_DERIVED( fb, CFileList, IFileList );
 
     static const String emptyFileListEntry;
 

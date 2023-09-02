@@ -20,9 +20,9 @@ namespace fb
 
             void setForceLimit( real_Num forceLimit ) override;
 
-            PxD6JointDriveFlag::Enum getDriveFlags() const override;
+            D6JointDriveFlag::Enum getDriveFlags() const override;
 
-            void setDriveFlags( PxD6JointDriveFlag::Enum driveFlags ) override;
+            void setDriveFlags( D6JointDriveFlag::Enum driveFlags ) override;
 
             void setIsAcceleration( bool acceleration ) const override;
 

@@ -1,6 +1,5 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
-
 #include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb

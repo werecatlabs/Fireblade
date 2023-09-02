@@ -3,7 +3,7 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IFontManager.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/UtilityTypes.h>
 
@@ -12,7 +12,7 @@ namespace fb
     namespace render
     {
 
-        class CFontManager : public SharedObject<IFontManager>
+        class CFontManager : public IFontManager
         {
         public:
             CFontManager();

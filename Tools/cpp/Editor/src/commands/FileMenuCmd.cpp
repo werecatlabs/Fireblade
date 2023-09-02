@@ -4,7 +4,7 @@
 #include <editor/Project.h>
 #include <ui/UIManager.h>
 #include "ui/ProjectWindow.h"
-#include <FBApplication/FBApplication.h>
+
 #include <FBCore/FBCore.h>
 
 #include "jobs/OpenSceneJob.h"
@@ -154,7 +154,7 @@ namespace fb
             break;
             case UIManager::WidgetId::CreateOverlayTestId:
             {
-                ApplicationUtil::createOverlayPanelTest();
+                //ApplicationUtil::createOverlayPanelTest();
 
                 auto editorManager = EditorManager::getSingletonPtr();
                 auto ui = editorManager->getUI();
@@ -163,7 +163,7 @@ namespace fb
             break;
             case UIManager::WidgetId::CreateOverlayTextTestId:
             {
-                ApplicationUtil::createOverlayTextTest();
+                //ApplicationUtil::createOverlayTextTest();
 
                 auto editorManager = EditorManager::getSingletonPtr();
                 auto ui = editorManager->getUI();
@@ -172,7 +172,7 @@ namespace fb
             break;
             case UIManager::WidgetId::CreateOverlayButtonTestId:
             {
-                ApplicationUtil::createOverlayButtonTest();
+                //ApplicationUtil::createOverlayButtonTest();
 
                 auto editorManager = EditorManager::getSingletonPtr();
                 auto ui = editorManager->getUI();
@@ -181,20 +181,20 @@ namespace fb
             break;
             case UIManager::WidgetId::CreateProceduralTestId:
             {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
+                //auto applicationManager = core::IApplicationManager::instance();
+                //FB_ASSERT( applicationManager );
 
-                auto actor = ApplicationUtil::createProceduralTest();
-                FB_ASSERT( actor );
+                //auto actor = ApplicationUtil::createProceduralTest();
+                //FB_ASSERT( actor );
 
-                if( applicationManager->isPlaying() )
-                {
-                    actor->setState( scene::IActor::State::Play );
-                }
-                else
-                {
-                    actor->setState( scene::IActor::State::Edit );
-                }
+                //if( applicationManager->isPlaying() )
+                //{
+                //    actor->setState( scene::IActor::State::Play );
+                //}
+                //else
+                //{
+                //    actor->setState( scene::IActor::State::Edit );
+                //}
 
                 auto editorManager = EditorManager::getSingletonPtr();
                 auto ui = editorManager->getUI();

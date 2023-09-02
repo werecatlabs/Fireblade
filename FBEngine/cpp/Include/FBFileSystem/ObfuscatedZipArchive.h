@@ -3,13 +3,13 @@
 
 #include <FBFileSystem/FBFileSystemPrerequisites.h>
 #include <FBCore/Interface/IO/IArchive.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/FileInfo.h>
 
 namespace fb
 {
 
-    class ObfuscatedZipArchive : public SharedObject<IArchive>
+    class ObfuscatedZipArchive : public IArchive
     {
     public:
         ObfuscatedZipArchive() = default;

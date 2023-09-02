@@ -6,14 +6,14 @@
 #include <FBCore/Interface/Script/IScriptReceiver.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Core/HashMap.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
     namespace render
     {
 
-        class CAnimationController : public SharedObject<IAnimationController>
+        class CAnimationController : public IAnimationController
         {
         public:
             static const hash_type SET_ANIMATION_ENABLED_HASH;
@@ -62,7 +62,7 @@ namespace fb
             void setStateObject( SmartPtr<IStateContext> subject );
 
         private:
-            class ScriptReceiver : public SharedObject<IScriptReceiver>
+            class ScriptReceiver : public IScriptReceiver
             {
             public:
                 ScriptReceiver( IAnimationController *animCtrl );
@@ -73,7 +73,7 @@ namespace fb
                 IAnimationController *m_animCtrl;
             };
 
-            class AnimationControllerStateListener : public SharedObject<IStateListener>
+            class AnimationControllerStateListener : public IStateListener
             {
             public:
                 AnimationControllerStateListener( CAnimationController *owner );
@@ -87,7 +87,7 @@ namespace fb
                 CAnimationController *m_owner;
             };
 
-            class Animation : public SharedObject<ISharedObject>
+            class Animation : public ISharedObject
             {
             public:
                 Animation( CAnimationController *controller );

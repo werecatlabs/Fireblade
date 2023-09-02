@@ -2,7 +2,7 @@
 // If you are new to Dear ImGui, read documentation from the docs/ folder + read the top of imgui.cpp.
 // Read online: https://github.com/ocornut/imgui/tree/master/docs
 #include <GameEditorPrerequisites.h>
-#include <core/Application.h>
+#include <EditorApplication.h>
 
 #import <Foundation/Foundation.h>
 
@@ -28,7 +28,7 @@
 
 @interface AppViewController () <MTKViewDelegate>
 
-@property( nonatomic, readonly ) fb::editor::Application *application;
+@property( nonatomic, readonly ) fb::editor::EditorApplication *application;
 @property( nonatomic, readonly ) MTKView *mtkView;
 @property( nonatomic, readonly ) NSView *view;
 @property( nonatomic, strong ) id<MTLDevice> device;
@@ -91,7 +91,7 @@
 
 #endif
 
-    _application = new fb::editor::Application;
+    _application = new fb::editor::EditorApplication;
 
     size_t windowHandle = 0;
     void *pData = (void *)&windowHandle;
@@ -281,6 +281,7 @@ int main( int argc, const char *argv[] )
 int main()
 {
     fb::editor::Application app;
+    app.setActiveThreads(0);
     app.load( nullptr );
     app.run();
     return 0;

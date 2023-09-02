@@ -4,7 +4,7 @@
 #include <editor/Project.h>
 #include "ui/UIManager.h"
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
+
 
 namespace fb
 {
@@ -28,6 +28,8 @@ namespace fb
             {
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
+
+                auto application = applicationManager->getApplication();
 
                 auto fileSystem = applicationManager->getFileSystem();
                 FB_ASSERT( fileSystem );
@@ -60,7 +62,7 @@ namespace fb
                 break;
                 case ResourceType::Material:
                 {
-                    resource = ApplicationUtil::createDefaultMaterial();
+                    resource = application->createDefaultMaterial();
                     FB_ASSERT( resource );
 
                     data = resource->toData();
@@ -76,14 +78,14 @@ namespace fb
                 break;
                 case ResourceType::Director:
                 {
-                    auto director = fb::make_ptr<TerrainDirector>();
+                    auto director = fb::make_ptr<scene::Director>();
                     FB_ASSERT( director );
 
                     director->load( nullptr );
 
                     data = director->toData();
                     FB_ASSERT( data );
-                    
+
                     dataStr = DataUtil::toString( data.get(), true );
                     FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );
                 }

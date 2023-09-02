@@ -2,8 +2,6 @@ project(FBSQLite)
 
 option(FB_BUILD_SQLITECODEC "Build sqlite codec" ON)
 
-add_compile_definitions (_FB_STATIC_LIB_)
-
 if (FB_BUILD_SQLITECODEC)
 	add_compile_definitions (SQLITE_HAS_CODEC)
 endif()
@@ -38,8 +36,7 @@ elseif (FB_USE_TBB)
     include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/tbb/include )
 endif()
 
-include_directories( ${FB_ROOT}/Dependencies/tinybind )
-include_directories( ${FB_ROOT}/Dependencies/tinyxml/include )
+include_directories( ${FB_ROOT}/Dependencies/tinyxml )
 include_directories( ${FB_ROOT}/Dependencies/utf8/source )
 include_directories( ${FB_ROOT}/AdditionalLibraries/zlib )
 include_directories( ${FB_ROOT}/AdditionalLibraries/zziplib )

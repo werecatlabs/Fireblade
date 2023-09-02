@@ -6,9 +6,7 @@ else()
     project(FBImGui C CXX)
 endif()
 
-add_compile_definitions (_FB_STATIC_LIB_)
 add_compile_definitions (IMGUI_IMPL_WIN32_DISABLE_GAMEPAD)
-
 
 if (FB_GRAPHICS_SYSTEM_OGRENEXT)
     add_compile_definitions (FB_OGRE_USE_PARTICLE_UNIVERSE=0)
@@ -186,18 +184,18 @@ include_directories( ${FB_ROOT}/Dependencies/tinyxml )
 include_directories( ${FB_ROOT}/Dependencies/utf8/source )
 
 if (FB_BUILD_IMGUI)
-    include_directories( ${FB_ROOT}/AdditionalLibraries/imgui )
-    include_directories( ${FB_ROOT}/AdditionalLibraries/imgui/backends )
-    include_directories( ${FB_ROOT}/AdditionalLibraries/imgui/misc/freetype )
+    include_directories( ${FB_ROOT}/Dependencies/imgui )
+    include_directories( ${FB_ROOT}/Dependencies/imgui/backends )
+    include_directories( ${FB_ROOT}/Dependencies/imgui/misc/freetype )
 endif()
 
 if (FB_BUILD_SDL2)
-    include_directories( ${FB_ROOT}/AdditionalLibraries/sdl2/include )
-    include_directories( ${FB_ROOT}/AdditionalLibraries/sdl_image )
+    include_directories( ${FB_ROOT}/Dependencies/sdl2/include )
+    include_directories( ${FB_ROOT}/Dependencies/sdl_image )
 endif()
 
-include_directories( ${FB_ROOT}/AdditionalLibraries/zlib )
-include_directories( ${FB_ROOT}/AdditionalLibraries/zziplib )
+include_directories( ${FB_ROOT}/Dependencies/zlib )
+include_directories( ${FB_ROOT}/Dependencies/zziplib )
 include_directories( ../../Include )
 
 include_directories( ${CMAKE_SOURCE_DIR}/FBEngine/cpp/Include/FBImGui )

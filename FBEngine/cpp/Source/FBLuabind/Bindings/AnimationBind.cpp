@@ -3,7 +3,7 @@
 #include <luabind/luabind.hpp>
 #include "FBLuabind/SmartPtrConverter.h"
 #include <FBCore/FBCore.h>
-#include "FBAnimation/FBAnimation.h"
+
 
 namespace fb
 {

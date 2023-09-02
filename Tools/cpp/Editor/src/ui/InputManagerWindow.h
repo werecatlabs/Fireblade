@@ -2,14 +2,14 @@
 #define InputManagerWindow_h__
 
 #include <GameEditorPrerequisites.h>
-#include "ui/BaseWindow.h"
+#include "ui/EditorWindow.h"
 
 namespace fb
 {
     namespace editor
     {
 
-        class InputManagerWindow : public BaseWindow
+        class InputManagerWindow : public EditorWindow
         {
         public:
             InputManagerWindow();

@@ -5,6 +5,11 @@
 #include <string>
 #include <vector>
 
+using ZZIP_DIR = struct zzip_dir;
+using ZZIP_FILE = struct zzip_file;
+
+struct zip_t;
+
 // forward declarations
 class TiXmlElement;
 class TiXmlNode;
@@ -58,7 +63,7 @@ namespace fb
 
     namespace core
     {
-        class IApplicationClient;
+        class IApplication;
         class IApplicationManager;
         class IPluginEvent;
         class IPluginInterface;
@@ -601,7 +606,17 @@ namespace fb
 
 namespace fb
 {
+    class CFileList;
+    class ObfuscatedZipArchive;
+    class ZipArchive;
+
     class MLP;
+
+    class ProjectManager;
+
+    class RotateManipulator;
+    class TranslateManipulator;
+    class ScaleManipulator;
 
     class StateMessageBuffer;
     class StateMessageJobStatus;
@@ -652,6 +667,12 @@ namespace fb
         class AudioSource;
 
         class Camera;
+        class CameraController;
+        class FPSCameraController;
+        class EditorCameraController;
+        class SphericalCameraController;
+        class ThirdPersonCameraController;
+        class VehicleCameraController;
 
         class FiniteStateMachine;
 
@@ -665,6 +686,7 @@ namespace fb
         class CollisionMesh;
         class CollisionBox;
         class Material;
+        class ParticleSystem;
         class Skybox;
         class Shader;
         class Tooltip;

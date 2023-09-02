@@ -58,9 +58,6 @@ namespace fb
                 auto factoryManager = applicationManager->getFactoryManager();
                 FB_ASSERT( factoryManager );
 
-                auto &gc = GarbageCollector::instance();
-                gc.update();
-
                 setLoadingState( LoadingState::Unloaded );
             }
         }

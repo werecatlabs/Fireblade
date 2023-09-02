@@ -2,7 +2,7 @@
 #include <ui/ResourceDatabaseDialog.h>
 #include <ui/ProjectTreeData.h>
 #include <editor/EditorManager.h>
-#include <FBApplication/FBApplication.h>
+
 #include <FBCore/FBCore.h>
 
 namespace fb
@@ -211,7 +211,7 @@ namespace fb
             {
             case IResource::ResourceType::None:
             {
-                ApplicationUtil::setText( treeNode, label );
+                Util::setText( treeNode, label );
 
                 auto data = factoryManager->make_ptr<ProjectTreeData>( "resource", "resource", resource,
                                                                        resource );
@@ -231,7 +231,7 @@ namespace fb
 
                     if( value == "Material" )
                     {
-                        ApplicationUtil::setText( treeNode, label );
+                        Util::setText( treeNode, label );
 
                         auto data = factoryManager->make_ptr<ProjectTreeData>( "resource", "resource",
                                                                                resource, resource );
@@ -252,7 +252,7 @@ namespace fb
             {
                 if( resource->isDerived<scene::IActor>() )
                 {
-                    ApplicationUtil::setText( treeNode, name );
+                    Util::setText( treeNode, name );
 
                     auto data = factoryManager->make_ptr<ProjectTreeData>( "resource", "resource",
                                                                            resource, resource );
@@ -268,7 +268,7 @@ namespace fb
             {
                 if( resource->isDerived<scene::IComponent>() )
                 {
-                    ApplicationUtil::setText( treeNode, name );
+                    Util::setText( treeNode, name );
 
                     auto data = factoryManager->make_ptr<ProjectTreeData>( "resource", "resource",
                                                                            resource, resource );
@@ -286,7 +286,7 @@ namespace fb
 
                     if( value == "Component" )
                     {
-                        ApplicationUtil::setText( treeNode, name );
+                        Util::setText( treeNode, name );
 
                         auto data = factoryManager->make_ptr<ProjectTreeData>( "resource", "resource",
                                                                                resource, resource );
@@ -308,7 +308,7 @@ namespace fb
 
                     if( value == "Texture" )
                     {
-                        ApplicationUtil::setText( treeNode, label );
+                        Util::setText( treeNode, label );
 
                         auto imageElement = ui->addElementByType<ui::IUIImage>();
                         FB_ASSERT( imageElement );
@@ -389,7 +389,7 @@ namespace fb
                         //parent = m_tree->addNode();
                         //FB_ASSERT( parent );
 
-                        //ApplicationUtil::setText( parent, path );
+                        //Util::setText( parent, path );
 
                         //auto data = factoryManager->make_ptr<ProjectTreeData>( "resource", "resource",
                         //                                                       nullptr, nullptr );
@@ -423,7 +423,7 @@ namespace fb
                                 auto splitNode = m_tree->addNode();
                                 FB_ASSERT( splitNode );
 
-                                ApplicationUtil::setText( splitNode, splitPath );
+                                Util::setText( splitNode, splitPath );
 
                                 auto data = factoryManager->make_ptr<ProjectTreeData>(
                                     "resource", "resource", nullptr, nullptr );
@@ -657,7 +657,7 @@ namespace fb
             // EndModal(wxID_OK);
         }
 
-        fb::Parameter ResourceDatabaseDialog::UIElementListener::handleEvent(
+        Parameter ResourceDatabaseDialog::UIElementListener::handleEvent(
             IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
             SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
         {

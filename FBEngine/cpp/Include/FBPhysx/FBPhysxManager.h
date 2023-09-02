@@ -3,8 +3,8 @@
 
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Interface/Physics/IPhysicsManager.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Physics/CPhysicsManager.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Memory/RawPtr.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/ConcurrentQueue.h>
@@ -22,7 +22,7 @@ namespace fb
         @author	Zane Desir
         @version 1.0
         */
-        class PhysxManager : public SharedObject<IPhysicsManager>
+        class PhysxManager : public CPhysicsManager
         {
         public:
             PhysxManager();
@@ -44,10 +44,10 @@ namespace fb
             void postUpdate() override;
 
             /** @copydoc IObject::createScene */
-            SmartPtr<IPhysicsScene3> createScene() override;
+            SmartPtr<IPhysicsScene3> addScene() override;
 
             /** @copydoc IObject::destroyScene */
-            void destroyScene( SmartPtr<IPhysicsScene3> scene ) override;
+            void removeScene( SmartPtr<IPhysicsScene3> scene ) override;
 
             /** @copydoc IPhysicsManager3::getEnableDebugDraw */
             bool getEnableDebugDraw() const override;
@@ -56,48 +56,48 @@ namespace fb
             void setEnableDebugDraw( bool enableDebugDraw ) override;
 
             /** @copydoc IPhysicsManager3::createMaterial */
-            SmartPtr<IPhysicsMaterial3> createMaterial() override;
+            SmartPtr<IPhysicsMaterial3> addMaterial() override;
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
-            void destroyMaterial( SmartPtr<IPhysicsMaterial3> material ) override;
+            void removeMaterial( SmartPtr<IPhysicsMaterial3> material ) override;
 
             /** @copydoc IPhysicsManager3::createCollisionShapeByType */
-            SmartPtr<IPhysicsShape3> createCollisionShapeByType( hash64 type,
+            SmartPtr<IPhysicsShape3> addCollisionShapeByType( hash64 type,
                                                                  SmartPtr<ISharedObject> data );
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
-            SmartPtr<IRigidStatic3> createRigidStatic( const Transform3<real_Num> &transform ) override;
+            SmartPtr<IRigidStatic3> addRigidStatic( const Transform3<real_Num> &transform ) override;
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
-            SmartPtr<IRigidDynamic3> createRigidDynamic(
+            SmartPtr<IRigidDynamic3> addRigidDynamic(
                 const Transform3<real_Num> &transform ) override;
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
-            SmartPtr<IRigidStatic3> createRigidStatic(
+            SmartPtr<IRigidStatic3> addRigidStatic(
                 SmartPtr<IPhysicsShape3> collisionShape ) override;
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
-            SmartPtr<IRigidStatic3> createRigidStatic( SmartPtr<IPhysicsShape3> collisionShape,
+            SmartPtr<IRigidStatic3> addRigidStatic( SmartPtr<IPhysicsShape3> collisionShape,
                                                        SmartPtr<Properties> properties ) override;
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
-            SmartPtr<IPhysicsSoftBody3> createSoftBody( const String &filePath ) override;
+            SmartPtr<IPhysicsSoftBody3> addSoftBody( const String &filePath ) override;
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
             SmartPtr<IPhysicsVehicle3> addVehicle( SmartPtr<IRigidBody3> chassis,
                                                    const SmartPtr<Properties> &properties ) override;
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
-            SmartPtr<IPhysicsVehicle3> addVehicle( SmartPtr<scene::IDirector> vehicleTemplate ) override;
+            SmartPtr<IPhysicsVehicle3> addVehicle( SmartPtr<scene::IDirector> vehicleTemplate );
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
-            bool destroyCollisionShape( SmartPtr<IPhysicsShape3> collisionShape ) override;
+            bool removeCollisionShape( SmartPtr<IPhysicsShape3> collisionShape ) override;
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
-            bool destroyPhysicsBody( SmartPtr<IRigidBody3> body ) override;
+            bool removePhysicsBody( SmartPtr<IRigidBody3> body ) override;
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
-            bool destroyVehicle( SmartPtr<IPhysicsVehicle3> vehicle ) override;
+            bool removeVehicle( SmartPtr<IPhysicsVehicle3> vehicle ) override;
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
             SmartPtr<ICharacterController3> addCharacter() override;
@@ -114,24 +114,24 @@ namespace fb
                              u32 collisionMask = 0 ) override;
 
             /** @copydoc IPhysicsManager3::d6JointCreate */
-            SmartPtr<IConstraintD6> d6JointCreate( SmartPtr<IPhysicsBody3> actor0,
+            SmartPtr<IConstraintD6> addJointD6( SmartPtr<IPhysicsBody3> actor0,
                                                    const Transform3<real_Num> &localFrame0,
                                                    SmartPtr<IPhysicsBody3> actor1,
                                                    const Transform3<real_Num> &localFrame1 ) override;
 
             /** @copydoc IPhysicsManager3::fixedJointCreate */
-            SmartPtr<IConstraintFixed3> fixedJointCreate(
+            SmartPtr<IConstraintFixed3> addFixedJoint(
                 SmartPtr<IPhysicsBody3> actor0, const Transform3<real_Num> &localFrame0,
                 SmartPtr<IPhysicsBody3> actor1, const Transform3<real_Num> &localFrame1 ) override;
 
             /** @copydoc IPhysicsManager3::createConstraintDrive */
-            SmartPtr<IConstraintDrive> createConstraintDrive() override;
+            SmartPtr<IConstraintDrive> addConstraintDrive() override;
 
             /** @copydoc IPhysicsManager3::createConstraintLinearLimit */
-            SmartPtr<IConstraintLinearLimit> createConstraintLinearLimit(real_Num extent, real_Num contactDist = real_Num(-1.0)) override;
+            SmartPtr<IConstraintLinearLimit> addConstraintLinearLimit(real_Num extent, real_Num contactDist = real_Num(-1.0)) override;
 
             /** @copydoc IPhysicsManager3::createRaycastHitData */
-            SmartPtr<IRaycastHit> createRaycastHitData() override;
+            SmartPtr<IRaycastHit> addRaycastHitData() override;
 
             /** @copydoc IPhysicsManager3::getStateTask */
             Thread::Task getStateTask() const override;
@@ -204,8 +204,8 @@ namespace fb
 
             // static physx::PxFilterFlags checkModelShape(ShapeData* shape0, physx::PxActor* a0);
 
-            static SharedPtr<physx::PxAllocatorCallback> m_allocator;
-            static SharedPtr<physx::PxErrorCallback> m_errorOutput;
+            SharedPtr<physx::PxAllocatorCallback> m_allocator;
+            SharedPtr<physx::PxErrorCallback> m_errorOutput;
 
             RawPtr<physx::PxFoundation> m_foundation;
 

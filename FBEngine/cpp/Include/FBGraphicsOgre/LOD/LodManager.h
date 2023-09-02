@@ -2,7 +2,7 @@
 #define LODManager_h__
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Grid2.h>
 
 namespace fb
@@ -10,7 +10,7 @@ namespace fb
     namespace render
     {
         
-        class LodManager : public SharedObject<ISharedObject>
+        class LodManager : public ISharedObject
         {
         public:
             LodManager();

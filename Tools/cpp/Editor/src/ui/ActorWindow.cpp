@@ -11,9 +11,10 @@
 #include <ui/TransformWindow.h>
 #include <ui/UIManager.h>
 #include <ui/ObjectBrowserDialog.h>
+#include <ui/MaterialWindow.h>
 #include <ui/TerrainWindow.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
+
 
 #define TREE_ITEM_STATE_NOT_FOUND 0
 #define TREE_ITEM_STATE_EXPANDED 1
@@ -69,6 +70,96 @@ namespace fb
                         }
                     }
                 }
+            }
+        }
+
+        void ActorWindow::updateObjectSelection( SmartPtr<ISharedObject> object )
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto selectionManager = applicationManager->getSelectionManager();
+            FB_ASSERT( selectionManager );
+
+            auto component = fb::dynamic_pointer_cast<scene::IComponent>( object );
+            if( component )
+            {
+                selectionManager->clearSelection();
+
+                selectionManager->addSelectedObject( component );
+
+                if( component->isDerived<scene::Button>() )
+                {
+                    m_objectType = ObjectType::Button;
+                }
+                else if( component->isDerived<scene::Material>() )
+                {
+                    m_objectType = ObjectType::Material;
+                }
+                else if( component->isDerived<scene::TerrainSystem>() )
+                {
+                    m_objectType = ObjectType::Terrain;
+                }
+                else
+                {
+                    m_objectType = ObjectType::None;
+                }
+
+                switch( m_objectType )
+                {
+                case ObjectType::Button:
+                {
+                    m_materialWindow->setWindowVisible( false );
+                    m_propertiesWindow->setWindowVisible( true );
+                    m_eventsWindow->setWindowVisible( true );
+                    m_terrainWindow->setWindowVisible( false );
+
+                    m_propertiesWindow->updateSelection();
+                    m_eventsWindow->updateSelection();
+                }
+                break;
+                case ObjectType::Material:
+                {
+                    m_materialWindow->setWindowVisible( true );
+                    m_propertiesWindow->setWindowVisible( false );
+                    m_eventsWindow->setWindowVisible( false );
+                    m_terrainWindow->setWindowVisible( false );
+
+                    m_materialWindow->updateSelection();
+                }
+                break;
+                case ObjectType::Terrain:
+                {
+                    m_materialWindow->setWindowVisible( false );
+                    m_propertiesWindow->setWindowVisible( true );
+                    m_eventsWindow->setWindowVisible( false );
+                    m_terrainWindow->setWindowVisible( true );
+                }
+                break;
+                default:
+                {
+                    m_materialWindow->setWindowVisible( false );
+                    m_propertiesWindow->setWindowVisible( true );
+                    m_eventsWindow->setWindowVisible( false );
+                    m_terrainWindow->setWindowVisible( false );
+
+                    m_propertiesWindow->updateSelection();
+                    m_eventsWindow->updateSelection();
+                }
+                }
+            }
+            else
+            {
+                selectionManager->clearSelection();
+
+                selectionManager->addSelectedObject( object );
+
+                m_materialWindow->setWindowVisible( false );
+                m_propertiesWindow->setWindowVisible( true );
+                m_eventsWindow->setWindowVisible( false );
+                m_terrainWindow->setWindowVisible( false );
+
+                m_propertiesWindow->updateSelection();
             }
         }
 
@@ -189,6 +280,11 @@ namespace fb
                 m_eventsWindow->setParent( parentWindow );
                 m_eventsWindow->load( data );
 
+                auto materialWindow = fb::make_ptr<MaterialWindow>( parentWindow );
+                materialWindow->load( data );
+                materialWindow->setWindowVisible( false );
+                m_materialWindow = materialWindow;
+
                 auto terrainWindow = fb::make_ptr<TerrainWindow>();
                 terrainWindow->setParent( parentWindow );
                 terrainWindow->load( data );
@@ -272,7 +368,7 @@ namespace fb
 
                 m_dataArray.clear();
 
-                BaseWindow::unload( nullptr );
+                EditorWindow::unload( nullptr );
 
                 setLoadingState( LoadingState::Unloaded );
             }
@@ -546,7 +642,7 @@ namespace fb
                     auto treeNode = m_tree->addNode();
 
                     FB_ASSERT( treeNode );
-                    ApplicationUtil::setText( treeNode, className );
+                    Util::setText( treeNode, className );
 
                     treeNode->setNodeUserData( data );
 
@@ -560,7 +656,7 @@ namespace fb
                     auto subComponentsTreeNode = m_tree->addNode();
 
                     FB_ASSERT( subComponentsTreeNode );
-                    ApplicationUtil::setText( subComponentsTreeNode, "Sub Components" );
+                    Util::setText( subComponentsTreeNode, "Sub Components" );
 
                     auto subComponents = component->getSubComponents();
                     if( !subComponents.empty() )
@@ -582,7 +678,7 @@ namespace fb
                     auto childrenTreeNode = m_tree->addNode();
 
                     FB_ASSERT( childrenTreeNode );
-                    ApplicationUtil::setText( childrenTreeNode, "Children" );
+                    Util::setText( childrenTreeNode, "Children" );
 
                     if( treeNode )
                     {
@@ -685,7 +781,7 @@ namespace fb
                     auto treeNode = m_tree->addNode();
 
                     FB_ASSERT( treeNode );
-                    ApplicationUtil::setText( treeNode, className );
+                    Util::setText( treeNode, className );
 
                     treeNode->setNodeUserData( data );
 
@@ -724,7 +820,7 @@ namespace fb
 
                 // auto node = m_tree->addNode();
                 // FB_ASSERT(node);
-                // ApplicationUtil::setText(node, actorName);
+                // Util::setText(node, actorName);
 
                 // parentNode->addChild(node);
 
@@ -1150,7 +1246,7 @@ namespace fb
         {
         }
 
-        fb::Parameter ActorWindow::UIElementListener::handleEvent(
+        Parameter ActorWindow::UIElementListener::handleEvent(
             IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
             SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
         {
@@ -1308,28 +1404,10 @@ namespace fb
 
                     selectionManager->clearSelection();
 
-                    auto component = data->getObjectData();
-                    selectionManager->addSelectedObject( component );
-
-                    auto terrain = m_owner->m_terrainWindow;
-
-                    if( component->isDerived<scene::TerrainSystem>() )
+                    auto object = data->getObjectData();
+                    if( object )
                     {
-                        terrain->setWindowVisible( true );
-                        m_owner->m_eventsWindow->setWindowVisible( false );
-
-                        terrain->updateSelection();
-                        m_owner->m_propertiesWindow->updateSelection();
-                        m_owner->m_eventsWindow->updateSelection();
-                    }
-                    else
-                    {
-                        terrain->setWindowVisible( false );
-                        m_owner->m_eventsWindow->setWindowVisible( true );
-
-                        terrain->updateSelection();
-                        m_owner->m_propertiesWindow->updateSelection();
-                        m_owner->m_eventsWindow->updateSelection();
+                        m_owner->updateObjectSelection( object );
                     }
                 }
             }
@@ -1346,5 +1424,5 @@ namespace fb
         {
             m_owner = owner;
         }
-    }  // end namespace editor
-}  // end namespace fb
+    }  // namespace editor
+}  // namespace fb

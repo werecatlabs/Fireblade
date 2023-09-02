@@ -2,7 +2,7 @@
 #include <FBCore/Memory/TypeManager.h>
 #include <FBCore/Core/StringUtil.h>
 
-#include <FBCore/Interface/IApplicationClient.h>
+#include <FBCore/Interface/IApplication.h>
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IMaterial.h>

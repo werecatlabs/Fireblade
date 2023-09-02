@@ -78,43 +78,71 @@ namespace fb
 
         bool CUIButton::handleEvent( const SmartPtr<IInputEvent> &event )
         {
-            switch( event->getEventType() )
+            if( auto enabled = isEnabled() )
             {
-            case IInputEvent::EventType::Mouse:
-            {
-                //Mouse event
-                auto mouseState = event->getMouseState();
-                auto mouseEventType = mouseState->getEventType();
-
-                if( mouseEventType == IMouseState::Event::LeftPressed )
+                switch( auto eventType = event->getEventType() )
                 {
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
+                case IInputEvent::EventType::Mouse:
+                {
+                    //Mouse event
+                    auto mouseState = event->getMouseState();
+                    auto mouseEventType = mouseState->getEventType();
 
-                    auto ui = fb::static_pointer_cast<CUIManager>( applicationManager->getUI() );
-                    if( ui )
+                    if( mouseEventType == IMouseState::Event::LeftPressed )
                     {
-                        auto relativeMousePosition = mouseState->getRelativePosition();
+                        auto applicationManager = core::IApplicationManager::instance();
+                        FB_ASSERT( applicationManager );
 
-                        if( auto uiWindow = ui->getMainWindow() )
+                        auto ui = fb::static_pointer_cast<CUIManager>( applicationManager->getUI() );
+                        if( ui )
                         {
-                            if( auto mainWindow = applicationManager->getWindow() )
+                            auto relativeMousePosition = mouseState->getRelativePosition();
+
+                            if( auto uiWindow = ui->getMainWindow() )
                             {
-                                auto mainWindowSize = mainWindow->getSize();
-                                auto mainWindowSizeF = Vector2F( (f32)mainWindowSize.x, (f32)mainWindowSize.y );
-
-                                auto pos = uiWindow->getPosition() / mainWindowSizeF;
-                                auto size = uiWindow->getSize() / mainWindowSizeF;
-
-                                auto aabb = AABB2F( pos, size, true );
-                                if( aabb.isInside( relativeMousePosition ) )
+                                if( auto mainWindow = applicationManager->getWindow() )
                                 {
+                                    auto mainWindowSize = mainWindow->getSize();
+                                    auto mainWindowSizeF =
+                                        Vector2F( (f32)mainWindowSize.x, (f32)mainWindowSize.y );
+
+                                    auto pos = uiWindow->getPosition() / mainWindowSizeF;
+                                    auto size = uiWindow->getSize() / mainWindowSizeF;
+
+                                    auto aabb = AABB2F( pos, size, true );
+                                    if( aabb.isInside( relativeMousePosition ) )
+                                    {
+                                        auto postion = getAbsolutePosition();
+                                        auto rect = AABB2F( postion, postion + getSize() );
+
+                                        auto point = ( relativeMousePosition - pos ) / size;
+
+                                        if( rect.isInside( point ) )
+                                        {
+                                            if( auto pLayout = getLayout() )
+                                            {
+                                                auto layout =
+                                                    fb::static_pointer_cast<CUILayout>( pLayout );
+                                                layout->onActivate( this );
+                                                return true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if( auto mainWindow = applicationManager->getWindow() )
+                                {
+                                    auto mainWindowSize = mainWindow->getSize();
+                                    auto mainWindowSizeF =
+                                        Vector2F( (f32)mainWindowSize.x, (f32)mainWindowSize.y );
                                     auto postion = getAbsolutePosition();
                                     auto rect = AABB2F( postion, postion + getSize() );
 
-                                    auto point = ( relativeMousePosition - pos ) / size;
+                                    auto point = ( relativeMousePosition - postion ) / mainWindowSizeF;
 
-                                    if( rect.isInside( point ) )
+                                    if( rect.isInside( relativeMousePosition ) )
                                     {
                                         if( auto pLayout = getLayout() )
                                         {
@@ -128,10 +156,13 @@ namespace fb
                         }
                         else
                         {
+                            auto relativeMousePosition = mouseState->getRelativePosition();
+
                             if( auto mainWindow = applicationManager->getWindow() )
                             {
                                 auto mainWindowSize = mainWindow->getSize();
-                                auto mainWindowSizeF = Vector2F( (f32)mainWindowSize.x, (f32)mainWindowSize.y );
+                                auto mainWindowSizeF =
+                                    Vector2F( (f32)mainWindowSize.x, (f32)mainWindowSize.y );
                                 auto postion = getAbsolutePosition();
                                 auto rect = AABB2F( postion, postion + getSize() );
 
@@ -149,126 +180,107 @@ namespace fb
                             }
                         }
                     }
-                    else
+                    else if( mouseEventType == IMouseState::Event::LeftReleased )
                     {
-                        auto relativeMousePosition = mouseState->getRelativePosition();
-
-                        if( auto mainWindow = applicationManager->getWindow() )
+                    }
+                    else if( mouseEventType == IMouseState::Event::MiddleReleased )
+                    {
+                    }
+                    else if( mouseEventType == IMouseState::Event::Moved )
+                    {
+                        Vector2F point( event->getMouseState()->getRelativePosition().X(),
+                                        event->getMouseState()->getRelativePosition().Y() );
+                        Vector2F postion = getAbsolutePosition();
+                        AABB2F rect( postion, postion + getSize() );
+                        if( rect.isInside( point ) )
                         {
-                            auto mainWindowSize = mainWindow->getSize();
-                            auto mainWindowSizeF = Vector2F( (f32)mainWindowSize.x, (f32)mainWindowSize.y );
-                            auto postion = getAbsolutePosition();
-                            auto rect = AABB2F( postion, postion + getSize() );
-
-                            auto point = ( relativeMousePosition - postion ) / mainWindowSizeF;
-
-                            if( rect.isInside( relativeMousePosition ) )
+                            if( m_hoverMaterial.length() > 0 )
                             {
-                                if( auto pLayout = getLayout() )
+                                if( m_container )
                                 {
-                                    auto layout = fb::static_pointer_cast<CUILayout>( pLayout );
-                                    layout->onActivate( this );
-                                    return true;
+                                    //m_container->setMaterialName( m_hoverMaterial );
                                 }
                             }
+
+                            setHighlighted( true );
                         }
-                    }
-                }
-                else if( mouseEventType == IMouseState::Event::LeftReleased )
-                {
-                }
-                else if( mouseEventType == IMouseState::Event::MiddleReleased )
-                {
-                }
-                else if( mouseEventType == IMouseState::Event::Moved )
-                {
-                    Vector2F point( event->getMouseState()->getRelativePosition().X(),
-                                    event->getMouseState()->getRelativePosition().Y() );
-                    Vector2F postion = getAbsolutePosition();
-                    AABB2F rect( postion, postion + getSize() );
-                    if( rect.isInside( point ) )
-                    {
-                        if( m_hoverMaterial.length() > 0 )
+                        else
                         {
                             if( m_container )
                             {
-                                //m_container->setMaterialName( m_hoverMaterial );
+                                //m_container->setMaterialName( m_defaultMaterial );
+                            }
+
+                            setHighlighted( false );
+                        }
+                    }
+                }
+                break;
+                case IInputEvent::EventType::User:
+                case IInputEvent::EventType::Key:
+                {
+                    if( !isInFocus() )
+                    {
+                        return false;
+                    }
+
+                    if( event->getKeyboardState()->isPressedDown() )
+                    {
+                        if( event->getKeyboardState()->getKeyCode() == (u32)KeyCodes::KEY_RETURN )
+                        {
+                            if( auto pLayout = getLayout() )
+                            {
+                                auto layout = fb::static_pointer_cast<CUILayout>( pLayout );
+                                layout->onActivate( this );
+                                return true;
                             }
                         }
-
-                        setHighlighted( true );
-                    }
-                    else
-                    {
-                        if( m_container )
+                        else if( event->getKeyboardState()->getKeyCode() == (u32)KeyCodes::KEY_BACK )
                         {
-                            //m_container->setMaterialName( m_defaultMaterial );
-                        }
-
-                        setHighlighted( false );
-                    }
-                }
-            }
-            break;
-            case IInputEvent::EventType::User:
-            case IInputEvent::EventType::Key:
-            {
-                if( !isInFocus() )
-                {
-                    return false;
-                }
-
-                if( event->getKeyboardState()->isPressedDown() )
-                {
-                    if( event->getKeyboardState()->getKeyCode() == (u32)KeyCodes::KEY_RETURN )
-                    {
-                        if( auto pLayout = getLayout() )
-                        {
-                            auto layout = fb::static_pointer_cast<CUILayout>( pLayout );
-                            layout->onActivate( this );
+                            onDeactivate();
                             return true;
                         }
                     }
-                    else if( event->getKeyboardState()->getKeyCode() == (u32)KeyCodes::KEY_BACK )
+                }
+                break;
+                case IInputEvent::EventType::Joystick:
+                {
+                    if( !isInFocus() )
                     {
-                        onDeactivate();
-                        return true;
+                        return false;
                     }
-                }
-            }
-            break;
-            case IInputEvent::EventType::Joystick:
-            {
-                if( !isInFocus() )
-                {
-                    return false;
-                }
 
-                auto actionId0 = StringUtil::getHash( "Action0" );
-                auto actionId1 = StringUtil::getHash( "Action1" );
+                    auto actionId0 = StringUtil::getHash( "Action0" );
+                    auto actionId1 = StringUtil::getHash( "Action1" );
 
-                auto joystickState = event->getJoystickState();
-                auto joystickEventType = (IJoystickState::Type)joystickState->getEventType();
+                    auto joystickState = event->getJoystickState();
+                    auto joystickEventType = (IJoystickState::Type)joystickState->getEventType();
 
-                switch( joystickEventType )
-                {
-                case IJoystickState::Type::ButtonPressed:
-                {
-                    auto gameInputState = event->getGameInputState();
-                    if( gameInputState->getAction() == actionId0 )
+                    switch( joystickEventType )
                     {
-                        if( auto pLayout = getLayout() )
+                    case IJoystickState::Type::ButtonPressed:
+                    {
+                        auto gameInputState = event->getGameInputState();
+                        if( gameInputState->getAction() == actionId0 )
                         {
-                            auto layout = fb::static_pointer_cast<CUILayout>( pLayout );
-                            layout->onActivate( this );
+                            if( auto pLayout = getLayout() )
+                            {
+                                auto layout = fb::static_pointer_cast<CUILayout>( pLayout );
+                                layout->onActivate( this );
+                                return true;
+                            }
+                        }
+                        else if( gameInputState->getAction() == actionId1 )
+                        {
+                            onDeactivate();
                             return true;
                         }
                     }
-                    else if( gameInputState->getAction() == actionId1 )
+                    break;
+                    default:
                     {
-                        onDeactivate();
-                        return true;
                     }
+                    };
                 }
                 break;
                 default:
@@ -276,11 +288,6 @@ namespace fb
                 }
                 };
             }
-            break;
-            default:
-            {
-            }
-            };
 
             return false;
         }

@@ -18,7 +18,7 @@ namespace fb
             void execute() override;
 
         protected:
-            class ActorData : public SharedObject<ISharedObject>
+            class ActorData : public ISharedObject
             {
             public:
                 ActorData();
@@ -30,18 +30,18 @@ namespace fb
                 SmartPtr<scene::IActor> getActor() const;
                 void setActor( SmartPtr<scene::IActor> val );
 
-                SmartPtr<IData> getActorData() const;
-                void setActorData( SmartPtr<IData> val );
+                SmartPtr<ISharedObject> getActorData() const;
+                void setActorData( SmartPtr<ISharedObject> val );
 
             private:
                 SmartPtr<scene::IActor> m_parent;
                 SmartPtr<scene::IActor> m_actor;
-                SmartPtr<IData> m_actorData;
+                SmartPtr<ISharedObject> m_actorData;
             };
 
             Array<SmartPtr<ActorData>> m_actorData;
         };
-    } // end namespace editor
-}     // end namespace fb
+    }  // end namespace editor
+}  // end namespace fb
 
 #endif  // RemoveSelectionCmd_h__

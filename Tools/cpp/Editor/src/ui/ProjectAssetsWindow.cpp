@@ -1,7 +1,7 @@
 #include <GameEditorPCH.h>
 #include <ui/ProjectAssetsWindow.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
+
 #include <ui/FileWindow.h>
 #include <ui/ProjectTreeData.h>
 #include <ui/UIManager.h>
@@ -11,6 +11,8 @@
 #include <commands/AddActorCmd.h>
 #include "commands/RemoveResourceCmd.h"
 #include <editor/Project.h>
+
+#include "jobs/FileSelectedJob.h"
 
 #define TREE_ITEM_STATE_NOT_FOUND 0
 #define TREE_ITEM_STATE_EXPANDED 1
@@ -97,22 +99,22 @@ namespace fb
                 m_applicationAddMenu = ui->addElementByType<ui::IUIMenu>();
                 m_applicationAddMenu->setLabel( "Add" );
 
-                ApplicationUtil::addMenuItem( m_applicationAddMenu,
+                Util::addMenuItem( m_applicationAddMenu,
                                               static_cast<s32>( MenuId::AddMaterial ), "Material",
                                               "Material" );
 
-                ApplicationUtil::addMenuItem( m_applicationAddMenu,
+                Util::addMenuItem( m_applicationAddMenu,
                                               static_cast<s32>( MenuId::AddScript ), "Script",
                                               "Add a script" );
 
-                ApplicationUtil::addMenuSeparator( m_applicationAddMenu );
-                ApplicationUtil::addMenuItem( m_applicationAddMenu,
+                Util::addMenuSeparator( m_applicationAddMenu );
+                Util::addMenuItem( m_applicationAddMenu,
                                               static_cast<s32>( MenuId::AddTerrainDirector ),
                                               "Terrain Resource", "Terrain Resource" );
 
                 m_applicationMenu->addMenuItem( m_applicationAddMenu );
 
-                ApplicationUtil::addMenuItem( m_applicationMenu, static_cast<s32>( MenuId::Remove ),
+                Util::addMenuItem( m_applicationMenu, static_cast<s32>( MenuId::Remove ),
                                               "Remove", "Remove" );
 
                 parentWindow->setContextMenu( m_applicationMenu );
@@ -182,7 +184,7 @@ namespace fb
 
                     clearData();
 
-                    BaseWindow::unload( data );
+                    EditorWindow::unload( data );
 
                     setLoadingState( LoadingState::Unloaded );
                 }
@@ -238,7 +240,7 @@ namespace fb
 
                     if( auto node = tree->addNode() )
                     {
-                        ApplicationUtil::setText( node, folderName );
+                        Util::setText( node, folderName );
 
                         node->setNodeUserData( data );
 
@@ -275,7 +277,7 @@ namespace fb
 
                             if( auto fileNode = tree->addNode() )
                             {
-                                ApplicationUtil::setText( fileNode, fileName );
+                                Util::setText( fileNode, fileName );
 
                                 fileNode->setNodeUserData( data );
 
@@ -387,7 +389,7 @@ namespace fb
                 FB_LOG_EXCEPTION( e );
             }
         }
-        
+
         void ProjectAssetsWindow::handleTreeSelectionActivated( SmartPtr<ui::IUITreeNode> node )
         {
             auto applicationManager = core::IApplicationManager::instance();
@@ -438,6 +440,8 @@ namespace fb
             auto taskManager = applicationManager->getTaskManager();
             FB_ASSERT( taskManager );
 
+            auto jobQueue = applicationManager->getJobQueue();
+
             auto editorManager = EditorManager::getSingletonPtr();
             FB_ASSERT( editorManager );
 
@@ -454,36 +458,15 @@ namespace fb
                 auto ownerType = projectTreeData->getOwnerType();
                 if( ownerType == "file" )
                 {
-                    auto renderLock = taskManager->lockTask( Thread::Task::Render );
-                    auto physicsLock = taskManager->lockTask( Thread::Task::Physics );
-
                     auto path = projectTreeData->getObjectType();
 
-                    auto projectPath = applicationManager->getProjectPath();
-                    if( StringUtil::isNullOrEmpty( projectPath ) )
-                    {
-                        projectPath = Path::getWorkingDirectory();
-                    }
-
-                    auto scenePath = Path::lexically_normal( projectPath, path );
-                    scenePath = StringUtil::cleanupPath( scenePath );
-                    project->setCurrentScenePath( scenePath );
-
-                    auto sceneManager = applicationManager->getSceneManager();
-                    auto scene = sceneManager->getCurrentScene();
-                    if( scene )
-                    {
-                        scene->clear();
-                        scene->loadScene( scenePath );
-                    }
-
-                    sceneManager->edit();
+                    auto job = fb::make_ptr<FileSelectedJob>();
+                    job->setFilePath( path );
+                    jobQueue->addJob( job );
                 }
             }
-
-            uiManager->rebuildSceneTree();
         }
-        
+
         void ProjectAssetsWindow::saveTreeState()
         {
         }
@@ -546,12 +529,19 @@ namespace fb
         {
             auto owner = getOwner();
 
-            if( eventValue == IEvent::handleTreeSelectionActivated )
+            if( eventValue == IEvent::handleTreeSelectionRelease )
             {
                 owner->m_selectedObject = object;
 
                 auto node = fb::dynamic_pointer_cast<ui::IUITreeNode>( arguments[0].object );
-                m_owner->handleTreeSelectionActivated( node );
+                auto treeData = fb::static_pointer_cast<ProjectTreeData>( node->getNodeUserData() );
+                if( treeData )
+                {
+                    if( treeData->getOwnerType() != "folder" )
+                    {
+                        m_owner->handleTreeSelectionActivated( node );
+                    }
+                }
             }
             else if( eventValue == IEvent::handleTreeNodeDoubleClicked )
             {
@@ -690,7 +680,7 @@ namespace fb
             if( element->isDerived<ui::IUITreeNode>() )
             {
                 auto treeNode = fb::static_pointer_cast<ui::IUITreeNode>( element );
-                auto text = ApplicationUtil::getText( treeNode );
+                auto text = Util::getText( treeNode );
 
                 auto userData = treeNode->getNodeUserData();
                 auto projectTreeData = fb::static_pointer_cast<ProjectTreeData>( userData );

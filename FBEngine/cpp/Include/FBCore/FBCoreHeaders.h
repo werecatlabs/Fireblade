@@ -1,6 +1,7 @@
 #ifndef FBCoreHeaders_h__
 #define FBCoreHeaders_h__
 
+#include <FBCore/ApplicationUtil.h>
 #include "FBCore/Animation/InterpolateAnimator.h"
 
 #include <FBCore/Core/BitUtil.h>
@@ -8,8 +9,11 @@
 #include <FBCore/Core/Util.h>
 #include <FBCore/Core/DataUtil.h>
 #include <FBCore/Core/DebugTrace.h>
+#include <FBCore/Core/FSMListener.h>
+#include <FBCore/Core/FSMManager.h>
 #include <FBCore/Core/Handle.h>
 #include <FBCore/Core/LogManager.h>
+#include <FBCore/Core/LogManagerDefault.h>
 #include <FBCore/Core/Node.h>
 #include <FBCore/Core/Path.h>
 #include <FBCore/Core/PluginMacros.h>
@@ -21,7 +25,7 @@
 #include <FBCore/Database/DatabaseManager.h>
 #include <FBCore/Database/AssetDatabaseManager.h>
 
-#include <FBCore/Interface/IApplicationClient.h>
+#include <FBCore/Interface/IApplication.h>
 #include <FBCore/Interface/IApplicationManager.h>
 
 // ai
@@ -93,8 +97,7 @@
 #include <FBCore/Interface/FSM/IFSM.h>
 #include <FBCore/Interface/FSM/IFSMManager.h>
 #include <FBCore/Interface/FSM/IFSMListener.h>
-#include <FBCore/Core/FSMListener.h>
-#include <FBCore/Core/FSMManager.h>
+
 
 // graphics
 #include <FBCore/Interface/Graphics/IAnimationController.h>
@@ -418,6 +421,13 @@
 #include <FBCore/Interface/System/IPluginEvent.h>
 #include <FBCore/Interface/System/IPluginInterface.h>
 
+#include <FBCore/IO/CFileSystem.h>
+#include <FBCore/IO/ZipUtil.h>
+
+#include <FBCore/Jobs/CameraManagerReset.h>
+#include <FBCore/Jobs/FlagSetJob.h>
+#include <FBCore/Jobs/ObjectUpdateJob.h>
+
 // math
 #include <FBCore/Math/MathUtil.h>
 #include <FBCore/Math/LinearSpline1.h>
@@ -431,6 +441,10 @@
 #include <FBCore/Math/Vector2.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Vector4.h>
+
+#include <FBCore/Manipulators/ScaleManipulator.h>
+#include <FBCore/Manipulators/TranslateManipulator.h>
+#include <FBCore/Manipulators/RotateManipulator.h>
 
 #include "FBCore/Mesh/Mesh.h"
 #include "FBCore/Mesh/VertexBuffer.h"
@@ -467,6 +481,7 @@
 
 #include <FBCore/Scene/Components/AudioEmitter.h>
 #include <FBCore/Scene/Components/Component.h>
+#include "FBCore/Scene/Components/CarController.h"
 #include <FBCore/Scene/Components/Camera.h>
 #include <FBCore/Scene/Components/Constraint.h>
 #include <FBCore/Scene/Components/Cubemap.h>
@@ -476,13 +491,22 @@
 #include <FBCore/Scene/Components/CollisionPlane.h>
 #include <FBCore/Scene/Components/CollisionSphere.h>
 #include <FBCore/Scene/Components/CollisionTerrain.h>
+#include <FBCore/Scene/Components/FiniteStateMachine.h>
 #include <FBCore/Scene/Components/Light.h>
 #include <FBCore/Scene/Components/Material.h>
 #include <FBCore/Scene/Components/Mesh.h>
 #include <FBCore/Scene/Components/MeshRenderer.h>
+#include <FBCore/Scene/Components/ParticleSystem.h>
 #include <FBCore/Scene/Components/Rigidbody.h>
 #include <FBCore/Scene/Components/Skybox.h>
 #include <FBCore/Scene/Components/SubComponent.h>
+#include <FBCore/Scene/Components/WheelController.h>
+
+#include <FBCore/Scene/Components/Camera/FPSCameraController.h>
+#include <FBCore/Scene/Components/Camera/EditorCameraController.h>
+#include <FBCore/Scene/Components/Camera/SphericalCameraController.h>
+#include <FBCore/Scene/Components/Camera/ThirdPersonCameraController.h>
+#include <FBCore/Scene/Components/Camera/VehicleCameraController.h>
 
 #include <FBCore/Scene/Components/Terrain/TerrainSystem.h>
 #include <FBCore/Scene/Components/Terrain/TerrainLayer.h>
@@ -497,10 +521,12 @@
 #include <FBCore/Scene/Components/UI/Layout.h>
 #include <FBCore/Scene/Components/UI/LayoutTransform.h>
 
+
 #include <FBCore/Scene/Systems/UI/LayoutTransformSystem.h>
 
 #include <FBCore/Scene/Actor.h>
 #include <FBCore/Scene/CameraManager.h>
+#include <FBCore/Scene/Director.h>
 #include <FBCore/Scene/SceneManager.h>
 #include <FBCore/Scene/Scene.h>
 #include <FBCore/Scene/Transform.h>
@@ -508,6 +534,7 @@
 #include <FBCore/Script/ScriptEvent.h>
 #include <FBCore/Script/ScriptClass.h>
 #include <FBCore/Script/ScriptFunction.h>
+#include <FBCore/Script/ScriptGenerator.h>
 #include <FBCore/Script/ScriptInvoker.h>
 #include <FBCore/Script/ScriptReceiverAdapter.h>
 #include <FBCore/Script/ScriptVariable.h>
@@ -597,6 +624,7 @@
 #include <FBCore/System/Plugin.h>
 #include <FBCore/System/PluginEvent.h>
 #include <FBCore/System/PluginManager.h>
+#include <FBCore/System/ProjectManager.h>
 #include <FBCore/System/ProcessManager.h>
 #include <FBCore/System/Profile.h>
 #include <FBCore/System/Profiler.h>
@@ -615,5 +643,6 @@
 #include <FBCore/System/TimerWin32.h>
 #include <FBCore/System/WorkerThread.h>
 #include <FBCore/System/WindowMessageData.h>
+
 
 #endif  // FBCoreHeaders_h__

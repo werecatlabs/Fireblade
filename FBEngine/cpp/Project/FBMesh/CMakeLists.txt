@@ -178,7 +178,7 @@ if (NOT FB_STATIC_LIB)
     elseif (UNIX)
         if (FB_GRAPHICS_SYSTEM_OGRENEXT)
             target_link_libraries(FBMesh -Wl,--start-group FBMesh.a FBAero.a FBAssimp.a libFBTest.a
-                FBApplication.a FBFileSystem.a FBMath.a FBState.a FBVehicle.a FBData.a FBMesh.a FBGraphics.a
+                FBApplication.a.a FBMath.a FBState.a FBVehicle.a FBData.a FBMesh.a FBGraphics.a
                 libFBObjectTemplates.a libFBVehicle.a libFBProcedural.a libFBSQLite.a libFBPhysx.a FBPhysics3.a FBAudio.a FBRenderUI.a  
                 FBGraphicsOgreNext.a ${X11_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
                 png Xaw Xrandr Xt xcb GL
@@ -201,7 +201,7 @@ if (NOT FB_STATIC_LIB)
             target_link_libraries(FBMesh libFBGraphicsSoftware.a)
         else()
             target_link_libraries(FBMesh -Wl,--start-group FBMesh.a FBAero.a 
-                FBApplication.a FBFileSystem.a FBMath.a FBState.a FBVehicle.a FBData.a FBMesh.a FBGraphics.a
+                FBApplication.a.a FBMath.a FBState.a FBVehicle.a FBData.a FBMesh.a FBGraphics.a
                 libFBObjectTemplates.a libFBVehicle.a libFBProcedural.a libFBSQLite.a libFBPhysx.a FBPhysics3.a FBAudio.a FBRenderUI.a        
                 libboost_thread-gcc5-mt-s-x64-1_70.a
                 libboost_date_time-gcc5-mt-s-x64-1_70.a

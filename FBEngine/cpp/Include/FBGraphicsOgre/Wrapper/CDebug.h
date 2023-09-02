@@ -5,7 +5,7 @@
 #include <FBCore/Interface/Graphics/IDebug.h>
 #include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Core/ConcurrentQueue.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Thread/Threading.h>
 #include <OgreMaterial.h>
 
@@ -13,7 +13,7 @@ namespace fb
 {
     namespace render
     {
-        class CDebug : public SharedObject<IDebug>
+        class CDebug : public IDebug
         {
         public:
             CDebug();

@@ -2,14 +2,14 @@
 #define ProjectTreeData_h__
 
 #include <GameEditorPrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb
 {
     namespace editor
     {
-                
-        class ProjectTreeData : public SharedObject<ISharedObject>
+
+        class ProjectTreeData : public ISharedObject
         {
         public:
             ProjectTreeData() = default;

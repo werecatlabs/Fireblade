@@ -2,14 +2,14 @@
 #define ImGuiEventWindow_h__
 
 #include <FBImGui/FBImGuiPrerequisites.h>
-#include <FBImGui/ImGuiWindow.h>
+#include <FBImGui/ImGuiWindowT.h>
 #include <FBCore/Interface/UI/IUIEventWindow.h>
 
 namespace fb
 {
     namespace ui
     {
-        class ImGuiEventWindow : public ImGuiWindow<IUIEventWindow>
+        class ImGuiEventWindow : public ImGuiWindowT<IUIEventWindow>
         {
         public:
             ImGuiEventWindow();

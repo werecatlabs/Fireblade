@@ -1,7 +1,7 @@
 #include <GameEditorPCH.h>
 #include <ui/FileViewWindow.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
+
 
 namespace fb
 {

@@ -3,17 +3,17 @@
 
 #include <FBOISInput/FBOISInputPrerequisites.h>
 #include "FBCore/Interface/Input/IGameInputMap.h"
-#include "FBCore/Interface/Input/IInputActionData.h"
-#include <FBCore/Memory/SharedObject.h>
+#include "FBCore/Interface/Input/IInputAction.h"
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/HashMap.h>
 #include <map>
 #include <vector>
 
 namespace fb
 {
-    using ActionKeyMap = std::map<u32, SmartPtr<IInputActionData>>;
+    using ActionKeyMap = std::map<u32, SmartPtr<IInputAction>>;
 
-    class OISGameInputMap : public SharedObject<IGameInputMap>
+    class OISGameInputMap : public IGameInputMap
     {
     public:
         OISGameInputMap();
@@ -32,14 +32,14 @@ namespace fb
         const ActionKeyMap &getKeyboardMap() const;
         const ActionKeyMap &getJoystickMap() const;
 
-        bool getInputActionData( u32 button, SmartPtr<IInputActionData> &data );
+        bool getInputActionData( u32 button, SmartPtr<IInputAction> &data );
 
     protected:
         /** */
-        void setKeyboardAction( u32 id, const SmartPtr<IInputActionData> &actionData );
+        void setKeyboardAction( u32 id, const SmartPtr<IInputAction> &actionData );
 
         /** */
-        void setJoystickAction( u32 id, const SmartPtr<IInputActionData> &actionData );
+        void setJoystickAction( u32 id, const SmartPtr<IInputAction> &actionData );
 
         ///
         ActionKeyMap m_keyboardMap;

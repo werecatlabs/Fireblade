@@ -4,7 +4,7 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IRenderTarget.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Core/Exception.h>
 #include <FBCore/Core/LogManager.h>
@@ -19,7 +19,7 @@ namespace fb
 
         /** Implements IRenderTarget interface for Ogre. */
         template <class T>
-        class CRenderTargetOgre : public SharedObject<T>
+        class CRenderTargetOgre : public T
         {
         public:
             /** Constructor. */

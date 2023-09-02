@@ -3,7 +3,6 @@
 #include "ui/FileWindow.h"
 #include "ui/ProjectAssetsWindow.h"
 #include "editor/EditorManager.h"
-#include <FBApplication/Script/ScriptGenerator.h>
 #include "ui/ProjectTreeData.h"
 #include "ui/UIManager.h"
 #include "commands/DragDropActorCmd.h"

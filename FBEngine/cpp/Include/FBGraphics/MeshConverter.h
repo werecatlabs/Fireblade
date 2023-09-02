@@ -4,13 +4,13 @@
 #include <FBGraphics/FBGraphicsPrerequisites.h>
 #include <FBCore/Interface/Graphics/IMeshConverter.h>
 #include <FBCore/Interface/Mesh/IMesh.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb
 {
 
     //--------------------------------------------
-    class MeshConverter : public SharedObject<render::IMeshConverter>
+    class MeshConverter : public render::IMeshConverter
     {
     public:
         MeshConverter();

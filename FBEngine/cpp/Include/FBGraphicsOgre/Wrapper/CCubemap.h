@@ -3,7 +3,7 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/ICubemap.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Core/Array.h>
 #include <OgreFrameListener.h>
 #include <OgreRenderTargetListener.h>
@@ -16,7 +16,7 @@ namespace fb
         /**
         * @brief A cubemap object.
          */
-        class CCubemap : public SharedObject<ICubemap>
+        class CCubemap : public ICubemap
         {
         public:
             /** @brief Constructor. */

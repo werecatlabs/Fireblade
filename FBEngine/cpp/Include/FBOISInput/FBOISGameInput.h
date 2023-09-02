@@ -4,11 +4,11 @@
 #include <FBOISInput/FBOISInputPrerequisites.h>
 #include <FBCore/Interface/Input/IGameInput.h>
 #include <FBCore/Interface/System/IEventListener.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb
 {
-    class OISGameInput : public SharedObject<IGameInput>
+    class OISGameInput : public IGameInput
     {
     public:
         OISGameInput( OISInputManager *inputManager );

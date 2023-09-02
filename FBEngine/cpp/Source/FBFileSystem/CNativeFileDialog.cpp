@@ -7,7 +7,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, CNativeFileDialog, SharedObject<INativeFileDialog> );
+    FB_CLASS_REGISTER_DERIVED( fb, CNativeFileDialog, INativeFileDialog );
 
     CNativeFileDialog::CNativeFileDialog()
     {

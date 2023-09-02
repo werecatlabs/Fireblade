@@ -1,6 +1,6 @@
 project(FBAudio)
 
-add_compile_definitions (_FB_STATIC_LIB_)
+
 
 # define header and source files for the library
 file(GLOB_RECURSE HEADER_FILES "../../Include/FBAudio/*.h")

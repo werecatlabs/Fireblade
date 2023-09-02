@@ -1,6 +1,5 @@
 #include <GameEditorPCH.h>
 #include <ui/InputManagerWindow.h>
-#include "FBWxWidgets/wxGUIUtil.h"
 #include "editor/EditorManager.h"
 #include <FBCore/FBCore.h>
 
@@ -8,7 +7,7 @@ namespace fb
 {
     namespace editor
     {
-        FB_CLASS_REGISTER_DERIVED( fb, InputManagerWindow, BaseWindow );
+        FB_CLASS_REGISTER_DERIVED( fb, InputManagerWindow, EditorWindow );
 
         InputManagerWindow::InputManagerWindow()
         {

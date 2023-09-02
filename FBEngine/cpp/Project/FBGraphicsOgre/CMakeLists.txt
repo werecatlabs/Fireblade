@@ -448,7 +448,7 @@ elseif (FB_USE_TBB)
     include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/tbb/include )
 endif()
 
-include_directories( ${FB_ROOT}/Dependencies/tinyxml/include )
+include_directories( ${FB_ROOT}/Dependencies/tinyxml )
 include_directories( ${FB_ROOT}/Dependencies/utf8/source )
 include_directories( ${FB_ROOT}/AdditionalLibraries/assimp/include )
 #include_directories( ${FB_ROOT}/AdditionalLibraries/ogre/Dependencies/include )

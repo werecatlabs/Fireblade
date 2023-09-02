@@ -5,7 +5,7 @@
 #include "editor/Project.h"
 #include "ui/ProjectWindow.h"
 #include "ui/UIManager.h"
-#include <FBApplication/FBApplication.h>
+
 #include <FBCore/FBCore.h>
 #include <fstream>
 

@@ -20,7 +20,6 @@
 #include <FBGraphicsOgre/FBOgreTypes.h>
 #include <FBGraphicsOgre/Ogre/MaterialListener.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
 
 #include <OgreBitesConfigDialog.h>
 #include <OgreWindowEventUtilities.h>
@@ -360,11 +359,11 @@ namespace fb
         {
             try
             {
-                FB_ASSERT( isValid() );
-
-                if( const auto &loadingState = getLoadingState(); loadingState == LoadingState::Loaded )
+                if( isLoaded() )
                 {
                     setLoadingState( LoadingState::Unloading );
+
+                    FB_ASSERT( isValid() );
 
                     if( auto textureManager = getTextureManager() )
                     {
@@ -431,9 +430,6 @@ namespace fb
                     }
 
                     FB_SAFE_DELETE( m_overlaySystem );
-
-                    auto &gc = GarbageCollector::instance();
-                    gc.update();
 
                     if( m_fontManager )
                     {

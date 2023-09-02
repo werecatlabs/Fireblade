@@ -2,7 +2,7 @@
 #define ImGuiRenderWindow_h__
 
 #include <FBImGui/FBImGuiPrerequisites.h>
-#include <FBImGui/ImGuiWindow.h>
+#include <FBImGui/ImGuiWindowT.h>
 #include <FBCore/Interface/UI/IUIRenderWindow.h>
 
 namespace fb
@@ -10,7 +10,7 @@ namespace fb
     namespace ui
     {
 
-        class ImGuiRenderWindow : public ImGuiWindow<IUIRenderWindow>
+        class ImGuiRenderWindow : public ImGuiWindowT<IUIRenderWindow>
         {
         public:
             ImGuiRenderWindow();

@@ -2,7 +2,7 @@
 #define __FileWindow_h__
 
 #include <GameEditorPrerequisites.h>
-#include "ui/BaseWindow.h"
+#include "ui/EditorWindow.h"
 #include <FBCore/Interface/System/IStateListener.h>
 
 namespace fb
@@ -10,7 +10,7 @@ namespace fb
     namespace editor
     {
 
-        class FileWindow : public BaseWindow
+        class FileWindow : public EditorWindow
         {
         public:
             enum UiIds
@@ -121,28 +121,6 @@ namespace fb
             void setPath( const String &val );
 
         protected:
-            // class DnDText : public wxTextDropTarget
-            //{
-            // public:
-            //	DnDText(FileWindow* pOwner);
-
-            //	bool OnDropText(wxCoord x, wxCoord y, const wxString& text) override;
-
-            // private:
-            //	FileWindow* m_pOwner = nullptr;
-            // };
-
-            // class DnDFile : public wxFileDropTarget
-            //{
-            // public:
-            //	DnDFile(FileWindow* pOwner);
-
-            //	bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames) override;
-
-            // private:
-            //	FileWindow* m_pOwner = nullptr;
-            // };
-
             void handleTreeSelectionChanged();
             void handleTreeSelectionActivated();
             void handleTreeDragStart();
@@ -163,17 +141,6 @@ namespace fb
             SmartPtr<ISharedObject> m_selectedObject;
 
             SmartPtr<ISharedObject> m_selectedEntity;
-
-            //SmartPtr<TemplateFilter> m_parentFilter;
-
-            // wxTreeItemId m_scriptsId;
-            // wxTreeItemId m_graphicsMeshId;
-            // wxTreeItemId m_particleId;
-
-            // wxTreeItemId m_lastSelectedItem;
-            // wxTreeItemId m_newSelectedItem; // use when restore tree state
-
-            // wxTreeItemId m_vehicleId;
 
             String m_path;
             std::map<String, bool> treeState;

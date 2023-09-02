@@ -3,15 +3,15 @@
 
 #include <GameEditorPrerequisites.h>
 #include <FBCore/Interface/System/ICommand.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Properties.h>
 
 namespace fb
 {
     namespace editor
     {
-        
-        class AddNewScriptCmd : public SharedObject<ICommand>
+
+        class AddNewScriptCmd : public ICommand
         {
         public:
             AddNewScriptCmd();

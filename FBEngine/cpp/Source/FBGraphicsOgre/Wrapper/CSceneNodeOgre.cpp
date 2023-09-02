@@ -240,14 +240,9 @@ namespace fb
                             m_sceneNode = nullptr;
                         }
 
-                        auto &gc = GarbageCollector::instance();
-                        gc.update();
-
                         setCreator( nullptr );
 
                         CSceneNode::unload( nullptr );
-
-                        gc.update();
                     }
 
                     setLoadingState( LoadingState::Unloaded );

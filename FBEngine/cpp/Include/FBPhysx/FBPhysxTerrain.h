@@ -4,7 +4,7 @@
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBPhysx/FBPhysxShape.h>
 #include <FBCore/Interface/Physics/ITerrainShape.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Math/Transform3.h>
 #include <geometry/PxHeightFieldGeometry.h>
 #include <PxSimpleTypes.h>
@@ -88,22 +88,6 @@ namespace fb
             void setHeightScale( const Vector3<real_Num>& heightScale );
 
         protected:
-            /** Callback class for raycasting against the terrain. */
-            class RaycastCallback : public physx::PxRaycastCallback
-            {
-            public:
-                /** Constructor. */
-                RaycastCallback( PhysxTerrain *collision );
-
-                /** Processes the raycast touch data. */
-                physx::PxAgain processTouches( const physx::PxRaycastHit *data,
-                                               physx::PxU32 nbHits ) override;
-
-                physx::PxRaycastHit buffer[10]; /**< Buffer for storing raycast hit data. */
-                physx::PxRaycastHit m_hit;      /**< Data for the most recent raycast hit. */
-                PhysxTerrain *m_collision;      /**< Pointer to the terrain */
-            };
-
             /**
              * @brief Creates a height field collision shape for the terrain.
              *
@@ -173,12 +157,7 @@ namespace fb
              * @brief Atomic boolean flag indicating whether the terrain shape is static (i.e. not movable).
              */
             atomic_bool m_isStatic;
-
-            /**
-             * @brief Raw pointer to the physics actor object associated with the terrain collision shape.
-             */
-            RawPtr<physx::PxRigidActor> m_actor;
-
+            
             /**
              * @brief Smart pointer to the physics material used by the terrain shape.
              */

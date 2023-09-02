@@ -176,11 +176,6 @@ namespace fb
         {
         }
 
-        bool CVideoTextureOgre::isLoaded() const
-        {
-            return true;
-        }
-
         void CVideoTextureOgre::save()
         {
         }

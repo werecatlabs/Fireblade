@@ -4,7 +4,7 @@
 #include <FBImGui/FBImGuiPrerequisites.h>
 #include <FBCore/Interface/UI/IUIApplication.h>
 #include <FBCore/Interface/Graphics/IWindowListener.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/ColourF.h>
 #include <imgui_internal.h>
 
@@ -13,7 +13,7 @@ namespace fb
     namespace ui
     {
 
-        class ImGuiApplication : public SharedObject<IUIApplication>
+        class ImGuiApplication : public IUIApplication
         {
         public:
             ImGuiApplication();
@@ -62,8 +62,14 @@ namespace fb
 
             static ImGuiOverlayOgre *getOverlay();
 
+            // todo rename and make accessor functions
+            ImGuiID dockLeft_id_left;
+            ImGuiID dockLeft_id_right;
+            ImGuiID dockLeft_id_up;
+            ImGuiID dockLeft_id_down;
+
         protected:
-            class WindowListener : public SharedObject<render::IWindowListener>
+            class WindowListener : public render::IWindowListener
             {
             public:
                 WindowListener() = default;
@@ -144,10 +150,7 @@ namespace fb
 
             bool m_useInputEvents = false;
 
-            ImGuiID dockLeft_id_left;
-            ImGuiID dockLeft_id_right;
-            ImGuiID dockLeft_id_up;
-            ImGuiID dockLeft_id_down;
+
 
             void *m_emptyTexture = nullptr;
         };

@@ -8,7 +8,7 @@ namespace fb
 {
     namespace render
     {
-        class CompositorManager : public SharedObject<ISharedObject>
+        class CompositorManager : public ISharedObject
         {
         public:
             CompositorManager();

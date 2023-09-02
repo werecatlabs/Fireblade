@@ -5,7 +5,7 @@
 #include <editor/Project.h>
 #include <ui/ActorWindow.h>
 #include <ui/UIManager.h>
-#include <FBApplication/FBApplication.h>
+
 #include <FBCore/FBCore.h>
 
 namespace fb

@@ -5,13 +5,13 @@
 #include <FBCore/Interface/IO/IFileList.h>
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Core/Array.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/FileInfo.h>
 
 namespace fb
 {
     /** Implementation of a file list */
-    class CFileList : public SharedObject<IFileList>
+    class CFileList : public IFileList
     {
     public:
         /** Default constructor. */ 

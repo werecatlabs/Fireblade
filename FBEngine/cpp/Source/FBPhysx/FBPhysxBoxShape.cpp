@@ -102,52 +102,10 @@ namespace fb
                     auto applicationManager = core::IApplicationManager::instance();
                     FB_ASSERT( applicationManager );
 
-                    auto stateManager = applicationManager->getStateManager();
-                    FB_ASSERT( stateManager );
-
                     auto physicsManager = applicationManager->getPhysicsManager();
                     FB_ASSERT( physicsManager );
 
                     ISharedObject::ScopedLock lock( physicsManager );
-
-                    if( auto stateObject = getStateObject() )
-                    {
-                        if( auto state = stateObject->getState() )
-                        {
-                            if( stateObject )
-                            {
-                                stateObject->setState( nullptr );
-                            }
-
-                            state->unload( nullptr );
-                            state = nullptr;
-                        }
-
-                        if( m_stateListener )
-                        {
-                            stateObject->removeStateListener( m_stateListener );
-                        }
-
-                        stateManager->removeStateObject( m_stateObject );
-                        setStateObject( nullptr );
-                    }
-
-                    if( m_stateListener )
-                    {
-                        m_stateListener->unload( nullptr );
-                        m_stateListener = nullptr;
-                    }
-
-                    auto shape = getShape();
-                    if( shape )
-                    {
-                        if( m_pxActor )
-                        {
-                            m_pxActor->detachShape( *shape, false );
-                        }
-                    }
-
-                    setShape( nullptr );
 
                     PhysxShape<IBoxShape3>::unload( data );
 
@@ -182,34 +140,12 @@ namespace fb
                     state->setExtents( extents );
                 }
             }
-
-            //auto applicationManager = core::IApplicationManager::instance();
-            //auto physicsManager = applicationManager->getPhysicsManager();
-
-            //auto task = Thread::getCurrentTask();
-            //auto physicsTask = physicsManager->getPhysicsTask();
-
-            //const auto &loadingState = getLoadingState();
-
-            //if( loadingState == LoadingState::Loaded && task == physicsTask )
-            //{
-            //    auto shape = getShape();
-            //    if( shape )
-            //    {
-            //        auto halfExtents = extents / static_cast<real_Num>( 2.0 );
-            //        physx::PxVec3 dimensions( ( halfExtents.X() ), ( halfExtents.Y() ),
-            //                                  ( halfExtents.Z() ) );
-            //        physx::PxBoxGeometry geometry( dimensions );
-            //        shape->setGeometry( geometry );
-            //    }
-
-            //    m_state->setDirty( false );
-            //}
         }
 
         void PhysxBoxShape::setAABB( const AABB3<real_Num> &box )
         {
-            m_extents = box.getExtent();
+            auto extents = box.getExtent();
+            setExtents( extents );
         }
 
         AABB3<real_Num> PhysxBoxShape::getAABB() const
@@ -261,16 +197,14 @@ namespace fb
 
             const auto &loadingState = getLoadingState();
 
-            //if( ( loadingState == LoadingState::Loading || loadingState == LoadingState::Loaded ) &&
-            //    task == physicsTask )
-            //{
             auto physics = physicsManager->getPhysics();
             FB_ASSERT( physics );
 
-            auto extents = getExtents() / static_cast<real_Num>( 2.0 );
+            auto halfExtents = getExtents() / static_cast<real_Num>( 2.0 );
 
-            physx::PxVec3 dimensions( ( extents.X() ), ( extents.Y() ), ( extents.Z() ) );
+            physx::PxVec3 dimensions( ( halfExtents.X() ), ( halfExtents.Y() ), ( halfExtents.Z() ) );
             physx::PxBoxGeometry geometry( dimensions );
+
             physx::PxTransform localPose = PhysxUtil::toPx( getLocalPose() );
 
             auto material = getMaterial();
@@ -291,16 +225,17 @@ namespace fb
 
             // shape->setSimulationFilterData(simFilterData);
             // shape->setQueryFilterData(qryFilterData);
-            //}
-            //else
-            //{
-            //    auto stateMessage = factoryManager->make_ptr<StateMessage>();
-            //    stateMessage->setType( CREATE_SHAPE_HASH );
 
-            //    if( auto stateContext = getStateObject() )
-            //    {
-            //        stateContext->addMessage( physicsTask, stateMessage );
-            //    }
+            //u32 GROUP_MASK = std::numeric_limits<u32>::max();
+            //u32 COLLISION_MASK = std::numeric_limits<u32>::max();
+
+            //physx::PxFilterData filterData;
+            //filterData.word0 = GROUP_MASK;
+            //filterData.word1 = COLLISION_MASK;
+
+            //if( shape )
+            //{
+            //    shape->setSimulationFilterData( filterData );
             //}
         }
 
@@ -321,11 +256,26 @@ namespace fb
             {
                 if( auto shape = m_owner->getShape() )
                 {
+                    auto actor = m_owner->getPxActor();
+                    if (actor)
+                    {
+                        actor->detachShape( *shape );    
+                    }
+
+                    auto transform = m_owner->getLocalPose();
                     auto extents = boxShapeState->getExtents() / static_cast<real_Num>( 2.0 );
-                    auto dimensions = PhysxUtil::toPx( extents );
+                    auto dimensions = PhysxUtil::toPx( extents * transform.getScale() );
 
                     auto geometry = physx::PxBoxGeometry( dimensions );
                     shape->setGeometry( geometry );
+
+                    physx::PxTransform localPose = PhysxUtil::toPx( transform );
+                    shape->setLocalPose( localPose );
+
+                    if( actor )
+                    {
+                        actor->attachShape( *shape );
+                    }
                 }
 
                 state->setDirty( false );

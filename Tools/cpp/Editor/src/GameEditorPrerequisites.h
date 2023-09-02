@@ -4,12 +4,6 @@
 #define _WINSOCKAPI_
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBApplication/FBApplicationPrerequisites.h>
-#include <FBProcedural/FBProceduralPrerequisites.h>
-
-#if FB_BUILD_WXWIDGETS
-#    include <FBWxWidgets/FBWxWidgetsPrerequisites.h>
-#endif
 
 namespace fb
 {
@@ -19,10 +13,13 @@ namespace fb
         class SceneDropJob;
         class SceneWindow;
 
+        class PromptEvaluator;
+        class RemovePromptEvaluator;
+
         class AboutDialog;
         class ActorWindow;
         class ApplicationFrame;
-        class BaseWindow;
+        class EditorWindow;
         class BuildingRecord;
         class CityLayer;
         class CityCenter;

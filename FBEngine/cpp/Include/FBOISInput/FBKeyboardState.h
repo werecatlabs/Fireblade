@@ -3,11 +3,11 @@
 
 #include <FBOISInput/FBOISInputPrerequisites.h>
 #include <FBCore/Interface/Input/IKeyboardState.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb
 {
-    class KeyboardState : public SharedObject<IKeyboardState>
+    class KeyboardState : public IKeyboardState
     {
     public:
         KeyboardState();

@@ -6,7 +6,7 @@ namespace fb
 {
     namespace editor
     {
-        FB_CLASS_REGISTER_DERIVED( fb, ProjectTreeData, SharedObject<ISharedObject> );
+        FB_CLASS_REGISTER_DERIVED( fb, ProjectTreeData, ISharedObject );
 
         ProjectTreeData::ProjectTreeData( const String &ownerType, const String &objectType,
                                           SmartPtr<ISharedObject> ownerData,

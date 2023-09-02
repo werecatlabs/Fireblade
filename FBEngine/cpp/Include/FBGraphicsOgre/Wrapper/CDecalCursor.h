@@ -4,13 +4,13 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IDecalCursor.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
     namespace render
     {
-        class CDecalCursor : public SharedObject<IDecalCursor>
+        class CDecalCursor : public IDecalCursor
         {
         public:
             CDecalCursor();
@@ -42,7 +42,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class CDecalCursorStateListener : public SharedObject<IStateListener>
+            class CDecalCursorStateListener : public IStateListener
             {
             public:
                 CDecalCursorStateListener( CDecalCursor *owner );

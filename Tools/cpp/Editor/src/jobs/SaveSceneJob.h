@@ -17,11 +17,11 @@ namespace fb
 
             void execute() override;
 
-            void saveScene( const String& filePath );
+            void saveScene( const String &filePath );
 
-	        String getFilePath() const;
+            String getFilePath() const;
 
-            void setFilePath( const String& filePath );
+            void setFilePath( const String &filePath );
 
         protected:
             String m_filePath;

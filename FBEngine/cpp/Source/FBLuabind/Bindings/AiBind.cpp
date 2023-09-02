@@ -5,8 +5,6 @@
 #include <FBCore/FBCore.h>
 #include "FBLuabind/FBLuabindTypes.h"
 #include <luabind/operator.hpp>
-
-#include "FBApplication/Ai/AiScriptedGoal.h"
 #include "FBLuabind/ParamConverter.h"
 
 namespace fb
@@ -36,34 +34,34 @@ namespace fb
         goal->setOwner( owner.get() );
     }
 
-    struct AiScriptedGoalWrapper : public AiScriptedGoal, luabind::wrap_base
-    {
-        AiScriptedGoalWrapper()
-        {
-        }
+    //struct AiScriptedGoalWrapper : public AiScriptedGoal, luabind::wrap_base
+    //{
+    //    AiScriptedGoalWrapper()
+    //    {
+    //    }
 
-        void start()
-        {
-            setState( (u32)IAiGoal::AiGoalState::AGS_EXECUTING );
-            call<void>( "start" );
-        }
+    //    void start()
+    //    {
+    //        setState( (u32)IAiGoal::State::Executing );
+    //        call<void>( "start" );
+    //    }
 
-        void update( const s32 &task, const time_interval &t, const time_interval &dt )
-        {
-            call<void>( "update", (lua_Number)t, (lua_Number)dt );
-        }
+    //    void update( const s32 &task, const time_interval &t, const time_interval &dt )
+    //    {
+    //        call<void>( "update", (lua_Number)t, (lua_Number)dt );
+    //    }
 
-        void finish()
-        {
-            setState( (u32)IAiGoal::AiGoalState::AGS_FINISHED );
-            call<void>( "finish" );
-        }
+    //    void finish()
+    //    {
+    //        setState( (u32)IAiGoal::State::Finished );
+    //        call<void>( "finish" );
+    //    }
 
-        static void default_start( AiScriptedGoal *ptr )
-        {
-            ptr->AiScriptedGoal::start();
-        }
-    };
+    //    static void default_start( AiScriptedGoal *ptr )
+    //    {
+    //        ptr->AiScriptedGoal::start();
+    //    }
+    //};
 
     void bindAi( lua_State *L )
     {

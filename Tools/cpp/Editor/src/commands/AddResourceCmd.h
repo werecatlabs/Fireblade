@@ -7,7 +7,7 @@
 
 #include <GameEditorPrerequisites.h>
 #include <FBCore/Interface/System/ICommand.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Atomics/AtomicValue.h>
 #include <commands/Command.h>
 

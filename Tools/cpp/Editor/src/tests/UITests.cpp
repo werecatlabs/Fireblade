@@ -1,11 +1,11 @@
 #include <GameEditorPCH.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
+
 #include <editor/EditorManager.h>
 #include <ui/UIManager.h>
 #include "commands/DragDropActorCmd.h"
 #include "commands/AddActorCmd.h"
-#include <Application.h>
+#include <EditorApplication.h>
 
 #if FB_EDITOR_TESTS
 #    include <boost/test/unit_test.hpp>
@@ -15,10 +15,10 @@ using namespace fb::editor;
 
 BOOST_AUTO_TEST_CASE( ui_test )
 {
-    fb::editor::Application app;
+    fb::editor::EditorApplication app;
 
     try
-    {        
+    {
         app.load( nullptr );
         //app.run();
 

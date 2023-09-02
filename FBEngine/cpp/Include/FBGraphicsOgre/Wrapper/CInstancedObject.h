@@ -89,10 +89,9 @@ namespace fb
             Vector4F getCustomParam( unsigned char idx ) override;
 
             bool isAttached() const override;
-            bool isLoaded() const override;
 
         protected:
-            class InstancedObjectStateListener : public SharedObject<IStateListener>
+            class InstancedObjectStateListener : public IStateListener
             {
             public:
                 InstancedObjectStateListener( CInstancedObject *instancedObject );
@@ -105,7 +104,7 @@ namespace fb
                 CInstancedObject *m_owner = nullptr;
             };
 
-            class InstancedObjectState : public SharedObject<IState>
+            class InstancedObjectState : public IState
             {
             public:
                 InstancedObjectState();

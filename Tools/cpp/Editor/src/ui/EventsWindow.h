@@ -1,7 +1,7 @@
 #ifndef EventsWindow_h__
 #define EventsWindow_h__
 
-#include "ui/BaseWindow.h"
+#include "ui/EditorWindow.h"
 #include <FBCore/Core/Array.h>
 
 namespace fb
@@ -9,7 +9,7 @@ namespace fb
     namespace editor
     {
 
-        class EventsWindow : public BaseWindow
+        class EventsWindow : public EditorWindow
         {
         public:
             EventsWindow();

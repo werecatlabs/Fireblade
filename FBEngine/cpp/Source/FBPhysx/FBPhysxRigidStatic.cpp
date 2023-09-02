@@ -262,26 +262,26 @@ namespace fb
             return m_scene;
         }
 
-        void PhysxRigidStatic::setActorFlag( PxActorFlag::Enum flag, bool value )
+        void PhysxRigidStatic::setActorFlag( ActorFlag::Enum flag, bool value )
         {
             m_rigidStatic->setActorFlag( static_cast<physx::PxActorFlag::Enum>( flag ), value );
         }
 
-        PxActorFlag::Enum PhysxRigidStatic::getActorFlags() const
+        ActorFlag::Enum PhysxRigidStatic::getActorFlags() const
         {
             auto actorFlags = m_rigidStatic->getActorFlags();
             auto iActorFlags = static_cast<u32>( actorFlags );
-            return static_cast<PxActorFlag::Enum>( iActorFlags );
+            return static_cast<ActorFlag::Enum>( iActorFlags );
         }
 
-        void PhysxRigidStatic::setRigidBodyFlag( [[maybe_unused]] PxRigidBodyFlag::Enum flag,
+        void PhysxRigidStatic::setRigidBodyFlag( [[maybe_unused]] RigidBodyFlag::Enum flag,
                                                  [[maybe_unused]] bool value )
         {
         }
 
-        PxRigidBodyFlag::Enum PhysxRigidStatic::getRigidBodyFlags() const
+        RigidBodyFlag::Enum PhysxRigidStatic::getRigidBodyFlags() const
         {
-            return static_cast<PxRigidBodyFlag::Enum>( 0 );
+            return static_cast<RigidBodyFlag::Enum>( 0 );
         }
 
         Array<SmartPtr<IPhysicsShape3>> PhysxRigidStatic::getShapes() const

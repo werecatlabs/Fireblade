@@ -187,23 +187,33 @@ namespace fb
     void ISharedObject::setLoadingState( const Atomic<LoadingState> &state )
     {
         auto applicationManager = core::IApplicationManager::instance();
+        if( applicationManager )
+        {
+            if( applicationManager->isLoaded() )
+            {
+                auto oldState = getLoadingState();
+                if( oldState != state )
+                {
+                    m_loadingState = state;
 
-        auto oldState = getLoadingState();
-        if( oldState != state )
+                    auto args = Array<Parameter>();
+                    args.resize( 2 );
+
+                    args[0] = Parameter( (s32)oldState.load() );
+                    args[1] = Parameter( (s32)state.load() );
+
+                    applicationManager->triggerEvent( IEvent::Type::Object, IEvent::loadingStateChanged,
+                                                      args, this, this, nullptr );
+                }
+            }
+            else
+            {
+                m_loadingState = state;
+            }
+        }
+        else
         {
             m_loadingState = state;
-
-            auto args = Array<Parameter>();
-            args.resize( 2 );
-
-            args[0] = Parameter( (s32)oldState.load() );
-            args[1] = Parameter( (s32)state.load() );
-
-            if( applicationManager )
-            {
-                applicationManager->triggerEvent( IEvent::Type::Object, IEvent::loadingStateChanged,
-                                                  args, this, this, nullptr );
-            }
         }
     }
 

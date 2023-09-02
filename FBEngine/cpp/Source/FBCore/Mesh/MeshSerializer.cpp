@@ -28,7 +28,7 @@ THE SOFTWARE.
 #include <FBCore/FBCorePCH.h>
 #include "FBCore/Mesh/MeshSerializer.h"
 #include "FBCore/Mesh/MeshFileFormat.h"
-#include <FBFileSystem/FileDataStream.h>
+#include <FBCore/IO/FileDataStream.h>
 #include <FBCore/FBCore.h>
 #include <FBCore/Mesh/Mesh.h>
 #include <fstream>

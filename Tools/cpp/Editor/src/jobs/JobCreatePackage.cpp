@@ -3,11 +3,8 @@
 #include "commands/AddNewScriptCmd.h"
 #include "ui/ProjectWindow.h"
 #include "editor/EditorManager.h"
-#include <FBApplication/FBApplication.h>
 #include <FBCore/FBCore.h>
 #include <fstream>
-
-#include "FBFileSystem/ZipUtil.h"
 
 namespace fb
 {
@@ -125,7 +122,7 @@ namespace fb
 
                 ZipUtil::createObfuscatedZipFileFromPath( dst + L"/scripts.fbpak", scriptFiles );
 
-                bool packageTextures = false;
+                bool packageTextures = getPackageTextures();
                 if( packageTextures )
                 {
                     auto textureFiles = PathW::getFilesAsAbsolutePaths( projectPathW + L"/Assets/",
@@ -172,6 +169,16 @@ namespace fb
         void JobCreatePackage::setDst( const StringW &dst )
         {
             m_dst = dst;
+        }
+
+        bool JobCreatePackage::getPackageTextures() const
+        {
+            return m_packageTextures;
+        }
+
+        void JobCreatePackage::setPackageTextures( bool packageTextures )
+        {
+            m_packageTextures = packageTextures;
         }
 
     }  // namespace editor

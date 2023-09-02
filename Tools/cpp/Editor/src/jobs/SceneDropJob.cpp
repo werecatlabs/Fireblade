@@ -38,7 +38,7 @@ namespace fb
                 auto properties = fb::make_ptr<Properties>();
                 auto dataStr = String( text.c_str() );
 
-                if(!StringUtil::isNullOrEmpty( dataStr ))
+                if( !StringUtil::isNullOrEmpty( dataStr ) )
                 {
                     DataUtil::parse( dataStr, properties.get() );
 
@@ -47,9 +47,9 @@ namespace fb
                     auto dragSrc = tree->getDragSourceElement();
                     auto dropDst = tree->getDropDestinationElement();
 
-                    if(sender->isDerived<ui::IUIWindow>())
+                    if( sender->isDerived<ui::IUIWindow>() )
                     {
-                        if(!StringUtil::isNullOrEmpty( filePath ))
+                        if( !StringUtil::isNullOrEmpty( filePath ) )
                         {
                             auto cmd = fb::make_ptr<AddActorCmd>();
                             cmd->setActorType( AddActorCmd::ActorType::Actor );
@@ -58,7 +58,7 @@ namespace fb
                         }
                         else
                         {
-                            if(!owner->getDragDropActorCmd())
+                            if( !owner->getDragDropActorCmd() )
                             {
                                 auto cmd = fb::make_ptr<DragDropActorCmd>();
                                 cmd->setPosition( Vector2I::zero() );
@@ -72,14 +72,14 @@ namespace fb
                             owner->setDragDropActorCmd( nullptr );
                         }
                     }
-                    else if(dragSrc)
+                    else if( dragSrc )
                     {
-                        if(!commandManager->hasCommand( owner->getDragDropActorCmd() ))
+                        if( !commandManager->hasCommand( owner->getDragDropActorCmd() ) )
                         {
                             owner->setDragDropActorCmd( nullptr );
                         }
 
-                        if(!owner->getDragDropActorCmd())
+                        if( !owner->getDragDropActorCmd() )
                         {
                             auto cmd = fb::make_ptr<DragDropActorCmd>();
                             cmd->setPosition( Vector2I::zero() );
@@ -91,7 +91,7 @@ namespace fb
                             commandManager->addCommand( cmd );
                         }
                     }
-                    else if(!StringUtil::isNullOrEmpty( filePath ))
+                    else if( !StringUtil::isNullOrEmpty( filePath ) )
                     {
                         auto cmd = fb::make_ptr<AddActorCmd>();
                         cmd->setActorType( AddActorCmd::ActorType::Actor );
@@ -100,7 +100,7 @@ namespace fb
                     }
                 }
             }
-            catch(std::exception &e)
+            catch( std::exception &e )
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -165,5 +165,5 @@ namespace fb
         {
             m_owner = owner;
         }
-    } // end namespace editor
-}     // end namespace fb
+    }  // end namespace editor
+}  // end namespace fb

@@ -3,7 +3,7 @@
 
 #include <FBFileSystem/FBFileSystemPrerequisites.h>
 #include <FBCore/Interface/IO/IFileSystem.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Core/Map.h>
@@ -15,7 +15,7 @@ namespace fb
     /** @class CFileSystem
      *  @brief An implementation of the IFileSystem interface to manage file and folder operations.
      */
-    class CFileSystem : public SharedObject<IFileSystem>
+    class CFileSystem : public IFileSystem
     {
     public:
         /** @brief Constructor. */
@@ -219,6 +219,8 @@ namespace fb
 
         /// An array of file archives.
         AtomicSharedPtr<ConcurrentArray<SmartPtr<IArchive>>> m_fileArchives;
+
+        mutable RecursiveMutex m_mutex;
     };
 }  // end namespace fb
 

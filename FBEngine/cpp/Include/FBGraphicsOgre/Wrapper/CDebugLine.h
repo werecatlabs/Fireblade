@@ -3,14 +3,13 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IDebugLine.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <OgreMaterial.h>
 
 namespace fb
 {
     namespace render
     {
-        class CDebugLine : public SharedObject<IDebugLine>
+        class CDebugLine : public IDebugLine
         {
         public:
             CDebugLine();

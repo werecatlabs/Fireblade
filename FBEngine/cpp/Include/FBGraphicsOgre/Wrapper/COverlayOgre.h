@@ -68,7 +68,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class OverlayStateListener : public SharedObject<IStateListener>
+            class OverlayStateListener : public IStateListener
             {
             public:
                 OverlayStateListener() = default;

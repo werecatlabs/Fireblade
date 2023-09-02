@@ -1,6 +1,6 @@
 project(FBWxWidgets)
 
-add_compile_definitions (_FB_STATIC_LIB_)
+
 add_compile_definitions (_UNICODE)
 
 if (APPLE)

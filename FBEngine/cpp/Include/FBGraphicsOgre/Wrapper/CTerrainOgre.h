@@ -4,7 +4,7 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Graphics/CTerrain.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <OgreVector3.h>
 #include <OgreRenderTargetListener.h>
 #include <OgreTexture.h>
@@ -168,7 +168,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class TerrainStateListener : public SharedObject<IStateListener>
+            class TerrainStateListener : public IStateListener
             {
             public:
                 TerrainStateListener() = default;

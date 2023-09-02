@@ -190,7 +190,7 @@ namespace fb
                     setParentWindow( nullptr );
                 }
 
-                BaseWindow::unload( nullptr );
+                EditorWindow::unload( nullptr );
 
                 setLoadingState( LoadingState::Unloaded );
             }

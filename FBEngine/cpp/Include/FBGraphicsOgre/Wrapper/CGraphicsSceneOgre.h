@@ -13,6 +13,7 @@
 #include <FBCore/Core/Map.h>
 #include <FBCore/Core/Set.h>
 #include <FBCore/Core/HashMap.h>
+#include <FBCore/Interface/System/IEventListener.h>
 
 namespace fb
 {
@@ -165,7 +166,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class MaterialSharedListener : public SharedObject<IEventListener>
+            class MaterialSharedListener : public IEventListener
             {
             public:
                 MaterialSharedListener() = default;
@@ -190,7 +191,7 @@ namespace fb
                 WeakPtr<CGraphicsSceneOgre> m_owner = nullptr;
             };
 
-            class SceneManagerStateListener : public SharedObject<IStateListener>
+            class SceneManagerStateListener : public IStateListener
             {
             public:
                 SceneManagerStateListener();
@@ -207,7 +208,7 @@ namespace fb
                 CGraphicsSceneOgre *m_owner = nullptr;
             };
 
-            class SkyboxStateListener : public SharedObject<IStateListener>
+            class SkyboxStateListener : public IStateListener
             {
             public:
                 SkyboxStateListener();

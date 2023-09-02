@@ -28,7 +28,6 @@ persons to whom the Software is furnished to do so, subject to the following con
 
 #import <FBGraphicsOgre/Window/Apple/macOS/WindowView.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
 //#import "OgreMetalView.h"
 #import <QuartzCore/QuartzCore.h>
 #import <SpriteKit/SpriteKit.h>

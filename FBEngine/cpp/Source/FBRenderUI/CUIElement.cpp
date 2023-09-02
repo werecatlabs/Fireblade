@@ -85,31 +85,30 @@ namespace fb
         template <class T>
         bool CUIElement<T>::handleEvent( const SmartPtr<IInputEvent> &event )
         {
-            // if(!m_isEnabled)
-            //	return false;
+            auto enabled = isEnabled();
+            if( !enabled )
+            {
+                return false;
+            }
 
-            // for(u32 i=0; i<m_inputListeners.size(); ++i)
+            //for( u32 i = 0; i < m_inputListeners.size(); ++i )
             //{
-            //	IGUIItemInputListener* inputListener = m_inputListeners[i];
-            //	if(inputListener->onEvent(event))
-            //		return true;
-            // }
-
-            // for (u32 i = 0; i < m_children.size(); ++i)
-            //{
-            //	CUIElement* pGUIItem = (CUIElement*)m_children[i];
-
-            //	if (pGUIItem->getName() == ("CreateShip0"))
-            //	{
-            //		int i = 0;
-            //		i = i;
-            //	}
-
-            //	if (pGUIItem->onEvent(event))
-            //	{
-            //		return true;
-            //	}
+            //    auto inputListener = m_inputListeners[i];
+            //    if( inputListener->onEvent( event ) )
+            //        return true;
             //}
+
+            if( auto p = getChildren() )
+            {
+                auto &children = *p;
+                for( auto &child : children )
+                {
+                    if( child->handleEvent( event ) )
+                    {
+                        return true;
+                    }
+                }
+            }
 
             return false;
         }
@@ -760,8 +759,7 @@ namespace fb
 
             if( auto parent = getParent() )
             {
-                auto parentElement = fb::static_pointer_cast<CUIElement<T>>( parent );
-                parentElement->onChildChangedState( this );
+                parent->onChildChangedState( this );
             }
         }
 
@@ -868,21 +866,19 @@ namespace fb
 
             if( auto p = getChildren() )
             {
-                auto &children = *p;
+                auto children = *p;
                 for( auto &child : children )
                 {
                     if( child )
                     {
-                        auto pChild = fb::static_pointer_cast<CUIElement<T>>( child );
-                        pChild->onActivate( element );
+                        child->onActivate( element );
                     }
                 }
             }
 
             if( auto parent = getParent() )
             {
-                auto pParent = fb::static_pointer_cast<CUIElement<T>>( parent );
-                pParent->onChildChangedState( this );
+                parent->onChildChangedState( this );
             }
         }
 
@@ -904,15 +900,13 @@ namespace fb
                 auto &children = *p;
                 for( auto &child : children )
                 {
-                    auto childElement = fb::static_pointer_cast<CUIElement<T>>( child );
-                    childElement->onDeactivate();
+                    child->onDeactivate();
                 }
             }
 
             if( auto parent = getParent() )
             {
-                auto pParent = fb::static_pointer_cast<CUIElement<T>>( parent );
-                pParent->onChildChangedState( this );
+                parent->onChildChangedState( this );
             }
         }
 
@@ -934,15 +928,13 @@ namespace fb
                 auto &children = *p;
                 for( auto &child : children )
                 {
-                    auto childElement = fb::static_pointer_cast<CUIElement<T>>( child );
-                    childElement->onSelect();
+                    child->onSelect();
                 }
             }
 
             if( auto parent = getParent() )
             {
-                auto pParent = fb::static_pointer_cast<CUIElement<T>>( parent );
-                pParent->onChildChangedState( this );
+                parent->onChildChangedState( this );
             }
         }
 
@@ -964,15 +956,13 @@ namespace fb
                 auto &children = *p;
                 for( auto &child : children )
                 {
-                    auto childElement = fb::static_pointer_cast<CUIElement<T>>( child );
-                    childElement->onDeselect();
+                    child->onDeselect();
                 }
             }
 
             if( auto parent = getParent() )
             {
-                auto pParent = fb::static_pointer_cast<CUIElement<T>>( parent );
-                pParent->onChildChangedState( this );
+                parent->onChildChangedState( this );
             }
         }
 
@@ -991,8 +981,7 @@ namespace fb
 
             if( auto parent = getParent() )
             {
-                auto pParent = fb::static_pointer_cast<CUIElement<T>>( parent );
-                pParent->onChildChangedState( this );
+                parent->onChildChangedState( this );
             }
         }
 
@@ -1011,8 +1000,7 @@ namespace fb
 
             if( auto parent = getParent() )
             {
-                auto pParent = fb::static_pointer_cast<CUIElement<T>>( parent );
-                pParent->onChildChangedState( this );
+                parent->onChildChangedState( this );
             }
         }
 
@@ -1041,10 +1029,7 @@ namespace fb
         template <class T>
         SmartPtr<Properties> CUIElement<T>::getProperties() const
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto factoryManager = applicationManager->getFactoryManager();
-
-            auto properties = factoryManager->make_ptr<Properties>();
+            auto properties = fb::make_ptr<Properties>();
             properties->setProperty( "size", getSize() );
             properties->setProperty( "position", getPosition() );
             properties->setProperty( "enabled", m_isEnabled );
@@ -1070,15 +1055,52 @@ namespace fb
         Array<SmartPtr<ISharedObject>> CUIElement<T>::getChildObjects() const
         {
             auto objects = Array<SmartPtr<ISharedObject>>();
-            objects.reserve( 5 );
+            objects.reserve( 32 );
 
-            objects.push_back( m_dragSource );
-            objects.push_back( m_dropTarget );
+            //if( auto stateObject = m_stateObject.load() )
+            //{
+            //    objects.push_back( stateObject );
+            //}
 
-            if( auto element = getOverlayElement() )
+            //if( auto stateListener = m_stateListener.load() )
+            //{
+            //    objects.push_back( stateListener );
+            //}
+
+            //if( auto owner = m_owner.load() )
+            //{
+            //    objects.push_back( owner );
+            //}
+
+            if( m_dragSource )
             {
-                objects.push_back( element );
+                objects.push_back( m_dragSource );
             }
+
+            if( m_dropTarget )
+            {
+                objects.push_back( m_dropTarget );
+            }
+
+            //if( auto element = getOverlayElement() )
+            //{
+            //    objects.push_back( element );
+            //}
+
+            //if( m_container )
+            //{
+            //    objects.push_back( m_container );
+            //}
+
+            //if( m_parent )
+            //{
+            //    objects.push_back( m_parent );
+            //}
+
+            //if( m_layout )
+            //{
+            //    objects.push_back( m_layout );
+            //}
 
             return objects;
         }
@@ -1569,20 +1591,9 @@ namespace fb
                     element->setSize( size );
                     element->setVisible( visible );
                     //element->setInheritsPick(inheritsPick);
-
-                    state->setDirty( false );
                 }
 
-                //if( auto widget = owner->getWidget() )
-                //{
-                //    widget->setDepth( zOrder );
-                //    widget->setPosition( MyGUI::IntPoint( iPosition.X(), iPosition.Y() ) );
-                //    widget->setSize( MyGUI::IntSize( iSize.X(), iSize.Y() ) );
-                //    widget->setVisible( visible );
-                //    //widget->setInheritsPick( inheritsPick );
-
-                //    state->setDirty( false );
-                //}
+                state->setDirty( false );
             }
         }
 

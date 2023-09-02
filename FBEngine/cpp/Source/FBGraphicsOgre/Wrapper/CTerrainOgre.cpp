@@ -43,7 +43,7 @@ namespace fb
 {
     namespace render
     {
-        FB_CLASS_REGISTER_DERIVED( fb, CTerrainOgre, SharedObject<ITerrain> );
+        FB_CLASS_REGISTER_DERIVED( fb, CTerrainOgre, ITerrain );
         u32 CTerrainOgre::m_ext = 0;
 
         CTerrainOgre::CTerrainOgre() :

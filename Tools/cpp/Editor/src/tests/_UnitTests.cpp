@@ -1,6 +1,6 @@
 #include <GameEditorPCH.h>
 #include <FBCore/FBCore.h>
-#include <Application.h>
+#include <EditorApplication.h>
 
 #if FB_EDITOR_TESTS
 
@@ -12,7 +12,7 @@ using namespace fb;
 
 BOOST_AUTO_TEST_CASE( editor_start )
 {
-    fb::editor::Application app;
+    fb::editor::EditorApplication app;
     app.load( nullptr );
     //app.run();
 
@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE( editor_run )
 {
     try
     {
-        fb::editor::Application app;
+        fb::editor::EditorApplication app;
 
         const auto threads = fb::Thread::hardware_concurrency();
         app.setActiveThreads( threads );
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE( editor_run_single_threaded )
 {
     try
     {
-        fb::editor::Application app;
+        fb::editor::EditorApplication app;
         app.setActiveThreads( 0 );
         app.load( nullptr );
         //app.run();

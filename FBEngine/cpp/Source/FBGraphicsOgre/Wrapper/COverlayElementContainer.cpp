@@ -388,13 +388,34 @@ namespace fb
         SmartPtr<Properties> COverlayElementContainer::getProperties() const
         {
             auto properties = COverlayElement<IOverlayElementContainer>::getProperties();
-
+            properties->setProperty( "Type", "OverlayElementContainer" );
+            properties->setProperty( "MetricsMode",
+                                     Ogre::StringConverter::toString( m_container->getMetricsMode() ) );
+            properties->setProperty(
+                "HorizontalAlignment",
+                Ogre::StringConverter::toString( m_container->getHorizontalAlignment() ) );
+            properties->setProperty( "VerticalAlignment", Ogre::StringConverter::toString(
+                                                              m_container->getVerticalAlignment() ) );
+            properties->setProperty( "Left", Ogre::StringConverter::toString( m_container->getLeft() ) );
+            properties->setProperty( "Top", Ogre::StringConverter::toString( m_container->getTop() ) );
+            properties->setProperty( "Width",
+                                     Ogre::StringConverter::toString( m_container->getWidth() ) );
+            properties->setProperty( "Height",
+                                     Ogre::StringConverter::toString( m_container->getHeight() ) );
+            properties->setProperty( "Visible",
+                                     Ogre::StringConverter::toString( m_container->isVisible() ) );
+            properties->setProperty( "MaterialName", m_container->getMaterialName() );
+            properties->setProperty( "Colour",
+                                     Ogre::StringConverter::toString( m_container->getColour() ) );
+            properties->setProperty( "Caption", m_container->getCaption() );
             return properties;
         }
 
         void COverlayElementContainer::setProperties( SmartPtr<Properties> properties )
         {
             COverlayElement<IOverlayElementContainer>::setProperties( properties );
+
+
         }
 
         Array<SmartPtr<ISharedObject>> COverlayElementContainer::getChildObjects() const

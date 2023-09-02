@@ -143,7 +143,7 @@ namespace fb
             void removeListener( SmartPtr<IParticleSystemListener> listener ) override;
 
         protected:
-            class ParticleSystemStateListener : public SharedObject<IStateListener>
+            class ParticleSystemStateListener : public IStateListener
             {
             public:
                 ParticleSystemStateListener( PUParticleSystem *puSystem );

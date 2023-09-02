@@ -37,7 +37,7 @@ namespace fb
             AtomicSmartPtr<scene::IComponent> m_component;
             AtomicSmartPtr<IFactory> m_factory;
         };
-    } // end namespace editor
-}     // end namespace fb
+    }  // end namespace editor
+}  // end namespace fb
 
 #endif  // AddComponentCmd_h__

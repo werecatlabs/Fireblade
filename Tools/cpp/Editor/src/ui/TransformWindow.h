@@ -2,7 +2,7 @@
 #define TransformWindow_h__
 
 #include <GameEditorPrerequisites.h>
-#include "ui/BaseWindow.h"
+#include "ui/EditorWindow.h"
 #include <FBCore/Interface/System/IEventListener.h>
 #include <FBCore/Interface/Scene/ITransform.h>
 
@@ -10,7 +10,7 @@ namespace fb
 {
     namespace editor
     {
-        class TransformWindow : public BaseWindow
+        class TransformWindow : public EditorWindow
         {
         public:
             TransformWindow();
@@ -28,7 +28,7 @@ namespace fb
             void setShowWorldTransform( bool showWorldTransform );
 
         protected:
-            class VectorListener : public SharedObject<IEventListener>
+            class VectorListener : public IEventListener
             {
             public:
                 VectorListener() = default;
@@ -71,7 +71,7 @@ namespace fb
 
             bool m_showWorldTransform = false;
         };
-    } // end namespace editor
-}     // end namespace fb
+    }  // end namespace editor
+}  // end namespace fb
 
 #endif  // TransformWindow_h__

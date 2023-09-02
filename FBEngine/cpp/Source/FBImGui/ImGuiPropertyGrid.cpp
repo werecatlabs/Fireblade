@@ -108,7 +108,7 @@ namespace fb
                                 handlePropertyChanged( propertyGrid, name, str );
                             }
                         }
-                        else if( typeLower == ( "vector2i" )  )
+                        else if( typeLower == ( "vector2i" ) )
                         {
                             auto vector = StringUtil::parseVector2<s32>( value );
 
@@ -308,6 +308,35 @@ namespace fb
 
                         ImGui::PopID();
 
+                        auto dropTarget = propertyGrid->getDropTarget();
+                        if( dropTarget )
+                        {
+                            if( ImGui::BeginDragDropTarget() )
+                            {
+                                auto payload = ImGui::AcceptDragDropPayload( "_TREENODE" );
+                                if( payload )
+                                {
+                                    auto pData = static_cast<const char *>( payload->Data );
+                                    auto dataSize = payload->DataSize;
+                                    auto data = String( pData, dataSize );
+
+                                    auto menuItemId = propertyGrid->getElementId();
+
+                                    auto args = Array<Parameter>();
+                                    args.resize( 3 );
+
+                                    args[0].setStr( data );
+                                    args[1].setStr( name );
+                                    args[2].setStr( value );
+
+                                    dropTarget->handleEvent( IEvent::Type::UI, IEvent::handleDrop, args,
+                                                             propertyGrid, propertyGrid, nullptr );
+                                }
+
+                                ImGui::EndDragDropTarget();
+                            }
+                        }
+
                         ++count;
                     }
 
@@ -408,7 +437,7 @@ namespace fb
                                                        const String &name, const String &str )
         {
             auto listeners = propertyGrid->getObjectListeners();
-            for( auto listener : listeners )
+            for( auto& listener : listeners )
             {
                 auto args = Array<Parameter>();
                 args.resize( 2 );

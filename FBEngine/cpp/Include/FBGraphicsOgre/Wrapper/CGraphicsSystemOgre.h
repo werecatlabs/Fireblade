@@ -4,7 +4,6 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Graphics/CGraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <OgreWindowEventUtilities.h>
 #include <OgreFrameListener.h>
 #include <OgreRenderQueueListener.h>

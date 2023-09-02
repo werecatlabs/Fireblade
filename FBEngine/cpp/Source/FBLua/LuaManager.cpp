@@ -36,7 +36,7 @@ namespace fb
     template <>
     LuaManager *Singleton<LuaManager>::m_singleton = nullptr;
 
-    FB_CLASS_REGISTER_DERIVED( fb, LuaManager, SharedObject<IScriptManager> );
+    FB_CLASS_REGISTER_DERIVED( fb, LuaManager, IScriptManager );
 
     void LuaManager::setClassNames( const Array<String> &classNames )
     {
@@ -965,27 +965,6 @@ namespace fb
 #endif
     }
 
-    void LuaManager::addFunctions( const SmartPtr<IScriptBind> &scriptFunctions )
-    {
-    }
-
-    bool LuaManager::getFunctions( SmartPtr<IScriptBind> &scriptFunctions )
-    {
-        FB_ASSERT_TRUE( false );  //not implemented
-        return false;
-    }
-
-    bool LuaManager::removeFunctions( const SmartPtr<IScriptBind> &scriptFunctions )
-    {
-        FB_ASSERT_TRUE( false );  //not implemented
-        return false;
-    }
-
-    void LuaManager::removeAllFunctions()
-    {
-        FB_ASSERT_TRUE( false );  //not implemented
-    }
-
     void LuaManager::executeScript( const String &script )
     {
         //int error = luaL_loadbuffer(m_luaState, script.c_str(), script.length(), "script") || lua_pcall(m_luaState, 0, 0, 0);
@@ -1379,7 +1358,6 @@ namespace fb
         bindGUIManager( luaState );
         bindPhysics( luaState );
         bindDatabase( luaState );
-        bindCombat( luaState );
         bindQuery( luaState );
         bindProcedural( luaState );
         bindObjectTemplates( luaState );
@@ -2049,17 +2027,6 @@ namespace fb
         auto object = static_cast<luabind::object *>( instance );
         //m_instances.erase_element(object);
         //FB_SAFE_DELETE(object);
-    }
-
-    void LuaManager::addScriptBinding( SmartPtr<IScriptBind> scriptBinding )
-    {
-        //scriptBinding->bind(m_luaState);
-        //m_scriptBindings.push_back(scriptBinding);
-    }
-
-    void LuaManager::removeScriptBinding( SmartPtr<IScriptBind> scriptBinding )
-    {
-        //m_scriptBindings.erase_element(scriptBinding);
     }
 
     void LuaManager::setError( bool error )

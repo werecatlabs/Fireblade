@@ -1,12 +1,11 @@
 #pragma once
 #include <FBCore/Interface/Graphics/IWindowListener.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Math/Vector2.h>
 
 namespace fb
 {
 
-    class PlatformInputManager : public SharedObject<ISharedObject>
+    class PlatformInputManager : public ISharedObject
     {
     public:
         PlatformInputManager() = default;
@@ -17,7 +16,7 @@ namespace fb
         void setWindow( SmartPtr<render::IWindow> window );
 
     protected:
-        class WindowListener : public SharedObject<render::IWindowListener>
+        class WindowListener : public render::IWindowListener
         {
         public:
             WindowListener() = default;

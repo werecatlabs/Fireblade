@@ -1,8 +1,6 @@
 #ifndef CRaycastHit_h__
 #define CRaycastHit_h__
 
-#include <FBApplication/FBApplicationPrerequisites.h>
-
 #include <FBCore/Interface/Physics/IRaycastHit.h>
 
 namespace fb

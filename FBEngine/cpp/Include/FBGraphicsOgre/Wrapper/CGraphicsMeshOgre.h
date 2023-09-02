@@ -76,7 +76,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class ScriptReceiver : public SharedObject<IScriptReceiver>
+            class ScriptReceiver : public IScriptReceiver
             {
             public:
                 ScriptReceiver( CGraphicsMeshOgre *meshObject );
@@ -100,7 +100,7 @@ namespace fb
                 void handleQuery( SmartPtr<IStateQuery> &query ) override;
             };
 
-            class MaterialStateListener : public SharedObject<IStateListener>
+            class MaterialStateListener : public IStateListener
             {
             public:
                 MaterialStateListener() = default;

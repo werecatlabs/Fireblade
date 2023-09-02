@@ -4,6 +4,7 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/IMaterialTexture.h>
 #include <FBCore/Graphics/CMaterialTexture.h>
+#include <FBCore/Interface/System/IEventListener.h>
 
 namespace fb
 {
@@ -68,7 +69,7 @@ namespace fb
                 void handleQuery( SmartPtr<IStateQuery> &query ) override;
             };
 
-            class TextureListener : public SharedObject<IEventListener>
+            class TextureListener : public IEventListener
             {
             public:
                 TextureListener() = default;

@@ -4,7 +4,7 @@
 #include <ui/UIManager.h>
 #include <ui/ActorWindow.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
+
 #include <ui/ResourceDatabaseDialog.h>
 
 namespace fb
@@ -53,6 +53,11 @@ namespace fb
                 auto propertiesListener = fb::make_ptr<PropertiesListener>();
                 propertiesListener->setOwner( this );
                 m_propertyGrid->addObjectListener( propertiesListener );
+
+                auto dropTarget = fb::make_ptr<PropertiesDropTarget>();
+                dropTarget->setOwner( this );
+                m_propertyGrid->setDropTarget( dropTarget );
+                m_dropTarget = dropTarget;
 
                 setLoadingState( LoadingState::Loaded );
             }
@@ -128,6 +133,8 @@ namespace fb
                         job->setObject( object );
                         jobQueue->addJob( job );
                     }
+
+                    setSelection( selection );
                 }
             }
             catch( std::exception &e )
@@ -307,6 +314,14 @@ namespace fb
                         m_propertyGrid->setProperties( properties );
                     }
                 }
+                else if( object->isDerived<render::IOverlay>() )
+                {
+                    auto element = fb::dynamic_pointer_cast<render::IOverlay>( object );
+                    if( auto properties = element->getProperties() )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
                 else if( object->isDerived<render::IOverlayElement>() )
                 {
                     auto element = fb::dynamic_pointer_cast<render::IOverlayElement>( object );
@@ -369,228 +384,243 @@ namespace fb
 
         void PropertiesWindow::updateSelectionMT( SmartPtr<ISharedObject> object )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto graphicsSystem = applicationManager->getGraphicsSystem();
-            auto materialManager = graphicsSystem->getMaterialManager();
-
-            auto resourceDatabase = applicationManager->getResourceDatabase();
-
-            auto meshManager = applicationManager->getMeshManager();
-
-            if( object )
+            if( auto propertyGrid = getPropertyGrid() )
             {
-                if( object->isDerived<scene::IActor>() )
+                auto applicationManager = core::IApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto graphicsSystem = applicationManager->getGraphicsSystem();
+                auto materialManager = graphicsSystem->getMaterialManager();
+
+                auto resourceDatabase = applicationManager->getResourceDatabase();
+
+                auto meshManager = applicationManager->getMeshManager();
+
+                if( object )
                 {
-                    auto actor = fb::dynamic_pointer_cast<scene::IActor>( object );
-
-                    auto properties = actor->getProperties();
-                    if( properties )
+                    if( object->isDerived<scene::IActor>() )
                     {
-                        m_propertyGrid->setProperties( properties );
-                    }
-                }
-                else if( object->isDerived<physics::IPhysicsMaterial3>() )
-                {
-                    auto physicsMaterial =
-                        fb::dynamic_pointer_cast<physics::IPhysicsMaterial3>( object );
+                        auto actor = fb::dynamic_pointer_cast<scene::IActor>( object );
 
-                    auto properties = physicsMaterial->getProperties();
-                    if( properties )
-                    {
-                        m_propertyGrid->setProperties( properties );
-                    }
-                }
-                else if( object->isDerived<physics::IPhysicsShape>() )
-                {
-                    auto physicsShape = fb::dynamic_pointer_cast<physics::IPhysicsShape>( object );
-
-                    auto properties = physicsShape->getProperties();
-                    if( properties )
-                    {
-                        m_propertyGrid->setProperties( properties );
-                    }
-                }
-                else if( object->isDerived<physics::IPhysicsBody3>() )
-                {
-                    auto physicsBody = fb::dynamic_pointer_cast<physics::IPhysicsBody3>( object );
-
-                    auto properties = physicsBody->getProperties();
-                    if( properties )
-                    {
-                        m_propertyGrid->setProperties( properties );
-                    }
-                }
-                else if( object->isDerived<scene::ITransform>() )
-                {
-                    auto transform = fb::dynamic_pointer_cast<scene::ITransform>( object );
-
-                    auto properties = transform->getProperties();
-                    if( properties )
-                    {
-                        m_propertyGrid->setProperties( properties );
-                    }
-                }
-                else if( object->isDerived<render::ISceneNode>() )
-                {
-                    auto sceneNode = fb::dynamic_pointer_cast<render::ISceneNode>( object );
-
-                    auto properties = sceneNode->getProperties();
-                    if( properties )
-                    {
-                        m_propertyGrid->setProperties( properties );
-                    }
-                }
-                else if( object->isDerived<render::IGraphicsObject>() )
-                {
-                    auto graphicsObject = fb::dynamic_pointer_cast<render::IGraphicsObject>( object );
-
-                    auto properties = graphicsObject->getProperties();
-                    if( properties )
-                    {
-                        m_propertyGrid->setProperties( properties );
-                    }
-                }
-                else if( object->isDerived<IStateContext>() )
-                {
-                    auto stateObject = fb::dynamic_pointer_cast<IStateContext>( object );
-
-                    auto properties = stateObject->getProperties();
-                    if( properties )
-                    {
-                        m_propertyGrid->setProperties( properties );
-                    }
-                }
-                else if( object->isDerived<IState>() )
-                {
-                    auto state = fb::dynamic_pointer_cast<IState>( object );
-
-                    auto properties = state->getProperties();
-                    if( properties )
-                    {
-                        m_propertyGrid->setProperties( properties );
-                    }
-                }
-                else if( object->isDerived<IMeshResource>() )
-                {
-                    auto meshResource = fb::static_pointer_cast<IMeshResource>( object );
-
-                    auto properties = meshResource->getProperties();
-                    if( properties )
-                    {
-                        m_propertyGrid->setProperties( properties );
-                    }
-                }
-                else if( object->isDerived<render::IMaterial>() )
-                {
-                    auto material = fb::static_pointer_cast<render::IMaterial>( object );
-
-                    auto properties = material->getProperties();
-                    if( properties )
-                    {
-                        m_propertyGrid->setProperties( properties );
-                    }
-                }
-                else if( object->isDerived<render::IMaterialNode>() )
-                {
-                    auto materialNode = fb::static_pointer_cast<render::IMaterialNode>( object );
-
-                    auto properties = materialNode->getProperties();
-                    if( properties )
-                    {
-                        m_propertyGrid->setProperties( properties );
-                    }
-                }
-                else if( object->isDerived<scene::IComponent>() )
-                {
-                    auto derived = fb::dynamic_pointer_cast<scene::IComponent>( object );
-
-                    if( auto properties = derived->getProperties() )
-                    {
-                        m_propertyGrid->setProperties( properties );
-                    }
-                }
-                else if( object->isDerived<scene::IComponentEventListener>() )
-                {
-                    auto derived = fb::dynamic_pointer_cast<scene::IComponentEventListener>( object );
-
-                    if( auto properties = derived->getProperties() )
-                    {
-                        m_propertyGrid->setProperties( properties );
-                    }
-                }
-                else if( object->isDerived<scene::IDirector>() )
-                {
-                    auto derived = fb::dynamic_pointer_cast<scene::IDirector>( object );
-
-                    if( auto properties = derived->getProperties() )
-                    {
-                        m_propertyGrid->setProperties( properties );
-                    }
-                }
-                else if( object->isDerived<ui::IUIElement>() )
-                {
-                    auto element = fb::dynamic_pointer_cast<ui::IUIElement>( object );
-
-                    if( auto properties = element->getProperties() )
-                    {
-                        m_propertyGrid->setProperties( properties );
-                    }
-                }
-                else if( object->isDerived<render::IOverlayElement>() )
-                {
-                    auto element = fb::dynamic_pointer_cast<render::IOverlayElement>( object );
-                    if( auto properties = element->getProperties() )
-                    {
-                        m_propertyGrid->setProperties( properties );
-                    }
-                }
-                else if( object->isDerived<FileSelection>() )
-                {
-                    auto fileSelection = fb::dynamic_pointer_cast<FileSelection>( object );
-
-                    auto filePath = fileSelection->getFilePath();
-                    auto ext = Path::getFileExtension( filePath );
-                    ext = StringUtil::make_lower( ext );
-
-                    static const auto materialExt = String( ".mat" );
-                    static const auto fbxExt = String( ".fbx" );
-                    static const auto resourceExt = String( ".resource" );
-
-                    if( ext == materialExt )
-                    {
-                        auto material = materialManager->loadFromFile( filePath );
-                        if( material )
+                        auto properties = actor->getProperties();
+                        if( properties )
                         {
-                            auto properties = material->getProperties();
-                            if( properties )
-                            {
-                                m_propertyGrid->setProperties( properties );
-                            }
+                            propertyGrid->setProperties( properties );
                         }
                     }
-                    else if( ext == fbxExt )
+                    else if( object->isDerived<physics::IPhysicsMaterial3>() )
                     {
-                        auto mesh = meshManager->loadFromFile( filePath );
-                        if( mesh )
+                        auto physicsMaterial =
+                            fb::dynamic_pointer_cast<physics::IPhysicsMaterial3>( object );
+
+                        auto properties = physicsMaterial->getProperties();
+                        if( properties )
                         {
-                            auto properties = mesh->getProperties();
-                            if( properties )
-                            {
-                                m_propertyGrid->setProperties( properties );
-                            }
+                            propertyGrid->setProperties( properties );
                         }
                     }
-                    else if( ext == resourceExt )
+                    else if( object->isDerived<physics::IPhysicsShape>() )
                     {
-                        auto resource = resourceDatabase->loadResource( filePath );
-                        if( resource )
+                        auto physicsShape = fb::dynamic_pointer_cast<physics::IPhysicsShape>( object );
+
+                        auto properties = physicsShape->getProperties();
+                        if( properties )
                         {
-                            auto properties = resource->getProperties();
-                            if( properties )
+                            propertyGrid->setProperties( properties );
+                        }
+                    }
+                    else if( object->isDerived<physics::IPhysicsBody3>() )
+                    {
+                        auto physicsBody = fb::dynamic_pointer_cast<physics::IPhysicsBody3>( object );
+
+                        auto properties = physicsBody->getProperties();
+                        if( properties )
+                        {
+                            propertyGrid->setProperties( properties );
+                        }
+                    }
+                    else if( object->isDerived<scene::ITransform>() )
+                    {
+                        auto transform = fb::dynamic_pointer_cast<scene::ITransform>( object );
+
+                        auto properties = transform->getProperties();
+                        if( properties )
+                        {
+                            propertyGrid->setProperties( properties );
+                        }
+                    }
+                    else if( object->isDerived<render::ISceneNode>() )
+                    {
+                        auto sceneNode = fb::dynamic_pointer_cast<render::ISceneNode>( object );
+
+                        auto properties = sceneNode->getProperties();
+                        if( properties )
+                        {
+                            propertyGrid->setProperties( properties );
+                        }
+                    }
+                    else if( object->isDerived<render::IGraphicsObject>() )
+                    {
+                        auto graphicsObject =
+                            fb::dynamic_pointer_cast<render::IGraphicsObject>( object );
+
+                        auto properties = graphicsObject->getProperties();
+                        if( properties )
+                        {
+                            propertyGrid->setProperties( properties );
+                        }
+                    }
+                    else if( object->isDerived<IStateContext>() )
+                    {
+                        auto stateObject = fb::dynamic_pointer_cast<IStateContext>( object );
+
+                        auto properties = stateObject->getProperties();
+                        if( properties )
+                        {
+                            propertyGrid->setProperties( properties );
+                        }
+                    }
+                    else if( object->isDerived<IState>() )
+                    {
+                        auto state = fb::dynamic_pointer_cast<IState>( object );
+
+                        auto properties = state->getProperties();
+                        if( properties )
+                        {
+                            propertyGrid->setProperties( properties );
+                        }
+                    }
+                    else if( object->isDerived<IMeshResource>() )
+                    {
+                        auto meshResource = fb::static_pointer_cast<IMeshResource>( object );
+
+                        auto properties = meshResource->getProperties();
+                        if( properties )
+                        {
+                            propertyGrid->setProperties( properties );
+                        }
+                    }
+                    else if( object->isDerived<render::IMaterial>() )
+                    {
+                        auto material = fb::static_pointer_cast<render::IMaterial>( object );
+
+                        auto properties = material->getProperties();
+                        if( properties )
+                        {
+                            propertyGrid->setProperties( properties );
+                        }
+                    }
+                    else if( object->isDerived<render::IMaterialNode>() )
+                    {
+                        auto materialNode = fb::static_pointer_cast<render::IMaterialNode>( object );
+
+                        auto properties = materialNode->getProperties();
+                        if( properties )
+                        {
+                            propertyGrid->setProperties( properties );
+                        }
+                    }
+                    else if( object->isDerived<scene::IComponent>() )
+                    {
+                        auto derived = fb::dynamic_pointer_cast<scene::IComponent>( object );
+
+                        if( auto properties = derived->getProperties() )
+                        {
+                            propertyGrid->setProperties( properties );
+                        }
+                    }
+                    else if( object->isDerived<scene::IComponentEventListener>() )
+                    {
+                        auto derived =
+                            fb::dynamic_pointer_cast<scene::IComponentEventListener>( object );
+
+                        if( auto properties = derived->getProperties() )
+                        {
+                            propertyGrid->setProperties( properties );
+                        }
+                    }
+                    else if( object->isDerived<scene::IDirector>() )
+                    {
+                        auto derived = fb::dynamic_pointer_cast<scene::IDirector>( object );
+
+                        if( auto properties = derived->getProperties() )
+                        {
+                            propertyGrid->setProperties( properties );
+                        }
+                    }
+                    else if( object->isDerived<ui::IUIElement>() )
+                    {
+                        auto element = fb::dynamic_pointer_cast<ui::IUIElement>( object );
+
+                        if( auto properties = element->getProperties() )
+                        {
+                            propertyGrid->setProperties( properties );
+                        }
+                    }
+                    else if( object->isDerived<render::IOverlay>() )
+                    {
+                        auto element = fb::dynamic_pointer_cast<render::IOverlay>( object );
+                        if( auto properties = element->getProperties() )
+                        {
+                            propertyGrid->setProperties( properties );
+                        }
+                    }
+                    else if( object->isDerived<render::IOverlayElement>() )
+                    {
+                        auto element = fb::dynamic_pointer_cast<render::IOverlayElement>( object );
+                        if( auto properties = element->getProperties() )
+                        {
+                            propertyGrid->setProperties( properties );
+                        }
+                    }
+                    else if( object->isDerived<FileSelection>() )
+                    {
+                        auto fileSelection = fb::dynamic_pointer_cast<FileSelection>( object );
+
+                        auto filePath = fileSelection->getFilePath();
+                        auto ext = Path::getFileExtension( filePath );
+                        ext = StringUtil::make_lower( ext );
+
+                        static const auto materialExt = String( ".mat" );
+                        static const auto fbxExt = String( ".fbx" );
+                        static const auto resourceExt = String( ".resource" );
+
+                        if( ext == materialExt )
+                        {
+                            auto material = materialManager->loadFromFile( filePath );
+                            if( material )
                             {
-                                m_propertyGrid->setProperties( properties );
+                                auto properties = material->getProperties();
+                                if( properties )
+                                {
+                                    propertyGrid->setProperties( properties );
+                                }
+                            }
+                        }
+                        else if( ext == fbxExt )
+                        {
+                            auto result =
+                                resourceDatabase->createOrRetrieveByType<IMeshResource>( filePath );
+                            auto mesh = result.first;
+                            if( mesh )
+                            {
+                                auto properties = mesh->getProperties();
+                                if( properties )
+                                {
+                                    propertyGrid->setProperties( properties );
+                                }
+                            }
+                        }
+                        else if( ext == resourceExt )
+                        {
+                            auto resource = resourceDatabase->loadResource( filePath );
+                            if( resource )
+                            {
+                                auto properties = resource->getProperties();
+                                if( properties )
+                                {
+                                    propertyGrid->setProperties( properties );
+                                }
                             }
                         }
                     }
@@ -641,6 +671,16 @@ namespace fb
             m_selected = selected;
         }
 
+        Array<SmartPtr<ISharedObject>> PropertiesWindow::getSelection() const
+        {
+            return m_selection;
+        }
+
+        void PropertiesWindow::setSelection( Array<SmartPtr<ISharedObject>> selection )
+        {
+            m_selection = selection;
+        }
+
         void PropertiesWindow::propertyChange( const String &name, const String &value, bool isButton )
         {
             try
@@ -665,7 +705,7 @@ namespace fb
                 }
                 else
                 {
-                    auto selection = selectionManager->getSelection();
+                    auto selection = getSelection();
                     for( auto object : selection )
                     {
                         resourceType = propertyChange( object, name, value, isButton );
@@ -707,6 +747,8 @@ namespace fb
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
+            auto application = applicationManager->getApplication();
+
             auto selectionManager = applicationManager->getSelectionManager();
             FB_ASSERT( selectionManager );
 
@@ -741,7 +783,7 @@ namespace fb
                             property.setAttribute( "click", "true" );
 
                             auto resourceTypeName = property.getAttribute( "resourceType" );
-                            resourceType = ApplicationUtil::getResourceType( resourceTypeName );
+                            resourceType = application->getResourceType( resourceTypeName );
                         }
 
                         actor->setProperties( properties );
@@ -760,7 +802,7 @@ namespace fb
                             property.setAttribute( "click", "true" );
 
                             auto resourceTypeName = property.getAttribute( "resourceType" );
-                            resourceType = ApplicationUtil::getResourceType( resourceTypeName );
+                            resourceType = application->getResourceType( resourceTypeName );
                         }
 
                         transform->setProperties( properties );
@@ -778,7 +820,7 @@ namespace fb
                             property.setAttribute( "click", "true" );
 
                             auto resourceTypeName = property.getAttribute( "resourceType" );
-                            resourceType = ApplicationUtil::getResourceType( resourceTypeName );
+                            resourceType = application->getResourceType( resourceTypeName );
                         }
 
                         component->setProperties( properties );
@@ -797,7 +839,7 @@ namespace fb
                             property.setAttribute( "click", "true" );
 
                             auto resourceTypeName = property.getAttribute( "resourceType" );
-                            resourceType = ApplicationUtil::getResourceType( resourceTypeName );
+                            resourceType = application->getResourceType( resourceTypeName );
                         }
 
                         sceneNode->setProperties( properties );
@@ -816,7 +858,7 @@ namespace fb
                             property.setAttribute( "click", "true" );
 
                             auto resourceTypeName = property.getAttribute( "resourceType" );
-                            resourceType = ApplicationUtil::getResourceType( resourceTypeName );
+                            resourceType = application->getResourceType( resourceTypeName );
                         }
 
                         graphicsObject->setProperties( properties );
@@ -835,7 +877,7 @@ namespace fb
                             property.setAttribute( "click", "true" );
 
                             auto resourceTypeName = property.getAttribute( "resourceType" );
-                            resourceType = ApplicationUtil::getResourceType( resourceTypeName );
+                            resourceType = application->getResourceType( resourceTypeName );
                         }
 
                         stateObject->setProperties( properties );
@@ -854,7 +896,7 @@ namespace fb
                             property.setAttribute( "click", "true" );
 
                             auto resourceTypeName = property.getAttribute( "resourceType" );
-                            resourceType = ApplicationUtil::getResourceType( resourceTypeName );
+                            resourceType = application->getResourceType( resourceTypeName );
                         }
 
                         state->setProperties( properties );
@@ -874,7 +916,7 @@ namespace fb
                             property.setAttribute( "click", "true" );
 
                             auto resourceTypeName = property.getAttribute( "resourceType" );
-                            resourceType = ApplicationUtil::getResourceType( resourceTypeName );
+                            resourceType = application->getResourceType( resourceTypeName );
                         }
 
                         component->setProperties( properties );
@@ -896,7 +938,7 @@ namespace fb
                                 property.setAttribute( "click", "true" );
 
                                 auto resourceTypeName = property.getAttribute( "resourceType" );
-                                resourceType = ApplicationUtil::getResourceType( resourceTypeName );
+                                resourceType = application->getResourceType( resourceTypeName );
                             }
 
                             physicsBody->setProperties( properties );
@@ -919,7 +961,7 @@ namespace fb
                                 property.setAttribute( "click", "true" );
 
                                 auto resourceTypeName = property.getAttribute( "resourceType" );
-                                resourceType = ApplicationUtil::getResourceType( resourceTypeName );
+                                resourceType = application->getResourceType( resourceTypeName );
                             }
 
                             meshResource->setProperties( properties );
@@ -944,7 +986,7 @@ namespace fb
                                 property.setAttribute( "click", "true" );
 
                                 auto resourceTypeName = property.getAttribute( "resourceType" );
-                                resourceType = ApplicationUtil::getResourceType( resourceTypeName );
+                                resourceType = application->getResourceType( resourceTypeName );
                             }
 
                             material->setProperties( properties );
@@ -971,7 +1013,7 @@ namespace fb
                                 property.setAttribute( "click", "true" );
 
                                 auto resourceTypeName = property.getAttribute( "resourceType" );
-                                resourceType = ApplicationUtil::getResourceType( resourceTypeName );
+                                resourceType = application->getResourceType( resourceTypeName );
                             }
 
                             materialPass->setProperties( properties );
@@ -1005,7 +1047,7 @@ namespace fb
                                 property.setAttribute( "click", "true" );
 
                                 auto resourceTypeName = property.getAttribute( "resourceType" );
-                                resourceType = ApplicationUtil::getResourceType( resourceTypeName );
+                                resourceType = application->getResourceType( resourceTypeName );
                             }
 
                             materialTexture->setProperties( properties );
@@ -1060,7 +1102,7 @@ namespace fb
 
                                         auto resourceTypeName = property.getAttribute( "resourceType" );
                                         resourceType =
-                                            ApplicationUtil::getResourceType( resourceTypeName );
+                                            application->getResourceType( resourceTypeName );
                                     }
 
                                     material->setProperties( properties );
@@ -1092,7 +1134,7 @@ namespace fb
 
                                         auto resourceTypeName = property.getAttribute( "resourceType" );
                                         resourceType =
-                                            ApplicationUtil::getResourceType( resourceTypeName );
+                                            application->getResourceType( resourceTypeName );
                                     }
 
                                     meshResource->setProperties( properties );
@@ -1103,7 +1145,8 @@ namespace fb
                 }
                 else if( object->isDerived<core::IPrototype>() )
                 {
-                    if( auto properties = state->getProperties() )
+                    auto prototype = fb::dynamic_pointer_cast<core::IPrototype>( object );
+                    if( auto properties = prototype->getProperties() )
                     {
                         properties->setProperty( name, value );
 
@@ -1113,10 +1156,67 @@ namespace fb
                             property.setAttribute( "click", "true" );
 
                             auto resourceTypeName = property.getAttribute( "resourceType" );
-                            resourceType = ApplicationUtil::getResourceType( resourceTypeName );
+                            resourceType = application->getResourceType( resourceTypeName );
                         }
 
-                        state->setProperties( properties );
+                        prototype->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<render::IOverlay>() )
+                {
+                    auto overlay = fb::dynamic_pointer_cast<render::IOverlay>( object );
+                    if( auto properties = overlay->getProperties() )
+                    {
+                        properties->setProperty( name, value );
+
+                        if( isButton )
+                        {
+                            auto &property = properties->getPropertyObject( name );
+                            property.setAttribute( "click", "true" );
+
+                            auto resourceTypeName = property.getAttribute( "resourceType" );
+                            resourceType = application->getResourceType( resourceTypeName );
+                        }
+
+                        overlay->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<render::IOverlayElement>() )
+                {
+                    auto overlayElement = fb::dynamic_pointer_cast<render::IOverlayElement>( object );
+                    if( auto properties = overlayElement->getProperties() )
+                    {
+                        properties->setProperty( name, value );
+
+                        if( isButton )
+                        {
+                            auto &property = properties->getPropertyObject( name );
+                            property.setAttribute( "click", "true" );
+
+                            auto resourceTypeName = property.getAttribute( "resourceType" );
+                            resourceType = application->getResourceType( resourceTypeName );
+                        }
+
+                        overlayElement->setProperties( properties );
+                    }
+                }
+                else if( object->isDerived<ui::IUIElement>() )
+                {
+                    auto element = fb::dynamic_pointer_cast<ui::IUIElement>( object );
+                    if( auto properties = element->getProperties() )
+                    {
+                        properties->setProperty( name, value );
+
+                        if( isButton )
+                        {
+                            auto &property = properties->getPropertyObject( name );
+                            property.setAttribute( "click", "true" );
+
+                            auto resourceTypeName = property.getAttribute( "resourceType" );
+                            resourceType = application->getResourceType( resourceTypeName );
+                        }
+
+                        element->setProperties( properties );
                     }
                 }
             }
@@ -1197,6 +1297,63 @@ namespace fb
         void PropertiesWindow::UpdateSelectionJob::setObject( SmartPtr<ISharedObject> object )
         {
             m_object = object;
+        }
+
+        PropertiesWindow::PropertiesDropTarget::PropertiesDropTarget()
+        {
+        }
+
+        PropertiesWindow::PropertiesDropTarget::~PropertiesDropTarget()
+        {
+        }
+
+        Parameter PropertiesWindow::PropertiesDropTarget::handleEvent(
+            IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
+            SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto resourceDatabase = applicationManager->getResourceDatabase();
+
+            if( eventValue == IEvent::handleDrop )
+            {
+                auto properties = fb::make_ptr<Properties>();
+                auto dataStr = arguments[0].getStr();
+                auto name = arguments[1].getStr();
+                auto value = arguments[2].getStr();
+
+                DataUtil::parse( dataStr, properties.get() );
+
+                auto filePath = properties->getProperty( "filePath" );
+                if( !StringUtil::isNullOrEmpty( filePath ) )
+                {
+                    if( auto resource = resourceDatabase->loadResource( filePath ) )
+                    {
+                        auto handle = resource->getHandle();
+                        auto uuid = handle->getUUID();
+
+                        m_owner->propertyChange( name, uuid, false );
+                    }
+                }
+                else
+                {
+                    auto uuid = properties->getProperty( "actorUUID" );
+                    m_owner->propertyChange( name, uuid, false );
+                }
+            }
+
+            return Parameter();
+        }
+
+        PropertiesWindow *PropertiesWindow::PropertiesDropTarget::getOwner() const
+        {
+            return m_owner;
+        }
+
+        void PropertiesWindow::PropertiesDropTarget::setOwner( PropertiesWindow *owner )
+        {
+            m_owner = owner;
         }
     }  // end namespace editor
 }  // end namespace fb

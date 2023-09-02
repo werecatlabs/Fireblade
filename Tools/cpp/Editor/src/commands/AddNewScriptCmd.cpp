@@ -2,8 +2,6 @@
 #include <commands/AddNewScriptCmd.h>
 #include <editor/EditorManager.h>
 #include <editor/Project.h>
-#include <FBApplication/Script/ScriptGenerator.h>
-#include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/FBCore.h>
 #include <stdio.h>
 #include <fstream>
@@ -16,12 +14,10 @@ namespace fb
     namespace editor
     {
 
-        //--------------------------------------------
         AddNewScriptCmd::AddNewScriptCmd()
         {
         }
 
-        //--------------------------------------------
         AddNewScriptCmd::AddNewScriptCmd( const Properties &properties )
         {
             m_properties = properties;
@@ -30,17 +26,14 @@ namespace fb
             m_properties.getPropertyValue( "fileName", m_fileName );
         }
 
-        //--------------------------------------------
         AddNewScriptCmd::~AddNewScriptCmd()
         {
         }
 
-        //--------------------------------------------
         void AddNewScriptCmd::redo()
         {
         }
 
-        //--------------------------------------------
         void AddNewScriptCmd::execute()
         {
             // auto filePath = m_filePath + String("/") + m_fileName;
@@ -73,7 +66,6 @@ namespace fb
             scriptGenerator.createCPlusPlusScript( path, fileName );
         }
 
-        //--------------------------------------------
         void AddNewScriptCmd::undo()
         {
             String filePath;
@@ -84,25 +76,21 @@ namespace fb
             }
         }
 
-        //--------------------------------------------
         String AddNewScriptCmd::getPath() const
         {
             return m_filePath;
         }
 
-        //--------------------------------------------
         void AddNewScriptCmd::setPath( const String &val )
         {
             m_filePath = val;
         }
 
-        //--------------------------------------------
         String AddNewScriptCmd::getFileName() const
         {
             return m_fileName;
         }
 
-        //--------------------------------------------
         void AddNewScriptCmd::setFileName( const String &val )
         {
             m_fileName = val;

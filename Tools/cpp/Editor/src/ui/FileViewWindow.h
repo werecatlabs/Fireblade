@@ -1,14 +1,14 @@
 #ifndef FileViewWindow_h__
 #define FileViewWindow_h__
 
-#include "ui/BaseWindow.h"
+#include "ui/EditorWindow.h"
 #include <FBCore/Interface/System/IStateListener.h>
 
 namespace fb
 {
     namespace editor
     {
-        class FileViewWindow : public BaseWindow
+        class FileViewWindow : public EditorWindow
         {
         public:
             FileViewWindow( SmartPtr<ui::IUIWindow> parent );

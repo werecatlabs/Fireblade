@@ -1,7 +1,6 @@
 #include <FBLuabind/FBLuabindPCH.h>
 #include <FBLuabind/ScriptObjectUtil.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
 
 using namespace luabind;
 
@@ -84,6 +83,16 @@ namespace fb
             if( scriptObj->isDerived<ui::IUIMenubar>() )
             {
                 luabind::detail::convert_to_lua( L, static_cast<ui::IUIMenubar *>( scriptObj ) );
+                return true;
+            }
+            if( scriptObj->isDerived<ui::IUITabBar>() )
+            {
+                luabind::detail::convert_to_lua( L, static_cast<ui::IUITabBar *>( scriptObj ) );
+                return true;
+            }
+            if( scriptObj->isDerived<ui::IUITabItem>() )
+            {
+                luabind::detail::convert_to_lua( L, static_cast<ui::IUITabItem *>( scriptObj ) );
                 return true;
             }
             if( scriptObj->isDerived<ui::IUIText>() )
@@ -179,121 +188,11 @@ namespace fb
         }
         else if( scriptObj->isDerived<scene::IComponent>() )
         {
-            if( scriptObj->isDerived<scene::SoundContainer>() )
+            if( scriptObj->isDerived<scene::Material>() )
             {
-                luabind::detail::convert_to_lua( L, static_cast<scene::SoundContainer *>( scriptObj ) );
-                return true;
+                FB_ASSERT( dynamic_cast<scene::Material *>( scriptObj ) );
+                luabind::detail::convert_to_lua( L, static_cast<scene::Material *>( scriptObj ) );
             }
-            //    else if( scriptObj->isDerived( MovementControl2::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<MovementControl2 *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<MovementControl2 *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( MovementControlFPS::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<MovementControlFPS *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<MovementControlFPS *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( InputComponent::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<InputComponent *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<InputComponent *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( EntityMovement2::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<EntityMovement2 *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<EntityMovement2 *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( CombatBodyContainer::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<CombatBodyContainer *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<CombatBodyContainer *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( GraphicsContainer::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<GraphicsContainer *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<GraphicsContainer *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( PhysicsContainer2::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<PhysicsContainer2 *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<PhysicsContainer2 *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( PhysicsResponse2::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<PhysicsResponse2 *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<PhysicsResponse2 *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( SuperFreezeLogic::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<SuperFreezeLogic *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<SuperFreezeLogic *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( WeaponContainer::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<WeaponContainer *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<WeaponContainer *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( ViewportComponent::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<ViewportComponent *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<ViewportComponent *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( EnergyContainer::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<EnergyContainer *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<EnergyContainer *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( Grid2Container::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<Grid2Container *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<Grid2Container *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( MatchLogic::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<MatchLogic *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<MatchLogic *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( AnimatorContainer::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<AnimatorContainer *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<AnimatorContainer *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( FragCounter::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<FragCounter *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<FragCounter *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( Playable::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<Playable *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<Playable *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( AiGoalBased::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<AiGoalBased *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<AiGoalBased *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( ScreenSpaceRotation::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<ScreenSpaceRotation *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<ScreenSpaceRotation *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( CollisionNode::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<CollisionNode *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<CollisionNode *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isExactly( Transformation::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<Transformation *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<Transformation *>( scriptObj ) );
-            //    }
-            //    else if( scriptObj->isDerived( IGameManager::TYPE_INFO ) )
-            //    {
-            //        FB_ASSERT( dynamic_cast<IGameManager *>( scriptObj ) );
-            //        luabind::detail::convert_to_lua( L, static_cast<IGameManager *>( scriptObj ) );
-            //    }
             else
             {
                 luabind::detail::convert_to_lua( L, static_cast<scene::IComponent *>( scriptObj ) );
@@ -302,16 +201,16 @@ namespace fb
         }
         else if( scriptObj->isDerived<scene::IDirector>() )
         {
-            if( scriptObj->isDerived<TerrainDirector>() )
-            {
-                luabind::detail::convert_to_lua( L, static_cast<TerrainDirector *>( scriptObj ) );
-                return true;
-            }
-            else
-            {
-                luabind::detail::convert_to_lua( L, static_cast<scene::IDirector *>( scriptObj ) );
-                return true;
-            }
+            //if( scriptObj->isDerived<TerrainDirector>() )
+            //{
+            //    luabind::detail::convert_to_lua( L, static_cast<TerrainDirector *>( scriptObj ) );
+            //    return true;
+            //}
+            //else
+            //{
+            //    luabind::detail::convert_to_lua( L, static_cast<scene::IDirector *>( scriptObj ) );
+            //    return true;
+            //}
         }
         else if( scriptObj->isDerived<editor::FileSelection>() )
         {

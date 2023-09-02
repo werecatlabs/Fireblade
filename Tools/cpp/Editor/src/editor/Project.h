@@ -3,7 +3,7 @@
 
 #include <GameEditorPrerequisites.h>
 #include <FBCore/Interface/Resource/IResource.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Resource/Resource.h>
 #include <FBCore/Core/Map.h>
 

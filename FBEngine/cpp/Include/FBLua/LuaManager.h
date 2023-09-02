@@ -3,7 +3,7 @@
 
 #include <FBLua/FBLuaPrerequisites.h>
 #include <FBCore/Interface/Script/IScriptManager.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Memory/RawPtr.h>
@@ -14,7 +14,7 @@ namespace fb
     /**
      * @brief LuaManager class responsible for managing Lua scripts, bindings, and functions. Inherits from IScriptManager.
      */
-    class LuaManager : public SharedObject<IScriptManager>
+    class LuaManager : public IScriptManager
     {
     public:
         /**
@@ -98,11 +98,6 @@ namespace fb
 
         String getDebugInfo() override;
 
-        void addFunctions( const SmartPtr<IScriptBind> &scriptFunctions );
-        bool getFunctions( SmartPtr<IScriptBind> &scriptFunctions );
-        bool removeFunctions( const SmartPtr<IScriptBind> &scriptFunctions );
-        void removeAllFunctions();
-
         void executeScript( const String &script );
 
         bool getEnableFullDebug() const;
@@ -123,9 +118,6 @@ namespace fb
         void removeBreakpoint( SmartPtr<IScriptBreakpoint> breakpoint ) override;
         void addBreakpoint( SmartPtr<IScriptBreakpoint> breakpoint ) override;
         Array<SmartPtr<IScriptBreakpoint>> getBreakpoints() const override;
-
-        void addScriptBinding( SmartPtr<IScriptBind> scriptBinding ) override;
-        void removeScriptBinding( SmartPtr<IScriptBind> scriptBinding ) override;
 
         void _getObject( void **object ) override;
 
@@ -231,14 +223,8 @@ namespace fb
         ///
         Array<SmartPtr<LuaObjectData>> m_creationList;
 
-        /// The script functions
-        Array<SmartPtr<IScriptBind>> m_functions;
-
         /// Instances
         Array<RawPtr<luabind::object>> m_instances;
-
-        /// Bindings
-        Array<SmartPtr<IScriptBind>> m_scriptBindings;
     };
 
 }  // end namespace fb

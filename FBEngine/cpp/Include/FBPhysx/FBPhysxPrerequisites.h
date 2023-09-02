@@ -8,6 +8,7 @@
 //
 namespace physx
 {
+
     class PxFoundation;
     class PxAllocatorCallback;
     class PxCapsuleController;
@@ -29,8 +30,10 @@ namespace physx
     class PxShape;
     class PxDefaultCpuDispatcher;
     class PxContactModifyPair;
+    class PxOutputStream;
     struct PxTriggerPair;
     struct PxConstraintInfo;
+
 } // end namespace physx
 
 namespace fb

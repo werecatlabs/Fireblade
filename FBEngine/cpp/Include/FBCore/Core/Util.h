@@ -7,6 +7,7 @@
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Quaternion.h>
 #include <FBCore/Math/Transform3.h>
+#include <FBCore/Interface/UI/IUIMenuItem.h>
 #include <deque>
 #include <algorithm>
 #include <xmmintrin.h>
@@ -245,11 +246,25 @@ namespace fb
 
         static int CalculateNearest2Pow( int input );
 
+        static SmartPtr<ui::IUIMenuItem> addMenuItem( SmartPtr<ui::IUIMenu> menu, s32 itemid,
+                                                      const String &text, const String &help,
+                                                      ui::IUIMenuItem::Type type = ui::IUIMenuItem::Type::Normal );
+
+        static SmartPtr<ui::IUIMenuItem> addMenuSeparator( SmartPtr<ui::IUIMenu> menu );
+
+        static SmartPtr<ui::IUIElement> setText( SmartPtr<ui::IUITreeNode> node, const String &text );
+        static SmartPtr<ui::IUIElement> setImage( SmartPtr<ui::IUITreeNode> node,
+                                                  const String &imagePath );
+
+        static SmartPtr<ui::IUIElement> getFirstChild( SmartPtr<ui::IUIElement> element );
+        static String getText( SmartPtr<ui::IUITreeNode> node );
+
         template <class T>
         static bool areAllValuesUnique( const std::vector<T> &vec );
 
         template <class T>
-        static Vector3<T> getAverageVelocity( std::vector<Transform3<T>> positions, std::vector<f64> times )
+        static Vector3<T> getAverageVelocity( std::vector<Transform3<T>> positions,
+                                              std::vector<f64> times )
         {
             auto averageVelocity = Vector3<T>( 0.0, 0.0, 0.0 );
             for( size_t i = 0; i < positions.size() - 1; i++ )

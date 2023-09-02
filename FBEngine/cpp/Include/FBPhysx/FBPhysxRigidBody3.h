@@ -58,13 +58,13 @@ namespace fb
                 }
             }
 
-            void setRigidBodyFlag( PxRigidBodyFlag::Enum flag, bool value ) override
+            void setRigidBodyFlag( RigidBodyFlag::Enum flag, bool value ) override
             {
             }
 
-            PxRigidBodyFlag::Enum getRigidBodyFlags() const override
+            RigidBodyFlag::Enum getRigidBodyFlags() const override
             {
-                return (PxRigidBodyFlag::Enum)0;
+                return (RigidBodyFlag::Enum)0;
             }
 
             void addShape( SmartPtr<IPhysicsShape3> shape ) override
@@ -276,6 +276,12 @@ namespace fb
                 return Vector3<real_Num>::zero();
             }
 
+            void _getObject( void** object ) const
+            {
+                auto p = PhysxRigidBody3<T>::getActor();
+                *object = p;
+            }
+
             physx::PxRigidActor *getActor() const;
 
             void setActor( physx::PxRigidActor *actor );
@@ -288,7 +294,7 @@ namespace fb
             Array<SmartPtr<IPhysicsShape3>> m_shapes;
         };
 
-        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, PhysxRigidBody3, T, SharedObject<T> );
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, PhysxRigidBody3, T, T );
 
         template <class T>
         physx::PxRigidActor *PhysxRigidBody3<T>::getActor() const

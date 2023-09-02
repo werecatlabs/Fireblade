@@ -1,8 +1,8 @@
 project(FBAssimp)
 
-add_compile_definitions (_FB_STATIC_LIB_)
+
 add_compile_definitions (ASSIMP_BUILD_NO_OWN_ZLIB)
-add_compile_definitions (ASSIMP_USE_HUNTER)
+#add_compile_definitions (ASSIMP_USE_HUNTER)
 add_compile_definitions (OPENDDL_STATIC_LIBARY)
 
 add_compile_definitions (ASSIMP_BUILD_DRACO=0)
@@ -115,7 +115,6 @@ include_directories( "${FB_ROOT}/FBEngine/cpp/Include/FBAssimp/Extern/assimp" )
 include_directories( "${FB_ROOT}/FBEngine/cpp/Include/FBAssimp/Extern/assimp/assimp" )
 include_directories( "${FB_ROOT}/FBEngine/cpp/Source/FBAssimp/Extern/assimp" )
 
-
 include_directories( "${FB_ROOT}/FBEngine/cpp/Source/FBAssimp/Extern/contrib" )
 include_directories( "${FB_ROOT}/FBEngine/cpp/Source/FBAssimp/Extern/contrib/draco/src" )
 include_directories( "${FB_ROOT}/FBEngine/cpp/Source/FBAssimp/Extern/contrib/pugixml/src" )
@@ -123,6 +122,7 @@ include_directories( "${FB_ROOT}/FBEngine/cpp/Source/FBAssimp/Extern/contrib/pug
 include_directories( "${FB_ROOT}/FBEngine/cpp/Source/FBAssimp/Extern/contrib/poly2tri" )
 include_directories( "${FB_ROOT}/FBEngine/cpp/Source/FBAssimp/Extern/contrib/zlib/contrib" )
 include_directories( "${FB_ROOT}/FBEngine/cpp/Source/FBAssimp/Extern/contrib/polyclipping" )
+include_directories( "${FB_ROOT}/FBEngine/cpp/Source/FBAssimp/Extern/contrib/unzip" )
 include_directories( "${FB_ROOT}/FBEngine/cpp/Source/FBAssimp/Extern/contrib/zip" )
 include_directories( "${FB_ROOT}/FBEngine/cpp/Source/FBAssimp/Extern/contrib/zip/src" )
 include_directories( "${FB_ROOT}/FBEngine/cpp/Source/FBAssimp/Extern/contrib/openddlparser/include" )

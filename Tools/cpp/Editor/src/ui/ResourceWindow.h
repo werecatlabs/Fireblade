@@ -6,14 +6,14 @@
 #define FB_ResourceWindow_H
 
 #include <GameEditorPrerequisites.h>
-#include "ui/BaseWindow.h"
+#include "ui/EditorWindow.h"
 #include <FBCore/Interface/System/IEventListener.h>
 
 namespace fb
 {
     namespace editor
     {
-        class ResourceWindow : public BaseWindow
+        class ResourceWindow : public EditorWindow
         {
         public:
             ResourceWindow( SmartPtr<ui::IUIWindow> parent );
@@ -25,7 +25,7 @@ namespace fb
             void updateSelection() override;
 
         protected:
-            class TreeCtrlListener : public SharedObject<IEventListener>
+            class TreeCtrlListener : public IEventListener
             {
             public:
                 TreeCtrlListener();

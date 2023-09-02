@@ -9,13 +9,14 @@
 #include <ui/UIManager.h>
 #include <editor/EditorManager.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
+
+
+#include "GameEditorTypes.h"
 
 namespace fb
 {
     namespace editor
     {
-
         ObjectWindow::ObjectWindow()
         {
         }
@@ -87,6 +88,31 @@ namespace fb
             }
         }
 
+        void ObjectWindow::reload( SmartPtr<ISharedObject> data )
+        {
+            if( m_actorWindow )
+            {
+                m_actorWindow->reload( data );
+            }
+
+            if( m_materialWindow )
+            {
+                m_materialWindow->reload( data );
+            }
+
+            if( m_fileViewWindow )
+            {
+                m_fileViewWindow->reload( data );
+            }
+
+            if( m_resourceWindow )
+            {
+                m_resourceWindow->reload( data );
+            }
+
+            EditorWindow::reload( data );
+        }
+
         void ObjectWindow::unload( SmartPtr<ISharedObject> data )
         {
             try
@@ -155,11 +181,11 @@ namespace fb
 
                 if( selected->isDerived<scene::IActor>() )
                 {
-                    m_objectType = ObjectWindow::ObjectType::Actor;
+                    m_objectType = ObjectType::Actor;
                 }
                 else if( selected->isDerived<scene::TerrainSystem>() )
                 {
-                    m_objectType = ObjectWindow::ObjectType::Terrain;
+                    m_objectType = ObjectType::Terrain;
                 }
                 else if( selected->isDerived<FileSelection>() )
                 {
@@ -168,35 +194,36 @@ namespace fb
                     auto fileExt = Path::getFileExtension( filePath );
                     fileExt = StringUtil::make_lower( fileExt );
 
-                    m_objectType = ObjectWindow::ObjectType::Resource;
+                    m_objectType = ObjectType::Resource;
 
                     if( fileExt == ".mat" )
                     {
-                        m_resourceType = ObjectWindow::ObjectType::Material;
+                        m_resourceType = ObjectType::Material;
+                        //m_resourceType = ObjectWindow::ObjectType::Resource;
                     }
                     else if( fileExt == ".fbx" )
                     {
-                        m_resourceType = ObjectWindow::ObjectType::Mesh;
+                        m_resourceType = ObjectType::Mesh;
                     }
                     else if( fileExt == ".resource" )
                     {
-                        m_resourceType = ObjectWindow::ObjectType::Resource;
+                        m_resourceType = ObjectType::Resource;
                     }
                     else
                     {
-                        m_resourceType = ObjectWindow::ObjectType::FileUnknown;
-                        m_objectType = ObjectWindow::ObjectType::FileUnknown;
+                        m_resourceType = ObjectType::FileUnknown;
+                        m_objectType = ObjectType::FileUnknown;
                     }
                 }
             }
 
             switch( m_objectType )
             {
-            case ObjectWindow::ObjectType::None:
+            case ObjectType::None:
             {
             }
             break;
-            case ObjectWindow::ObjectType::Actor:
+            case ObjectType::Actor:
             {
                 if( m_actorWindow )
                 {
@@ -224,19 +251,19 @@ namespace fb
                 }
             }
             break;
-            case ObjectWindow::ObjectType::Resource:
+            case ObjectType::Resource:
             {
                 switch( m_resourceType )
                 {
-                case ObjectWindow::ObjectType::None:
+                case ObjectType::None:
                 {
                 }
                 break;
-                case ObjectWindow::ObjectType::Actor:
+                case ObjectType::Actor:
                 {
                 }
                 break;
-                case ObjectWindow::ObjectType::Resource:
+                case ObjectType::Resource:
                 {
                     if( m_actorWindow )
                     {
@@ -264,7 +291,7 @@ namespace fb
                     }
                 }
                 break;
-                case ObjectWindow::ObjectType::FileUnknown:
+                case ObjectType::FileUnknown:
                 {
                     if( m_actorWindow )
                     {
@@ -292,7 +319,7 @@ namespace fb
                     }
                 }
                 break;
-                case ObjectWindow::ObjectType::Mesh:
+                case ObjectType::Mesh:
                 {
                     if( m_actorWindow )
                     {
@@ -320,7 +347,7 @@ namespace fb
                     }
                 }
                 break;
-                case ObjectWindow::ObjectType::Material:
+                case ObjectType::Material:
                 {
                     if( m_actorWindow )
                     {
@@ -348,11 +375,11 @@ namespace fb
                     }
                 }
                 break;
-                case ObjectWindow::ObjectType::MaterialNode:
+                case ObjectType::MaterialNode:
                 {
                 }
                 break;
-                case ObjectWindow::ObjectType::Terrain:
+                case ObjectType::Terrain:
                 {
                     if( m_actorWindow )
                     {
@@ -384,18 +411,18 @@ namespace fb
                 {
                 }
                 break;
-                };
+                }
             }
             break;
-            case ObjectWindow::ObjectType::Mesh:
+            case ObjectType::Mesh:
             {
             }
             break;
-            case ObjectWindow::ObjectType::Material:
+            case ObjectType::Material:
             {
             }
             break;
-            case ObjectWindow::ObjectType::MaterialNode:
+            case ObjectType::MaterialNode:
             {
             }
             break;
@@ -403,8 +430,7 @@ namespace fb
             {
             }
             break;
-            };
+            }
         }
-
     }  // end namespace editor
 }  // end namespace fb

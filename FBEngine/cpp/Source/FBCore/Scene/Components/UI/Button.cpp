@@ -99,7 +99,8 @@ namespace fb
                                        const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
                                        SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
         {
-            if( object == getButton() )
+            const auto button = getButton();
+            if( object == button )
             {
                 auto events = getEvents();
                 for( auto &event : events )

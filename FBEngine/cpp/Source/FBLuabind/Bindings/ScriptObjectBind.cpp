@@ -108,7 +108,7 @@ namespace fb
                         .def( "preUpdate", &IObject::preUpdate )
                         .def( "update", &IObject::update )
                         .def( "postUpdate", &IObject::postUpdate )
-                        .def( "getHandle", &IObject::getHandle )
+                        //.def( "getHandle", &IObject::getHandle )
                         .def( "isValid", &IObject::isValid )
                         .def( "getCreatorData", &IObject::getCreatorData )
                         .def( "setCreatorData", &IObject::setCreatorData )

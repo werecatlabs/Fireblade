@@ -3,7 +3,6 @@
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/ISceneNode.h>
-#include <FBCore/Memory/SharedObject.h>
 #include <FBCore/Interface/Script/IScriptReceiver.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Atomics/Atomics.h>
@@ -82,6 +81,8 @@ namespace fb
             SmartPtr<ISceneNode> findChild( const String &name ) override;
             void getChildren( Array<SmartPtr<ISceneNode>> &children ) const;
 
+            void removeChildren() override;
+
             Array<SmartPtr<ISceneNode>> getChildren() const override;
 
             u32 getNumChildren() const override;
@@ -126,13 +127,11 @@ namespace fb
 
             u32 getObjectsBuffer( SmartPtr<IGraphicsObject> *buffer, u32 bufferSize ) const override;
 
-            void removeChildren() override;
-
             u32 getChildrenBuffer( SmartPtr<ISceneNode> *children, u32 bufferSize ) const override;
 
             void destroyStateContext();
 
-            class ScriptReceiver : public SharedObject<IScriptReceiver>
+            class ScriptReceiver : public IScriptReceiver
             {
             public:
                 ScriptReceiver( CSceneNodeOgre *node );
@@ -143,13 +142,14 @@ namespace fb
                 s32 getProperty( hash_type id, Parameter &param ) const override;
                 s32 getProperty( hash_type id, Parameters &params ) const override;
                 s32 getProperty( hash_type hash, void *param ) const override;
-                s32 callFunction( hash_type hashId, const Parameters &params, Parameters &results ) override;
+                s32 callFunction( hash_type hashId, const Parameters &params,
+                                  Parameters &results ) override;
 
             private:
                 CSceneNodeOgre *m_node = nullptr;
             };
 
-            class SceneNodeStateListener : public SharedObject<IStateListener>
+            class SceneNodeStateListener : public IStateListener
             {
             public:
                 SceneNodeStateListener() = default;
@@ -200,8 +200,8 @@ namespace fb
             /// The objects attached to this scene node.
             Array<SmartPtr<IGraphicsObject>> m_graphicsObjects;
 
-            SpinRWMutex ( SceneNodeMutex );
-            SpinRWMutex ( StatesMutex );
+            SpinRWMutex( SceneNodeMutex );
+            SpinRWMutex( StatesMutex );
 
             static u32 m_nameExt;
         };

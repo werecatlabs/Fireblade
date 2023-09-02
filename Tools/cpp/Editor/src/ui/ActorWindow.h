@@ -2,10 +2,12 @@
 #define __ActorWindow_h__
 
 #include <GameEditorPrerequisites.h>
-#include <ui/BaseWindow.h>
+#include <ui/EditorWindow.h>
 #include <FBCore/Math/Transform3.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Interface/System/IEventListener.h>
+
+#include "GameEditorTypes.h"
 
 namespace fb
 {
@@ -14,7 +16,7 @@ namespace fb
         /**
          * @brief A window for managing actors and their components.
          */
-        class ActorWindow : public BaseWindow
+        class ActorWindow : public EditorWindow
         {
         public:
             /**
@@ -172,7 +174,7 @@ namespace fb
             void setPropertiesWindow( SmartPtr<PropertiesWindow> propertiesWindow );
 
         protected:
-            class TerrainStateListener : public SharedObject<IStateListener>
+            class TerrainStateListener : public IStateListener
             {
             public:
                 TerrainStateListener( ActorWindow *projectWindow );
@@ -187,7 +189,7 @@ namespace fb
                 ActorWindow *m_projectWindow = nullptr;
             };
 
-            class UIElementListener : public SharedObject<IEventListener>
+            class UIElementListener : public IEventListener
             {
             public:
                 UIElementListener();
@@ -205,6 +207,8 @@ namespace fb
             };
 
             void setActorName( const String &textStr );
+
+            void updateObjectSelection( SmartPtr<ISharedObject> object );
 
             SmartPtr<ui::IUIWindow> m_actorWindow;
             SmartPtr<ui::IUIWindow> m_componentWindow;
@@ -224,6 +228,8 @@ namespace fb
             SmartPtr<TransformWindow> m_transformWindow;
             SmartPtr<PropertiesWindow> m_propertiesWindow;
             SmartPtr<EventsWindow> m_eventsWindow;
+
+            SmartPtr<MaterialWindow> m_materialWindow;
             SmartPtr<TerrainWindow> m_terrainWindow;
 
             SmartPtr<ISharedObject> m_selectedObject;
@@ -231,6 +237,9 @@ namespace fb
             SmartPtr<ISharedObject> m_selectedEntity;
 
             std::map<String, bool> treeState;
+
+            ObjectType m_objectType = ObjectType::None;
+            ObjectType m_resourceType = ObjectType::None;
         };
     }  // end namespace editor
 }  // end namespace fb

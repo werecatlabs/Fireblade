@@ -1,7 +1,7 @@
 #ifndef EventWindow_h__
 #define EventWindow_h__
 
-#include "ui/BaseWindow.h"
+#include "ui/EditorWindow.h"
 #include <FBCore/Core/Array.h>
 #include <FBCore/Interface/System/IEventListener.h>
 
@@ -9,7 +9,7 @@ namespace fb
 {
     namespace editor
     {
-        class EventWindow : public BaseWindow
+        class EventWindow : public EditorWindow
         {
         public:
             enum class WidgetId
@@ -41,7 +41,7 @@ namespace fb
             void setEvent( SmartPtr<scene::IComponentEvent> event );
 
         protected:
-            class UIElementListener : public SharedObject<IEventListener>
+            class UIElementListener : public IEventListener
             {
             public:
                 UIElementListener();

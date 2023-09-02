@@ -54,8 +54,6 @@ namespace fb
                         .def( "removeListeners", &IFSMManager::removeListeners )
                         .def( "getListenerPriority", &IFSMManager::getListenerPriority )
                         .def( "setListenerPriority", &IFSMManager::setListenerPriority )
-                        .def( "isReady", &IFSMManager::isReady )
-                        .def( "setReady", &IFSMManager::setReady )
                         .def( "getFlagsPtr", &IFSMManager::getFlagsPtr )
                         .def( "getListeners", &IFSMManager::getListeners )];
 

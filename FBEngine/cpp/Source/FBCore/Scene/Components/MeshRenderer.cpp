@@ -181,7 +181,10 @@ namespace fb
                         }
                     }
 
-                    sceneManager->unregisterAllComponent( this );
+                    if( sceneManager )
+                    {
+                        sceneManager->unregisterAllComponent( this );
+                    }
 
                     Component::unload( data );
 

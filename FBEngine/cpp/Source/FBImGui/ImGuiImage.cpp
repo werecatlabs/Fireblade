@@ -27,12 +27,57 @@ namespace fb
             {
                 if( !texture->isLoaded() )
                 {
-                    texture->load(nullptr);
+                    texture->load( nullptr );
                 }
 
-                m_textureHandle = texture->getTextureHandle();
+                void *iTexture = 0;
+                texture->getTextureFinal( (void **)&iTexture );
+                m_textureHandle = reinterpret_cast<size_t>( iTexture );
 
-                ImGui::Image( (ImTextureID)&m_textureHandle, ImVec2( size.x, size.y ) );
+                //m_textureHandle = texture->getTextureHandle();
+
+                if( iTexture != 0 )
+                {
+                    ImGui::Image( (ImTextureID)iTexture, ImVec2( size.x, size.y ) );
+
+                    auto dropTarget = getDropTarget();
+                    if( dropTarget )
+                    {
+                        if( ImGui::BeginDragDropTarget() )
+                        {
+                            auto payload = ImGui::AcceptDragDropPayload( "_TREENODE" );
+                            if( payload )
+                            {
+                                auto pData = static_cast<const char *>( payload->Data );
+                                auto dataSize = payload->DataSize;
+                                auto data = String( pData, dataSize );
+
+                                auto menuItemId = getElementId();
+
+                                auto args = Array<Parameter>();
+                                args.resize( 1 );
+
+                                args[0].setStr( data );
+
+                                dropTarget->handleEvent( IEvent::Type::UI, IEvent::handleDrop, args,
+                                                         this, this, nullptr );
+                            }
+
+                            ImGui::EndDragDropTarget();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                auto applicationManager = core::IApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto ui = applicationManager->getUI();
+                SmartPtr<ImGuiApplication> application = ui->getApplication();
+                auto emptyTexture = application->getEmptyTexture();
+
+                ImGui::Image( (ImTextureID)emptyTexture, ImVec2( size.x, size.y ) );
 
                 auto dropTarget = getDropTarget();
                 if( dropTarget )
@@ -49,28 +94,17 @@ namespace fb
                             auto menuItemId = getElementId();
 
                             auto args = Array<Parameter>();
-                            args.resize(1);
+                            args.resize( 1 );
 
                             args[0].setStr( data );
 
-                            dropTarget->handleEvent( IEvent::Type::UI, IEvent::handleDrop, args,
-                                                     this, this, nullptr );
+                            dropTarget->handleEvent( IEvent::Type::UI, IEvent::handleDrop, args, this,
+                                                     this, nullptr );
                         }
 
                         ImGui::EndDragDropTarget();
                     }
                 }
-            }
-            else
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto ui = applicationManager->getUI();
-                SmartPtr<ImGuiApplication> application = ui->getApplication();
-                auto emptyTexture = application->getEmptyTexture();
-
-                ImGui::Image( (ImTextureID)emptyTexture, ImVec2( size.x, size.y ) );
             }
         }
 

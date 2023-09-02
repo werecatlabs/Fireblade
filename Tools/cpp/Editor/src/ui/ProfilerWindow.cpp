@@ -1,8 +1,5 @@
 #include <GameEditorPCH.h>
 #include "ui/ProfilerWindow.h"
-
-#include <imgui.h>
-
 #include "editor/EditorManager.h"
 #include <FBCore/FBCore.h>
 

@@ -16,8 +16,15 @@ namespace fb
             ImGuiTabBar();
             ~ImGuiTabBar() override;
 
-            FB_CLASS_REGISTER_DECL;
             void update();
+
+            virtual SmartPtr<IUITabItem> addTabItem();
+            virtual void removeTabItem( SmartPtr<IUITabItem> tabItem );
+
+            FB_CLASS_REGISTER_DECL;
+
+        protected:
+            Array<SmartPtr<IUITabItem>> m_tabItems;
         };
 
     }  // end namespace ui

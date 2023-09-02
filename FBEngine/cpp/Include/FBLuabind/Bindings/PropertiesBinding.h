@@ -2,13 +2,13 @@
 #define PropertiesBinding_h__
 
 #include <FBCore/Core/Properties.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Interface/Script/IScriptObject.h>
 
 namespace fb
 {
 
-    class PropertiesBinding : public SharedObject<IScriptObject>
+    class PropertiesBinding : public IScriptObject
     {
     public:
         PropertiesBinding();

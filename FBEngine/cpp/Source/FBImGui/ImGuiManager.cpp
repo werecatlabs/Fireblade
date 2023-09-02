@@ -11,6 +11,7 @@
 #include <FBImGui/ImGuiTreeCtrl.h>
 #include <FBImGui/ImGuiTreeNode.h>
 #include <FBImGui/ImGuiText.h>
+#include <FBImGui/ImGuiTextEntry.h>
 #include <FBImGui/ImGuiWindow.h>
 #include <FBImGui/ImGuiPropertyGrid.h>
 #include <FBImGui/ImGuiDropdown.h>
@@ -25,8 +26,9 @@
 #include <FBImGui/ImGuiTerrainEditor.h>
 #include "FBImGui/ImGuiEventWindow.h"
 #include "FBImGui/ImGuiAbout.h"
+#include "FBImGui/ImGuiTabBar.h"
+#include "FBImGui/ImGuiTabItem.h"
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
 
 #include "ImGuiInputManager.h"
 #include "ImGuiProfilerWindow.h"
@@ -125,7 +127,7 @@ namespace fb
         {
         }
 
-        fb::SmartPtr<fb::ui::IUIApplication> ImGuiManager::addApplication()
+        SmartPtr<IUIApplication> ImGuiManager::addApplication()
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
@@ -201,13 +203,18 @@ namespace fb
                 const auto TREENODE_TYPEINFO = IUITreeNode::typeInfo();
                 const auto Property_Grid_TYPEINFO = IUIPropertyGrid::typeInfo();
                 const auto TEXT_TYPEINFO = IUIText::typeInfo();
+                const auto TEXTENTRY_TYPEINFO = IUITextEntry::typeInfo();
                 const auto TERRAIN_TYPEINFO = IUITerrainEditor::typeInfo();
+
+                const auto TABBAR_TYPEINFO = IUITabBar::typeInfo();
+                const auto TABITEM_TYPEINFO = IUITabItem::typeInfo();
+
                 const auto Dropdown_TYPEINFO = IUIDropdown::typeInfo();
                 const auto Vector2_TYPEINFO = IUIVector2::typeInfo();
                 const auto Vector3_TYPEINFO = IUIVector3::typeInfo();
                 const auto Vector4_TYPEINFO = IUIVector4::typeInfo();
 
-                const auto ProfilerWindow_TYPEINFO = ui::IUIProfilerWindow::typeInfo();
+                const auto ProfilerWindow_TYPEINFO = IUIProfilerWindow::typeInfo();
 
                 if( type == APPLICATION_TYPEINFO )
                 {
@@ -242,7 +249,7 @@ namespace fb
                 }
                 if( type == WINDOW_TYPEINFO )
                 {
-                    element = factoryManager->make_ptr<ImGuiWindow<ui::IUIWindow>>();
+                    element = factoryManager->make_ptr<ImGuiWindow>();
                     element->load( nullptr );
                 }
                 if( type == IMAGE_TYPEINFO )
@@ -283,6 +290,11 @@ namespace fb
                 if( type == TEXT_TYPEINFO )
                 {
                     element = factoryManager->make_ptr<ImGuiText>();
+                    element->load( nullptr );
+                }
+                if( type == TEXTENTRY_TYPEINFO )
+                {
+                    element = factoryManager->make_ptr<ImGuiTextEntry>();
                     element->load( nullptr );
                 }
                 if( type == LabelCheckbox_TYPEINFO )
@@ -328,6 +340,18 @@ namespace fb
                 if( type == TERRAIN_TYPEINFO )
                 {
                     element = fb::make_ptr<ImGuiTerrainEditor>();
+                    element->load( nullptr );
+                }
+
+                if( type == TABBAR_TYPEINFO )
+                {
+                    element = fb::make_ptr<ImGuiTabBar>();
+                    element->load( nullptr );
+                }
+
+                if( type == TABITEM_TYPEINFO )
+                {
+                    element = fb::make_ptr<ImGuiTabItem>();
                     element->load( nullptr );
                 }
             }

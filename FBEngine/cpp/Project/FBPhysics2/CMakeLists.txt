@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 project(FBPhysics2)
 
-add_compile_definitions (_FB_STATIC_LIB_)
+
 
 # define header and source files for the library
 file(GLOB_RECURSE HEADER_FILES "../../Include/FBPhysics2/*.h")

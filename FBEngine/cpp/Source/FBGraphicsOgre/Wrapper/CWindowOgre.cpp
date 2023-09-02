@@ -147,7 +147,7 @@ namespace fb
                 //windowMovedOrResized();
 
 #if defined FB_PLATFORM_APPLE
-                if (m_osWindow)
+                if( m_osWindow )
                 {
                     m_osWindow->updateTrackingSize();
                 }
@@ -208,6 +208,10 @@ namespace fb
             {
                 FB_LOG_EXCEPTION( e );
             }
+        }
+
+        void CWindowOgre::handleEvent( SmartPtr<IWindowEvent> event )
+        {
         }
 
         void CWindowOgre::update()
@@ -311,7 +315,7 @@ namespace fb
 
         void CWindowOgre::setFullscreen( bool fullScreen, unsigned int width, unsigned int height )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             m_isFullscreen = fullScreen;
             m_window->setFullscreen( fullScreen, width, height );
         }
@@ -347,7 +351,7 @@ namespace fb
 
         void CWindowOgre::reposition( s32 left, s32 top )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             m_window->reposition( left, top );
         }
 
@@ -382,7 +386,7 @@ namespace fb
 
         bool CWindowOgre::isVisible() const
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             return m_window->isVisible();
         }
 
@@ -422,25 +426,25 @@ namespace fb
         void CWindowOgre::getMetrics( unsigned int &width, unsigned int &height,
                                       unsigned int &colourDepth, int &left, int &top )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             return m_window->getMetrics( width, height, left, top );
         }
 
         u8 CWindowOgre::suggestPixelFormat() const
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             return m_window->suggestPixelFormat();
         }
 
         bool CWindowOgre::isDeactivatedOnFocusChange() const
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             return m_window->isDeactivatedOnFocusChange();
         }
 
         void CWindowOgre::setDeactivateOnFocusChange( bool deactivate )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             m_window->setDeactivateOnFocusChange( deactivate );
         }
 

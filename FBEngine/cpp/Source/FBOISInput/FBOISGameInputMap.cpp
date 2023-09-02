@@ -33,15 +33,15 @@ namespace fb
     void OISGameInputMap::setJoystickAction( u32 id, u32 button0, u32 button1 )
     {
         setJoystickAction( id,
-                           SmartPtr<IInputActionData>( new InputActionData( button0, button1, id ) ) );
+                           SmartPtr<IInputAction>( new InputActionData( button0, button1, id ) ) );
     }
 
-    void OISGameInputMap::setKeyboardAction( u32 id, const SmartPtr<IInputActionData> &actionData )
+    void OISGameInputMap::setKeyboardAction( u32 id, const SmartPtr<IInputAction> &actionData )
     {
         m_keyboardMap[id] = actionData;
     }
 
-    void OISGameInputMap::setJoystickAction( u32 id, const SmartPtr<IInputActionData> &actionData )
+    void OISGameInputMap::setJoystickAction( u32 id, const SmartPtr<IInputAction> &actionData )
     {
         m_joystickMap[id] = actionData;
     }
@@ -52,7 +52,7 @@ namespace fb
         auto keyActionIt = keyboardMap.begin();
         for( ; keyActionIt != keyboardMap.end(); ++keyActionIt )
         {
-            const SmartPtr<IInputActionData> &actionData = keyActionIt->second;
+            const SmartPtr<IInputAction> &actionData = keyActionIt->second;
             if( actionData->getPrimaryAction() == key || actionData->getSecondaryAction() == key )
             {
                 return actionData->getActionId();
@@ -76,7 +76,7 @@ namespace fb
         auto joyIt = joystickMap.begin();
         for( ; joyIt != joystickMap.end(); ++joyIt )
         {
-            const SmartPtr<IInputActionData> &actionData = joyIt->second;
+            const SmartPtr<IInputAction> &actionData = joyIt->second;
             if( actionData->getPrimaryAction() == button || actionData->getSecondaryAction() == button )
             {
                 return actionData->getActionId();
@@ -96,13 +96,13 @@ namespace fb
         return m_joystickMap;
     }
 
-    bool OISGameInputMap::getInputActionData( u32 button, SmartPtr<IInputActionData> &data )
+    bool OISGameInputMap::getInputActionData( u32 button, SmartPtr<IInputAction> &data )
     {
         const ActionKeyMap &joystickMap = getJoystickMap();
         auto joyIt = joystickMap.begin();
         for( ; joyIt != joystickMap.end(); ++joyIt )
         {
-            const SmartPtr<IInputActionData> &actionData = joyIt->second;
+            const SmartPtr<IInputAction> &actionData = joyIt->second;
 
             bool buttonState0 = false;
             bool buttonState1 = false;

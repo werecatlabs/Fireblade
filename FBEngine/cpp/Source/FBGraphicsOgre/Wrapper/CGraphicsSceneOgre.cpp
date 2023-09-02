@@ -31,8 +31,6 @@
 #include <OgreShaderGenerator.h>
 #include <Ogre.h>
 #include <tinyxml.h>
-
-#include "FBParticleSystem/CParticleSystem.h"
 #include "Wrapper/CDynamicMesh.h"
 
 #ifdef FB_OGRE_USE_MESH_SPLITTERS
@@ -46,7 +44,7 @@ namespace fb
     namespace render
     {
 
-        FB_CLASS_REGISTER_DERIVED( fb, CGraphicsSceneOgre, SharedObject<IGraphicsScene> );
+        FB_CLASS_REGISTER_DERIVED( fb, CGraphicsSceneOgre, IGraphicsScene );
         u32 CGraphicsSceneOgre::m_nextGeneratedNameExt = 0;
 
         CGraphicsSceneOgre::CGraphicsSceneOgre() :
@@ -273,7 +271,12 @@ namespace fb
                     }
 
                     m_graphicsObjects.clear();
-                    m_rootSceneNode->removeChildren();
+
+                    auto rootSceneNode = fb::static_pointer_cast<CSceneNodeOgre>( m_rootSceneNode );
+                    if( rootSceneNode )
+                    {
+                        rootSceneNode->removeChildren();
+                    }
 
                     m_registeredSceneNodes = nullptr;
                     m_registeredGfxObjects.clear();
@@ -294,11 +297,19 @@ namespace fb
                         }
                     }
 
-                    m_rootSceneNode->removeChildren();
+                    if( rootSceneNode )
+                    {
+                        rootSceneNode->removeChildren();
+                    }
+
                     setSceneNodes( nullptr );
 
-                    m_rootSceneNode->unload( nullptr );
-                    m_rootSceneNode = nullptr;
+                    if( rootSceneNode )
+                    {
+                        rootSceneNode->unload( nullptr );
+                        rootSceneNode = nullptr;
+                        m_rootSceneNode = nullptr;
+                    }
 
                     if( m_sceneManager )
                     {

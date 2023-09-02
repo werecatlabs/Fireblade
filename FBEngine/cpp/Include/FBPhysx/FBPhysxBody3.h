@@ -3,17 +3,18 @@
 
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBPhysx/FBPhysxSharedObject.h>
+#include <FBCore/Physics/CPhysicsBody3.h>
 #include <FBCore/Interface/Physics/IPhysicsBody3.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/State/States/PhysicsBodyState.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb
 {
     namespace physics
     {
         template <class T>
-        class PhysxBody3 : public PhysxSharedObject<T>
+        class PhysxBody3 : public CPhysicsBody3<T>
         {
         public:
             PhysxBody3()
@@ -37,13 +38,13 @@ namespace fb
                 return Transform3<real_Num>();
             }
 
-            void setActorFlag( PxActorFlag::Enum flag, bool value ) override
+            void setActorFlag( ActorFlag::Enum flag, bool value ) override
             {
             }
 
-            PxActorFlag::Enum getActorFlags() const override
+            ActorFlag::Enum getActorFlags() const override
             {
-                return (PxActorFlag::Enum)0;
+                return (ActorFlag::Enum)0;
             }
 
             real_Num getMass() const override
@@ -142,7 +143,7 @@ namespace fb
         {
         }
 
-        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, PhysxBody3, T, SharedObject<T> );
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, PhysxBody3, T, T );
     }  // namespace physics
 }  // namespace fb
 

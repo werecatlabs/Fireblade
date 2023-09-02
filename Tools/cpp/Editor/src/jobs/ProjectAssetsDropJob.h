@@ -9,5 +9,4 @@ namespace fb
     }  // end namespace editor
 }  // end namespace fb
 
-
-#endif // ProjectAssetsDropJob_h__
+#endif  // ProjectAssetsDropJob_h__

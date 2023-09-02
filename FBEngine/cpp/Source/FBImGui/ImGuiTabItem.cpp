@@ -1,6 +1,9 @@
 #include <FBImGui/FBImGuiPCH.h>
 #include <FBImGui/ImGuiTabItem.h>
+#include <FBCore/FBCore.h>
 #include <imgui.h>
+
+#include "ImGuiApplication.h"
 
 namespace fb
 {
@@ -18,12 +21,34 @@ namespace fb
 
         void ImGuiTabItem::update()
         {
-            auto name = getName();
+            auto applicationManager = core::IApplicationManager::instance();
+            auto ui = applicationManager->getUI();
+            auto uiApplication = fb::static_pointer_cast<ImGuiApplication>( ui->getApplication() );
+
+            auto name = getLabel();
             if( ImGui::BeginTabItem( name.c_str() ) )
             {
+                if( auto p = getChildren() )
+                {
+                    auto &children = *p;
+                    for( auto child : children )
+                    {
+                        uiApplication->createElement( child );
+                    }
+                }
+
                 ImGui::EndTabItem();
             }
         }
 
+        String ImGuiTabItem::getLabel() const
+        {
+            return m_label;
+        }
+
+        void ImGuiTabItem::setLabel( const String &label )
+        {
+            m_label = label;
+        }
     }  // end namespace ui
 }  // end namespace fb

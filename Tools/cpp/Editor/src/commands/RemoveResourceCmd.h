@@ -2,7 +2,7 @@
 #define _REMOVE_ENTITY_BODY_CMD_H
 
 #include <GameEditorPrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Interface/System/ICommand.h>
 #include <FBCore/Core/Properties.h>
 #include <commands/Command.h>

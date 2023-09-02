@@ -3,7 +3,7 @@
 #include "commands/AddNewScriptCmd.h"
 #include "ui/ProjectWindow.h"
 #include "editor/EditorManager.h"
-#include <FBApplication/FBApplication.h>
+
 #include <FBCore/FBCore.h>
 #include <fstream>
 

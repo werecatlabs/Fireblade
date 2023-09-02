@@ -9,7 +9,7 @@
 #include <GameEditorTypes.h>
 #include <ui/ObjectBrowserDialog.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
+
 #include <FBGraphics/FBGraphics.h>
 
 namespace fb
@@ -19,6 +19,7 @@ namespace fb
         MaterialWindow::MaterialWindow( SmartPtr<ui::IUIWindow> parent )
         {
             auto className = String( "MaterialEditor" );
+            //auto className = String( "BaseEditor" );
             setClassName( className );
 
             setParent( parent );
@@ -35,7 +36,7 @@ namespace fb
             {
                 setLoadingState( LoadingState::Loading );
 
-                BaseWindow::load( data );
+                EditorWindow::load( data );
 
                 auto applicationManager = core::IApplicationManager::instance();
                 auto ui = applicationManager->getUI();
@@ -52,6 +53,7 @@ namespace fb
 
                 auto debugWindow = ui->addElementByType<ui::IUIWindow>();
                 setDebugWindow( debugWindow );
+                debugWindow->setVisible( false, false );
 
                 if( parent )
                 {
@@ -148,7 +150,7 @@ namespace fb
 
                 m_dataArray.clear();
 
-                BaseWindow::unload( data );
+                EditorWindow::unload( data );
 
                 setLoadingState( LoadingState::Unloaded );
             }
@@ -161,7 +163,7 @@ namespace fb
         void MaterialWindow::updateSelection()
         {
             buildTree();
-            BaseWindow::updateSelection();
+            EditorWindow::updateSelection();
         }
 
         SmartPtr<render::IMaterial> MaterialWindow::getMaterial() const
@@ -189,7 +191,10 @@ namespace fb
             try
             {
                 auto tree = getTree();
-                FB_ASSERT( tree );
+                if( !tree )
+                {
+                    return;
+                }
 
                 if( tree )
                 {
@@ -261,7 +266,10 @@ namespace fb
 
                                 if( material )
                                 {
-                                    material->load( nullptr );
+                                    if( material->isLoaded() == false )
+                                    {
+                                        material->load( nullptr );
+                                    }
 
                                     setMaterial( material );
 
@@ -308,7 +316,7 @@ namespace fb
                 treeNode->setExpanded( true );
 
                 FB_ASSERT( treeNode );
-                ApplicationUtil::setText( treeNode, actorName );
+                Util::setText( treeNode, actorName );
 
                 treeNode->setNodeUserData( data );
 
@@ -392,7 +400,7 @@ namespace fb
                     auto treeNode = m_tree->addNode();
 
                     FB_ASSERT( treeNode );
-                    ApplicationUtil::setText( treeNode, className );
+                    Util::setText( treeNode, className );
 
                     treeNode->setNodeUserData( data );
 

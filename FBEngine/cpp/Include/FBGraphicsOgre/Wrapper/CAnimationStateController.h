@@ -5,7 +5,7 @@
 #include <FBCore/Interface/Graphics/IGraphicsScene.h>
 #include <FBCore/Interface/Graphics/IGraphicsObject.h>
 #include <FBCore/Interface/Graphics/IAnimationStateController.h>
-#include <FBCore/Memory/SharedObject.h>
+
 #include <FBCore/Core/HashMap.h>
 
 namespace fb
@@ -13,7 +13,7 @@ namespace fb
     namespace render
     {
 
-        class CAnimationStateController : public SharedObject<IAnimationStateController>
+        class CAnimationStateController : public IAnimationStateController
         {
         public:
             CAnimationStateController( SmartPtr<IGraphicsScene> creator );
@@ -41,7 +41,7 @@ namespace fb
             f32 getTimePosition( const String &animationName ) override;
 
         private:
-            class Animation : public SharedObject<ISharedObject>
+            class Animation : public ISharedObject
             {
             public:
                 Animation( CAnimationStateController *controller );

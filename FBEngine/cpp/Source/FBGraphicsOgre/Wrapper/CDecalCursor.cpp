@@ -8,7 +8,7 @@ namespace fb
 {
     namespace render
     {
-        FB_CLASS_REGISTER_DERIVED( fb, CDecalCursor, SharedObject<IDecalCursor> );
+        FB_CLASS_REGISTER_DERIVED( fb, CDecalCursor, IDecalCursor );
 
         CDecalCursor::CDecalCursor() : m_decalCursor( nullptr )
         {

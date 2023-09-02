@@ -2,7 +2,6 @@
 #include <ui/ObjectBrowserDialog.h>
 #include <ui/ProjectTreeData.h>
 #include <editor/EditorManager.h>
-#include <FBApplication/ApplicationUtil.h>
 #include <FBCore/FBCore.h>
 #include "ActorWindow.h"
 #include "UIManager.h"
@@ -165,7 +164,7 @@ namespace fb
                     auto treeNode = m_tree->addNode();
 
                     FB_ASSERT( treeNode );
-                    ApplicationUtil::setText( treeNode, name );
+                    Util::setText( treeNode, name );
 
                     auto data = factoryManager->make_ptr<ProjectTreeData>( "factory", "factory", factory,
                                                                            factory );

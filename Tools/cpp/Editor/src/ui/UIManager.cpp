@@ -1,7 +1,7 @@
 #include <GameEditorPCH.h>
 #include <ui/UIManager.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
+
 #include <editor/EditorManager.h>
 #include <editor/Project.h>
 #include "commands/FileMenuCmd.h"
@@ -11,7 +11,6 @@
 #include <ui/TerrainWindow.h>
 #include <ui/SceneWindow.h>
 #include <ui/PropertiesWindow.h>
-#include <ui/MeshImportWindow.h>
 #include <ui/MaterialWindow.h>
 #include "ui/ProfilerWindow.h"
 #include <ui/ObjectWindow.h>
@@ -20,7 +19,9 @@
 #include <ui/InputManagerWindow.h>
 
 #include "commands/ToggleEditorCamera.h"
-#include "jobs/GenerateSkyboxMaterials.h"
+#include "jobs/AssetDatabaseBuildJob.h"
+#include "jobs/AssetImportJob.h"
+#include "jobs/GenerateSkybox.h"
 #include "jobs/JobCreatePackage.h"
 #include "jobs/OptimiseDatabasesJob.h"
 #include "jobs/ProjectCleanJob.h"
@@ -68,78 +69,78 @@ namespace fb
             auto fileMenu = ui->addElementByType<ui::IUIMenu>();
             fileMenu->setLabel( "File" );
 
-            ApplicationUtil::addMenuItem( fileMenu, static_cast<s32>( WidgetId::NewProjectId ),
+            Util::addMenuItem( fileMenu, static_cast<s32>( WidgetId::NewProjectId ),
                                           "New Project", "Create a project",
                                           ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem( fileMenu, static_cast<s32>( WidgetId::OpenProjectId ),
+            Util::addMenuItem( fileMenu, static_cast<s32>( WidgetId::OpenProjectId ),
                                           "Open Project", "Open a project",
                                           ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem( fileMenu, static_cast<s32>( WidgetId::SaveProjectId ),
+            Util::addMenuItem( fileMenu, static_cast<s32>( WidgetId::SaveProjectId ),
                                           "Save Project", "Save a project",
                                           ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuSeparator( fileMenu );
-            ApplicationUtil::addMenuItem( fileMenu, static_cast<s32>( WidgetId::NewSceneId ),
+            Util::addMenuSeparator( fileMenu );
+            Util::addMenuItem( fileMenu, static_cast<s32>( WidgetId::NewSceneId ),
                                           "New Scene", "New Scene", ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem( fileMenu, static_cast<s32>( WidgetId::OpenSceneId ),
+            Util::addMenuItem( fileMenu, static_cast<s32>( WidgetId::OpenSceneId ),
                                           "Open Scene", "Open Scene", ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem( fileMenu, static_cast<s32>( WidgetId::SaveId ), "Save Scene",
+            Util::addMenuItem( fileMenu, static_cast<s32>( WidgetId::SaveId ), "Save Scene",
                                           "Save Scene", ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem( fileMenu, static_cast<s32>( WidgetId::SaveSceneAsId ),
+            Util::addMenuItem( fileMenu, static_cast<s32>( WidgetId::SaveSceneAsId ),
                                           "Save Scene As", "Save Scene As",
                                           ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem( fileMenu, static_cast<s32>( WidgetId::SaveAllId ), "Save All",
+            Util::addMenuItem( fileMenu, static_cast<s32>( WidgetId::SaveAllId ), "Save All",
                                           "Save All", ui::IUIMenuItem::Type::Normal );
-            //ApplicationUtil::addMenuSeparator( fileMenu );
-            //ApplicationUtil::addMenuItem(
+            //Util::addMenuSeparator( fileMenu );
+            //Util::addMenuItem(
             //    fileMenu, static_cast<s32>( UIManager::WidgetId::GenerateCMakeProjectId ),
             //    "Generate CMake Project", "Generate CMake Project", ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuSeparator( fileMenu );
-            ApplicationUtil::addMenuItem( fileMenu, static_cast<s32>( WidgetId::CreatePackageId ),
+            Util::addMenuSeparator( fileMenu );
+            Util::addMenuItem( fileMenu, static_cast<s32>( WidgetId::CreatePackageId ),
                                           "Create Package", "Create Package",
                                           ui::IUIMenuItem::Type::Normal );
-            //ApplicationUtil::addMenuSeparator( fileMenu );
+            //Util::addMenuSeparator( fileMenu );
 
-            //ApplicationUtil::addMenuItem(
+            //Util::addMenuItem(
             //    fileMenu, static_cast<s32>( UIManager::WidgetId::CreateUnityBindings ),
             //    "Create Unity Bindings", "Create Unity Bindings", ui::IUIMenuItem::Type::Normal );
-            //ApplicationUtil::addMenuSeparator( fileMenu );
+            //Util::addMenuSeparator( fileMenu );
 
             //auto recentFilesMenu = ui->addElementByType<ui::IUIMenu>();
             //recentFilesMenu->setLabel( "Recent Files" );
-            //ApplicationUtil::addMenuItem( recentFilesMenu,
+            //Util::addMenuItem( recentFilesMenu,
             //                              static_cast<s32>( UIManager::WidgetId::LoadProceduralSceneId ),
             //                              "File", "File", ui::IUIMenuItem::Type::Normal );
             //fileMenu->addMenuItem( recentFilesMenu );
 
             //auto recentProjectsMenu = ui->addElementByType<ui::IUIMenu>();
             //recentProjectsMenu->setLabel( "Recent Projects" );
-            //ApplicationUtil::addMenuItem( recentProjectsMenu,
+            //Util::addMenuItem( recentProjectsMenu,
             //                              static_cast<s32>( UIManager::WidgetId::LoadProceduralSceneId ),
             //                              "File", "File", ui::IUIMenuItem::Type::Normal );
             //fileMenu->addMenuItem( recentProjectsMenu );
 
-            ApplicationUtil::addMenuSeparator( fileMenu );
-            ApplicationUtil::addMenuItem( fileMenu, static_cast<s32>( WidgetId::Exit ), "Exit",
+            Util::addMenuSeparator( fileMenu );
+            Util::addMenuItem( fileMenu, static_cast<s32>( WidgetId::Exit ), "Exit",
                                           "Quit this program", ui::IUIMenuItem::Type::Normal );
 
             menuBar->addMenu( fileMenu );
 
             auto editMenu = ui->addElementByType<ui::IUIMenu>();
             editMenu->setLabel( "Edit" );
-            ApplicationUtil::addMenuItem( editMenu, static_cast<s32>( WidgetId::UndoId ), "Undo",
+            Util::addMenuItem( editMenu, static_cast<s32>( WidgetId::UndoId ), "Undo",
                                           "Undo command", ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem( editMenu, static_cast<s32>( WidgetId::RedoId ), "Redo",
+            Util::addMenuItem( editMenu, static_cast<s32>( WidgetId::RedoId ), "Redo",
                                           "Redo command", ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuSeparator( editMenu );
+            Util::addMenuSeparator( editMenu );
             menuBar->addMenu( editMenu );
 
             auto assetsMenu = ui->addElementByType<ui::IUIMenu>();
             assetsMenu->setLabel( "Assets" );
-            ApplicationUtil::addMenuItem( assetsMenu, static_cast<s32>( WidgetId::AssetImportId ),
+            Util::addMenuItem( assetsMenu, static_cast<s32>( WidgetId::AssetImportId ),
                                           "Import", "Import", ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem( assetsMenu, static_cast<s32>( WidgetId::AssetReimportId ),
+            Util::addMenuItem( assetsMenu, static_cast<s32>( WidgetId::AssetReimportId ),
                                           "Reimport", "Reimport", ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem( assetsMenu, static_cast<s32>( WidgetId::AssetDatabaseBuildId ),
+            Util::addMenuItem( assetsMenu, static_cast<s32>( WidgetId::AssetDatabaseBuildId ),
                                           "Build Database", "Build Database",
                                           ui::IUIMenuItem::Type::Normal );
 
@@ -150,64 +151,67 @@ namespace fb
 
             auto utilImportMenu = ui->addElementByType<ui::IUIMenu>();
             utilImportMenu->setLabel( "Import" );
-            ApplicationUtil::addMenuItem(
+            Util::addMenuItem(
                 utilImportMenu, static_cast<s32>( WidgetId::ImportJsonSceneId ), "Import Json Scene",
                 "Import Json Scene", ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem(
+            Util::addMenuItem(
                 utilImportMenu, static_cast<s32>( WidgetId::ImportUnityYamlId ), "Import Unity Yaml",
                 "Import Json Scene", ui::IUIMenuItem::Type::Normal );
             utilMenu->addMenuItem( utilImportMenu );
 
             auto utilDebugMenu = ui->addElementByType<ui::IUIMenu>();
             utilDebugMenu->setLabel( "Debug" );
-            ApplicationUtil::addMenuItem( utilDebugMenu, static_cast<s32>( WidgetId::ShowAllOverlaysId ),
+            Util::addMenuItem( utilDebugMenu, static_cast<s32>( WidgetId::ShowAllOverlaysId ),
                                           "showAllOverlays", "showAllOverlays",
                                           ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem( utilDebugMenu, static_cast<s32>( WidgetId::HideAllOverlaysId ),
+            Util::addMenuItem( utilDebugMenu, static_cast<s32>( WidgetId::HideAllOverlaysId ),
                                           "hideAllOverlays", "hideAllOverlays",
                                           ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem(
+            Util::addMenuItem(
                 utilDebugMenu, static_cast<s32>( WidgetId::CreateOverlayTestId ),
                 "createOverlayPanelTest", "createOverlayPanelTest", ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem(
+            Util::addMenuItem(
                 utilDebugMenu, static_cast<s32>( WidgetId::CreateOverlayTextTestId ),
                 "createOverlayTextTest", "createOverlayTextTest", ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem(
+            Util::addMenuItem(
                 utilDebugMenu, static_cast<s32>( WidgetId::CreateOverlayButtonTestId ),
                 "createOverlayButtonTest", "createOverlayButtonTest", ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem( utilDebugMenu, static_cast<s32>( WidgetId::CreateBoxTestId ),
+            Util::addMenuItem( utilDebugMenu, static_cast<s32>( WidgetId::CreateBoxTestId ),
                                           "createBoxTest", "createBoxTest",
                                           ui::IUIMenuItem::Type::Normal );
             utilMenu->addMenuItem( utilDebugMenu );
 
             auto utilProceduralMenu = ui->addElementByType<ui::IUIMenu>();
             utilProceduralMenu->setLabel( "Procedural" );
-            ApplicationUtil::addMenuItem(
+            Util::addMenuItem(
                 utilProceduralMenu, static_cast<s32>( WidgetId::CreateProceduralTestId ),
                 "Create Procedural Test", "Create Procedural Test", ui::IUIMenuItem::Type::Normal );
             utilMenu->addMenuItem( utilProceduralMenu );
 
             auto utilSceneMenu = ui->addElementByType<ui::IUIMenu>();
             utilSceneMenu->setLabel( "Scene" );
-            ApplicationUtil::addMenuItem(
+            Util::addMenuItem(
                 utilSceneMenu, static_cast<s32>( WidgetId::CreateProceduralTestId ),
                 "Create Procedural Test", "Create Procedural Test", ui::IUIMenuItem::Type::Normal );
             utilMenu->addMenuItem( utilSceneMenu );
 
             auto utilDatabaseMenu = ui->addElementByType<ui::IUIMenu>();
             utilDatabaseMenu->setLabel( "Database" );
-            ApplicationUtil::addMenuItem(
+            Util::addMenuItem(
                 utilDatabaseMenu, static_cast<s32>( WidgetId::OptimiseDatabasesId ),
                 "Optimise Databases", "Optimise Databases", ui::IUIMenuItem::Type::Normal );
+            Util::addMenuItem(
+                utilDatabaseMenu, static_cast<s32>( WidgetId::CreateAssetFromDatabasesId ),
+                "Create asset", "Create asset", ui::IUIMenuItem::Type::Normal );
             utilMenu->addMenuItem( utilDatabaseMenu );
 
             auto utilMaterialMenu = ui->addElementByType<ui::IUIMenu>();
             utilMaterialMenu->setLabel( "Materials" );
-            ApplicationUtil::addMenuItem( utilMaterialMenu,
+            Util::addMenuItem( utilMaterialMenu,
                                           static_cast<s32>( WidgetId::GenerateSkyboxMaterialsId ),
                                           "Generate Skybox Materials", "Generate Skybox Materials",
                                           ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem(
+            Util::addMenuItem(
                 utilMaterialMenu, static_cast<s32>( WidgetId::SetupMaterialsId ), "Setup Materials",
                 "Setup Materials", ui::IUIMenuItem::Type::Normal );
             utilMenu->addMenuItem( utilMaterialMenu );
@@ -215,7 +219,7 @@ namespace fb
             auto utilProjectMenu = ui->addElementByType<ui::IUIMenu>();
             utilProjectMenu->setLabel( "Project" );
 
-            ApplicationUtil::addMenuItem( utilProjectMenu, static_cast<s32>( WidgetId::CleanProjectId ),
+            Util::addMenuItem( utilProjectMenu, static_cast<s32>( WidgetId::CleanProjectId ),
                                           "Clean", "Clean", ui::IUIMenuItem::Type::Normal );
 
             utilMenu->addMenuItem( utilProjectMenu );
@@ -224,27 +228,27 @@ namespace fb
 
             auto proceduralMenu = ui->addElementByType<ui::IUIMenu>();
             proceduralMenu->setLabel( "Procedural" );
-            ApplicationUtil::addMenuItem(
+            Util::addMenuItem(
                 proceduralMenu, static_cast<s32>( WidgetId::LoadProceduralSceneId ),
                 "Load Procedural Scene", "Load Procedural Scene", ui::IUIMenuItem::Type::Normal );
             menuBar->addMenu( proceduralMenu );
 
             auto windowMenu = ui->addElementByType<ui::IUIMenu>();
             windowMenu->setLabel( "Window" );
-            ApplicationUtil::addMenuItem( windowMenu, static_cast<s32>( WidgetId::ComponentsId ),
+            Util::addMenuItem( windowMenu, static_cast<s32>( WidgetId::ComponentsId ),
                                           "Components", "Components", ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem( windowMenu, static_cast<s32>( WidgetId::ResourcesId ),
+            Util::addMenuItem( windowMenu, static_cast<s32>( WidgetId::ResourcesId ),
                                           "Resources", "Resources", ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem( windowMenu, static_cast<s32>( WidgetId::InputWindowId ),
+            Util::addMenuItem( windowMenu, static_cast<s32>( WidgetId::InputWindowId ),
                                           "Input", "Input", ui::IUIMenuItem::Type::Normal );
-            ApplicationUtil::addMenuItem( windowMenu, static_cast<s32>( WidgetId::ProfilerWindowId ),
+            Util::addMenuItem( windowMenu, static_cast<s32>( WidgetId::ProfilerWindowId ),
                                           "Profiler", "Profiler", ui::IUIMenuItem::Type::Normal );
 
             menuBar->addMenu( windowMenu );
 
             auto helpMenu = ui->addElementByType<ui::IUIMenu>();
             helpMenu->setLabel( "Help" );
-            ApplicationUtil::addMenuItem( helpMenu, static_cast<s32>( WidgetId::AboutId ), "About",
+            Util::addMenuItem( helpMenu, static_cast<s32>( WidgetId::AboutId ), "About",
                                           "About", ui::IUIMenuItem::Type::Normal );
             menuBar->addMenu( helpMenu );
 
@@ -608,93 +612,6 @@ namespace fb
             m_terrainWindow = val;
         }
 
-        void UIManager::showComponentEditWindow()
-        {
-            // auto applicationManager = core::IApplicationManager::instance();
-            // auto selectionManager = applicationManager->getSelectionManager();
-
-            // auto selection = selectionManager->getSelected();
-            // for (auto object : selection)
-            //{
-            //	if (object)
-            //	{
-            //		auto actor = fb::dynamic_pointer_cast<IActor>(object);
-            //		auto transform = fb::dynamic_pointer_cast<ITransform>(object);
-            //		auto component = fb::dynamic_pointer_cast<scene::IComponent>(object);
-            //		auto resource = fb::dynamic_pointer_cast<IResource>(object);
-            //		auto fileSelection = fb::dynamic_pointer_cast<FileSelection>(object);
-
-            //		if (component)
-            //		{
-            //			//if (component->isExactly<scene::MaterialComponent>())
-            //			//{
-            //			//	if (m_materialWindow)
-            //			//	{
-            //			//		m_materialWindow->show();
-            //			//	}
-            //			//}
-            //		}
-            //		else if (fileSelection)
-            //		{
-            //			hideComponentEditWindows();
-
-            //			//auto filePath = fileSelection->getFilePath();
-            //			//auto ext = Path::getFileExtension(filePath);
-            //			//if (ext == ".fbx" || ext == ".FBX")
-            //			//{
-            //			//	if (m_meshImportWindow)
-            //			//	{
-            //			//		m_meshImportWindow->show();
-            //			//	}
-            //			//}
-            //		}
-            //	}
-            //}
-        }
-
-        void UIManager::hideComponentEditWindows() const
-        {
-            // if (m_terrainWindow)
-            //{
-            //	m_terrainWindow->hide();
-            // }
-
-            // if (m_meshImportWindow)
-            //{
-            //	m_meshImportWindow->hide();
-            // }
-
-            // if (m_foliageWindow)
-            //{
-            //	m_foliageWindow->hide();
-            // }
-
-            // if (m_roadWindow)
-            //{
-            //	m_roadWindow->hide();
-            // }
-
-            // if (m_textureWindow)
-            //{
-            //	m_textureWindow->hide();
-            // }
-
-            // if (m_materialWindow)
-            //{
-            //	m_materialWindow->hide();
-            // }
-        }
-
-        MeshImportWindow *UIManager::getMeshImportWindow() const
-        {
-            return m_meshImportWindow;
-        }
-
-        void UIManager::setMeshImportWindow( MeshImportWindow *val )
-        {
-            m_meshImportWindow = val;
-        }
-
         FoliageWindow *UIManager::getFoliageWindow() const
         {
             return m_foliageWindow;
@@ -854,11 +771,15 @@ namespace fb
             auto applicationManager = core::IApplicationManager::instance();
             auto fileSystem = applicationManager->getFileSystem();
 
+            auto application = applicationManager->getApplication();
+
             auto editorManager = EditorManager::getSingletonPtr();
 
             auto resourceDatabase = applicationManager->getResourceDatabase();
             auto factoryManager = applicationManager->getFactoryManager();
             auto jobQueue = applicationManager->getJobQueue();
+            auto sceneManager = applicationManager->getSceneManager();
+            auto scene = sceneManager->getCurrentScene();
 
             auto uiManager = editorManager->getUI();
             FB_ASSERT( uiManager );
@@ -908,18 +829,12 @@ namespace fb
                     auto uiManager = editorManager->getUI();
                     FB_ASSERT( uiManager );
 
-                    auto sceneManager = applicationManager->getSceneManager();
-                    FB_ASSERT( sceneManager );
+                    scene->setName( "Untitled" );
+                    scene->setFilePath( String() );
+                    scene->clear();
 
-                    if( auto scene = sceneManager->getCurrentScene() )
-                    {
-                        scene->setName( "Untitled" );
-                        scene->setFilePath( String() );
-                        scene->clear();
-                    }
-
-                    ApplicationUtil::createDefaultSky();
-                    ApplicationUtil::createDirectionalLight();
+                    application->createDefaultSky();
+                    application->createDirectionalLight();
 
                     uiManager->rebuildSceneTree();
                 }
@@ -990,13 +905,8 @@ namespace fb
                 break;
                 case WidgetId::AssetImportId:
                 {
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto resourceDatabase = applicationManager->getResourceDatabase();
-                    FB_ASSERT( resourceDatabase );
-
-                    resourceDatabase->importAssets();
+                    auto job = fb::make_ptr<AssetImportJob>();
+                    jobQueue->addJob( job );
                 }
                 break;
                 case WidgetId::AssetReimportId:
@@ -1012,13 +922,8 @@ namespace fb
                 break;
                 case WidgetId::AssetDatabaseBuildId:
                 {
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto resourceDatabase = applicationManager->getResourceDatabase();
-                    FB_ASSERT( resourceDatabase );
-
-                    resourceDatabase->build();
+                    auto job = fb::make_ptr<AssetDatabaseBuildJob>();
+                    jobQueue->addJob( job );
                 }
                 break;
                 case WidgetId::ImportJsonSceneId:
@@ -1055,14 +960,14 @@ namespace fb
                                 auto fileSystem = applicationManager->getFileSystem();
                                 FB_ASSERT( fileSystem );
 
-                                auto sceneData = ApplicationUtil::importScene( filePath );
+                                auto sceneData = application->importScene( filePath );
 
                                 auto sceneManager = applicationManager->getSceneManager();
-                                //auto scene = sceneManager->getCurrentScene();
-                                //if( scene )
-                                //{
-                                //    scene->fromData( sceneData );
-                                //}
+                                auto scene = sceneManager->getCurrentScene();
+                                if( scene )
+                                {
+                                    scene->fromData( sceneData );
+                                }
 
                                 uiManager->rebuildSceneTree();
                             }
@@ -1127,7 +1032,7 @@ namespace fb
                     auto applicationManager = core::IApplicationManager::instance();
                     FB_ASSERT( applicationManager );
 
-                    auto job = fb::make_ptr<GenerateSkyboxMaterials>();
+                    auto job = fb::make_ptr<GenerateSkybox>();
                     jobQueue->addJob( job );
                 }
                 break;
@@ -1135,8 +1040,8 @@ namespace fb
                 {
                     auto sceneManager = applicationManager->getSceneManager();
 
-                    auto cube = ApplicationUtil::createDefaultCube( true );
-                    auto ground = ApplicationUtil::createDefaultGround();
+                    auto cube = application->createDefaultCube( true );
+                    auto ground = application->createDefaultGround();
 
                     uiManager->rebuildSceneTree();
                 }
@@ -1165,13 +1070,20 @@ namespace fb
                 break;
                 case WidgetId::OptimiseDatabasesId:
                 {
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto jobQueue = applicationManager->getJobQueue();
-
                     auto job = fb::make_ptr<OptimiseDatabasesJob>();
                     jobQueue->addJob( job );
+                }
+                break;
+                case WidgetId::CreateAssetFromDatabasesId:
+                {
+                    SmartPtr<scene::IPrefab> prefab = resourceDatabase->loadResource( 3 );
+                    if( prefab )
+                    {
+                        auto actor = prefab->createActor();
+                        scene->addActor( actor );
+                    }
+
+                    uiManager->rebuildSceneTree();
                 }
                 break;
                 case WidgetId::AboutId:
@@ -1349,8 +1261,6 @@ namespace fb
             {
                 propertiesWindow->updateSelection();
             }
-
-            ui->showComponentEditWindow();
         }
 
         Parameter UIManager::EventListener::handleEvent( IEvent::Type eventType, hash_type eventValue,

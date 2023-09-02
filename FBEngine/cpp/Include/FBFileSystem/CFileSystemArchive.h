@@ -3,14 +3,14 @@
 
 #include <FBFileSystem/FBFileSystemPrerequisites.h>
 #include <FBCore/Interface/IO/IArchive.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/ConcurrentArray.h>
 #include <FBFileSystem/CFileList.h>
 
 namespace fb
 {
     /** A file archive */
-    class CFileSystemArchive : public SharedObject<IArchive>
+    class CFileSystemArchive : public IArchive
     {
     public:
         /** Constructor */

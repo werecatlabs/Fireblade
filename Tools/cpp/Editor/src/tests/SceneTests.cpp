@@ -1,11 +1,11 @@
 #include <GameEditorPCH.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
+
 #include <editor/EditorManager.h>
 #include <ui/UIManager.h>
 #include "commands/DragDropActorCmd.h"
 #include "commands/AddActorCmd.h"
-#include <Application.h>
+#include <EditorApplication.h>
 
 #if FB_EDITOR_TESTS
 #    include <boost/test/unit_test.hpp>
@@ -17,7 +17,7 @@ BOOST_AUTO_TEST_CASE( actor_component_test )
 {
     try
     {
-        fb::editor::Application app;
+        fb::editor::EditorApplication app;
         app.load( nullptr );
         //app.run();
 
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE( actor_test )
 {
     try
     {
-        fb::editor::Application app;
+        fb::editor::EditorApplication app;
         app.load( nullptr );
         //app.run();
 
@@ -248,7 +248,7 @@ BOOST_AUTO_TEST_CASE( actor_dragdrop_test )
 {
     try
     {
-        fb::editor::Application app;
+        fb::editor::EditorApplication app;
         app.load( nullptr );
         //app.run();
 
@@ -336,7 +336,7 @@ BOOST_AUTO_TEST_CASE( actor_prefab_test )
 {
     try
     {
-        fb::editor::Application app;
+        fb::editor::EditorApplication app;
         app.load( nullptr );
         //app.run();
 
@@ -472,7 +472,7 @@ BOOST_AUTO_TEST_CASE( actor_addremove_test )
 {
     try
     {
-        fb::editor::Application app;
+        fb::editor::EditorApplication app;
         app.load( nullptr );
         //app.run();
 

@@ -39,6 +39,8 @@ namespace fb
     {
         try
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+
             setLoadingState( LoadingState::Loading );
 
             const auto size = 4096;
@@ -56,6 +58,7 @@ namespace fb
 
     void CFileSystem::reload( SmartPtr<ISharedObject> data )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         unload( data );
         load( data );
     }
@@ -64,12 +67,17 @@ namespace fb
     {
         try
         {
-            const auto &loadingState = getLoadingState();
-            if( loadingState != LoadingState::Unloaded )
+            RecursiveMutex::ScopedLock lock( m_mutex );
+
+            if( isLoaded() )
             {
                 setLoadingState( LoadingState::Unloading );
 
-                //m_files.clear();
+                if( auto p = getFilesPtr() )
+                {
+                    auto &files = *p;
+                    files.clear();
+                }
 
                 if( auto p = getFolderArchivesPtr() )
                 {
@@ -93,9 +101,6 @@ namespace fb
                 }
 
                 m_fileArchives = nullptr;
-
-                auto &gc = GarbageCollector::instance();
-                gc.update();
 
                 setLoadingState( LoadingState::Unloaded );
             }
@@ -550,6 +555,8 @@ namespace fb
     {
         try
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+
             FB_ASSERT( !StringUtil::isNullOrEmpty( filePath ) );
 
             auto applicationManager = core::IApplicationManager::instance();
@@ -1042,7 +1049,7 @@ namespace fb
     {
         try
         {
-            FB_ASSERT( SharedObject<IArchive>::typeInfo() != 0 );
+            FB_ASSERT( IArchive::typeInfo() != 0 );
 
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
@@ -1599,23 +1606,26 @@ namespace fb
 
     void CFileSystem::addFolderArchive( SmartPtr<IArchive> archive )
     {
-        if( auto p = getFolderArchivesPtr() )
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
+        auto p = getFolderArchivesPtr();
+        if (!p)
+        {
+            p = fb::make_shared<ConcurrentArray<SmartPtr<IArchive>>>();
+            setFolderArchivesPtr( p );
+        }
+
+        if( p )
         {
             auto &archives = *p;
             archives.push_back( archive );
-        }
-        else
-        {
-            auto newPtr = fb::make_shared<ConcurrentArray<SmartPtr<IArchive>>>();
-            auto &newFiles = *newPtr;
-            newFiles.push_back( archive );
-
-            m_folderArchives = newPtr;
         }
     }
 
     void CFileSystem::removeFolderArchive( SmartPtr<IArchive> archive )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         if( auto p = getFolderArchivesPtr() )
         {
             auto &archives = *p;
@@ -1638,24 +1648,26 @@ namespace fb
 
     void CFileSystem::addFileArchive( SmartPtr<IArchive> archive )
     {
-        if( auto p = getFileArchivesPtr() )
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
+        auto p = getFileArchivesPtr();
+        if (!p)
+        {
+            p = fb::make_shared<ConcurrentArray<SmartPtr<IArchive>>>();
+            m_fileArchives = p;
+        }
+
+        if( p )
         {
             auto &archives = *p;
             archives.push_back( archive );
-        }
-        else
-        {
-            auto newPtr = fb::make_shared<ConcurrentArray<SmartPtr<IArchive>>>();
-            auto &newFiles = *newPtr;
-            newFiles.reserve( 32 );
-            newFiles.push_back( archive );
-
-            m_fileArchives = newPtr;
         }
     }
 
     void CFileSystem::removeFileArchive( SmartPtr<IArchive> archive )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         if( auto p = getFileArchivesPtr() )
         {
             auto &archives = *p;

@@ -1,7 +1,7 @@
 #ifndef __SceneWindow_h__
 #define __SceneWindow_h__
 
-#include "ui/BaseWindow.h"
+#include "ui/EditorWindow.h"
 #include <FBCore/Interface/System/IEventListener.h>
 #include <FBCore/Interface/UI/IUIDropTarget.h>
 #include <FBCore/Interface/UI/IUIDragSource.h>
@@ -10,7 +10,7 @@ namespace fb
 {
     namespace editor
     {
-        class SceneWindow : public BaseWindow
+        class SceneWindow : public EditorWindow
         {
         public:
             /**
@@ -151,13 +151,13 @@ namespace fb
              * @param treeState The state of the scene tree.
              */
             void setTreeState( SharedPtr<std::map<String, bool>> treeState );
-            
+
             SmartPtr<ICommand> getDragDropActorCmd() const;
 
             void setDragDropActorCmd( SmartPtr<ICommand> dragDropActorCmd );
 
         protected:
-            class TreeCtrlListener : public SharedObject<IEventListener>
+            class TreeCtrlListener : public IEventListener
             {
             public:
                 TreeCtrlListener();
@@ -174,7 +174,7 @@ namespace fb
                 SceneWindow *m_owner = nullptr;
             };
 
-            class SceneWindowListener : public SharedObject<IEventListener>
+            class SceneWindowListener : public IEventListener
             {
             public:
                 SceneWindowListener() = default;
@@ -191,7 +191,26 @@ namespace fb
                 SceneWindow *m_owner = nullptr;
             };
 
-            class DragSource : public SharedObject<ui::IUIDragSource>
+            class PromptListener : public IEventListener
+            {
+            public:
+                PromptListener();
+
+                ~PromptListener();
+
+                Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                       const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
+
+                SceneWindow *getOwner() const;
+
+                void setOwner( SceneWindow *owner );
+
+            private:
+                SceneWindow *m_owner = nullptr;
+            };
+
+            class DragSource : public ui::IUIDragSource
             {
             public:
                 DragSource() = default;
@@ -211,7 +230,7 @@ namespace fb
                 SceneWindow *m_owner = nullptr;
             };
 
-            class DropTarget : public SharedObject<ui::IUIDropTarget>
+            class DropTarget : public ui::IUIDropTarget
             {
             public:
                 DropTarget() = default;
@@ -246,6 +265,9 @@ namespace fb
             SmartPtr<ui::IUIWindow> m_window;
             SmartPtr<ui::IUIWindow> m_sceneWindow;
 
+            SmartPtr<ui::IUITextEntry> m_inputText;
+            SmartPtr<IEventListener> m_promptListener;
+
             SmartPtr<ui::IUITreeCtrl> m_tree;
             SmartPtr<IEventListener> m_treeListener;
 
@@ -264,7 +286,7 @@ namespace fb
 
             AtomicSharedPtr<std::map<String, bool>> m_treeState;
         };
-    } // end namespace editor
-}     // end namespace fb
+    }  // end namespace editor
+}  // end namespace fb
 
 #endif  // EntityWindow_h__

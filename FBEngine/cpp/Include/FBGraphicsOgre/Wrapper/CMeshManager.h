@@ -4,14 +4,14 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Resource/IMeshManager.h>
 #include <FBCore/Core/HashMap.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
     namespace render
     {
 
-        class CMeshManager : public SharedObject<IMeshManager>
+        class CMeshManager : public IMeshManager
         {
         public:
             CMeshManager();

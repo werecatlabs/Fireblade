@@ -158,7 +158,7 @@ namespace fb
 
         void UserComponent::setProperties( SmartPtr<Properties> properties )
         {
-            auto className = String( "" );
+            auto className = String();
             properties->getPropertyValue( "className", className );
             properties->getPropertyValue( "updateInEditMode", m_updateInEditMode );
 
@@ -286,7 +286,8 @@ namespace fb
 
         void UserComponent::createScriptData()
         {
-            if( !getScriptData() )
+            auto scriptData = getScriptData();
+            if( !scriptData )
             {
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
@@ -296,9 +297,10 @@ namespace fb
                 FB_ASSERT( scriptManager );
                 FB_ASSERT( scriptManager->isValid() );
 
-                if( !StringUtil::isNullOrEmpty( m_className ) )
+                auto className = getClassName();
+                if( !StringUtil::isNullOrEmpty( className ) )
                 {
-                    scriptManager->createObject( m_className, this );
+                    scriptManager->createObject( className, this );
                 }
             }
         }

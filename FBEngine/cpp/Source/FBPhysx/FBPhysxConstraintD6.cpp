@@ -66,7 +66,7 @@ namespace fb
             m_joint = joint;
         }
 
-        void PhysxConstraintD6::setDrive( PxD6Drive::Enum index, SmartPtr<IConstraintDrive> drive )
+        void PhysxConstraintD6::setDrive( D6Drive::Enum index, SmartPtr<IConstraintDrive> drive )
         {
             if(m_joint)
             {
@@ -77,7 +77,7 @@ namespace fb
             }
         }
 
-        SmartPtr<IConstraintDrive> PhysxConstraintD6::getDrive( PxD6Drive::Enum index ) const
+        SmartPtr<IConstraintDrive> PhysxConstraintD6::getDrive( D6Drive::Enum index ) const
         {
             return nullptr;
         }
@@ -102,7 +102,7 @@ namespace fb
             return nullptr;
         }
 
-        void PhysxConstraintD6::setMotion( PxD6Axis::Enum axis, PxD6Motion::Enum type )
+        void PhysxConstraintD6::setMotion( D6Axis::Enum axis, D6Motion::Enum type )
         {
             if(m_joint)
             {
@@ -111,15 +111,15 @@ namespace fb
             }
         }
 
-        PxD6Motion::Enum PhysxConstraintD6::getMotion( PxD6Axis::Enum axis ) const
+        D6Motion::Enum PhysxConstraintD6::getMotion( D6Axis::Enum axis ) const
         {
             if(m_joint)
             {
                 auto motion = m_joint->getMotion( static_cast<physx::PxD6Axis::Enum>(axis) );
-                return static_cast<PxD6Motion::Enum>(motion);
+                return static_cast<D6Motion::Enum>(motion);
             }
 
-            return static_cast<PxD6Motion::Enum>(0);
+            return static_cast<D6Motion::Enum>(0);
         }
     } // end namespace physics
 }     // end namespace fb

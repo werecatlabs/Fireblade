@@ -1,6 +1,6 @@
 project(FBLua)
 
-add_compile_definitions (_FB_STATIC_LIB_)
+
 add_compile_definitions (FB_PROFILE_LUA_CALLS=0)
 add_compile_definitions (BOOST_BIND_GLOBAL_PLACEHOLDERS)
 

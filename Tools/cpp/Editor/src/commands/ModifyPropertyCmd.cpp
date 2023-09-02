@@ -24,7 +24,6 @@ namespace fb
 
         void ModifyPropertyCmd::execute()
         {
-
         }
 
     }  // namespace editor

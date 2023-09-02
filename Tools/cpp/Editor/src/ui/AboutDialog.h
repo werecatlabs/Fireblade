@@ -2,7 +2,7 @@
 #define AboutDialog_h__
 
 #include <GameEditorPrerequisites.h>
-#include <ui/BaseWindow.h>
+#include <ui/EditorWindow.h>
 #include <FBCore/Math/Transform3.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Interface/System/IEventListener.h>
@@ -13,7 +13,7 @@ namespace fb
     {
 
         /** The editor's about dialog. */
-        class AboutDialog : public BaseWindow
+        class AboutDialog : public EditorWindow
         {
         public:
             AboutDialog() = default;

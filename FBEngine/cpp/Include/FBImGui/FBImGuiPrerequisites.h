@@ -38,7 +38,7 @@ namespace fb
         class ImGuiRenderWindow;
 
         template<class T>
-        class ImGuiWindow;
+        class ImGuiWindowT;
 
         class ImGuiMenu;
         class ImGuiMenubar;

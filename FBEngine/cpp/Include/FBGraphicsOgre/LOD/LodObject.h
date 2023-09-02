@@ -2,7 +2,7 @@
 #define LodObject_h__
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Quaternion.h>
 
@@ -11,7 +11,7 @@ namespace fb
     namespace render
     {
         
-        class LodObject : public SharedObject<ISharedObject>
+        class LodObject : public ISharedObject
         {
         public:
             LodObject();

@@ -17,9 +17,9 @@ namespace fb
 
             void execute() override;
 
-	        String getFilePath() const;
+            String getFilePath() const;
 
-            void setFilePath( const String& filePath );
+            void setFilePath( const String &filePath );
 
         protected:
             String m_filePath;
@@ -28,5 +28,4 @@ namespace fb
     }  // namespace editor
 }  // namespace fb
 
-
-#endif // OpenSceneJob_h__
+#endif  // OpenSceneJob_h__

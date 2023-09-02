@@ -6,14 +6,14 @@
 #define FB_MATERIALWINDOW_H
 
 #include <GameEditorPrerequisites.h>
-#include "ui/BaseWindow.h"
+#include "ui/EditorWindow.h"
 #include <FBCore/Interface/System/IEventListener.h>
 
 namespace fb
 {
     namespace editor
     {
-        class MaterialWindow : public BaseWindow
+        class MaterialWindow : public EditorWindow
         {
         public:
             MaterialWindow( SmartPtr<ui::IUIWindow> parent );
@@ -31,7 +31,7 @@ namespace fb
             void setTree( SmartPtr<ui::IUITreeCtrl> tree );
 
         protected:
-            class DropdownListener : public SharedObject<IEventListener>
+            class DropdownListener : public IEventListener
             {
             public:
                 DropdownListener() = default;
@@ -49,7 +49,7 @@ namespace fb
                 MaterialWindow *m_owner = nullptr;
             };
 
-            class TreeCtrlListener : public SharedObject<IEventListener>
+            class TreeCtrlListener : public IEventListener
             {
             public:
                 TreeCtrlListener();

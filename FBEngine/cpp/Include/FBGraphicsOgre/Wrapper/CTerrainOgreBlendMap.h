@@ -4,7 +4,7 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBCore/Interface/Graphics/ITerrainBlendMap.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Memory/SharedObject.h>
+
 
 namespace fb
 {
@@ -13,7 +13,7 @@ namespace fb
 
         /** Concrete implementation of ITerrainBlendMap for use with Ogre terrain.
          *  Holds and manages a single Ogre TerrainLayerBlendMap. */
-        class CTerrainOgreBlendMap : public SharedObject<ITerrainBlendMap>
+        class CTerrainOgreBlendMap : public ITerrainBlendMap
         {
         public:
             /** Constructor. */
@@ -86,7 +86,7 @@ namespace fb
             /**
              *  This class listens to state changes for a terrain blend map and responds accordingly.
              */
-            class TerrainBlendMapStateListener : public SharedObject<IStateListener>
+            class TerrainBlendMapStateListener : public IStateListener
             {
             public:
                 /**

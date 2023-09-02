@@ -2,7 +2,6 @@
 #define ImGuiTerrainEditor_h__
 
 #include <FBImGui/FBImGuiPrerequisites.h>
-#include <FBApplication/FBApplicationPrerequisites.h>
 #include <FBImGui/CImGuiElement.h>
 #include "FBCore/Interface/UI/IUITerrainEditor.h"
 

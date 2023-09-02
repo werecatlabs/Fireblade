@@ -7,7 +7,7 @@ include(cpp_compiler_options)
 #add_subdirectory(Project/FBAnimation)
 #add_subdirectory(Project/FBApplication)
 #add_subdirectory(Project/FBAudio)
-#add_subdirectory(Project/FBAssimp)
+add_subdirectory(Project/FBAssimp)
 
 if (FB_BUILD_BULLETPHYSICS)
 	add_subdirectory(Project/FBBulletPhysics)
@@ -53,7 +53,7 @@ endif()
 #add_subdirectory(Project/FBGStreamer)
 add_subdirectory(Project/FBRenderUI)
 
-add_subdirectory(Project/FBFileSystem)
+#add_subdirectory(Project/FBFileSystem)
 
 #add_subdirectory(Project/FBLightmapper)
 add_subdirectory(Project/FBMesh)

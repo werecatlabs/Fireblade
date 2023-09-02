@@ -4,8 +4,6 @@
 #include "FBLuabind/SmartPtrConverter.h"
 #include "FBLuabind/ParamConverter.h"
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
-//#include "FBLuabind/NullScriptObject.h"
 #include <boost/core/noncopyable.hpp>
 #include "FBLuabind/ScriptObjectFunctions.h"
 #include "FBLuabind/Helpers/EngineHelper.h"
@@ -220,7 +218,11 @@ namespace fb
                     .def( "getResourceData", &IResourceDatabase::getResourceData )
                     .def( "getResources", &IResourceDatabase::getResources )
                     .def( "importFile", &IResourceDatabase::importFile )
-                    .def( "loadResource", &IResourceDatabase::loadResource )
+                    .def( "loadResource", ( SmartPtr<IResource>( IResourceDatabase::* )( hash64 ) ) &
+                                              IResourceDatabase::loadResource )
+                    .def( "loadResource",
+                          ( SmartPtr<IResource>( IResourceDatabase::* )( const String & ) ) &
+                              IResourceDatabase::loadResource )
                     .def( "loadResourceById", &IResourceDatabase::loadResourceById )
                     .def( "getDatabaseManager", &IResourceDatabase::getDatabaseManager )
                     .def( "setDatabaseManager", &IResourceDatabase::setDatabaseManager )

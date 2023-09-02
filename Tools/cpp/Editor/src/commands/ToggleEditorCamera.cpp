@@ -3,7 +3,7 @@
 #include <editor/EditorManager.h>
 #include <ui/UIManager.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
+
 
 namespace fb
 {

@@ -427,7 +427,7 @@ namespace fb
         {
         }
 
-        void PhysxRigidDynamic::setRigidBodyFlag( PxRigidBodyFlag::Enum flag, bool value )
+        void PhysxRigidDynamic::setRigidBodyFlag( RigidBodyFlag::Enum flag, bool value )
         {
             if( auto actor = getActorDynamic() )
             {
@@ -437,9 +437,9 @@ namespace fb
             }
         }
 
-        PxRigidBodyFlag::Enum PhysxRigidDynamic::getRigidBodyFlags() const
+        RigidBodyFlag::Enum PhysxRigidDynamic::getRigidBodyFlags() const
         {
-            return static_cast<PxRigidBodyFlag::Enum>( 0 );
+            return static_cast<RigidBodyFlag::Enum>( 0 );
         }
 
         void PhysxRigidDynamic::setLinearVelocity( const Vector3<real_Num> &linVel,
@@ -577,7 +577,7 @@ namespace fb
             return Vector3<real_Num>::zero();
         }
 
-        void PhysxRigidDynamic::setActorFlag( PxActorFlag::Enum flag, bool value )
+        void PhysxRigidDynamic::setActorFlag( ActorFlag::Enum flag, bool value )
         {
             if( auto actor = getActor() )
             {
@@ -586,16 +586,16 @@ namespace fb
             }
         }
 
-        PxActorFlag::Enum PhysxRigidDynamic::getActorFlags() const
+        ActorFlag::Enum PhysxRigidDynamic::getActorFlags() const
         {
             if( auto actor = getActor() )
             {
                 auto flags = actor->getActorFlags();
                 auto iFlags = flags.operator physx::PxU32();
-                return static_cast<PxActorFlag::Enum>( iFlags );
+                return static_cast<ActorFlag::Enum>( iFlags );
             }
 
-            return static_cast<PxActorFlag::Enum>( 0 );
+            return static_cast<ActorFlag::Enum>( 0 );
         }
 
         void PhysxRigidDynamic::setKinematicTarget( const Transform3<real_Num> &destination )

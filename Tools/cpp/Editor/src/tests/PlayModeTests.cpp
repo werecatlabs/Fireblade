@@ -1,11 +1,11 @@
 #include <GameEditorPCH.h>
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
+
 #include <editor/EditorManager.h>
 #include <ui/UIManager.h>
 #include "commands/DragDropActorCmd.h"
 #include "commands/AddActorCmd.h"
-#include <Application.h>
+#include <EditorApplication.h>
 
 #if FB_EDITOR_TESTS
 #    include <boost/test/unit_test.hpp>
@@ -15,7 +15,7 @@ using namespace fb::editor;
 
 BOOST_AUTO_TEST_CASE( play_mode )
 {
-    auto app = fb::make_ptr<fb::editor::Application>();
+    auto app = fb::make_ptr<fb::editor::EditorApplication>();
 
     try
     {
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE( play_mode )
 
 BOOST_AUTO_TEST_CASE( play_stop_mode )
 {
-    auto app = fb::make_ptr<fb::editor::Application>();
+    auto app = fb::make_ptr<fb::editor::EditorApplication>();
 
     try
     {

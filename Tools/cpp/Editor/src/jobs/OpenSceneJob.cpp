@@ -4,7 +4,7 @@
 #include <editor/Project.h>
 #include <ui/UIManager.h>
 #include "ui/ProjectWindow.h"
-#include <FBApplication/FBApplication.h>
+
 #include <FBCore/FBCore.h>
 
 namespace fb
@@ -24,6 +24,8 @@ namespace fb
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
+
+            auto resourceDatabase = applicationManager->getResourceDatabase();
 
             auto editorManager = EditorManager::getSingletonPtr();
             FB_ASSERT( editorManager );
@@ -79,6 +81,7 @@ namespace fb
                             scene->loadScene( scenePath );
                         }
 
+                        resourceDatabase->refresh();
                         uiManager->rebuildSceneTree();
 
                         if( auto projectWindow = uiManager->getProjectWindow() )

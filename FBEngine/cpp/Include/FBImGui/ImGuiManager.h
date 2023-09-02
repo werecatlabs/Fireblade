@@ -6,7 +6,7 @@
 #include <FBCore/Interface/UI/IUIManager.h>
 #include <FBCore/Interface/Graphics/IWindowListener.h>
 #include <FBCore/Interface/System/IEventListener.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <unordered_map>
 
 namespace fb
@@ -42,7 +42,7 @@ namespace fb
             Count
         };
 
-        class ImGuiManager : public SharedObject<IUIManager>
+        class ImGuiManager : public IUIManager
         {
         public:
             ImGuiManager();
@@ -100,7 +100,7 @@ namespace fb
             void setMainWindow( SmartPtr<IUIWindow> uiWindow );
 
         protected:
-            class InputListener : public SharedObject<IEventListener>
+            class InputListener : public IEventListener
             {
             public:
                 /** Triggered when an input event has occurred. */
@@ -122,7 +122,7 @@ namespace fb
                 ImGuiManager *m_owner = nullptr;
             };
 
-            class WindowListener : public SharedObject<render::IWindowListener>
+            class WindowListener : public render::IWindowListener
             {
             public:
                 WindowListener() = default;

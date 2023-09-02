@@ -7,10 +7,8 @@
 #include <commands/AddResourceCmd.h>
 #include <GameEditorTypes.h>
 #include <editor/Project.h>
-
-
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
+
 
 #define TREE_ITEM_STATE_NOT_FOUND 0
 #define TREE_ITEM_STATE_EXPANDED 1
@@ -21,53 +19,14 @@ namespace fb
     namespace editor
     {
 
-        //-------------------------------------------------
         FileWindow::FileWindow()
         {
-            // m_lastSelectedItem = 0;
-
-            // auto window = new wxScrolledWindow(parent, id, pos, size, style);
-            // setWindow(window);
-
-            // auto baseSizer = new wxBoxSizer( wxVERTICAL );
-            // window->SetSizer(baseSizer);
-
-            // m_tree = new wxTreeCtrl(window, ENTITY_TREE_ID);
-            // baseSizer->Add(m_tree, 1, wxEXPAND);
-
-            // m_tree->SetDropTarget(new DnDText(this));
-            ////m_tree->SetDropTarget(new DnDFile(this));
-
-            // m_tree->Bind(wxEVT_TREE_SEL_CHANGED, &FileWindow::handleTreeSelectionChanged, this, -1);
-            // m_tree->Bind(wxEVT_TREE_ITEM_ACTIVATED, &FileWindow::handleTreeSelectionActivated, this,
-            // -1); m_tree->Bind(wxEVT_TREE_BEGIN_DRAG, &FileWindow::handleTreeDragStart, this, -1);
-
-            // m_defaultMenu = new wxMenu();
-            // m_defaultAddMenu = new wxMenu();
-
-            // m_defaultAddMenu->Append(ADD_SCRIPT, "Add Script");
-            // m_defaultAddMenu->Append(ADD_MATERIAL, "Add Material");
-            // m_defaultAddMenu->Append(ADD_SCENE, "Add Empty Scene");
-            // m_defaultMenu->AppendSubMenu(m_defaultAddMenu, "Add");
-            // m_defaultMenu->Append(REMOVE_COMPONENT, "Remove");
-            // m_defaultMenu->AppendSeparator();
-            // m_defaultMenu->Append(REFRESH, "Refresh");
-
-            // m_tree->Bind(wxEVT_RIGHT_DOWN, &FileWindow::handleContextMenu, this, -1);
-
-            // m_defaultAddMenu->Bind(wxEVT_MENU, &FileWindow::addScript, this, ADD_SCRIPT);
-            // m_defaultAddMenu->Bind(wxEVT_MENU, &FileWindow::addMaterial, this, ADD_MATERIAL);
-            // m_defaultAddMenu->Bind(wxEVT_MENU, &FileWindow::addScene, this, ADD_SCENE);
-            // m_defaultMenu->Bind(wxEVT_MENU, &FileWindow::refresh, this, REFRESH);
         }
 
-        //-------------------------------------------------
         FileWindow::~FileWindow()
         {
-            // FB_SAFE_DELETE(m_defaultMenu);
         }
 
-        //-------------------------------------------------
         void FileWindow::load( SmartPtr<ISharedObject> data )
         {
             setLoadingState( LoadingState::Loading );
@@ -95,7 +54,6 @@ namespace fb
             setLoadingState( LoadingState::Loaded );
         }
 
-        //-------------------------------------------------
         void FileWindow::unload( SmartPtr<ISharedObject> data )
         {
             try
@@ -120,7 +78,7 @@ namespace fb
                     setParentWindow( nullptr );
                 }
 
-                BaseWindow::unload( nullptr );
+                EditorWindow::unload( nullptr );
 
                 setLoadingState( LoadingState::Unloaded );
             }
@@ -130,31 +88,15 @@ namespace fb
             }
         }
 
-        //-------------------------------------------------
         void FileWindow::update( time_interval t, time_interval dt )
         {
         }
 
-        //-------------------------------------------------
         void FileWindow::addFolderToTree( SmartPtr<ui::IUITreeNode> parent,
                                           SmartPtr<IFolderExplorer> listing )
         {
-            // auto editorManager = EditorManager::getSingletonPtr();
-            // auto project = editorManager->getProject();
-            // ProjectTreeData data("project", "project", project, project);
-
-            // auto folderName = listing->getFolderName();
-            // auto folderTreeId = m_tree->AppendItem(parent, folderName, -1, -1, new
-            // ProjectTreeData(data));
-            //
-            // auto subFolders = listing->getSubFolders();
-            // for (auto& subFolder : subFolders)
-            //{
-            //	addFolderToTree(folderTreeId, subFolder);
-            // }
         }
 
-        //-------------------------------------------------
         void FileWindow::buildTree()
         {
             try
@@ -206,7 +148,7 @@ namespace fb
 
                             auto node = m_tree->addNode();
                             FB_ASSERT( node );
-                            ApplicationUtil::setText( node, folderName );
+                            Util::setText( node, folderName );
 
                             rootNode->addChild( node );
 
@@ -225,64 +167,8 @@ namespace fb
             {
                 FB_LOG_EXCEPTION( e );
             }
-
-            // try
-            //{
-            //	m_tree->DeleteAllItems();
-
-            //	auto applicationManager = core::IApplicationManager::instance();
-            //	auto fileSystem = applicationManager->getFileSystem();
-
-            //	auto editorManager = EditorManager::getSingletonPtr();
-            //	auto project = editorManager->getProject();
-            //	auto appTemplate = project->getApplicationTemplate();
-            //
-            //	ProjectTreeData scriptsData(m_defaultMenu, "project", "filter", project, m_parentFilter);
-
-            //	auto rootId = m_tree->AddRoot("Project", -1, -1, new ProjectTreeData(scriptsData));
-
-            //	auto projectFolder = applicationManager->getProjectPath();
-            //	if (StringUtil::isNullOrEmpty(projectFolder))
-            //	{
-            //		projectFolder = Path::getWorkingDirectory();
-            //	}
-
-            //	auto selectedProjectFolder = project->getSelectedProjectPath();
-            //	if (StringUtil::isNullOrEmpty(selectedProjectFolder))
-            //	{
-            //		selectedProjectFolder = Path::getWorkingDirectory();
-            //	}
-
-            //	auto folderListing = fileSystem->getDirectoryListing(selectedProjectFolder);
-            //	if (folderListing)
-            //	{
-            //		auto files = folderListing->getFiles();
-            //		for (auto& file : files)
-            //		{
-            //			auto filePath = Path::getRelativePath(projectFolder, file);
-            //			filePath = StringUtil::cleanupPath(filePath);
-
-            //			ProjectTreeData data("file", filePath, project, project);
-
-            //			auto fileName = Path::getFileName(filePath);
-            //			wxTreeItemId folderTreeId = m_tree->AppendItem(rootId, fileName, -1, -1, new
-            // ProjectTreeData(data));
-            //		}
-            //	}
-
-            //	m_tree->Expand(rootId);
-            //}
-            // catch (Exception& e)
-            //{
-            //	wxMessageBox(e.what());
-            //}
-            // catch (std::exception& e)
-            //{
-            //	wxMessageBox(e.what());
-            //}
         }
 
-        //-------------------------------------------------
         void FileWindow::handleTreeSelectionChanged()
         {
             ////if(m_tree->HasFocus())
@@ -393,7 +279,6 @@ namespace fb
             //}
         }
 
-        //-------------------------------------------------
         void FileWindow::handleTreeSelectionActivated()
         {
             // if(m_tree->HasFocus())
@@ -487,7 +372,6 @@ namespace fb
             //}
         }
 
-        //-------------------------------------------------
         void FileWindow::handleTreeDragStart()
         {
             // auto selectedId = event.GetItem();
@@ -536,14 +420,12 @@ namespace fb
             // wxDragResult result = dragSource.DoDragDrop(true);
         }
 
-        //-------------------------------------------------
         void FileWindow::handleContextMenu()
         {
             // m_tree->PopupMenu(m_defaultMenu);
             // event.Skip();
         }
 
-        //-------------------------------------------------
         void FileWindow::saveTreeState()
         {
             //// clear map
@@ -560,7 +442,6 @@ namespace fb
             // }
         }
 
-        //-------------------------------------------------
         void FileWindow::saveItemState()
         {
             //// make item name
@@ -590,7 +471,6 @@ namespace fb
             // }
         }
 
-        //-------------------------------------------------
         void FileWindow::restoreTreeState()
         {
             // wxTreeItemId itemId = m_tree->GetRootItem();
@@ -609,7 +489,6 @@ namespace fb
             // }
         }
 
-        //-------------------------------------------------
         void FileWindow::restoreItemState()
         {
             //// make item name
@@ -653,7 +532,6 @@ namespace fb
             // }
         }
 
-        //-------------------------------------------------
         void FileWindow::addScript()
         {
             // auto window = getWindow();
@@ -705,18 +583,15 @@ namespace fb
             }
         }
 
-        //-------------------------------------------------
         void FileWindow::addScene()
         {
         }
 
-        //-------------------------------------------------
         void FileWindow::refresh()
         {
             buildTree();
         }
 
-        //-------------------------------------------------
         int FileWindow::getItemState( String itemName )
         {
             std::map<String, bool>::iterator it;
@@ -730,55 +605,25 @@ namespace fb
             return TREE_ITEM_STATE_NOT_FOUND;
         }
 
-        //-------------------------------------------------
         SmartPtr<ISharedObject> FileWindow::getSelectedObject() const
         {
             return m_selectedObject;
         }
 
-        //-------------------------------------------------
         void FileWindow::setSelectedObject( SmartPtr<ISharedObject> val )
         {
             m_selectedObject = val;
         }
 
-        //-------------------------------------------------
         String FileWindow::getPath() const
         {
             return m_path;
         }
 
-        //-------------------------------------------------
         void FileWindow::setPath( const String &val )
         {
             m_path = val;
         }
-
-        ////-------------------------------------------------
-        // FileWindow::DnDFile::DnDFile(FileWindow* pOwner)
-        //{
-        //	m_pOwner = pOwner;
-        // }
-
-        ////-------------------------------------------------
-        // bool FileWindow::DnDFile::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames)
-        //{
-        //	m_pOwner->buildTree();
-        //	return false;
-        // }
-
-        ////-------------------------------------------------
-        // FileWindow::DnDText::DnDText(FileWindow* pOwner)
-        //	: m_pOwner(pOwner)
-        //{
-
-        //}
-
-        ////-------------------------------------------------
-        // bool FileWindow::DnDText::OnDropText(wxCoord x, wxCoord y, const wxString& text)
-        //{
-        //	return false;
-        // }
 
     }  // end namespace editor
 }  // end namespace fb

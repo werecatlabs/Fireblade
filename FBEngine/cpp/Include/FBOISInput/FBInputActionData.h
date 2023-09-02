@@ -2,26 +2,26 @@
 #define FBInputActionData_h__
 
 #include <FBOISInput/FBOISInputPrerequisites.h>
-#include <FBCore/Interface/Input/IInputActionData.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Input/IInputAction.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb
 {
     /** Stores data for an action. */
-    class InputActionData : public SharedObject<IInputActionData>
+    class InputActionData : public IInputAction
     {
     public:
         InputActionData();
         InputActionData( u32 first, u32 second, u32 actionId );
 
-        u32 getPrimaryAction() const override;
-        void setPrimaryAction( u32 primary ) override;
+        hash_type getPrimaryAction() const override;
+        void setPrimaryAction( hash_type primary ) override;
 
-        u32 getSecondaryAction() const override;
-        void setSecondaryAction( u32 secondary ) override;
+        hash_type getSecondaryAction() const override;
+        void setSecondaryAction( hash_type secondary ) override;
 
-        u32 getActionId() const override;
-        void setActionId( u32 actionId ) override;
+        hash_type getActionId() const override;
+        void setActionId( hash_type actionId ) override;
 
     protected:
         u32 m_primary = 0;

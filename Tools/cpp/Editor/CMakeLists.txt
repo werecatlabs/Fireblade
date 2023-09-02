@@ -50,7 +50,9 @@ else ()
     add_compile_definitions (FB_EDITOR_TESTS=0)
 endif()
 
-add_compile_definitions (_FB_STATIC_LIB_)
+add_compile_definitions( BOOST_ALL_NO_LIB )
+add_compile_definitions( __TBB_NO_IMPLICIT_LINKAGE=1 )
+add_compile_definitions( __TBBMALLOC_NO_IMPLICIT_LINKAGE=1 )
 add_compile_definitions (_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS)
 add_compile_definitions (_UNICODE)
 
@@ -70,6 +72,11 @@ file(GLOB HEADER_FILES "src/*.h")
 file(GLOB SOURCE_FILES "src/*.cpp")
 set(FB_HEADER_REL_PATH "${FB_ROOT}/Tools/cpp/Editor/src")
 set(FB_SOURCE_REL_PATH "${FB_ROOT}/Tools/cpp/Editor/src")
+
+file(GLOB_RECURSE HEADER_FILES_EDITOR "src/ai/*.h")
+file(GLOB_RECURSE SOURCE_FILES_EDITOR "src/ai/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_EDITOR})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_EDITOR})
 
 file(GLOB_RECURSE HEADER_FILES_EDITOR "src/commands/*.h")
 file(GLOB_RECURSE SOURCE_FILES_EDITOR "src/commands/*.cpp")
@@ -308,17 +315,12 @@ else()
 endif()
 
 if (WIN32)
-    target_link_libraries(Editor FBApplication.lib)
     target_link_libraries(Editor FBAssimp.lib)
     target_link_libraries(Editor FBCore.lib)
-    target_link_libraries(Editor FBCPlusPlus.lib)
     target_link_libraries(Editor FBGraphics.lib)
-    target_link_libraries(Editor FBFileSystem.lib)
     target_link_libraries(Editor FBMesh.lib)
-    target_link_libraries(Editor FBProcedural.lib)
     target_link_libraries(Editor FBRenderUI.lib)
     target_link_libraries(Editor FBSQLite.lib)
-    target_link_libraries(Editor FBVehicle.lib)
 
     if (FB_ENABLE_LUA)
         target_link_libraries(Editor FBLua.lib)
@@ -333,7 +335,7 @@ if (WIN32)
         target_link_libraries(Editor debug tbbmalloc_debug.lib optimized tbbmalloc.lib)
         target_link_libraries(Editor debug tbbmalloc_proxy_debug.lib optimized tbbmalloc_proxy.lib)
     elseif (FB_USE_TBB)
-        target_link_libraries(Editor debug tbb_debug.lib optimized tbb.lib)
+        #target_link_libraries(Editor debug tbb_debug.lib optimized tbb.lib)
     endif()
 
     if (FB_BUILD_OISINPUT)
@@ -356,6 +358,7 @@ if (WIN32)
 
     if (FB_BUILD_IMGUI)
         target_link_libraries(Editor FBImGui.lib)
+        target_link_libraries(Editor imgui.lib)
     endif()
 
     if (FB_USE_FBXSDK)
@@ -456,7 +459,7 @@ if (WIN32)
             target_link_libraries(Editor glu32.lib)
 
             if (FB_PLATFORM_X64)
-                target_link_libraries(Editor amd_ags_x64.lib)
+                #target_link_libraries(Editor amd_ags_x64.lib)
             endif()
         endif ()
 
@@ -465,7 +468,7 @@ if (WIN32)
             target_link_libraries(Editor glu32.lib)
             
             if (FB_PLATFORM_X64)
-                target_link_libraries(Editor amd_ags_x64.lib)
+                #target_link_libraries(Editor amd_ags_x64.lib)
             endif()
         endif ()
 
@@ -482,30 +485,20 @@ if (WIN32)
         target_link_libraries(Editor FBPhysx.lib)
 
         if (FB_PLATFORM_X64)
-            target_link_libraries(Editor 
-                        debug PhysX3DEBUG_x64.lib
-                        optimized PhysX3_x64.lib)
-            target_link_libraries(Editor 
-                        debug PhysX3ExtensionsDEBUG.lib
-                        optimized PhysX3Extensions.lib)
-            target_link_libraries(Editor 
-                        debug PhysX3CommonDEBUG_x64.lib 
-                        optimized PhysX3Common_x64.lib)
-            target_link_libraries(Editor 
-                        debug PhysX3VehicleDEBUG.lib 
-                        optimized PhysX3Vehicle.lib)
-            target_link_libraries(Editor 
-                        debug PhysX3CookingDEBUG_x64.lib
-                        optimized PhysX3Cooking_x64.lib)
-            target_link_libraries(Editor 
-                        debug PhysXProfileSDKDEBUG.lib
-                        optimized PhysXProfileSDK.lib)
-            target_link_libraries(Editor 
-                        debug PxTaskDEBUG.lib
-                        optimized PxTask.lib)
-            target_link_libraries(Editor 
-                        debug PhysXVisualDebuggerSDKDEBUG.lib
-                        optimized PhysXVisualDebuggerSDK.lib)
+            target_link_libraries(Editor PhysX3.lib)
+            target_link_libraries(Editor PhysX3Extensions.lib)
+            target_link_libraries(Editor PhysX3Common.lib)
+            target_link_libraries(Editor PhysX3Vehicle.lib)
+            target_link_libraries(Editor PhysX3Cooking.lib)
+            target_link_libraries(Editor PhysXProfileSDK.lib)
+            target_link_libraries(Editor PxTask.lib)
+            target_link_libraries(Editor PhysXVisualDebuggerSDK.lib)
+            target_link_libraries(Editor PhysX3MetaData.lib)
+            target_link_libraries(Editor PhysX3Foundation.lib)
+            target_link_libraries(Editor PxSceneQuery.lib)
+            target_link_libraries(Editor PxSimulationController.lib)
+            target_link_libraries(Editor PhysX3LowLevel.lib)
+            target_link_libraries(Editor PhysX3LowLevelCloth.lib)
         else ()
             target_link_libraries(Editor 
                         debug PhysX3DEBUG_x86.lib
@@ -542,14 +535,35 @@ if (WIN32)
         #target_link_libraries(Editor debug assimp-vc142-mtd.lib optimized assimp-vc142-mt.lib)
     endif()
 
-    if (FB_BUILD_WILDMAGIC5)
-        target_link_libraries(Editor debug Wm5CoreD.lib optimized Wm5Core.lib)
-        target_link_libraries(Editor debug Wm5MathematicsD.lib optimized Wm5Mathematics.lib)
-        target_link_libraries(Editor debug Wm5PhysicsD.lib optimized Wm5Physics.lib)
+    #if (FB_BUILD_WILDMAGIC5)
+     #   target_link_libraries(Editor debug Wm5CoreD.lib optimized Wm5Core.lib)
+     #   target_link_libraries(Editor debug Wm5MathematicsD.lib optimized Wm5Mathematics.lib)
+    #    target_link_libraries(Editor debug Wm5PhysicsD.lib optimized Wm5Physics.lib)
+    #endif()
+
+    target_link_libraries(Editor bcrypt.lib)
+
+    target_link_libraries(Editor libboost_thread.lib)
+    target_link_libraries(Editor libboost_date_time.lib)
+    target_link_libraries(Editor libboost_chrono.lib)
+    target_link_libraries(Editor libboost_timer.lib)
+    target_link_libraries(Editor libboost_filesystem.lib)
+    target_link_libraries(Editor libboost_json.lib)
+
+    target_link_libraries(Editor minizip.lib)
+    target_link_libraries(Editor nativefiledialog.lib)
+    target_link_libraries(Editor rttr.lib)
+    target_link_libraries(Editor tinyxml.lib)   
+    target_link_libraries(Editor yaml-cpp.lib)
+    target_link_libraries(Editor zlib.lib)
+    target_link_libraries(Editor zzip.lib)
+
+    if (FB_USE_TBB)
+        target_link_libraries(Editor tbb_static.lib)
+        target_link_libraries(Editor tbbmalloc_static.lib)
     endif()
 elseif (APPLE)
     # fireblade libraries
-    target_link_libraries(Editor libFBAnimation.a)
     target_link_libraries(Editor libFBApplication.a)
     target_link_libraries(Editor libFBCore.a)
     target_link_libraries(Editor libFBFileSystem.a)
@@ -602,6 +616,7 @@ elseif (APPLE)
     target_link_libraries(Editor libboost_chrono.a)
     target_link_libraries(Editor libboost_timer.a)
     target_link_libraries(Editor libboost_filesystem.a)
+    target_link_libraries(Editor libboost_json.a)
 
     target_link_libraries(Editor libwx_osx_cocoau_core-3.1.a)
     target_link_libraries(Editor libwx_baseu-3.1.a)
@@ -660,7 +675,7 @@ elseif (APPLE)
     set_target_properties(Editor PROPERTIES LINK_FLAGS "-Wl,-F/Library/Frameworks")
 elseif (UNIX)
     target_link_libraries(Editor -Wl,--start-group FBCore.a FBAero.a libFBProcedural.a FBImGui.a
-        FBApplication.a FBFileSystem.a FBMath.a FBMesh.a FBOISInput.a FBVehicle.a FBData.a FBState.a libFBPhysx.a libFBSQLite.a
+        FBMath.a FBMesh.a FBOISInput.a FBVehicle.a FBData.a FBState.a libFBPhysx.a libFBSQLite.a
         libFBVehicle.a FBGraphics.a FBGraphicsOgreNext.a FBAssimp.a FBRenderUI.a libFBCPlusPlus.a
         libboost_thread-gcc5-mt-s-x64-1_70.a
         libboost_date_time-gcc5-mt-s-x64-1_70.a
@@ -699,7 +714,7 @@ set_target_properties(Editor PROPERTIES
 
         )
 
-add_dependencies(Editor FBGraphics FBCore FBFileSystem FBRenderUI)
+add_dependencies(Editor FBGraphics FBCore FBRenderUI)
 
 if (FB_ENABLE_LUA)
     add_dependencies(Editor FBLua)

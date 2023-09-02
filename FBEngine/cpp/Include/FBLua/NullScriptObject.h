@@ -4,12 +4,12 @@
 #include <FBCore/Core/Singleton.h>
 #include <FBCore/Core/Parameter.h>
 #include <FBCore/Interface/Script/IScriptObject.h>
-#include <FBCore/Memory/SharedObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb
 {
 
-    class NullScriptObject : public SharedObject<IScriptObject>, public Singleton<NullScriptObject>
+    class NullScriptObject : public IScriptObject, public Singleton<NullScriptObject>
     {
     public:
         NullScriptObject();

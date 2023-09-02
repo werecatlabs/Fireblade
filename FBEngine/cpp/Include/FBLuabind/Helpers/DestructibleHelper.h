@@ -1,22 +1,21 @@
 #ifndef DestructibleHelper_h__
 #define DestructibleHelper_h__
 
-#include <FBApplication/Components/Destructible.h>
 #include <lua.h>
 
 namespace fb
 {
 
     
-    class DestructibleHelper
-    {
-    public:
-        static lua_Integer getCollisionType( scene::Destructible *destructible );
-        static void setCollisionType( scene::Destructible *destructible, lua_Integer val );
+    //class DestructibleHelper
+    //{
+    //public:
+    //    static lua_Integer getCollisionType( scene::Destructible *destructible );
+    //    static void setCollisionType( scene::Destructible *destructible, lua_Integer val );
 
-        static lua_Integer getCollisionMask( scene::Destructible *destructible );
-        static void setCollisionMask( scene::Destructible *destructible, lua_Integer val );
-    };
+    //    static lua_Integer getCollisionMask( scene::Destructible *destructible );
+    //    static void setCollisionMask( scene::Destructible *destructible, lua_Integer val );
+    //};
 
 }  // end namespace fb
 

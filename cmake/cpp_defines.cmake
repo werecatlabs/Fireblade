@@ -6,6 +6,10 @@ add_compile_definitions (FB_SIMD_ALIGNMENT=16)
 add_compile_definitions (FB_MEDIA_PATH="${CMAKE_SOURCE_DIR}/bin/media")
 add_compile_definitions (_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
 
+add_compile_definitions( BOOST_ALL_NO_LIB )
+add_compile_definitions( __TBB_NO_IMPLICIT_LINKAGE=1 )
+add_compile_definitions( __TBBMALLOC_NO_IMPLICIT_LINKAGE=1 )
+
 if(WIN32)
     add_compile_definitions (_WIN32_WINNT=0x0601)
 endif()
@@ -547,3 +551,9 @@ add_compile_definitions(
 add_compile_definitions (FB_STREAM_TEMP_SIZE=2048)
 
 add_compile_definitions (_ENABLE_ATOMIC_ALIGNMENT_FIX)
+
+add_compile_definitions (PX_PHYSX_STATIC_LIB)
+add_compile_definitions (PX_PHYSX_CORE_STATIC_LIB)
+add_compile_definitions (PX_FOUNDATION_NO_EXPORTS)
+add_compile_definitions (PX_COOKING)
+#add_compile_definitions (PX_CALL_CONV)
