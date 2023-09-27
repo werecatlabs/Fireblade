@@ -927,8 +927,7 @@ namespace fb
                     auto fileSystem = applicationManager->getFileSystem();
 
                     auto editorSettings = applicationManager->getEditorSettings();
-                    FB_ASSERT( editorSettings );
-
+                    
                     auto editorManager = EditorManager::getSingletonPtr();
                     FB_ASSERT( editorManager );
 

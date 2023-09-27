@@ -43,6 +43,11 @@ elseif(WIN32)
         else()
             set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MP /MTd /Zi /GF /Ob0 /Od /W3 /Zc:__cplusplus /bigobj")
         endif()
+		
+		set(CMAKE_C_FLAGS_DEBUG "/D_DEBUG /MP /MTd /Zi /GF /Ob0 /Od /W3 /bigobj")
+		set(CMAKE_C_FLAGS_MINSIZEREL "/MT /MP /Zi /O2 /Ob2 /D NDEBUG /W3 /bigobj")
+        set(CMAKE_C_FLAGS_RELEASE "/MT /MP /Zi /GF /O2 /Ob1 /D NDEBUG /W3 /bigobj")
+        set(CMAKE_C_FLAGS_RELWITHDEBINFO "/MT /MP /Zi /GF /O2 /Ob1 /D NDEBUG /W3 /bigobj")
 
         set(CMAKE_CXX_FLAGS_MINSIZEREL "/MT /MP /Zi /O2 /Ob2 /D NDEBUG /W3 /Zc:__cplusplus /bigobj")
         set(CMAKE_CXX_FLAGS_RELEASE "/MT /MP /Zi /GF /O2 /Ob1 /D NDEBUG /W3 /Zc:__cplusplus /bigobj")
@@ -63,12 +68,18 @@ elseif (APPLE)
 		-Wno-unused-variable
 		-Wno-unused-parameter
 	)
+	
+	set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2 -msse3")
+    set(CMAKE_C_FLAGS_DEBUG "-g -w -allow-multiple-definition")
+    set(CMAKE_C_FLAGS_MINSIZEREL "-O3 -finline-functions -DNDEBUG")
+    set(CMAKE_C_FLAGS_RELEASE "-O3 -finline-functions -DNDEBUG")
+    set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O3 -g -w -finline-functions -DNDEBUG -allow-multiple-definition")
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2 -msse3")
-    set(CMAKE_CXX_FLAGS_DEBUG "-g -w -allow-multiple-definition")
+    set(CMAKE_CXX_FLAGS_DEBUG "-g -w")
     set(CMAKE_CXX_FLAGS_MINSIZEREL "-O3 -finline-functions -DNDEBUG")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3 -finline-functions -DNDEBUG")
-    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g -w -finline-functions -DNDEBUG -allow-multiple-definition")
+    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g -w -finline-functions -DNDEBUG")
 else()
 	add_compile_options(
 		-Wno-unused-variable

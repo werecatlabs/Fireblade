@@ -484,7 +484,6 @@ if (WIN32)
     if (FB_BUILD_PHYSX)
         target_link_libraries(Editor FBPhysx.lib)
 
-        if (FB_PLATFORM_X64)
             target_link_libraries(Editor PhysX3.lib)
             target_link_libraries(Editor PhysX3Extensions.lib)
             target_link_libraries(Editor PhysX3Common.lib)
@@ -499,32 +498,6 @@ if (WIN32)
             target_link_libraries(Editor PxSimulationController.lib)
             target_link_libraries(Editor PhysX3LowLevel.lib)
             target_link_libraries(Editor PhysX3LowLevelCloth.lib)
-        else ()
-            target_link_libraries(Editor 
-                        debug PhysX3DEBUG_x86.lib
-                        optimized PhysX3_x86.lib)
-            target_link_libraries(Editor 
-                        debug PhysX3ExtensionsDEBUG.lib
-                        optimized PhysX3Extensions.lib)
-            target_link_libraries(Editor 
-                        debug PhysX3CommonDEBUG_x86.lib 
-                        optimized PhysX3Common_x86.lib)
-            target_link_libraries(Editor 
-                        debug PhysX3VehicleDEBUG.lib 
-                        optimized PhysX3Vehicle.lib)
-            target_link_libraries(Editor 
-                        debug PhysX3CookingDEBUG_x86.lib
-                        optimized PhysX3Cooking_x86.lib)
-            target_link_libraries(Editor 
-                        debug PhysXProfileSDKDEBUG.lib
-                        optimized PhysXProfileSDK.lib)
-            target_link_libraries(Editor 
-                        debug PxTaskDEBUG.lib
-                        optimized PxTask.lib)
-            target_link_libraries(Editor 
-                        debug PhysXVisualDebuggerSDKDEBUG.lib
-                        optimized PhysXVisualDebuggerSDK.lib)
-        endif()
     elseif(FB_BUILD_ODE)
         target_link_libraries(Editor FBODE3.lib)
     elseif(FB_BUILD_PHYSICS3)
@@ -542,14 +515,12 @@ if (WIN32)
     #endif()
 
     target_link_libraries(Editor bcrypt.lib)
-
     target_link_libraries(Editor libboost_thread.lib)
     target_link_libraries(Editor libboost_date_time.lib)
     target_link_libraries(Editor libboost_chrono.lib)
     target_link_libraries(Editor libboost_timer.lib)
     target_link_libraries(Editor libboost_filesystem.lib)
     target_link_libraries(Editor libboost_json.lib)
-
     target_link_libraries(Editor minizip.lib)
     target_link_libraries(Editor nativefiledialog.lib)
     target_link_libraries(Editor rttr.lib)
@@ -753,7 +724,7 @@ if (WIN32)
     #set_property(TARGET Editor PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Bin/windows/v142/x64/Debug)
 
     set_target_properties(Editor PROPERTIES 
-        VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/Bin/windows/v142/x64/$(Configuration)")
+        VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/Bin/windows/${FB_TOOLSET}/${FB_ARCH}/${FB_STATIC_LINK_CRT_TYPE}/${CMAKE_BUILD_TYPE}")
 
     set_target_properties (Editor PROPERTIES FOLDER Tools/Cpp)
 endif()
