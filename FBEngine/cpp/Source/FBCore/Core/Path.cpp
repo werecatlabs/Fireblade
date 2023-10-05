@@ -734,6 +734,48 @@ namespace fb
     }
 
     template <>
+    void BasePath<String>::copyFolder( const String &srcPath, const String &dstPath )
+    {
+        boost::filesystem::path sourcePath( srcPath );
+        boost::filesystem::path destinationPath( dstPath );
+
+        try
+        {
+            // Check if the source path exists
+            if( boost::filesystem::exists( sourcePath ) )
+            {
+                // Check if the source is a directory
+                if( boost::filesystem::is_directory( sourcePath ) )
+                {
+                    // Create the destination directory if it doesn't exist
+                    if( !boost::filesystem::exists( destinationPath ) )
+                    {
+                        boost::filesystem::create_directories( destinationPath );
+                    }
+
+                    // Recursively copy the contents of the source directory to the destination
+                    auto flags = boost::filesystem::copy_options::recursive | boost::filesystem::copy_options::overwrite_existing;
+                    boost::filesystem::copy( sourcePath, destinationPath, flags );
+                }
+                else
+                {
+                    // Source is not a directory
+                    std::cerr << "Source is not a directory." << std::endl;
+                }
+            }
+            else
+            {
+                // Source path doesn't exist
+                std::cerr << "Source path does not exist." << std::endl;
+            }
+        }
+        catch( const boost::filesystem::filesystem_error &ex )
+        {
+            std::cerr << "Error: " << ex.what() << std::endl;
+        }
+    }
+
+    template <>
     void BasePath<String>::copyFile( const String &srcPath, const String &dstPath )
     {
         auto newPath = getFilePath( dstPath );

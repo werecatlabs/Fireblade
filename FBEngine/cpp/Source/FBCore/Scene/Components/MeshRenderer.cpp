@@ -441,25 +441,15 @@ namespace fb
         {
             if( auto actor = getActor() )
             {
-#if _DEBUG
-                auto handle = actor->getHandle();
-                if( handle )
-                {
-                    auto name = handle->getName();
-                    if( name == "F40f40" )
-                    {
-                        int stop = 0;
-                        stop = 0;
-                    }
-                }
-#endif
-
-                auto actorTransform = actor->getTransform();
-                if( actorTransform )
+                if( auto actorTransform = actor->getTransform() )
                 {
                     auto actorPosition = actorTransform->getPosition();
                     auto actorOrientation = actorTransform->getOrientation();
                     auto actorScale = actorTransform->getScale();
+
+                    FB_ASSERT( actorPosition.isValid() );
+                    FB_ASSERT( actorOrientation.isSane() );
+                    FB_ASSERT( actorScale.isValid() );
 
                     if( m_graphicshNode )
                     {

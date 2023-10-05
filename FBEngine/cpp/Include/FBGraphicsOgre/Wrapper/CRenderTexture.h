@@ -16,10 +16,10 @@ namespace fb
         {
         public:
             /** Constructor. */
-            CRenderTexture() = default;
+            CRenderTexture();
 
             /** Destructor. */
-            ~CRenderTexture() override = default;
+            ~CRenderTexture() override;
 
             /** @copydoc IRenderTexture::update */
             void update() override;

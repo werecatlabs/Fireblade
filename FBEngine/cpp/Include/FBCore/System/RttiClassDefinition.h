@@ -24,7 +24,9 @@
         if( TYPE::m_typeInfo == 0 ) \
         { \
             auto typeManager = TypeManager::instance(); \
-            auto iTypeInfo = typeManager->getNewTypeId( #TYPE, 0 ); \
+            const auto &typeInfo = typeid( TYPE ); \
+            auto name = typeInfo.name(); \
+            auto iTypeInfo = typeManager->getNewTypeId( name, 0 ); \
             setTypeInfo( iTypeInfo ); \
         } \
     } \
@@ -57,8 +59,13 @@
     { \
         if( TYPE::m_typeInfo == 0 ) \
         { \
+            BASE_TYPE::setupTypeInfo(); \
             auto typeManager = TypeManager::instance(); \
-            auto _typeInfo = typeManager->getNewTypeId( #TYPE, BASE_TYPE::typeInfo() ); \
+            const auto &baseTypeInfo = typeid( BASE_TYPE ); \
+            auto baseName = baseTypeInfo.name(); \
+            const auto &typeInfo = typeid( TYPE ); \
+            auto name = typeInfo.name(); \
+            auto _typeInfo = typeManager->getNewTypeIdFromName( name, baseName ); \
             setTypeInfo( _typeInfo ); \
         } \
     } \
@@ -69,7 +76,7 @@
     } \
 \
     u32 TYPE::m_typeInfo = 0; \
-    ObjectSetup<TYPE> objectSetupTemplate##TYPE;
+    //ObjectSetup<TYPE> objectSetupTemplate##TYPE;
 
 #define FB_CLASS_REGISTER_DERIVED_TEMPLATE( NAMESPACE, TEMPLATE_CLASS, TYPE, BASE_TYPE ) \
     template <class T> \
@@ -94,12 +101,13 @@
     { \
         if( TEMPLATE_CLASS<T>::m_typeInfo == 0 ) \
         { \
+            BASE_TYPE::setupTypeInfo(); \
             auto typeManager = TypeManager::instance(); \
-            auto baseTypeInfo = BASE_TYPE::typeInfo(); \
-            auto templateTypeInfo = TYPE::typeInfo(); \
-            auto templateTypeName = typeManager->getName( templateTypeInfo ); \
-            auto classTypeName = String( #TEMPLATE_CLASS ) + "<" + templateTypeName + ">"; \
-            auto classTypeInfo = typeManager->getNewTypeId( classTypeName, baseTypeInfo ); \
+            const auto &baseTypeInfo = typeid( BASE_TYPE ); \
+            auto baseName = baseTypeInfo.name(); \
+            const auto &typeInfo = typeid( TEMPLATE_CLASS ); \
+            auto name = typeInfo.name(); \
+            auto classTypeInfo = typeManager->getNewTypeIdFromName( name, baseName ); \
             setTypeInfo( classTypeInfo ); \
         } \
     } \
@@ -111,11 +119,12 @@
     } \
 \
     template <class T> \
-    u32 TEMPLATE_CLASS<T>::m_typeInfo = 0; \
-    template <class T> \
-    ObjectSetup<TEMPLATE_CLASS<TYPE> > TEMPLATE_CLASS<T>::objectSetupTemplate##TYPE;
+    u32 TEMPLATE_CLASS<T>::m_typeInfo = 0;
+//template <class T> \
+    //ObjectSetup<TEMPLATE_CLASS<TYPE> > TEMPLATE_CLASS<T>::objectSetupTemplate##TYPE;
 
-#define FB_CLASS_REGISTER_DERIVED_TEMPLATE_PAIR( NAMESPACE, TEMPLATE_CLASS, TYPE, SECOND_TYPE, BASE_TYPE ) \
+#define FB_CLASS_REGISTER_DERIVED_TEMPLATE_PAIR( NAMESPACE, TEMPLATE_CLASS, TYPE, SECOND_TYPE, \
+                                                 BASE_TYPE ) \
     template <class T, class U> \
     void TEMPLATE_CLASS<T, U>::setTypeInfo( u32 id ) \
     { \
@@ -138,11 +147,13 @@
     { \
         if( TEMPLATE_CLASS<T, U>::m_typeInfo == 0 ) \
         { \
+            BASE_TYPE::setupTypeInfo(); \
             auto typeManager = TypeManager::instance(); \
-            auto baseTypeInfo = BASE_TYPE::typeInfo(); \
-            auto templateTypeName = String(#TYPE) + String(", ") + String(#SECOND_TYPE); \
-            auto classTypeName = String( #TEMPLATE_CLASS ) + "<" + templateTypeName + ">"; \
-            auto classTypeInfo = typeManager->getNewTypeId( classTypeName, baseTypeInfo ); \
+            const auto &baseTypeInfo = typeid( BASE_TYPE ); \
+            auto baseName = baseTypeInfo.name(); \
+            const auto &typeInfo = typeid( TEMPLATE_CLASS<T, U> ); \
+            auto name = typeInfo.name(); \
+            auto classTypeInfo = typeManager->getNewTypeIdFromName( name, baseName ); \
             setTypeInfo( classTypeInfo ); \
         } \
     } \
@@ -154,7 +165,7 @@
     } \
 \
     template <class T, class U> \
-    u32 TEMPLATE_CLASS<T, U>::m_typeInfo = 0; 
+    u32 TEMPLATE_CLASS<T, U>::m_typeInfo = 0;
 
 #define FB_CLASS_REGISTER_DERIVED_TEMPLATE_SPECIALISE( NAMESPACE, TEMPLATE_CLASS, TYPE, BASE_TYPE ) \
     template <> \
@@ -179,8 +190,13 @@
     { \
         if( TEMPLATE_CLASS<TYPE>::m_typeInfo == 0 ) \
         { \
+            BASE_TYPE::setupTypeInfo(); \
             auto typeManager = TypeManager::instance(); \
-            auto _typeInfo = typeManager->getNewTypeId( #TEMPLATE_CLASS #TYPE, BASE_TYPE::typeInfo() ); \
+            const auto &baseTypeInfo = typeid( BASE_TYPE ); \
+            auto baseName = baseTypeInfo.name(); \
+            const auto &typeInfo = typeid( TEMPLATE_CLASS<TYPE> ); \
+            auto name = typeInfo.name(); \
+            auto _typeInfo = typeManager->getNewTypeIdFromName( name, baseName ); \
             setTypeInfo( _typeInfo ); \
         } \
     } \
@@ -192,8 +208,8 @@
     } \
 \
     template <> \
-    u32 TEMPLATE_CLASS<TYPE>::m_typeInfo = 0; \
-    template <> \
-    ObjectSetup<TEMPLATE_CLASS<TYPE> > TEMPLATE_CLASS<T>::objectSetupTemplate##TYPE;
+    u32 TEMPLATE_CLASS<TYPE>::m_typeInfo = 0;
+//template <> \
+    //ObjectSetup<TEMPLATE_CLASS<TYPE> > TEMPLATE_CLASS<T>::objectSetupTemplate##TYPE;
 
 #endif  // RttiClassDefinition_h__

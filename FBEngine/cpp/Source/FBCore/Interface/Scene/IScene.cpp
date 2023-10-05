@@ -6,6 +6,6 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, IScene, ISharedObject );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, IScene, IResource );
     }  // namespace scene
 }  // namespace fb

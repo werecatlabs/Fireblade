@@ -1,7 +1,6 @@
 #ifndef ObfuscatedZipFile_h__
 #define ObfuscatedZipFile_h__
 
-
 #include <FBCore/IO/DataStream.h>
 
 namespace fb

@@ -12,7 +12,6 @@ using std::ofstream;
 
 namespace fb
 {
-
     String ScriptGenerator::getClassCPP( const String &parent )
     {
         for( auto &map : m_classMap )
@@ -85,6 +84,67 @@ namespace fb
     }
 
     ScriptGenerator::~ScriptGenerator()
+    {
+    }
+
+    void ScriptGenerator::createScript( ScriptGenerator::LanguageType type, const String &path )
+    {
+        auto applicationManager = core::IApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto fileSystem = applicationManager->getFileSystem();
+        FB_ASSERT( fileSystem );
+
+        switch( type )
+        {
+        case ScriptGenerator::LanguageType::LUA:
+        {
+            auto sourceStr = String();
+
+            auto className = String("NewScript");
+
+            sourceStr =
+                "class '" + className + "'\n"
+                "\n";
+
+            sourceStr += "function " + className + ":__init(window)\n"
+                "end\n"
+                "\n"
+                "function " + className + ":__finalize()\n"
+                "end\n"
+                "\n"
+                "function " + className + ":load()\n"
+                "end\n"
+                "\n"
+                "function " + className + ":unload()\n"
+                "end\n"
+                "\n"
+                "function " + className + ":initialise()\n"
+                "end\n"
+                "\n"
+                "function " + className + ":update()\n"
+                "end\n"
+                "\n"
+                "function " + className + ":show()\n"
+                "end\n"
+                "\n"
+                "function " + className + ":hide()\n"
+                "end";
+
+            auto sourcePath = Path::getFilePath( path );
+            fileSystem->createDirectories( sourcePath );
+
+            fileSystem->writeAllText( path, sourceStr );
+        }
+        break;
+        default:
+        {
+        }
+        }
+    }
+
+    void ScriptGenerator::createScript( ScriptGenerator::LanguageType type, const String &path,
+                                        SmartPtr<ScriptClass> pClass )
     {
     }
 
@@ -1118,7 +1178,7 @@ namespace fb
             sourceStr += ") " + newLineStr;
             sourceStr += headerTabStr + "{" + newLineStr;
 
-            auto fn = fb::static_pointer_cast<ScriptFunction>(function);
+            auto fn = fb::static_pointer_cast<ScriptFunction>( function );
             auto functionBody = fn->getFunctionBodyCPP();
 
             sourceStr += headerTabStr + singleTabStr + functionBody;

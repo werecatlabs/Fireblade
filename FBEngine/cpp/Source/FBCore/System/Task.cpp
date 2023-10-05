@@ -77,9 +77,10 @@ namespace fb
         try
         {
             auto applicationManager = core::IApplicationManager::instance();
+            auto taskManager = applicationManager->getTaskManager();
 
-            auto task = getTask();
-            if( auto fsmManager = applicationManager->getFsmManagerByTask( task ) )
+            auto eTask = getTask();
+            if( auto fsmManager = applicationManager->getFsmManagerByTask( eTask ) )
             {
                 fsmManager->update();
             }
@@ -116,9 +117,32 @@ namespace fb
                     auto nextUpdateTime = getNextUpdateTime();
                     if( nextUpdateTime < timer->now() )
                     {
-                        auto task = getTask();
-                        auto prevTask = Thread::getCurrentTask();
-                        Thread::setCurrentTask( task );
+                        auto eCurrentTask = Thread::getCurrentTask();
+
+                        Thread::setCurrentTask( eTask );
+
+                        auto taskFlags = getThreadTaskFlags();
+
+                        if( eTask != Thread::Task::Primary )
+                        {
+                            if( isPrimary() )
+                            {
+                                taskFlags = taskFlags | Thread::Primary_Flag;
+                            }
+                        }
+                        else
+                        {
+                            auto tasks = taskManager->getTasks();
+                            for(auto task : tasks)
+                            {
+                                if( task->isPrimary() )
+                                {
+                                    taskFlags = taskFlags | task->getThreadTaskFlags();
+                                }
+                            }
+                        }
+
+                        Thread::setTaskFlags( taskFlags );
 
                         timer->update();
 
@@ -154,7 +178,7 @@ namespace fb
                             setNextUpdateTime( nextUpdateTime );
                         }
 
-                        Thread::setCurrentTask( prevTask );
+                        Thread::setCurrentTask( eCurrentTask );
                     }
 
                     if( profile )
@@ -283,6 +307,16 @@ namespace fb
     void Task::setTask( Thread::Task task )
     {
         m_taskId = task;
+    }
+
+    u32 Task::getThreadTaskFlags() const
+    {
+        return m_threadTaskFlags;
+    }
+
+    void Task::setThreadTaskFlags( u32 threadTaskFlags )
+    {
+        m_threadTaskFlags = threadTaskFlags;
     }
 
     void Task::stop()

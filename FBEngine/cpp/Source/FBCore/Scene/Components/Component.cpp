@@ -42,7 +42,7 @@ namespace fb
 
                 m_componentFSM = fsmManager->createFSM();
 
-                auto componentFsmListener = factoryManager->make_ptr<BaseComponentFSMListener>();
+                auto componentFsmListener = factoryManager->make_ptr<ComponentFSMListener>();
                 componentFsmListener->setOwner( this );
                 m_componentFsmListener = componentFsmListener;
 
@@ -215,28 +215,6 @@ namespace fb
             }
 
             return IFSM::ReturnType::Ok;
-        }
-
-        void Component::_setComponentId( hash32 val )
-        {
-            // m_componentId = val;
-            //  m_handle->setHash(val);
-        }
-
-        hash32 Component::getComponentTypeId() const
-        {
-            return 0;
-        }
-
-        const String &Component::getComponentType() const
-        {
-            static String type = "BaseComponent";
-            return type;
-        }
-
-        hash32 Component::getComponentId() const
-        {
-            return 0;
         }
 
         void Component::setDirty( bool dirty )
@@ -637,16 +615,6 @@ namespace fb
             return State::Count;
         }
 
-        void *Component::getDataPtr() const
-        {
-            return m_dataPtr;
-        }
-
-        void Component::setDataPtr( void *data )
-        {
-            m_dataPtr = data;
-        }
-
         Array<SmartPtr<IComponentEvent>> Component::getEvents() const
         {
             return m_events;
@@ -775,58 +743,58 @@ namespace fb
             m_director = director;
         }
 
-        Component::BaseComponentStateListener::BaseComponentStateListener()
+        Component::ComponentStateListener::ComponentStateListener()
         {
         }
 
-        Component::BaseComponentStateListener::~BaseComponentStateListener()
+        Component::ComponentStateListener::~ComponentStateListener()
         {
         }
 
-        void Component::BaseComponentStateListener::handleStateChanged( SmartPtr<IState> &state )
+        void Component::ComponentStateListener::handleStateChanged( SmartPtr<IState> &state )
         {
         }
 
-        void Component::BaseComponentStateListener::handleStateChanged(
+        void Component::ComponentStateListener::handleStateChanged(
             const SmartPtr<IStateMessage> &message )
         {
         }
 
-        void Component::BaseComponentStateListener::handleQuery( SmartPtr<IStateQuery> &query )
+        void Component::ComponentStateListener::handleQuery( SmartPtr<IStateQuery> &query )
         {
         }
 
-        Component *Component::BaseComponentStateListener::getComponent() const
+        Component *Component::ComponentStateListener::getComponent() const
         {
             return m_component;
         }
 
-        void Component::BaseComponentStateListener::setComponent( Component *component )
+        void Component::ComponentStateListener::setComponent( Component *component )
         {
             m_component = component;
         }
 
-        Component::BaseComponentFSMListener::BaseComponentFSMListener()
+        Component::ComponentFSMListener::ComponentFSMListener()
         {
         }
 
-        Component::BaseComponentFSMListener::~BaseComponentFSMListener()
+        Component::ComponentFSMListener::~ComponentFSMListener()
         {
         }
 
-        IFSM::ReturnType Component::BaseComponentFSMListener::handleEvent( u32 state,
+        IFSM::ReturnType Component::ComponentFSMListener::handleEvent( u32 state,
                                                                            IFSM::Event eventType )
         {
             FB_ASSERT( m_owner );
             return m_owner->handleComponentEvent( state, eventType );
         }
 
-        Component *Component::BaseComponentFSMListener::getOwner() const
+        Component *Component::ComponentFSMListener::getOwner() const
         {
             return m_owner;
         }
 
-        void Component::BaseComponentFSMListener::setOwner( Component *owner )
+        void Component::ComponentFSMListener::setOwner( Component *owner )
         {
             m_owner = owner;
         }

@@ -1,7 +1,7 @@
 #ifndef IScene_h__
 #define IScene_h__
 
-#include <FBCore/Interface/Memory/ISharedObject.h>
+#include <FBCore/Interface/Resource/IResource.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Thread/ThreadTypes.h>
 #include <FBCore/Interface/Scene/IActor.h>
@@ -16,7 +16,7 @@ namespace fb
          * @author Zane Desir
          * @version 1.0
          */
-        class IScene : public ISharedObject
+        class IScene : public IResource
         {
         public:
             /**

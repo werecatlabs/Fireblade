@@ -28,6 +28,8 @@ namespace fb
         */
         FBAtomicSmartPtr() = default;
 
+        FBAtomicSmartPtr( const FBAtomicSmartPtr<T> &other );
+
         /** Destroys the atomic smart pointer. */
         ~FBAtomicSmartPtr();
 
@@ -76,15 +78,17 @@ namespace fb
         FBSmartPtr<T> exchange( const FBSmartPtr<T> ptr );
 
     protected:
-        T *get()
-        {
-            return m_pointer;
-        }
+        T *get();
 
         ///< The smart pointer that this atomic smart pointer holds.
-        std::atomic<T *> m_pointer =
-            nullptr;  
+        std::atomic<T *> m_pointer = nullptr;
     };
+
+    template <class T>
+    FBAtomicSmartPtr<T>::FBAtomicSmartPtr( const FBAtomicSmartPtr<T> &other )
+    {
+        *this = other.load();
+    }
 
     template <class T>
     FBAtomicSmartPtr<T>::~FBAtomicSmartPtr()
@@ -142,6 +146,12 @@ namespace fb
         auto old = m_pointer.load();
         m_pointer = ptr.get();
         return old;
+    }
+
+    template <class T>
+    T* FBAtomicSmartPtr<T>::get()
+    {
+        return m_pointer;
     }
 
 }  // end namespace fb

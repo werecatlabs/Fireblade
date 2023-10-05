@@ -47,21 +47,23 @@ namespace fb
 
         void setQuadratic( f32 quadratic );
 
+        SmartPtr<IState> clone() const override;
+
         FB_CLASS_REGISTER_DECL;
 
     protected:
         ColourF m_diffuseColour;
         ColourF m_specularColour;
-        Vector3F m_direction;
+        Vector3F m_direction = Vector3F::unitY();
 
         Vector4F m_attenuation;
         hash32 m_lightType = 0;
 
-        f32 m_range = 0.0f;
+        f32 m_range = 1000.0f;
 
-        f32 m_constant = 0.0f;
-        f32 m_linear = 0.0f;
-        f32 m_quadratic = 0.0f;
+        f32 m_constant = 1.0f;
+        f32 m_linear = 1.0f;
+        f32 m_quadratic =1.0f;
     };
 }  // end namespace fb
 

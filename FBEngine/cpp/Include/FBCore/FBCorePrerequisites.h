@@ -2,8 +2,6 @@
 #define FBPrerequisites_h__
 
 #include <FBCore/FBCoreTypes.h>
-#include <string>
-#include <vector>
 
 using ZZIP_DIR = struct zzip_dir;
 using ZZIP_FILE = struct zzip_file;

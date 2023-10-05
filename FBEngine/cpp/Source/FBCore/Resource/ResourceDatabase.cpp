@@ -444,13 +444,14 @@ namespace fb
                 //data = DataUtil::toString( &importData );
             }
 
-            // if (db)
+            // if( db )
             //{
-            //	auto sql = String("INSERT INTO `assets`(`id`,`name`,`data`) VALUES (NULL, '") + filePath
-            //+ String("', '" + data + "');"); 	auto query = db->query(sql);
+            //    auto sql = String( "INSERT INTO `assets`(`id`,`name`,`data`) VALUES (NULL, '" ) +
+            //               filePath + String( "', '" + data + "');" );
+            //    auto query = db->query( sql );
 
-            //	db->unload(0);
-            //	db = nullptr;
+            //    db->unload( 0 );
+            //    db = nullptr;
             //}
 
             if( extension == ".fbx" || extension == ".FBX" )
@@ -573,6 +574,9 @@ namespace fb
 
             Array<SmartPtr<scene::IDirector>> resources;
             resources.reserve( 1024 );
+
+            auto referenceObjects = getReferenceObjects();
+            resources.insert( resources.end(), referenceObjects.begin(), referenceObjects.end() );
 
             auto objects = getSceneObjects();
             for( auto object : objects )
@@ -1267,7 +1271,7 @@ namespace fb
         parent->addChild( properties );
 
         auto sAssetId = StringUtil::toString( id );
-        String sql = "select * from configured_models where id = '" + sAssetId + "'";
+        String sql = "select * from configured_actors where id = '" + sAssetId + "'";
 
         if( auto query = db->executeQuery( sql ) )
         {
@@ -1286,7 +1290,7 @@ namespace fb
             }
         }
 
-        String parentSql = "select * from configured_models where parent_id = '" + sAssetId + "'";
+        String parentSql = "select * from configured_actors where parent_id = '" + sAssetId + "'";
         if( auto query = db->executeQuery( parentSql ) )
         {
             while( !query->eof() )
@@ -1317,7 +1321,7 @@ namespace fb
         loadAssetNode( databaseManager, properties, id );
 
         auto sAssetId = StringUtil::toString( id );
-        String sql = "select * from attribs where model_id = '" + sAssetId + "'";
+        String sql = "select * from attribs where actor_id = '" + sAssetId + "'";
 
         if( auto query = databaseManager->executeQuery( sql ) )
         {
@@ -1362,6 +1366,88 @@ namespace fb
                 }
             }
         }
+    }
+
+    Array<SmartPtr<ISharedObject>> ResourceDatabase::getReferenceObjects() const
+    {
+        auto applicationManager = core::IApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto factoryManager = applicationManager->getFactoryManager();
+
+        Array<SmartPtr<ISharedObject>> objects;
+        objects.reserve( 4096 );
+
+        auto projectPath = applicationManager->getProjectPath();
+        if( StringUtil::isNullOrEmpty( projectPath ) )
+        {
+            projectPath = Path::getWorkingDirectory();
+        }
+
+        auto databaseManager = getDatabaseManager();
+        FB_ASSERT( databaseManager );
+
+        auto assetDatabaseManager = fb::static_pointer_cast<AssetDatabaseManager>( databaseManager );
+        FB_ASSERT( assetDatabaseManager );
+
+        auto cachePath = applicationManager->getMediaPath();
+
+        auto databasePath = cachePath + "/AssetDatabase.db";
+        assetDatabaseManager->loadFromFile( databasePath );
+
+        auto sql = String( "select * from 'configured_actors' where parent_id=1" );
+        auto query = assetDatabaseManager->executeQuery( sql );
+        if( query )
+        {
+            while( !query->eof() )
+            {
+                auto id = query->getFieldValue( "id" );
+                auto uuid = query->getFieldValue( "uuid" );
+                auto path = query->getFieldValue( "path" );
+                auto type = query->getFieldValue( "type" );
+                auto name = query->getFieldValue( "name" );
+
+                path = "reference/" + name; // test
+
+                //if( StringUtil::isNullOrEmpty( path ) )
+                //{
+                //    query->nextRow();
+                //    continue;
+                //}
+
+                if( StringUtil::isNullOrEmpty( uuid ) )
+                {
+                    uuid = id;
+                }
+
+                auto resourceDirector = factoryManager->make_object<scene::IDirector>();
+                resourceDirector->load( nullptr );
+
+                if( auto handle = resourceDirector->getHandle() )
+                {
+                    handle->setName( name );
+                    handle->setUUID( uuid );
+                }
+
+                auto directorProperties = resourceDirector->getProperties();
+
+                auto numFields = query->getNumFields();
+
+                for( size_t i = 0; i < numFields; ++i )
+                {
+                    auto fieldName = query->getFieldName( static_cast<u32>( i ) );
+                    auto fieldValue = query->getFieldValue( static_cast<u32>( i ) );
+
+                    directorProperties->setProperty( fieldName, fieldValue );
+                }
+
+                objects.push_back( resourceDirector );
+
+                query->nextRow();
+            }
+        }
+
+        return objects;
     }
 
     Array<SmartPtr<ISharedObject>> ResourceDatabase::getSceneObjects() const

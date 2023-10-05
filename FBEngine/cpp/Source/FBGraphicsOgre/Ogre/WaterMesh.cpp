@@ -8,7 +8,7 @@ namespace fb
 
 #define ANIMATIONS_PER_SECOND 30.0f
 
-        WaterMesh::WaterMesh( const String &inMeshName, Real planeSize, int inComplexity )
+        WaterMesh::WaterMesh( const String &inMeshName, Ogre::Real planeSize, int inComplexity )
         {
             // int x,y,b; // I prefer to initialize for() variables inside it, but VC doesn't like it ;(
 
@@ -158,7 +158,7 @@ namespace fb
             // MeshManager::getSingleton().remove(meshName);
         }
         /* ========================================================================= */
-        void WaterMesh::push( Real x, Real y, Real depth, bool absolute )
+        void WaterMesh::push( Ogre::Real x, Ogre::Real y, Ogre::Real depth, bool absolute )
         {
             float *buf = vertexBuffers[currentBuffNumber] + 1;
             // scale pressure according to time passed
@@ -184,19 +184,19 @@ namespace fb
 #undef _PREP
         }
         /* ========================================================================= */
-        Real WaterMesh::getHeight( Real x, Real y )
+        Ogre::Real WaterMesh::getHeight( Ogre::Real x, Ogre::Real y )
         {
 #define hat( _x, _y ) buf[3 * ( (int)_y * ( complexity + 1 ) + (int)( _x ) )]
             float *buf = vertexBuffers[currentBuffNumber];
-            Real xa = floor( x );
-            Real xb = xa + 1;
-            Real ya = floor( y );
-            Real yb = ya + 1;
-            Real yaxavg =
+            Ogre::Real xa = floor( x );
+            Ogre::Real xb = xa + 1;
+            Ogre::Real ya = floor( y );
+            Ogre::Real yb = ya + 1;
+            Ogre::Real yaxavg =
                 hat( xa, ya ) * ( 1.0f - fabs( xa - x ) ) + hat( xb, ya ) * ( 1.0f - fabs( xb - x ) );
-            Real ybxavg =
+            Ogre::Real ybxavg =
                 hat( xa, yb ) * ( 1.0f - fabs( xa - x ) ) + hat( xb, yb ) * ( 1.0f - fabs( xb - x ) );
-            Real yavg = yaxavg * ( 1.0f - fabs( ya - y ) ) + ybxavg * ( 1.0f - fabs( yb - y ) );
+            Ogre::Real yavg = yaxavg * ( 1.0f - fabs( ya - y ) ) + ybxavg * ( 1.0f - fabs( yb - y ) );
             return yavg;
         }
         /* ========================================================================= */
@@ -268,7 +268,7 @@ namespace fb
             // normVertexBuffer->unlock();
         }
         /* ========================================================================= */
-        void WaterMesh::updateMesh( Real timeSinceLastFrame )
+        void WaterMesh::updateMesh( Ogre::Real timeSinceLastFrame )
         {
             int x, y;
 
@@ -292,9 +292,9 @@ namespace fb
                 double D = PARAM_D;  // distance
                 double U = PARAM_U;  // viscosity
                 double T = PARAM_T;  // time
-                Real TERM1 = ( 4.0f - 8.0f * C * C * T * T / ( D * D ) ) / ( U * T + 2 );
-                Real TERM2 = ( U * T - 2.0f ) / ( U * T + 2.0f );
-                Real TERM3 = ( 2.0f * C * C * T * T / ( D * D ) ) / ( U * T + 2 );
+                Ogre::Real TERM1 = ( 4.0f - 8.0f * C * C * T * T / ( D * D ) ) / ( U * T + 2 );
+                Ogre::Real TERM2 = ( U * T - 2.0f ) / ( U * T + 2.0f );
+                Ogre::Real TERM3 = ( 2.0f * C * C * T * T / ( D * D ) ) / ( U * T + 2 );
                 for( y = 1; y < complexity; y++ )
                 {  // don't do anything with border values
                     float *row = buf + 3 * y * ( complexity + 1 );

@@ -129,6 +129,18 @@ namespace fb
         template <class T>
         T getDataTypeEnum( u32 id ) const;
 
+        template <class T>
+        u32 getTypeId()
+        {
+            // Use typeid to get a unique type identifier for type T
+            const auto &typeInfo = typeid( T );
+
+            auto name = typeInfo.name();
+            return getTypeByName(name);
+        }
+
+        u32 getTypeByName(const String& name);
+
         /**
          * @brief Get a new unique type id.
          * @return Returns a new unique type id as a 32-bit unsigned integer.
@@ -142,6 +154,7 @@ namespace fb
          * @return Returns a new unique type id as a 32-bit unsigned integer.
          */
         u32 getNewTypeId( const String &name, u32 baseType );
+        u32 getNewTypeIdFromName( const String &name, const String &baseName );
 
         /**
          * @brief Get all the base types of the given type.
@@ -170,6 +183,11 @@ namespace fb
          * @return Returns the type group as a 32-bit unsigned integer.
          */
         u32 getTypeGroup( u32 id ) const;
+
+        /**
+         * @brief Set the singleton instance of the TypeManager.
+         */
+        static void setInstance( TypeManager *typeManager );
 
         /**
          * @brief Get the singleton instance of the TypeManager.
@@ -208,6 +226,9 @@ namespace fb
 
         /// Stores the type groups, indexed by their ids. Mutable because it can be updated by const methods.
         mutable Array<atomic_u32> m_typeGroup;
+
+        /// Stores the types, indexed by their hashes.
+        Array<atomic_u32> m_hashTypes;
 
         /// Stores the base types, indexed by their ids.
         Array<atomic_u32> m_baseType;

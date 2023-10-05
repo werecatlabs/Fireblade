@@ -1313,6 +1313,11 @@ namespace fb
         return tempData;
     }
 
+    void CFileSystem::copyFolder( const String &srcPath, const String &dstPath )
+    {
+        Path::copyFolder( srcPath, dstPath );
+    }
+
     void CFileSystem::copyFile( const String &srcPath, const String &dstPath )
     {
         Path::copyFile( srcPath, dstPath );

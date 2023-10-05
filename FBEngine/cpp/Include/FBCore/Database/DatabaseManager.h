@@ -120,11 +120,6 @@ namespace fb
         Array<String> m_attached;
 
         RecursiveMutex m_mutex;  
-
-#if FB_PROFILE_DB
-        SmartPtr<Timer> m_timer;
-        std::ofstream m_log;
-#endif
     };
 }  // end namespace fb
 

@@ -67,6 +67,10 @@ namespace fb
             String getMediaPath() const override;
             void setMediaPath( const String &mediaPath ) override;
 
+            String getRenderMediaPath() const;
+
+            void setRenderMediaPath( const String &renderMediaPath );
+
             String getSettingsCachePath() const override;
             void setSettingsCachePath( const String &cachePath ) override;
 
@@ -246,6 +250,10 @@ namespace fb
             /** @copydoc IApplicationManager::getActors */
             Array<SmartPtr<scene::IActor>> getActors() const override;
 
+            SmartPtr<IPluginManager> getPluginManager() const;
+
+            void setPluginManager( SmartPtr<IPluginManager> pluginManager );
+
             /** @copydoc IApplicationManager::addPlugin */
             void addPlugin( SmartPtr<ISharedObject> plugin ) override;
 
@@ -278,9 +286,11 @@ namespace fb
                                     const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
                                     SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
 
+            RawPtr<TypeManager> getTypeManager() const;
+
+            void setTypeManager( RawPtr<TypeManager> typeManager );
+
             FB_CLASS_REGISTER_DECL;
-
-
 
         protected:
             SharedPtr<Array<SmartPtr<IFSMManager>>> getFSMManagersPtr() const;
@@ -291,6 +301,7 @@ namespace fb
             String m_projectPath;
             String m_projectLibraryName;
             String m_mediaPath;
+            String m_renderMediaPath;
 
             atomic_s32 m_loadProgress;
             atomic_bool m_enableRenderer = false;
@@ -370,6 +381,10 @@ namespace fb
 
             AtomicSmartPtr<render::IWindow> m_window;
             AtomicSmartPtr<ui::IUIWindow> m_sceneRenderWindow;
+
+            SmartPtr<IPluginManager> m_pluginManager;
+
+            AtomicRawPtr<TypeManager> m_typeManager;
 
             Array<SmartPtr<ISharedObject>> m_plugins;
 

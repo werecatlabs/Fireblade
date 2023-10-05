@@ -12,8 +12,20 @@ namespace fb
     class ScriptGenerator
     {
     public:
+        enum class LanguageType
+        {
+            CPP,
+            CSHARP,
+            LUA,
+
+            Count
+        };
+
         ScriptGenerator();
         ~ScriptGenerator();
+
+        void createScript(LanguageType type, const String& path);
+        void createScript(LanguageType type, const String& path, SmartPtr<ScriptClass> pClass);
 
         String getClassCPP( const String &parent );
 

@@ -89,7 +89,7 @@ namespace fb
                 FB_ASSERT( Path::isPathAbsolute( absolutePath ) );
                 fileInfo.absolutePath = absolutePath;
 
-                fileInfo.isDirectory = false;
+                fileInfo.isDirectory = Path::isFolder(absolutePath);
 
                 fileInfo.fileId = StringUtil::getHash64( filePath );
 

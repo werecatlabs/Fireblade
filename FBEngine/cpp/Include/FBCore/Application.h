@@ -172,6 +172,7 @@ namespace fb
             /** */
             virtual bool createCameraCtrlManager();
 
+            virtual void createPluginManager();
             virtual void createPlugins();
 
             // Optional to override this

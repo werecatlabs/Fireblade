@@ -444,7 +444,7 @@ namespace fb
 
     Array<SmartPtr<ITask>> TaskManager::getTasks() const
     {
-        return Array<SmartPtr<ITask>>();
+        return Array<SmartPtr<ITask>>( m_tasks.begin(), m_tasks.end() );
     }
 
     void TaskManager::wait()
@@ -460,9 +460,13 @@ namespace fb
 
     void TaskManager::stop()
     {
-        for( auto &t : m_tasks )
+        auto applicationManager = core::IApplicationManager::instance();
+        if( applicationManager->isRunning() )
         {
-            t->stop();
+            for( auto &t : m_tasks )
+            {
+                t->stop();
+            }
         }
     }
 

@@ -114,12 +114,7 @@ namespace fb
         {
             try
             {
-                //#if _DEBUG
-                //                auto task = Thread::getCurrentTask();
-                //                auto renderTask =
-                //                IApplicationManager::instance()->getGraphicsSystem()->getRenderTask();
-                //                FB_ASSERT( task == renderTask );
-                //#endif
+                FB_ASSERT( Thread::getTaskFlag( Thread::Render_Flag ) );
 
                 setLoadingState( LoadingState::Loading );
 

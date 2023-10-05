@@ -1,5 +1,5 @@
-#ifndef Plugin_h__
-#define Plugin_h__
+#ifndef PluginMacros_h__
+#define PluginMacros_h__
 
 #include <FBCore/FBCoreTypes.h>
 
@@ -177,4 +177,4 @@ typedef void *PluginHandle;
 
 #endif
 
-#endif  // Plugin_h__
+#endif  // PluginMacros_h__

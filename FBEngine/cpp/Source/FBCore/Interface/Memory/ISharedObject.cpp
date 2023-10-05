@@ -405,4 +405,104 @@ namespace fb
         m_sharedEventListeners = p;
     }
 
+#if !FB_FINAL
+    s32 ISharedObject::addWeakReference()
+    {
+#if FB_TRACK_REFERENCES
+#    if FB_TRACK_WEAK_REFERENCES
+        auto address = (void *)this;
+        const c8 *file = __FILE__;
+        const u32 line = __LINE__;
+        const c8 *func = __FUNCTION__;
+
+        auto &objectTracker = ObjectTracker::instance();
+        objectTracker.addRef( this, address, file, line, func );
+#    endif
+#endif
+
+        return ++m_weakReferences;
+    }
+
+    s32 ISharedObject::addReference()
+    {
+#if FB_TRACK_REFERENCES
+#    if FB_TRACK_STRONG_REFERENCES
+
+        auto references = gc.addReference( T::typeInfo(), m_objectId );
+
+        // FB_ASSERT( isGarbageCollected() && references > 0 );
+        FB_ASSERT( references < 1e10 );
+
+        auto address = (void *)this;
+        const c8 *file = __FILE__;
+        const u32 line = __LINE__;
+        const c8 *func = __FUNCTION__;
+
+        auto &objectTracker = ObjectTracker::instance();
+        objectTracker.addRef( this, address, file, line, func );
+
+        return references;
+#    else
+
+        return gc.addReference( T::typeInfo(), m_objectId );
+#    endif
+#else
+        return ++m_references;
+#endif
+    }
+
+    bool ISharedObject::removeReference()
+    {
+#if FB_TRACK_REFERENCES
+#    if FB_TRACK_STRONG_REFERENCES
+        auto address = (void *)this;
+        const c8 *file = __FILE__;
+        const u32 line = __LINE__;
+        const c8 *func = __FUNCTION__;
+
+        auto &objectTracker = ObjectTracker::instance();
+        objectTracker.removeRef( this, address, file, line, func );
+#    endif
+#endif
+
+        if( --m_references == 0 )
+        {
+            destroySharedObject();
+            return true;
+        }
+
+        return false;
+    }
+
+    s32 ISharedObject::getWeakReferences() const
+    {
+        return m_weakReferences;
+    }
+
+    s32 ISharedObject::getReferences() const
+    {
+        return m_references;
+    }
+
+    bool ISharedObject::isAlive() const
+    {
+        return ( m_objectFlags & GC_FLAG_OBJECT_ALIVE ) != 0;
+    }
+
+    bool ISharedObject::isLoaded() const
+    {
+        return m_loadingState == LoadingState::Loaded;
+    }
+
+    SmartPtr<ISharedObject> ISharedObject::getScriptData() const
+    {
+        return m_scriptData;
+    }
+
+    void ISharedObject::setScriptData( SmartPtr<ISharedObject> data )
+    {
+        m_scriptData = data;
+    }
+#endif
+
 }  // end namespace fb

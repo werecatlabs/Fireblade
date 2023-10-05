@@ -48,6 +48,8 @@
 namespace fb
 {
 
+    static TypeManager *instance_ = nullptr;
+
     TypeManager::TypeManager()
     {
         auto size = FB_TYPE_MANAGER_NUM_TYPES;
@@ -153,6 +155,17 @@ namespace fb
         return m_numInstances[id];
     }
 
+    u32 TypeManager::getTypeByName( const String &name )
+    {
+        auto it = std::find( m_name.begin(), m_name.end(), name );
+        if( it != m_name.end() )
+        {
+            return (u32)std::distance( m_name.begin(), it );
+        }
+
+        return 0;
+    }
+
     u32 TypeManager::getNewTypeId( const String &name, u32 baseType )
     {
         FB_ASSERT( m_typeCount < getSize() - 1 );
@@ -185,6 +198,12 @@ namespace fb
     u32 TypeManager::getNewTypeId()
     {
         return m_typeCount++;
+    }
+
+    u32 TypeManager::getNewTypeIdFromName( const String &name, const String &baseName )
+    {
+        auto baseType = getTypeByName( baseName );
+        return getNewTypeId( name, baseType );
     }
 
     Array<u32> TypeManager::getBaseTypes( u32 type ) const
@@ -417,10 +436,14 @@ namespace fb
         }
     }
 
+    void TypeManager::setInstance( TypeManager *typeManager )
+    {
+        instance_ = typeManager;
+    }
+
     TypeManager *TypeManager::instance()
     {
-        static TypeManager _instance;
-        return &_instance;
+        return instance_;
     }
 
 }  // end namespace fb

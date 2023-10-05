@@ -23,7 +23,7 @@ namespace fb
 {
     namespace scene
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, Scene, IScene );
+        FB_CLASS_REGISTER_DERIVED( fb::scene, Scene, Resource<IScene> );
 
         static bool isSceneLoaded = false;  // todo remove to use a fsm
 
@@ -333,7 +333,10 @@ namespace fb
                     auto &updateObjects = *p;
                     for( auto actor : updateObjects )
                     {
-                        actor->preUpdate();
+                        if( actor )
+                        {
+                            actor->preUpdate();
+                        }
                     }
                 }
 
@@ -357,9 +360,12 @@ namespace fb
                 if( p )
                 {
                     auto &updateObjects = *p;
-                    for( auto &object : updateObjects )
+                    for( auto actor : updateObjects )
                     {
-                        object->update();
+                        if( actor )
+                        {
+                            actor->update();
+                        }
                     }
                 }
 
@@ -391,7 +397,10 @@ namespace fb
                     auto &updateObjects = *p;
                     for( auto actor : updateObjects )
                     {
-                        actor->postUpdate();
+                        if( actor )
+                        {
+                            actor->postUpdate();
+                        }
                     }
                 }
 
@@ -402,7 +411,10 @@ namespace fb
                     auto actors = getActors();
                     for( auto actor : actors )
                     {
-                        actor->levelWasLoaded( this );
+                        if( actor )
+                        {
+                            actor->levelWasLoaded( this );
+                        }
                     }
 
                     isSceneLoaded = false;

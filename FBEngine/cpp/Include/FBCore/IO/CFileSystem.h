@@ -1,7 +1,6 @@
 #ifndef _FB_FileSystem_H_
 #define _FB_FileSystem_H_
 
-
 #include <FBCore/Interface/IO/IFileSystem.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Array.h>
@@ -127,6 +126,7 @@ namespace fb
         String getBytesString( SmartPtr<IStream> &pStream ) override;
         String getBytesString( std::ifstream &is );
 
+        void copyFolder( const String &srcPath, const String &dstPath ) override;
         void copyFile( const String &srcPath, const String &dstPath ) override;
         void deleteFile( const String &filePath ) override;
 

@@ -211,7 +211,7 @@ namespace fb
             if( file.is_open() )
             {
                 file.seekg( 0, std::ios::end );
-                long size = file.tellg();
+                auto size = file.tellg();
                 file.seekg( 0, std::ios::beg );
 
                 Array<char> buffer( size );
@@ -271,7 +271,7 @@ namespace fb
             if( file.is_open() )
             {
                 file.seekg( 0, std::ios::end );
-                long size = file.tellg();
+                auto size = file.tellg();
                 file.seekg( 0, std::ios::beg );
 
                 Array<char> buffer( size );

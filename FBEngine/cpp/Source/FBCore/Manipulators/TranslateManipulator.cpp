@@ -138,6 +138,7 @@ namespace fb
             auto applicationManager = core::IApplicationManager::instance();
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             auto sceneManager = graphicsSystem->getGraphicsScene();
+            auto selectionManager = applicationManager->getSelectionManager();
 
             auto sceneRoot = sceneManager->getRootSceneNode();
             m_sceneNode = sceneManager->addSceneNode();
@@ -240,15 +241,11 @@ namespace fb
             m_mesh[AT_YZ]->setCastShadows( false );
             m_node[AT_YZ]->attachObject( m_mesh[AT_YZ] );
 
-            // EventManagerPtr& eventManager = FBSystem::getSingletonPtr()->getEventManager();
-            // eventManager->addEventListener(this);
-
-            //auto selectionManager = applicationManager->getSelectionManager();
-            //if( selectionManager )
-            //{
-            //    m_selectionManagerListener = fb::make_ptr<SelectionManagerListener>( this );
-            //    selectionManager->addListener( m_selectionManagerListener );
-            //}
+            if( selectionManager )
+            {
+                m_selectionManagerListener = fb::make_ptr<SelectionManagerListener>( this );
+                selectionManager->addObjectListener( m_selectionManagerListener );
+            }
 
             m_sceneNode->setVisible( false );
         }
@@ -705,12 +702,12 @@ namespace fb
         return m_isVisible;
     }
 
-    fb::SmartPtr<fb::render::ISceneNode> TranslateManipulator::getSceneNode() const
+    SmartPtr<render::ISceneNode> TranslateManipulator::getSceneNode() const
     {
         return m_sceneNode;
     }
 
-    void TranslateManipulator::setSceneNode( fb::SmartPtr<fb::render::ISceneNode> sceneNode )
+    void TranslateManipulator::setSceneNode( SmartPtr<render::ISceneNode> sceneNode )
     {
         m_sceneNode = sceneNode;
     }
@@ -720,54 +717,71 @@ namespace fb
         m_isVisible = visible;
     }
 
-    //TranslateManipulator::SelectionManagerListener::SelectionManagerListener(
-    //    TranslateManipulator *manipulator ) :
-    //    m_manipulator( manipulator )
-    //{
-    //}
+    TranslateManipulator::SelectionManagerListener::SelectionManagerListener(
+        TranslateManipulator *manipulator ) :
+        m_owner( manipulator )
+    {
+    }
 
-    //TranslateManipulator::SelectionManagerListener::~SelectionManagerListener()
-    //{
-    //    m_manipulator = nullptr;
-    //}
+    TranslateManipulator::SelectionManagerListener::~SelectionManagerListener()
+    {
+        m_owner = nullptr;
+    }
 
-    //void TranslateManipulator::SelectionManagerListener::addSelectedObject()
-    //{
-    //    if( m_manipulator )
-    //    {
-    //        m_manipulator->updateManipulatorPosition();
-    //    }
-    //}
+    Parameter TranslateManipulator::SelectionManagerListener::handleEvent(
+        IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
+        SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
+    {
+        return Parameter();
+    }
 
-    //void TranslateManipulator::SelectionManagerListener::addSelectedObjects()
-    //{
-    //    if( m_manipulator )
-    //    {
-    //        m_manipulator->updateManipulatorPosition();
-    //    }
-    //}
+    void TranslateManipulator::SelectionManagerListener::addSelectedObject()
+    {
+        if( auto owner = getOwner() )
+        {
+            owner->updateManipulatorPosition();
+        }
+    }
 
-    //void TranslateManipulator::SelectionManagerListener::setSelectedObjects()
-    //{
-    //    if( m_manipulator )
-    //    {
-    //        m_manipulator->updateManipulatorPosition();
-    //    }
-    //}
+    void TranslateManipulator::SelectionManagerListener::addSelectedObjects()
+    {
+        if( auto owner = getOwner() )
+        {
+            owner->updateManipulatorPosition();
+        }
+    }
 
-    //void TranslateManipulator::SelectionManagerListener::deselectObjects()
-    //{
-    //    if( m_manipulator )
-    //    {
-    //        m_manipulator->updateManipulatorPosition();
-    //    }
-    //}
+    void TranslateManipulator::SelectionManagerListener::setSelectedObjects()
+    {
+        if( auto owner = getOwner() )
+        {
+            owner->updateManipulatorPosition();
+        }
+    }
 
-    //void TranslateManipulator::SelectionManagerListener::deselectAll()
-    //{
-    //    if( m_manipulator )
-    //    {
-    //        m_manipulator->updateManipulatorPosition();
-    //    }
-    //}
+    void TranslateManipulator::SelectionManagerListener::deselectObjects()
+    {
+        if( auto owner = getOwner() )
+        {
+            owner->updateManipulatorPosition();
+        }
+    }
+
+    void TranslateManipulator::SelectionManagerListener::deselectAll()
+    {
+        if( auto owner = getOwner() )
+        {
+            owner->updateManipulatorPosition();
+        }
+    }
+
+    TranslateManipulator *TranslateManipulator::SelectionManagerListener::getOwner() const
+    {
+        return m_owner;
+    }
+
+    void TranslateManipulator::SelectionManagerListener::setOwner( TranslateManipulator *owner )
+    {
+        m_owner = owner;
+    }
 }  // end namespace fb

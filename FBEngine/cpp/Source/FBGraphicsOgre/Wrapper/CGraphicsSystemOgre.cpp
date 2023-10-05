@@ -11,7 +11,7 @@
 #include <FBGraphicsOgre/Wrapper/CGraphicsSceneOgre.h>
 #include <FBGraphicsOgre/Wrapper/COverlayManagerOgre.h>
 #include <FBGraphicsOgre/Wrapper/CResourceGroupManager.h>
-#include <FBGraphicsOgre/Wrapper/CMaterialManager.h>
+#include <FBGraphicsOgre/Wrapper/CMaterialManagerOgre.h>
 #include <FBGraphicsOgre/Wrapper/CTextureManagerOgre.h>
 #include <FBGraphicsOgre/Wrapper/CWindowOgre.h>
 #include <FBGraphicsOgre/Wrapper/CFontManager.h>
@@ -212,10 +212,12 @@ namespace fb
 
                 setLoadingState( LoadingState::Loading );
 
-                CGraphicsSystem::load( data );
-
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
+                FB_ASSERT( applicationManager->isValid() );
+
+                CGraphicsSystem::load( data );
+
                 FB_ASSERT( applicationManager->isValid() );
 
 #ifdef FB_PLATFORM_WIN32
@@ -293,14 +295,29 @@ namespace fb
 
                 m_overlaySystem = new OverlaySystem;
 
+                FB_ASSERT( applicationManager->isValid() );
+
                 m_overlayMgr = fb::make_ptr<COverlayManagerOgre>();
                 m_compositorManager = fb::make_ptr<CompositorManager>();
                 m_resourceGroupManager = fb::make_ptr<CResourceGroupManager>();
-                m_materialManager = fb::make_ptr<CMaterialManager>();
+
+                FB_ASSERT( applicationManager->isValid() );
+
+                m_materialManager = fb::make_ptr<CMaterialManagerOgre>();
+
+                FB_ASSERT( applicationManager->isValid() );
+
                 m_textureManager = fb::make_ptr<CTextureManagerOgre>();
                 m_instanceManager = fb::make_ptr<CInstanceManager>();
+
+                FB_ASSERT( applicationManager->isValid() );
+
                 m_meshManager = fb::make_ptr<CMeshManager>();
+
+                FB_ASSERT( applicationManager->isValid() );
                 m_fontManager = fb::make_ptr<CFontManager>();
+
+                FB_ASSERT( applicationManager->isValid() );
 
                 m_resourceGroupHelper = new ResourceGroupHelper;
 
@@ -308,6 +325,8 @@ namespace fb
 
                 auto meshConverter = fb::make_ptr<MeshConverter>();
                 setMeshConverter( meshConverter );
+
+                FB_ASSERT( applicationManager->isValid() );
 
                 ResourceGroupManager *ogreResGrpMgr = ResourceGroupManager::getSingletonPtr();
                 ogreResGrpMgr->setLoadingListener( m_resourceLoadingListener );
@@ -748,6 +767,10 @@ namespace fb
                 FB_ASSERT( isValid() );
                 FB_ASSERT( m_root );
                 FB_ASSERT( isLoaded() );
+
+                auto applicationManager = core::IApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+                FB_ASSERT( applicationManager->isValid() );
 
                 auto showDialog = false;
                 auto applyDefaults = true;
@@ -1438,7 +1461,7 @@ namespace fb
             break;
             }
 
-            return false;
+            return true;
         }
 
         IGraphicsSystem::RenderApi CGraphicsSystemOgre::getRenderApi() const
@@ -1463,75 +1486,12 @@ namespace fb
 
         Thread::Task CGraphicsSystemOgre::getStateTask() const
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            if( auto threadPool = applicationManager->getThreadPool() )
-            {
-                if( threadPool->getNumThreads() > 0 )
-                {
-                    const auto hasTasks = applicationManager->hasTasks();
-                    return hasTasks ? Thread::Task::Render : Thread::Task::Primary;
-                }
-            }
-
-            return Thread::Task::Primary;
+            return Thread::Task::Render;
         }
 
         Thread::Task CGraphicsSystemOgre::getRenderTask() const
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            if( const auto taskManager = applicationManager->getTaskManager() )
-            {
-                if( applicationManager->isLoading() )
-                {
-                    return Thread::Task::Primary;
-                }
-
-                // if (isUpdating())
-                //{
-                //	return Thread::getCurrentTask();
-                // }
-
-                if( const auto threadPool = applicationManager->getThreadPool() )
-                {
-                    if( threadPool->getNumThreads() > 0 )
-                    {
-                        if( const auto task = taskManager->getTask( Thread::Task::Render ) )
-                        {
-                            if( task->isExecuting() )
-                            {
-                                return Thread::Task::Render;
-                            }
-
-                            if( task->isPrimary() )
-                            {
-                                return Thread::Task::Primary;
-                            }
-
-                            return Thread::Task::Primary;
-                        }
-                    }
-                    else
-                    {
-                        if( const auto task = taskManager->getTask( Thread::Task::Render ) )
-                        {
-                            if( task->isExecuting() )
-                            {
-                                return Thread::Task::Render;
-                            }
-                        }
-
-                        return Thread::Task::Primary;
-                    }
-                }
-
-                return applicationManager->hasTasks() ? Thread::Task::Render : Thread::Task::Primary;
-            }
-
-            return Thread::Task::Primary;
+            return Thread::Task::Render;
         }
 
         bool CGraphicsSystemOgre::getUseRTSS() const
@@ -1569,10 +1529,7 @@ namespace fb
             const auto &loadingState = getLoadingState();
             if( loadingState == LoadingState::Loaded )
             {
-                auto stateTask = getStateTask();
-                auto task = Thread::getCurrentTask();
-
-                if( forceQueue || stateTask != task )
+                if( forceQueue || !Thread::getTaskFlag( Thread::Render_Flag ) )
                 {
                     const auto &graphicsObjectLoadingState = graphicsObject->getLoadingState();
                     if( !( graphicsObjectLoadingState == LoadingState::Loading ||

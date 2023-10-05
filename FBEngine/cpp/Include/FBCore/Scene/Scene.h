@@ -8,6 +8,7 @@
 #include <FBCore/Core/ConcurrentQueue.h>
 #include <FBCore/Core/ConcurrentHashMap.h>
 #include <FBCore/Core/FixedArray.h>
+#include <FBCore/Resource/Resource.h>
 
 namespace fb
 {
@@ -15,7 +16,7 @@ namespace fb
     {
 
         /** Scene implementation. */
-        class Scene : public IScene
+        class Scene : public Resource<IScene>
         {
         public:
             /** Constructor. */

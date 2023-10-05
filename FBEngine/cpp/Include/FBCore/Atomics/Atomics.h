@@ -9,10 +9,6 @@
 #include <FBCore/Atomics/AtomicValue.h>
 #include <atomic>
 
-#if FB_USE_TBB
-#    include <tbb/atomic.h>
-#endif
-
 namespace fb
 {
 #if FB_USE_STD_ATOMIC

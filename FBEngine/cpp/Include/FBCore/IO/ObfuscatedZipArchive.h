@@ -2,7 +2,6 @@
 #define ObfuscatedZipReader_h__
 
 #include <FBCore/Interface/IO/IArchive.h>
-#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/FileInfo.h>
 
 namespace fb

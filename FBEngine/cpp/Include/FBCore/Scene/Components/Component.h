@@ -23,14 +23,14 @@ namespace fb
         {
         public:
             /** Listener class for finite state machine. */
-            class BaseComponentFSMListener : public FSMListener
+            class ComponentFSMListener : public FSMListener
             {
             public:
                 /** Default constructor. */
-                BaseComponentFSMListener();
+                ComponentFSMListener();
 
                 /** Virtual destructor. */
-                ~BaseComponentFSMListener() override;
+                ~ComponentFSMListener() override;
 
                 /** Handle finite state machine event. */
                 IFSM::ReturnType handleEvent( u32 state, IFSM::Event eventType ) override;
@@ -140,18 +140,6 @@ namespace fb
 
             void componentLoaded( SmartPtr<IComponent> component );
 
-            /** Gets the component id. */
-            hash32 getComponentId() const;
-
-            /** Sets the component id. */
-            void _setComponentId( hash32 val );
-
-            /** Gets the component type as String. */
-            virtual const String &getComponentType() const;
-
-            /** Gets the component type as an integer. */
-            virtual hash32 getComponentTypeId() const;
-
             /** Sets the flags of this component. */
             void setComponentFlag( u32 flag, bool value );
 
@@ -199,26 +187,6 @@ namespace fb
 
             /** @copydoc IComponent::getState */
             State getState() const override;
-
-            /**
-             * Gets a pointer to the data for the component.
-             * @tparam T The type of data to get a pointer for.
-             * @return A pointer to the data of the specified type, or null if not found.
-             */
-            template <class T>
-            T *getDataPtrByType() const;
-
-            /**
-             * Gets a pointer to the data for the component.
-             * @return A pointer to the data.
-             */
-            void *getDataPtr() const;
-
-            /**
-             * Sets the data pointer for the component.
-             * @param data The data pointer to set.
-             */
-            void setDataPtr( void *data );
 
             /** @copydoc IComponent::getEvents */
             Array<SmartPtr<IComponentEvent>> getEvents() const override;
@@ -279,18 +247,18 @@ namespace fb
              * BaseComponentStateListener is a class that serves as a base implementation for an IStateListener.
              * It provides functionality for handling state change messages and queries.
              */
-            class BaseComponentStateListener : public IStateListener
+            class ComponentStateListener : public IStateListener
             {
             public:
                 /**
                  * Default constructor for BaseComponentStateListener.
                  */
-                BaseComponentStateListener();
+                ComponentStateListener();
 
                 /**
                  * Virtual destructor for BaseComponentStateListener.
                  */
-                ~BaseComponentStateListener() override;
+                ~ComponentStateListener() override;
 
                 /**
                  * Implementation of the IStateListener::handleStateChanged method that handles a state change message.
@@ -404,21 +372,11 @@ namespace fb
             atomic_bool m_isDirty = false;
 
             /**
-             * The data pointer of the component.
-             */
-            void *m_dataPtr = nullptr;
-
-            /**
              * The ID extension of the component.
              */
             static u32 m_idExt;
         };
 
-        template <class T>
-        T *Component::getDataPtrByType() const
-        {
-            return static_cast<T *>( m_dataPtr );
-        }
     }  // namespace scene
 }  // namespace fb
 

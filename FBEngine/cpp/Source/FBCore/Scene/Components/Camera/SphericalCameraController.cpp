@@ -236,7 +236,7 @@ namespace fb
                         if( auto mainWindow = applicationManager->getWindow() )
                         {
                             auto mainWindowSize = mainWindow->getSize();
-                            auto mainWindowSizeF = Vector2F( mainWindowSize.x, mainWindowSize.y );
+                            auto mainWindowSizeF = Vector2F( (f32)mainWindowSize.x, (f32)mainWindowSize.y );
 
                             auto pos = uiWindow->getPosition() / mainWindowSizeF;
                             auto size = uiWindow->getSize() / mainWindowSizeF;

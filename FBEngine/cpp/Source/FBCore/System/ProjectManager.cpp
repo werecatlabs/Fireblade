@@ -5,17 +5,42 @@
 
 namespace fb
 {
-    void ProjectManager::generateCMakeProject()
+
+    ProjectManager::ProjectManager()
     {
+        m_projectName = "Plugin";
+        m_enginePath = "Engine";
+    }
+
+    ProjectManager::~ProjectManager()
+    {
+    }
+
+    void ProjectManager::generateProject()
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         auto applicationManager = core::IApplicationManager::instance();
         auto fileSystem = applicationManager->getFileSystem();
 
         Array<String> defines;
         Array<String> includes;
+
         Array<String> libraryPaths;
+        Array<String> macosLibraryPaths;
+        Array<String> unixLibraryPaths;
+
         Array<String> libs;
+        Array<String> macosLibs;
+        Array<String> unixLibs;
 
         defines.push_back( "_FB_STATIC_LIB_" );
+        defines.push_back( "BOOST_ALL_NO_LIB" );
+        defines.push_back( "__TBB_NO_IMPLICIT_LINKAGE=1" );
+        defines.push_back( "__TBBMALLOC_NO_IMPLICIT_LINKAGE=1" );
+        defines.push_back( "_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS" );
+        defines.push_back( "_UNICODE" );
+        defines.push_back( "FB_USE_BOOST" );
 
 #if FB_USE_ONETBB
         defines.push_back( "FB_USE_ONETBB=1" );
@@ -23,7 +48,7 @@ namespace fb
         defines.push_back( "FB_USE_TBB=1" );
 #endif
 
-        auto enginePath = String( "E:/dev/fireblade" );
+        auto enginePath = getEnginePath();
 
         includes.push_back( enginePath + "/Dependencies/boost" );
 
@@ -33,41 +58,68 @@ namespace fb
         includes.push_back( enginePath + "/Dependencies/tbb/include" );
 #endif
 
-        includes.push_back( enginePath + "/FBEngine/cpp/Include/FBCPlusPlus" );
-        includes.push_back( enginePath + "/AdditionalLibraries/cppsqlite/include" );
-        includes.push_back( enginePath + "/AdditionalLibraries/sqlite/include" );
+        //includes.push_back( enginePath + "/FBEngine/cpp/Include/FBCPlusPlus" );
+        //includes.push_back( enginePath + "/AdditionalLibraries/cppsqlite/include" );
+        //includes.push_back( enginePath + "/AdditionalLibraries/sqlite/include" );
         // includes.push_back(enginePath + "/AdditionalLibraries/aurora");
         includes.push_back( enginePath + "/FBEngine/cpp/Include" );
-        includes.push_back( enginePath + "/FBEngine/cpp/Include/FBCPlusPlus" );
+        //includes.push_back( enginePath + "/FBEngine/cpp/Include/FBCPlusPlus" );
 
-        libs.push_back( "FBCore.lib" );
-        libs.push_back( "FBFileSystem.lib" );
-        libs.push_back( "FBMath.lib" );
-        libs.push_back( "FBMesh.lib" );
-        libs.push_back( "FBInterface.lib" );
-        libs.push_back( "FBProcedural.lib" );
-        libs.push_back( "FBSystem.lib" );
-        libs.push_back( "FBPhysx.lib" );
-        libs.push_back( "FBData.lib" );
-        libs.push_back( "FBSQLite.lib" );
-        libs.push_back( "FBObjectTemplates.lib" );
-        libs.push_back( "FBVehicle.lib" );
-        libs.push_back( "FBWxWidgets.lib" );
-        libs.push_back( "FBObjectTemplates.lib" );
-        libs.push_back( "FBApplication.lib" );
-        libs.push_back( "FBState.lib" );
-        libs.push_back( "FBOISInput.lib" );
-        libs.push_back( "FBGraphics.lib" );
-        // libs.push_back("glfw.lib");
-        // libs.push_back("RocketControls_d.lib");
-        // libs.push_back("RocketCore_d.lib");
-        // libs.push_back("RocketDebugger_d.lib");
-        // libs.push_back("RuntimeCompiler_VS2010.lib");
-        // libs.push_back("RuntimeObjectSystem.lib");
-        // libs.push_back("Systems.lib");
+        libs.push_back( "FBCore" );
+        libs.push_back( "bcrypt" );
+        libs.push_back( "libboost_thread" );
+        libs.push_back( "libboost_date_time" );
+        libs.push_back( "libboost_chrono" );
+        libs.push_back( "libboost_timer" );
+        libs.push_back( "libboost_filesystem" );
+        libs.push_back( "libboost_json" );
+        libs.push_back( "minizip" );
+        libs.push_back( "nativefiledialog" );
+        libs.push_back( "rttr" );
+        libs.push_back( "tinyxml" );
+        libs.push_back( "yaml-cpp" );
+        libs.push_back( "zlib" );
+        libs.push_back( "zzip" );
+        libs.push_back( "tbb_static" );
+        libs.push_back( "tbbmalloc_static" );
 
-        auto toolset = String( "v142" );
-        auto arch = String( "x64" );
+        macosLibs.push_back( "FBCore" );
+        macosLibs.push_back( "libboost_thread" );
+        macosLibs.push_back( "libboost_date_time" );
+        macosLibs.push_back( "libboost_chrono" );
+        macosLibs.push_back( "libboost_timer" );
+        macosLibs.push_back( "libboost_filesystem" );
+        macosLibs.push_back( "libboost_json" );
+        macosLibs.push_back( "minizip" );
+        macosLibs.push_back( "nativefiledialog" );
+        macosLibs.push_back( "rttr" );
+        macosLibs.push_back( "tinyxml" );
+        macosLibs.push_back( "yaml-cpp" );
+        macosLibs.push_back( "zlib" );
+        macosLibs.push_back( "zzip" );
+        macosLibs.push_back( "tbb_static" );
+        macosLibs.push_back( "tbbmalloc_static" );
+
+        unixLibs.push_back( "FBCore" );
+        unixLibs.push_back( "libboost_thread" );
+        unixLibs.push_back( "libboost_date_time" );
+        unixLibs.push_back( "libboost_chrono" );
+        unixLibs.push_back( "libboost_timer" );
+        unixLibs.push_back( "libboost_filesystem" );
+        unixLibs.push_back( "libboost_json" );
+        unixLibs.push_back( "minizip" );
+        unixLibs.push_back( "nativefiledialog" );
+        unixLibs.push_back( "rttr" );
+        unixLibs.push_back( "tinyxml" );
+        unixLibs.push_back( "yaml-cpp" );
+        unixLibs.push_back( "zlib" );
+        unixLibs.push_back( "zzip" );
+        unixLibs.push_back( "tbb_static" );
+        unixLibs.push_back( "tbbmalloc_static" );
+
+        auto toolset = String( "${FB_TOOLSET}" );
+        auto arch = String( "${FB_ARCH}" );
+        auto cmakeSourceStr = String( "${CMAKE_SOURCE_DIR}" );
 
 #if FB_STATIC_LINK_CRT
         auto crtType = String( "MT" );
@@ -77,6 +129,10 @@ namespace fb
 
         libraryPaths.push_back( enginePath + "/libs/windows/" + toolset + "/" + arch + "/" + crtType +
                                 "/${CMAKE_BUILD_TYPE}" );
+        macosLibraryPaths.push_back( enginePath + "/libs/macos/${CMAKE_BUILD_TYPE}" );
+        unixLibraryPaths.push_back( enginePath + "/libs/unix/${CMAKE_BUILD_TYPE}" );
+
+        /*
         libraryPaths.push_back( enginePath + "/AdditionalLibraries/lib/windows/" + toolset + "/" + arch +
                                 "/" + crtType + "/physx/" );
         libraryPaths.push_back( enginePath + "/AdditionalLibraries/lib/windows/" + toolset + "/" + arch +
@@ -94,11 +150,15 @@ namespace fb
         libraryPaths.push_back( enginePath + "/AdditionalLibraries/lib/windows/" + toolset + "/" + arch +
                                 "/" + crtType + "/ois/" );
         // libraryPaths.push_back(enginePath + "/AdditionalLibraries/aurora/x64/${CMAKE_BUILD_TYPE}");
+        */
 
-        auto newLineStr = "\n";
+        const auto windowsLibraryExtendsionStr = String( ".lib" );
+        const auto unixLibraryExtendsionStr = String( ".a" );
+        const auto tabStr = String( " " );
+        const auto newLineStr = String( "\n" );
         auto cmakeRequired = String( "cmake_minimum_required(VERSION 3.13)\n" );
-        auto projectName = String( "Vehicle" );
-        auto projectDeclare = "project(" + projectName + ")\n";
+        auto projectName = getProjectName();
+        auto projectDeclare = "project(" + projectName + " C CXX)\n";
 
         auto compileOptions =
             String( "if (WIN32)" ) + newLineStr +
@@ -144,8 +204,8 @@ namespace fb
             newLineStr + String( "" ) + newLineStr + String( "	add_compile_definitions(NDEBUG)" ) +
             newLineStr + String( "endif()" );
 
-        auto headerFilesStr = String( "file(GLOB_RECURSE HEADER_FILES \"Assets/*.h\")\n" );
-        auto sourceFilesStr = String( "file(GLOB_RECURSE SOURCE_FILES \"Assets/*.cpp\")\n" );
+        auto headerFilesStr = String( "file(GLOB_RECURSE HEADER_FILES \"Plugin/*.h\")\n" );
+        auto sourceFilesStr = String( "file(GLOB_RECURSE SOURCE_FILES \"Plugin/*.cpp\")\n" );
 
         auto defineOpen = String( "add_compile_definitions(" );
         auto defineClose = String( ")" );
@@ -163,11 +223,49 @@ namespace fb
         cmakeStr += newLineStr;
         cmakeStr += "set(CMAKE_CXX_STANDARD 17)";
         cmakeStr += newLineStr;
-        cmakeStr += newLineStr;
+        cmakeStr += "set(FB_ROOT \"${CMAKE_SOURCE_DIR}\")";
+        cmakeStr += newLineStr + newLineStr;
+
+        cmakeStr +=
+            "if (WIN32)\n"
+            "\tset(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "
+            "${FB_ROOT}/libs/windows/${FB_TOOLSET}/${FB_ARCH}/${FB_STATIC_LINK_CRT_TYPE}/"
+            "${CMAKE_BUILD_TYPE})\n"
+            "\tset(CMAKE_LIBRARY_OUTPUT_DIRECTORY "
+            "${FB_ROOT}/libs/windows/${FB_TOOLSET}/${FB_ARCH}/${FB_STATIC_LINK_CRT_TYPE}/"
+            "${CMAKE_BUILD_TYPE})\n"
+            "\tset(CMAKE_RUNTIME_OUTPUT_DIRECTORY "
+            "${FB_ROOT}/bin/windows/${FB_TOOLSET}/${FB_ARCH}/${FB_STATIC_LINK_CRT_TYPE}/"
+            "${CMAKE_BUILD_TYPE})\n"
+            "elseif (APPLE)\n"
+            "    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${FB_ROOT}/libs/macOS/${CMAKE_BUILD_TYPE})\n"
+            "    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${FB_ROOT}/libs/macOS/${CMAKE_BUILD_TYPE})\n"
+            "    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FB_ROOT}/bin/macOS/${CMAKE_BUILD_TYPE})\n"
+            "elseif (UNIX)\n"
+            "    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${FB_ROOT}/libs/linux/${CMAKE_BUILD_TYPE})\n"
+            "    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${FB_ROOT}/libs/linux/${CMAKE_BUILD_TYPE})\n"
+            "    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FB_ROOT}/bin/linux/${CMAKE_BUILD_TYPE})\n"
+            "endif ()";
+        cmakeStr += newLineStr + newLineStr;
+
+        cmakeStr += getPlatformOptions();
+        cmakeStr += newLineStr + newLineStr;
+
+        cmakeStr += getToolsetOptions();
+        cmakeStr += newLineStr + newLineStr;
 
         cmakeStr += compileOptions + newLineStr;
 
         cmakeStr += newLineStr;
+
+        cmakeStr +=
+            "if (FB_PLATFORM_X64)\n"
+            "\tadd_compile_definitions(_AMD64_)\n"
+            "else()\n"
+            "\tadd_compile_definitions(_X86_)\n"
+            "endif()";
+
+        cmakeStr += newLineStr + newLineStr;
 
         for( auto define : defines )
         {
@@ -178,15 +276,39 @@ namespace fb
 
         for( auto includeDir : includes )
         {
-            cmakeStr += includeDirOpen + includeDir + includeDirClose + newLineStr;
+            cmakeStr +=
+                includeDirOpen + includeDir + includeDirClose + newLineStr;
         }
 
         cmakeStr += newLineStr;
 
+        std::stringstream linkDirectories;
+        linkDirectories << String( "if (WIN32)\n" );
+
         for( auto libraryPath : libraryPaths )
         {
-            cmakeStr += libraryDirOpen + projectName + " " + libraryPath + libraryDirClose + newLineStr;
+            linkDirectories << libraryDirOpen + projectName + " " + libraryPath + libraryDirClose +
+                                   newLineStr;
         }
+
+        linkDirectories << String( "elseif(APPLE)\n" );
+
+        for( auto libraryPath : macosLibraryPaths )
+        {
+            linkDirectories << libraryDirOpen + projectName + " " + libraryPath + libraryDirClose +
+                                   newLineStr;
+        }
+
+        linkDirectories << String( "elseif(UNIX)\n" );
+
+        for( auto libraryPath : unixLibraryPaths )
+        {
+            linkDirectories << libraryDirOpen + projectName + " " + libraryPath + libraryDirClose +
+                                   newLineStr;
+        }
+
+        linkDirectories << String( "endif()\n" );
+        cmakeStr += linkDirectories.str();
 
         cmakeStr += newLineStr;
 
@@ -201,11 +323,30 @@ namespace fb
                                       " ${HEADER_FILES} ${SOURCE_FILES})\n" );
         cmakeStr += libraryDeclare + newLineStr;
 
+        auto libraries = String( "if (WIN32)\n" );
         for( auto lib : libs )
         {
-            cmakeStr += libraryOpen + projectName + " " + lib + libraryClose + newLineStr;
+            libraries += tabStr + libraryOpen + projectName + " " + lib + windowsLibraryExtendsionStr +
+                         libraryClose + newLineStr;
         }
 
+        libraries += String( "elseif(APPLE)\n" );
+        for( auto lib : macosLibs )
+        {
+            libraries += tabStr + libraryOpen + projectName + " " + lib + unixLibraryExtendsionStr +
+                         libraryClose + newLineStr;
+        }
+
+        libraries += String( "elseif(UNIX)\n" );
+        for( auto lib : unixLibs )
+        {
+            libraries += tabStr + libraryOpen + projectName + " " + lib + unixLibraryExtendsionStr +
+                         libraryClose + newLineStr;
+        }
+
+        libraries += String( "endif()\n" );
+
+        cmakeStr += libraries;
         cmakeStr += newLineStr;
 
         auto projectPath = applicationManager->getProjectPath();
@@ -218,8 +359,63 @@ namespace fb
         return m_isSharedLibrary;
     }
 
-    void ProjectManager::setSharedLibrary( bool val )
+    void ProjectManager::setSharedLibrary( bool sharedLibrary )
     {
-        m_isSharedLibrary = val;
+        m_isSharedLibrary = sharedLibrary;
     }
+
+    String ProjectManager::getProjectName() const
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        return m_projectName;
+    }
+
+    void ProjectManager::setProjectName( const String &projectName )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_projectName = projectName;
+    }
+
+    String ProjectManager::getEnginePath() const
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        return m_enginePath;
+    }
+
+    void ProjectManager::setEnginePath( const String &enginePath )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_enginePath = enginePath;
+    }
+
+    String ProjectManager::getPlatformOptions() const
+    {
+        return "include(CheckTypeSize)\n"
+               "CHECK_TYPE_SIZE(\"void*\" FB_PTR_SIZE BUILTIN_TYPES_ONLY)\n"
+               "if (FB_PTR_SIZE EQUAL 8)\n"
+               "  set(FB_PLATFORM_X64 TRUE)\n"
+               "  set(FB_ARCH \"x64\")\n"
+               "else ()\n"
+               "  set(FB_PLATFORM_X64 FALSE)\n"
+               "  set(FB_ARCH \"x86\")\n"
+               "endif ()";
+    }
+
+    String ProjectManager::getToolsetOptions() const
+    {
+        return "if(WIN32)\n"
+               "\tif (MSVC_TOOLSET_VERSION EQUAL \"141\")\n"
+               "\t\tset(FB_TOOLSET \"v141\")\n"
+               "\telseif(MSVC_TOOLSET_VERSION EQUAL \"142\")\n"
+               "\t\tset(FB_TOOLSET \"v142\")\n"
+               "    elseif(MSVC_TOOLSET_VERSION EQUAL \"143\")\n"
+               "\t\tset(FB_TOOLSET \"v143\")\n"
+               "\tendif()\n"
+               "elseif(APPLE)\n"
+               "    set(FB_TOOLSET \"\")\n"
+               "else()\n"
+               "    set(FB_TOOLSET \"\")\n"
+               "endif()";
+    }
+
 }  // end namespace fb

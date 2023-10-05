@@ -40,6 +40,7 @@ namespace fb
         {
             try
             {
+                FB_ASSERT( Thread::getTaskFlag( Thread::Render_Flag ) );
                 FB_ASSERT( getLoadingState() != LoadingState::Loaded );
 
                 setLoadingState( LoadingState::Loading );
@@ -50,12 +51,6 @@ namespace fb
 
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
                 FB_ASSERT( graphicsSystem );
-
-#if _DEBUG
-                auto task = Thread::getCurrentTask();
-                auto renderTaskDebugId = graphicsSystem->getRenderTask();
-                FB_ASSERT( task == renderTaskDebugId );
-#endif
 
                 auto resourceGroupManager = Ogre::ResourceGroupManager::getSingletonPtr();
                 FB_ASSERT( resourceGroupManager );
@@ -85,7 +80,7 @@ namespace fb
                     }
                 }
 
-                String defaultGrp = "General";
+                static const String defaultGrp = "General";
 
                 // load scripts
                 // parseScripts( Ogre::GpuProgramManager::getSingletonPtr(), ".cg", defaultGrp );
@@ -164,7 +159,7 @@ namespace fb
                 if( auto stateObject = getStateObject() )
                 {
                     stateObject->triggerEvent( IEvent::Type::Loading, (hash_type)LoadingState::Loaded,
-                                               Array<Parameter>(), this, this,nullptr );
+                                               Array<Parameter>(), this, this, nullptr );
                 }
             }
             catch( std::exception &e )
@@ -190,31 +185,31 @@ namespace fb
 
         void CResourceGroupManager::initialiseAllResourceGroups()
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             m_resourceGroupManager->initialiseAllResourceGroups();
         }
 
         void CResourceGroupManager::initialiseResourceGroup( const String &groupName )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             m_resourceGroupManager->initialiseResourceGroup( groupName.c_str() );
         }
 
         void CResourceGroupManager::unloadResourceGroup( const String &groupName )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             m_resourceGroupManager->unloadResourceGroup( groupName.c_str() );
         }
 
         void CResourceGroupManager::clearResourceGroup( const String &groupName )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             m_resourceGroupManager->clearResourceGroup( groupName.c_str() );
         }
 
         void CResourceGroupManager::destroyResourceGroup( const String &groupName )
         {
-            ISharedObject::ScopedLock lock(core::IApplicationManager::instance()->getGraphicsSystem() );
+            ISharedObject::ScopedLock lock( core::IApplicationManager::instance()->getGraphicsSystem() );
             m_resourceGroupManager->destroyResourceGroup( groupName.c_str() );
         }
 
@@ -345,7 +340,7 @@ namespace fb
 
                     FB_LOG( fileName );
 
-                    if (StringUtil::contains( fileName, "pbr-vert.glsl" ))
+                    if( StringUtil::contains( fileName, "pbr-vert.glsl" ) )
                     {
                         int a = 0;
                         a++;

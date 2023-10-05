@@ -1,17 +1,16 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Application.h>
 #include <FBCore/FBCore.h>
-#include "FBCore/Core/LogManager.h"
-#include "FBCore/Scene/Director.h"
-#include "FBCore/Scene/Components/CarController.h"
-#include "FBCore/Scene/Components/ParticleSystem.h"
-#include "FBCore/Scene/Components/WheelController.h"
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Scene/Director.h>
+#include <FBCore/Scene/Components/CarController.h>
+#include <FBCore/Scene/Components/ParticleSystem.h>
+#include <FBCore/Scene/Components/WheelController.h>
 
 namespace fb
 {
     namespace core
     {
-
         Application::Application()
         {
         }
@@ -25,9 +24,23 @@ namespace fb
         {
             try
             {
+                auto currentThreadId = Thread::ThreadId::Primary;
+                Thread::setCurrentThreadId( currentThreadId );
+
+                auto task = Thread::Task::Primary;
+                Thread::setCurrentTask( task );
+
+                auto taskFlags = std::numeric_limits<u32>::max();
+                Thread::setTaskFlags( taskFlags );
+
+                auto typeManager = new TypeManager();
+                TypeManager::setInstance( typeManager );
+
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
                 FB_ASSERT( applicationManager->isValid() );
+
+                applicationManager->setTypeManager( typeManager );
 
                 createLogManager();
                 FB_ASSERT( applicationManager->isValid() );
@@ -35,6 +48,9 @@ namespace fb
                 FB_DEBUG_TRACE;
 
                 createFactoryManager();
+                FB_ASSERT( applicationManager->isValid() );
+
+                createPluginManager();
                 FB_ASSERT( applicationManager->isValid() );
 
                 createPlugins();
@@ -613,8 +629,14 @@ namespace fb
                     if( auto window = graphicsSystem->getDefaultWindow() )
                     {
                         inputManager->setWindow( window );
+
+#if defined FB_PLATFORM_WIN32
                         inputManager->setCreateMouse( true );
                         inputManager->setCreateKeyboard( true );
+#elif defined FB_PLATFORM_APPLE
+                        inputManager->setCreateMouse( false );
+                        inputManager->setCreateKeyboard( false );
+#endif
 
                         inputManager->load( nullptr );
 
@@ -1736,8 +1758,7 @@ namespace fb
             return vehicleActor;
         }
 
-        fb::SmartPtr<fb::scene::IActor> Application::createDefaultParticleSystem(
-            bool addToScene )
+        fb::SmartPtr<fb::scene::IActor> Application::createDefaultParticleSystem( bool addToScene )
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
@@ -1915,37 +1936,39 @@ namespace fb
                 {
                     if( auto window = graphicsSystem->getDefaultWindow() )
                     {
-                        FB_ASSERT( m_camera );
-                        m_camera->setAutoAspectRatio( true );
+                        if( m_camera )
+                        {
+                            m_camera->setAutoAspectRatio( true );
 
-                        auto vp = window->addViewport( 0, m_camera );
-                        FB_ASSERT( vp );
+                            auto vp = window->addViewport( 0, m_camera );
+                            FB_ASSERT( vp );
 
-                        auto viewportColour = ColourF::Blue * 0.2f;
-                        vp->setBackgroundColour( viewportColour );
+                            auto viewportColour = ColourF::Blue * 0.2f;
+                            vp->setBackgroundColour( viewportColour );
 
-                        //auto actualWidth = static_cast<f32>( vp->getActualWidth() );
-                        //auto actualHeight = static_cast<f32>( vp->getActualHeight() );
+                            //auto actualWidth = static_cast<f32>( vp->getActualWidth() );
+                            //auto actualHeight = static_cast<f32>( vp->getActualHeight() );
 
-                        //auto aspectRatio = 1.0f;
-                        //if( actualHeight > 0.0f )
-                        //{
-                        //    aspectRatio = actualWidth / actualHeight;
-                        //}
+                            //auto aspectRatio = 1.0f;
+                            //if( actualHeight > 0.0f )
+                            //{
+                            //    aspectRatio = actualWidth / actualHeight;
+                            //}
 
-                        //FB_ASSERT( MathF::isFinite( aspectRatio ) );
-                        //FB_ASSERT( aspectRatio > 0.0f );
+                            //FB_ASSERT( MathF::isFinite( aspectRatio ) );
+                            //FB_ASSERT( aspectRatio > 0.0f );
 
-                        //m_camera->setAspectRatio( aspectRatio );
-                        //FB_ASSERT( m_camera->isValid() );
+                            //m_camera->setAspectRatio( aspectRatio );
+                            //FB_ASSERT( m_camera->isValid() );
 
-                        vp->setClearEveryFrame( true );
-                        vp->setOverlaysEnabled( true );
-                        vp->setAutoUpdated( true );
-                        m_viewport = vp;
+                            vp->setClearEveryFrame( true );
+                            vp->setOverlaysEnabled( true );
+                            vp->setAutoUpdated( true );
+                            m_viewport = vp;
 
-                        FB_ASSERT( m_viewport );
-                        FB_ASSERT( m_viewport->isValid() );
+                            FB_ASSERT( m_viewport );
+                            FB_ASSERT( m_viewport->isValid() );
+                        }
                     }
                 }
             }
@@ -1973,6 +1996,15 @@ namespace fb
         bool Application::createCameraCtrlManager()
         {
             return true;
+        }
+
+        void Application::createPluginManager()
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto pluginManager = fb::make_ptr<PluginManager>();
+            applicationManager->setPluginManager( pluginManager );
         }
 
         void Application::createPlugins()
@@ -2081,23 +2113,11 @@ namespace fb
                 auto mediaPath = String( "" );
 
 #    if defined FB_PLATFORM_WIN32
-#        if FB_GRAPHICS_SYSTEM_OGRENEXT
-                mediaPath = String( "../../../../Media/2.0" );
-#        elif FB_GRAPHICS_SYSTEM_OGRE
-                mediaPath = String( "../../../../Media/1.0" );
-#        endif
+                mediaPath = String( "../../../../../Media" );
 #    elif defined FB_PLATFORM_APPLE
-#        if FB_GRAPHICS_SYSTEM_OGRENEXT
-                mediaPath = String( "../../Media/2.0" );
-#        elif FB_GRAPHICS_SYSTEM_OGRE
-                mediaPath = String( "../../Media/1.0" );
-#        endif
+                mediaPath = String( "../../Media" );
 #    else
-#        if FB_GRAPHICS_SYSTEM_OGRENEXT
-                mediaPath = String( "../../Media/2.0" );
-#        elif FB_GRAPHICS_SYSTEM_OGRE
-                mediaPath = String( "../../Media/1.0" );
-#        endif
+                mediaPath = String( "../../Media" );
 #    endif
 
                 auto absolutePath = Path::lexically_normal( workingDirectory, mediaPath );
@@ -2108,9 +2128,14 @@ namespace fb
                     fileSystem->addFileArchive( pack, true, true, IFileSystem::ArchiveType::Zip );
                 }
 
+#    if defined FB_PLATFORM_WIN32
                 fileSystem->addFolder( mediaPath, true );
-
                 applicationManager->setMediaPath( mediaPath );
+#    else
+                auto absoluteMediaPath = Path::lexically_normal( workingDirectory, mediaPath );
+                fileSystem->addFolder( absoluteMediaPath, true );
+                applicationManager->setMediaPath( absoluteMediaPath );
+#    endif
 #else
                 fileSystem->addFileArchive( "Media.zip", false, false, IFileSystem::ArchiveType::Zip );
 #endif
@@ -2172,7 +2197,7 @@ namespace fb
             auto factoryManager = applicationManager->getFactoryManager();
             FB_ASSERT( factoryManager );
 
-            auto numThreads = getActiveThreads();
+            auto numThreads = (u32)getActiveThreads();
 
             auto maxThreads = Thread::hardware_concurrency();
             if( numThreads > maxThreads )
@@ -2219,6 +2244,7 @@ namespace fb
 
                 auto primaryTask = taskManager->getTask( Thread::Task::Primary );
                 primaryTask->setTask( Thread::Task::Primary );
+                primaryTask->setThreadTaskFlags( Thread::Primary_Flag );
                 primaryTask->setPrimary( true );
                 primaryTask->setEnabled( true );
                 primaryTask->setOwner( this );
@@ -2226,6 +2252,7 @@ namespace fb
 
                 auto applicationTask = taskManager->getTask( Thread::Task::Application );
                 applicationTask->setTask( Thread::Task::Application );
+                applicationTask->setThreadTaskFlags( Thread::Application_Flag );
                 applicationTask->setPrimary( false );
                 applicationTask->setEnabled( true );
                 applicationTask->setOwner( this );
@@ -2233,6 +2260,7 @@ namespace fb
 
                 auto renderTask = taskManager->getTask( Thread::Task::Render );
                 renderTask->setTask( Thread::Task::Render );
+                renderTask->setThreadTaskFlags( Thread::Render_Flag );
                 renderTask->setPrimary( true );
                 renderTask->setEnabled( true );
                 renderTask->setOwner( this );
@@ -2240,6 +2268,7 @@ namespace fb
 
                 auto physicsTask = taskManager->getTask( Thread::Task::Physics );
                 physicsTask->setTask( Thread::Task::Physics );
+                physicsTask->setThreadTaskFlags( Thread::Physics_Flag );
                 physicsTask->setPrimary( false );
                 physicsTask->setEnabled( true );
                 physicsTask->setOwner( this );
@@ -2247,6 +2276,7 @@ namespace fb
 
                 auto garbageCollectTask = taskManager->getTask( Thread::Task::GarbageCollect );
                 garbageCollectTask->setTask( Thread::Task::GarbageCollect );
+                garbageCollectTask->setThreadTaskFlags( Thread::GarbageCollect_Flag );
                 garbageCollectTask->setPrimary( false );
                 garbageCollectTask->setEnabled( true );
                 garbageCollectTask->setOwner( this );
@@ -2421,5 +2451,5 @@ namespace fb
             }
         }
 
-    }  // namespace application
+    }  // namespace core
 }  // namespace fb

@@ -6,6 +6,7 @@
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/FixedArray.h>
+#include <FBCore/Interface/System/IEventListener.h>
 
 namespace fb
 {
@@ -52,20 +53,29 @@ namespace fb
         void setSceneNode( SmartPtr<render::ISceneNode> sceneNode );
 
     private:
-        //class SelectionManagerListener : public ISelectionManagerListener
-        //{
-        //public:
-        //    SelectionManagerListener( TranslateManipulator *manipulator );
-        //    ~SelectionManagerListener() override;
+        class SelectionManagerListener : public IEventListener
+        {
+        public:
+            SelectionManagerListener() = default;
+            SelectionManagerListener( TranslateManipulator *manipulator );
+            ~SelectionManagerListener() override;
 
-        //    void addSelectedObject() override;
-        //    void addSelectedObjects() override;
-        //    void setSelectedObjects() override;
-        //    void deselectObjects() override;
-        //    void deselectAll() override;
+            Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                   const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                   SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
 
-        //    TranslateManipulator *m_manipulator = nullptr;
-        //};
+            void addSelectedObject();
+            void addSelectedObjects();
+            void setSelectedObjects();
+            void deselectObjects();
+            void deselectAll();
+
+            TranslateManipulator *getOwner() const;
+            void setOwner( TranslateManipulator *owner );
+
+        private:
+            TranslateManipulator *m_owner = nullptr;
+        };
 
         void setVisible( bool visible );
 
@@ -93,7 +103,7 @@ namespace fb
         Array<SmartPtr<render::IGraphicsMesh>> m_mesh;
         Array<SmartPtr<render::IGraphicsMesh>> m_coneMesh;
 
-        //SmartPtr<ISelectionManagerListener> m_selectionManagerListener;
+        SmartPtr<SelectionManagerListener> m_selectionManagerListener;
 
         Vector3<real_Num> RelativeTranslation;  //! Relative translation of the scene node.
         Vector3<real_Num> RelativeRotation;     //! Relative rotation of the scene node.

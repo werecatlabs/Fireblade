@@ -2,6 +2,7 @@
 #include <FBCore/System/FactoryManager.h>
 #include <FBCore/Core/Exception.h>
 #include <FBCore/Core/LogManager.h>
+#include <FBCore/Core/StringUtil.h>
 #include <FBCore/Interface/System/IState.h>
 #include <FBCore/Interface/System/IStateContext.h>
 
@@ -9,7 +10,7 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, FactoryManager, IFactoryManager );
 
-    FactoryManager::FactoryManager() : IFactoryManager()
+    FactoryManager::FactoryManager()
     {
         auto factories = fb::make_shared<ConcurrentArray<SmartPtr<IFactory>>>();
         factories->reserve( 1024 );
@@ -149,7 +150,7 @@ namespace fb
             }
         }
 
-        auto factoryName = StringUtil::replaceAll( name, "class ", "" );
+        auto factoryName = StringUtil::replaceAll( name, "class", "" );
         for( auto &factory : factories )
         {
             auto objectType = factory->getObjectType();
@@ -159,10 +160,24 @@ namespace fb
             }
         }
 
+        factoryName = StringUtil::replaceAll( factoryName, "fb::", "" );
+        factoryName = StringUtil::replaceAll( factoryName, "core::", "" );
+        factoryName = StringUtil::replaceAll( factoryName, "scene::", "" );
+        factoryName = StringUtil::trim(factoryName);
+
         for( auto &factory : factories )
         {
             auto factoryObjectType = factory->getObjectType();
-            auto factoryObjectTypeCleaned = StringUtil::replaceAll( factoryObjectType, "class ", "" );
+            auto factoryObjectTypeCleaned = StringUtil::replaceAll( factoryObjectType, "class", "" );
+            if( factoryObjectTypeCleaned == factoryName )
+            {
+                return factory;
+            }
+
+            factoryObjectTypeCleaned = StringUtil::replaceAll( factoryObjectTypeCleaned, "fb::", "" );
+            factoryObjectTypeCleaned = StringUtil::replaceAll( factoryObjectTypeCleaned, "core::", "" );
+            factoryObjectTypeCleaned = StringUtil::replaceAll( factoryObjectTypeCleaned, "scene::", "" );
+            factoryObjectTypeCleaned = StringUtil::trim(factoryObjectTypeCleaned);
             if( factoryObjectTypeCleaned == factoryName )
             {
                 return factory;

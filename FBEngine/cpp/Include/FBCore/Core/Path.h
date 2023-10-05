@@ -49,6 +49,7 @@ namespace fb
 
         static size_t getFileSize( const T &filename );
 
+        static void copyFolder( const T &srcPath, const T &dstPath );
         static void copyFile( const T &srcPath, const T &dstPath );
         static void createDirectories( const T &dst );
 

@@ -1,11 +1,9 @@
 #ifndef CFileList_h__
 #define CFileList_h__
 
-
 #include <FBCore/Interface/IO/IFileList.h>
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Core/Array.h>
-#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/FileInfo.h>
 
 namespace fb

@@ -1171,74 +1171,16 @@ namespace fb
         return false;
     }
 
-    using namespace rttr;
-    using namespace rttr::detail;
-
-    // Custom type converter for MyCustomPtr
-    template <typename T>
-    struct MyCustomPtrConverter : public rttr::detail::type_converter_target<T>
-    {
-        MyCustomPtrConverter( const type &target_type ) :
-            rttr::detail::type_converter_target<T>( target_type )
-        {
-        }
-
-        T convert( void *data, bool &ok ) const
-        {
-            ok = true;
-            return T( *static_cast<T *>( data ) );
-        }
-
-        static void *extract( const rttr::variant &var )
-        {
-            if( var.can_convert<SmartPtr<T>>() )
-            {
-                SmartPtr<T> ptr = *var.get_value<SmartPtr<T> *>();
-                return static_cast<void *>( ptr.get() );
-            }
-            return nullptr;
-        }
-
-        static rttr::variant wrap( void *ptr )
-        {
-            auto customPtr = *static_cast<SmartPtr<T> *>( ptr );
-            return rttr::variant( customPtr );
-        }
-
-        rttr::type get_source_type() const override
-        {
-            return rttr::type::get<SmartPtr<T>>();
-        }
-    };
-
     void Properties::registerClass()
     {
         using namespace fb;
         using namespace rttr;
+        using namespace rttr::detail;
 
         registration::class_<Properties>( "Properties" )
             .property( "name", &Properties::m_name )
             .property( "properties", &Properties::m_properties )
             .property( "children", &Properties::m_children );
-
-        //registration::class_<SmartPtr<Properties>>( "PropertiesPtr" )
-        //    .property( "name", &Properties::m_name )
-        //    .property( "properties", &Properties::m_properties )
-        //    .property( "children", &Properties::m_children );
-
-        //MyCustomPtrConverter<Properties>::register_converter();
-        auto p = new MyCustomPtrConverter<Properties>( rttr::type::get<Properties>() );
-        detail::type_register::register_converter( p );
-
-        //rttr::registration::conversion::constructor<std::unique_ptr<int>, std::unique_ptr<int>>(
-        //    "std::unique_ptr<int>" );
-        //rttr::registration::conversion::constructor<std::shared_ptr<int>, std::shared_ptr<int>>(
-        //    "std::shared_ptr<int>" );
-
-        //detail::type_register::register_converter(p);
-        //rttr::type_converter<MyCustomPtrConverter<Properties>>::register_converter();
     }
-
-    //template<> class MyCustomPtrConverter<Properties>;
 
 }  // end namespace fb

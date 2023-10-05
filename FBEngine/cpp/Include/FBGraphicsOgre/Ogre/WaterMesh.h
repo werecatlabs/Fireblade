@@ -49,15 +49,15 @@ namespace fb
             void push( f32 x, f32 y, f32 depth, bool absolute = false );
 
             /** gets height at given x and y, takes average value of the closes nodes */
-            Real getHeight( f32 x, f32 y );
+            Ogre::Real getHeight( f32 x, f32 y );
 
             /** updates mesh */
             void updateMesh( f32 timeSinceLastFrame );
 
-            Real PARAM_C;  // ripple speed
-            Real PARAM_D;  // distance
-            Real PARAM_U;  // viscosity
-            Real PARAM_T;  // time
+            Ogre::Real PARAM_C;  // ripple speed
+            Ogre::Real PARAM_D;  // distance
+            Ogre::Real PARAM_U;  // viscosity
+            Ogre::Real PARAM_T;  // time
             bool useFakeNormals;
         };
     }  // end namespace render

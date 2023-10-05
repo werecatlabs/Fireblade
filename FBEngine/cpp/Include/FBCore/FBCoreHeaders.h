@@ -2,7 +2,7 @@
 #define FBCoreHeaders_h__
 
 #include <FBCore/ApplicationUtil.h>
-#include "FBCore/Animation/InterpolateAnimator.h"
+#include <FBCore/Animation/InterpolateAnimator.h>
 
 #include <FBCore/Core/BitUtil.h>
 #include <FBCore/Core/ColourF.h>
@@ -470,6 +470,7 @@
 #include <FBCore/Memory/FactoryUtil.h>
 #include <FBCore/Memory/MemoryTracker.h>
 #include <FBCore/Memory/ObjectTracker.h>
+#include <FBCore/Memory/TypeManager.h>
 
 #include <FBCore/Physics/CRaycastHit.h>
 

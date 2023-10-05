@@ -93,6 +93,10 @@ namespace fb
         /** @copydoc ITask::removeListener */
         void setTask( Thread::Task task ) override;
 
+        u32 getThreadTaskFlags() const;
+
+        void setThreadTaskFlags( u32 threadTaskFlags );
+
         /** @copydoc ITask::removeListener */
         void stop() override;
 
@@ -164,17 +168,19 @@ namespace fb
         AtomicSmartPtr<IProfile> m_profile;
 
         Thread::Task m_taskId = Thread::Task::Primary;
+        atomic_u32 m_threadTaskFlags = 0;
+
         ConcurrentQueue<SmartPtr<IJob>> m_jobs;
         atomic_f64 m_autoFPS = 0.0;
         atomic_u32 m_tickCount = 0;
         atomic_s32 m_stopped = 0;
         atomic_s32 m_affinity = 0;
-        atomic_u32* m_taskFlags = nullptr;
+        atomic_u32 *m_taskFlags = nullptr;
 
         void *m_managerData = nullptr;
 
         mutable SpinRWMutex m_mutex;
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif  // TaskMinimal_h__

@@ -1,7 +1,6 @@
 #ifndef __IPluginManager_H__
 #define __IPluginManager_H__
 
-#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb

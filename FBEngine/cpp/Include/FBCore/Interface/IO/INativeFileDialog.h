@@ -1,7 +1,6 @@
 #ifndef INativeFileDialog_h__
 #define INativeFileDialog_h__
 
-#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/StringTypes.h>
 

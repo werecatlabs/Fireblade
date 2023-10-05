@@ -213,7 +213,7 @@ persons to whom the Software is furnished to do so, subject to the following con
     NSRect clipRect = NSMakeRect(0.0f, 0.0f, 0.0f, 0.0f);
     clipRect		= [[[self window] contentView] frame];
 
-    NSRect rect = NSMakeRect(0.0f, 0.0f, clipRect.size.width*2, clipRect.size.height*2);
+    NSRect rect = NSMakeRect(0.0f, 0.0f, clipRect.size.width * 2.0f, clipRect.size.height * 2.0f);
 
     if ([self trackingArea])
     {

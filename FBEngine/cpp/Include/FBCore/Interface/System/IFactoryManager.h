@@ -3,6 +3,9 @@
 
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Interface/System/IFactory.h>
+#include <FBCore/Thread/RecursiveMutex.h>
+#include <FBCore/Memory/PointerUtil.h>
+#include <FBCore/Core/StringTypes.h>
 
 #ifdef _DEBUG
 #    include <fstream>

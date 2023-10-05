@@ -393,11 +393,9 @@ namespace fb
             FactoryTemplate<B> *m_factory = nullptr;
         };
 
-#if FB_USE_MEMORY_POOL
         AtomicSmartPtr<Pool<T>> m_pool;
 
         InstancePool<T> m_instancePool;
-#endif
 
         Listener<T> m_listener;
 

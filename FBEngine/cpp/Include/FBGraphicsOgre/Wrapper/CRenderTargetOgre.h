@@ -26,7 +26,7 @@ namespace fb
             CRenderTargetOgre();
 
             /** Destructor. */
-            ~CRenderTargetOgre() override;
+            virtual ~CRenderTargetOgre() override;
 
             /** @copydoc ISharedObject::load */
             void load( SmartPtr<ISharedObject> data ) override;
@@ -161,6 +161,8 @@ namespace fb
             /** @copydoc IRenderTarget::setTexture */
             void setTexture( SmartPtr<ITexture> texture );
 
+            FB_CLASS_REGISTER_TEMPLATE_DECL( CRenderTargetOgre, T );
+
         protected:
             /** Sets up the state object. */
             virtual void setupStateObject();
@@ -187,13 +189,15 @@ namespace fb
             static s32 m_ext;
         };
 
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, CRenderTargetOgre, T, T );
+
         template <class T>
         s32 CRenderTargetOgre<T>::m_ext = 0;
 
         template <class T>
         CRenderTargetOgre<T>::CRenderTargetOgre()
         {
-            setupStateObject();
+
         }
 
         template <class T>
@@ -785,18 +789,7 @@ namespace fb
                 auto stateManager = applicationManager->getStateManager();
                 FB_ASSERT( stateManager );
 
-                auto graphicsSystem = applicationManager->getGraphicsSystem();
-                FB_ASSERT( graphicsSystem );
-
-                auto factoryManager = applicationManager->getFactoryManager();
-                FB_ASSERT( factoryManager );
-
                 auto stateObject = stateManager->addStateObject();
-
-                // auto sceneNodeStateListener = factoryManager->make_ptr<WindowStateListener>();
-                // sceneNodeStateListener->setOwner( this );
-                // m_stateListener = sceneNodeStateListener;
-                // stateObject->addStateListener( m_stateListener );
 
                 stateObject->setOwner( this );
                 setStateObject( stateObject );

@@ -1,56 +1,22 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Database/AssetDatabaseManager.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Database/IDatabase.h>
+#include <FBCore/Interface/Database/IDatabaseQuery.h>
+#include <FBCore/Interface/Graphics/IMaterial.h>
+#include <FBCore/Interface/Graphics/ITexture.h>
+#include <FBCore/Interface/IO/IFileSystem.h>
+#include <FBCore/Interface/Memory/IData.h>
+#include <FBCore/Interface/Resource/IResource.h>
+#include <FBCore/Interface/Scene/IActor.h>
+#include <FBCore/Interface/Scene/IComponent.h>
+#include <FBCore/Core/FileInfo.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {
 
     AssetDatabaseManager::AssetDatabaseManager()
     {
-        try
-        {
-            // CppSQLite3DB* db = new CppSQLite3DB;
-            // m_database = db;
-
-            // if (sqlite3_threadsafe() == 0)
-            //{
-            //	FB_LOG_ERROR("Error: sqlite compiled without thread safety.");
-            // }
-
-#if FB_USE_DB_CUSTOM_ALLOCATOR
-            sqlite3_mem_methods my_malloc_implementation;
-            memset( &my_malloc_implementation, 0, sizeof( sqlite3_mem_methods ) );
-            my_malloc_implementation.xMalloc = xMalloc;
-            my_malloc_implementation.xFree = xFree;
-            my_malloc_implementation.xRealloc = xRealloc;
-            my_malloc_implementation.xSize = xSize;
-            my_malloc_implementation.xRoundup = xRoundup;
-            my_malloc_implementation.xInit = xInit;
-            my_malloc_implementation.xShutdown = xShutdown;
-            sqlite3_config( SQLITE_CONFIG_MALLOC, &my_malloc_implementation );
-#endif
-
-            // const int KBuferSize = 128;
-            // const int KSize = 10 * 1024;
-            // const int KBufferCount = 8;
-            // static u3264_t sqliteScratchBuffer[KSize*KBuferSize / sizeof(u3264_t)];
-
-            // sqlite3_config(
-            //	SQLITE_CONFIG_SCRATCH,
-            //	&sqliteScratchBuffer[0],
-            //	KSize,
-            //	KBufferCount);
-
-            //// Max DB page size is 16KB. SQLite doc says to add 40 bytes for page header.
-            // const int KPageSize = 16 * 1024 + 40;
-            // const int KPageCount = 512;
-            // static u3264_t sqlitePageCache[KPageSize*KPageCount / sizeof(u3264_t)];
-            // sqlite3_config(SQLITE_CONFIG_PAGECACHE, sqlitePageCache, KPageSize, KPageCount);
-        }
-        catch( Exception &e )
-        {
-            FB_LOG_EXCEPTION( e );
-        }
     }
 
     AssetDatabaseManager::~AssetDatabaseManager()

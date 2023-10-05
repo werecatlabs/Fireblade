@@ -357,6 +357,8 @@ namespace fb
         */
         virtual String getBytesString( SmartPtr<IStream> &pStream ) = 0;
 
+        virtual void copyFolder( const String &srcPath, const String &dstPath ) = 0;
+
         /** Copies a file from one path to another.
             @param srcPath: The source path of the file to copy.
             @param dstPath: The destination path to copy the file to.

@@ -4,10 +4,6 @@
 #include <FBCore/FBCoreConfig.h>
 #include <cstdint>
 
-#ifdef FB_PLATFORM_WIN32
-#    include <libloaderapi.h>
-#endif
-
 namespace fb
 {
     /// 8 bit unsigned variable.
@@ -52,8 +48,6 @@ namespace fb
 
     /// Double precision float.
     using physics_Num = double;
-
-    typedef double Real;  // todo remove used for refactoring
 #else
     /// Single precision float.
     using real_Num = float;
@@ -63,8 +57,6 @@ namespace fb
 
     /// Single precision float.
     using physics_Num = float;
-
-    using Real = float;  // todo remove used for refactoring
 #endif
 
     /// Number used for the engine's time intervals.
@@ -83,14 +75,6 @@ namespace fb
     typedef hash64 hash32;
 #else
     using hash_type = hash64;
-#endif
-
-#if defined FB_PLATFORM_WIN32
-    typedef HMODULE LibraryHandle;
-    typedef FARPROC LibraryFunction;
-#else
-    typedef void *LibraryHandle;
-    typedef void *LibraryFunction;
 #endif
 
     enum class LoadingState : u8

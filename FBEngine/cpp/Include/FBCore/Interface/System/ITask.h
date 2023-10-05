@@ -162,6 +162,10 @@ namespace fb
          */
         virtual void setTask( Thread::Task task ) = 0;
 
+        virtual u32 getThreadTaskFlags() const = 0;
+
+        virtual void setThreadTaskFlags( u32 threadTaskFlags ) = 0;
+
         /**
          * @brief Stops the task from running.
          */

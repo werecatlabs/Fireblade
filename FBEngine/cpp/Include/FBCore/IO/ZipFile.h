@@ -1,7 +1,6 @@
 #ifndef ZipFile_h__
 #define ZipFile_h__
 
-
 #include <FBCore/IO/DataStream.h>
 
 namespace fb

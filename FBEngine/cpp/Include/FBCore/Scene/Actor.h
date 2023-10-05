@@ -125,12 +125,6 @@ namespace fb
             /** @copydoc IActor::childRemoved */
             void childRemoved( SmartPtr<IActor> child ) override;
 
-            template <class T>
-            SmartPtr<T> removeComponent();
-
-            template <class T>
-            SmartPtr<T> removeComponents();
-
             /** @copydoc IActor::updateDirty */
             void updateDirty( u32 flags, u32 oldFlags ) override;
 
@@ -196,12 +190,12 @@ namespace fb
             /** @copydoc IActor::componentLoaded */
             void componentLoaded( SmartPtr<IComponent> component ) override;
 
-            SmartPtr<IActor> getChildByIndex( u32 index ) const;
+            SmartPtr<IActor> getChildByIndex( u32 index ) const override;
 
-            u32 getNumChildren() const;
+            u32 getNumChildren() const override;
 
-            s32 getSiblingIndex() const;
-            
+            s32 getSiblingIndex() const override;
+
             /** Adds a child to this actor. */
             void addChild( SmartPtr<IActor> child ) override;
 
@@ -230,10 +224,10 @@ namespace fb
             Array<SmartPtr<IActor>> getAllChildren( SmartPtr<IActor> parent ) const;
 
             /** @copydoc IActor::toData */
-            SmartPtr<ISharedObject> toData() const;
+            SmartPtr<ISharedObject> toData() const override;
 
             /** @copydoc IActor::fromData */
-            void fromData( SmartPtr<ISharedObject> data );
+            void fromData( SmartPtr<ISharedObject> data ) override;
 
             /** @copydoc IActor::getProperties */
             SmartPtr<Properties> getProperties() const override;
@@ -373,7 +367,7 @@ namespace fb
 
             static u32 m_idExt;
         };
-    }  // namespace scene
-}  // namespace fb
+    } // namespace scene
+}     // namespace fb
 
 #endif  // CActor_h__

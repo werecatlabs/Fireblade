@@ -123,7 +123,7 @@ namespace fb
                             //                       ref yVelocity, fRotationSnapTime );
 
                             currentHeight = Math<real_Num>::lerp( currentHeight, wantedHeight,
-                                                                  m_heightDamping * dt );
+                                                                  m_heightDamping * (real_Num)dt );
 
                             wantedPosition = position;
                             wantedPosition.y = currentHeight;
@@ -136,8 +136,8 @@ namespace fb
 
                             auto targetPosition = m_target->getPosition();
 
-                            m_LastPosition += ( cameraPosition - m_LastPosition ) * dt * 10.0;
-                            m_LastTarget += ( targetPosition - m_LastTarget ) * dt * 10.0;
+                            m_LastPosition += ( cameraPosition - m_LastPosition ) * (real_Num)dt * (real_Num)10.0;
+                            m_LastTarget += ( targetPosition - m_LastTarget ) * (real_Num)dt * (real_Num)10.0;
 
                             // if (m_cameraSceneNode)
                             //{

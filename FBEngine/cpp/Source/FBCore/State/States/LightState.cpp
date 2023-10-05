@@ -1,6 +1,8 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/State/States/LightState.h>
 
+#include "FBCore/Memory/PointerUtil.h"
+
 namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, LightState, BaseState );
@@ -111,4 +113,20 @@ namespace fb
     {
         m_quadratic = quadratic;
     }
-}  // end namespace fb
+
+    SmartPtr<IState> LightState::clone() const
+    {
+        auto state = fb::make_ptr<LightState>();
+        state->m_diffuseColour = m_diffuseColour;
+        state->m_specularColour = m_specularColour;
+        state->m_direction = m_direction;
+        state->m_attenuation = m_attenuation;
+        state->m_lightType = m_lightType;
+        state->m_range = m_range;
+        state->m_constant = m_constant;
+        state->m_linear = m_linear;
+        state->m_quadratic = m_quadratic;
+        return state;
+    }
+
+} // end namespace fb

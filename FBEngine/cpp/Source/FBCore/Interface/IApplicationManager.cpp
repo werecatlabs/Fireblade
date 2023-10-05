@@ -7,6 +7,7 @@ namespace fb
 {
     namespace core
     {
+
         FB_CLASS_REGISTER_DERIVED( fb, IApplicationManager, ISharedObject );
 
         AtomicSmartPtr<IApplicationManager> IApplicationManager::m_instance;
@@ -20,5 +21,6 @@ namespace fb
         {
             m_instance = instance;
         }
+
     }  // namespace core
 }  // namespace fb

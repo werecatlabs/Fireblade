@@ -1,16 +1,9 @@
 #ifndef _FBFactoryManager_H_
 #define _FBFactoryManager_H_
 
-#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
-
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/ConcurrentArray.h>
-#include <FBCore/Core/StringTypes.h>
-#include <FBCore/Core/StringUtil.h>
-#include <FBCore/Interface/System/IFactory.h>
-#include <FBCore/Thread/RecursiveMutex.h>
-#include <FBCore/Memory/PointerUtil.h>
 
 namespace fb
 {

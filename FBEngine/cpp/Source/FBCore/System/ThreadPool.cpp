@@ -76,7 +76,7 @@ namespace fb
     {
         try
         {
-            if( getLoadingState() == LoadingState::Loaded )
+            if( isLoaded() )
             {
                 setLoadingState( LoadingState::Unloading );
 

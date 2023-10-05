@@ -43,8 +43,6 @@ namespace fb
             m_uiComponent = nullptr;
             m_layout = nullptr;
 
-            setDataPtr( nullptr );
-
             Component::unload( data );
             setLoadingState( LoadingState::Unloaded );
         }

@@ -346,6 +346,7 @@ namespace fb
         SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> m_sharedEventListeners;
     };
 
+#if FB_FINAL
     inline s32 ISharedObject::addWeakReference()
     {
 #if FB_TRACK_REFERENCES
@@ -443,6 +444,7 @@ namespace fb
     {
         m_scriptData = data;
     }
+#endif
 
     template <class B>
     const SmartPtr<B> ISharedObject::getSharedFromThis() const

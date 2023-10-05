@@ -31,7 +31,7 @@ namespace fb
     {
         try
         {
-            setLoadingState( LoadingState::Unloaded );
+            setLoadingState( LoadingState::Loading );
 
             m_workerThreadId = static_cast<Thread::ThreadId>( m_threadIdExt++ );
             m_thread = new std::thread( &WorkerThread::run, this );
@@ -48,8 +48,7 @@ namespace fb
     {
         try
         {
-            const auto &loadingState = getLoadingState();
-            if( loadingState != LoadingState::Unloaded )
+            if( isLoaded() )
             {
                 setLoadingState( LoadingState::Unloading );
 
@@ -77,14 +76,19 @@ namespace fb
     {
         try
         {
+            FB_ASSERT(isAlive());
+
             auto pApplicationManager = core::IApplicationManager::instance();
             auto applicationManager = pApplicationManager.get();
             FB_ASSERT( applicationManager );
 
-            auto state = getState();
-            while( applicationManager->isRunning() )
+            auto pTimer = fb::make_ptr<TimerChrono>();
+            auto timer = pTimer.get();
+            FB_ASSERT( timer );
+
+            while( applicationManager->isRunning() && !applicationManager->getQuit() )
             {
-                switch( state )
+                switch( auto state = getState() )
                 {
                 case State::Start:
                 {
@@ -92,17 +96,13 @@ namespace fb
                     auto jobQueue = pJobQueue.get();
                     FB_ASSERT( jobQueue );
 
-                    auto pTimer = fb::make_ptr<TimerChrono>();
-                    auto timer = pTimer.get();
-                    FB_ASSERT( timer );
-
                     auto pTaskManager = applicationManager->getTaskManager();
                     auto taskManager = pTaskManager.get();
                     FB_ASSERT( taskManager );
 
                     Thread::setCurrentThreadId( m_workerThreadId );
 
-                    while( applicationManager->isRunning() && state != State::Stop )
+                    while( applicationManager->isRunning() && !applicationManager->getQuit() && getState() != State::Stop )
                     {
                         setUpdating( true );
 
@@ -130,8 +130,6 @@ namespace fb
                         }
 
                         setUpdating( false );
-
-                        state = getState();
                     }
                 }
                 break;
@@ -141,8 +139,6 @@ namespace fb
                 }
                 break;
                 }
-
-                state = getState();
             }
         }
         catch( std::exception &e )
@@ -216,6 +212,18 @@ namespace fb
     void WorkerThread::setThread( std::thread *thread )
     {
         m_thread = thread;
+    }
+
+    time_interval WorkerThread::getTargetFPS() const
+    {
+        FB_ASSERT( !Math<time_interval>::equals( m_targetFPS, 0.0 ) );
+        FB_ASSERT( Math<time_interval>::isFinite( m_targetFPS ) );
+        return m_targetFPS;
+    }
+
+    IWorkerThread::State WorkerThread::getState() const
+    {
+        return m_state;
     }
 
 }  // end namespace fb

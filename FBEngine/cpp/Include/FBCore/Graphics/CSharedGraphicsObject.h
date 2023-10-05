@@ -71,13 +71,8 @@ namespace fb
         template <typename T>
         bool CSharedGraphicsObject<T>::isThreadSafe() const
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto graphicsSystem = applicationManager->getGraphicsSystem();
-
-            auto renderTask = graphicsSystem->getRenderTask();
-            auto task = Thread::getCurrentTask();
-
-            return CSharedGraphicsObject<T>::isLoaded() && task == renderTask;
+            auto taskFlags = Thread::getTaskFlags();
+            return CSharedGraphicsObject<T>::isLoaded() && ((taskFlags & Thread::Render_Flag) != 0);
         }
 
         template <typename T>

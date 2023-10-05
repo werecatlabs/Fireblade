@@ -669,6 +669,10 @@ namespace fb
                 // mutableMouseState.Y.abs = (f32)win->getHeight() / 0.5f;
             }
 
+            m_currentInputEvent = fb::make_ptr<InputEvent>();
+            m_currentMouseState = fb::make_ptr<MouseState>();
+            m_currentKeyboardState = fb::make_ptr<KeyboardState>();
+
             setLoadingState( LoadingState::Loaded );
         }
         catch( std::exception &e )
@@ -791,7 +795,7 @@ namespace fb
 
     bool OISInputManager::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
     {
-        SmartPtr<IInputEvent> event( new InputEvent );
+        auto event = createInputEvent();
         event->setEventType( IInputEvent::EventType::Mouse );
 
         // GameInputs::iterator it = m_gameInputs.begin();
@@ -802,7 +806,7 @@ namespace fb
         //	break;
         // }
 
-        SmartPtr<IMouseState> mouseState( new MouseState );
+        auto mouseState = createMouseState();
         event->setMouseState( mouseState );
 
         switch( id )
@@ -1019,7 +1023,7 @@ namespace fb
         m_listeners = listeners;
     }
 
-    SmartPtr<IGameInput> OISInputManager::addGameInput( hash32 id )
+    SmartPtr<IGameInput> OISInputManager::addGameInput( hash_type id )
     {
         try
         {
@@ -1042,7 +1046,7 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<IGameInput> OISInputManager::findGameInput( hash32 id ) const
+    SmartPtr<IGameInput> OISInputManager::findGameInput( hash_type id ) const
     {
         auto it = m_gameInputs.find( id );
         if( it != m_gameInputs.end() )
@@ -1325,6 +1329,36 @@ namespace fb
         }
 
         return false;
+    }
+
+    SmartPtr<IInputEvent> OISInputManager::createInputEvent()
+    {
+        return fb::make_ptr<InputEvent>();
+    }
+
+    SmartPtr<IMouseState> OISInputManager::createMouseState()
+    {
+        return fb::make_ptr<MouseState>();
+    }
+
+    SmartPtr<IKeyboardState> OISInputManager::createKeyboardState()
+    {
+        return fb::make_ptr<KeyboardState>();
+    }
+
+    SmartPtr<IInputEvent> OISInputManager::getCurrentInputEvent() const
+    {
+        return m_currentInputEvent;
+    }
+
+    SmartPtr<IMouseState> OISInputManager::getCurrentMouseState() const
+    {
+        return m_currentMouseState;
+    }
+
+    SmartPtr<IKeyboardState> OISInputManager::getCurrentKeyboardState() const
+    {
+        return m_currentKeyboardState;
     }
 
     void OISInputManager::addListener( SmartPtr<IEventListener> listener )

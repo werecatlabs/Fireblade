@@ -3,7 +3,9 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/FBCoreTypes.h>
+#include <FBCore/Core/FixedArray.h>
 #include <FBCore/Core/StringTypes.h>
+#include <FBCore/Thread/SpinRWMutex.h>
 
 namespace fb
 {
@@ -79,6 +81,19 @@ namespace fb
             Count
         };
 
+        static const u32 Primary_Flag;
+        static const u32 Ai_Flag;
+        static const u32 Animation_Flag;
+        static const u32 Application_Flag;
+        static const u32 Collision_Flag;
+        static const u32 Controls_Flag;
+        static const u32 Dynamics_Flag;
+        static const u32 GarbageCollect_Flag;
+        static const u32 Physics_Flag;
+        static const u32 None_Flag;
+        static const u32 Render_Flag;
+        static const u32 Sound_Flag;
+
         /**
          * @brief Get the current task being executed by the thread.
          * @return The current task.
@@ -90,6 +105,15 @@ namespace fb
          * @param task The task to set.
          */
         static void setCurrentTask( Task task );
+
+        static u32 getTaskFlags();
+        static void setTaskFlags( u32 taskFlags );
+
+        static u32 getTaskFlags(Task task);
+        static void setTaskFlags( Task task, u32 taskFlags );
+
+        static bool getTaskFlag(u32 flag);
+        static void setTaskFlag( u32 flag, bool value );
 
         /**
          * @brief Get the ID of the current executing thread.
@@ -169,6 +193,10 @@ namespace fb
          * @return The name of the task.
          */
         static String getTaskName( Task id );
+
+    private:
+        static FixedArray<u32, (u32)Task::Count> m_taskFlags;
+        static SpinRWMutex m_taskFlagsMutex;
     };
 }  // end namespace fb
 

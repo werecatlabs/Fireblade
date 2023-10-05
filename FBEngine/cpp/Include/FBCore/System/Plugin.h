@@ -3,12 +3,11 @@
 
 #include <FBCore/Interface/System/IPlugin.h>
 
-
 namespace fb
 {
     namespace core
     {
-        
+
         class Plugin : public IPlugin
         {
         public:

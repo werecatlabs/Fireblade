@@ -1,5 +1,5 @@
-#ifndef _CWindow_H
-#define _CWindow_H
+#ifndef __CWindowOgre_H
+#define __CWindowOgre_H
 
 #include <FBGraphicsOgre/FBGraphicsOgrePrerequisites.h>
 #include <FBGraphicsOgre/Wrapper/CRenderTargetOgre.h>

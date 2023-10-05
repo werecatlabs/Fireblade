@@ -39,19 +39,28 @@ namespace fb
          */
         virtual bool postEvent( SmartPtr<IInputEvent> event ) = 0;
 
+        virtual SmartPtr<IInputEvent> createInputEvent() = 0;
+
+        virtual SmartPtr<IMouseState> createMouseState() = 0;
+        virtual SmartPtr<IKeyboardState> createKeyboardState() = 0;
+
+        virtual SmartPtr<IInputEvent> getCurrentInputEvent() const = 0;
+        virtual SmartPtr<IMouseState> getCurrentMouseState() const = 0;
+        virtual SmartPtr<IKeyboardState> getCurrentKeyboardState() const = 0;
+
         /**
          * @brief Adds a game input device to the manager
          * @param id The ID of the game input device
          * @return A smart pointer to the newly added game input device
          */
-        virtual SmartPtr<IGameInput> addGameInput( hash32 id ) = 0;
+        virtual SmartPtr<IGameInput> addGameInput( hash_type id ) = 0;
 
         /**
          * @brief Finds a game input device in the manager by ID
          * @param id The ID of the game input device to find
          * @return A smart pointer to the found game input device, or nullptr if not found
          */
-        virtual SmartPtr<IGameInput> findGameInput( hash32 id ) const = 0;
+        virtual SmartPtr<IGameInput> findGameInput( hash_type id ) const = 0;
 
         /**
          * @brief Gets an array of all game input devices managed by this manager

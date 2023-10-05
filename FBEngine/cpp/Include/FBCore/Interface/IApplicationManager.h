@@ -130,6 +130,12 @@ namespace fb
             /** Sets the path of the media folder. */
             virtual void setMediaPath( const String &mediaPath ) = 0;
 
+            /** Gets the path of the render media folder. */
+            virtual String getRenderMediaPath() const = 0;
+
+            /** Sets the path of the render media folder. */
+            virtual void setRenderMediaPath( const String &renderMediaPath ) = 0;
+
             /** Gets the build configuration. */
             virtual String getBuildConfig() const = 0;
 
@@ -744,6 +750,12 @@ namespace fb
              */
             virtual Array<SmartPtr<scene::IActor>> getActors() const = 0;
 
+            /** Gets the plugin manager. */
+            virtual SmartPtr<IPluginManager> getPluginManager() const = 0;
+
+            /** Sets the plugin manager. */
+            virtual void setPluginManager( SmartPtr<IPluginManager> pluginManager ) = 0;
+
             /**
              * Adds a plugin to the application manager.
              *
@@ -805,6 +817,10 @@ namespace fb
                                             const Array<Parameter> &arguments,
                                             SmartPtr<ISharedObject> sender,
                                             SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) = 0;
+
+            virtual RawPtr<TypeManager> getTypeManager() const = 0;
+
+            virtual void setTypeManager( RawPtr<TypeManager> typeManager ) = 0;
 
             /**
              * Gets a component by the template type.

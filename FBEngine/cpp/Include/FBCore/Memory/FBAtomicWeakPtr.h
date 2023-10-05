@@ -32,20 +32,14 @@ namespace fb
          *
          * @param other The FBAtomicWeakPtr object to copy.
          */
-        FBAtomicWeakPtr( const FBAtomicWeakPtr<T> &other )
-        {
-            *this = other;
-        }
+        FBAtomicWeakPtr( const FBAtomicWeakPtr<T> &other );
 
         /**
          * Constructs a new FBAtomicWeakPtr object by copying the value of an FBWeakPtr object.
          *
          * @param other The FBWeakPtr object to copy.
          */
-        FBAtomicWeakPtr( const FBWeakPtr<T> &other )
-        {
-            *this = other;
-        }
+        FBAtomicWeakPtr( const FBWeakPtr<T> &other );
 
         /**
          * Destroys the FBAtomicWeakPtr object.
@@ -106,6 +100,18 @@ namespace fb
         mutable SpinRWMutex m_mutex;
         FBWeakPtr<T> m_pointer;
     };
+
+    template <class T>
+    FBAtomicWeakPtr<T>::FBAtomicWeakPtr( const FBAtomicWeakPtr<T> &other )
+    {
+        *this = other;
+    }
+
+    template <class T>
+    FBAtomicWeakPtr<T>::FBAtomicWeakPtr( const FBWeakPtr<T> &other )
+    {
+        *this = other;
+    }
 
     template <class T>
     bool FBAtomicWeakPtr<T>::is_lock_free() const

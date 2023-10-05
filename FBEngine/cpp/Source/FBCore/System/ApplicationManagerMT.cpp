@@ -28,6 +28,7 @@
 #include <FBCore/Interface/Physics/IPhysicsScene2.h>
 #include <FBCore/Interface/Physics/IPhysicsScene3.h>
 #include <FBCore/Interface/System/IPluginInterface.h>
+#include <FBCore/Interface/System/IPluginManager.h>
 #include <FBCore/Interface/Procedural/IProceduralEngine.h>
 #include <FBCore/Interface/Procedural/IProceduralManager.h>
 #include <FBCore/Interface/Resource/IResourceDatabase.h>
@@ -92,16 +93,32 @@ namespace fb
                 const auto settingsCachePath = String( ".FBSettingsCache/" );
                 setSettingsCachePath( settingsCachePath );
 #elif defined FB_PLATFORM_APPLE
-                auto path = Path::getAbsolutePath( Path::macBundlePath(), "../" );
-                Path::setWorkingDirectory( path );
+                auto macBundlePath = Path::macBundlePath();
+                //auto path = Path::getAbsolutePath( macBundlePath, "../" );
+                //Path::setWorkingDirectory( path );
 
-                setProjectPath( path );
+                auto projectPath = String();
+                setProjectPath( projectPath );
 
                 const auto fileCachePath = String( ".FBCache/" );
                 setCachePath( fileCachePath );
 
                 const auto settingsCachePath = String( ".FBSettingsCache/" );
                 setSettingsCachePath( settingsCachePath );
+#endif
+
+#if !FB_FINAL
+                auto mediaPath = String( "" );
+
+#    if defined FB_PLATFORM_WIN32
+                mediaPath = String( "../../../../../Media" );
+#    elif defined FB_PLATFORM_APPLE
+                mediaPath = String( "../../Media" );
+#    else
+                mediaPath = String( "../../Media" );
+#    endif
+
+                setMediaPath( mediaPath );
 #endif
 
                 setLoadingState( LoadingState::Loaded );
@@ -1037,6 +1054,18 @@ namespace fb
             m_mediaPath = mediaPath;
         }
 
+        String ApplicationManagerMT::getRenderMediaPath() const
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            return m_renderMediaPath;
+        }
+
+        void ApplicationManagerMT::setRenderMediaPath( const String &renderMediaPath )
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            m_renderMediaPath = renderMediaPath;
+        }
+
         String ApplicationManagerMT::getSettingsCachePath() const
         {
             RecursiveMutex::ScopedLock lock( m_mutex );
@@ -1109,6 +1138,16 @@ namespace fb
             }
 
             return Array<SmartPtr<scene::IActor>>();
+        }
+
+        fb::SmartPtr<fb::IPluginManager> ApplicationManagerMT::getPluginManager() const
+        {
+            return m_pluginManager;
+        }
+
+        void ApplicationManagerMT::setPluginManager( SmartPtr<IPluginManager> pluginManager )
+        {
+            m_pluginManager = pluginManager;
         }
 
         void ApplicationManagerMT::addPlugin( SmartPtr<ISharedObject> plugin )
@@ -1198,6 +1237,16 @@ namespace fb
             }
 
             return Parameter();
+        }
+
+        RawPtr<TypeManager> ApplicationManagerMT::getTypeManager() const
+        {
+            return m_typeManager.load();
+        }
+
+        void ApplicationManagerMT::setTypeManager( RawPtr<TypeManager> typeManager )
+        {
+            m_typeManager = typeManager;
         }
 
         SharedPtr<Array<SmartPtr<IFSMManager>>> ApplicationManagerMT::getFSMManagersPtr() const

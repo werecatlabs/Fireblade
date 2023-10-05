@@ -1,9 +1,7 @@
 #ifndef CNativeFileDialog_h__
 #define CNativeFileDialog_h__
 
-
 #include <FBCore/Interface/IO/INativeFileDialog.h>
-#include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb
 {

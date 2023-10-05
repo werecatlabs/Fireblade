@@ -18,10 +18,11 @@ namespace fb
     namespace render
     {
 
-        FB_CLASS_REGISTER_DERIVED( fb, CWindowOgre, IWindow );
+        FB_CLASS_REGISTER_DERIVED( fb, CWindowOgre, CRenderTargetOgre<IWindow> );
 
-        CWindowOgre::CWindowOgre() : m_window( nullptr )
+        CWindowOgre::CWindowOgre() : CRenderTargetOgre<IWindow>()
         {
+            setupStateObject();
         }
 
         CWindowOgre::~CWindowOgre()
@@ -33,6 +34,7 @@ namespace fb
         {
             try
             {
+                FB_ASSERT( Thread::getTaskFlag( Thread::Render_Flag ) );
                 setLoadingState( LoadingState::Loading );
 
                 setSize( Vector2I( 1280, 720 ) );
@@ -41,9 +43,8 @@ namespace fb
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
 
 #if _DEBUG
-                auto task = Thread::getCurrentTask();
-                auto renderTask = graphicsSystem->getRenderTask();
-                FB_ASSERT( task == renderTask );
+                auto taskFlags = Thread::getTaskFlags();
+                FB_ASSERT( ( taskFlags & Thread::Render_Flag ) != 0 );
 #endif
 
                 // Confirm Ogre::Root created
@@ -451,25 +452,23 @@ namespace fb
         void CWindowOgre::getCustomAttribute( const String &name, void *pData )
         {
             auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
             auto graphicsSystem = applicationManager->getGraphicsSystem();
-            FB_ASSERT( graphicsSystem );
 
-            auto task = Thread::getCurrentTask();
-            auto renderTask = graphicsSystem->getRenderTask();
+            ScopedLock lock( graphicsSystem );
 
-            if( task == renderTask )
+            if( m_window )
             {
-                if( m_window )
-                {
-                    m_window->getCustomAttribute( name, pData );
-                }
+                m_window->getCustomAttribute( name, pData );
             }
         }
 
         void CWindowOgre::getWindowHandle( void *pData )
         {
+            auto applicationManager = core::IApplicationManager::instance();
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+
+            ScopedLock lock( graphicsSystem );
+
 #if defined FB_PLATFORM_WIN32
             getCustomAttribute( "WINDOW", pData );
 #elif defined FB_PLATFORM_APPLE
@@ -500,7 +499,6 @@ namespace fb
             m_listeners.push_back( listener );
         }
 
-        //--------------------------------------------
         void CWindowOgre::removeListener( SmartPtr<IWindowListener> listener )
         {
             auto it = std::find( m_listeners.begin(), m_listeners.end(), listener );
@@ -510,7 +508,6 @@ namespace fb
             }
         }
 
-        //--------------------------------------------
         Array<SmartPtr<IWindowListener>> CWindowOgre::getListeners() const
         {
             return m_listeners;

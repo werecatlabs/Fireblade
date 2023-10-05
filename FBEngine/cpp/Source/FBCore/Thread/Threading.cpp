@@ -25,6 +25,22 @@ namespace fb
     FB_THREAD_LOCAL_STORAGE u32 CURRENT_THREAD_ID = 0;
     FB_THREAD_LOCAL_STORAGE u32 CURRENT_THREAD_FLAGS = 0;
 
+    const u32 Thread::Primary_Flag = 1 << 1;
+    const u32 Thread::Ai_Flag = 1 << 2;
+    const u32 Thread::Animation_Flag = 1 << 3;
+    const u32 Thread::Application_Flag = 1 << 4;
+    const u32 Thread::Collision_Flag = 1 << 5;
+    const u32 Thread::Controls_Flag = 1 << 6;
+    const u32 Thread::Dynamics_Flag = 1 << 7;
+    const u32 Thread::GarbageCollect_Flag = 1 << 8;
+    const u32 Thread::Physics_Flag = 1 << 9;
+    const u32 Thread::None_Flag = 1 << 10;
+    const u32 Thread::Render_Flag = 1 << 11;
+    const u32 Thread::Sound_Flag = 1 << 12;
+
+    FixedArray<u32, (u32)Thread::Task::Count> Thread::m_taskFlags;
+    SpinRWMutex Thread::m_taskFlagsMutex;
+
     Thread::Task Thread::getCurrentTask()
     {
         FB_ASSERT( CURRENT_TASK_ID >= 0 );
@@ -37,6 +53,55 @@ namespace fb
         FB_ASSERT( static_cast<s32>( task ) >= 0 );
         FB_ASSERT( static_cast<s32>( task ) < static_cast<int>( Thread::Task::Count ) );
         CURRENT_TASK_ID = static_cast<u32>( task );
+    }
+
+    u32 Thread::getTaskFlags()
+    {
+        SpinRWMutex::ScopedLock lock( m_taskFlagsMutex, false );
+        auto task = (u32)getCurrentTask();
+        return m_taskFlags[task];
+    }
+
+    void Thread::setTaskFlags( u32 taskFlags )
+    {
+        SpinRWMutex::ScopedLock lock( m_taskFlagsMutex, true );
+        auto task = (u32)getCurrentTask();
+        m_taskFlags[task] = taskFlags;
+    }
+
+    u32 Thread::getTaskFlags( Task task )
+    {
+        SpinRWMutex::ScopedLock lock( m_taskFlagsMutex, false );
+        return m_taskFlags[(u32)task];
+    }
+
+    void Thread::setTaskFlags( Task task, u32 taskFlags )
+    {
+        SpinRWMutex::ScopedLock lock( m_taskFlagsMutex, true );
+        m_taskFlags[(u32)task] = taskFlags;
+    }
+
+    bool Thread::getTaskFlag( u32 flag )
+    {
+        SpinRWMutex::ScopedLock lock( m_taskFlagsMutex, false );
+        auto task = (u32)getCurrentTask();
+        return (m_taskFlags[task] & flag) != 0;
+    }
+
+    void Thread::setTaskFlag( u32 flag, bool value )
+    {
+        SpinRWMutex::ScopedLock lock( m_taskFlagsMutex, true );
+
+        auto task = (u32)getCurrentTask();
+
+        if( value )
+        {
+            m_taskFlags[task] |= flag;
+        }
+        else
+        {
+            m_taskFlags[task] &= ~flag;
+        }
     }
 
     void Thread::sleep( time_interval seconds )

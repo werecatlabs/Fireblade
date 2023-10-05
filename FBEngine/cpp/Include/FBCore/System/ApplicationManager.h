@@ -58,6 +58,10 @@ namespace fb
             String getMediaPath() const override;
             void setMediaPath( const String &mediaPath ) override;
 
+            String getRenderMediaPath() const;
+
+            void setRenderMediaPath( const String &renderMediaPath );
+
             String getSettingsCachePath() const override;
             void setSettingsCachePath( const String &cachePath ) override;
 
@@ -233,6 +237,10 @@ namespace fb
             /** @copydoc IApplicationManager::addLoadProgress */
             void addLoadProgress( s32 loadProgress ) override;
 
+            SmartPtr<IPluginManager> getPluginManager() const;
+
+            void setPluginManager( SmartPtr<IPluginManager> pluginManager );
+
             void addPlugin( SmartPtr<ISharedObject> plugin ) override;
 
             void removePlugin( SmartPtr<ISharedObject> plugin ) override;
@@ -258,6 +266,18 @@ namespace fb
 
             bool isValid() const override;
 
+            SmartPtr<IInput> getInput() const override;
+
+            void setInput( SmartPtr<IInput> input ) override;
+
+            Array<SmartPtr<scene::IActor>> getActors() const override;
+
+            SmartPtr<scene::IComponent> getComponentByType( u32 typeId ) const override;
+
+            RawPtr<TypeManager> getTypeManager() const;
+
+            void setTypeManager( RawPtr<TypeManager> typeManager );
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
@@ -268,6 +288,7 @@ namespace fb
             String m_projectPath;
             String m_projectLibraryName;
             String m_mediaPath;
+            String m_renderMediaPath;
 
             atomic_s32 m_loadProgress;
             atomic_bool m_enableRenderer = false;
@@ -324,6 +345,8 @@ namespace fb
             SmartPtr<IFileSystem> m_fileSystem;
             SmartPtr<IApplication> m_application;
 
+            SmartPtr<IInput> m_input;
+
             SmartPtr<ITimer> m_timer;
 
             SmartPtr<procedural::IProceduralEngine> m_proceduralEngine;
@@ -343,6 +366,12 @@ namespace fb
             mutable SmartPtr<IDatabaseManager> m_database;
 
             SmartPtr<ui::IUIWindow> m_sceneRenderWindow;
+
+            SmartPtr<IPluginManager> m_pluginManager;
+
+            RawPtr<TypeManager> m_typeManager;
+
+            Array<SmartPtr<ISharedObject>> m_plugins;
 
             atomic_bool m_isPauseMenuActive = false;
             atomic_bool m_isRunning = true;

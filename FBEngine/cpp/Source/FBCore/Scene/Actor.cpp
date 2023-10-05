@@ -341,27 +341,6 @@ namespace fb
             }
         }
 
-        template <class T>
-        SmartPtr<T> Actor::removeComponents()
-        {
-            // int iClassType = Object::getClassType<scalar_num>();
-            // std::unordered_map<int, Array<SmartPtr<IComponent>>>::iterator it =
-            // m_componentsByType.find(iClassType); if (it != m_componentsByType.end())
-            //{
-            //	Array<SmartPtr<IComponent>>& components = it->second;
-            //	if (!components.empty())
-            //	{
-            //		Array<SmartPtr<IComponent>>::iterator componentIt = components.begin();
-            //		SmartPtr<scalar_num> component = (*componentIt);
-            //		components.erase(componentIt);
-            //		rebuildComponentCache();
-            //		return component;
-            //	}
-            // }
-
-            return nullptr;
-        }
-
         void Actor::preUpdate()
         {
             preUpdateDirtyComponents();
@@ -1633,15 +1612,14 @@ namespace fb
             Array<SmartPtr<IActor>> children;
             children.reserve( 128 );
 
-            auto parentTransform = parent;
-            auto childCount = parentTransform->getNumChildren();
+            auto childCount = parent->getNumChildren();
 
             for( u32 i = 0; i < childCount; i++ )
             {
-                auto childTransform = parentTransform->getChildByIndex( i );
-                children.push_back( childTransform );
+                auto child = parent->getChildByIndex( i );
+                children.push_back( child );
 
-                auto childChildren = getAllChildren( childTransform );
+                auto childChildren = getAllChildren( child );
 
                 children.insert( children.end(), childChildren.begin(), childChildren.end() );
             }
@@ -2390,28 +2368,5 @@ namespace fb
             //registration::class_<Actor>( "Actor" ).property( "transform", &Actor::m_transform );
         }
 
-        template <class T>
-        SmartPtr<T> Actor::removeComponent()
-        {
-            // auto typeinfo = T::typeInfo();
-            // FB_ASSERT(typeinfo);
-
-            // auto iClassType = typeinfo->getHash();
-            // auto it = m_componentsByType.find(iClassType);
-            // if (it != m_componentsByType.end())
-            //{
-            //	auto& components = it->second;
-            //	if (!components.empty())
-            //	{
-            //		auto componentIt = components.begin();
-            //		auto component = (*componentIt);
-            //		components.erase(componentIt);
-            //		rebuildComponentCache();
-            //		return component;
-            //	}
-            // }
-
-            return nullptr;
-        }
     }  // namespace scene
 }  // end namespace fb

@@ -4,8 +4,20 @@
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/StringTypes.h>
 
+#ifdef FB_PLATFORM_WIN32
+#    include <libloaderapi.h>
+#endif
+
 namespace fb
 {
+#if defined FB_PLATFORM_WIN32
+    typedef HMODULE LibraryHandle;
+    typedef FARPROC LibraryFunction;
+#else
+    typedef void *LibraryHandle;
+    typedef void *LibraryFunction;
+#endif
+
     /** Interface for a plugin.*/
     class IPlugin : public ISharedObject
     {

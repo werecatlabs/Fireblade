@@ -1,24 +1,21 @@
 #ifndef IProject_h__
 #define IProject_h__
 
-#include <FBCore/Interface/Memory/ISharedObject.h>
+#include <FBCore/Interface/Resource/IResource.h>
 #include <FBCore/Core/Array.h>
 
 namespace fb
 {
 
     /** Interface for a project. */
-    class IProject : public ISharedObject
+    class IProject : public IResource
     {
     public:
         /** Destructor. */
         ~IProject() override = default;
 
-        /** */
-        virtual void load( const String &filePath ) = 0;
-
         virtual String getApplicationFilePath() const = 0;
-        virtual void setApplicationFilePath( const String &val ) = 0;
+        virtual void setApplicationFilePath( const String &applicationFilePath ) = 0;
 
         virtual String getProjectFilePath() const = 0;
         virtual void setProjectFilePath( const String &val ) = 0;
@@ -37,6 +34,8 @@ namespace fb
 
         virtual bool isArchive() const = 0;
         virtual void setArchive( bool val ) = 0;
+
+        FB_CLASS_REGISTER_DECL;
     };
 }  // end namespace fb
 

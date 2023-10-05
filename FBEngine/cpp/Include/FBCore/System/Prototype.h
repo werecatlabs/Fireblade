@@ -33,6 +33,10 @@ namespace fb
             */
             virtual SmartPtr<Properties> getProperties() const
             {
+                static const auto loadedStr = String("loaded");
+                static const auto referencesStr = String("references");
+                static const auto weakReferencesStr = String("weakReferences");
+
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
@@ -40,9 +44,9 @@ namespace fb
                 FB_ASSERT( factoryManager );
 
                 auto properties = factoryManager->make_ptr<Properties>();
-                properties->setProperty( "loaded", this->isLoaded() );
-                properties->setProperty( "references", this->getReferences() );
-                properties->setProperty( "weakReferences", this->getWeakReferences() );
+                properties->setProperty( loadedStr, Prototype<T>::isLoaded() );
+                properties->setProperty( referencesStr, Prototype<T>::getReferences() );
+                properties->setProperty( weakReferencesStr, Prototype<T>::getWeakReferences() );
                 return properties;
             }
 
@@ -62,11 +66,6 @@ namespace fb
                 FB_ASSERT( factoryManager );
 
                 auto type = this->getTypeInfo();
-
-                constexpr bool res = std::is_convertible<IPrototype *, ISharedObject *>();
-                if( res )
-                {
-                }
 
                 SmartPtr<IPrototype> instance = factoryManager->createById( type );
 

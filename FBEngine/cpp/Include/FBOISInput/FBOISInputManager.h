@@ -96,8 +96,16 @@ namespace fb
 
         bool postEvent( SmartPtr<IInputEvent> event ) override;
 
-        SmartPtr<IGameInput> addGameInput( hash32 id ) override;
-        SmartPtr<IGameInput> findGameInput( hash32 id ) const override;
+        SmartPtr<IInputEvent> createInputEvent();
+        SmartPtr<IMouseState> createMouseState();
+        SmartPtr<IKeyboardState> createKeyboardState();
+
+        SmartPtr<IInputEvent> getCurrentInputEvent() const;
+        SmartPtr<IMouseState> getCurrentMouseState() const;
+        SmartPtr<IKeyboardState> getCurrentKeyboardState() const;
+
+        SmartPtr<IGameInput> addGameInput( hash_type id ) override;
+        SmartPtr<IGameInput> findGameInput( hash_type id ) const override;
         Array<SmartPtr<IGameInput>> getGameInputs() const override;
 
         bool isCursorVisible() const override;
@@ -229,6 +237,10 @@ namespace fb
 
         void setListenersPtr( SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> listeners );
 
+        SmartPtr<IInputEvent> m_currentInputEvent;
+        SmartPtr<IMouseState> m_currentMouseState;
+        SmartPtr<IKeyboardState> m_currentKeyboardState;
+
         Vector2F m_mousePosition = Vector2F::zero();
         Vector3<real_Num> m_mouseScroll = Vector3<real_Num>::zero();
 
@@ -266,7 +278,7 @@ namespace fb
 
         bool m_debugEnabled = false;
 
-        using GameInputs = HashMap<hash32, SmartPtr<IGameInput>>;
+        using GameInputs = HashMap<hash_type, SmartPtr<IGameInput>>;
         GameInputs m_gameInputs;
 
         using UserData = HashMap<u32, void *>;

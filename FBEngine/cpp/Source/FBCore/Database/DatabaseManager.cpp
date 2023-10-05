@@ -1,10 +1,15 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Database/DatabaseManager.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Database/IDatabase.h>
+#include <FBCore/Interface/Database/IDatabaseQuery.h>
+#include <FBCore/Interface/System/IFactoryManager.h>
+#include <FBCore/Interface/System/IJobQueue.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Core/Path.h>
+#include <FBCore/Core/StringUtil.h>
 
 namespace fb
 {
-
     DatabaseManager::DatabaseManager()
     {
         try
@@ -78,6 +83,12 @@ namespace fb
             FB_LOG( "Database::load: " + filePath );
 
             m_databasePath = filePath;
+
+            auto path = Path::getFilePath( m_databasePath );
+            if( !Path::isExistingFolder( path ) )
+            {
+                Path::createDirectories( path );
+            }
 
             m_database->loadFromFile( m_databasePath );
 
@@ -288,7 +299,7 @@ namespace fb
             auto jobQueue = applicationManager->getJobQueue();
             FB_ASSERT( jobQueue );
 
-            SmartPtr<QueryJob> job( new QueryJob( this, queryStr ) );
+            auto job = fb::make_ptr<QueryJob>( this, queryStr );
             jobQueue->addJob( job );
         }
         catch( Exception &e )
@@ -678,9 +689,9 @@ namespace fb
         auto parent_id = -1;
 
 #if FB_BUILD_EDITOR_PLUGIN
-        auto modelSql = "Select * From configured_models where id = " + StringUtil::toString( id );
+        auto modelSql = "Select * From configured_actors where id = " + StringUtil::toString( id );
 #else
-        auto modelSql = "Select * From refdb.configured_models where id = " + StringUtil::toString( id );
+        auto modelSql = "Select * From refdb.configured_actors where id = " + StringUtil::toString( id );
 #endif
 
         auto modelResult = executeQuery( modelSql );

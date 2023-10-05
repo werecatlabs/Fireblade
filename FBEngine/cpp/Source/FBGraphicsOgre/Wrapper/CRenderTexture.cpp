@@ -7,6 +7,15 @@ namespace fb
 {
     namespace render
     {
+        CRenderTexture::CRenderTexture()
+        {
+            setupStateObject();
+        }
+
+        CRenderTexture::~CRenderTexture()
+        {
+        }
+
         void CRenderTexture::update()
         {
             auto size = getSize();

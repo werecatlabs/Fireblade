@@ -1,9 +1,7 @@
 #ifndef __FBMesh__H
 #define __FBMesh__H
 
-#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Mesh/IMesh.h>
-
 #include <FBCore/Core/Array.h>
 
 namespace fb

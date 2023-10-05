@@ -191,6 +191,7 @@ namespace fb
             {
                 if( isLoaded() )
                 {
+                    FB_ASSERT( Thread::getTaskFlag( Thread::Render_Flag ) );
                     setLoadingState( LoadingState::Unloading );
 
                     auto applicationManager = core::IApplicationManager::instance();
@@ -198,8 +199,6 @@ namespace fb
 
                     auto graphicsSystem = applicationManager->getGraphicsSystem();
                     auto stateManager = applicationManager->getStateManager();
-
-                    FB_ASSERT( Thread::getCurrentTask() == graphicsSystem->getRenderTask() );
 
                     // m_terrainTemplate.setNull();
                     // m_stateObject.setNull();

@@ -1,5 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/ApplicationManager.h>
+#include <FBCore/Core/DebugTrace.h>
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Interface/Scene/IActor.h>
@@ -16,6 +17,7 @@
 #include <FBCore/Interface/IApplication.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IWindow.h>
+#include <FBCore/Interface/Input/IInput.h>
 #include <FBCore/Interface/Input/IInputDeviceManager.h>
 #include <FBCore/Interface/IO/IFileSystem.h>
 #include <FBCore/Interface/Mesh/IMeshLoader.h>
@@ -25,6 +27,7 @@
 #include <FBCore/Interface/Physics/IPhysicsScene2.h>
 #include <FBCore/Interface/Physics/IPhysicsScene3.h>
 #include <FBCore/Interface/System/IPluginInterface.h>
+#include <FBCore/Interface/System/IPluginManager.h>
 #include <FBCore/Interface/Procedural/IProceduralEngine.h>
 #include <FBCore/Interface/Procedural/IProceduralManager.h>
 #include <FBCore/Interface/Resource/IResourceDatabase.h>
@@ -72,7 +75,7 @@ namespace fb
         {
             try
             {
-                auto numTasks = (size_t)Thread::Task::Count;
+                auto numTasks = static_cast<size_t>( Thread::Task::Count );
                 auto fsmManagers = fb::make_shared<Array<SmartPtr<IFSMManager>>>();
                 fsmManagers->resize( numTasks );
                 m_fsmManagers = fsmManagers;
@@ -352,18 +355,19 @@ namespace fb
 
         SmartPtr<IFactoryManager> ApplicationManager::getFactoryManager() const
         {
+            FB_ASSERT( m_factoryManager && m_factoryManager->getReferences() > 0 );
             return m_factoryManager;
         }
 
         SmartPtr<IFSMManager> ApplicationManager::getFsmManagerByTask( Thread::Task task ) const
         {
-            return ( *m_fsmManagers )[(u32)task];
+            return ( *m_fsmManagers )[static_cast<u32>( task )];
         }
 
         void ApplicationManager::setFsmManagerByTask( Thread::Task task,
                                                       SmartPtr<IFSMManager> fsmManager )
         {
-            ( *m_fsmManagers )[(u32)task] = fsmManager;
+            ( *m_fsmManagers )[static_cast<u32>( task )] = fsmManager;
         }
 
         void ApplicationManager::setLogManager( SmartPtr<ILogManager> logManager )
@@ -373,6 +377,7 @@ namespace fb
 
         void ApplicationManager::setFactoryManager( SmartPtr<IFactoryManager> factoryManager )
         {
+            FB_ASSERT( m_factoryManager == nullptr );
             m_factoryManager = factoryManager;
         }
 
@@ -969,6 +974,16 @@ namespace fb
             m_mediaPath = StringUtil::cleanupPath( m_mediaPath );
         }
 
+        String ApplicationManager::getRenderMediaPath() const
+        {
+            return m_renderMediaPath;
+        }
+
+        void ApplicationManager::setRenderMediaPath( const String &renderMediaPath )
+        {
+            m_renderMediaPath = renderMediaPath;
+        }
+
         String ApplicationManager::getSettingsCachePath() const
         {
             return m_settingsCachePath;
@@ -1035,8 +1050,27 @@ namespace fb
             m_loadProgress += loadProgress;
         }
 
+        fb::SmartPtr<fb::IPluginManager> ApplicationManager::getPluginManager() const
+        {
+            return m_pluginManager;
+        }
+
+        void ApplicationManager::setPluginManager( SmartPtr<IPluginManager> pluginManager )
+        {
+            m_pluginManager = pluginManager;
+        }
+
         void ApplicationManager::addPlugin( SmartPtr<ISharedObject> plugin )
         {
+            FB_DEBUG_TRACE;
+
+            FB_ASSERT( plugin );
+
+            if( plugin )
+            {
+                plugin->load( nullptr );
+                m_plugins.push_back( plugin );
+            }
         }
 
         void ApplicationManager::setSceneRenderWindow( SmartPtr<ui::IUIWindow> sceneRenderWindow )
@@ -1064,7 +1098,40 @@ namespace fb
                 }
             }
 
+            if( m_factoryManager )
+            {
+                if( !m_factoryManager->isValid() )
+                {
+                    return false;
+                }
+
+                if( m_factoryManager->getReferences() == 0 )
+                {
+                    return false;
+                }
+            }
+
             return true;
+        }
+
+        SmartPtr<IInput> ApplicationManager::getInput() const
+        {
+            return m_input;
+        }
+
+        void ApplicationManager::setInput( SmartPtr<IInput> input )
+        {
+            m_input = input;
+        }
+
+        Array<SmartPtr<scene::IActor>> ApplicationManager::getActors() const
+        {
+            return Array<SmartPtr<scene::IActor>>();
+        }
+
+        SmartPtr<scene::IComponent> ApplicationManager::getComponentByType( u32 typeId ) const
+        {
+            return nullptr;
         }
 
         void ApplicationManager::removePlugin( SmartPtr<ISharedObject> plugin )
@@ -1110,6 +1177,16 @@ namespace fb
             return Parameter();
         }
 
+        RawPtr<TypeManager> ApplicationManager::getTypeManager() const
+        {
+            return m_typeManager;
+        }
+
+        void ApplicationManager::setTypeManager( RawPtr<TypeManager> typeManager )
+        {
+            m_typeManager = typeManager;
+        }
+
         SmartPtr<ILogManager> ApplicationManager::getLogManager() const
         {
             return m_logManager;
@@ -1119,6 +1196,5 @@ namespace fb
         {
             return m_fsmManagers;
         }
-
     }  // namespace core
 }  // namespace fb

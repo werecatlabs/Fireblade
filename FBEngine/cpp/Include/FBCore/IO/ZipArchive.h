@@ -1,9 +1,7 @@
 #ifndef ZipArchive_h__
 #define ZipArchive_h__
 
-
 #include <FBCore/Interface/IO/IArchive.h>
-#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/FileInfo.h>
 

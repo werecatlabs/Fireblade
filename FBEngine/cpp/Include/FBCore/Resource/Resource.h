@@ -225,21 +225,31 @@ namespace fb
     template <class T>
     SmartPtr<Properties> Resource<T>::getProperties() const
     {
+        static const auto nameStr = String("name");
+
         auto properties = core::Prototype<T>::getProperties();
 
-        const auto handle = this->getHandle();
-        properties->setProperty( "name", handle->getName() );
+        if( const auto handle = Resource<T>::getHandle() )
+        {
+            auto name = handle->getName();
+            properties->setProperty( nameStr, name );
+        }
+
         return properties;
     }
 
     template <class T>
     void Resource<T>::setProperties( SmartPtr<Properties> properties )
     {
-        auto name = String();
-        properties->getProperty( "name", name );
+        static const auto nameStr = String("name");
 
-        auto handle = this->getHandle();
-        handle->setName( name );
+        auto name = String();
+        properties->getProperty( nameStr, name );
+
+        if( const auto handle = Resource<T>::getHandle() )
+        {
+            handle->setName( name );
+        }
     }
 
     template <class T>

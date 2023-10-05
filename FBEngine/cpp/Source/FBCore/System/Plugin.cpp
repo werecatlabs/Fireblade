@@ -13,6 +13,7 @@ namespace fb
 {
     namespace core
     {
+
         Plugin::~Plugin()
         {
             unload( nullptr );
@@ -108,5 +109,6 @@ namespace fb
         {
             m_filename = fileName;
         }
+
     }  // namespace core
 }  // namespace fb

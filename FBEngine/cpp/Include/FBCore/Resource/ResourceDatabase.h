@@ -67,7 +67,8 @@ namespace fb
 
 	    SmartPtr<Properties> loadAssetNode( SmartPtr<IDatabaseManager> db, SmartPtr<Properties> parent, hash64 id );
         Array<SmartPtr<ISharedObject>> getSceneObjects() const;
-
+        Array<SmartPtr<ISharedObject>> getReferenceObjects() const;
+	
         SmartPtr<ISharedObject> getObjectByFileId( const String &fileId ) const override;
 
         SharedPtr<Array<SmartPtr<IResource>>> getInstancesPtr() const;

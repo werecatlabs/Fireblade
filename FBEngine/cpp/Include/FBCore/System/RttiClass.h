@@ -4,7 +4,7 @@
 #include <boost/describe.hpp>
 #include <boost/mp11.hpp>
 
-template <class T>
+/*template <class T>
 class ObjectSetup
 {
 public:
@@ -12,7 +12,7 @@ public:
     {
         T::setupTypeInfo();
     }
-};
+};*/
 
 #define FB_OBJECT_CLASS_REGISTER_DECL \
 public: \
@@ -37,7 +37,7 @@ public: \
     static void setupTypeInfo(); \
     virtual u32 getTypeInfo() const override; \
     static u32 m_typeInfo; \
-    static ObjectSetup<TEMPLATE_CLASS<TYPE>> objectSetupTemplate##TYPE;
+    //static ObjectSetup<TEMPLATE_CLASS<TYPE>> objectSetupTemplate##TYPE;
 
 #define FB_CLASS_REGISTER_TEMPLATE_PAIR_DECL( TEMPLATE_CLASS, TYPE, SECOND_TYPE ) \
 public: \

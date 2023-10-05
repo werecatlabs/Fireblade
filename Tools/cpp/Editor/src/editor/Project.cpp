@@ -383,7 +383,7 @@ namespace fb
 
             fileSystem->deleteFilesFromPath( scriptProjectFolder );
 
-            projectManager->generateCMakeProject();
+            projectManager->generateProject();
 
             fileSystem->createDirectories( scriptProjectFolder );
             Path::setWorkingDirectory( scriptProjectFolder );
