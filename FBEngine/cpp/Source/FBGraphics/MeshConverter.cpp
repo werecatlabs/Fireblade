@@ -1265,10 +1265,12 @@ namespace fb
 
         return pMesh.get();
         */
-        return NULL;
+        return nullptr;
 #else
-        return NULL;
+        return nullptr;
 #endif
+
+        return nullptr;
     }
 
     //--------------------------------------------

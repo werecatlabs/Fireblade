@@ -6,7 +6,6 @@ namespace fb
     namespace render
     {
 
-        //--------------------------------------------
         String GraphicsUtil::getTerrainTextureType( IMaterial::TerrainTextureTypes terrainTextureType )
         {
             switch( terrainTextureType )
@@ -40,7 +39,6 @@ namespace fb
             return String( "" );
         }
 
-        //--------------------------------------------
         String GraphicsUtil::getPbsTextureType( IMaterial::PbsTextureTypes pbsTextureType )
         {
             switch( pbsTextureType )
@@ -84,7 +82,6 @@ namespace fb
             return String( "" );
         }
 
-        //--------------------------------------------
         String GraphicsUtil::getSkyboxTextureType( IMaterial::SkyboxTextureTypes skyboxTextureType )
         {
             switch( skyboxTextureType )
@@ -113,7 +110,6 @@ namespace fb
             return String( "" );
         }
 
-        //--------------------------------------------
         String GraphicsUtil::getSkyboxCubeTextureType(
             IMaterial::SkyboxCubeTextureTypes skyboxTextureType )
         {
@@ -131,7 +127,6 @@ namespace fb
             return String( "" );
         }
 
-        //--------------------------------------------
         String GraphicsUtil::getMaterialType( IMaterial::MaterialType materialType )
         {
             switch( materialType )
@@ -163,7 +158,6 @@ namespace fb
             return String( "" );
         }
 
-        //--------------------------------------------
         Array<String> GraphicsUtil::getMaterialTypes()
         {
             Array<String> enumValues;
@@ -179,7 +173,6 @@ namespace fb
             return enumValues;
         }
 
-        //--------------------------------------------
         String GraphicsUtil::getMaterialTypesString()
         {
             auto enumValues = String( "" );

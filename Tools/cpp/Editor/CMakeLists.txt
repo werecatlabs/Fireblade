@@ -386,7 +386,7 @@ if (WIN32)
         endif ()
 
         if (FB_PLATFORM_X64)
-            target_link_libraries(Editor amd_ags_x64.lib)
+            #target_link_libraries(Editor amd_ags_x64.lib)
         endif()
     elseif(FB_GRAPHICS_SYSTEM_OGRE)
         target_link_libraries(Editor FBGraphicsOgre.lib)
