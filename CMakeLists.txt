@@ -109,7 +109,7 @@ else ()
 endif()
 
 if (WIN32)
-    option(FB_USE_HOUDINI "Build with houdini" ON)
+    option(FB_USE_HOUDINI "Build with houdini" OFF)
 else()
     option(FB_USE_HOUDINI "Build with houdini" OFF)
 endif()
@@ -170,7 +170,7 @@ option(FB_USE_CUSTOM_NEW_DELETE "custom new delete" ON)
 option(FB_OBJECT_ALIGNED_ALLOC "use aligned allocation" ON)
 
 option(FB_CODEC_FREEIMAGE "use free image codec" ON)
-option(FB_CODEC_STBI "use stbi codec" ON)
+option(FB_CODEC_STBI "use stbi codec" OFF)
 
 if (FB_USE_CPP20)
     set(CMAKE_CXX_STANDARD 20)
