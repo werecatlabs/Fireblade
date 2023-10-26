@@ -28,9 +28,6 @@ namespace fb
             /** @copydoc UIComponent::setProperties */
             void setProperties( SmartPtr<Properties> properties ) override;
 
-            void updateElementState();
-            void updateCaption();
-
             SmartPtr<ui::IUIButton> getButton() const;
 
             void setButton( SmartPtr<ui::IUIButton> button );
@@ -49,6 +46,8 @@ namespace fb
                                    SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
             void createUI() override;
+            void updateElementState();
+            void updateCaption();
 
             SmartPtr<ui::IUIButton> m_button;
             bool m_isSimpleButton = true;

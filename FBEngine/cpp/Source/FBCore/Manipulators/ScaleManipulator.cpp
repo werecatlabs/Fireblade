@@ -4,6 +4,8 @@
 
 namespace fb
 {
+    FB_CLASS_REGISTER_DERIVED( fb, ScaleManipulator, ISharedObject );
+
     const f32 COMPONENT_RADIUS = 0.5f;
     const f32 TRANSLATE_REDUCTION_COEF = 0.02f;
     const f32 SCALE_COEF = 0.2f;

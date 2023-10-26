@@ -51,6 +51,7 @@ namespace fb
 
     void UIElementState::setVisible( bool visible )
     {
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
         if( m_visible != visible )
         {
             m_visible = visible;
@@ -60,6 +61,7 @@ namespace fb
 
     bool UIElementState::isVisible() const
     {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_visible;
     }
 

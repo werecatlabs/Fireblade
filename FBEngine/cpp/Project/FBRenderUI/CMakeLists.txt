@@ -1,12 +1,13 @@
-project(FBRenderUI)
+project(FBRenderUI C CXX)
 
 #add_compile_definitions (MYGUI_STATIC)
 #add_compile_definitions (MYGUI_USE_FREETYPE)
 add_compile_definitions (FB_USE_MYGUI=0)
+#add_compile_definitions (COBJMACROS)
 
 # define header and source files for the library
 file(GLOB_RECURSE HEADER_FILES "../../Include/FBRenderUI/*.h" "../../Include/FBRenderUI/*.inl")
-file(GLOB_RECURSE SOURCE_FILES "../../Source/FBRenderUI/*.cpp")
+file(GLOB_RECURSE SOURCE_FILES "../../Source/FBRenderUI/*.cpp" "../../Source/FBRenderUI/*.c")
 
 set(FB_HEADER_REL_PATH "${FB_ROOT}/FBEngine/cpp/Project/FBRenderUI/../../Include/FBRenderUI")
 set(FB_SOURCE_REL_PATH "${FB_ROOT}/FBEngine/cpp/Project/FBRenderUI/../../Source/FBRenderUI")
@@ -64,7 +65,7 @@ if (FB_USE_PRECOMPILED_HEADERS)
     file(GLOB_RECURSE OGRE_SOURCE_FILES "${CMAKE_SOURCE_DIR}/FBEngine/cpp/Source/FBRenderUI/Extern/MyGUI/MyGUIEngine/src/*.cpp")
     set_source_files_properties(${OGRE_SOURCE_FILES} PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 
-    file(GLOB_RECURSE OGRE_SOURCE_FILES "${CMAKE_SOURCE_DIR}/FBEngine/cpp/Source/FBRenderUI/Extern/MyGUI/Platforms/Ogre/OgrePlatform/src/*.cpp")
+    file(GLOB_RECURSE OGRE_SOURCE_FILES "${CMAKE_SOURCE_DIR}/FBEngine/cpp/Source/FBRenderUI/*.c")
     set_source_files_properties(${OGRE_SOURCE_FILES} PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 endif()
 

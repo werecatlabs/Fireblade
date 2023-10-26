@@ -1,10 +1,29 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Manipulators/TranslateManipulator.h>
 #include <FBCore/Scene/Components/Camera/CameraController.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Scene/Components/Camera.h>
+#include <FBCore/Interface/Graphics/IDebug.h>
+#include <FBCore/Interface/Graphics/IDebugLine.h>
+#include <FBCore/Interface/Graphics/IGraphicsMesh.h>
+#include <FBCore/Interface/Graphics/IGraphicsScene.h>
+#include <FBCore/Interface/Graphics/IGraphicsSystem.h>
+#include <FBCore/Interface/Graphics/ISceneNode.h>
+#include <FBCore/Interface/Graphics/IWindow.h>
+#include <FBCore/Interface/Input/IInputEvent.h>
+#include <FBCore/Interface/Input/IMouseState.h>
+#include <FBCore/Interface/Scene/ICameraManager.h>
+#include <FBCore/Interface/Scene/ITransform.h>
+#include <FBCore/Interface/System/ISelectionManager.h>
+#include <FBCore/Interface/System/ITimer.h>
+#include <FBCore/Interface/UI/IUIManager.h>
+#include <FBCore/Interface/UI/IUIWindow.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Math/MathUtil.h>
 
 namespace fb
 {
+    FB_CLASS_REGISTER_DERIVED( fb, TranslateManipulator, ISharedObject );
+
     f32 COMPONENT_RADIUS = 0.1f;
     f32 TRANSLATE_REDUCTION_COEF = 0.02f;
     f32 SCALE_COEF = 0.2f;
@@ -27,11 +46,21 @@ namespace fb
             {
                 setLoadingState( LoadingState::Loading );
 
+                auto applicationManager = core::IApplicationManager::instance();
+                auto selectionManager = applicationManager->getSelectionManager();
+
                 m_node.resize( 6 );
                 m_mesh.resize( 6 );
                 m_coneMesh.resize( 3 );
 
-                createRenderObjects();
+                //createRenderObjects();
+
+                if( selectionManager )
+                {
+                    m_selectionManagerListener = fb::make_ptr<SelectionManagerListener>( this );
+                    selectionManager->addObjectListener( m_selectionManagerListener );
+                }
+
                 setLoadingState( LoadingState::Loaded );
             }
         }
@@ -53,14 +82,14 @@ namespace fb
                 auto applicationManager = core::IApplicationManager::instance();
                 auto selectionManager = applicationManager->getSelectionManager();
 
-                //if( selectionManager )
-                //{
-                //    if( m_selectionManagerListener )
-                //    {
-                //        selectionManager->removeListener( m_selectionManagerListener );
-                //        m_selectionManagerListener = nullptr;
-                //    }
-                //}
+                if( selectionManager )
+                {
+                    if( m_selectionManagerListener )
+                    {
+                        selectionManager->removeObjectListener( m_selectionManagerListener );
+                        m_selectionManagerListener = nullptr;
+                    }
+                }
 
                 for( auto mesh : m_mesh )
                 {
@@ -241,12 +270,6 @@ namespace fb
             m_mesh[AT_YZ]->setCastShadows( false );
             m_node[AT_YZ]->attachObject( m_mesh[AT_YZ] );
 
-            if( selectionManager )
-            {
-                m_selectionManagerListener = fb::make_ptr<SelectionManagerListener>( this );
-                selectionManager->addObjectListener( m_selectionManagerListener );
-            }
-
             m_sceneNode->setVisible( false );
         }
         catch( std::exception &e )
@@ -268,13 +291,22 @@ namespace fb
         {
         case Thread::Task::Application:
         {
-            if( !m_bEnabled )
+            if( !m_enabled )
             {
                 return;
             }
 
+            //if( !isVisible() )
+            //{
+            //    return;
+            //}
+
             auto applicationManager = core::IApplicationManager::instance();
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            auto debug = graphicsSystem->getDebug();
+
             auto cameraManager = applicationManager->getCameraManager();
+            auto scale = Vector3F( 1.f, 1.f, 1.f );
 
             auto cameraActor = cameraManager->getCurrentCamera();
             if( cameraActor )
@@ -289,46 +321,35 @@ namespace fb
                     camDist = 1.0f;
                 }
 
-                auto scale = Vector3F( 1.f, 1.f, 1.f );
                 scale *= camDist * SCALE_COEF;
                 m_fScale = scale.length();
 
-                m_sceneNode->setScale( scale );
+                if( m_sceneNode )
+                {
+                    m_sceneNode->setScale( scale );
+                }
             }
 
-            // select the material
-            if( m_bXSelected )
-            {
-                m_mesh[AT_X]->setMaterialName( "ManipulatorHandlesYellowMat" );
-                m_coneMesh[AT_X]->setMaterialName( "ManipulatorHandlesYellowMat" );
-            }
-            else
-            {
-                m_mesh[AT_X]->setMaterialName( "ManipulatorHandlesGreenMat" );
-                m_coneMesh[AT_X]->setMaterialName( "ManipulatorHandlesGreenMat" );
-            }
+            Array<u32> colours;
+            colours.resize( 3 );
 
-            if( m_bYSelected )
-            {
-                m_mesh[AT_Y]->setMaterialName( "ManipulatorHandlesYellowMat" );
-                m_coneMesh[AT_Y]->setMaterialName( "ManipulatorHandlesYellowMat" );
-            }
-            else
-            {
-                m_mesh[AT_Y]->setMaterialName( "ManipulatorHandlesRedMat" );
-                m_coneMesh[AT_Y]->setMaterialName( "ManipulatorHandlesRedMat" );
-            }
+            colours[0] = m_bXSelected ? 0xFFFF00 : 0xFF0000;
+            colours[1] = m_bXSelected ? 0xFFFF00 : 0x00FF00;
+            colours[2] = m_bXSelected ? 0xFFFF00 : 0x0000FF;
 
-            if( m_bZSelected )
-            {
-                m_mesh[AT_Z]->setMaterialName( "ManipulatorHandlesYellowMat" );
-                m_coneMesh[AT_Z]->setMaterialName( "ManipulatorHandlesYellowMat" );
-            }
-            else
-            {
-                m_mesh[AT_Z]->setMaterialName( "ManipulatorHandlesBlueMat" );
-                m_coneMesh[AT_Z]->setMaterialName( "ManipulatorHandlesBlueMat" );
-            }
+            auto pos = getPosition();
+            auto hash = StringUtil::getHash( "TranslateManipulator" );
+
+            auto lineX =
+                debug->drawLine( hash + AT_X, pos, pos + Vector3F::unitX() * m_fScale, colours[0] );
+            auto lineY =
+                debug->drawLine( hash + AT_Y, pos, pos + Vector3F::unitY() * m_fScale, colours[1] );
+            auto lineZ =
+                debug->drawLine( hash + AT_Z, pos, pos + Vector3F::unitZ() * m_fScale, colours[2] );
+
+            lineX->setMaxLifeTime( 1e10 );
+            lineY->setMaxLifeTime( 1e10 );
+            lineZ->setMaxLifeTime( 1e10 );
         }
         break;
         default:
@@ -339,6 +360,8 @@ namespace fb
 
     void TranslateManipulator::update()
     {
+        int stop = 0;
+        stop = 0;
     }
 
     void TranslateManipulator::postUpdate()
@@ -376,15 +399,20 @@ namespace fb
             return false;
         }
 
-        if( !m_bEnabled )
+        if( !m_enabled )
         {
             return false;
         }
 
-        if( event->getEventType() != IInputEvent::EventType::Mouse )
-        {
-            return false;
-        }
+        //if( !isVisible() )
+        //{
+        //    return false;
+        //}
+
+        //if( event->getEventType() != IInputEvent::EventType::Mouse )
+        //{
+        //    return false;
+        //}
 
         auto applicationManager = core::IApplicationManager::instance();
         auto cameraManager = applicationManager->getCameraManager();
@@ -397,6 +425,22 @@ namespace fb
         auto mouseState = event->getMouseState();
         if( mouseState )
         {
+            auto windowSize = Vector2F( 1280, 720 );
+
+            auto window = applicationManager->getWindow();
+            if( window )
+            {
+                auto iWindowSize = window->getSize();
+                windowSize = Vector2F( iWindowSize.x, iWindowSize.y );
+            }
+
+            auto ui = applicationManager->getUI();
+            auto sceneWindow = applicationManager->getSceneRenderWindow();
+            if( sceneWindow )
+            {
+                windowSize = sceneWindow->getSize();
+            }
+
             auto mousePosition = mouseState->getAbsolutePosition();
 
             m_cursorPos.X() = mousePosition.X();
@@ -408,17 +452,17 @@ namespace fb
                 return false;
             }
 
-            auto camera = cameraActor->getComponent<scene::CameraController>();
-            SmartPtr<scene::Transform> cameraWorldTransform = cameraActor->getTransform();
+            auto camera = cameraActor->getComponent<scene::Camera>();
+            auto cameraWorldTransform = cameraActor->getTransform();
 
-            auto ray = camera->getCameraToViewportRay( mousePosition );
+            auto ray = camera->getCameraToViewportRay( mousePosition / windowSize );
+            auto handles = getHandles();
 
             // Y Axis
             if( !m_bMouseButtonDown )
             {
-                auto node = m_node[AT_Y];
-                auto aabb = node->getWorldAABB();
-                auto result = MathUtil<real_Num>::intersects( ray, aabb );
+                auto handle = handles[AT_Y];
+                auto result = MathUtil<real_Num>::intersects( ray, handle );
                 if( result.first )
                 {
                     m_bYSelected = true;
@@ -433,9 +477,8 @@ namespace fb
             // x axis
             if( !m_bMouseButtonDown )
             {
-                auto node = m_node[AT_X];
-                auto aabb = node->getWorldAABB();
-                auto result = MathUtil<real_Num>::intersects( ray, aabb );
+                auto handle = handles[AT_X];
+                auto result = MathUtil<real_Num>::intersects( ray, handle );
                 if( result.first )
                 {
                     m_bXSelected = true;
@@ -450,9 +493,8 @@ namespace fb
             // z axis
             if( !m_bMouseButtonDown )
             {
-                auto node = m_node[AT_Z];
-                auto aabb = node->getWorldAABB();
-                auto result = MathUtil<real_Num>::intersects( ray, aabb );
+                auto handle = handles[AT_Z];
+                auto result = MathUtil<real_Num>::intersects( ray, handle );
                 if( result.first )
                 {
                     m_bZSelected = true;
@@ -486,11 +528,13 @@ namespace fb
                     if( actor )
                     {
                         auto transform = actor->getTransform();
+                        if( transform )
+                        {
+                            auto position = transform->getLocalPosition();
 
-                        auto position = transform->getLocalPosition();
-
-                        auto positionStr = StringUtil::toString( position );
-                        keyValues.push_back( positionStr );
+                            auto positionStr = StringUtil::toString( position );
+                            keyValues.push_back( positionStr );
+                        }
                     }
                 }
 
@@ -581,7 +625,7 @@ namespace fb
                         auto actor = fb::dynamic_pointer_cast<scene::IActor>( selected );
                         if( actor )
                         {
-                            SmartPtr<scene::Transform> transform = actor->getTransform();
+                            auto transform = actor->getTransform();
 
                             auto entityPos = transform->getLocalPosition();
 
@@ -624,14 +668,17 @@ namespace fb
 
             for( auto selected : selection )
             {
-                auto actor = fb::dynamic_pointer_cast<scene::IActor>( selected );
-                if( actor )
+                if( selected->isDerived<scene::IActor>() )
                 {
-                    // auto worldTransform = actor->getTransform();
-                    // if (worldTransform)
-                    //{
-                    //	vAveragePosition += worldTransform->getPosition();
-                    // }
+                    auto actor = fb::dynamic_pointer_cast<scene::IActor>( selected );
+                    if( actor )
+                    {
+                        auto worldTransform = actor->getTransform();
+                        if( worldTransform )
+                        {
+                            vAveragePosition += worldTransform->getPosition();
+                        }
+                    }
                 }
             }
 
@@ -649,27 +696,26 @@ namespace fb
 
     void TranslateManipulator::setEnabled( bool bEnabled )
     {
-        if( m_bEnabled != bEnabled )
+        if( m_enabled != bEnabled )
         {
-            m_bEnabled = bEnabled;
-            m_sceneNode->setVisible( m_bEnabled );
+            m_enabled = bEnabled;
             updateManipulatorPosition();
         }
     }
 
     bool TranslateManipulator::isEnabled()
     {
-        return m_bEnabled;
+        return m_enabled;
     }
 
     const Vector3<real_Num> &TranslateManipulator::getPosition() const
     {
-        return RelativeTranslation;
+        return m_relativeTranslation;
     }
 
     void TranslateManipulator::setPosition( const Vector3<real_Num> &newpos )
     {
-        RelativeTranslation = newpos;
+        m_relativeTranslation = newpos;
 
         if( m_sceneNode )
         {
@@ -679,27 +725,27 @@ namespace fb
 
     const Vector3<real_Num> &TranslateManipulator::getRotation() const
     {
-        return RelativeRotation;
+        return m_relativeRotation;
     }
 
     void TranslateManipulator::setRotation( const Vector3<real_Num> &rotation )
     {
-        RelativeRotation = rotation;
+        m_relativeRotation = rotation;
     }
 
     const Vector3<real_Num> &TranslateManipulator::getScale() const
     {
-        return RelativeScale;
+        return m_relativeScale;
     }
 
     void TranslateManipulator::setScale( const Vector3<real_Num> &scale )
     {
-        RelativeScale = scale;
+        m_relativeScale = scale;
     }
 
     bool TranslateManipulator::isVisible() const
     {
-        return m_isVisible;
+        return m_visible;
     }
 
     SmartPtr<render::ISceneNode> TranslateManipulator::getSceneNode() const
@@ -712,9 +758,44 @@ namespace fb
         m_sceneNode = sceneNode;
     }
 
+    Array<Line3<real_Num>> TranslateManipulator::getLines() const
+    {
+        Array<Line3<real_Num>> lines;
+        lines.resize( 3 );
+
+        auto pos = getPosition();
+        auto hash = StringUtil::getHash( "TranslateManipulator" );
+        lines[0] = Line3<real_Num>( pos, pos + Vector3F::unitX() * m_fScale );
+        lines[1] = Line3<real_Num>( pos, pos + Vector3F::unitY() * m_fScale );
+        lines[2] = Line3<real_Num>( pos, pos + Vector3F::unitZ() * m_fScale );
+
+        return lines;
+    }
+
+    Array<Cylinder3<real_Num>> TranslateManipulator::getHandles() const
+    {
+        Array<Cylinder3<real_Num>> handles;
+        handles.resize( 3 );
+
+        auto pos = getPosition();
+
+        auto radius = 0.1f * m_fScale;
+        auto height = 3.0f * m_fScale;
+        auto axisScale = 1.0f;
+
+        handles[0] = Cylinder3<real_Num>( Line3<real_Num>( pos, pos + Vector3<real_Num>::unitX() * axisScale ),
+                                          radius, height );
+        handles[1] = Cylinder3<real_Num>( Line3<real_Num>( pos, pos + Vector3<real_Num>::unitY() * axisScale ),
+                                          radius, height );
+        handles[2] = Cylinder3<real_Num>( Line3<real_Num>( pos, pos + Vector3<real_Num>::unitZ() * axisScale ),
+                                          radius, height );
+
+        return handles;
+    }
+
     void TranslateManipulator::setVisible( bool visible )
     {
-        m_isVisible = visible;
+        m_visible = visible;
     }
 
     TranslateManipulator::SelectionManagerListener::SelectionManagerListener(
@@ -732,6 +813,19 @@ namespace fb
         IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
         SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
     {
+        if( eventValue == IEvent::addSelectedObject )
+        {
+            addSelectedObject();
+        }
+        if( eventValue == IEvent::addSelectedObjects )
+        {
+            addSelectedObjects();
+        }
+        if( eventValue == IEvent::deselectObjects )
+        {
+            deselectObjects();
+        }
+
         return Parameter();
     }
 

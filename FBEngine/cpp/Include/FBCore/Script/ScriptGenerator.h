@@ -9,7 +9,7 @@
 namespace fb
 {
     
-    class ScriptGenerator
+    class ScriptGenerator : public ISharedObject
     {
     public:
         enum class LanguageType

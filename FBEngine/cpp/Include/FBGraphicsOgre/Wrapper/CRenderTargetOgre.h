@@ -260,7 +260,7 @@ namespace fb
 
                     for( size_t i = 0; i < size; ++i )
                     {
-                        auto vp = m_renderTarget->getViewport( i );
+                        auto vp = m_renderTarget->getViewport( (u16)i );
                         FB_ASSERT( vp );
 
                         auto actualWidth = vp->getActualWidth();
@@ -274,7 +274,7 @@ namespace fb
 
                     for( size_t i = 0; i < size; ++i )
                     {
-                        auto vp = m_renderTarget->getViewport( i );
+                        auto vp = m_renderTarget->getViewport( (u16)i );
                         FB_ASSERT( vp );
 
                         auto actualWidth = vp->getActualWidth();

@@ -3,7 +3,6 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Math/RaycastHit.h>
 #include <FBCore/Math/Ray3.h>
 #include <FBCore/Core/Array.h>
 
@@ -89,7 +88,7 @@ namespace fb
              * @return True if there was at least one hit, false otherwise.
              */
             virtual bool castRay( const Vector3<real_Num> &origin, const Vector3<real_Num> &dir,
-                                  Array<SmartPtr<RaycastHit>> &hits ) = 0;
+                                  Array<SmartPtr<IRaycastHit>> &hits ) = 0;
 
             /**
              * @brief Casts a ray and returns the first hit.
@@ -97,7 +96,7 @@ namespace fb
              * @param hit The hit information to be stored.
              * @return True if there was a hit, false otherwise.
              */
-            virtual bool castRay( const Ray3<real_Num> &ray, RaycastHit &hit ) = 0;
+            virtual bool castRay( const Ray3<real_Num> &ray, SmartPtr<IRaycastHit> hit ) = 0;
 
             /**
              * @brief Casts a dynamic ray and returns the first hit.
@@ -105,15 +104,7 @@ namespace fb
              * @param hit The hit information to be stored.
              * @return True if there was a hit, false otherwise.
              */
-            virtual bool castRayDynamic( const Ray3<real_Num> &ray, RaycastHit &hit ) = 0;
-
-            /**
-             * @brief Casts a ray and returns the first hit.
-             * @param ray The ray to be cast.
-             * @param hit A shared pointer to the hit information to be stored.
-             * @return True if there was a hit, false otherwise.
-             */
-            virtual bool castRay( const Ray3<real_Num> &ray, SmartPtr<IRaycastHit> &hit ) = 0;
+            virtual bool castRayDynamic( const Ray3<real_Num> &ray, SmartPtr<IRaycastHit> hit ) = 0;
 
             /**
              * @brief Sets the gravity vector of the scene.

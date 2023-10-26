@@ -11,6 +11,7 @@ add_compile_definitions (FREEIMAGE_LIB)
 #add_compile_definitions (OGRE_USE_SIMD=0)
 #add_compile_definitions (OGRE_THREAD_SUPPORT=0)
 #add_compile_definitions (OGRE_THREAD_PROVIDER=0)
+add_compile_definitions (U_STATIC_IMPLEMENTATION=1)
 
 if (FB_BUILD_OGRENEXT_DEPRECATED)
     add_compile_definitions (OGRE_DEPRECATED_2_2)
@@ -57,6 +58,16 @@ file(GLOB HEADER_FILES_CORE "../../Include/FBGraphicsOgreNext/Core/*.h")
 file(GLOB SOURCE_FILES_CORE "../../Source/FBGraphicsOgreNext/Core/*.cpp")
 list(APPEND HEADER_FILES ${HEADER_FILES_CORE})
 list(APPEND SOURCE_FILES ${SOURCE_FILES_CORE})
+
+file(GLOB_RECURSE HEADER_FILES_ColibriGui "../../Include/FBGraphicsOgreNext/ColibriGui/*.h")
+file(GLOB_RECURSE SOURCE_FILES_ColibriGui "../../Source/FBGraphicsOgreNext/ColibriGui/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_ColibriGui})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_ColibriGui})
+
+file(GLOB_RECURSE HEADER_FILES_ui "../../Include/FBGraphicsOgreNext/UI/*.h")
+file(GLOB_RECURSE SOURCE_FILES_ui "../../Source/FBGraphicsOgreNext/UI/*.cpp")
+list(APPEND HEADER_FILES ${HEADER_FILES_ui})
+list(APPEND SOURCE_FILES ${SOURCE_FILES_ui})
 
 file(GLOB HEADER_FILES_ADDONS "../../Include/FBGraphicsOgreNext/AddOns/*.h")
 file(GLOB SOURCE_FILES_ADDONS "../../Source/FBGraphicsOgreNext/AddOns/*.cpp")
@@ -506,12 +517,24 @@ foreach(_source IN ITEMS ${SOURCE_FILES})
     source_group("Source Files\\${_group_file_path}" FILES "${_source}")
 endforeach()
 
-filter_items(${HEADER_FILES} "OgreMain/include/Android/.*")
-filter_items(${SOURCE_FILES} "OgreMain/src/Android/.*")
+#filter_items(${HEADER_FILES} "OgreMain/include/Android/.*")
+#filter_items(${SOURCE_FILES} "OgreMain/src/Android/.*")
 
 include_directories( ${FB_ROOT}/Dependencies/boost )
 include_directories( ${FB_ROOT}/Dependencies/tinyxml/include )
 include_directories( ${FB_ROOT}/Dependencies/utf8/source )
+
+include_directories( ${FB_ROOT}/Dependencies/harfbuzz/src )
+include_directories( ${FB_ROOT}/Dependencies/sds_library/include )
+include_directories( ${FB_ROOT}/Dependencies/icu )
+include_directories( ${FB_ROOT}/Dependencies/icu/common )
+include_directories( ${FB_ROOT}/Dependencies/icu/common/unicode )
+
+if(WIN32)
+    include_directories( ${FB_ROOT}/Dependencies/windows )
+elseif(APPLE)
+    include_directories( ${FB_ROOT}/Dependencies/apple )
+endif()
 
 if (FB_USE_ONETBB)
     include_directories( ${CMAKE_SOURCE_DIR}/Dependencies/onetbb/include )
@@ -553,6 +576,7 @@ include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Comp
 #include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Deprecated )
 
 include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math )
+include_directories( ../../Include/FBGraphicsOgreNext )
 
 if (FB_USE_C_MATH)
     include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/Math/Array )
@@ -579,7 +603,11 @@ include_directories( ../../Include/FBGraphicsOgreNext/Ogre/Components/Hlms/Pbs/i
 include_directories( ../../Include/FBGraphicsOgreNext/Ogre/Components/Hlms/Unlit/include )
 include_directories( ../../Include/FBGraphicsOgreNext/Ogre/PlugIns/CgProgramManager/include )
 
-
+if (FB_BUILD_IMGUI)
+    include_directories( ${FB_ROOT}/Dependencies/imgui )
+    include_directories( ${FB_ROOT}/Dependencies/imgui/backends )
+    include_directories( ${FB_ROOT}/Dependencies/imgui/misc/freetype )
+endif()
 
 if (WIN32)
     if (FB_BUILD_RENDERER_DX11)
@@ -652,6 +680,8 @@ include_directories( ../../Include )
 include_directories( ../../Include/FBGraphicsOgreNext )
 include_directories( ../../Include/FBGraphicsOgreNext/Extern )
 include_directories( ../../Include/FBGraphicsOgreNext/Deferred )
+include_directories( ../../Include/FBGraphicsOgreNext/ColibriGui )
+include_directories( ../../Include/FBGraphicsOgreNext/UI )
 
 if(WIN32)
     include_directories( ../../Include/FBGraphicsOgreNext/Ogre/OgreMain/include/WIN32 )
@@ -670,6 +700,9 @@ if (FB_USE_PRECOMPILED_HEADERS)
     use_precompiled_header(FBGraphicsOgreNext "FBGraphicsOgreNext/FBGraphicsOgreNextPCH.h" "${CMAKE_SOURCE_DIR}/FBEngine/cpp/Source/FBGraphicsOgreNext/FBGraphicsOgreNextPCH.cpp")
 
     file(GLOB_RECURSE OGRE_SOURCE_FILES "${CMAKE_SOURCE_DIR}/FBEngine/cpp/Source/FBGraphicsOgreNext/Ogre/*.cpp")
+    set_source_files_properties(${OGRE_SOURCE_FILES} PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
+ 
+    file(GLOB_RECURSE OGRE_SOURCE_FILES "${CMAKE_SOURCE_DIR}/FBEngine/cpp/Source/FBGraphicsOgreNext/ColibriGui/*.cpp")
     set_source_files_properties(${OGRE_SOURCE_FILES} PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
     
     file(GLOB_RECURSE OGRE_SOURCE_FILES "${CMAKE_SOURCE_DIR}/FBEngine/cpp/Source/FBGraphicsOgreNext/Terra/*.cpp")

@@ -73,9 +73,9 @@ namespace fb
                     if( !image )
                     {
                         createImage();
+                        setupMaterial();
                     }
 
-                    setupMaterial();
                     updateOrder();
                     updateTransform();
                     updateVisibility();

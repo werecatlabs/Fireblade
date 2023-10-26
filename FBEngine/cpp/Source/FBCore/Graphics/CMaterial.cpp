@@ -4,8 +4,20 @@
 #include <FBCore/Graphics/CMaterialTexture.h>
 #include <FBCore/Graphics/CMaterialPass.h>
 #include <FBCore/Graphics/CTexture.h>
-#include <FBCore/FBCore.h>
-#include <FBGraphics/FBGraphics.h>
+#include <FBCore/Core/DataUtil.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Interface/IO/IFileSystem.h>
+#include <FBCore/Interface/IO/IStream.h>
+#include <FBCore/Interface/Resource/IResourceDatabase.h>
+#include <FBCore/State/Messages/StateMessageSetTexture.h>
+#include <FBCore/State/Messages/StateMessagePair.h>
+#include <FBCore/State/Messages/StateMessageLoad.h>
+#include <FBCore/State/Messages/StateMessageObjectsArray.h>
+#include <FBCore/State/Messages/StateMessageFragmentParam.h>
+#include <FBCore/State/Messages/StateMessageIntValue.h>
+#include <FBCore/State/Messages/StateMessageUIntValue.h>
+#include <FBCore/State/States/MaterialState.h>
+#include "FBGraphics/GraphicsUtil.h"
 
 namespace fb
 {
@@ -78,8 +90,9 @@ namespace fb
             auto fileSystem = applicationManager->getFileSystem();
             FB_ASSERT( fileSystem );
 
-            auto pData = fb::static_pointer_cast<Properties>( toData() );
-            auto materialStr = DataUtil::toString( pData.get(), true );
+            auto data = toData();
+            auto properties = fb::static_pointer_cast<Properties>( data );
+            auto materialStr = DataUtil::toString( properties.get(), true );
 
             fileSystem->writeAllText( filePath, materialStr );
         }
@@ -115,7 +128,6 @@ namespace fb
                 setFilePath( filePath );
 
                 fromData( materialData );
-                load( nullptr );
             }
         }
 
@@ -129,7 +141,8 @@ namespace fb
                 auto fileSystem = applicationManager->getFileSystem();
                 FB_ASSERT( fileSystem );
 
-                auto materialData = fb::static_pointer_cast<Properties>( toData() );
+                auto data = toData();
+                auto materialData = fb::static_pointer_cast<Properties>( data );
                 FB_ASSERT( materialData );
 
                 auto dataStr = DataUtil::toString( materialData.get(), true );
@@ -246,7 +259,7 @@ namespace fb
                         auto &textures = *p;
                         textures[layerIdx] = texture;
                     }
-
+                    
                     auto techniques = getTechniques();
                     for( auto technique : techniques )
                     {

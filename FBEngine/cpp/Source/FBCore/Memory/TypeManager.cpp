@@ -58,8 +58,8 @@ namespace fb
 
     TypeManager::~TypeManager()
     {
-        m_name.clear();
-        m_hash.clear();
+        m_names.clear();
+        m_hashes.clear();
         m_typeIndex.clear();
         m_typeGroup.clear();
         m_baseType.clear();
@@ -70,14 +70,24 @@ namespace fb
     String TypeManager::getName( u32 id ) const
     {
         SpinRWMutex::ScopedLock lock( m_nameMutex, false );
-        FB_ASSERT( id < m_name.size() );
-        return m_name[id];
+        FB_ASSERT( id < m_names.size() );
+        return m_names[id];
+    }
+
+    String TypeManager::getLabel( u32 id ) const
+    {
+        return m_labels[id];
+    }
+
+    void TypeManager::setLabel( u32 id, const String &label )
+    {
+        m_labels[id] = label;
     }
 
     hash64 TypeManager::getHash( u32 id ) const
     {
         FB_ASSERT( id < getSize() );
-        return m_hash[id];
+        return m_hashes[id];
     }
 
     u32 TypeManager::getBaseType( u32 id ) const
@@ -157,10 +167,10 @@ namespace fb
 
     u32 TypeManager::getTypeByName( const String &name )
     {
-        auto it = std::find( m_name.begin(), m_name.end(), name );
-        if( it != m_name.end() )
+        auto it = std::find( m_names.begin(), m_names.end(), name );
+        if( it != m_names.end() )
         {
-            return (u32)std::distance( m_name.begin(), it );
+            return (u32)std::distance( m_names.begin(), it );
         }
 
         return 0;
@@ -181,12 +191,12 @@ namespace fb
         if( !StringUtil::isNullOrEmpty( name ) )
         {
             SpinRWMutex::ScopedLock lock( m_nameMutex, true );
-            m_name[newId] = name;
+            m_names[newId] = name;
         }
 
         FB_ASSERT( m_baseType[newId].load() == 0 );
 
-        m_hash[newId] = StringUtil::getHash64( name );
+        m_hashes[newId] = StringUtil::getHash64( name );
         m_typeIndex[newId] = newId;
 
         FB_ASSERT( m_baseType[newId].load() == 0 );
@@ -426,8 +436,9 @@ namespace fb
         {
             m_size = size;
 
-            m_name.resize( size );
-            m_hash.resize( size );
+            m_names.resize( size );
+            m_labels.resize( size );
+            m_hashes.resize( size );
             m_typeIndex.resize( size );
             m_typeGroup.resize( size );
             m_baseType.resize( size );

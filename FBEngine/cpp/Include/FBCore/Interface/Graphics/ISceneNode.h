@@ -240,7 +240,7 @@ namespace fb
             virtual bool getShowBoundingBox() const = 0;
 
             /** Updates the bounds of the scene node. */
-            virtual void _updateBounds() = 0;
+            virtual void updateBounds() = 0;
 
             /** Sets the visibility flags for the attached graphic objects. */
             virtual void setVisibilityFlags( u32 flags ) = 0;

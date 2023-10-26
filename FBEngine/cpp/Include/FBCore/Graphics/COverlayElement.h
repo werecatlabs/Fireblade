@@ -29,9 +29,9 @@ namespace fb
 
             void setName( const String &name ) override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         state->setName( name );
                     }
@@ -40,9 +40,9 @@ namespace fb
 
             String getName() const override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         return state->getName();
                     }
@@ -53,20 +53,20 @@ namespace fb
 
             void setMaterial( SmartPtr<IMaterial> material ) override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
-                        return state->setMaterial( material );
+                        state->setMaterial( material );
                     }
                 }
             }
 
             SmartPtr<IMaterial> getMaterial() const override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         return state->getMaterial();
                     }
@@ -77,9 +77,9 @@ namespace fb
 
             void setCaption( const String &text ) override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         return state->setCaption( text );
                     }
@@ -88,9 +88,9 @@ namespace fb
 
             String getCaption() const override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         return state->getCaption();
                     }
@@ -101,9 +101,9 @@ namespace fb
 
             void setVisible( bool visible ) override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         return state->setVisible( visible );
                     }
@@ -112,9 +112,9 @@ namespace fb
 
             bool isVisible() const override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         return state->isVisible();
                     }
@@ -125,9 +125,9 @@ namespace fb
 
             Vector2F getPosition() const override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         return state->getPosition();
                     }
@@ -138,9 +138,9 @@ namespace fb
 
             void setPosition( const Vector2F &position ) override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         state->setPosition( position );
                     }
@@ -149,9 +149,9 @@ namespace fb
 
             Vector2F getSize() const override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         return state->getSize();
                     }
@@ -162,9 +162,9 @@ namespace fb
 
             void setSize( const Vector2F &size ) override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         state->setSize( size );
                     }
@@ -173,9 +173,9 @@ namespace fb
 
             u32 getZOrder() const override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         return state->getZOrder();
                     }
@@ -186,9 +186,9 @@ namespace fb
 
             void setZOrder( [[maybe_unused]] u32 zOrder ) override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         state->setZOrder( zOrder );
                     }
@@ -197,9 +197,9 @@ namespace fb
 
             void setColour( [[maybe_unused]] const ColourF &colour ) override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         state->setColour( colour );
                     }
@@ -208,9 +208,9 @@ namespace fb
 
             ColourF getColour() const override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         return state->getColour();
                     }
@@ -221,9 +221,9 @@ namespace fb
 
             void setMetricsMode( [[maybe_unused]] u8 metricsMode ) override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         return state->setMetricsMode( metricsMode );
                     }
@@ -232,9 +232,9 @@ namespace fb
 
             u8 getMetricsMode() const override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         return state->getMetricsMode();
                     }
@@ -245,9 +245,9 @@ namespace fb
 
             void setHorizontalAlignment( u8 gha ) override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         return state->setHorizontalAlignment( gha );
                     }
@@ -256,9 +256,9 @@ namespace fb
 
             u8 getHorizontalAlignment() const override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         return state->getHorizontalAlignment();
                     }
@@ -269,9 +269,9 @@ namespace fb
 
             void setVerticalAlignment( u8 gva ) override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         return state->setVerticalAlignment( gva );
                     }
@@ -280,9 +280,9 @@ namespace fb
 
             u8 getVerticalAlignment() const override
             {
-                if(auto stateContext = getStateObject())
+                if( auto stateContext = getStateObject() )
                 {
-                    if(auto state = stateContext->template getStateByType<OverlayElementState>())
+                    if( auto state = stateContext->template getStateByType<OverlayElementState>() )
                     {
                         return state->getVerticalAlignment();
                     }
@@ -323,9 +323,9 @@ namespace fb
 
             void addChild( SmartPtr<IOverlayElement> element ) override
             {
-                if(element)
+                if( element )
                 {
-                    if(auto p = getChildrenPtr())
+                    if( auto p = getChildrenPtr() )
                     {
                         auto &children = *p;
                         children.push_back( element );
@@ -335,13 +335,13 @@ namespace fb
 
             void removeChild( SmartPtr<IOverlayElement> element ) override
             {
-                if(element)
+                if( element )
                 {
-                    if(auto p = getChildrenPtr())
+                    if( auto p = getChildrenPtr() )
                     {
                         auto children = *p;
                         auto it = std::find( children.begin(), children.end(), element );
-                        if(it != children.end())
+                        if( it != children.end() )
                         {
                             children.erase( it );
                         }
@@ -356,7 +356,7 @@ namespace fb
 
             Array<SmartPtr<IOverlayElement>> getChildren() const override
             {
-                if(auto p = getChildrenPtr())
+                if( auto p = getChildrenPtr() )
                 {
                     auto &children = *p;
                     return Array<SmartPtr<IOverlayElement>>( children.begin(), children.end() );
@@ -368,12 +368,12 @@ namespace fb
             /** @copydoc IObject::isValid */
             bool isValid() const override
             {
-                if(auto parent = getParent())
+                if( auto parent = getParent() )
                 {
                     auto children = getChildren();
-                    for(auto child : children)
+                    for( auto child : children )
                     {
-                        if(!child->isValid())
+                        if( !child->isValid() )
                         {
                             return false;
                         }
@@ -503,7 +503,7 @@ namespace fb
         };
 
         FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, COverlayElement, T, T );
-    } // end namespace render
-}     // end namespace fb
+    }  // end namespace render
+}  // end namespace fb
 
 #endif

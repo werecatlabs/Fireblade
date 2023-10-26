@@ -105,25 +105,11 @@ namespace fb
 
         SmartPtr<Properties> CollisionBox::getProperties() const
         {
-            // auto properties = fb::make_ptr<Properties>();
-
-            // properties->setProperty("extents", m_extents);
-
-            // return properties;
-
             return Collision::getProperties();
         }
 
         void CollisionBox::setProperties( SmartPtr<Properties> properties )
         {
-            // Vector3F extents;
-            // properties->getPropertyValue("extents", extents);
-
-            // if (!MathUtilF::equals(extents, m_extents))
-            //{
-            //	setExtents(extents);
-            // }
-
             Collision::setProperties( properties );
         }
 

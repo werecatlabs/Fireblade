@@ -28,6 +28,7 @@
             auto name = typeInfo.name(); \
             auto iTypeInfo = typeManager->getNewTypeId( name, 0 ); \
             setTypeInfo( iTypeInfo ); \
+            typeManager->setLabel( iTypeInfo, #TYPE ); \
         } \
     } \
 \
@@ -65,8 +66,9 @@
             auto baseName = baseTypeInfo.name(); \
             const auto &typeInfo = typeid( TYPE ); \
             auto name = typeInfo.name(); \
-            auto _typeInfo = typeManager->getNewTypeIdFromName( name, baseName ); \
-            setTypeInfo( _typeInfo ); \
+            auto iTypeInfo = typeManager->getNewTypeIdFromName( name, baseName ); \
+            setTypeInfo( iTypeInfo ); \
+            typeManager->setLabel( iTypeInfo, #TYPE ); \
         } \
     } \
 \
@@ -107,8 +109,9 @@
             auto baseName = baseTypeInfo.name(); \
             const auto &typeInfo = typeid( TEMPLATE_CLASS ); \
             auto name = typeInfo.name(); \
-            auto classTypeInfo = typeManager->getNewTypeIdFromName( name, baseName ); \
-            setTypeInfo( classTypeInfo ); \
+            auto iTypeInfo = typeManager->getNewTypeIdFromName( name, baseName ); \
+            setTypeInfo( iTypeInfo ); \
+            typeManager->setLabel( iTypeInfo, #TEMPLATE_CLASS ); \
         } \
     } \
 \
@@ -153,8 +156,9 @@
             auto baseName = baseTypeInfo.name(); \
             const auto &typeInfo = typeid( TEMPLATE_CLASS<T, U> ); \
             auto name = typeInfo.name(); \
-            auto classTypeInfo = typeManager->getNewTypeIdFromName( name, baseName ); \
-            setTypeInfo( classTypeInfo ); \
+            auto iTypeInfo = typeManager->getNewTypeIdFromName( name, baseName ); \
+            setTypeInfo( iTypeInfo ); \
+            typeManager->setLabel( iTypeInfo, #TEMPLATE_CLASS ); \
         } \
     } \
 \
@@ -196,8 +200,9 @@
             auto baseName = baseTypeInfo.name(); \
             const auto &typeInfo = typeid( TEMPLATE_CLASS<TYPE> ); \
             auto name = typeInfo.name(); \
-            auto _typeInfo = typeManager->getNewTypeIdFromName( name, baseName ); \
-            setTypeInfo( _typeInfo ); \
+            auto iTypeInfo = typeManager->getNewTypeIdFromName( name, baseName ); \
+            setTypeInfo( iTypeInfo ); \
+            typeManager->setLabel( iTypeInfo, #TEMPLATE_CLASS ); \
         } \
     } \
 \

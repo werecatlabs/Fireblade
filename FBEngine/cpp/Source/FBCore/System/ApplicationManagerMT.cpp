@@ -79,7 +79,7 @@ namespace fb
             {
                 setLoadingState( LoadingState::Loading );
 
-                auto numTasks = (size_t)Thread::Task::Count;
+                auto numTasks = static_cast<size_t>(Thread::Task::Count);
                 auto fsmManagers = fb::make_shared<Array<SmartPtr<IFSMManager>>>();
                 fsmManagers->resize( numTasks );
                 m_fsmManagers = fsmManagers;
@@ -123,7 +123,7 @@ namespace fb
 
                 setLoadingState( LoadingState::Loaded );
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -134,21 +134,21 @@ namespace fb
             try
             {
                 const auto &loadingState = getLoadingState();
-                if( loadingState != LoadingState::Unloaded )
+                if(loadingState != LoadingState::Unloaded)
                 {
                     setLoadingState( LoadingState::Unloading );
 
                     setApplication( nullptr );
 
-                    if( auto taskManager = getTaskManager() )
+                    if(auto taskManager = getTaskManager())
                     {
                         taskManager->unload( nullptr );
                         setTaskManager( nullptr );
                     }
 
-                    if( auto stateContext = getStateObject() )
+                    if(auto stateContext = getStateObject())
                     {
-                        if( auto stateManager = getStateManager() )
+                        if(auto stateManager = getStateManager())
                         {
                             stateManager->removeStateObject( stateContext );
                         }
@@ -156,174 +156,174 @@ namespace fb
                         setStateObject( nullptr );
                     }
 
-                    if( auto meshLoader = getMeshLoader() )
+                    if(auto meshLoader = getMeshLoader())
                     {
                         meshLoader->unload( nullptr );
                         setMeshLoader( nullptr );
                     }
 
-                    if( auto scriptManager = getScriptManager() )
+                    if(auto scriptManager = getScriptManager())
                     {
                         scriptManager->unload( nullptr );
                         setScriptManager( nullptr );
                     }
 
-                    if( auto window = getWindow() )
+                    if(auto window = getWindow())
                     {
                         setWindow( nullptr );
                     }
 
-                    if( auto window = getSceneRenderWindow() )
+                    if(auto window = getSceneRenderWindow())
                     {
                         setSceneRenderWindow( nullptr );
                     }
 
-                    if( auto input = getInput() )
+                    if(auto input = getInput())
                     {
                         input->unload( nullptr );
                         setInput( nullptr );
                     }
 
-                    if( auto inputDeviceManager = getInputDeviceManager() )
+                    if(auto inputDeviceManager = getInputDeviceManager())
                     {
                         inputDeviceManager->unload( nullptr );
                         setInputDeviceManager( nullptr );
                     }
 
-                    if( auto selectionManager = getSelectionManager() )
+                    if(auto selectionManager = getSelectionManager())
                     {
                         selectionManager->unload( nullptr );
                         setSelectionManager( nullptr );
                     }
 
-                    if( auto prefabManager = getPrefabManager() )
+                    if(auto prefabManager = getPrefabManager())
                     {
                         prefabManager->unload( nullptr );
                         setPrefabManager( nullptr );
                     }
 
-                    if( auto sceneManager = getSceneManager() )
+                    if(auto sceneManager = getSceneManager())
                     {
                         sceneManager->unload( nullptr );
                         setSceneManager( nullptr );
                     }
 
-                    if( auto database = getDatabase() )
+                    if(auto database = getDatabase())
                     {
                         database->unload( nullptr );
                         setDatabase( nullptr );
                     }
 
-                    if( auto proceduralManager = getProceduralManager() )
+                    if(auto proceduralManager = getProceduralManager())
                     {
                         proceduralManager->unload( nullptr );
                         setProceduralManager( nullptr );
                     }
 
-                    if( auto systemManager = getSystemSettings() )
+                    if(auto systemManager = getSystemSettings())
                     {
                         systemManager->unload( nullptr );
                         setSystemSettings( nullptr );
                     }
 
-                    if( auto commandManager = getCommandManager() )
+                    if(auto commandManager = getCommandManager())
                     {
                         commandManager->unload( nullptr );
                         setCommandManager( nullptr );
                     }
 
-                    if( auto resourceDatabase = getResourceDatabase() )
+                    if(auto resourceDatabase = getResourceDatabase())
                     {
                         resourceDatabase->unload( nullptr );
                         setResourceDatabase( nullptr );
                     }
 
-                    if( auto resourceManager = getResourceManager() )
+                    if(auto resourceManager = getResourceManager())
                     {
                         resourceManager->unload( nullptr );
                         setResourceManager( nullptr );
                     }
 
-                    if( auto processManager = getProcessManager() )
+                    if(auto processManager = getProcessManager())
                     {
                         processManager->unload( nullptr );
                         setProcessManager( nullptr );
                     }
 
-                    if( auto meshLoader = getMeshLoader() )
+                    if(auto meshLoader = getMeshLoader())
                     {
                         meshLoader->unload( nullptr );
                         meshLoader = nullptr;
                     }
 
-                    if( auto meshManager = getMeshManager() )
+                    if(auto meshManager = getMeshManager())
                     {
                         meshManager->unload( nullptr );
                         setMeshManager( nullptr );
                     }
 
-                    if( auto ui = getUI() )
+                    if(auto ui = getUI())
                     {
                         ui->unload( nullptr );
                         setUI( nullptr );
                     }
 
-                    if( auto ui = getRenderUI() )
+                    if(auto ui = getRenderUI())
                     {
                         ui->unload( nullptr );
                         setRenderUI( nullptr );
                     }
 
-                    if( auto vehicleManager = getVehicleManager() )
+                    if(auto vehicleManager = getVehicleManager())
                     {
                         vehicleManager->unload( nullptr );
                         setVehicleManager( nullptr );
                     }
 
-                    if( auto physicsManager2 = getPhysicsManager2D() )
+                    if(auto physicsManager2 = getPhysicsManager2D())
                     {
                         physicsManager2->unload( nullptr );
                         setPhysicsManager2D( nullptr );
                     }
 
-                    if( auto physicsScene = getPhysicsScene() )
+                    if(auto physicsScene = getPhysicsScene())
                     {
                         physicsScene->clear();
                         physicsScene->unload( nullptr );
                         setPhysicsScene( nullptr );
                     }
 
-                    if( auto controlsScene = getControlsScene() )
+                    if(auto controlsScene = getControlsScene())
                     {
                         controlsScene->unload( nullptr );
                         setControlsScene( nullptr );
                     }
 
-                    if( auto raycastScene = getRaycastScene() )
+                    if(auto raycastScene = getRaycastScene())
                     {
                         raycastScene->unload( nullptr );
                         setRaycastScene( nullptr );
                     }
 
-                    if( auto objectsScene = getObjectsScene() )
+                    if(auto objectsScene = getObjectsScene())
                     {
                         objectsScene->unload( nullptr );
                         setObjectsScene( nullptr );
                     }
 
-                    if( auto physicsManager = getPhysicsManager() )
+                    if(auto physicsManager = getPhysicsManager())
                     {
                         physicsManager->unload( nullptr );
                         setPhysicsManager( nullptr );
                     }
 
-                    if( auto fileSystem = getFileSystem() )
+                    if(auto fileSystem = getFileSystem())
                     {
                         fileSystem->unload( nullptr );
                         setFileSystem( nullptr );
                     }
 
-                    if( auto graphicsSystem = getGraphicsSystem() )
+                    if(auto graphicsSystem = getGraphicsSystem())
                     {
                         graphicsSystem->unload( nullptr );
                         setGraphicsSystem( nullptr );
@@ -331,44 +331,44 @@ namespace fb
 
                     ITransformRoot::setInstance( nullptr );
 
-                    if( auto threadPool = getThreadPool() )
+                    if(auto threadPool = getThreadPool())
                     {
                         threadPool->unload( nullptr );
                         setThreadPool( nullptr );
                     }
 
-                    if( auto logManager = getLogManager() )
+                    if(auto logManager = getLogManager())
                     {
                         logManager->unload( nullptr );
                         setLogManager( nullptr );
                     }
 
-                    if( auto timer = getTimer() )
+                    if(auto timer = getTimer())
                     {
                         timer->unload( nullptr );
                         setTimer( nullptr );
                     }
 
-                    if( auto stateManager = getStateManager() )
+                    if(auto stateManager = getStateManager())
                     {
                         stateManager->unload( nullptr );
                         setStateManager( nullptr );
                     }
 
-                    for( auto plugin : m_plugins )
+                    for(auto plugin : m_plugins)
                     {
                         plugin->unload( nullptr );
                     }
 
                     m_plugins.clear();
 
-                    if( auto fsmManager = getFsmManager() )
+                    if(auto fsmManager = getFsmManager())
                     {
                         fsmManager->unload( nullptr );
                         setFsmManager( nullptr );
                     }
 
-                    if( auto factoryManager = getFactoryManager() )
+                    if(auto factoryManager = getFactoryManager())
                     {
                         factoryManager->unload( nullptr );
                         setFactoryManager( nullptr );
@@ -377,7 +377,7 @@ namespace fb
                     setLoadingState( LoadingState::Unloaded );
                 }
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -470,10 +470,10 @@ namespace fb
 
         SmartPtr<IFSMManager> ApplicationManagerMT::getFsmManagerByTask( Thread::Task task ) const
         {
-            if( auto p = getFSMManagersPtr() )
+            if(auto p = getFSMManagersPtr())
             {
                 auto &fsmManagers = *p;
-                return fsmManagers[(u32)task];
+                return fsmManagers[static_cast<u32>(task)];
             }
 
             return nullptr;
@@ -483,21 +483,21 @@ namespace fb
                                                         SmartPtr<IFSMManager> fsmManager )
         {
             auto p = getFSMManagersPtr();
-            if( !p )
+            if(!p)
             {
                 p = fb::make_shared<Array<SmartPtr<IFSMManager>>>();
 
-                auto numTasks = (size_t)Thread::Task::Count;
+                auto numTasks = static_cast<size_t>(Thread::Task::Count);
                 p->resize( numTasks );
 
                 setFSMManagersPtr( p );
             }
 
-            if( p )
+            if(p)
             {
                 auto &fsmManagers = *p;
 
-                auto iTask = (u32)task;
+                auto iTask = static_cast<u32>(task);
                 fsmManagers[iTask] = fsmManager;
             }
         }
@@ -605,7 +605,7 @@ namespace fb
 
         bool ApplicationManagerMT::hasTasks() const
         {
-            if( const auto taskManager = getTaskManager() )
+            if(const auto taskManager = getTaskManager())
             {
                 return taskManager->getNumTasks() > 0;
             }
@@ -1079,15 +1079,15 @@ namespace fb
 
         Thread::Task ApplicationManagerMT::getApplicationTask() const
         {
-            if( auto taskManager = getTaskManager() )
+            if(auto taskManager = getTaskManager())
             {
-                if( auto task = taskManager->getTask( Thread::Task::Application ) )
+                if(auto task = taskManager->getTask( Thread::Task::Application ))
                 {
-                    if( task->isExecuting() )
+                    if(task->isExecuting())
                     {
                         return Thread::Task::Application;
                     }
-                    if( task->isPrimary() )
+                    if(task->isPrimary())
                     {
                         return Thread::Task::Primary;
                     }
@@ -1126,11 +1126,11 @@ namespace fb
         {
             FB_ASSERT( isValid() );
 
-            if( auto sceneManager = getSceneManager() )
+            if(auto sceneManager = getSceneManager())
             {
                 FB_ASSERT( sceneManager->isValid() );
 
-                if( auto scene = sceneManager->getCurrentScene() )
+                if(auto scene = sceneManager->getCurrentScene())
                 {
                     FB_ASSERT( scene->isValid() );
                     return scene->getActors();
@@ -1140,7 +1140,7 @@ namespace fb
             return Array<SmartPtr<scene::IActor>>();
         }
 
-        fb::SmartPtr<fb::IPluginManager> ApplicationManagerMT::getPluginManager() const
+        SmartPtr<IPluginManager> ApplicationManagerMT::getPluginManager() const
         {
             return m_pluginManager;
         }
@@ -1158,7 +1158,7 @@ namespace fb
 
             RecursiveMutex::ScopedLock lock( m_mutex );
 
-            if( plugin )
+            if(plugin)
             {
                 plugin->load( nullptr );
                 m_plugins.push_back( plugin );
@@ -1209,12 +1209,12 @@ namespace fb
             const auto &typeManager = TypeManager::instance();
 
             auto actors = getActors();
-            for( auto &actor : actors )
+            for(auto &actor : actors)
             {
                 auto components = actor->getComponents();
-                for( auto &component : components )
+                for(auto &component : components)
                 {
-                    if( typeManager->isDerived( typeId, component->getTypeInfo() ) )
+                    if(typeManager->isDerived( typeId, component->getTypeInfo() ))
                     {
                         return component;
                     }
@@ -1230,7 +1230,7 @@ namespace fb
                                                       SmartPtr<ISharedObject> object,
                                                       SmartPtr<IEvent> event )
         {
-            if( auto stateContext = getStateObject() )
+            if(auto stateContext = getStateObject())
             {
                 return stateContext->triggerEvent( eventType, eventValue, arguments, sender, object,
                                                    event );
@@ -1259,6 +1259,5 @@ namespace fb
         {
             m_fsmManagers = fsmManagers;
         }
-
-    }  // namespace core
-}  // namespace fb
+    } // namespace core
+}     // namespace fb

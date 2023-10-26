@@ -84,7 +84,6 @@ namespace fb
                std::isfinite( val.Z() );
     }
 
-    //---------------------------------------------
     template <class T>
     Quaternion<T> MathUtil<T>::getRotationTo( const Vector3<T> &src, const Vector3<T> &dest,
                                               const Vector3<T> &fallbackAxis /*= Vector3<T>::ZERO*/ )
@@ -137,7 +136,6 @@ namespace fb
         return q;
     }
 
-    //---------------------------------------------
     template <class T>
     Quaternion<T> MathUtil<T>::getOrientationFromDirection( const Vector3<T> &vec,
                                                             const Vector3<T> &localDirectionVector,
@@ -213,14 +211,12 @@ namespace fb
         return targetOrientation;
     }
 
-    //---------------------------------------------
     template <class T>
     Vector3<T> MathUtil<T>::reflect( const Vector3<T> &vec, const Vector3<T> &normal )
     {
         return vec - T( 2.0 ) * normal * normal.dotProduct( vec );
     }
 
-    //---------------------------------------------
     template <class T>
     Vector3<T> MathUtil<T>::toSpherical( const Vector3<T> &cartesian )
     {
@@ -242,7 +238,6 @@ namespace fb
                            static_cast<T>( spherical.get<1>() ) );
     }
 
-    //---------------------------------------------
     template <class T>
     Vector3<T> MathUtil<T>::toCartesian( const Vector3<T> &spherical )
     {
@@ -265,7 +260,6 @@ namespace fb
                            static_cast<T>( cartesian.get<2>() ) );
     }
 
-    //---------------------------------------------
     template <class T>
     Vector3<T> MathUtil<T>::toPosition( const Vector3<T> &rotation, Vector3<T> &up, Vector3<T> &pitchVec,
                                         Vector3<T> &yawVec )
@@ -283,7 +277,6 @@ namespace fb
         return ( ( yaw * pitch ) * -Vector3<T>::UNIT_Z ) * rotation.X();
     }
 
-    //---------------------------------------------
     template <class T>
     Vector3<T> MathUtil<T>::toRotation( const Vector3<T> &cartesian, const Vector3<T> &pitchVec,
                                         const Vector3<T> &yawVec )
@@ -295,7 +288,6 @@ namespace fb
         return spherical;
     }
 
-    //---------------------------------------------
     template <class T>
     T MathUtil<T>::average( const Array<T> &v )
     {
@@ -308,7 +300,6 @@ namespace fb
         return sum / static_cast<T>( v.size() );
     }
 
-    //---------------------------------------------
     template <class T>
     T MathUtil<T>::average( const std::deque<T> &v )
     {
@@ -321,7 +312,6 @@ namespace fb
         return sum / static_cast<T>( v.size() );
     }
 
-    //---------------------------------------------
     template <class T>
     T MathUtil<T>::latlong_distance( const Vector2<T> &lat_long_1, const Vector2<T> &lat_long_2 )
     {
@@ -344,7 +334,6 @@ namespace fb
         return distance * T( 1000.0 );
     }
 
-    //---------------------------------------------
     template <class T>
     void MathUtil<T>::swap( Vector3<T> &a, Vector3<T> &b )
     {
@@ -353,7 +342,6 @@ namespace fb
         b = temp;
     }
 
-    //---------------------------------------------
     template <class T>
     Vector3<T> MathUtil<T>::round( const Vector3<T> &v, s32 decimals )
     {
@@ -362,7 +350,6 @@ namespace fb
                            Math<T>::round( v.Z() * val ) / val );
     }
 
-    //---------------------------------------------
     template <class T>
     void MathUtil<T>::repair( Vector3<T> &Min, Vector3<T> &Max )
     {
@@ -390,7 +377,6 @@ namespace fb
         }
     }
 
-    //---------------------------------------------
     template <class T>
     template <class IT_TYPE>
     void MathUtil<T>::lowest( IT_TYPE begin, IT_TYPE end, T &val )
@@ -403,7 +389,6 @@ namespace fb
         }
     }
 
-    //---------------------------------------------
     template <class T>
     template <class IT_TYPE>
     void MathUtil<T>::highest( IT_TYPE begin, IT_TYPE end, T &val )
@@ -416,14 +401,12 @@ namespace fb
         }
     }
 
-    //---------------------------------------------
     template <class T>
     Transform3<T> MathUtil<T>::transformFromPlaneEquation( const Plane3<T> plane )
     {
         return Transform3<T>();
     }
 
-    //---------------------------------------------
     template <class T>
     std::pair<bool, T> MathUtil<T>::intersects( const Ray3<T> &ray, const AABB3<T> &box )
     {

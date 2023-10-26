@@ -40,7 +40,7 @@ namespace fb
              * @param end The end position of the line in 3D space.
              * @param colour The color of the line.
              */
-            virtual void drawLine( s32 id, const Vector3<real_Num> &start, const Vector3<real_Num> &end,
+            virtual SmartPtr<IDebugLine> drawLine( s32 id, const Vector3<real_Num> &start, const Vector3<real_Num> &end,
                                    u32 colour ) = 0;
 
             /**

@@ -182,6 +182,11 @@ namespace fb
             /** @copydoc IComponent::updateVisibility */
             void updateVisibility() override;
 
+            /**
+             * @brief Updates the materials of the UI component.
+             */
+            virtual void updateMaterials(){}
+
             /** @copydoc IComponent::setState */
             void setState( State state ) override;
 

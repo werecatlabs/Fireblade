@@ -71,18 +71,7 @@ namespace fb
         {
             m_mesh = mesh;
 
-            auto ext = String( "" );
-
-            auto useBinaryMeshes = true;
-            if( useBinaryMeshes )
-            {
-                ext = String( ".fbmeshbin" );
-            }
-            else
-            {
-                ext = String( ".fbmesh" );
-            }
-
+            static const auto ext = String( ".fbmeshbin" );
             auto meshPath = m_mesh->getName() + ext;
             setMeshPath( meshPath );
         }
@@ -99,7 +88,7 @@ namespace fb
 
         SmartPtr<Properties> Mesh::getProperties() const
         {
-            auto properties = fb::make_ptr<Properties>();
+            auto properties = Component::getProperties();
 
             static const auto meshPathStr = String( "Mesh Path" );
             static const auto meshStr = String( "Mesh Resource" );
@@ -118,11 +107,10 @@ namespace fb
 
         void Mesh::setProperties( SmartPtr<Properties> properties )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
+            Component::setProperties( properties );
 
+            auto applicationManager = core::IApplicationManager::instance();
             auto resourceDatabase = applicationManager->getResourceDatabase();
-            FB_ASSERT( resourceDatabase );
 
             static const auto meshPathStr = String( "Mesh Path" );
             static const auto meshStr = String( "Mesh Resource" );
@@ -133,32 +121,21 @@ namespace fb
             auto meshResource = getMeshResource();
             properties->getPropertyValue( meshStr, meshResource );
 
-            if( !meshResource )
+            if( meshResource != getMeshResource() )
             {
+                setMeshResource( meshResource );
+            }
+
+            if( meshPath != getMeshPath() )
+            {
+                meshPath = StringUtil::cleanupPath( meshPath );
+                setMeshPath( meshPath );
+
                 if( !StringUtil::isNullOrEmpty( meshPath ) )
                 {
                     auto meshResourceResult =
                         resourceDatabase->createOrRetrieveByType<IMeshResource>( meshPath );
-                    meshResource = meshResourceResult.first;
-                }
-            }
-
-            setMeshResource( meshResource );
-
-            if( meshPath != getMeshPath() )
-            {
-                auto ext = Path::getFileExtension( meshPath );
-
-                if( ext == ".mesh" )
-                {
-                    meshPath = StringUtil::replaceAll( meshPath, ".mesh", ".fbmeshbin" );
-                    meshPath = StringUtil::cleanupPath( meshPath );
-                    setMeshPath( meshPath );
-                }
-                else
-                {
-                    meshPath = StringUtil::cleanupPath( meshPath );
-                    setMeshPath( meshPath );
+                    setMeshResource( meshResourceResult.first );
                 }
             }
         }
@@ -170,7 +147,9 @@ namespace fb
             switch( eventType )
             {
             case IFSM::Event::Change:
-                break;
+            {
+            }
+            break;
             case IFSM::Event::Enter:
             {
                 auto eState = static_cast<State>( state );
@@ -206,13 +185,21 @@ namespace fb
             }
             break;
             case IFSM::Event::Pending:
-                break;
+            {
+            }
+            break;
             case IFSM::Event::Complete:
-                break;
+            {
+            }
+            break;
             case IFSM::Event::NewState:
-                break;
+            {
+            }
+            break;
             case IFSM::Event::WaitForChange:
-                break;
+            {
+            }
+            break;
             default:
             {
             }

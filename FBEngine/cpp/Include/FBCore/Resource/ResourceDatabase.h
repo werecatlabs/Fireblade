@@ -48,7 +48,7 @@ namespace fb
         SmartPtr<IResource> loadResource( const String &path ) override;
         SmartPtr<IResource> loadResourceById( const String &uuid ) override;
 
-        SmartPtr<IResource> createOrRetrieveResource( SmartPtr<IDatabaseQuery> query );
+        SmartPtr<IResource> createOrRetrieveResource( SmartPtr<IDatabaseQuery> query, bool bLoadResource );
 
         SmartPtr<IDatabaseManager> getDatabaseManager() const override;
         void setDatabaseManager( SmartPtr<IDatabaseManager> databaseManager ) override;

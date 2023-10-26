@@ -74,6 +74,12 @@ namespace fb
          */
         ~ISharedObject() override;
 
+        virtual void preUpdate() override;
+
+        virtual void update() override;
+
+        virtual void postUpdate() override;
+
         /**
          * Adds a weak reference to the shared object and increments the reference counter.
          *

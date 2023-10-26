@@ -2,7 +2,6 @@
 #define __AsyncOperation_h__
 
 #include <FBCore/Interface/System/IAsyncOperation.h>
-
 #include <FBCore/Memory/ObjectYield.h>
 #include <FBCore/Core/ConcurrentArray.h>
 

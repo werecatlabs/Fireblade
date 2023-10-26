@@ -45,7 +45,7 @@ namespace fb
     void FBOgreDataStream::seek( size_t pos )
     {
         FB_ASSERT( m_stream );
-        m_stream->seek( pos );
+        m_stream->seek( (long)pos );
     }
 
     size_t FBOgreDataStream::tell( void ) const

@@ -718,7 +718,7 @@ namespace fb
                         auto &children = *p;
                         for( auto child : children )
                         {
-                            child->setVisible( visible );
+                            child->setVisible( visible, cacade );
                         }
                     }
                 }
@@ -1275,78 +1275,14 @@ namespace fb
             }
         }
 
-        //
-        // Vector3<real_Num> CActor::getPosition() const
-        //{
-        //	return Vector3<real_Num>::zero();
-        // }
-
-        //
-        // void CActor::setPosition(const Vector3<real_Num>& val)
-        //{
-
-        //}
-
-        //
-        // Quaternion<real_Num> CActor::getOrientation() const
-        //{
-        //	return Quaternion<real_Num>::identity();
-        // }
-
-        //
-        // void CActor::setOrientation(const Quaternion<real_Num>& val)
-        //{
-
-        //}
-
-        //
-        // SaracenComponentData CActor::getComponentDataAsFromSceneNode(const SmartPtr<IStateNode>&
-        // sceneNode)
-        //{
-        //	SaracenComponentData componentData;
-
-        //	if (sceneNode)
-        //	{
-        //		componentData.hashName = sceneNode->getHashName();
-
-        //		Vector3<real_Num> position = sceneNode->_getDerivedPosition();
-        //		Quaternion<real_Num> orientation = sceneNode->_getDerivedOrientation();
-
-        //		componentData.worldTransform.position.x = position.X();
-        //		componentData.worldTransform.position.y = position.Y();
-        //		componentData.worldTransform.position.z = position.Z();
-        //		componentData.worldTransform.position.w = 0.0f;
-
-        //		componentData.worldTransform.orientation.x = orientation.X();
-        //		componentData.worldTransform.orientation.y = orientation.Y();
-        //		componentData.worldTransform.orientation.z = orientation.Z();
-        //		componentData.worldTransform.orientation.w = orientation.W();
-
-        //		Vector3<real_Num> localPosition = sceneNode->getPosition();
-        //		Quaternion<real_Num> localOrientation = sceneNode->getOrientation();
-
-        //		componentData.localTransform.position.x = localPosition.X();
-        //		componentData.localTransform.position.y = localPosition.Y();
-        //		componentData.localTransform.position.z = localPosition.Z();
-        //		componentData.localTransform.position.w = 0.0f;
-
-        //		componentData.localTransform.orientation.x = localOrientation.X();
-        //		componentData.localTransform.orientation.y = localOrientation.Y();
-        //		componentData.localTransform.orientation.z = localOrientation.Z();
-        //		componentData.localTransform.orientation.w = localOrientation.W();
-        //	}
-
-        //	return componentData;
-        //}
-
         bool Actor::getPerpetual() const
         {
-            return m_destroyOnLoad;
+            return m_perpetual;
         }
 
-        void Actor::setPerpetual( bool destroyOnLoad )
+        void Actor::setPerpetual( bool perpetual )
         {
-            m_destroyOnLoad = destroyOnLoad;
+            m_perpetual = perpetual;
         }
 
         bool Actor::getAutoUpdateComponents() const

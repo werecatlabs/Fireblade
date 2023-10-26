@@ -64,7 +64,7 @@ namespace fb
         AtomicWeakPtr<IStateContext> m_stateObject;
         Atomic<Thread::Task> m_taskId = Thread::Task::Primary;
         atomic_f64 m_time = 0.0;
-        atomic_bool m_dirty = false;
+        atomic_s32 m_dirty = 0;
         atomic_bool m_isRegistered = false;
     };
 }  // end namespace fb

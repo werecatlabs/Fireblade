@@ -5,6 +5,8 @@
 
 namespace fb
 {
+    FB_CLASS_REGISTER_DERIVED( fb, RotateManipulator, ISharedObject );
+
     const f32 COMPONENT_RADIUS = 0.5f;
     const f32 TRANSLATE_REDUCTION_COEF = 0.02f;
     const f32 SCALE_COEF = 0.2f;
@@ -44,7 +46,7 @@ namespace fb
                 m_node.resize( 6 );
                 m_mesh.resize( 6 );
 
-                createRenderObjects();
+                //createRenderObjects();
                 setLoadingState( LoadingState::Loaded );
             }
         }
@@ -194,7 +196,7 @@ namespace fb
             m_sceneNode->setScale( scale );
         }
 
-        m_sceneNode->_updateBounds();
+        m_sceneNode->updateBounds();
         auto box = m_sceneNode->getWorldAABB();
 
         // select the material

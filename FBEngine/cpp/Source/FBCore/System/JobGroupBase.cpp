@@ -7,7 +7,7 @@ namespace fb
     JobGroupBase::JobGroupBase()
     {
         m_isFinished = false;
-        setState( JobState::Ready );
+        setState( State::Ready );
     }
 
     JobGroupBase::~JobGroupBase()
@@ -27,12 +27,12 @@ namespace fb
     {
     }
 
-    IJob::JobState JobGroupBase::getState() const
+    IJob::State JobGroupBase::getState() const
     {
         return m_state;
     }
 
-    void JobGroupBase::setState( IJob::JobState state )
+    void JobGroupBase::setState( IJob::State state )
     {
         m_state = state;
     }
@@ -70,11 +70,6 @@ namespace fb
     bool JobGroupBase::isFinished() const
     {
         return m_isFinished;
-    }
-
-    void JobGroupBase::setFinished( bool finished )
-    {
-        m_isFinished = finished;
     }
 
     bool JobGroupBase::wait()

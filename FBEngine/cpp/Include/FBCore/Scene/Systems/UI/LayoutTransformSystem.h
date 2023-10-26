@@ -1,7 +1,6 @@
 #ifndef CanvasTransformSystem_h__
 #define CanvasTransformSystem_h__
 
-#include <FBCore/Interface/Scene/ISystem.h>
 #include <FBCore/Scene/Systems/ComponentSystem.h>
 #include <FBCore/Scene/Components/UI/LayoutTransform.h>
 

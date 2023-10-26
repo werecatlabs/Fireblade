@@ -55,6 +55,8 @@ namespace fb
                     {
                         pass->reload( data );
                     }
+
+                    setPassesPtr( nullptr );
                 }
             }
             catch( std::exception &e )
@@ -79,6 +81,8 @@ namespace fb
                             pass->unload( nullptr );
                         }
                     }
+
+                    setPassesPtr( nullptr );
                 }
 
                 setLoadingState( LoadingState::Unloaded );

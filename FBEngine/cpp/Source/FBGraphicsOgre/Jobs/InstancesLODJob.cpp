@@ -16,7 +16,7 @@ namespace fb
             m_instances = instances;
             m_viewport = viewport;
 
-            setState( IJob::JobState::Ready );
+            //setState( IJob::State::Ready );
         }
 
         
@@ -27,10 +27,10 @@ namespace fb
         
         void InstancesLODJob::update()
         {
-            if( this->getState() != IJob::JobState::Executing )
+            if( this->getState() != IJob::State::Executing )
             {
                 m_index = 0;
-                setState( IJob::JobState::Executing );
+                setState( IJob::State::Executing );
 
                 numInstancesLess150 = 0;
                 numInstancesLess300 = 0;
@@ -48,7 +48,7 @@ namespace fb
 
                     if( m_instances.size() <= m_index )
                     {
-                        setState( IJob::JobState::Finish );
+                        setState( IJob::State::Finish );
                         break;
                     }
 

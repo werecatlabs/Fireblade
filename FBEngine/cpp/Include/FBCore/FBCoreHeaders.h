@@ -98,7 +98,6 @@
 #include <FBCore/Interface/FSM/IFSMManager.h>
 #include <FBCore/Interface/FSM/IFSMListener.h>
 
-
 // graphics
 #include <FBCore/Interface/Graphics/IAnimationController.h>
 #include <FBCore/Interface/Graphics/IAnimationStateController.h>
@@ -407,7 +406,6 @@
 #include <FBCore/Interface/Vehicle/IVehicleController.h>
 #include <FBCore/Interface/Vehicle/IVehicleComponent.h>
 #include <FBCore/Interface/Vehicle/IVehicleManager.h>
-#include <FBCore/Interface/Vehicle/ICarController.h>
 #include <FBCore/Interface/Vehicle/IDifferential.h>
 #include <FBCore/Interface/Vehicle/IVehiclePowerUnit.h>
 #include <FBCore/Interface/Vehicle/IGearBox.h>
@@ -415,13 +413,12 @@
 #include <FBCore/Interface/Vehicle/IBatteryPack.h>
 #include <FBCore/Interface/Vehicle/IESController.h>
 #include <FBCore/Interface/Vehicle/IVehicleBody.h>
-#include <FBCore/Interface/Vehicle/ITruckController.h>
 
 // plugin
 #include <FBCore/Interface/System/IPluginEvent.h>
 #include <FBCore/Interface/System/IPluginInterface.h>
 
-#include <FBCore/IO/CFileSystem.h>
+#include <FBCore/IO/FileSystem.h>
 #include <FBCore/IO/ZipUtil.h>
 
 #include <FBCore/Jobs/CameraManagerReset.h>
@@ -446,23 +443,22 @@
 #include <FBCore/Manipulators/TranslateManipulator.h>
 #include <FBCore/Manipulators/RotateManipulator.h>
 
-#include "FBCore/Mesh/Mesh.h"
-#include "FBCore/Mesh/VertexBuffer.h"
-#include "FBCore/Mesh/IndexBuffer.h"
-#include "FBCore/Mesh/SubMesh.h"
+#include <FBCore/Mesh/Mesh.h>
+#include <FBCore/Mesh/VertexBuffer.h>
+#include <FBCore/Mesh/IndexBuffer.h>
+#include <FBCore/Mesh/SubMesh.h>
 #include <FBCore/Mesh/VertexDeclaration.h>
-
-#include "FBCore/Mesh/MeshResource.h"
-#include "FBCore/Mesh/IndexBuffer.h"
-#include "FBCore/Mesh/VertexBuffer.h"
-#include "FBCore/Mesh/SubMesh.h"
-#include "FBCore/Mesh/Mesh.h"
-#include "FBCore/Mesh/MeshUtil.h"
-#include "FBCore/Mesh/MeshSerializer.h"
-#include "FBCore/Mesh/MeshGenerator.h"
-#include "FBCore/Mesh/CollisionMesh.h"
-#include "FBCore/Mesh/CollisionSubMesh.h"
-#include "FBCore/Mesh/VertexDeclaration.h"
+#include <FBCore/Mesh/MeshResource.h>
+#include <FBCore/Mesh/IndexBuffer.h>
+#include <FBCore/Mesh/VertexBuffer.h>
+#include <FBCore/Mesh/SubMesh.h>
+#include <FBCore/Mesh/Mesh.h>
+#include <FBCore/Mesh/MeshUtil.h>
+#include <FBCore/Mesh/MeshSerializer.h>
+#include <FBCore/Mesh/MeshGenerator.h>
+#include <FBCore/Mesh/CollisionMesh.h>
+#include <FBCore/Mesh/CollisionSubMesh.h>
+#include <FBCore/Mesh/VertexDeclaration.h>
 
 #include <FBCore/Memory/Data.h>
 #include <FBCore/Memory/FactoryRegistration.h>
@@ -472,7 +468,7 @@
 #include <FBCore/Memory/ObjectTracker.h>
 #include <FBCore/Memory/TypeManager.h>
 
-#include <FBCore/Physics/CRaycastHit.h>
+#include <FBCore/Physics/RaycastHit.h>
 
 #include <FBCore/Resource/MeshManager.h>
 #include <FBCore/Resource/PrefabManager.h>
@@ -521,7 +517,6 @@
 #include <FBCore/Scene/Components/UI/Text.h>
 #include <FBCore/Scene/Components/UI/Layout.h>
 #include <FBCore/Scene/Components/UI/LayoutTransform.h>
-
 
 #include <FBCore/Scene/Systems/UI/LayoutTransformSystem.h>
 
@@ -645,5 +640,6 @@
 #include <FBCore/System/WorkerThread.h>
 #include <FBCore/System/WindowMessageData.h>
 
+#include <FBCore/Vehicle/VehicleManager.h>
 
 #endif  // FBCoreHeaders_h__

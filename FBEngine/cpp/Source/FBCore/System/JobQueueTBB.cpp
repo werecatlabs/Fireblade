@@ -59,9 +59,9 @@ namespace fb
                     SmartPtr<IJob> job;
                     while( m_jobQueue.try_pop( job ) )
                     {
-                        job->setState( IJob::JobState::Executing );
+                        job->setState( IJob::State::Executing );
                         job->execute();
-                        job->setState( IJob::JobState::Finish );
+                        job->setState( IJob::State::Finish );
 
                         Thread::yield();
                     }
@@ -77,7 +77,7 @@ namespace fb
 
     void JobQueueTBB::addJob( SmartPtr<IJob> job )
     {
-        job->setState( IJob::JobState::Queue );
+        job->setState( IJob::State::Queue );
 
         if( !job->isPrimary() )
         {

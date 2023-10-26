@@ -3,7 +3,6 @@
 
 #include <FBCore/Interface/Scene/ISystem.h>
 
-
 namespace fb
 {
     namespace scene
@@ -36,7 +35,7 @@ namespace fb
             SmartPtr<IState> getState( u32 id ) const;
             void setState( u32 id, SmartPtr<IState> state );
 
-	        u32 getGrowSize() const;
+            u32 getGrowSize() const;
 
             void setGrowSize( u32 growSize );
 

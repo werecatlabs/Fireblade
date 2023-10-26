@@ -136,9 +136,6 @@ namespace fb
             /** Find a child by id. */
             virtual SmartPtr<IUIElement> findChildById( const String &id ) const = 0;
 
-            /** Finds a component by id. */
-            virtual SmartPtr<IUIElement> findChildByComponentId( const String &componentId ) const = 0;
-
             /** Gets the ui layout this belongs to. */
             virtual SmartPtr<IUIElement> getLayout() const = 0;
 

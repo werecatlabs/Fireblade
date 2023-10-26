@@ -1,10 +1,14 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/FBCore.h>
-#include "FBCore/IO/CFileSystem.h"
-#include "FBCore/IO/CFileSystemArchive.h"
+#include "FBCore/IO/FolderListingT.h"
+#include "FBCore/IO/FileSystem.h"
+#include "FBCore/IO/FileSystemArchive.h"
 #include "FBCore/IO/FileDataStream.h"
+#include "FBCore/IO/ObfuscatedZipFile.h"
 #include "FBCore/IO/ZipArchive.h"
 #include "FBCore/IO/ZipFile.h"
+#include <FBCore/Vehicle/VehicleController.h>
+#include <FBCore/Vehicle/WheelController.h>
 
 namespace fb
 {
@@ -23,6 +27,16 @@ namespace fb
         FactoryUtil::addFactory<StateContextStandard>();
         FactoryUtil::addFactory<StateManagerStandard>();
         FactoryUtil::addFactory<WorkerThread>();
+
+        FactoryUtil::addFactory<Data<FileInfo>>();
+
+        FactoryUtil::addFactory<DirectoryListing>();
+
+        FactoryUtil::addFactory<FileList>();
+        FactoryUtil::addFactory<FileDataStream>();
+        FactoryUtil::addFactory<FileSystemArchive>();
+        FactoryUtil::addFactory<ObfuscatedZipFile>();
+        FactoryUtil::addFactory<ZipFile>();
 
         FactoryUtil::addFactory<scene::Actor>();
         FactoryUtil::addFactory<scene::Director>();
@@ -82,6 +96,16 @@ namespace fb
         factoryManager->setPoolSizeByType<scene::Actor>( 32 );
         factoryManager->setPoolSizeByType<scene::AudioEmitter>( 4 );
 
+        factoryManager->setPoolSizeByType<Data<FileInfo>>( 32 );
+
+        factoryManager->setPoolSizeByType<DirectoryListing>( 4096 );
+
+        factoryManager->setPoolSizeByType<FileList>( 4096 );
+        factoryManager->setPoolSizeByType<FileDataStream>( 4096 );
+        factoryManager->setPoolSizeByType<FileSystemArchive>( 32 );
+        factoryManager->setPoolSizeByType<ObfuscatedZipFile>( 32 );
+        factoryManager->setPoolSizeByType<ZipFile>( 32 );
+
         factoryManager->setPoolSizeByType<EventJob>( 32 );
         factoryManager->setPoolSizeByType<Properties>( 32 );
         factoryManager->setPoolSizeByType<StateQueueStandard>( 32 );
@@ -115,16 +139,19 @@ namespace fb
         factoryManager->setPoolSizeByType<StateMessageIntValue>( messagePoolSize );
         factoryManager->setPoolSizeByType<StateMessageVisible>( messagePoolSize );
 
-        FactoryUtil::addFactory<CFileList>();
-        FactoryUtil::addFactory<CFileSystem>();
+        FactoryUtil::addFactory<FileList>();
+        FactoryUtil::addFactory<FileSystem>();
         FactoryUtil::addFactory<FileDataStream>();
-        FactoryUtil::addFactory<CFileSystemArchive>();
+        FactoryUtil::addFactory<FileSystemArchive>();
+
+        FactoryUtil::addFactory<VehicleController>();
+        FactoryUtil::addFactory<WheelController>();
 
         FactoryUtil::addFactory<ZipArchive>();
         FactoryUtil::addFactory<ZipFile>();
 
-        factoryManager->setPoolSizeByType<CFileList>( 32 );
-        factoryManager->setPoolSizeByType<CFileSystemArchive>( 32 );
+        factoryManager->setPoolSizeByType<FileList>( 32 );
+        factoryManager->setPoolSizeByType<FileSystemArchive>( 32 );
         factoryManager->setPoolSizeByType<FileDataStream>( 4 );
         factoryManager->setPoolSizeByType<ZipArchive>( 8 );
         factoryManager->setPoolSizeByType<ZipFile>( 4 );

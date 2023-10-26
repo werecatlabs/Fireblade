@@ -23,6 +23,9 @@ namespace fb
         template <class T>
         static void addFactoryByName( const String &name, u32 poolSize );
 
+        template <class T>
+        static void removeFactory();
+
         static void createFactories();
     };
 
@@ -87,6 +90,23 @@ namespace fb
 
         factoryManager->addFactory( pFactory );
         factoryManager->setPoolSize( hash, poolSize );
+    }
+
+    template <class T>
+    void FactoryUtil::removeFactory()
+    {
+        auto applicationManager = core::IApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto factoryManager = applicationManager->getFactoryManager();
+        FB_ASSERT( factoryManager );
+
+        auto typeManager = TypeManager::instance();
+        FB_ASSERT( typeManager );
+
+        auto typeInfo = T::typeInfo();
+        auto factory = factoryManager->getFactoryById( typeInfo );
+        factoryManager->removeFactory( factory );
     }
 
 }  // namespace fb

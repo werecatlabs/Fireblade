@@ -910,7 +910,7 @@ namespace fb
         {
         }
 
-        void CSceneNodeOgre::_updateBounds()
+        void CSceneNodeOgre::updateBounds()
         {
             if( m_sceneNode )
             {

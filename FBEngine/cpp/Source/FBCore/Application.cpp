@@ -36,7 +36,7 @@ namespace fb
                 auto typeManager = new TypeManager();
                 TypeManager::setInstance( typeManager );
 
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
                 FB_ASSERT( applicationManager->isValid() );
 
@@ -109,7 +109,7 @@ namespace fb
                 FB_LOG( "Create scene manager." );
                 FB_ASSERT( applicationManager->isValid() );
 
-                if( !createGraphicsSystem() )
+                if(!createGraphicsSystem())
                 {
                     FB_LOG( "GraphicsSystem not created." );
                     FB_ASSERT( applicationManager->isValid() );
@@ -170,7 +170,7 @@ namespace fb
 
                 createScene();
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -180,12 +180,12 @@ namespace fb
         {
             try
             {
-                if( isLoaded() )
+                if(isLoaded())
                 {
                     FB_DEBUG_TRACE;
                     setLoadingState( LoadingState::Unloading );
 
-                    auto applicationManager = core::IApplicationManager::instance();
+                    auto applicationManager = IApplicationManager::instance();
                     FB_ASSERT( applicationManager );
                     FB_ASSERT( applicationManager->isValid() );
 
@@ -201,14 +201,14 @@ namespace fb
 
                     applicationManager->unload( nullptr );
                     applicationManager->setLoadingState( LoadingState::Unloaded );
-                    core::IApplicationManager::setInstance( nullptr );
+                    IApplicationManager::setInstance( nullptr );
                     applicationManager = nullptr;
                     FB_ASSERT( core::IApplicationManager::instance() == nullptr );
 
                     setLoadingState( LoadingState::Unloaded );
                 }
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -216,7 +216,7 @@ namespace fb
 
         void Application::run()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
@@ -250,7 +250,7 @@ namespace fb
             taskManager->setState( ITaskManager::State::FreeStep );
             threadPool->setState( IThreadPool::State::Start );
 
-            while( applicationManager->isRunning() )
+            while(applicationManager->isRunning())
             {
                 taskManager->update();
                 Thread::yield();
@@ -262,7 +262,7 @@ namespace fb
 
         void Application::update()
         {
-            auto pApplicationManager = core::IApplicationManager::instance();
+            auto pApplicationManager = IApplicationManager::instance();
             auto applicationManager = pApplicationManager.get();
             FB_ASSERT( applicationManager );
 
@@ -281,7 +281,7 @@ namespace fb
             auto timer = applicationManager->getTimer();
             FB_ASSERT( timer );
 
-            if( sceneManager )
+            if(sceneManager)
             {
                 sceneManager->preUpdate();
             }
@@ -290,17 +290,17 @@ namespace fb
             stateManager->update();
             stateManager->postUpdate();
 
-            if( m_frameStatistics )
+            if(m_frameStatistics)
             {
                 m_frameStatistics->update();
             }
 
-            if( sceneManager )
+            if(sceneManager)
             {
                 sceneManager->update();
             }
 
-            switch( auto task = Thread::getCurrentTask() )
+            switch(auto task = Thread::getCurrentTask())
             {
             case Thread::Task::Ai:
             {
@@ -335,7 +335,7 @@ namespace fb
                     auto dt = timer->getDeltaTime();
                     auto t = timer->getTime();
                 }
-                catch( std::exception &e )
+                catch(std::exception &e)
                 {
                     FB_LOG_EXCEPTION( e );
                 }
@@ -354,9 +354,9 @@ namespace fb
                     auto t = timer->getTime();
                     FB_ASSERT( Math<time_interval>::isFinite( t ) );
 
-                    if( timer->getTimeSinceLevelLoad() > 3.0 )
+                    if(timer->getTimeSinceLevelLoad() > 3.0)
                     {
-                        if( physicsManager )
+                        if(physicsManager)
                         {
                             physicsManager->preUpdate();
                             physicsManager->update();
@@ -364,14 +364,14 @@ namespace fb
                         }
 
                         auto physicsScene = applicationManager->getPhysicsScene();
-                        if( physicsScene )
+                        if(physicsScene)
                         {
                             physicsScene->preUpdate();
                             physicsScene->update();
                             physicsScene->postUpdate();
                         }
 
-                        if( auto vehicleManager = applicationManager->getVehicleManager() )
+                        if(auto vehicleManager = applicationManager->getVehicleManager())
                         {
                             vehicleManager->preUpdate();
                             vehicleManager->update();
@@ -379,7 +379,7 @@ namespace fb
                         }
                     }
                 }
-                catch( std::exception &e )
+                catch(std::exception &e)
                 {
                     FB_LOG_EXCEPTION( e );
                 }
@@ -398,7 +398,7 @@ namespace fb
                     auto t = timer->getTime();
                     FB_ASSERT( Math<time_interval>::isFinite( t ) );
 
-                    if( auto inputManager = applicationManager->getInputDeviceManager() )
+                    if(auto inputManager = applicationManager->getInputDeviceManager())
                     {
                         inputManager->update();
                     }
@@ -407,7 +407,7 @@ namespace fb
 
                     fsmManager->update();
                 }
-                catch( std::exception &e )
+                catch(std::exception &e)
                 {
                     FB_LOG_EXCEPTION( e );
                 }
@@ -423,12 +423,12 @@ namespace fb
                     graphicsSystem->update();
 
                     graphicsSystem->messagePump();
-                    if( applicationManager->getQuit() )
+                    if(applicationManager->getQuit())
                     {
                         applicationManager->setRunning( false );
                     }
                 }
-                catch( std::exception &e )
+                catch(std::exception &e)
                 {
                     FB_LOG_EXCEPTION( e );
                 }
@@ -444,7 +444,7 @@ namespace fb
             break;
             }
 
-            if( sceneManager )
+            if(sceneManager)
             {
                 sceneManager->postUpdate();
             }
@@ -464,7 +464,7 @@ namespace fb
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
                 FB_ASSERT( applicationManager->isValid() );
 
@@ -472,7 +472,7 @@ namespace fb
                 FB_ASSERT( factoryManager );
                 FB_ASSERT( factoryManager->isValid() );
 
-                if( auto graphicsSystem = factoryManager->make_object<render::IGraphicsSystem>() )
+                if(auto graphicsSystem = factoryManager->make_object<render::IGraphicsSystem>())
                 {
                     FB_ASSERT( graphicsSystem );
                     FB_ASSERT( graphicsSystem->isValid() );
@@ -485,7 +485,7 @@ namespace fb
 
                     FB_ASSERT( applicationManager->isValid() );
 
-                    if( !graphicsSystem->configure( nullptr ) )
+                    if(!graphicsSystem->configure( nullptr ))
                     {
                         return false;
                     }
@@ -515,7 +515,7 @@ namespace fb
                     return true;
                 }
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -525,7 +525,7 @@ namespace fb
 
         void Application::createDefaultFont()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto fileSystem = applicationManager->getFileSystem();
@@ -542,12 +542,12 @@ namespace fb
             directorProperties->setProperty( "font_size", 12 );
             directorProperties->setProperty( "font_resolution", 96 );
 
-            if( fileSystem->isExistingFile( fontFileName, true, true ) )
+            if(fileSystem->isExistingFile( fontFileName, true, true ))
             {
                 auto fontName = String( "default" );
                 auto result =
                     resourceDatabase->createOrRetrieveFromDirector<render::IFont>( fontName, director );
-                if( result.first && result.second )
+                if(result.first && result.second)
                 {
                     auto font = result.first;
                     font->setProperties( directorProperties );
@@ -562,11 +562,11 @@ namespace fb
 
         void Application::createGraphicsSceneManager()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
-            if( auto graphicsSystem = applicationManager->getGraphicsSystem() )
+            if(auto graphicsSystem = applicationManager->getGraphicsSystem())
             {
                 FB_ASSERT( graphicsSystem );
 
@@ -590,7 +590,7 @@ namespace fb
 
         void Application::createPhysics()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
@@ -599,7 +599,7 @@ namespace fb
             FB_ASSERT( factoryManager->isValid() );
 
             auto physicsManager = factoryManager->make_object<physics::IPhysicsManager>();
-            if( physicsManager )
+            if(physicsManager)
             {
                 FB_ASSERT( physicsManager->isValid() );
 
@@ -613,7 +613,7 @@ namespace fb
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto factoryManager = applicationManager->getFactoryManager();
@@ -622,11 +622,11 @@ namespace fb
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
                 FB_ASSERT( graphicsSystem );
 
-                if( auto inputManager = factoryManager->make_object<IInputDeviceManager>() )
+                if(auto inputManager = factoryManager->make_object<IInputDeviceManager>())
                 {
                     applicationManager->setInputDeviceManager( inputManager );
 
-                    if( auto window = graphicsSystem->getDefaultWindow() )
+                    if(auto window = graphicsSystem->getDefaultWindow())
                     {
                         inputManager->setWindow( window );
 
@@ -650,7 +650,7 @@ namespace fb
                     }
                 }
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -658,7 +658,7 @@ namespace fb
 
         void Application::createSceneManager()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
@@ -683,7 +683,7 @@ namespace fb
 
         void Application::createCamera()
         {
-            if( m_sceneMgr )
+            if(m_sceneMgr)
             {
                 FB_ASSERT( m_sceneMgr );
                 FB_ASSERT( m_sceneMgr->isValid() );
@@ -716,9 +716,9 @@ namespace fb
             }
         }
 
-        fb::SmartPtr<fb::scene::IActor> Application::createDefaultCamera( bool addToScene )
+        SmartPtr<scene::IActor> Application::createDefaultCamera( bool addToScene )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto sceneManager = applicationManager->getSceneManager();
@@ -738,13 +738,13 @@ namespace fb
             auto c = actor->addComponent<scene::Camera>();
             FB_ASSERT( c );
 
-            if( addToScene )
+            if(addToScene)
             {
                 scene->addActor( actor );
                 scene->registerAllUpdates( actor );
             }
 
-            auto uniqueId = 0;  // StringUtil::getHash(uuid);
+            auto uniqueId = 0; // StringUtil::getHash(uuid);
             return actor;
         }
 
@@ -752,23 +752,23 @@ namespace fb
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto selectionManager = applicationManager->getSelectionManager();
                 FB_ASSERT( selectionManager );
 
                 auto selection = selectionManager->getSelection();
-                for( auto selected : selection )
+                for(auto selected : selection)
                 {
-                    if( selected->isDerived<scene::IActor>() )
+                    if(selected->isDerived<scene::IActor>())
                     {
                         auto actor = fb::static_pointer_cast<scene::IActor>( selected );
                         createRigidStaticMesh( actor, true );
                     }
                 }
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -778,51 +778,51 @@ namespace fb
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto selectionManager = applicationManager->getSelectionManager();
                 FB_ASSERT( selectionManager );
 
                 auto selection = selectionManager->getSelection();
-                for( auto selected : selection )
+                for(auto selected : selection)
                 {
-                    if( selected->isDerived<scene::IActor>() )
+                    if(selected->isDerived<scene::IActor>())
                     {
                         auto actor = fb::static_pointer_cast<scene::IActor>( selected );
                         createRigidDynamicMesh( actor, true );
                     }
                 }
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
         }
 
-        fb::IResource::ResourceType Application::getResourceType( const String &resourceTypeName )
+        IResource::ResourceType Application::getResourceType( const String &resourceTypeName )
         {
-            if( resourceTypeName == "None" )
+            if(resourceTypeName == "None")
             {
                 return IResource::ResourceType::None;
             }
-            if( resourceTypeName == "Material" )
+            if(resourceTypeName == "Material")
             {
                 return IResource::ResourceType::Material;
             }
-            if( resourceTypeName == "Object" )
+            if(resourceTypeName == "Object")
             {
                 return IResource::ResourceType::Object;
             }
-            if( resourceTypeName == "Actor" )
+            if(resourceTypeName == "Actor")
             {
                 return IResource::ResourceType::Actor;
             }
-            if( resourceTypeName == "Component" )
+            if(resourceTypeName == "Component")
             {
                 return IResource::ResourceType::Component;
             }
-            if( resourceTypeName == "Texture" )
+            if(resourceTypeName == "Texture")
             {
                 return IResource::ResourceType::Texture;
             }
@@ -830,9 +830,9 @@ namespace fb
             return IResource::ResourceType::None;
         }
 
-        fb::String Application::getResourceTypeByName( IResource::ResourceType resourceType )
+        String Application::getResourceTypeByName( IResource::ResourceType resourceType )
         {
-            switch( resourceType )
+            switch(resourceType)
             {
             case IResource::ResourceType::None:
                 return "None";
@@ -851,9 +851,9 @@ namespace fb
             return "";
         }
 
-        fb::SmartPtr<fb::Properties> Application::importScene( const String &filePath )
+        SmartPtr<Properties> Application::importScene( const String &filePath )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto fileSystem = applicationManager->getFileSystem();
@@ -868,11 +868,11 @@ namespace fb
             return pScene;
         }
 
-        fb::SmartPtr<fb::scene::IActor> Application::createDefaultCubemap( bool addToScene )
+        SmartPtr<scene::IActor> Application::createDefaultCubemap( bool addToScene )
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
                 FB_ASSERT( applicationManager->isValid() );
 
@@ -898,7 +898,7 @@ namespace fb
 
                 auto meshComponent = actor->addComponent<scene::Mesh>();
                 FB_ASSERT( meshComponent );
-                meshComponent->setMeshPath( "cube.fbmeshbin" );
+                meshComponent->setMeshPath( "cube_internal.fbmeshbin" );
 
                 auto meshRenderer = actor->addComponent<scene::MeshRenderer>();
                 FB_ASSERT( meshRenderer );
@@ -907,12 +907,12 @@ namespace fb
                 FB_ASSERT( material );
                 FB_ASSERT( material->isValid() );
 
-                if( material )
+                if(material)
                 {
                     material->setMaterialPath( "Standard.mat" );
                 }
 
-                if( addToScene )
+                if(addToScene)
                 {
                     scene->addActor( actor );
                     FB_ASSERT( scene->isValid() );
@@ -920,7 +920,7 @@ namespace fb
 
                 return actor;
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -928,11 +928,11 @@ namespace fb
             return nullptr;
         }
 
-        fb::SmartPtr<fb::scene::IActor> Application::createDefaultCube( bool addToScene )
+        SmartPtr<scene::IActor> Application::createDefaultCube( bool addToScene )
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
                 FB_ASSERT( applicationManager->isValid() );
 
@@ -958,7 +958,7 @@ namespace fb
 
                 auto meshComponent = actor->addComponent<scene::Mesh>();
                 FB_ASSERT( meshComponent );
-                meshComponent->setMeshPath( "cube.fbmeshbin" );
+                meshComponent->setMeshPath( "cube_internal.fbmeshbin" );
 
                 auto meshRenderer = actor->addComponent<scene::MeshRenderer>();
                 FB_ASSERT( meshRenderer );
@@ -967,12 +967,12 @@ namespace fb
                 FB_ASSERT( material );
                 FB_ASSERT( material->isValid() );
 
-                if( material )
+                if(material)
                 {
                     material->setMaterialPath( "Standard.mat" );
                 }
 
-                if( addToScene )
+                if(addToScene)
                 {
                     scene->addActor( actor );
                     FB_ASSERT( scene->isValid() );
@@ -980,7 +980,7 @@ namespace fb
 
                 return actor;
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -988,11 +988,11 @@ namespace fb
             return nullptr;
         }
 
-        fb::SmartPtr<fb::scene::IActor> Application::createDefaultCubeMesh( bool addToScene )
+        SmartPtr<scene::IActor> Application::createDefaultCubeMesh( bool addToScene )
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
                 FB_ASSERT( applicationManager->isValid() );
 
@@ -1018,7 +1018,7 @@ namespace fb
 
                 auto meshComponent = actor->addComponent<scene::Mesh>();
                 FB_ASSERT( meshComponent );
-                meshComponent->setMeshPath( "cube.fbmeshbin" );
+                meshComponent->setMeshPath( "cube_internal.fbmeshbin" );
 
                 auto meshRenderer = actor->addComponent<scene::MeshRenderer>();
                 FB_ASSERT( meshRenderer );
@@ -1027,12 +1027,12 @@ namespace fb
                 FB_ASSERT( material );
                 FB_ASSERT( material->isValid() );
 
-                if( material )
+                if(material)
                 {
                     material->setMaterialPath( "Standard.mat" );
                 }
 
-                if( addToScene )
+                if(addToScene)
                 {
                     scene->addActor( actor );
                     FB_ASSERT( scene->isValid() );
@@ -1040,7 +1040,7 @@ namespace fb
 
                 return actor;
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -1048,9 +1048,9 @@ namespace fb
             return nullptr;
         }
 
-        fb::SmartPtr<fb::scene::IActor> Application::createDefaultGround( bool addToScene )
+        SmartPtr<scene::IActor> Application::createDefaultGround( bool addToScene )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto sceneManager = applicationManager->getSceneManager();
@@ -1067,7 +1067,7 @@ namespace fb
 
             auto collisionBox = actor->addComponent<scene::CollisionBox>();
             FB_ASSERT( collisionBox );
-            if( collisionBox )
+            if(collisionBox)
             {
                 collisionBox->setExtents( Vector3F::unit() * 500.0f );
             }
@@ -1077,7 +1077,7 @@ namespace fb
 
             auto meshComponent = actor->addComponent<scene::Mesh>();
             FB_ASSERT( meshComponent );
-            meshComponent->setMeshPath( "cube.fbmeshbin" );
+            meshComponent->setMeshPath( "cube_internal.fbmeshbin" );
 
             auto meshRenderer = actor->addComponent<scene::MeshRenderer>();
             FB_ASSERT( meshRenderer );
@@ -1085,25 +1085,25 @@ namespace fb
             auto material = actor->addComponent<scene::Material>();
             FB_ASSERT( material );
 
-            if( material )
+            if(material)
             {
                 material->setMaterialPath( "Standard.mat" );
                 material->updateMaterial();
             }
 
-            auto groundPosition = Vector3<real_Num>::unitY() * static_cast<real_Num>( -250.0 );
+            auto groundPosition = Vector3<real_Num>::unitY() * static_cast<real_Num>(-250.0);
             // groundPosition += Vector3F::unitZ() * -250.0f;
 
-            auto groundScale = Vector3<real_Num>::unit() * static_cast<real_Num>( 500.0 );
+            auto groundScale = Vector3<real_Num>::unit() * static_cast<real_Num>(500.0);
 
             auto transform = actor->getTransform();
-            if( transform )
+            if(transform)
             {
                 transform->setLocalPosition( groundPosition );
                 transform->setLocalScale( groundScale );
             }
 
-            if( addToScene )
+            if(addToScene)
             {
                 scene->addActor( actor );
                 FB_ASSERT( scene->isValid() );
@@ -1112,9 +1112,9 @@ namespace fb
             return actor;
         }
 
-        fb::SmartPtr<fb::scene::IActor> Application::createDefaultTerrain( bool addToScene )
+        SmartPtr<scene::IActor> Application::createDefaultTerrain( bool addToScene )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto sceneManager = applicationManager->getSceneManager();
@@ -1144,7 +1144,7 @@ namespace fb
             auto rigidbody = actor->addComponent<scene::Rigidbody>();
             FB_ASSERT( rigidbody );
 
-            if( addToScene )
+            if(addToScene)
             {
                 scene->addActor( actor );
                 scene->registerAllUpdates( actor );
@@ -1153,9 +1153,9 @@ namespace fb
             return actor;
         }
 
-        fb::SmartPtr<fb::scene::IActor> Application::createDefaultConstraint()
+        SmartPtr<scene::IActor> Application::createDefaultConstraint()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto sceneManager = applicationManager->getSceneManager();
@@ -1184,9 +1184,9 @@ namespace fb
             return actor;
         }
 
-        fb::SmartPtr<fb::scene::IActor> Application::createDirectionalLight( bool addToScene )
+        SmartPtr<scene::IActor> Application::createDirectionalLight( bool addToScene )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto sceneManager = applicationManager->getSceneManager();
@@ -1209,24 +1209,24 @@ namespace fb
             // todo remove
             // for test the renderer
             auto light = actor->addComponent<scene::Light>();
-            if( light )
+            if(light)
             {
                 light->setLightType( render::ILight::LightTypes::LT_DIRECTIONAL );
             }
 
-            if( addToScene )
+            if(addToScene)
             {
                 scene->addActor( actor );
                 scene->registerAllUpdates( actor );
             }
 
-            auto uniqueId = 0;  // StringUtil::getHash(uuid);
+            auto uniqueId = 0; // StringUtil::getHash(uuid);
             return actor;
         }
 
-        fb::SmartPtr<fb::scene::IActor> Application::createPointLight( bool addToScene )
+        SmartPtr<scene::IActor> Application::createPointLight( bool addToScene )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto sceneManager = applicationManager->getSceneManager();
@@ -1249,24 +1249,24 @@ namespace fb
             // todo remove
             // for test the renderer
             auto light = actor->addComponent<scene::Light>();
-            if( light )
+            if(light)
             {
                 light->setLightType( render::ILight::LightTypes::LT_POINT );
             }
 
-            if( addToScene )
+            if(addToScene)
             {
                 scene->addActor( actor );
                 scene->registerAllUpdates( actor );
             }
 
-            auto uniqueId = 0;  // StringUtil::getHash(uuid);
+            auto uniqueId = 0; // StringUtil::getHash(uuid);
             return actor;
         }
 
-        fb::SmartPtr<fb::scene::IActor> Application::createDefaultPlane( bool addToScene )
+        SmartPtr<scene::IActor> Application::createDefaultPlane( bool addToScene )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto sceneManager = applicationManager->getSceneManager();
@@ -1281,9 +1281,9 @@ namespace fb
             actor->setName( name );
 
             auto localOrientation = Quaternion<real_Num>::angleAxis(
-                Math<real_Num>::DegToRad( static_cast<real_Num>( -90.0 ) ), Vector3<real_Num>::unitX() );
+                Math<real_Num>::DegToRad( static_cast<real_Num>(-90.0) ), Vector3<real_Num>::unitX() );
             actor->setLocalOrientation( localOrientation );
-            actor->setLocalScale( Vector3<real_Num>::unit() * static_cast<real_Num>( 100.0 ) );
+            actor->setLocalScale( Vector3<real_Num>::unit() * static_cast<real_Num>(100.0) );
 
             // auto id = StringUtil::getHash(name);
             // actor->setId(id);
@@ -1306,25 +1306,25 @@ namespace fb
             auto material = actor->addComponent<scene::Material>();
             FB_ASSERT( material );
 
-            if( material )
+            if(material)
             {
                 material->setMaterialPath( "Standard.mat" );
                 material->updateMaterial();
             }
 
-            if( addToScene )
+            if(addToScene)
             {
                 scene->addActor( actor );
                 scene->registerAllUpdates( actor );
             }
 
-            auto uniqueId = 0;  // StringUtil::getHash(uuid);
+            auto uniqueId = 0; // StringUtil::getHash(uuid);
             return actor;
         }
 
-        fb::SmartPtr<fb::scene::IActor> Application::createDefaultVehicle( bool addToScene )
+        SmartPtr<scene::IActor> Application::createDefaultVehicle( bool addToScene )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto prefabManager = applicationManager->getPrefabManager();
@@ -1365,7 +1365,7 @@ namespace fb
             auto vehicle = actor->addComponent<scene::CarController>();
             FB_ASSERT( vehicle );
 
-            auto cubeMeshPath = String( "cube.fbmeshbin" );
+            auto cubeMeshPath = String( "cube_internal.fbmeshbin" );
 
             auto meshComponent = actor->addComponent<scene::Mesh>();
             FB_ASSERT( meshComponent );
@@ -1377,7 +1377,7 @@ namespace fb
             auto material = actor->addComponent<scene::Material>();
             FB_ASSERT( material );
 
-            if( material )
+            if(material)
             {
                 material->setMaterialPath( "Standard.mat" );
                 material->updateMaterial();
@@ -1394,18 +1394,18 @@ namespace fb
             wheelPositions.resize( 4 );
 
             auto wheelOffset = -1.0f;
-            wheelPositions[(u32)scene::CarController::Wheels::FRONT_LEFT] =
+            wheelPositions[static_cast<u32>(scene::CarController::Wheels::FRONT_LEFT)] =
                 Vector3F( -width / 2.0f, wheelOffset, wheelBase / 2.0f );
-            wheelPositions[(u32)scene::CarController::Wheels::FRONT_RIGHT] =
+            wheelPositions[static_cast<u32>(scene::CarController::Wheels::FRONT_RIGHT)] =
                 Vector3F( width / 2.0f, wheelOffset, wheelBase / 2.0f );
-            wheelPositions[(u32)scene::CarController::Wheels::REAR_LEFT] =
+            wheelPositions[static_cast<u32>(scene::CarController::Wheels::REAR_LEFT)] =
                 Vector3F( -width / 2.0f, wheelOffset, -wheelBase / 2.0f );
-            wheelPositions[(u32)scene::CarController::Wheels::REAR_RIGHT] =
+            wheelPositions[static_cast<u32>(scene::CarController::Wheels::REAR_RIGHT)] =
                 Vector3F( width / 2.0f, wheelOffset, -wheelBase / 2.0f );
 
             auto wheelMeshSize = Vector3F( 0.1f, 0.3f, 0.3f );
 
-            for( u32 i = 0; i < 4; ++i )
+            for(u32 i = 0; i < 4; ++i)
             {
                 auto wheelMeshActor = sceneManager->createActor();
 
@@ -1441,7 +1441,7 @@ namespace fb
 
             actor->addChild( dynamicsActor );
 
-            for( u32 i = 0; i < 4; ++i )
+            for(u32 i = 0; i < 4; ++i)
             {
                 auto wheelActor = sceneManager->createActor();
                 dynamicsActor->addChild( wheelActor );
@@ -1468,11 +1468,11 @@ namespace fb
             //	actor->addChild(vehicleMesh);
             //}
 
-            auto groundPosition = Vector3<real_Num>::unitY() * static_cast<real_Num>( 5.0 );
-            auto groundScale = Vector3<real_Num>::unit() * static_cast<real_Num>( 1.0 );
+            auto groundPosition = Vector3<real_Num>::unitY() * static_cast<real_Num>(5.0);
+            auto groundScale = Vector3<real_Num>::unit() * static_cast<real_Num>(1.0);
 
             auto transform = actor->getTransform();
-            if( transform )
+            if(transform)
             {
                 transform->setLocalPosition( groundPosition );
                 transform->setLocalScale( groundScale );
@@ -1480,7 +1480,7 @@ namespace fb
 
             actor->updateTransform();
 
-            if( addToScene )
+            if(addToScene)
             {
                 scene->addActor( actor );
                 scene->registerAllUpdates( actor );
@@ -1489,9 +1489,9 @@ namespace fb
             return actor;
         }
 
-        fb::SmartPtr<fb::scene::IActor> Application::createDefaultCar( bool addToScene )
+        SmartPtr<scene::IActor> Application::createDefaultCar( bool addToScene )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto prefabManager = applicationManager->getPrefabManager();
@@ -1523,7 +1523,7 @@ namespace fb
             auto vehicle = actor->addComponent<scene::CarController>();
             FB_ASSERT( vehicle );
 
-            auto cubeMeshPath = String( "cube.fbmeshbin" );
+            auto cubeMeshPath = String( "cube_internal.fbmeshbin" );
 
             auto meshComponent = actor->addComponent<scene::Mesh>();
             FB_ASSERT( meshComponent );
@@ -1535,7 +1535,7 @@ namespace fb
             auto material = actor->addComponent<scene::Material>();
             FB_ASSERT( material );
 
-            if( material )
+            if(material)
             {
                 material->setMaterialPath( "Standard.mat" );
                 material->updateMaterial();
@@ -1554,7 +1554,7 @@ namespace fb
 
             actor->addChild( dynamicsActor );
 
-            for( u32 i = 0; i < 4; ++i )
+            for(u32 i = 0; i < 4; ++i)
             {
                 auto wheelActor = sceneManager->createActor();
                 dynamicsActor->addChild( wheelActor );
@@ -1591,7 +1591,7 @@ namespace fb
             auto groundScale = Vector3<real_Num>::unit() * 1.0f;
 
             auto transform = actor->getTransform();
-            if( transform )
+            if(transform)
             {
                 transform->setLocalPosition( groundPosition );
                 transform->setLocalScale( groundScale );
@@ -1599,7 +1599,7 @@ namespace fb
 
             actor->updateTransform();
 
-            if( addToScene )
+            if(addToScene)
             {
                 scene->addActor( actor );
                 scene->registerAllUpdates( actor );
@@ -1608,9 +1608,9 @@ namespace fb
             return actor;
         }
 
-        fb::SmartPtr<fb::scene::IActor> Application::createDefaultTruck( bool addToScene )
+        SmartPtr<scene::IActor> Application::createDefaultTruck( bool addToScene )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto prefabManager = applicationManager->getPrefabManager();
@@ -1644,7 +1644,7 @@ namespace fb
 
             auto meshComponent = actor->addComponent<scene::Mesh>();
             FB_ASSERT( meshComponent );
-            meshComponent->setMeshPath( "cube.fbmeshbin" );
+            meshComponent->setMeshPath( "cube_internal.fbmeshbin" );
 
             auto meshRenderer = actor->addComponent<scene::MeshRenderer>();
             FB_ASSERT( meshRenderer );
@@ -1652,7 +1652,7 @@ namespace fb
             auto material = actor->addComponent<scene::Material>();
             FB_ASSERT( material );
 
-            if( material )
+            if(material)
             {
                 material->setMaterialPath( "Standard.mat" );
                 material->updateMaterial();
@@ -1671,7 +1671,7 @@ namespace fb
 
             actor->addChild( dynamicsActor );
 
-            for( u32 i = 0; i < 4; ++i )
+            for(u32 i = 0; i < 4; ++i)
             {
                 auto wheelActor = sceneManager->createActor();
                 dynamicsActor->addChild( wheelActor );
@@ -1690,7 +1690,7 @@ namespace fb
             actor->addChild( rigActor );
 
             auto prefab = prefabManager->loadPrefab( "f40.fbx" );
-            if( prefab )
+            if(prefab)
             {
                 auto vehicleMesh = prefab->createActor();
 
@@ -1708,7 +1708,7 @@ namespace fb
             auto groundScale = Vector3<real_Num>::unit() * 1.0f;
 
             auto transform = actor->getTransform();
-            if( transform )
+            if(transform)
             {
                 transform->setLocalPosition( groundPosition );
                 transform->setLocalScale( groundScale );
@@ -1716,7 +1716,7 @@ namespace fb
 
             actor->updateTransform();
 
-            if( addToScene )
+            if(addToScene)
             {
                 scene->addActor( actor );
                 scene->registerAllUpdates( actor );
@@ -1725,9 +1725,9 @@ namespace fb
             return actor;
         }
 
-        fb::SmartPtr<fb::scene::IActor> Application::createVehicleFromDatabase( s32 id )
+        SmartPtr<scene::IActor> Application::createVehicleFromDatabase( s32 id )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto sceneManager = applicationManager->getSceneManager();
@@ -1758,9 +1758,9 @@ namespace fb
             return vehicleActor;
         }
 
-        fb::SmartPtr<fb::scene::IActor> Application::createDefaultParticleSystem( bool addToScene )
+        SmartPtr<scene::IActor> Application::createDefaultParticleSystem( bool addToScene )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto sceneManager = applicationManager->getSceneManager();
@@ -1778,14 +1778,14 @@ namespace fb
             return actor;
         }
 
-        fb::SmartPtr<fb::IData> Application::loadVehicleDataFromDatabase( s32 id )
+        SmartPtr<IData> Application::loadVehicleDataFromDatabase( s32 id )
         {
             return nullptr;
         }
 
-        fb::SmartPtr<fb::render::IMaterial> Application::createDefaultMaterialUI()
+        SmartPtr<render::IMaterial> Application::createDefaultMaterialUI()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -1797,14 +1797,14 @@ namespace fb
             auto materialName = String( "DefaultUI" );
             SmartPtr<render::IMaterial> defaultMat =
                 materialManager->loadFromFile( materialName + ".mat" );
-            if( !defaultMat )
+            if(!defaultMat)
             {
                 static const auto uuid =
-                    String( "2f261ebe-5db8-11ed-9b6a-0242ac120002" );  //StringUtil::getUUID();
+                    String( "2f261ebe-5db8-11ed-9b6a-0242ac120002" ); //StringUtil::getUUID();
 
                 auto resource = materialManager->createOrRetrieve( uuid, materialName, "material" );
                 auto material = fb::static_pointer_cast<render::IMaterial>( resource.first );
-                if( material )
+                if(material)
                 {
                     material->setMaterialType( render::IMaterial::MaterialType::UI );
                     graphicsSystem->loadObject( material );
@@ -1812,37 +1812,37 @@ namespace fb
                     auto techniques = material->getTechniques();
                     SmartPtr<render::IMaterialTechnique> technique;
 
-                    if( !techniques.empty() )
+                    if(!techniques.empty())
                     {
                         technique = techniques[0];
                     }
 
-                    if( !technique )
+                    if(!technique)
                     {
                         technique = material->createTechnique();
                     }
 
-                    if( technique )
+                    if(technique)
                     {
                         auto passes = technique->getPasses();
                         SmartPtr<render::IMaterialPass> pass;
 
-                        if( !passes.empty() )
+                        if(!passes.empty())
                         {
                             pass = passes[0];
                         }
 
-                        if( !pass )
+                        if(!pass)
                         {
                             pass = technique->createPass();
                         }
 
-                        if( pass )
+                        if(pass)
                         {
                             auto textures = pass->getTextureUnits();
-                            if( !textures.empty() )
+                            if(!textures.empty())
                             {
-                                textures[0];
+                                //textures[0];
                             }
                         }
                     }
@@ -1852,12 +1852,11 @@ namespace fb
             }
 
             return defaultMat;
-            //return nullptr;
         }
 
-        fb::SmartPtr<fb::render::IMaterial> Application::createDefaultMaterial()
+        SmartPtr<render::IMaterial> Application::createDefaultMaterial()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -1868,37 +1867,37 @@ namespace fb
 
             auto resource = materialManager->create( StringUtil::getUUID() );
             auto material = fb::static_pointer_cast<render::IMaterial>( resource );
-            if( material )
+            if(material)
             {
                 auto techniques = material->getTechniques();
                 SmartPtr<render::IMaterialTechnique> technique;
 
-                if( !techniques.empty() )
+                if(!techniques.empty())
                 {
                     technique = techniques[0];
                 }
 
-                if( !technique )
+                if(!technique)
                 {
                     technique = material->createTechnique();
                 }
 
-                if( technique )
+                if(technique)
                 {
                     auto passes = technique->getPasses();
                     SmartPtr<render::IMaterialPass> pass;
 
-                    if( !passes.empty() )
+                    if(!passes.empty())
                     {
                         pass = passes[0];
                     }
 
-                    if( !pass )
+                    if(!pass)
                     {
                         pass = technique->createPass();
                     }
 
-                    if( pass )
+                    if(pass)
                     {
                     }
                 }
@@ -1909,7 +1908,7 @@ namespace fb
 
         void Application::createDefaultMaterials()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -1918,7 +1917,7 @@ namespace fb
 
             auto filePath = String( "default" );
             auto result = resourceDatabase->createOrRetrieveByType<render::IMaterial>( filePath );
-            if( result.first && result.second )
+            if(result.first && result.second)
             {
                 auto material = result.first;
                 graphicsSystem->loadObject( material );
@@ -1929,14 +1928,14 @@ namespace fb
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
-                if( auto graphicsSystem = applicationManager->getGraphicsSystem() )
+                if(auto graphicsSystem = applicationManager->getGraphicsSystem())
                 {
-                    if( auto window = graphicsSystem->getDefaultWindow() )
+                    if(auto window = graphicsSystem->getDefaultWindow())
                     {
-                        if( m_camera )
+                        if(m_camera)
                         {
                             m_camera->setAutoAspectRatio( true );
 
@@ -1963,6 +1962,8 @@ namespace fb
 
                             vp->setClearEveryFrame( true );
                             vp->setOverlaysEnabled( true );
+                            vp->setEnableUI(true);
+                            vp->setEnableSceneRender(true);
                             vp->setAutoUpdated( true );
                             m_viewport = vp;
 
@@ -1972,7 +1973,7 @@ namespace fb
                     }
                 }
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -2000,7 +2001,7 @@ namespace fb
 
         void Application::createPluginManager()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pluginManager = fb::make_ptr<PluginManager>();
@@ -2019,7 +2020,7 @@ namespace fb
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto fileSystem = applicationManager->getFileSystem();
@@ -2037,7 +2038,7 @@ namespace fb
                 std::sort( scripts.begin(), scripts.end() );
                 scriptManager->loadScripts( scripts );
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -2050,7 +2051,7 @@ namespace fb
 
         void Application::createLogManager()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto logManager = fb::make_ptr<LogManagerDefault>();
@@ -2065,7 +2066,7 @@ namespace fb
 
         void Application::createFactoryManager()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto factoryManager = fb::make_ptr<FactoryManager>();
@@ -2075,7 +2076,7 @@ namespace fb
 
         void Application::createStateManager()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
@@ -2099,7 +2100,7 @@ namespace fb
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto factoryManager = applicationManager->getFactoryManager();
@@ -2123,7 +2124,7 @@ namespace fb
                 auto absolutePath = Path::lexically_normal( workingDirectory, mediaPath );
 
                 auto packs = fileSystem->getFiles( mediaPath + "/packs" );
-                for( auto &pack : packs )
+                for(auto &pack : packs)
                 {
                     fileSystem->addFileArchive( pack, true, true, IFileSystem::ArchiveType::Zip );
                 }
@@ -2143,7 +2144,7 @@ namespace fb
                 fileSystem->addFileArchive( ".FBCache", true, true, IFileSystem::ArchiveType::Folder );
                 fileSystem->addFileArchive( "./", true, true, IFileSystem::ArchiveType::Folder );
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -2166,7 +2167,7 @@ namespace fb
 
         void Application::createTimer()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
@@ -2176,7 +2177,7 @@ namespace fb
 
         void Application::createPrefabManager()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
@@ -2190,17 +2191,17 @@ namespace fb
 
         void Application::createThreadPool()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
             auto factoryManager = applicationManager->getFactoryManager();
             FB_ASSERT( factoryManager );
 
-            auto numThreads = (u32)getActiveThreads();
+            auto numThreads = static_cast<u32>(getActiveThreads());
 
             auto maxThreads = Thread::hardware_concurrency();
-            if( numThreads > maxThreads )
+            if(numThreads > maxThreads)
             {
                 numThreads = maxThreads;
             }
@@ -2211,7 +2212,7 @@ namespace fb
             threadPool->setNumThreads( numThreads );
             threadPool->load( nullptr );
 
-            for( u32 i = 0; i < numThreads; ++i )
+            for(u32 i = 0; i < numThreads; ++i)
             {
                 auto workerThread = threadPool->getThread( i );
                 workerThread->setTargetFPS( 100.0 );
@@ -2220,7 +2221,7 @@ namespace fb
 
         void Application::createTaskManager()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
 
             auto taskManager = fb::make_ptr<TaskManager>();
             applicationManager->setTaskManager( taskManager );
@@ -2232,7 +2233,7 @@ namespace fb
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
                 FB_ASSERT( applicationManager->isValid() );
 
@@ -2282,7 +2283,7 @@ namespace fb
                 garbageCollectTask->setOwner( this );
                 garbageCollectTask->setTargetFPS( 60.0 );
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -2290,7 +2291,7 @@ namespace fb
 
         void Application::createJobQueue()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
@@ -2300,7 +2301,7 @@ namespace fb
 
         void Application::createFsmManager()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto factoryManager = applicationManager->getFactoryManager();
@@ -2337,7 +2338,7 @@ namespace fb
 
         SmartPtr<scene::IActor> Application::createDefaultSky( bool addToScene )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto sceneManager = applicationManager->getSceneManager();
@@ -2351,17 +2352,17 @@ namespace fb
             auto skybox = actor->addComponent<scene::Skybox>();
 
             auto material = actor->addComponent<scene::Material>();
-            if( material )
+            if(material)
             {
                 material->setMaterialPath( "DefaultSkybox.mat" );
             }
 
-            if( addToScene )
+            if(addToScene)
             {
                 scene->addActor( actor );
             }
 
-            auto uniqueId = 0;  // StringUtil::getHash(uuid);
+            auto uniqueId = 0; // StringUtil::getHash(uuid);
             return actor;
         }
 
@@ -2372,37 +2373,37 @@ namespace fb
                 actor->setStatic( true );
 
                 auto meshComponent = actor->getComponent<scene::Mesh>();
-                if( meshComponent )
+                if(meshComponent)
                 {
                     auto collisionMesh = actor->getComponent<scene::CollisionMesh>();
-                    if( !collisionMesh )
+                    if(!collisionMesh)
                     {
                         collisionMesh = actor->addComponent<scene::CollisionMesh>();
                     }
 
-                    if( collisionMesh )
+                    if(collisionMesh)
                     {
                         auto meshPath = meshComponent->getMeshPath();
                         collisionMesh->setMeshPath( meshPath );
                     }
 
                     auto rigidbody = actor->getComponent<scene::Rigidbody>();
-                    if( !rigidbody )
+                    if(!rigidbody)
                     {
                         rigidbody = actor->addComponent<scene::Rigidbody>();
                     }
                 }
 
-                if( auto p = actor->getChildrenPtr() )
+                if(auto p = actor->getChildrenPtr())
                 {
                     auto &children = *p;
-                    for( auto child : children )
+                    for(auto child : children)
                     {
                         createRigidStaticMesh( child, recursive );
                     }
                 }
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -2415,41 +2416,40 @@ namespace fb
                 actor->setStatic( false );
 
                 auto meshComponent = actor->getComponent<scene::Mesh>();
-                if( meshComponent )
+                if(meshComponent)
                 {
                     auto collisionMesh = actor->getComponent<scene::CollisionMesh>();
-                    if( !collisionMesh )
+                    if(!collisionMesh)
                     {
                         collisionMesh = actor->addComponent<scene::CollisionMesh>();
                     }
 
-                    if( collisionMesh )
+                    if(collisionMesh)
                     {
                         auto meshPath = meshComponent->getMeshPath();
                         collisionMesh->setMeshPath( meshPath );
                     }
 
                     auto rigidbody = actor->getComponent<scene::Rigidbody>();
-                    if( !rigidbody )
+                    if(!rigidbody)
                     {
                         rigidbody = actor->addComponent<scene::Rigidbody>();
                     }
                 }
 
-                if( auto p = actor->getChildrenPtr() )
+                if(auto p = actor->getChildrenPtr())
                 {
                     auto &children = *p;
-                    for( auto child : children )
+                    for(auto child : children)
                     {
                         createRigidDynamicMesh( child, recursive );
                     }
                 }
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
         }
-
-    }  // namespace core
-}  // namespace fb
+    } // namespace core
+}     // namespace fb

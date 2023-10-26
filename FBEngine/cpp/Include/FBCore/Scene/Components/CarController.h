@@ -48,8 +48,8 @@ namespace fb
             SmartPtr<Rigidbody> getChassis() const;
             void setChassis( SmartPtr<Rigidbody> chassis );
 
-            SmartPtr<ICarController> getVehicleController() const;
-            void setVehicleController( SmartPtr<ICarController> vehicleController );
+            SmartPtr<IVehicleController> getVehicleController() const;
+            void setVehicleController( SmartPtr<IVehicleController> vehicleController );
 
             f32 getThrottle() const;
             void setThrottle( f32 throttle );
@@ -62,11 +62,9 @@ namespace fb
 
             Vector3F getMOI() const;
 
-            void setMOI( const Vector3F& moi );
+            void setMOI( const Vector3F &moi );
 
             FB_CLASS_REGISTER_DECL;
-
-
 
         protected:
             class InputListener : public IEventListener
@@ -178,7 +176,7 @@ namespace fb
             f32 m_steering = 0.0f;
 
             SmartPtr<IEventListener> m_inputListener;
-            SmartPtr<ICarController> m_vehicleController;
+            SmartPtr<IVehicleController> m_vehicleController;
             SmartPtr<VehicleCallback> m_vehicleCallback;
 
             // SmartPtr<render::IGraphicsObject> m_mesh;
@@ -195,7 +193,7 @@ namespace fb
             Array<SmartPtr<WheelController>> m_wheels;
             Array<SmartPtr<WheelController>> m_poweredWheels;
         };
-    } // namespace scene
-}     // end namespace fb
+    }  // namespace scene
+}  // end namespace fb
 
 #endif  // CarController_h__

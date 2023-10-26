@@ -32,7 +32,7 @@ namespace fb
                 m_vehicleCallback = fb::make_ptr<VehicleCallback>();
                 m_vehicleCallback->setOwner( this );
 
-                auto vehicleController = factoryManager->make_object<ICarController>();
+                auto vehicleController = factoryManager->make_object<IVehicleController>();
                 setVehicleController( vehicleController );
 
                 if( vehicleController )
@@ -243,11 +243,11 @@ namespace fb
 
             if( vehicleController )
             {
-                vehicleController->setChannel( static_cast<s32>( ICarController::Input::THROTTLE ),
+                vehicleController->setChannel( static_cast<s32>( IVehicleController::Input::THROTTLE ),
                                                m_throttle );
-                vehicleController->setChannel( static_cast<s32>( ICarController::Input::BRAKE ),
+                vehicleController->setChannel( static_cast<s32>( IVehicleController::Input::BRAKE ),
                                                m_brake );
-                vehicleController->setChannel( static_cast<s32>( ICarController::Input::STEERING ),
+                vehicleController->setChannel( static_cast<s32>( IVehicleController::Input::STEERING ),
                                                m_steering );
             }
 
@@ -772,12 +772,12 @@ namespace fb
             m_chassis = chassis;
         }
 
-        SmartPtr<ICarController> CarController::getVehicleController() const
+        SmartPtr<IVehicleController> CarController::getVehicleController() const
         {
             return m_vehicleController;
         }
 
-        void CarController::setVehicleController( SmartPtr<ICarController> vehicleController )
+        void CarController::setVehicleController( SmartPtr<IVehicleController> vehicleController )
         {
             m_vehicleController = vehicleController;
         }
@@ -1070,4 +1070,7 @@ namespace fb
             m_owner = owner;
         }
     }  // namespace scene
+
+
+
 }  // end namespace fb

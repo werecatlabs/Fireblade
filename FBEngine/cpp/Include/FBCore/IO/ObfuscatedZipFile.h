@@ -9,6 +9,7 @@ namespace fb
     class ObfuscatedZipFile : public DataStream
     {
     public:
+        ObfuscatedZipFile() = default;
         ObfuscatedZipFile( ObfuscatedZipArchive *archive, const String &fileName, ZZIP_FILE *zzipFile,
                            u32 uncompressedSize );
         ~ObfuscatedZipFile() override;
@@ -25,7 +26,7 @@ namespace fb
         size_t read( void *buffer, size_t sizeToRead ) override;
         size_t write( const void *buffer, size_t sizeToWrite ) override;
 
-        bool seek( long finalPos ) override;
+        bool seek( size_t finalPos ) override;
 
         void skip( long count ) override;
 

@@ -69,7 +69,7 @@ namespace fb
         return 0;
     }
 
-    bool ObfuscatedZipFile::seek( long finalPos )
+    bool ObfuscatedZipFile::seek( size_t finalPos )
     {
         zzip_seek( m_zipFile, static_cast<zzip_off_t>( finalPos ), SEEK_SET );
         return true;

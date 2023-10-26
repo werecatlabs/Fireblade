@@ -1,6 +1,5 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Director.h>
-#include <FBCore/Interface/Scene/IActor.h>
 
 namespace fb
 {
@@ -71,17 +70,17 @@ namespace fb
         {
         }
 
-        SmartPtr<IActor> Director::findChild( const String &name )
+        SmartPtr<IDirector> Director::findChild( const String &name )
         {
             return nullptr;
         }
 
-        Array<SmartPtr<IActor>> Director::getChildren() const
+        Array<SmartPtr<IDirector>> Director::getChildren() const
         {
-            return Array<SmartPtr<IActor>>();
+            return Array<SmartPtr<IDirector>>();
         }
 
-        SharedPtr<ConcurrentArray<SmartPtr<IActor>>> Director::getChildrenPtr() const
+        SharedPtr<ConcurrentArray<SmartPtr<IDirector>>> Director::getChildrenPtr() const
         {
             return nullptr;
         }

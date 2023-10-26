@@ -100,6 +100,11 @@ namespace fb
                 luabind::detail::convert_to_lua( L, static_cast<ui::IUIText *>( scriptObj ) );
                 return true;
             }
+            if( scriptObj->isDerived<ui::IUITextEntry>() )
+            {
+                luabind::detail::convert_to_lua( L, static_cast<ui::IUITextEntry *>( scriptObj ) );
+                return true;
+            }
             if( scriptObj->isDerived<ui::IUITreeCtrl>() )
             {
                 luabind::detail::convert_to_lua( L, static_cast<ui::IUITreeCtrl *>( scriptObj ) );

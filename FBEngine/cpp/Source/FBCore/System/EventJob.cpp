@@ -1,15 +1,18 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/EventJob.h>
 #include <FBCore/Interface/System/IEventListener.h>
+#include <FBCore/Interface/IApplicationManager.h>
 
 namespace fb
 {
     void EventJob::execute()
     {
+        auto applicationManager = core::IApplicationManager::instance();
+
         auto sender = getSender();
         auto object = getObject();
 
-        auto listeners = getObjectListeners();
+        auto listeners = applicationManager->getObjectListeners();
         for( auto &listener : listeners )
         {
             listener->handleEvent( eventType, eventValue, arguments, sender, object, event );
@@ -18,6 +21,18 @@ namespace fb
         if( sender )
         {
             listeners = sender->getObjectListeners();
+            for( auto &listener : listeners )
+            {
+                if( listener )
+                {
+                    listener->handleEvent( eventType, eventValue, arguments, sender, object, event );
+                }
+            }
+        }
+
+        if( object )
+        {
+            listeners = object->getObjectListeners();
             for( auto &listener : listeners )
             {
                 if( listener )

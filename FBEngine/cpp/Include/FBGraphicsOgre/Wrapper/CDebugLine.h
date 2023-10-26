@@ -38,6 +38,10 @@ namespace fb
             hash32 getId() const override;
             void setId( hash32 id ) override;
 
+            u32 getColour() const;
+
+            void setColour( u32 colour );
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
@@ -52,6 +56,8 @@ namespace fb
 
             f64 m_lifeTime = 0.0;
             f64 m_maxLifeTime = 1.0;
+
+            u32 m_colour = 1;
 
             bool m_isDirty = true;
             bool m_isVisible = false;

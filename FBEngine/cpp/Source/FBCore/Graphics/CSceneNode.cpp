@@ -1,17 +1,23 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Graphics/CSceneNode.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Math/MathUtil.h>
+#include <FBCore/State/States/SceneNodeState.h>
+#include <FBCore/Interface/Graphics/IGraphicsScene.h>
 
 namespace fb
 {
     namespace render
     {
+        FB_CLASS_REGISTER_DERIVED( fb, CSceneNode, ISceneNode );
+
         CSceneNode::CSceneNode()
         {
         }
 
         CSceneNode::~CSceneNode()
         {
+            unload( nullptr );
         }
 
         void CSceneNode::load( SmartPtr<ISharedObject> data )
@@ -76,47 +82,97 @@ namespace fb
 
         void CSceneNode::setPosition( const Vector3<real_Num> &position )
         {
+            FB_ASSERT( position.isFinite() );
+
+            if( auto state = getState() )
+            {
+                state->setPosition( position );
+            }
         }
 
         Vector3<real_Num> CSceneNode::getPosition() const
         {
+            if( auto state = getState() )
+            {
+                return state->getPosition();
+            }
+
             return Vector3<real_Num>::zero();
         }
 
         Vector3<real_Num> CSceneNode::getWorldPosition() const
         {
+            if( auto state = getState() )
+            {
+                return state->getAbsolutePosition();
+            }
+
             return Vector3<real_Num>::zero();
         }
 
         void CSceneNode::setRotationFromDegrees( const Vector3<real_Num> &degrees )
         {
+            auto orientation = Quaternion<real_Num>::eulerDegrees( degrees.x, degrees.y, degrees.z );
+            setOrientation( orientation );
         }
 
         void CSceneNode::setOrientation( const Quaternion<real_Num> &orientation )
         {
+            FB_ASSERT( orientation.isSane() );
+
+            if( auto state = getState() )
+            {
+                state->setOrientation( orientation );
+            }
         }
 
         Quaternion<real_Num> CSceneNode::getOrientation() const
         {
+            if( auto state = getState() )
+            {
+                return state->getOrientation();
+            }
+
             return Quaternion<real_Num>::identity();
         }
 
         Quaternion<real_Num> CSceneNode::getWorldOrientation() const
         {
+            if( auto state = getState() )
+            {
+                return state->getAbsoluteOrientation();
+            }
+
             return Quaternion<real_Num>::identity();
         }
 
         void CSceneNode::setScale( const Vector3<real_Num> &scale )
         {
+            FB_ASSERT( scale.isFinite() );
+
+            if( auto state = getState() )
+            {
+                state->setScale( scale );
+            }
         }
 
         Vector3<real_Num> CSceneNode::getScale() const
         {
+            if( auto state = getState() )
+            {
+                return state->getScale();
+            }
+
             return Vector3<real_Num>::zero();
         }
 
         Vector3<real_Num> CSceneNode::getWorldScale() const
         {
+            if( auto state = getState() )
+            {
+                return state->getAbsoluteScale();
+            }
+
             return Vector3<real_Num>::zero();
         }
 
@@ -127,6 +183,10 @@ namespace fb
 
         void CSceneNode::lookAt( const Vector3<real_Num> &targetPoint )
         {
+            auto direction = targetPoint - getPosition();
+            auto orientation = MathUtilF::getOrientationFromDirection(
+                direction, -Vector3F::unitZ(), true, Vector3<real_Num>::unitY() );
+            setOrientation( orientation );
         }
 
         void CSceneNode::setFixedYawAxis(
@@ -255,7 +315,7 @@ namespace fb
             return false;
         }
 
-        void CSceneNode::_updateBounds()
+        void CSceneNode::updateBounds()
         {
         }
 
@@ -278,11 +338,26 @@ namespace fb
 
         SmartPtr<Properties> CSceneNode::getProperties() const
         {
-            return nullptr;
+            auto properties = fb::make_ptr<Properties>();
+            return properties;
         }
 
         void CSceneNode::setProperties( SmartPtr<Properties> properties )
         {
+        }
+
+        Array<SmartPtr<ISharedObject>> CSceneNode::getChildObjects() const
+        {
+            auto childObjects = CSharedGraphicsObject<ISceneNode>::getChildObjects();
+            childObjects.push_back( getCreator() );
+            childObjects.push_back( getParent() );
+            childObjects.push_back( getState() );
+            return childObjects;
+        }
+
+        SmartPtr<SceneNodeState> CSceneNode::getState() const
+        {
+            return m_state;
         }
     }  // namespace render
 }  // namespace fb

@@ -27,6 +27,8 @@ namespace fb
             /** @copydoc IPluginManager::loadPlugin */
             SmartPtr<IPlugin> loadPlugin( const String &filename ) override;
 
+            void loadPlugin( SmartPtr<IPlugin> plugin ) override;
+
             /** @copydoc IPluginManager::unloadPlugin */
             void unloadPlugin( SmartPtr<IPlugin> plugin ) override;
 

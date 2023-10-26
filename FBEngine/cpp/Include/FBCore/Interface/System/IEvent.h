@@ -94,6 +94,7 @@ namespace fb
         static const hash_type transform;
 
         static const hash_type addSelectedObject;
+        static const hash_type addSelectedObjects;
         static const hash_type deselectObjects;
         static const hash_type deselectAll;
 

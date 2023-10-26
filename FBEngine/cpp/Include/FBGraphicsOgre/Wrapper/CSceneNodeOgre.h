@@ -99,7 +99,7 @@ namespace fb
 
             Ogre::SceneNode *getSceneNode() const;
 
-            void _updateBounds() override;
+            void updateBounds() override;
 
             void setVisibilityFlags( u32 flags ) override;
             u32 getVisibilityFlags() const;
@@ -200,8 +200,8 @@ namespace fb
             /// The objects attached to this scene node.
             Array<SmartPtr<IGraphicsObject>> m_graphicsObjects;
 
-            SpinRWMutex( SceneNodeMutex );
-            SpinRWMutex( StatesMutex );
+            SpinRWMutex SceneNodeMutex;
+            SpinRWMutex StatesMutex;
 
             static u32 m_nameExt;
         };

@@ -73,7 +73,7 @@ namespace fb
         Array<FileInfo> m_fileInfoList;
 
         ///
-        SmartPtr<CFileList> m_fileList;
+        SmartPtr<FileList> m_fileList;
 
         String m_password;
 

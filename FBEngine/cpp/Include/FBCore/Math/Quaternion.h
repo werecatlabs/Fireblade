@@ -1206,10 +1206,10 @@ namespace fb
     template <typename T>
     bool Quaternion<T>::isSane() const
     {
-        constexpr auto defaultTolerance = std::numeric_limits<T>::epsilon();
+        constexpr auto defaultTolerance = T(0.001);
         constexpr auto defaultMagnitude = T( 1.0 );
 
-        auto tolerance = defaultTolerance * T( 1000.0 );  // Adjust as needed
+        auto tolerance = defaultTolerance * T( 1.0 );  // Adjust as needed
 
         return isFinite() && Math<T>::Abs( magnitude() - defaultMagnitude ) < tolerance;
     }

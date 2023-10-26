@@ -196,7 +196,7 @@ namespace fb
             drawLine( id + 2, p + offset2, p - offset2, color );
         }
 
-        void CDebug::drawLine( s32 id, const Vector3<real_Num> &start, const Vector3<real_Num> &end,
+        SmartPtr<IDebugLine> CDebug::drawLine( s32 id, const Vector3<real_Num> &start, const Vector3<real_Num> &end,
                                u32 colour )
         {
             auto line = getLine( id );
@@ -210,6 +210,8 @@ namespace fb
                 line->setPosition( start );
                 line->setVector( end - start );
             }
+
+            return line;
         }
 
         void CDebug::drawText( s32 id, const Vector2<real_Num> &position, const String &text, u32 color )

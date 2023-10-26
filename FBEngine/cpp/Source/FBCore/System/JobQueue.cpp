@@ -32,9 +32,9 @@ namespace fb
             {
                 if( job )
                 {
-                    job->setState( IJob::JobState::Executing );
+                    job->setState( IJob::State::Executing );
                     job->execute();
-                    job->setState( IJob::JobState::Finish );
+                    job->setState( IJob::State::Finish );
                 }
             }
 
@@ -49,9 +49,9 @@ namespace fb
                     {
                         if( job )
                         {
-                            job->setState( IJob::JobState::Executing );
+                            job->setState( IJob::State::Executing );
                             job->execute();
-                            job->setState( IJob::JobState::Finish );
+                            job->setState( IJob::State::Finish );
                         }
                     }
                 }
@@ -62,9 +62,9 @@ namespace fb
                 {
                     if( job )
                     {
-                        job->setState( IJob::JobState::Executing );
+                        job->setState( IJob::State::Executing );
                         job->execute();
-                        job->setState( IJob::JobState::Finish );
+                        job->setState( IJob::State::Finish );
                     }
                 }
             }
@@ -77,9 +77,9 @@ namespace fb
             {
                 if( job )
                 {
-                    job->setState( IJob::JobState::Executing );
+                    job->setState( IJob::State::Executing );
                     job->execute();
-                    job->setState( IJob::JobState::Finish );
+                    job->setState( IJob::State::Finish );
                 }
             }
         }
@@ -90,6 +90,9 @@ namespace fb
 
     void JobQueue::addJob( SmartPtr<IJob> job )
     {
+        FB_ASSERT( job->getState() != IJob::State::Queue );
+        job->setState( IJob::State::Queue );
+
         if( job->isPrimary() )
         {
             m_primaryJobs.push( job );

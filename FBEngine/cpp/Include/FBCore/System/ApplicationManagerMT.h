@@ -9,7 +9,6 @@ namespace fb
 {
     namespace core
     {
-
         /** Implementation of the IApplicationManager interface. */
         class ApplicationManagerMT : public IApplicationManager
         {
@@ -33,10 +32,10 @@ namespace fb
             void setEditor( bool editor ) override;
 
             /** @copydoc IApplicationManager::isEditorCamera */
-            bool isEditorCamera() const;
+            bool isEditorCamera() const override;
 
             /** @copydoc IApplicationManager::setEditorCamera */
-            void setEditorCamera( bool editor );
+            void setEditorCamera( bool editor ) override;
 
             bool isPlaying() const override;
             void setPlaying( bool playing ) override;
@@ -67,9 +66,9 @@ namespace fb
             String getMediaPath() const override;
             void setMediaPath( const String &mediaPath ) override;
 
-            String getRenderMediaPath() const;
+            String getRenderMediaPath() const override;
 
-            void setRenderMediaPath( const String &renderMediaPath );
+            void setRenderMediaPath( const String &renderMediaPath ) override;
 
             String getSettingsCachePath() const override;
             void setSettingsCachePath( const String &cachePath ) override;
@@ -121,8 +120,8 @@ namespace fb
             SmartPtr<IFSMManager> getFsmManager() const override;
             void setFsmManager( SmartPtr<IFSMManager> fsmManager ) override;
 
-            SmartPtr<IFSMManager> getFsmManagerByTask( Thread::Task task ) const;
-            void setFsmManagerByTask( Thread::Task task, SmartPtr<IFSMManager> fsmManager );
+            SmartPtr<IFSMManager> getFsmManagerByTask( Thread::Task task ) const override;
+            void setFsmManagerByTask( Thread::Task task, SmartPtr<IFSMManager> fsmManager ) override;
 
             SmartPtr<procedural::IProceduralEngine> getProceduralEngine() const override;
             void setProceduralEngine( SmartPtr<procedural::IProceduralEngine> val ) override;
@@ -139,9 +138,9 @@ namespace fb
             SmartPtr<render::IGraphicsSystem> getGraphicsSystem() const override;
             void setGraphicsSystem( SmartPtr<render::IGraphicsSystem> graphicsSystem ) override;
 
-            SmartPtr<IVideoManager> getVideoManager() const;
+            SmartPtr<IVideoManager> getVideoManager() const override;
 
-            void setVideoManager( SmartPtr<IVideoManager> videoManager );
+            void setVideoManager( SmartPtr<IVideoManager> videoManager ) override;
 
             SmartPtr<ITaskManager> getTaskManager() const override;
             void setTaskManager( SmartPtr<ITaskManager> taskManager ) override;
@@ -250,9 +249,9 @@ namespace fb
             /** @copydoc IApplicationManager::getActors */
             Array<SmartPtr<scene::IActor>> getActors() const override;
 
-            SmartPtr<IPluginManager> getPluginManager() const;
+            SmartPtr<IPluginManager> getPluginManager() const override;
 
-            void setPluginManager( SmartPtr<IPluginManager> pluginManager );
+            void setPluginManager( SmartPtr<IPluginManager> pluginManager ) override;
 
             /** @copydoc IApplicationManager::addPlugin */
             void addPlugin( SmartPtr<ISharedObject> plugin ) override;
@@ -273,22 +272,22 @@ namespace fb
             void setWindow( SmartPtr<render::IWindow> window ) override;
 
             /** @copydoc IApplicationManager::getSceneRenderWindow */
-            SmartPtr<ui::IUIWindow> getSceneRenderWindow() const;
+            SmartPtr<ui::IUIWindow> getSceneRenderWindow() const override;
 
             /** @copydoc IApplicationManager::setSceneRenderWindow */
-            void setSceneRenderWindow( SmartPtr<ui::IUIWindow> sceneRenderWindow );
+            void setSceneRenderWindow( SmartPtr<ui::IUIWindow> sceneRenderWindow ) override;
 
             /** @copydoc IApplicationManager::getComponentByType */
-            SmartPtr<scene::IComponent> getComponentByType( u32 typeId ) const;
+            SmartPtr<scene::IComponent> getComponentByType( u32 typeId ) const override;
 
             /** @copydoc IApplicationManager::triggerEvent */
             Parameter triggerEvent( IEvent::Type eventType, hash_type eventValue,
                                     const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
-                                    SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
+                                    SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
-            RawPtr<TypeManager> getTypeManager() const;
+            RawPtr<TypeManager> getTypeManager() const override;
 
-            void setTypeManager( RawPtr<TypeManager> typeManager );
+            void setTypeManager( RawPtr<TypeManager> typeManager ) override;
 
             FB_CLASS_REGISTER_DECL;
 
@@ -382,7 +381,7 @@ namespace fb
             AtomicSmartPtr<render::IWindow> m_window;
             AtomicSmartPtr<ui::IUIWindow> m_sceneRenderWindow;
 
-            SmartPtr<IPluginManager> m_pluginManager;
+            AtomicSmartPtr<IPluginManager> m_pluginManager;
 
             AtomicRawPtr<TypeManager> m_typeManager;
 
@@ -400,8 +399,7 @@ namespace fb
 
             mutable RecursiveMutex m_mutex;
         };
-
-    }  // namespace core
-}  // namespace fb
+    } // namespace core
+}     // namespace fb
 
 #endif  // CApplicationManager_h__

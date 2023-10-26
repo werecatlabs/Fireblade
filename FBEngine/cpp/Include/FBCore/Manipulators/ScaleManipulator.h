@@ -30,10 +30,11 @@ namespace fb
         bool IsEnabled();
 
         bool isVisible() const;
-
-    private:
         void setVisible( bool isVisible );
 
+        FB_CLASS_REGISTER_DECL;
+
+    private:
         const Vector3F &getPosition() const;
         void setPosition( const Vector3F &newpos );
 

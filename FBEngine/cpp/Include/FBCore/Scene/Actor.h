@@ -7,10 +7,8 @@
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Quaternion.h>
-#include <FBCore/Core/FixedArray.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/ConcurrentArray.h>
-#include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Core/FSMListener.h>
 
 namespace fb
@@ -167,7 +165,7 @@ namespace fb
             bool getPerpetual() const override;
 
             /** @copydoc IActor::setPerpetual */
-            void setPerpetual( bool destroyOnLoad ) override;
+            void setPerpetual( bool perpetual ) override;
 
             /** @copydoc IActor::getAutoUpdateComponents */
             bool getAutoUpdateComponents() const;
@@ -363,7 +361,7 @@ namespace fb
             AtomicWeakPtr<IFactoryManager> m_factoryManager;
 
             atomic_bool m_autoUpdateComponents = true;
-            atomic_bool m_destroyOnLoad = false;
+            atomic_bool m_perpetual = false;
 
             static u32 m_idExt;
         };

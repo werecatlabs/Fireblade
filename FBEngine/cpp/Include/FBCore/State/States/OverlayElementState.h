@@ -60,7 +60,7 @@ namespace fb
         FB_CLASS_REGISTER_DECL;
 
     protected:
-        SmartPtr<render::IMaterial> m_material;
+        AtomicSmartPtr<render::IMaterial> m_material;
 
         ColourF m_colour = ColourF::White;
 

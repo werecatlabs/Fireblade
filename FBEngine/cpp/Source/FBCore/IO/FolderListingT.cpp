@@ -3,13 +3,12 @@
 
 namespace fb
 {
-    //--------------------------------------------
+
     template <class TInterface, class T>
     FolderListingT<TInterface, T>::FolderListingT()
     {
     }
 
-    //--------------------------------------------
     template <class TInterface, class T>
     FolderListingT<TInterface, T>::~FolderListingT()
     {

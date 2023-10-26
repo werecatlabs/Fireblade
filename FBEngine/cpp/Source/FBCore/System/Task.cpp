@@ -203,6 +203,9 @@ namespace fb
 
     void Task::queueJob( SmartPtr<IJob> job )
     {
+        //FB_ASSERT( job->getState() != IJob::State::Queue );
+        job->setState( IJob::State::Queue );
+
         if( job )
         {
             m_jobs.push( job );

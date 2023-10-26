@@ -1,5 +1,5 @@
-#ifndef CPass_h__
-#define CPass_h__
+#ifndef CMaterialPass_h__
+#define CMaterialPass_h__
 
 #include <FBCore/Interface/Graphics/IMaterialPass.h>
 #include <FBCore/Interface/System/IStateListener.h>

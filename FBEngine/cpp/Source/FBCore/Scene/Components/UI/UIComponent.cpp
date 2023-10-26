@@ -8,7 +8,6 @@
 #include <FBCore/Interface/Scene/ITransform.h>
 #include <FBCore/Interface/UI/IUILayout.h>
 #include <FBCore/Interface/UI/IUIManager.h>
-#include <FBCore/Interface/UI/IUIImage.h>
 #include <FBCore/Interface/Resource/IResourceDatabase.h>
 #include <FBCore/Core/BitUtil.h>
 #include <FBCore/Core/LogManager.h>
@@ -90,6 +89,9 @@ namespace fb
 
         void UIComponent::setElement( SmartPtr<ui::IUIElement> element )
         {
+            auto applicationManager = core::IApplicationManager::instance();
+            auto stateContext = applicationManager->getStateObject();
+
             if( m_element )
             {
                 m_element->removeObjectListener( m_elementListener );
@@ -133,6 +135,45 @@ namespace fb
                     element->setVisible( visible );
                 }
             }
+        }
+
+        void UIComponent::hierarchyChanged()
+        {
+            if( auto element = getElement() )
+            {
+                if( auto stateContext = element->getStateObject() )
+                {
+                    stateContext->setDirty( true );
+                }
+            }
+
+            getActor()->updateTransform();
+        }
+
+        void UIComponent::childAddedInHierarchy( SmartPtr<IActor> child )
+        {
+            if( auto element = getElement() )
+            {
+                if( auto stateContext = element->getStateObject() )
+                {
+                    stateContext->setDirty( true );
+                }
+            }
+
+            getActor()->updateTransform();
+        }
+
+        void UIComponent::childRemovedInHierarchy( SmartPtr<IActor> child )
+        {
+            if( auto element = getElement() )
+            {
+                if( auto stateContext = element->getStateObject() )
+                {
+                    stateContext->setDirty( true );
+                }
+            }
+
+            getActor()->updateTransform();
         }
 
         Array<SmartPtr<ISharedObject>> UIComponent::getChildObjects() const
@@ -196,39 +237,10 @@ namespace fb
 
         void UIComponent::updateDirty( u32 flags, u32 oldFlags )
         {
+            auto applicationManager = core::IApplicationManager::instance();
+
             if( auto actor = getActor() )
             {
-                auto enabled = isEnabled() && actor->isEnabledInScene();
-                auto visible = actor->isVisible();
-
-                if( BitUtil::getFlagValue( flags, IActor::ActorFlagInScene ) !=
-                    BitUtil::getFlagValue( oldFlags, IActor::ActorFlagInScene ) )
-                {
-                    if( m_element )
-                    {
-                        m_element->setEnabled( enabled );
-                        m_element->setVisible( visible );
-                    }
-                }
-                else if( BitUtil::getFlagValue( flags, IActor::ActorFlagEnabled ) !=
-                         BitUtil::getFlagValue( oldFlags, IActor::ActorFlagEnabled ) )
-                {
-                    if( m_element )
-                    {
-                        m_element->setEnabled( enabled );
-                        m_element->setVisible( visible );
-                    }
-                }
-                else if( BitUtil::getFlagValue( flags, IActor::ActorFlagEnabledInScene ) !=
-                         BitUtil::getFlagValue( oldFlags, IActor::ActorFlagEnabledInScene ) )
-                {
-                    if( m_element )
-                    {
-                        m_element->setEnabled( enabled );
-                        m_element->setVisible( visible );
-                    }
-                }
-
                 switch( auto eState = getState() )
                 {
                 case State::Edit:
@@ -256,6 +268,7 @@ namespace fb
 
                     updateElementState();
                     updateOrder();
+                    updateVisibility();
                 }
                 }
             }
@@ -502,10 +515,12 @@ namespace fb
 
         void UIComponent::updateVisibility()
         {
+            auto applicationManager = core::IApplicationManager::instance();
+
             if( auto actor = getActor() )
             {
                 auto enabled = isEnabled() && actor->isEnabledInScene();
-                auto visible = actor->isVisible();
+                auto visible = applicationManager->isPlaying() ? enabled : enabled && actor->isVisible();
 
                 if( auto element = getElement() )
                 {
@@ -528,15 +543,36 @@ namespace fb
             IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
             SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
         {
-            if( sender->isDerived<ui::IUIElement>() )
+            if( sender )
             {
-                auto element = fb::static_pointer_cast<ui::IUIElement>( sender );
-
-                if( auto pOwner = element->getOwner() )
+                if( sender->isDerived<ui::IUIElement>() )
                 {
-                    if( auto owner = fb::dynamic_pointer_cast<UIComponent>( pOwner ) )
+                    auto element = fb::static_pointer_cast<ui::IUIElement>( sender );
+
+                    if( auto pOwner = element->getOwner() )
                     {
-                        owner->handleEvent( eventType, eventValue, arguments, sender, object, event );
+                        if( auto owner = fb::dynamic_pointer_cast<UIComponent>( pOwner ) )
+                        {
+                            owner->handleEvent( eventType, eventValue, arguments, sender, object,
+                                                event );
+                        }
+                    }
+                }
+            }
+
+            if( object )
+            {
+                if( object->isDerived<ui::IUIElement>() )
+                {
+                    auto element = fb::static_pointer_cast<ui::IUIElement>( object );
+
+                    if( auto pOwner = element->getOwner() )
+                    {
+                        if( auto owner = fb::dynamic_pointer_cast<UIComponent>( pOwner ) )
+                        {
+                            owner->handleEvent( eventType, eventValue, arguments, sender, object,
+                                                event );
+                        }
                     }
                 }
             }

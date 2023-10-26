@@ -968,7 +968,7 @@ namespace fb
 
             auto meshComponent = actor->addComponent<scene::Mesh>();
             FB_ASSERT( meshComponent );
-            meshComponent->setMeshPath( "cube.fbmeshbin" );
+            meshComponent->setMeshPath( "cube_internal.fbmeshbin" );
 
             auto meshRenderer = actor->addComponent<scene::MeshRenderer>();
             FB_ASSERT( meshRenderer );
@@ -1028,7 +1028,7 @@ namespace fb
 
             auto meshComponent = actor->addComponent<scene::Mesh>();
             FB_ASSERT( meshComponent );
-            meshComponent->setMeshPath( "cube.fbmeshbin" );
+            meshComponent->setMeshPath( "cube_internal.fbmeshbin" );
 
             auto meshRenderer = actor->addComponent<scene::MeshRenderer>();
             FB_ASSERT( meshRenderer );
@@ -1088,7 +1088,7 @@ namespace fb
 
             auto meshComponent = actor->addComponent<scene::Mesh>();
             FB_ASSERT( meshComponent );
-            meshComponent->setMeshPath( "cube.fbmeshbin" );
+            meshComponent->setMeshPath( "cube_internal.fbmeshbin" );
 
             auto meshRenderer = actor->addComponent<scene::MeshRenderer>();
             FB_ASSERT( meshRenderer );
@@ -1147,7 +1147,7 @@ namespace fb
 
         auto meshComponent = actor->addComponent<scene::Mesh>();
         FB_ASSERT( meshComponent );
-        meshComponent->setMeshPath( "cube.fbmeshbin" );
+        meshComponent->setMeshPath( "cube_internal.fbmeshbin" );
 
         auto meshRenderer = actor->addComponent<scene::MeshRenderer>();
         FB_ASSERT( meshRenderer );
@@ -1435,7 +1435,7 @@ namespace fb
         auto vehicle = actor->addComponent<scene::CarController>();
         FB_ASSERT( vehicle );
 
-        auto cubeMeshPath = String( "cube.fbmeshbin" );
+        auto cubeMeshPath = String( "cube_internal.fbmeshbin" );
 
         auto meshComponent = actor->addComponent<scene::Mesh>();
         FB_ASSERT( meshComponent );
@@ -1593,7 +1593,7 @@ namespace fb
         auto vehicle = actor->addComponent<scene::CarController>();
         FB_ASSERT( vehicle );
 
-        auto cubeMeshPath = String( "cube.fbmeshbin" );
+        auto cubeMeshPath = String( "cube_internal.fbmeshbin" );
 
         auto meshComponent = actor->addComponent<scene::Mesh>();
         FB_ASSERT( meshComponent );
@@ -1714,7 +1714,7 @@ namespace fb
 
         auto meshComponent = actor->addComponent<scene::Mesh>();
         FB_ASSERT( meshComponent );
-        meshComponent->setMeshPath( "cube.fbmeshbin" );
+        meshComponent->setMeshPath( "cube_internal.fbmeshbin" );
 
         auto meshRenderer = actor->addComponent<scene::MeshRenderer>();
         FB_ASSERT( meshRenderer );
@@ -1878,7 +1878,7 @@ namespace fb
                         auto textures = pass->getTextureUnits();
                         if( !textures.empty() )
                         {
-                            textures[0];
+                            //textures[0];
                         }
                     }
                 }
@@ -1888,7 +1888,6 @@ namespace fb
         }
 
         return defaultMat;
-        //return nullptr;
     }
 
     SmartPtr<render::IMaterial> ApplicationUtil::createDefaultMaterial()

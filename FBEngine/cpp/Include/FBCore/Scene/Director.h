@@ -3,7 +3,6 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/IDirector.h>
-
 #include <FBCore/Resource/Resource.h>
 
 namespace fb
@@ -54,18 +53,18 @@ namespace fb
             void removeChildren() override;
 
             /** @copydoc IDirector::findChild */
-            SmartPtr<IActor> findChild( const String &name ) override;
+            SmartPtr<IDirector> findChild( const String &name ) override;
 
             /** @copydoc IDirector::getChildren */
-            Array<SmartPtr<IActor>> getChildren() const;
+            Array<SmartPtr<IDirector>> getChildren() const;
 
             /** @copydoc IDirector::getChildrenPtr */
-            SharedPtr<ConcurrentArray<SmartPtr<IActor>>> getChildrenPtr() const override;
+            SharedPtr<ConcurrentArray<SmartPtr<IDirector>>> getChildrenPtr() const override;
 
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            SharedPtr<ConcurrentArray<SmartPtr<IActor>>> m_children;
+            SharedPtr<ConcurrentArray<SmartPtr<IDirector>>> m_children;
 
             /**
              * \brief String pair values.

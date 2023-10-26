@@ -68,6 +68,18 @@ namespace fb
         //FB_ASSERT( m_weakReferences == 0 );
     }
 
+    void ISharedObject::preUpdate()
+    {
+    }
+
+    void ISharedObject::update()
+    {
+    }
+
+    void ISharedObject::postUpdate()
+    {
+    }
+
     s32 ISharedObject::addWeakReference( void *address, const c8 *file, u32 line, const c8 *func )
     {
 #if FB_TRACK_REFERENCES
@@ -408,8 +420,8 @@ namespace fb
 #if !FB_FINAL
     s32 ISharedObject::addWeakReference()
     {
-#if FB_TRACK_REFERENCES
-#    if FB_TRACK_WEAK_REFERENCES
+#    if FB_TRACK_REFERENCES
+#        if FB_TRACK_WEAK_REFERENCES
         auto address = (void *)this;
         const c8 *file = __FILE__;
         const u32 line = __LINE__;
@@ -417,16 +429,16 @@ namespace fb
 
         auto &objectTracker = ObjectTracker::instance();
         objectTracker.addRef( this, address, file, line, func );
+#        endif
 #    endif
-#endif
 
         return ++m_weakReferences;
     }
 
     s32 ISharedObject::addReference()
     {
-#if FB_TRACK_REFERENCES
-#    if FB_TRACK_STRONG_REFERENCES
+#    if FB_TRACK_REFERENCES
+#        if FB_TRACK_STRONG_REFERENCES
 
         auto references = gc.addReference( T::typeInfo(), m_objectId );
 
@@ -442,19 +454,19 @@ namespace fb
         objectTracker.addRef( this, address, file, line, func );
 
         return references;
-#    else
+#        else
 
         return gc.addReference( T::typeInfo(), m_objectId );
-#    endif
-#else
+#        endif
+#    else
         return ++m_references;
-#endif
+#    endif
     }
 
     bool ISharedObject::removeReference()
     {
-#if FB_TRACK_REFERENCES
-#    if FB_TRACK_STRONG_REFERENCES
+#    if FB_TRACK_REFERENCES
+#        if FB_TRACK_STRONG_REFERENCES
         auto address = (void *)this;
         const c8 *file = __FILE__;
         const u32 line = __LINE__;
@@ -462,8 +474,8 @@ namespace fb
 
         auto &objectTracker = ObjectTracker::instance();
         objectTracker.removeRef( this, address, file, line, func );
+#        endif
 #    endif
-#endif
 
         if( --m_references == 0 )
         {

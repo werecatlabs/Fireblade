@@ -56,7 +56,7 @@ namespace fb
         {
         case SEEK_CUR:
         {
-            newPos = currentZipFile->tell() + offset;
+            newPos = (zzip_size_t)(currentZipFile->tell() + offset);
             currentZipFile->skip( offset );
         }
         break;

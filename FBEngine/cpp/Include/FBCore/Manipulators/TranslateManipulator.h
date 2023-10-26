@@ -3,6 +3,8 @@
 
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Math/AABB3.h>
+#include "FBCore/Math/Cylinder3.h"
+#include <FBCore/Math/Line3.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/FixedArray.h>
@@ -47,10 +49,16 @@ namespace fb
         bool isEnabled();
 
         bool isVisible() const;
+        void setVisible( bool visible );
 
         SmartPtr<render::ISceneNode> getSceneNode() const;
 
         void setSceneNode( SmartPtr<render::ISceneNode> sceneNode );
+
+        Array<Line3<real_Num>> getLines() const;
+        Array<Cylinder3<real_Num>> getHandles() const;
+
+        FB_CLASS_REGISTER_DECL;
 
     private:
         class SelectionManagerListener : public IEventListener
@@ -76,8 +84,6 @@ namespace fb
         private:
             TranslateManipulator *m_owner = nullptr;
         };
-
-        void setVisible( bool visible );
 
         const Vector3<real_Num> &getPosition() const;
         void setPosition( const Vector3<real_Num> &newpos );
@@ -105,18 +111,29 @@ namespace fb
 
         SmartPtr<SelectionManagerListener> m_selectionManagerListener;
 
-        Vector3<real_Num> RelativeTranslation;  //! Relative translation of the scene node.
-        Vector3<real_Num> RelativeRotation;     //! Relative rotation of the scene node.
-        Vector3<real_Num> RelativeScale;        //! Relative scale of the scene node.
+        //! Relative translation of the scene node.
+        Vector3<real_Num> m_relativeTranslation;
 
-        Vector3<real_Num> m_vPosition;  // store the gizmo's position	//should use the scene variable
-        Vector3<real_Num> m_vAxis;      // the axis around which the translatation takes place
-        Vector3<real_Num> m_vStart;     // The start position of the gizmo's movement
+        //! Relative rotation of the scene node.
+        Vector3<real_Num> m_relativeRotation;
+
+        //! Relative scale of the scene node.
+        Vector3<real_Num> m_relativeScale;        
+
+        // store the gizmo's position	//should use the scene variable
+        Vector3<real_Num> m_vPosition;
+
+        // the axis around which the translatation takes place
+        Vector3<real_Num> m_vAxis;
+
+        // The start position of the gizmo's movement
+        Vector3<real_Num> m_vStart;     
 
         Vector2<real_Num> m_prevCursor;
         Vector2<real_Num> m_cursorPos;
 
-        f32 m_fScale;  // the scale of the manipulator components
+        // the scale of the manipulator components
+        f32 m_fScale;  
 
         // bool to indicate whether or not the x axis is selected
         bool m_bXSelected = false;
@@ -127,9 +144,14 @@ namespace fb
         // bool to indicate whether or not the z axis is selected
         bool m_bZSelected = false;
 
-        bool m_bMouseButtonDown;  //
-        bool m_bEnabled;          // boolean to know whether or not the gizmo is enabled
-        bool m_isVisible;         // boolean to know whether or not the gizmo should be shown
+        //
+        bool m_bMouseButtonDown;  
+
+        // boolean to know whether or not the gizmo is enabled
+        bool m_enabled;          
+
+        // boolean to know whether or not the gizmo should be shown
+        bool m_visible;         
 
         bool m_shouldLogMessages;
 

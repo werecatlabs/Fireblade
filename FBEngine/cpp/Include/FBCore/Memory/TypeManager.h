@@ -33,6 +33,10 @@ namespace fb
          */
         String getName( u32 id ) const;
 
+        String getLabel( u32 id ) const;
+
+        void setLabel( u32 id, const String &label );
+
         /**
          * @brief Get the hash value of the type with the given id.
          * @param id The id of the type to retrieve the hash for.
@@ -130,16 +134,9 @@ namespace fb
         T getDataTypeEnum( u32 id ) const;
 
         template <class T>
-        u32 getTypeId()
-        {
-            // Use typeid to get a unique type identifier for type T
-            const auto &typeInfo = typeid( T );
+        u32 getTypeId();
 
-            auto name = typeInfo.name();
-            return getTypeByName(name);
-        }
-
-        u32 getTypeByName(const String& name);
+        u32 getTypeByName( const String &name );
 
         /**
          * @brief Get a new unique type id.
@@ -216,10 +213,13 @@ namespace fb
         u32 calculateGroupIndex( u32 typeInfo ) const;
 
         /// Stores the names of the types, indexed by their ids.
-        Array<String> m_name;
+        Array<String> m_names;
+
+        /// Stores the names of the types, indexed by their ids.
+        Array<String> m_labels;
 
         /// Stores the hash values of the types, indexed by their ids.
-        Array<atomic_u64> m_hash;
+        Array<atomic_u64> m_hashes;
 
         /// Stores the type indices, indexed by their ids.
         Array<atomic_u32> m_typeIndex;
@@ -249,17 +249,27 @@ namespace fb
         mutable SpinRWMutex m_nameMutex;
     };
 
+    template <class T>
+    T TypeManager::getDataTypeEnum( u32 id ) const
+    {
+        return static_cast<T>( getDataType( id ) );
+    }
+
+    template <class T>
+    u32 TypeManager::getTypeId()
+    {
+        // Use typeid to get a unique type identifier for type T
+        const auto &typeInfo = typeid( T );
+
+        auto name = typeInfo.name();
+        return getTypeByName( name );
+    }
+
     template <class B, class T>
     void TypeManager::setDataTypeEnum( T dataType )
     {
         auto iTypeInfo = B::typeInfo();
         setDataType( iTypeInfo, static_cast<u32>( dataType ) );
-    }
-
-    template <class T>
-    T TypeManager::getDataTypeEnum( u32 id ) const
-    {
-        return static_cast<T>( getDataType( id ) );
     }
 
 }  // end namespace fb

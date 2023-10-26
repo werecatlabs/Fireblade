@@ -3,6 +3,8 @@
 #include <FBCore/Core/Exception.h>
 #include <FBCore/Core/LogManager.h>
 #include <fstream>
+#include <ios>
+#include <iostream>
 
 namespace fb
 {
@@ -232,7 +234,7 @@ namespace fb
         mInStream->seekg( count, std::ios::cur );
     }
 
-    bool FileDataStream::seek( long pos )
+    bool FileDataStream::seek( size_t pos )
     {
         mInStream->clear();  // Clear fail status in case eof was set
         mInStream->seekg( pos, std::ios::beg );

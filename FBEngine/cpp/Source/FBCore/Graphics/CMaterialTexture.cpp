@@ -169,10 +169,10 @@ namespace fb
             {
                 auto properties = fb::make_ptr<Properties>();
 
-                if( m_texture )
+                if( auto texture = getTexture() )
                 {
-                    auto handle = m_texture->getHandle();
-                    properties->setProperty( "texturePath", handle->getUUID() );
+                    auto handle = texture->getHandle();
+                    properties->setProperty( "texture", handle->getUUID() );
                 }
 
                 return properties;
@@ -202,7 +202,7 @@ namespace fb
 
                 if( resourceDatabase )
                 {
-                    auto texturePath = properties->getProperty( "texturePath" );
+                    auto texturePath = properties->getProperty( "texture" );
                     if( !StringUtil::isNullOrEmpty( texturePath ) )
                     {
                         if( auto textureResource = resourceDatabase->loadResourceById( texturePath ) )
@@ -214,7 +214,7 @@ namespace fb
                                 texture->load( nullptr );
                             }
 
-                            setTexture( texture );
+                            //setTexture( texture );
                         }
                     }
                 }
@@ -231,7 +231,7 @@ namespace fb
             {
                 auto properties = CMaterialNode<IMaterialTexture>::getProperties();
 
-                static const auto texturePathStr = String( "Texture" );
+                static const auto texturePathStr = String( "texture" );
 
                 properties->setProperty( "scale", m_scale );
                 properties->setProperty( "tint", m_tint );
@@ -305,7 +305,7 @@ namespace fb
                 auto textureManager = graphicsSystem->getTextureManager();
                 FB_ASSERT( textureManager );
 
-                static const auto texturePathStr = String( "Texture" );
+                static const auto texturePathStr = String( "texture" );
 
                 properties->getPropertyValue( "scale", m_scale );
                 properties->getPropertyValue( "tint", m_tint );

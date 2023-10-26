@@ -8,7 +8,17 @@ namespace fb
     class OverlayState : public BaseState
     {
     public:
+        OverlayState();
+        ~OverlayState();
+
+        bool isVisible() const;
+
+        void setVisible( bool visible );
+
         FB_CLASS_REGISTER_DECL;
+
+    protected:
+        atomic_bool m_visible = true;
     };
 }  // end namespace fb
 

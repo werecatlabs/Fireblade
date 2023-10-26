@@ -575,7 +575,6 @@ namespace fb
     class IVertexElement;
 
     // vehicle
-    class ICarController;
     class IVehicleController;
     class IVehicleManager;
     class IVehicleCallback;
@@ -604,7 +603,7 @@ namespace fb
 
 namespace fb
 {
-    class CFileList;
+    class FileList;
     class ObfuscatedZipArchive;
     class ZipArchive;
 

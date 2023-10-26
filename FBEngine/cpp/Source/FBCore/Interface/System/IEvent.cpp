@@ -83,6 +83,7 @@ namespace fb
     const hash_type IEvent::transform = StringUtil::getHash( "transform" );
 
     const hash_type IEvent::addSelectedObject = StringUtil::getHash( "addSelectedObject" );
+    const hash_type IEvent::addSelectedObjects = StringUtil::getHash( "addSelectedObjects" );
     const hash_type IEvent::deselectObjects = StringUtil::getHash( "deselectObjects" );
     const hash_type IEvent::deselectAll = StringUtil::getHash( "deselectAll" );
 

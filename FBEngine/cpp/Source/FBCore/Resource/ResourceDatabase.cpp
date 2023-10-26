@@ -956,7 +956,7 @@ namespace fb
         {
             while( !query->eof() )
             {
-                return createOrRetrieveResource( query );
+                return createOrRetrieveResource( query, true );
             }
         }
 
@@ -966,7 +966,7 @@ namespace fb
         {
             while( !query->eof() )
             {
-                return createOrRetrieveResource( query );
+                return createOrRetrieveResource( query, true );
             }
         }
 
@@ -1029,14 +1029,15 @@ namespace fb
         {
             while( !query->eof() )
             {
-                return createOrRetrieveResource( query );
+                return createOrRetrieveResource( query, true );
             }
         }
 
         return nullptr;
     }
 
-    SmartPtr<IResource> ResourceDatabase::createOrRetrieveResource( SmartPtr<IDatabaseQuery> query )
+    SmartPtr<IResource> ResourceDatabase::createOrRetrieveResource( SmartPtr<IDatabaseQuery> query,
+                                                                    bool bLoadResource )
     {
         auto applicationManager = core::IApplicationManager::instance();
         FB_ASSERT( applicationManager );
@@ -1063,11 +1064,25 @@ namespace fb
         if( type == "Material" )
         {
             auto materialResult = materialManager->createOrRetrieve( uuid, path, type );
+
+            auto resource = materialResult.first;
+            if( bLoadResource )
+            {
+                graphicsSystem->loadObject( resource );
+            }
+
             return materialResult.first;
         }
         if( type == "Texture" )
         {
             auto textureResult = textureManager->createOrRetrieve( uuid, path, type );
+
+            auto resource = textureResult.first;
+            if( bLoadResource )
+            {
+                graphicsSystem->loadObject( resource );
+            }
+
             return textureResult.first;
         }
 
@@ -1407,7 +1422,7 @@ namespace fb
                 auto type = query->getFieldValue( "type" );
                 auto name = query->getFieldValue( "name" );
 
-                path = "reference/" + name; // test
+                path = "reference/" + name;  // test
 
                 //if( StringUtil::isNullOrEmpty( path ) )
                 //{

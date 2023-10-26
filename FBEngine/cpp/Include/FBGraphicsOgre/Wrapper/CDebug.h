@@ -27,7 +27,7 @@ namespace fb
             void postUpdate() override;
 
             void drawPoint( s32 id, const Vector3<real_Num> &positon, u32 color ) override;
-            void drawLine( s32 id, const Vector3<real_Num> &start, const Vector3<real_Num> &end,
+            SmartPtr<IDebugLine> drawLine( s32 id, const Vector3<real_Num> &start, const Vector3<real_Num> &end,
                            u32 colour ) override;
 
             void drawText( s32 id, const Vector2<real_Num> &position, const String &text, u32 color );

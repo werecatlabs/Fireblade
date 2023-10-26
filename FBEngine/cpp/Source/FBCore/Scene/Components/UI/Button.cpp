@@ -19,6 +19,7 @@ namespace fb
         FB_CLASS_REGISTER_DERIVED( fb::scene, Button, IComponent );
 
         Button::Button()
+            : m_caption("Button")
         {
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
@@ -71,8 +72,7 @@ namespace fb
         {
             try
             {
-                const auto &state = getLoadingState();
-                if( state != LoadingState::Unloaded )
+                if( isLoaded() )
                 {
                     setLoadingState( LoadingState::Unloading );
 

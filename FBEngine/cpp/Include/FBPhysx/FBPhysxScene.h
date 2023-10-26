@@ -63,10 +63,9 @@ namespace fb
             void removeActor( SmartPtr<IPhysicsBody3> body ) override;
 
             bool castRay( const Vector3<real_Num> &origin, const Vector3<real_Num> &dir,
-                          Array<SmartPtr<RaycastHit>> &hits ) override;
-            bool castRay( const Ray3<real_Num> &ray, RaycastHit &hit ) override;
-            bool castRayDynamic( const Ray3<real_Num> &ray, RaycastHit &hit ) override;
-            bool castRay( const Ray3<real_Num> &ray, SmartPtr<IRaycastHit> &hit ) override;
+                          Array<SmartPtr<IRaycastHit>> &hits ) override;
+            bool castRay( const Ray3<real_Num> &ray, SmartPtr<IRaycastHit> hit ) override;
+            bool castRayDynamic( const Ray3<real_Num> &ray, SmartPtr<IRaycastHit> hit ) override;
 
             /** @copydoc IPhysicsScene3::getStateObject */
             SmartPtr<IStateContext> getStateObject() const override;

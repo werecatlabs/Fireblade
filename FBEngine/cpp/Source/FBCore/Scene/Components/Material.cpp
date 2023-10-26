@@ -44,8 +44,10 @@ namespace fb
                 setLoadingState( LoadingState::Loading );
 
                 Component::load( data );
-                // updateMaterial();
-                // updateImageComponent();
+
+                auto materialObjectListener = fb::make_ptr<MaterialStateObjectListener>();
+                materialObjectListener->setOwner( this );
+                setMaterialObjectListener( materialObjectListener );
 
                 setLoadingState( LoadingState::Loaded );
             }
@@ -187,8 +189,6 @@ namespace fb
 
                 static const auto materialPathStr = String( "Material" );
 
-                // properties->getPropertyValue("Material Name", m_materialName);
-
                 SmartPtr<render::IMaterial> material;
                 properties->getPropertyValue( materialPathStr, material );
                 properties->getPropertyValue( "index", m_index );
@@ -221,7 +221,8 @@ namespace fb
 
                     if( !material->isLoaded() )
                     {
-                        graphicsSystem->loadObject( material );
+                        ScopedLock lock (graphicsSystem);
+                        material->load( nullptr);
                     }
                 }
 
@@ -229,32 +230,15 @@ namespace fb
                 {
                     m_material = material;
 
-                    updateMaterial();
-                    updateImageComponent();
-                    updateDependentComponents();
+                    //if( material )
+                    {
+                        //if( material->isLoaded() )
+                        {
+                            updateImageComponent();
+                            updateDependentComponents();
+                        }
+                    }
                 }
-
-                // auto path = applicationManager->getProjectPath();
-                // if( StringUtil::isNullOrEmpty( path ) )
-                //{
-                //     path = Path::getWorkingDirectory();
-                // }
-
-                // auto absolutePath = Path::getAbsolutePath( path, materialPath );
-                // materialPath = Path::getRelativePath( path, absolutePath );
-                // materialPath = StringUtil::cleanupPath( materialPath );
-
-                // if( m_materialPath != materialPath )
-                //{
-                //     if( m_material )
-                //     {
-                //         m_material = nullptr;
-                //     }
-
-                //    m_materialPath = materialPath;
-                //}
-
-                // properties->getPropertyValue("Main Texture", m_mainTexturePath);
             }
             catch( std::exception &e )
             {
@@ -333,11 +317,19 @@ namespace fb
 
         void Material::setMaterial( SmartPtr<render::IMaterial> material )
         {
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+
             if( m_material != material )
             {
                 if( m_material )
                 {
                     FB_ASSERT( getMaterial() && getMaterial()->isValid() );
+
+                    auto materialObjectListener = getMaterialObjectListener();
+                    m_material->removeObjectListener( materialObjectListener );
 
                     auto materialStateObject = m_material->getStateObject();
                     if( materialStateObject )
@@ -352,12 +344,21 @@ namespace fb
                 {
                     FB_ASSERT( getMaterial() && getMaterial()->isValid() );
 
+                    auto materialObjectListener = getMaterialObjectListener();
+                    m_material->addObjectListener( materialObjectListener );
+
                     auto materialStateObject = m_material->getStateObject();
                     if( materialStateObject )
                     {
                         materialStateObject->addStateListener( m_materialListener );
                     }
+
+                    graphicsSystem->loadObject( m_material );
                 }
+
+                updateMaterial();
+                updateImageComponent();
+                updateDependentComponents();
             }
         }
 
@@ -379,28 +380,31 @@ namespace fb
                     auto materialManager = graphicsSystem->getMaterialManager();
                     FB_ASSERT( materialManager );
 
-                    // if( materialManager )
-                    //{
-                    //     auto materialPath = getMaterialPath();
-                    //     if( !StringUtil::isNullOrEmpty( materialPath ) )
-                    //     {
-                    //         auto newMaterial = materialManager->loadFromFile( materialPath );
-                    //         if( !newMaterial )
-                    //         {
-                    //             FB_LOG_ERROR( "Could not load material: " + materialPath );
-                    //         }
+                    if( materialManager )
+                    {
+                        auto materialPath = getMaterialPath();
+                        if( !StringUtil::isNullOrEmpty( materialPath ) )
+                        {
+                            auto newMaterial = materialManager->loadFromFile( materialPath );
+                            if( !newMaterial )
+                            {
+                                FB_LOG_ERROR( "Could not load material: " + materialPath );
+                            }
 
-                    //        setMaterial( newMaterial );
-                    //    }
-                    //}
+                            setMaterial( newMaterial );
+                        }
+                    }
                 }
             }
-
-            if( material )
+            else
             {
                 if( !material->isLoaded() )
                 {
-                    graphicsSystem->loadObject( material );
+                    auto materialPath = getMaterialPath();
+                    if( !StringUtil::isNullOrEmpty( materialPath ) )
+                    {
+                        material->loadFromFile( materialPath );
+                    }
                 }
             }
         }
@@ -410,22 +414,10 @@ namespace fb
             auto actor = getActor();
             if( actor )
             {
-                auto meshRenderer = actor->getComponent<MeshRenderer>();
-                if( meshRenderer )
+                auto components = actor->getComponents();
+                for( auto component : components )
                 {
-                    meshRenderer->updateMaterials();
-                }
-
-                auto uiComponent = actor->getComponent<UIComponent>();
-                if( uiComponent )
-                {
-                    uiComponent->updateMaterials();
-                }
-
-                auto skybox = actor->getComponent<Skybox>();
-                if( skybox )
-                {
-                    skybox->updateMaterials();
+                    component->updateMaterials();
                 }
             }
         }
@@ -458,16 +450,86 @@ namespace fb
             m_index = index;
         }
 
-        Material::MaterialStateListener::MaterialStateListener( Material *owner ) : m_owner( owner )
+        SmartPtr<IEventListener> Material::getMaterialObjectListener() const
         {
+            return m_materialObjectListener;
+        }
+
+        void Material::setMaterialObjectListener( SmartPtr<IEventListener> materialObjectListener )
+        {
+            m_materialObjectListener = materialObjectListener;
+        }
+
+        Material::MaterialStateObjectListener::MaterialStateObjectListener()
+        {
+        }
+
+        Material::MaterialStateObjectListener::~MaterialStateObjectListener()
+        {
+        }
+
+        SmartPtr<Material> Material::MaterialStateObjectListener::getOwner() const
+        {
+            return m_owner;
+        }
+
+        void Material::MaterialStateObjectListener::setOwner( SmartPtr<Material> owner )
+        {
+            m_owner = owner;
+        }
+
+        Material::MaterialStateListener::MaterialStateListener( Material *owner )
+        {
+            m_owner = owner;
         }
 
         Material::MaterialStateListener::~MaterialStateListener()
         {
         }
 
+        Parameter Material::MaterialStateObjectListener::handleEvent(
+            IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
+            SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
+        {
+            auto task = Thread::getCurrentTask();
+            if( task == Thread::Task::Application )
+            {
+                if( eventValue == IEvent::loadingStateChanged )
+                {
+                    if( arguments[1].getS32() == (u32)LoadingState::Loaded )
+                    {
+                        auto owner = getOwner();
+                        if( owner )
+                        {
+                            if( owner->getMaterial() == sender )
+                            {
+                                if( owner->getLoadingState() == LoadingState::Loaded )
+                                {
+                                    //owner->updateMaterial();
+                                    owner->updateImageComponent();
+                                    owner->updateDependentComponents();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return Parameter();
+        }
+
         void Material::MaterialStateListener::handleStateChanged( SmartPtr<IState> &state )
         {
+            auto owner = getOwner();
+            if( owner )
+            {
+                if( owner->isLoaded() )
+                {
+                    //owner->updateMaterial();
+                    //owner->updateImageComponent();
+                    //owner->updateDependentComponents();
+                }
+            }
         }
 
         void Material::MaterialStateListener::handleStateChanged(
@@ -485,7 +547,6 @@ namespace fb
                     {
                         if( owner->getLoadingState() == LoadingState::Loaded )
                         {
-                            owner->updateMaterial();
                             owner->updateImageComponent();
                             owner->updateDependentComponents();
                         }

@@ -35,6 +35,12 @@ namespace fb
             return plugin;
         }
 
+        void PluginManager::loadPlugin( SmartPtr<IPlugin> plugin )
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            m_plugins.push_back( plugin );
+        }
+
         void PluginManager::unloadPlugin( SmartPtr<IPlugin> plugin )
         {
             RecursiveMutex::ScopedLock lock( m_mutex );

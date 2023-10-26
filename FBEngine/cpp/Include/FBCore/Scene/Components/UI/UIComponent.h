@@ -92,6 +92,14 @@ namespace fb
              */
             void visibilityChanged() override;
 
+            void hierarchyChanged() override;
+
+            /** @copydoc IComponent::childAddedInHierarchy */
+            void childAddedInHierarchy( SmartPtr<IActor> child ) override;
+
+            /** @copydoc IComponent::childRemovedInHierarchy */
+            void childRemovedInHierarchy( SmartPtr<IActor> child ) override;
+
             /**
              * @brief Gets the child objects of the UI component.
              * @copydoc BaseComponent::getChildObjects

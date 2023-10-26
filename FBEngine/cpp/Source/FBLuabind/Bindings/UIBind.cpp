@@ -57,7 +57,6 @@ namespace fb
                         .def( "destroyAllChildren", &IUIElement::destroyAllChildren )
                         .def( "hasChildById", &IUIElement::hasChildById )
                         .def( "findChildById", &IUIElement::findChildById )
-                        .def( "findChildByComponentId", &IUIElement::findChildByComponentId )
                         .def( "getLayout", &IUIElement::getLayout )
                         .def( "setLayout", &IUIElement::setLayout )
                         .def( "getContainer", &IUIElement::getContainer )
@@ -180,6 +179,9 @@ namespace fb
                         .def( "setTextSize", &IUIText::setTextSize )
 
                         .scope[def( "typeInfo", IUIText::typeInfo )]];
+
+        module( L )[class_<IUITextEntry, IUIText, SmartPtr<IUIElement>>( "IUITextEntry" )
+                        .scope[def( "typeInfo", IUITextEntry::typeInfo )]];
 
         module( L )[class_<IUITreeCtrl, IUIElement, SmartPtr<IUIElement>>( "IUITreeCtrl" )
                         .def( "clear", &IUITreeCtrl::clear )

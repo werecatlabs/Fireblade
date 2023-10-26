@@ -1,9 +1,9 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/IO/ObfuscatedZipArchive.h>
 #include <FBCore/IO/ObfuscatedZipFile.h>
-#include <FBCore/IO/CMemoryFile.h>
-#include <FBCore/IO/CFileSystem.h>
-#include <FBCore/IO/CFileList.h>
+#include <FBCore/IO/MemoryFile.h>
+#include <FBCore/IO/FileSystem.h>
+#include <FBCore/IO/FileList.h>
 #include <FBCore/FBCore.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -70,7 +70,7 @@ namespace fb
 
         auto name = getPath();
 
-        m_fileList = fb::make_ptr<CFileList>( name, false, false );
+        m_fileList = fb::make_ptr<FileList>( name, false, false );
 
         if( !mZzipDir )
         {

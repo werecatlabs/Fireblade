@@ -79,16 +79,6 @@ namespace fb
             return BitUtil::getFlagValue( static_cast<u32>( m_flags ), flag );
         }
 
-        void CameraController::setCamera( SmartPtr<render::ICamera> camera )
-        {
-            m_camera = camera;
-        }
-
-        SmartPtr<render::ICamera> CameraController::getCamera() const
-        {
-            return m_camera;
-        }
-
         void CameraController::setViewportId( u32 viewportId )
         {
             m_viewportId = viewportId;
@@ -97,17 +87,6 @@ namespace fb
         u32 CameraController::getViewportId() const
         {
             return m_viewportId;
-        }
-
-        Ray3<real_Num> CameraController::getCameraToViewportRay(
-            const Vector2<real_Num> &screenPosition ) const
-        {
-            if( m_camera )
-            {
-                return m_camera->getRay( screenPosition.X(), screenPosition.Y() );
-            }
-
-            return Ray3<real_Num>();
         }
 
         bool CameraController::isInFrustum( const AABB3<real_Num> &box ) const

@@ -17,7 +17,7 @@ namespace fb
 
         void JobYield::stop()
         {
-            m_job->setState( Job::JobState::Finish );
+            m_job->setState( Job::State::Finish );
         }
     }  // namespace core
 }  // namespace fb

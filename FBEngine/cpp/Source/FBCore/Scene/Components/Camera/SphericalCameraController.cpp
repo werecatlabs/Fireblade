@@ -236,7 +236,8 @@ namespace fb
                         if( auto mainWindow = applicationManager->getWindow() )
                         {
                             auto mainWindowSize = mainWindow->getSize();
-                            auto mainWindowSizeF = Vector2F( (f32)mainWindowSize.x, (f32)mainWindowSize.y );
+                            auto mainWindowSizeF =
+                                Vector2F( (f32)mainWindowSize.x, (f32)mainWindowSize.y );
 
                             auto pos = uiWindow->getPosition() / mainWindowSizeF;
                             auto size = uiWindow->getSize() / mainWindowSizeF;
@@ -257,13 +258,9 @@ namespace fb
                     }
                     else
                     {
-                        auto camera = this->getCamera();
-                        if( !camera )
-                        {
-                            auto actor = getActor();
-                            auto cameraComponent = actor->getComponent<Camera>();
-                            camera = cameraComponent->getCamera();
-                        }
+                        auto actor = getActor();
+                        auto cameraComponent = actor->getComponent<Camera>();
+                        auto camera = cameraComponent->getCamera();
 
                         if( camera )
                         {

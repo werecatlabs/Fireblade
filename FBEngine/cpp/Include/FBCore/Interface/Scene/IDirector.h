@@ -54,13 +54,13 @@ namespace fb
             virtual void removeChildren() = 0;
 
             /** Return the child with the name provided. Return null if a child is not found. */
-            virtual SmartPtr<IActor> findChild( const String &name ) = 0;
+            virtual SmartPtr<IDirector> findChild( const String &name ) = 0;
 
             /** Gets children. */
-            virtual Array<SmartPtr<IActor>> getChildren() const = 0;
+            virtual Array<SmartPtr<IDirector>> getChildren() const = 0;
 
             /** Gets children. */
-            virtual SharedPtr<ConcurrentArray<SmartPtr<IActor>>> getChildrenPtr() const = 0;
+            virtual SharedPtr<ConcurrentArray<SmartPtr<IDirector>>> getChildrenPtr() const = 0;
 
             FB_CLASS_REGISTER_DECL;
         };

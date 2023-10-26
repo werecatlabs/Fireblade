@@ -4,7 +4,6 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Scene/ICameraManager.h>
 #include <FBCore/Core/Array.h>
-
 #include <FBCore/Thread/RecursiveMutex.h>
 
 namespace fb

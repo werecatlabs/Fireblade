@@ -69,7 +69,7 @@ namespace fb
         ZZIP_DIR *mZzipDir = nullptr;
 
         /// The file list.
-        SmartPtr<CFileList> m_fileList;
+        SmartPtr<FileList> m_fileList;
 
         /// A password.
         String m_password;

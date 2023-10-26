@@ -75,7 +75,7 @@ namespace fb
         {
             try
             {
-                auto numTasks = static_cast<size_t>( Thread::Task::Count );
+                auto numTasks = static_cast<size_t>(Thread::Task::Count);
                 auto fsmManagers = fb::make_shared<Array<SmartPtr<IFSMManager>>>();
                 fsmManagers->resize( numTasks );
                 m_fsmManagers = fsmManagers;
@@ -88,7 +88,7 @@ namespace fb
                 setSettingsCachePath( settingsCachePath );
 #endif
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -99,204 +99,204 @@ namespace fb
             try
             {
                 const auto &loadingState = getLoadingState();
-                if( loadingState != LoadingState::Unloaded )
+                if(loadingState != LoadingState::Unloaded)
                 {
                     setLoadingState( LoadingState::Unloading );
 
-                    if( m_selectionManager )
+                    if(m_selectionManager)
                     {
                         m_selectionManager->unload( nullptr );
                         m_selectionManager = nullptr;
                     }
 
-                    if( m_sceneManager )
+                    if(m_sceneManager)
                     {
                         m_sceneManager->unload( nullptr );
                         m_sceneManager = nullptr;
                     }
 
-                    if( m_database )
+                    if(m_database)
                     {
                         m_database->unload( nullptr );
                         m_database = nullptr;
                     }
 
-                    if( m_proceduralManager )
+                    if(m_proceduralManager)
                     {
                         m_proceduralManager->unload( nullptr );
                         m_proceduralManager = nullptr;
                     }
 
-                    if( m_systemManager )
+                    if(m_systemManager)
                     {
                         m_systemManager->unload( nullptr );
                         m_systemManager = nullptr;
                     }
 
-                    if( m_commandManager )
+                    if(m_commandManager)
                     {
                         m_commandManager->unload( nullptr );
                         m_commandManager = nullptr;
                     }
 
-                    if( m_resourceDatabase )
+                    if(m_resourceDatabase)
                     {
                         m_resourceDatabase->unload( nullptr );
                         m_resourceDatabase = nullptr;
                     }
 
-                    if( m_resourceManager )
+                    if(m_resourceManager)
                     {
                         m_resourceManager->unload( nullptr );
                         m_resourceManager = nullptr;
                     }
 
-                    if( m_processManager )
+                    if(m_processManager)
                     {
                         m_processManager->unload( nullptr );
                         m_processManager = nullptr;
                     }
 
-                    if( m_meshLoader )
+                    if(m_meshLoader)
                     {
                         m_meshLoader->unload( nullptr );
                         m_meshLoader = nullptr;
                     }
 
-                    if( m_meshManager )
+                    if(m_meshManager)
                     {
                         m_meshManager->unload( nullptr );
                         m_meshManager = nullptr;
                     }
 
-                    if( m_physicsScene )
+                    if(m_physicsScene)
                     {
                         m_physicsScene->clear();
                         m_physicsScene->unload( nullptr );
                         m_physicsScene = nullptr;
                     }
 
-                    if( m_controlsScene )
+                    if(m_controlsScene)
                     {
                         m_controlsScene->clear();
                         m_controlsScene->unload( nullptr );
                         m_controlsScene = nullptr;
                     }
 
-                    if( m_softbodyScene )
+                    if(m_softbodyScene)
                     {
                         m_controlsScene->clear();
                         m_softbodyScene->unload( nullptr );
                         m_softbodyScene = nullptr;
                     }
 
-                    if( m_particleScene )
+                    if(m_particleScene)
                     {
                         m_particleScene->clear();
                         m_particleScene->unload( nullptr );
                         m_particleScene = nullptr;
                     }
 
-                    if( m_raycastScene )
+                    if(m_raycastScene)
                     {
                         m_raycastScene->clear();
                         m_raycastScene->unload( nullptr );
                         m_raycastScene = nullptr;
                     }
 
-                    if( m_objectsScene )
+                    if(m_objectsScene)
                     {
                         m_objectsScene->clear();
                         m_objectsScene->unload( nullptr );
                         m_objectsScene = nullptr;
                     }
 
-                    if( m_scene )
+                    if(m_scene)
                     {
                         m_scene->unload( nullptr );
                         m_scene = nullptr;
                     }
 
-                    if( m_ui )
+                    if(m_ui)
                     {
                         m_ui->unload( nullptr );
                         m_ui = nullptr;
                     }
 
-                    if( m_vehicleManager )
+                    if(m_vehicleManager)
                     {
                         m_vehicleManager->unload( nullptr );
                         m_vehicleManager = nullptr;
                     }
 
-                    if( m_physicsManager2 )
+                    if(m_physicsManager2)
                     {
                         m_physicsManager2->unload( nullptr );
                         m_physicsManager2 = nullptr;
                     }
 
-                    if( m_physicsScene )
+                    if(m_physicsScene)
                     {
                         m_physicsScene->unload( nullptr );
                         m_physicsScene = nullptr;
                     }
 
-                    if( m_controlsScene )
+                    if(m_controlsScene)
                     {
                         m_controlsScene->unload( nullptr );
                         m_controlsScene = nullptr;
                     }
 
-                    if( m_softbodyScene )
+                    if(m_softbodyScene)
                     {
                         m_softbodyScene->unload( nullptr );
                         m_softbodyScene = nullptr;
                     }
 
-                    if( m_particleScene )
+                    if(m_particleScene)
                     {
                         m_particleScene->unload( nullptr );
                         m_particleScene = nullptr;
                     }
 
-                    if( m_raycastScene )
+                    if(m_raycastScene)
                     {
                         m_raycastScene->unload( nullptr );
                         m_raycastScene = nullptr;
                     }
 
-                    if( m_objectsScene )
+                    if(m_objectsScene)
                     {
                         m_objectsScene->unload( nullptr );
                         m_objectsScene = nullptr;
                     }
 
-                    if( m_physicsManager3 )
+                    if(m_physicsManager3)
                     {
                         m_physicsManager3->unload( nullptr );
                         m_physicsManager3 = nullptr;
                     }
 
-                    if( m_fileSystem )
+                    if(m_fileSystem)
                     {
                         m_fileSystem->unload( nullptr );
                         m_fileSystem = nullptr;
                     }
 
-                    if( m_graphicsSystem )
+                    if(m_graphicsSystem)
                     {
                         m_graphicsSystem->unload( nullptr );
                         m_graphicsSystem = nullptr;
                     }
 
-                    if( m_taskManager )
+                    if(m_taskManager)
                     {
                         m_taskManager->unload( nullptr );
                         m_taskManager = nullptr;
                     }
 
                     auto threadPool = getThreadPool();
-                    if( threadPool )
+                    if(threadPool)
                     {
                         threadPool->unload( nullptr );
                         threadPool = nullptr;
@@ -304,27 +304,27 @@ namespace fb
                     }
 
                     auto logManager = getLogManager();
-                    if( logManager )
+                    if(logManager)
                     {
                         logManager->unload( nullptr );
                         setLogManager( nullptr );
                     }
 
                     auto timer = getTimer();
-                    if( timer )
+                    if(timer)
                     {
                         timer->unload( nullptr );
                         setTimer( nullptr );
                     }
 
-                    if( m_stateManager )
+                    if(m_stateManager)
                     {
                         m_stateManager->unload( nullptr );
                         m_stateManager = nullptr;
                     }
 
                     auto factoryManager = getFactoryManager();
-                    if( factoryManager )
+                    if(factoryManager)
                     {
                         factoryManager->unload( nullptr );
                         setFactoryManager( nullptr );
@@ -334,7 +334,7 @@ namespace fb
                     setLoadingState( LoadingState::Unloaded );
                 }
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -361,13 +361,13 @@ namespace fb
 
         SmartPtr<IFSMManager> ApplicationManager::getFsmManagerByTask( Thread::Task task ) const
         {
-            return ( *m_fsmManagers )[static_cast<u32>( task )];
+            return ( *m_fsmManagers )[static_cast<u32>(task)];
         }
 
         void ApplicationManager::setFsmManagerByTask( Thread::Task task,
                                                       SmartPtr<IFSMManager> fsmManager )
         {
-            ( *m_fsmManagers )[static_cast<u32>( task )] = fsmManager;
+            ( *m_fsmManagers )[static_cast<u32>(task)] = fsmManager;
         }
 
         void ApplicationManager::setLogManager( SmartPtr<ILogManager> logManager )
@@ -535,7 +535,7 @@ namespace fb
 
         bool ApplicationManager::hasTasks() const
         {
-            if( m_taskManager )
+            if(m_taskManager)
             {
                 return m_taskManager->getNumTasks() > 0;
             }
@@ -1006,16 +1006,16 @@ namespace fb
             // }
 
             auto taskManager = getTaskManager();
-            if( taskManager )
+            if(taskManager)
             {
                 auto task = taskManager->getTask( Thread::Task::Application );
-                if( task )
+                if(task)
                 {
-                    if( task->isExecuting() )
+                    if(task->isExecuting())
                     {
                         return Thread::Task::Application;
                     }
-                    if( task->isPrimary() )
+                    if(task->isPrimary())
                     {
                         return Thread::Task::Primary;
                     }
@@ -1050,7 +1050,7 @@ namespace fb
             m_loadProgress += loadProgress;
         }
 
-        fb::SmartPtr<fb::IPluginManager> ApplicationManager::getPluginManager() const
+        SmartPtr<IPluginManager> ApplicationManager::getPluginManager() const
         {
             return m_pluginManager;
         }
@@ -1066,7 +1066,7 @@ namespace fb
 
             FB_ASSERT( plugin );
 
-            if( plugin )
+            if(plugin)
             {
                 plugin->load( nullptr );
                 m_plugins.push_back( plugin );
@@ -1081,31 +1081,31 @@ namespace fb
         bool ApplicationManager::isValid() const
         {
             auto taskManager = getTaskManager();
-            if( taskManager )
+            if(taskManager)
             {
-                if( !taskManager->isValid() )
+                if(!taskManager->isValid())
                 {
                     return false;
                 }
             }
 
             auto threadPool = getThreadPool();
-            if( threadPool )
+            if(threadPool)
             {
-                if( !threadPool->isValid() )
+                if(!threadPool->isValid())
                 {
                     return false;
                 }
             }
 
-            if( m_factoryManager )
+            if(m_factoryManager)
             {
-                if( !m_factoryManager->isValid() )
+                if(!m_factoryManager->isValid())
                 {
                     return false;
                 }
 
-                if( m_factoryManager->getReferences() == 0 )
+                if(m_factoryManager->getReferences() == 0)
                 {
                     return false;
                 }
@@ -1168,7 +1168,7 @@ namespace fb
                                                     SmartPtr<ISharedObject> object,
                                                     SmartPtr<IEvent> event )
         {
-            if( auto stateContext = getStateObject() )
+            if(auto stateContext = getStateObject())
             {
                 return stateContext->triggerEvent( eventType, eventValue, arguments, sender, object,
                                                    event );
@@ -1196,5 +1196,5 @@ namespace fb
         {
             return m_fsmManagers;
         }
-    }  // namespace core
-}  // namespace fb
+    } // namespace core
+}     // namespace fb

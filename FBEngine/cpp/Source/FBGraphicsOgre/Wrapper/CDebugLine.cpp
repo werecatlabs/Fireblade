@@ -211,5 +211,16 @@ namespace fb
         {
             m_id = id;
         }
+
+        u32 CDebugLine::getColour() const
+        {
+            return m_colour;
+        }
+
+        void CDebugLine::setColour( u32 colour )
+        {
+            m_colour = colour;
+        }
+
     }  // end namespace render
 }  // end namespace fb

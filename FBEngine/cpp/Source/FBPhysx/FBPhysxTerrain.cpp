@@ -112,35 +112,38 @@ namespace fb
         {
             try
             {
-                setLoadingState( LoadingState::Unloading );
-
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto physicsManager =
-                    fb::static_pointer_cast<PhysxManager>( applicationManager->getPhysicsManager() );
-                FB_ASSERT( physicsManager );
-
-                auto factoryManager = applicationManager->getFactoryManager();
-                FB_ASSERT( factoryManager );
-
-                auto physics = physicsManager->getPhysics();
-                FB_ASSERT( physics );
-
-                if( auto shape = getShape() )
+                if( isLoaded() )
                 {
-                    if( auto actor = getPxActor() )
+                    setLoadingState( LoadingState::Unloading );
+
+                    auto applicationManager = core::IApplicationManager::instance();
+                    FB_ASSERT( applicationManager );
+
+                    auto physicsManager =
+                        fb::static_pointer_cast<PhysxManager>( applicationManager->getPhysicsManager() );
+                    FB_ASSERT( physicsManager );
+
+                    auto factoryManager = applicationManager->getFactoryManager();
+                    FB_ASSERT( factoryManager );
+
+                    auto physics = physicsManager->getPhysics();
+                    FB_ASSERT( physics );
+
+                    if( auto shape = getShape() )
                     {
-                        actor->detachShape( *shape, false );
+                        if( auto actor = getPxActor() )
+                        {
+                            actor->detachShape( *shape, false );
+                        }
+
+                        shape->release();
+                        setShape( nullptr );
                     }
 
-                    shape->release();
-                    setShape( nullptr );
+                    PhysxShape<ITerrainShape>::unload( data );
+
+                    setLoadingState( LoadingState::Unloaded );
                 }
-
-                PhysxShape<ITerrainShape>::unload( data );
-
-                setLoadingState( LoadingState::Unloaded );
             }
             catch( std::exception &e )
             {

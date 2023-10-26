@@ -139,6 +139,8 @@ namespace fb
 
         void Layout::setProperties( SmartPtr<Properties> properties )
         {
+            UIComponent::setProperties( properties );
+
             properties->getPropertyValue( "referenceSize", m_referenceSize );
 
             if( auto actor = getActor() )

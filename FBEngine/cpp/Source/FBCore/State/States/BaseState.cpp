@@ -51,20 +51,27 @@ namespace fb
 
     bool BaseState::isDirty() const
     {
-        return m_dirty;
+        return m_dirty > 0;
     }
 
     void BaseState::setDirty( bool dirty )
     {
-        m_dirty = dirty;
-
         if( dirty )
         {
+            ++m_dirty;
+
             if( auto stateContext = getStateContext() )
             {
                 auto applicationManager = core::IApplicationManager::instance();
                 auto stateManager = applicationManager->getStateManager();
                 stateManager->addDirty( stateContext );
+            }
+        }
+        else
+        {
+            if( m_dirty > 0 )
+            {
+                --m_dirty;
             }
         }
     }

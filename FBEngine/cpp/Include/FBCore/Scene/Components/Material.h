@@ -2,12 +2,12 @@
 #define MaterialComponent_h__
 
 #include <FBCore/Scene/Components/Component.h>
+#include <FBCore/Interface/System/IEventListener.h>
 
 namespace fb
 {
     namespace scene
     {
-
         class Material : public Component
         {
         public:
@@ -47,9 +47,31 @@ namespace fb
 
             void setIndex( u32 index );
 
+            SmartPtr<IEventListener> getMaterialObjectListener() const;
+
+            void setMaterialObjectListener( SmartPtr<IEventListener> materialObjectListener );
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
+            class MaterialStateObjectListener : public IEventListener
+            {
+            public:
+                MaterialStateObjectListener();
+                ~MaterialStateObjectListener() override;
+
+                Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                       const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
+
+                SmartPtr<Material> getOwner() const;
+
+                void setOwner( SmartPtr<Material> owner );
+
+            protected:
+                AtomicSmartPtr<Material> m_owner;
+            };
+
             class MaterialStateListener : public IStateListener
             {
             public:
@@ -65,13 +87,14 @@ namespace fb
                 void setOwner( SmartPtr<Material> owner );
 
             protected:
-                SmartPtr<Material> m_owner;
+                AtomicSmartPtr<Material> m_owner;
             };
 
             void updateDirty();
 
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType ) override;
 
+            AtomicSmartPtr<IEventListener> m_materialObjectListener;
             SmartPtr<IStateListener> m_materialListener;
             SmartPtr<render::IMaterial> m_material;
             s32 m_index = 0;

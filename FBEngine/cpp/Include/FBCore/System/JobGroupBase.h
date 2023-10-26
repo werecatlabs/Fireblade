@@ -19,8 +19,8 @@ namespace fb
         virtual bool getInterupt() const;
         virtual void setInterupt( bool interupt );
 
-        JobState getState() const override;
-        void setState( JobState state ) override;
+        State getState() const override;
+        void setState( State state ) override;
 
         u32 getProgress() const override;
         void setProgress( u32 val ) override;
@@ -32,7 +32,6 @@ namespace fb
         void setPrimary( bool val ) override;
 
         bool isFinished() const override;
-        void setFinished( bool finished ) override;
 
         bool wait() override;
         bool wait( f64 maxWaitTime ) override;
@@ -49,7 +48,7 @@ namespace fb
         void setCoroutine( bool val ) override;
 
     protected:
-        Atomic<JobState> m_state = JobState::Ready;
+        Atomic<State> m_state = State::Ready;
         atomic_u32 m_progress = 0;
         atomic_u32 m_priority = 0;
         atomic_bool m_isPrimary = false;

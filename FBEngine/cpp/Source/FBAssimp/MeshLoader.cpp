@@ -622,16 +622,9 @@ namespace fb
         try
         {
             auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
             auto sceneManager = applicationManager->getSceneManager();
-            FB_ASSERT( sceneManager );
-
             auto fileSystem = applicationManager->getFileSystem();
-            FB_ASSERT( fileSystem );
-
             auto factoryManager = applicationManager->getFactoryManager();
-            FB_ASSERT( factoryManager );
 
             auto actor = sceneManager->createActor();
             parent->addChild( actor );
@@ -639,21 +632,7 @@ namespace fb
             auto name = pNode->mName;
             actor->setName( name.C_Str() );
 
-            if( actor->getName() == "F40" )
-            {
-                int stop = 0;
-                stop = 0;
-            }
-
-            if( actor->getName() == "B_R_T" )
-            {
-                int stop = 0;
-                stop = 0;
-            }
-
             auto meshResource = getMeshResource();
-            //mScene->mFlags;
-            // pNode->
 
             auto localTransform = pNode->mTransformation;
             localTransform = localTransform.Inverse();
@@ -666,8 +645,8 @@ namespace fb
 
             aiMatrix4x4 aiM;
 
-            auto nodeTransformData = mNodeDerivedTransformByName.find( pNode->mName.data );
-            if( nodeTransformData != mNodeDerivedTransformByName.end() )
+            auto nodeTransformData = m_nodeDerivedTransformByName.find( pNode->mName.data );
+            if( nodeTransformData != m_nodeDerivedTransformByName.end() )
             {
                 aiM = nodeTransformData->second;
             }
@@ -690,7 +669,20 @@ namespace fb
             auto actorOrientation = Quaternion<real_Num>( rot.w, rot.x, rot.y, rot.z );
             auto actorScale = Vector3<real_Num>( scale.x, scale.y, scale.z );
 
-            //actorPosition *= actorScale;
+            if( !actorPosition.isFinite() )
+            {
+                actorPosition = Vector3<real_Num>::zero();
+            }
+
+            if( !actorOrientation.isSane() )
+            {
+                actorOrientation = Quaternion<real_Num>::identity();
+            }
+
+            if( !actorScale.isFinite() )
+            {
+                actorScale = Vector3<real_Num>::unit();
+            }
 
             FB_ASSERT( actorPosition.isValid() );
             FB_ASSERT( actorOrientation.isValid() );
@@ -714,25 +706,13 @@ namespace fb
                 auto actorLocalOrientation = actorLocalTransform.getOrientation();
                 auto actorLocalScale = actorLocalTransform.getScale();
 
-                //actorTransform->setLocalPosition( actorLocalPosition );
-                //actorTransform->setLocalOrientation( actorLocalOrientation );
-                //actorTransform->setLocalScale( actorLocalScale );
-
                 actorTransform->setPosition( actorPosition );
                 actorTransform->setOrientation( actorOrientation );
                 actorTransform->setScale( actorScale );
 
                 FB_ASSERT( actorWorldTransform.isSane() );
 
-                //actorTransform->updateWorldFromLocal();
                 actorTransform->updateLocalFromWorld();
-
-                //actor->updateTransform();
-
-                //if( auto rootActor = getRootActor() )
-                //{
-                //    rootActor->updateTransform();
-                //}
             }
 
             auto numMeshes = pNode->mNumMeshes;
@@ -872,8 +852,8 @@ namespace fb
 
             aiMatrix4x4 aiM;
 
-            auto nodeTransformData = mNodeDerivedTransformByName.find( pNode->mName.data );
-            if( nodeTransformData != mNodeDerivedTransformByName.end() )
+            auto nodeTransformData = m_nodeDerivedTransformByName.find( pNode->mName.data );
+            if( nodeTransformData != m_nodeDerivedTransformByName.end() )
             {
                 aiM = nodeTransformData->second;
             }
@@ -1112,19 +1092,13 @@ namespace fb
             aiString szPath;
             if( AI_SUCCESS == aiGetMaterialString( mat, AI_MATKEY_TEXTURE_DIFFUSE( 0 ), &szPath ) )
             {
-                if( !m_quietMode )
-                {
-                    FB_LOG( "Using aiGetMaterialString : Found texture " + String( szPath.data ) +
-                            " for channel " + StringUtil::toString( uvindex ) );
-                }
+                FB_LOG( "Using aiGetMaterialString : Found texture " + String( szPath.data ) +
+                        " for channel " + StringUtil::toString( uvindex ) );
             }
 
             if( szPath.length < 1 )
             {
-                if( !m_quietMode )
-                {
-                    FB_LOG( "Didn't find any texture units..." );
-                }
+                FB_LOG( "Didn't find any texture units..." );
 
                 szPath = String( "dummyMat" + StringUtil::toString( dummyMatCount ) ).c_str();
                 dummyMatCount++;
@@ -1133,10 +1107,8 @@ namespace fb
             String basename;
             String outPath;
             StringUtil::splitFilename( String( szPath.data ), basename, outPath );
-            if( !m_quietMode )
-            {
-                FB_LOG( "Creating " + basename );
-            }
+
+            FB_LOG( "Creating " + basename );
 
             // Ogre::ResourceManager::ResourceCreateOrRetrieveResult status =
             // omatMgr->createOrRetrieve(ReplaceSpaces(basename),
@@ -1188,76 +1160,25 @@ namespace fb
 
             if( mat->GetTexture( type, 0, &path ) == AI_SUCCESS )
             {
-                if( !m_quietMode )
-                {
-                    FB_LOG( "Found texture " + String( path.data ) + " for channel " +
-                            StringUtil::toString( uvindex ) );
-                }
+                FB_LOG( "Found texture " + String( path.data ) + " for channel " +
+                        StringUtil::toString( uvindex ) );
 
                 if( AI_SUCCESS == aiGetMaterialString( mat, AI_MATKEY_TEXTURE_DIFFUSE( 0 ), &szPath ) )
                 {
-                    if( !m_quietMode )
-                    {
-                        FB_LOG( "Using aiGetMaterialString : Found texture " + String( szPath.data ) +
-                                " for channel " + StringUtil::toString( uvindex ) );
-                    }
+                    FB_LOG( "Using aiGetMaterialString : Found texture " + String( szPath.data ) +
+                            " for channel " + StringUtil::toString( uvindex ) );
                 }
 
-                // omat->setMainTexturePath(path.C_Str());
+                if( auto m = omat->getMaterial() )
+                {
+                    auto textureName = String( path.C_Str() );
+                    if( !fileSystem->isExistingFile( textureName ) )
+                    {
+                        textureName = Path::getFileName( textureName );
+                    }
 
-                //// attempt to load the image
-                // Ogre::Image image;
-
-                //// possibly if we fail to actually find it, pop up a box?
-                // Ogre::String pathname(mDir + "\\" + path.data);
-
-                // std::ifstream imgstream;
-                // imgstream.open(path.data, std::ios::binary);
-                // if (!imgstream.is_open())
-                //	imgstream.open(Ogre::String(mPath + Ogre::String("\\") +
-                //Ogre::String(path.data)).c_str(), std::ios::binary);
-
-                // if (imgstream.is_open())
-                //{
-                //	// Wrap as a stream
-                //	Ogre::DataStreamPtr strm(OGRE_NEW Ogre::FileStreamDataStream(path.data, &imgstream,
-                //false));
-
-                //	if (!strm->size() || strm->size() == 0xffffffff)
-                //	{
-                //		// fall back to our very simple and very hardcoded hot-pink version
-                //		Ogre::DataStreamPtr altStrm(OGRE_NEW Ogre::MemoryDataStream(s_RGB,
-                //sizeof(s_RGB))); 		image.loadRawData(altStrm, 2, 2, Ogre::PF_R8G8B8); 		if (!mQuietMode)
-                //		{
-                //			Ogre::LogManager::getSingleton().logMessage("Could not load texture, falling back
-                //to hotpink");
-                //		}
-                //	}
-                //	else
-                //	{
-                //		// extract extension from filename
-                //		size_t pos = pathname.find_last_of('.');
-                //		Ogre::String ext = pathname.substr(pos + 1);
-                //		image.load(strm, ext);
-                //		imgstream.close();
-                //	}
-                //}
-                // else {
-                //	// fall back to our very simple and very hardcoded hot-pink version
-                //	Ogre::DataStreamPtr altStrm(OGRE_NEW Ogre::MemoryDataStream(s_RGB, sizeof(s_RGB)));
-                //	image.loadRawData(altStrm, 2, 2, Ogre::PF_R8G8B8);
-                //	if (!mQuietMode)
-                //	{
-                //		Ogre::LogManager::getSingleton().logMessage("Could not load texture, falling back
-                //to hotpink - 2");
-                //	}
-                //}
-
-                ///*		Ogre::TextureManager::getSingleton().loadImage(Ogre::String(szPath.data),
-                ///Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, image);*/
-                //		//TODO: save this to materials/textures ?
-                // Ogre::TextureUnitState* texUnitState =
-                // omat->getTechnique(0)->getPass(0)->createTextureUnitState(basename);
+                    m->setTexture( textureName, 0 );
+                }
             }
 
             if( material )
@@ -1276,10 +1197,10 @@ namespace fb
     {
         try
         {
-            auto it = mNodeDerivedTransformByName.find( pNode->mName.data );
-            if( it == mNodeDerivedTransformByName.end() )
+            auto it = m_nodeDerivedTransformByName.find( pNode->mName.data );
+            if( it == m_nodeDerivedTransformByName.end() )
             {
-                mNodeDerivedTransformByName[pNode->mName.data] = accTransform;
+                m_nodeDerivedTransformByName[pNode->mName.data] = accTransform;
             }
 
             for( u32 childIdx = 0; childIdx < pNode->mNumChildren; ++childIdx )
@@ -1356,7 +1277,7 @@ namespace fb
         auto factoryManager = applicationManager->getFactoryManager();
 
         // if animated all submeshes must have bone weights
-        if( mBonesByName.size() && !mesh->HasBones() )
+        if( m_bonesByName.size() && !mesh->HasBones() )
         {
             if( !m_quietMode )
             {
@@ -1366,19 +1287,8 @@ namespace fb
             return false;
         }
 
-        String materialName;
-        SmartPtr<render::IMaterial> matptr;
-
-        if( ( mLoaderParams & LP_GENERATE_MATERIALS_AS_CODE ) == 0 )
-        {
-            materialName = mat->GetName().C_Str();
-            matptr = createMaterial( mesh->mMaterialIndex, mat, mDir );
-        }
-        else
-        {
-            materialName = mat->GetName().C_Str();
-            matptr = createMaterialByScript( mesh->mMaterialIndex, mat );
-        }
+        auto pName = mat->GetName().C_Str();
+        String materialName = pName ? pName : "";
 
         // now begin the object definition
         // We create a submesh per material
@@ -1481,8 +1391,8 @@ namespace fb
 
         aiMatrix4x4 aiM;
 
-        auto nodeTransformData = mNodeDerivedTransformByName.find( pNode->mName.data );
-        if( nodeTransformData != mNodeDerivedTransformByName.end() )
+        auto nodeTransformData = m_nodeDerivedTransformByName.find( pNode->mName.data );
+        if( nodeTransformData != m_nodeDerivedTransformByName.end() )
         {
             aiM = nodeTransformData->second;
         }
@@ -1503,11 +1413,6 @@ namespace fb
             vect.x = vec->x;
             vect.y = vec->y;
             vect.z = vec->z;
-
-            // vect *= aiM;
-
-            // auto localTransform = pNode->mTransformation;
-            // vect *= localTransform.Inverse();
 
             auto pos = Vector3<f32>( vect.x, vect.y, vect.z );
             pos *= m_meshScale;
@@ -1645,32 +1550,10 @@ namespace fb
         //} // if mesh has bones
 
         // Finally we set a material to the submesh
-        if( matptr )
-        {
-            auto handle = matptr->getHandle();
-            auto name = handle->getName();
-            submesh->setMaterialName( name );
-        }
-        else
-        {
-            submesh->setMaterialName( materialName );
-        }
+        submesh->setMaterialName( materialName );
 
         return true;
     }
-
-    SmartPtr<render::IMaterial> MeshLoader::createMaterial( unsigned int mMaterialIndex,
-                                                            const aiMaterial *mat, const String &mDir )
-    {
-        return nullptr;
-    }
-
-    SmartPtr<render::IMaterial> MeshLoader::createMaterialByScript( unsigned int mMaterialIndex,
-                                                                    const aiMaterial *mat )
-    {
-        return nullptr;
-    }
-
 #endif
 
     bool MeshLoader::getUseSingleMesh() const

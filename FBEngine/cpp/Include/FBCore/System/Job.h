@@ -16,10 +16,10 @@ namespace fb
         ~Job() override = default;
 
         /** @copydoc IJob::getState */
-        JobState getState() const override;
+        State getState() const override;
 
         /** @copydoc IJob::setState */
-        void setState( JobState state ) override;
+        void setState( State state ) override;
 
         /** @copydoc IJob::getProgress */
         u32 getProgress() const override;
@@ -41,9 +41,6 @@ namespace fb
 
         /** @copydoc IJob::isFinished */
         bool isFinished() const override;
-
-        /** @copydoc IJob::setFinished */
-        void setFinished( bool finished ) override;
 
         /** @copydoc IJob::wait */
         bool wait() override;
@@ -76,11 +73,10 @@ namespace fb
 
     protected:
         atomic_u32 m_affinity = 0;
-        Atomic<JobState> m_state = JobState::Ready;
+        Atomic<State> m_state = State::Ready;
         atomic_u32 m_progress = 0;
         atomic_u32 m_priority = 0;
         atomic_bool m_isPrimary = false;
-        atomic_bool m_isFinished = false;
         atomic_bool m_isCoroutine = false;
 
         SmartPtr<IObjectYield> m_yieldObject;

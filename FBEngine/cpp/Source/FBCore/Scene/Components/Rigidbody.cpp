@@ -239,29 +239,29 @@ namespace fb
             auto physicsScene = applicationManager->getPhysicsScene();
             if( physicsScene )
             {
-                if( m_rigidDynamic )
+                if( auto rigidDynamic = getRigidDynamic() )
                 {
-                    physicsScene->removeActor( m_rigidDynamic );
+                    physicsScene->removeActor( rigidDynamic );
                 }
 
-                if( m_rigidStatic )
+                if( auto rigidStatic = getRigidStatic() )
                 {
-                    physicsScene->removeActor( m_rigidStatic );
+                    physicsScene->removeActor( rigidStatic );
                 }
             }
 
             if( physicsManager )
             {
-                if( m_rigidDynamic )
+                if( auto rigidDynamic = getRigidDynamic() )
                 {
-                    physicsManager->removePhysicsBody( m_rigidDynamic );
-                    m_rigidDynamic = nullptr;
+                    physicsManager->removePhysicsBody( rigidDynamic );
+                    setRigidDynamic( nullptr );
                 }
 
-                if( m_rigidStatic )
+                if( auto rigidStatic = getRigidStatic() )
                 {
-                    physicsManager->removePhysicsBody( m_rigidStatic );
-                    m_rigidStatic = nullptr;
+                    physicsManager->removePhysicsBody( rigidStatic );
+                    setRigidStatic( nullptr );
                 }
 
                 if( m_material )
@@ -288,14 +288,14 @@ namespace fb
 
                         if( shape )
                         {
-                            if( m_rigidDynamic )
+                            if( auto rigidDynamic = getRigidDynamic() )
                             {
-                                m_rigidDynamic->addShape( shape );
+                                rigidDynamic->addShape( shape );
                             }
 
-                            if( m_rigidStatic )
+                            if( auto rigidStatic = getRigidStatic() )
                             {
-                                m_rigidStatic->addShape( shape );
+                                rigidStatic->addShape( shape );
                             }
                         }
                     }
@@ -351,17 +351,17 @@ namespace fb
 
                     attachShape();
 
-                    if( m_rigidDynamic )
+                    if( auto rigidDynamic = getRigidDynamic() )
                     {
-                        if( m_rigidDynamic->getNumShapes() > 0 )
+                        if( rigidDynamic->getNumShapes() > 0 )
                         {
                             addToScene();
                         }
                     }
 
-                    if( m_rigidStatic )
+                    if( auto rigidStatic = getRigidStatic() )
                     {
-                        if( m_rigidStatic->getNumShapes() > 0 )
+                        if( rigidStatic->getNumShapes() > 0 )
                         {
                             addToScene();
                         }
@@ -397,17 +397,17 @@ namespace fb
                         createRigidbodyObject();
                         attachShape();
 
-                        if( m_rigidDynamic )
+                        if( auto rigidDynamic = getRigidDynamic() )
                         {
-                            if( m_rigidDynamic->getNumShapes() > 0 )
+                            if( rigidDynamic->getNumShapes() > 0 )
                             {
                                 addToScene();
                             }
                         }
 
-                        if( m_rigidStatic )
+                        if( auto rigidStatic = getRigidStatic() )
                         {
-                            if( m_rigidStatic->getNumShapes() > 0 )
+                            if( rigidStatic->getNumShapes() > 0 )
                             {
                                 addToScene();
                             }

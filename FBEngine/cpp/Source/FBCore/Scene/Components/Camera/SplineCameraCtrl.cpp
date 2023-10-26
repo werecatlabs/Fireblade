@@ -31,7 +31,7 @@ namespace fb
 
             m_cameraSceneNode = cameraSceneNode;
 
-            setCamera( camera );
+            //setCamera( camera );
 
             m_depthOffset = 0.0f;
             m_offsetPosition = Vector2F( 0.5f, 0.5f );

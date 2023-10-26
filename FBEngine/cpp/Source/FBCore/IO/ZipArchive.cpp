@@ -1,9 +1,9 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/IO/ZipArchive.h>
 #include <FBCore/IO/ZipFile.h>
-#include <FBCore/IO/CMemoryFile.h>
-#include <FBCore/IO/CFileSystem.h>
-#include <FBCore/IO/CFileList.h>
+#include <FBCore/IO/MemoryFile.h>
+#include <FBCore/IO/FileSystem.h>
+#include <FBCore/IO/FileList.h>
 #include <FBCore/FBCore.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,7 +39,7 @@ namespace fb
 
         auto name = getPath();
 
-        m_fileList = factoryManager->make_ptr<CFileList>();
+        m_fileList = factoryManager->make_ptr<FileList>();
         m_fileList->setPath( name );
 
         if( !mZzipDir )

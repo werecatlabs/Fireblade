@@ -6,12 +6,12 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, Job, IJob );
 
-    IJob::JobState Job::getState() const
+    IJob::State Job::getState() const
     {
         return m_state;
     }
 
-    void Job::setState( JobState state )
+    void Job::setState( State state )
     {
         m_state = state;
     }
@@ -49,16 +49,16 @@ namespace fb
     bool Job::isFinished() const
     {
         auto state = getState();
-        return state == JobState::Finish || state == JobState::Ready;
-    }
-
-    void Job::setFinished( bool finished )
-    {
-        m_isFinished = finished;
+        return state == State::Finish || state == State::Ready;
     }
 
     bool Job::wait()
     {
+        while( getState() == IJob::State::Queue )
+        {
+            Thread::yield();
+        }
+
         while( !isFinished() )
         {
             Thread::yield();
@@ -69,6 +69,11 @@ namespace fb
 
     bool Job::wait( f64 maxWaitTime )
     {
+        while( getState() == IJob::State::Queue )
+        {
+            Thread::yield();
+        }
+
         while( !isFinished() )
         {
             Thread::yield();
@@ -103,7 +108,7 @@ namespace fb
 
     void Job::coroutine_execute_step( SmartPtr<IObjectYield> &rYield )
     {
-        setState( JobState::Finish );
+        setState( State::Finish );
     }
 
     bool Job::isCoroutine() const

@@ -68,25 +68,8 @@ namespace fb
         return 0;
     }
 
-    bool ZipFile::seek( long pos )
+    bool ZipFile::seek( size_t pos )
     {
-        //auto position = static_cast<size_t>( finalPos );
-
-        //auto curPos = static_cast<u32>( zzip_tell( m_zipFile ) );
-        //auto newPos = static_cast<s32>( curPos ) + static_cast<s32>( finalPos );
-
-        //if( newPos >= m_size )
-        //{
-        //    position = m_size - 1;
-        //}
-        //else if( newPos < 0 )
-        //{
-        //    position = 0;
-        //}
-
-        //zzip_seek( m_zipFile, static_cast<zzip_off_t>( position ), SEEK_CUR );
-        //return true;
-
         zzip_seek( m_zipFile, static_cast<zzip_off_t>( pos ), SEEK_SET );
         return true;
     }

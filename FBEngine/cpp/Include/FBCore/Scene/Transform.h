@@ -2,7 +2,6 @@
 #define __FB_Transformation_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-
 #include <FBCore/Interface/Scene/ITransform.h>
 #include <FBCore/Atomics/AtomicFloat.h>
 

@@ -77,7 +77,7 @@ namespace fb
          * from the beginning of the stream.
          * @return True if successful, otherwise false.
          */
-        virtual bool seek( long finalPos ) = 0;
+        virtual bool seek( size_t finalPos ) = 0;
 
         //! Get the size of the stream.
         /** @return Size of the stream in bytes.

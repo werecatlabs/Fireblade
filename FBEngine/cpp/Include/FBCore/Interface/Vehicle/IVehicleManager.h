@@ -51,24 +51,27 @@ namespace fb
          * @return A smart pointer to the newly created vehicle controller
          */
         template <class T>
-        SmartPtr<T> createVehicleByType()
-        {
-            auto typeInfo = T::typeInfo();
-            FB_ASSERT( typeInfo != 0 );
-
-            auto typeManager = TypeManager::instance();
-            FB_ASSERT( typeManager );
-
-            auto typeHash = typeManager->getHash( typeInfo );
-            FB_ASSERT( typeHash != 0 );
-
-            auto vehicle = createVehicle( typeHash );
-            FB_ASSERT( fb::dynamic_pointer_cast<T>( vehicle ) );
-            return fb::static_pointer_cast<T>( vehicle );
-        }
+        SmartPtr<T> createVehicleByType();
 
         FB_CLASS_REGISTER_DECL;
     };
+
+    template <class T>
+    SmartPtr<T> IVehicleManager::createVehicleByType()
+    {
+        auto typeInfo = T::typeInfo();
+        FB_ASSERT( typeInfo != 0 );
+
+        auto typeManager = TypeManager::instance();
+        FB_ASSERT( typeManager );
+
+        auto typeHash = typeManager->getHash( typeInfo );
+        FB_ASSERT( typeHash != 0 );
+
+        auto vehicle = createVehicle( typeHash );
+        FB_ASSERT( fb::dynamic_pointer_cast<T>( vehicle ) );
+        return fb::static_pointer_cast<T>( vehicle );
+    }
 
 }  // end namespace fb
 

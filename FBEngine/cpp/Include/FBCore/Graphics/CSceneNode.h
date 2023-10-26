@@ -146,7 +146,7 @@ namespace fb
 
             bool getShowBoundingBox() const override;
 
-            void _updateBounds() override;
+            void updateBounds() override;
 
             void setVisibilityFlags( u32 flags ) override;
 
@@ -160,12 +160,26 @@ namespace fb
 
             void setProperties( SmartPtr<Properties> properties ) override;
 
+            Array<SmartPtr<ISharedObject>> getChildObjects() const;
+
+            SmartPtr<SceneNodeState> getState() const;
+
+            FB_CLASS_REGISTER_DECL;
+
         protected:
+            AtomicSmartPtr<SceneNodeState> m_state;
+
             /**< The scene manager that created this node. */
             AtomicWeakPtr<IGraphicsScene> m_creator;
 
             /**< The parent scene node. */
             AtomicWeakPtr<ISceneNode> m_parent;
+
+            /// an array of this scene node's children
+            Array<SmartPtr<ISceneNode>> m_children;
+
+            /// The objects attached to this scene node.
+            Array<SmartPtr<IGraphicsObject>> m_graphicsObjects;
         };
 
     }  // namespace render

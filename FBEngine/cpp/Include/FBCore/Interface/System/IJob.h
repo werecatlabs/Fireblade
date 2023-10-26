@@ -18,7 +18,7 @@ namespace fb
         /**
          * @brief Enum class representing the different states a job can be in.
          */
-        enum class JobState
+        enum class State
         {
             Ready,
             Queue,
@@ -82,14 +82,14 @@ namespace fb
          *
          * @return JobState The current state of the job.
          */
-        virtual JobState getState() const = 0;
+        virtual State getState() const = 0;
 
         /**
          * @brief Set the state of the job.
          *
          * @param state The desired state for the job.
          */
-        virtual void setState( JobState state ) = 0;
+        virtual void setState( State state ) = 0;
 
         /**
          * @brief Get the job progress.
@@ -119,9 +119,6 @@ namespace fb
 
         /** To know if the job is finished. */
         virtual bool isFinished() const = 0;
-
-        /** To know if the job is finished. */
-        virtual void setFinished( bool finished ) = 0;
 
         /** Called to wait until the job is finished. */
         virtual bool wait() = 0;

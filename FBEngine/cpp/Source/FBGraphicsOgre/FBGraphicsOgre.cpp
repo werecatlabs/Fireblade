@@ -1,27 +1,25 @@
 #include <FBGraphicsOgre/FBGraphicsOgrePCH.h>
 #include <FBGraphicsOgre/FBGraphicsOgre.h>
 #include <FBGraphicsOgre/Wrapper/CGraphicsSystemOgre.h>
-#include <FBCore/FBCore.h>
 #include <FBGraphicsOgre/Wrapper/CDebugLine.h>
 #include <FBGraphicsOgre/Wrapper/CMaterialOgre.h>
 #include <FBGraphicsOgre/Wrapper/CMaterialPassOgre.h>
 #include <FBGraphicsOgre/Wrapper/CMaterialTechniqueOgre.h>
 #include <FBGraphicsOgre/Wrapper/CSceneNodeOgre.h>
-
-#include "FBGraphicsOgre/Wrapper/CTextureOgre.h"
+#include <FBGraphicsOgre/Wrapper/CTextureOgre.h>
 #include <FBGraphicsOgre/Wrapper/CTextureOgreStateListener.h>
-#include "Wrapper/CCubemap.h"
-#include "Wrapper/CDebugText.h"
-#include "Wrapper/CDynamicMesh.h"
-#include "Wrapper/CFont.h"
-#include "Wrapper/CGraphicsMeshOgre.h"
-#include "Wrapper/CLightOgre.h"
-#include "Wrapper/COverlayElementContainer.h"
-#include "Wrapper/COverlayElementText.h"
-#include "Wrapper/COverlayOgre.h"
-#include "Wrapper/CWindowOgre.h"
-#include "Wrapper/CTerrainOgre.h"
-#include "Wrapper/CSceneNodeOgre.h"
+#include <FBGraphicsOgre/Wrapper/CCubemap.h>
+#include <FBGraphicsOgre/Wrapper/CDebugText.h>
+#include <FBGraphicsOgre/Wrapper/CDynamicMesh.h>
+#include <FBGraphicsOgre/Wrapper/CFont.h>
+#include <FBGraphicsOgre/Wrapper/CGraphicsMeshOgre.h>
+#include <FBGraphicsOgre/Wrapper/CLightOgre.h>
+#include <FBGraphicsOgre/Wrapper/COverlayElementContainer.h>
+#include <FBGraphicsOgre/Wrapper/COverlayElementText.h>
+#include <FBGraphicsOgre/Wrapper/COverlayOgre.h>
+#include <FBGraphicsOgre/Wrapper/CWindowOgre.h>
+#include <FBGraphicsOgre/Wrapper/CTerrainOgre.h>
+#include <FBCore/FBCore.h>
 
 namespace fb
 {

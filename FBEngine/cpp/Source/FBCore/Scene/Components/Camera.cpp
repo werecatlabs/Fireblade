@@ -21,7 +21,8 @@ namespace fb
         u32 Camera::m_nameExt = 0;
         u32 Camera::m_zorderExt = 0;
 
-        Camera::Camera() : Component()
+        Camera::Camera() :
+            Component()
         {
         }
 
@@ -56,24 +57,24 @@ namespace fb
                 auto camera = smgr->addCamera( cameraName );
                 FB_ASSERT( camera );
 
-                if( !actor->getFlag( scene::IActor::ActorFlagIsEditor ) )
+                if(!actor->getFlag( IActor::ActorFlagIsEditor ))
                 {
                     camera->setRenderUI( false );
                 }
 
                 m_camera = camera;
                 m_node = m_camera->getOwner();
-                if( !m_node )
+                if(!m_node)
                 {
                     auto rootNode = smgr->getRootSceneNode();
                     FB_ASSERT( rootNode );
 
-                    if( rootNode )
+                    if(rootNode)
                     {
                         auto cameraNodeName =
                             String( "CameraComponentNode" ) + StringUtil::toString( m_nameExt++ );
                         m_node = rootNode->addChildSceneNode( cameraNodeName );
-                        if( m_node )
+                        if(m_node)
                         {
                             m_node->attachObject( m_camera );
                         }
@@ -81,7 +82,7 @@ namespace fb
                 }
 
                 auto cameraManager = applicationManager->getCameraManager();
-                if( cameraManager )
+                if(cameraManager)
                 {
                     auto cameraActor = getActor();
                     cameraManager->addCamera( cameraActor );
@@ -96,7 +97,7 @@ namespace fb
 
                 setLoadingState( LoadingState::Loaded );
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -107,14 +108,14 @@ namespace fb
             try
             {
                 const auto &loadingState = getLoadingState();
-                if( loadingState == LoadingState::Loaded )
+                if(loadingState == LoadingState::Loaded)
                 {
                     setLoadingState( LoadingState::Unloading );
 
                     auto applicationManager = core::IApplicationManager::instance();
                     auto sceneManager = applicationManager->getSceneManager();
 
-                    if( auto graphicsSystem = applicationManager->getGraphicsSystem() )
+                    if(auto graphicsSystem = applicationManager->getGraphicsSystem())
                     {
                         auto window = graphicsSystem->getDefaultWindow();
                         FB_ASSERT( window );
@@ -125,28 +126,28 @@ namespace fb
                         m_editorTexture = nullptr;
 
                         auto cameraManager = applicationManager->getCameraManager();
-                        if( cameraManager )
+                        if(cameraManager)
                         {
                             auto cameraActor = getActor();
                             cameraManager->removeCamera( cameraActor );
                         }
 
-                        if( m_camera )
+                        if(m_camera)
                         {
                             m_camera->setVisible( false );
                         }
 
-                        if( m_viewport )
+                        if(m_viewport)
                         {
                             m_viewport->setCamera( nullptr );
                         }
 
-                        if( smgr->getActiveCamera() == m_camera )
+                        if(smgr->getActiveCamera() == m_camera)
                         {
                             smgr->setActiveCamera( nullptr );
                         }
 
-                        if( m_viewport )
+                        if(m_viewport)
                         {
                             m_viewport->setRenderTarget( nullptr );
 
@@ -154,14 +155,14 @@ namespace fb
                             m_viewport = nullptr;
                         }
 
-                        if( m_camera )
+                        if(m_camera)
                         {
                             m_camera->setEditorTexture( nullptr );
                             m_camera->setTargetTexture( nullptr );
 
-                            if( m_camera->isAttached() )
+                            if(m_camera->isAttached())
                             {
-                                if( m_node )
+                                if(m_node)
                                 {
                                     m_camera->detachFromParent( m_node );
                                 }
@@ -171,7 +172,7 @@ namespace fb
                             m_camera = nullptr;
                         }
 
-                        if( m_node )
+                        if(m_node)
                         {
                             smgr->removeSceneNode( m_node );
                             m_node = nullptr;
@@ -185,7 +186,7 @@ namespace fb
                     setLoadingState( LoadingState::Unloaded );
                 }
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -198,9 +199,9 @@ namespace fb
 
         void Camera::setTargetTexture( SmartPtr<render::ITexture> targetTexture )
         {
-            if( targetTexture )
+            if(targetTexture)
             {
-                if( !m_viewport )
+                if(!m_viewport)
                 {
                     createViewport();
                 }
@@ -219,7 +220,7 @@ namespace fb
 
         SmartPtr<Properties> Camera::getProperties() const
         {
-            if( auto properties = Component::getProperties() )
+            if(auto properties = Component::getProperties())
             {
                 properties->setProperty( "isActive", m_isActive );
 
@@ -249,9 +250,9 @@ namespace fb
         {
             m_editorTexture = editorTexture;
 
-            if( m_editorTexture )
+            if(m_editorTexture)
             {
-                if( !m_viewport )
+                if(!m_viewport)
                 {
                     createViewport();
                 }
@@ -260,7 +261,7 @@ namespace fb
                 updateActiveState( active );
             }
 
-            if( m_camera )
+            if(m_camera)
             {
                 m_camera->setEditorTexture( editorTexture );
             }
@@ -321,16 +322,16 @@ namespace fb
             auto smgr = graphicsSystem->getGraphicsScene();
             FB_ASSERT( smgr );
 
-            if( active )
+            if(active)
             {
                 m_camera->setVisible( true );
 
-                if( smgr->getActiveCamera() != m_camera )
+                if(smgr->getActiveCamera() != m_camera)
                 {
                     smgr->setActiveCamera( m_camera );
                 }
 
-                if( m_viewport )
+                if(m_viewport)
                 {
                     m_viewport->setCamera( m_camera );
                 }
@@ -339,12 +340,12 @@ namespace fb
             {
                 m_camera->setVisible( false );
 
-                if( m_viewport )
+                if(m_viewport)
                 {
                     m_viewport->setCamera( nullptr );
                 }
 
-                if( smgr->getActiveCamera() == m_camera )
+                if(smgr->getActiveCamera() == m_camera)
                 {
                     smgr->setActiveCamera( nullptr );
                 }
@@ -353,12 +354,12 @@ namespace fb
 
         void Camera::updateTransform()
         {
-            switch( auto task = Thread::getCurrentTask() )
+            switch(auto task = Thread::getCurrentTask())
             {
             case Thread::Task::Application:
             {
                 auto state = getState();
-                switch( state )
+                switch(state)
                 {
                 case State::Edit:
                 case State::Play:
@@ -396,11 +397,21 @@ namespace fb
             }
         }
 
+        Ray3<real_Num> Camera::getCameraToViewportRay( const Vector2<real_Num> &screenPosition )
+        {
+            if(auto camera = getCamera())
+            {
+                return camera->getRay( screenPosition.x, screenPosition.y );
+            }
+
+            return Ray3<real_Num>();
+        }
+
         void Camera::updateOrder()
         {
-            if( auto actor = getActor() )
+            if(auto actor = getActor())
             {
-                if( actor->getFlag( IActor::ActorFlagIsEditor ) )
+                if(actor->getFlag( IActor::ActorFlagIsEditor ))
                 {
                     setZOrder( 100 );
                     return;
@@ -419,18 +430,18 @@ namespace fb
             cameras.reserve( 12 );
 
             auto actors = scene->getActors();
-            for( auto actor : actors )
+            for(auto actor : actors)
             {
                 auto cameras = actor->getComponentsAndInChildren<Camera>();
-                for( auto camera : cameras )
+                for(auto camera : cameras)
                 {
                     cameras.push_back( camera );
                 }
             }
 
-            for( auto camera : cameras )
+            for(auto camera : cameras)
             {
-                if( camera == this )
+                if(camera == this)
                 {
                     break;
                 }
@@ -443,14 +454,14 @@ namespace fb
 
         s32 Camera::getZOrder( SmartPtr<IActor> obj )
         {
-            if( auto actor = getActor() )
+            if(auto actor = getActor())
             {
                 auto children = actor->getAllComponentsInChildren<Camera>();
 
                 auto count = 100;
-                for( auto &child : children )
+                for(auto &child : children)
                 {
-                    if( child->getActor() == obj )
+                    if(child->getActor() == obj)
                     {
                         return count;
                     }
@@ -471,7 +482,7 @@ namespace fb
         {
             m_zOrder = zOrder;
 
-            if( m_viewport )
+            if(m_viewport)
             {
                 m_viewport->setZOrder( zOrder );
             }
@@ -479,9 +490,9 @@ namespace fb
 
         void Camera::updateTransform( const Transform3<real_Num> &t )
         {
-            if( isActive() )
+            if(isActive())
             {
-                if( m_node )
+                if(m_node)
                 {
                     auto p = t.getPosition();
                     auto r = t.getOrientation();
@@ -494,9 +505,9 @@ namespace fb
 
         void Camera::createViewport()
         {
-            if( !m_viewport )
+            if(!m_viewport)
             {
-                if( auto renderTarget = getRenderTarget() )
+                if(auto renderTarget = getRenderTarget())
                 {
                     updateOrder();
 
@@ -524,9 +535,9 @@ namespace fb
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
-            if( applicationManager->isEditor() )
+            if(applicationManager->isEditor())
             {
-                if( auto t = m_editorTexture.lock() )
+                if(auto t = m_editorTexture.lock())
                 {
                     return t->getRenderTarget();
                 }
@@ -550,14 +561,14 @@ namespace fb
 
             auto cameraManager = applicationManager->getCameraManager();
 
-            if( auto actor = getActor() )
+            if(auto actor = getActor())
             {
-                if( BitUtil::getFlagValue( flags, IActor::ActorFlagInScene ) !=
-                    BitUtil::getFlagValue( oldFlags, IActor::ActorFlagInScene ) )
+                if(BitUtil::getFlagValue( flags, IActor::ActorFlagInScene ) !=
+                   BitUtil::getFlagValue( oldFlags, IActor::ActorFlagInScene ))
                 {
                 }
-                else if( BitUtil::getFlagValue( flags, IActor::ActorFlagEnabled ) !=
-                         BitUtil::getFlagValue( oldFlags, IActor::ActorFlagEnabled ) )
+                else if(BitUtil::getFlagValue( flags, IActor::ActorFlagEnabled ) !=
+                        BitUtil::getFlagValue( oldFlags, IActor::ActorFlagEnabled ))
                 {
                 }
             }
@@ -576,7 +587,7 @@ namespace fb
 
             auto cameraManager = applicationManager->getCameraManager();
 
-            switch( eventType )
+            switch(eventType)
             {
             case IFSM::Event::Change:
             {
@@ -584,13 +595,13 @@ namespace fb
             break;
             case IFSM::Event::Enter:
             {
-                auto eState = static_cast<State>( state );
-                switch( eState )
+                auto eState = static_cast<State>(state);
+                switch(eState)
                 {
                 case State::Edit:
                 {
                     auto actor = getActor();
-                    if( actor->getFlag( IActor::ActorFlagIsEditor ) )
+                    if(actor->getFlag( IActor::ActorFlagIsEditor ))
                     {
                         setupCamera();
                     }
@@ -605,7 +616,7 @@ namespace fb
                 case State::Play:
                 {
                     auto actor = getActor();
-                    if( !actor->getFlag( IActor::ActorFlagIsEditor ) )
+                    if(!actor->getFlag( IActor::ActorFlagIsEditor ))
                     {
                         setupCamera();
                     }
@@ -625,20 +636,20 @@ namespace fb
             break;
             case IFSM::Event::Leave:
             {
-                auto eState = static_cast<State>( state );
-                switch( eState )
+                auto eState = static_cast<State>(state);
+                switch(eState)
                 {
                 case State::Edit:
                 case State::Play:
                 {
                     m_camera->setVisible( false );
 
-                    if( m_viewport )
+                    if(m_viewport)
                     {
                         m_viewport->setCamera( nullptr );
                     }
 
-                    if( smgr->getActiveCamera() == m_camera )
+                    if(smgr->getActiveCamera() == m_camera)
                     {
                         smgr->setActiveCamera( nullptr );
                     }
@@ -737,17 +748,16 @@ namespace fb
                 }
             }
 #else
-            if( m_camera )
+            if(m_camera)
             {
                 m_camera->setVisible( active );
             }
 
-            if( m_viewport )
+            if(m_viewport)
             {
                 m_viewport->setActive( active );
             }
 #endif
         }
-
-    }  // namespace scene
-}  // end namespace fb
+    } // namespace scene
+}     // end namespace fb

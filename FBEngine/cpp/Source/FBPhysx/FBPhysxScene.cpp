@@ -522,7 +522,7 @@ namespace fb
         }
 
         bool PhysxScene::castRay( const Vector3<real_Num> &origin, const Vector3<real_Num> &dir,
-                                  Array<SmartPtr<RaycastHit>> &hits )
+                                  Array<SmartPtr<IRaycastHit>> &hits )
         {
             using namespace physx;
 
@@ -548,8 +548,8 @@ namespace fb
                     auto hitPos = origin + ( dir * distance );
 
                     auto hit = fb::make_ptr<RaycastHit>();
-                    hit->distance = distance;
-                    hit->point = hitPos;
+                    hit->setDistance( distance );
+                    hit->setPoint( hitPos );
                     hits.push_back( hit );
 
                     return true;
@@ -559,7 +559,7 @@ namespace fb
             return false;
         }
 
-        bool PhysxScene::castRay( const Ray3<real_Num> &ray, RaycastHit &hit )
+        bool PhysxScene::castRay( const Ray3<real_Num> &ray, SmartPtr<IRaycastHit> hit )
         {
             using namespace physx;
 
@@ -594,18 +594,18 @@ namespace fb
                                               pxQueryFilterData );
                 if( status )
                 {
-                    f32 d = raycastCallback.m_hit.distance;
+                    auto d = (real_Num)raycastCallback.m_hit.distance;
                     if( d < maxDistance )
                     {
                         const auto &n = raycastCallback.m_hit.normal;
 
-                        hit.distance = d;
-                        hit.point = origin + ( dir * hit.distance );
-                        hit.normal = Vector3<real_Num>( n.x, n.y, n.z );
+                        hit->setDistance( d );
+                        hit->setPoint( origin + ( dir * d ) );
+                        hit->setNormal( Vector3<real_Num>( n.x, n.y, n.z ));
 
                         FB_ASSERT( MathF::isFinite( d ) );
-                        FB_ASSERT( MathUtil<real_Num>::isFinite( hit.point ) );
-                        FB_ASSERT( MathUtil<real_Num>::isFinite( hit.normal ) );
+                        FB_ASSERT( MathUtil<real_Num>::isFinite( hit->getPoint() ) );
+                        FB_ASSERT( MathUtil<real_Num>::isFinite( hit->getNormal() ) );
 
                         return true;
                     }
@@ -666,7 +666,7 @@ namespace fb
             }
         }
 
-        bool PhysxScene::castRayDynamic( const Ray3<real_Num> &ray, RaycastHit &hit )
+        bool PhysxScene::castRayDynamic( const Ray3<real_Num> &ray, SmartPtr<IRaycastHit> hit )
         {
             auto applicationManager = core::IApplicationManager::instance();
             auto physicsManager = applicationManager->getPhysicsManager();
@@ -705,8 +705,8 @@ namespace fb
 
                     auto hitPos = origin + ( dir * distance );
 
-                    hit.distance = distance;
-                    hit.point = hitPos;
+                    hit->setDistance( distance );
+                    hit->setPoint( hitPos );
 
                     return true;
                 }
@@ -737,62 +737,6 @@ namespace fb
                 return PxQueryHitType::eBLOCK;
             }
         };
-
-        bool PhysxScene::castRay( const Ray3<real_Num> &ray, SmartPtr<IRaycastHit> &hit )
-        {
-            if( auto scene = getScene() )
-            {
-                using namespace physx;
-
-                FB_ASSERT( MathUtil<real_Num>::isFinite( ray.getOrigin() ) );
-                FB_ASSERT( MathUtil<real_Num>::isFinite( ray.getDirection() ) );
-
-                auto applicationManager = core::IApplicationManager::instance();
-                auto physicsManager = applicationManager->getPhysicsManager();
-                FB_PXSCENE_READ_LOCK( scene );
-
-                const Vector3<real_Num> &origin = ray.getOrigin();
-                const Vector3<real_Num> &dir = ray.getDirection();
-
-                auto rorigin = PxVec3( origin.X(), origin.Y(), origin.Z() );
-                auto unitDir = PxVec3( dir.X(), dir.Y(), dir.Z() );
-                const f32 maxDistance = 100000.0f;
-
-                PxHitFlags hitFlags( PxHitFlag::eDEFAULT );
-
-                //PxQueryFilterData pxQueryFilterData( PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC );
-                //pxQueryFilterData.flags |= PxQueryFlag::eANY_HIT;
-
-                PxQueryFilterData pxQueryFilterData( PxQueryFlag::eSTATIC );
-
-                QueryFilterCallback queryFilterCallback;
-
-                RaycastCallback raycastCallback;
-                raycastCallback.m_checkStatic = hit->getCheckStatic();
-                raycastCallback.m_checkDynamic = hit->getCheckDynamic();
-
-                bool status = scene->raycast( rorigin, unitDir, maxDistance, raycastCallback, hitFlags,
-                                              pxQueryFilterData, &queryFilterCallback );
-                if( status )
-                {
-                    f32 d = raycastCallback.m_hit.distance;
-                    if( d < maxDistance )
-                    {
-                        const auto &n = raycastCallback.m_hit.normal;
-
-                        hit->setDistance( d );
-                        hit->setPoint( origin + ( dir * d ) );
-                        hit->setNormal( Vector3<real_Num>( n.x, n.y, n.z ) );
-
-                        FB_ASSERT( MathF::isFinite( d ) );
-
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
 
         physx::PxAgain PhysxScene::RaycastCallback::processTouches( const physx::PxRaycastHit *buffer,
                                                                     u32 nbHits )

@@ -3,7 +3,7 @@
 
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBPhysx/FBPhysxSharedObject.h>
-#include <FBCore/Physics/CPhysicsBody3.h>
+#include <FBCore/Physics/PhysicsBody3.h>
 #include <FBCore/Interface/Physics/IPhysicsBody3.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/State/States/PhysicsBodyState.h>
@@ -14,7 +14,7 @@ namespace fb
     namespace physics
     {
         template <class T>
-        class PhysxBody3 : public CPhysicsBody3<T>
+        class PhysxBody3 : public PhysicsBody3<T>
         {
         public:
             PhysxBody3()

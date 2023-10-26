@@ -1444,7 +1444,8 @@ namespace fb
         boost::filesystem::path path( basePath );
         return path.is_absolute();
 #else
-        return false;
+        std::filesystem::path path( basePath );
+        return path.is_absolute();
 #endif
     }
 

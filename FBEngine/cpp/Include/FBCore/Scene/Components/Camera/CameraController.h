@@ -30,13 +30,8 @@ namespace fb
             void setFlag( u32 flag, bool value );
             bool getFlag( u32 flag ) const;
 
-            void setCamera( SmartPtr<render::ICamera> camera );
-            SmartPtr<render::ICamera> getCamera() const;
-
             void setViewportId( u32 viewportId );
             u32 getViewportId() const;
-
-            Ray3<real_Num> getCameraToViewportRay( const Vector2<real_Num> &screenPosition ) const;
 
             bool isInFrustum( const AABB3<real_Num> &box ) const;
 
@@ -76,7 +71,6 @@ namespace fb
 
             u8 m_viewportId = 0;
             atomic_u32 m_flags = 0;
-            SmartPtr<render::ICamera> m_camera;
             SmartPtr<IEventListener> m_eventListener;
         };
     } // namespace scene

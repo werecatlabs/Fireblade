@@ -1,11 +1,11 @@
 #ifndef __FB_ProjectManager_h__
 #define __FB_ProjectManager_h__
 
-#include <FBCore/Interface/Memory/ISharedObject.h>
+#include <FBCore/Interface/System/IProjectManager.h>
 
 namespace fb
 {
-    class ProjectManager : public ISharedObject
+    class ProjectManager : public IProjectManager
     {
     public:
         ProjectManager();

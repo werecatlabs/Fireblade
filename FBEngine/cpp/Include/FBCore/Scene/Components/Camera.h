@@ -2,6 +2,7 @@
 #define CameraComponent_h__
 
 #include <FBCore/Scene/Components/Component.h>
+#include "FBCore/Math/Ray3.h"
 
 namespace fb
 {
@@ -64,6 +65,8 @@ namespace fb
             void setZOrder( u32 zOrder );
 
             void updateTransform( const Transform3<real_Num> &transform );
+
+            Ray3<real_Num> getCameraToViewportRay(const Vector2<real_Num>& screenPosition );
 
             FB_CLASS_REGISTER_DECL;
 

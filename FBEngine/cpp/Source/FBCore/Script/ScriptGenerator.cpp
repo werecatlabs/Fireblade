@@ -628,9 +628,9 @@ namespace fb
     {
         std::stringstream scriptStream;
 
-        scriptStream << "--" << className.c_str() << ".lua"
+        scriptStream << String("--") << className.c_str() << ".lua"
                      << "\n";
-        scriptStream << "class "
+        scriptStream << String("class ")
                      << "'" << className.c_str() << "'\n";
 
         Array<SmartPtr<ScriptFunction>> scriptFunctions;

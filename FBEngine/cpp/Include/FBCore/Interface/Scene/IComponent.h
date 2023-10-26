@@ -114,6 +114,11 @@ namespace fb
             virtual void updateVisibility() = 0;
 
             /**
+             * Updates the component materials.
+             */
+            virtual void updateMaterials() = 0;
+
+            /**
              * Sets the component state.
              * @param state The new state for the component.
              */

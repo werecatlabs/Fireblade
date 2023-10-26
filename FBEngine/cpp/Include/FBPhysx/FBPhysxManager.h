@@ -3,7 +3,7 @@
 
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Physics/CPhysicsManager.h>
+#include <FBCore/Physics/PhysicsManager.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Memory/RawPtr.h>
 #include <FBCore/Core/Array.h>
@@ -22,7 +22,7 @@ namespace fb
         @author	Zane Desir
         @version 1.0
         */
-        class PhysxManager : public CPhysicsManager
+        class PhysxManager : public PhysicsManager
         {
         public:
             PhysxManager();
@@ -171,9 +171,6 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            void initialise( const SmartPtr<Properties> &properties );
-            void initialise( SmartPtr<scene::IDirector> objectTemplate );
-
             SmartPtr<ISphereShape3> createSphere();
 
             SmartPtr<IBoxShape3> createBox();

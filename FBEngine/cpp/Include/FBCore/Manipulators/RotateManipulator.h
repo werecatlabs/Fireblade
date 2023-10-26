@@ -37,6 +37,8 @@ namespace fb
         bool isVisible() const;
         void setVisible( bool visible );
 
+        FB_CLASS_REGISTER_DECL;
+
     private:
         void createRenderObjects();
 

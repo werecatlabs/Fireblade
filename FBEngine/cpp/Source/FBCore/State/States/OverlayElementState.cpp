@@ -106,7 +106,7 @@ namespace fb
 
     void OverlayElementState::setMaterial( SmartPtr<render::IMaterial> material )
     {
-        if( m_material != material )
+        if( getMaterial() != material )
         {
             m_material = material;
             setDirty( true );

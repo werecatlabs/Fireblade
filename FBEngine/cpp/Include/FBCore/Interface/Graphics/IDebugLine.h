@@ -57,8 +57,13 @@ namespace fb
              */
             virtual void setVisible( bool visible ) = 0;
 
+            virtual u32 getColour() const = 0;
+
+            virtual void setColour( u32 colour ) = 0;
+
             FB_CLASS_REGISTER_DECL;
         };
+
     }  // end namespace render
 }  // end namespace fb
 

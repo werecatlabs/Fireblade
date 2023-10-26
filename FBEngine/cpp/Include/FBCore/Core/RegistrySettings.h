@@ -4,6 +4,10 @@
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/StringTypes.h>
 
+#ifdef FB_PLATFORM_WIN32
+#include <minwindef.h>
+#endif
+
 namespace fb
 {
     class RegistrySettings : public ISharedObject

@@ -50,7 +50,7 @@ namespace fb
 
         /** @copydoc DataStream::seek
          */
-        bool seek( long finalPos ) override;
+        bool seek( size_t finalPos ) override;
 
         /** @copydoc DataStream::tell
          */

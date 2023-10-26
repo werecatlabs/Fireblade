@@ -21,25 +21,6 @@ namespace fb
     class MeshLoader : public IMeshLoader
     {
     public:
-        enum LoaderParams
-        {
-            LP_GENERATE_SINGLE_MESH = 1 << 0,
-
-            // See the two possible methods for material gneration
-            LP_GENERATE_MATERIALS_AS_CODE = 1 << 1,
-
-            // 3ds max exports the animation over a longer time frame than the animation actually plays for
-            // this is a fix for that
-            LP_CUT_ANIMATION_WHERE_NO_FURTHER_CHANGE = 1 << 2,
-
-            // when 3ds max exports as DAE it gets some of the transforms wrong, get around this by using
-            // this option and a prior run with of the model exported as ASE
-            LP_USE_LAST_RUN_NODE_DERIVED_TRANSFORMS = 1 << 3,
-
-            // Quiet mode - don't output anything
-            LP_QUIET_MODE = 1 << 4
-        };
-
         MeshLoader();
         ~MeshLoader() override;
 
@@ -77,10 +58,7 @@ namespace fb
     protected:
         void createActor( SmartPtr<ITransformNode> parentNode, SmartPtr<scene::IActor> parentActor );
 
-#if FB_USE_FBXSDK
-        //FbxScene* pScene;
-        //FbxManager* pSdkManager;
-#elif FB_USE_ASSET_IMPORT
+#if FB_USE_ASSET_IMPORT
         void createMaterials( Array<render::IMaterial> &materials, const aiScene *mScene,
                               const aiNode *pNode, const String &mDir );
 
@@ -98,37 +76,30 @@ namespace fb
         bool createSubMesh( const String &name, int index, const aiNode *pNode, const aiMesh *mesh,
                             const aiMaterial *mat, SmartPtr<IMesh> mMesh, const String &mDir );
 
-        SmartPtr<render::IMaterial> createMaterial( unsigned int mMaterialIndex, const aiMaterial *mat,
-                                                    const String &mDir );
-
-        SmartPtr<render::IMaterial> createMaterialByScript( unsigned int mMaterialIndex,
-                                                            const aiMaterial *mat );
-
         void createMaterial( SmartPtr<scene::Material> pMat, s32 index, const aiMaterial *mat,
                              const String &mDir );
 
         using BoneNodeMap = std::map<String, const aiNode *>;
-        BoneNodeMap mBoneNodesByName;
+        BoneNodeMap m_boneNodesByName;
 
         using BoneMap = std::map<String, const aiBone *>;
-        BoneMap mBonesByName;
+        BoneMap m_bonesByName;
 
         using NodeTransformMap = std::map<String, aiMatrix4x4>;
-        NodeTransformMap mNodeDerivedTransformByName;
+        NodeTransformMap m_nodeDerivedTransformByName;
 #endif
 
         SmartPtr<scene::IActor> m_rootActor;
 
-        Array<SmartPtr<IMesh>> mMeshes;
+        Array<SmartPtr<IMesh>> m_meshes;
         bool m_useSingleMesh;
         bool m_quietMode;
 
         SmartPtr<IMeshResource> m_meshResource;
 
-        int mLoaderParams = 0;
         Vector3<f32> m_meshScale = Vector3<f32>::unit();
 
-        u64 m_fileHash;
+        u64 m_fileHash = 0;
         String m_meshPath;
     };
 }  // end namespace fb
