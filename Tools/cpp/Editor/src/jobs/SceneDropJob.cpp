@@ -2,7 +2,9 @@
 #include <jobs/SceneDropJob.h>
 #include "commands/AddActorCmd.h"
 #include "commands/DragDropActorCmd.h"
+#include <editor/EditorManager.h>
 #include "ui/SceneWindow.h"
+#include <ui/UIManager.h>
 #include <FBCore/FBCore.h>
 
 namespace fb
@@ -35,19 +37,42 @@ namespace fb
                 auto fileSystem = applicationManager->getFileSystem();
                 FB_ASSERT( fileSystem );
 
+                auto editorManager = EditorManager::getSingletonPtr();
+
+                auto uiManager = editorManager->getUI();
+
+                auto resourceDatabase = applicationManager->getResourceDatabase();
+
+                auto sceneManager = applicationManager->getSceneManager();
+                auto scene = sceneManager->getCurrentScene();
+
                 auto properties = fb::make_ptr<Properties>();
                 auto dataStr = String( text.c_str() );
 
-                if( !StringUtil::isNullOrEmpty( dataStr ) )
-                {
-                    DataUtil::parse( dataStr, properties.get() );
+                DataUtil::parse( dataStr, properties.get() );
 
+                if( properties->hasProperty( "resourceUUID" ) )
+                {
+                    auto resourceId = properties->getProperty( "resourceUUID" );
+                    auto iResourceId = StringUtil::parseInt(resourceId);
+
+                    SmartPtr<scene::IPrefab> prefab = resourceDatabase->loadResource( iResourceId );
+                    if( prefab )
+                    {
+                        auto actor = prefab->createActor();
+                        scene->addActor( actor );
+                    }
+
+                    uiManager->rebuildSceneTree();
+                }
+                else if( !StringUtil::isNullOrEmpty( dataStr ) )
+                {
                     auto filePath = properties->getProperty( "filePath" );
 
                     auto dragSrc = tree->getDragSourceElement();
                     auto dropDst = tree->getDropDestinationElement();
 
-                    if( sender->isDerived<ui::IUIWindow>() )
+                    if( sender && sender->isDerived<ui::IUIWindow>() )
                     {
                         if( !StringUtil::isNullOrEmpty( filePath ) )
                         {

@@ -48,7 +48,7 @@ namespace fb
 
                 auto parentWindow = ui->addElementByType<ui::IUIWindow>();
                 parentWindow->setLabel( "Object" );
-                setWindow( parentWindow );
+                setParentWindow( parentWindow );
 
                 if( parent )
                 {
@@ -183,6 +183,7 @@ namespace fb
                 {
                     m_objectType = ObjectType::Actor;
                 }
+
                 else if( selected->isDerived<scene::TerrainSystem>() )
                 {
                     m_objectType = ObjectType::Terrain;
@@ -214,6 +215,11 @@ namespace fb
                         m_resourceType = ObjectType::FileUnknown;
                         m_objectType = ObjectType::FileUnknown;
                     }
+                }
+                else if( selected->isDerived<IResource>() )
+                {
+                    m_resourceType = ObjectType::Resource;
+                    m_objectType = ObjectType::Resource;
                 }
             }
 

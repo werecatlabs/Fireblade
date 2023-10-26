@@ -18,7 +18,7 @@ int main()
 
     const auto threads = fb::Thread::hardware_concurrency();
     app->setActiveThreads( threads );
-    //app->setActiveThreads( 0 );
+    //app->setActiveThreads( 2 );
 
     app->load( nullptr );
     app->run();

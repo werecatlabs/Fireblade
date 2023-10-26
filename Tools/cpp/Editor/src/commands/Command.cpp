@@ -1,24 +1,14 @@
 #include <GameEditorPCH.h>
 #include <commands/Command.h>
 #include <editor/EditorManager.h>
-
 #include <editor/Project.h>
 #include "ui/UIManager.h"
 #include <FBCore/FBCore.h>
-
 
 namespace fb
 {
     namespace editor
     {
-
-        Command::Command()
-        {
-        }
-
-        Command::~Command()
-        {
-        }
 
         void Command::undo()
         {
@@ -34,11 +24,13 @@ namespace fb
 
         ICommand::State Command::getState() const
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             return m_commandState;
         }
 
         void Command::setState( ICommand::State state )
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             m_commandState = state;
         }
 

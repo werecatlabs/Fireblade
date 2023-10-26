@@ -5,23 +5,17 @@
 #include <editor/Project.h>
 #include <ui/ActorWindow.h>
 #include <ui/UIManager.h>
-
 #include <FBCore/FBCore.h>
 
 namespace fb
 {
     namespace editor
     {
-        void AddComponentCmd::load( SmartPtr<ISharedObject> data )
-        {
-        }
-
-        void AddComponentCmd::unload( SmartPtr<ISharedObject> data )
-        {
-        }
 
         void AddComponentCmd::undo()
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+
             if( auto actor = getActor() )
             {
                 if( auto component = getComponent() )
@@ -40,6 +34,8 @@ namespace fb
 
         void AddComponentCmd::redo()
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+
             if( auto actor = getActor() )
             {
                 if( auto component = getComponent() )
@@ -58,6 +54,8 @@ namespace fb
 
         void AddComponentCmd::execute()
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
@@ -109,31 +107,37 @@ namespace fb
 
         SmartPtr<IFactory> AddComponentCmd::getFactory() const
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             return m_factory;
         }
 
         void AddComponentCmd::setFactory( SmartPtr<IFactory> factory )
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             m_factory = factory;
         }
 
         SmartPtr<scene::IComponent> AddComponentCmd::getComponent() const
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             return m_component;
         }
 
         void AddComponentCmd::setComponent( SmartPtr<scene::IComponent> component )
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             m_component = component;
         }
 
         SmartPtr<scene::IActor> AddComponentCmd::getActor() const
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             return m_actor;
         }
 
         void AddComponentCmd::setActor( SmartPtr<scene::IActor> actor )
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             m_actor = actor;
         }
     }  // namespace editor

@@ -35,19 +35,31 @@ namespace fb
                 auto filePath = scene->getFilePath();
                 if( !StringUtil::isNullOrEmpty( filePath ) )
                 {
-                    if( Path::isExistingFile( filePath ) )
+                    if( !getSaveAs() )
                     {
-                        scene->saveScene();
+                        if( Path::isExistingFile( filePath ) )
+                        {
+                            scene->saveScene();
+                        }
+                        else
+                        {
+                            saveScene( filePath );
+                        }
                     }
                     else
                     {
                         saveScene( filePath );
                     }
-                }
 
-                filePath = getFilePath();
-                if( !StringUtil::isNullOrEmpty( filePath ) )
+                    filePath = getFilePath();
+                    if( !StringUtil::isNullOrEmpty( filePath ) )
+                    {
+                        saveScene( filePath );
+                    }
+                }
+                else
                 {
+                    auto filePath = applicationManager->getProjectPath();
                     saveScene( filePath );
                 }
             }
@@ -71,10 +83,16 @@ namespace fb
 
             if( auto fileDialog = fileSystem->openFileDialog() )
             {
-                auto projectPath = Path::getWorkingDirectory();
+                auto projectPath = filePath;
+
+                if( StringUtil::isNullOrEmpty( projectPath ) )
+                {
+                    projectPath = applicationManager->getProjectPath();
+                }
+
                 if( !fileSystem->isExistingFolder( projectPath ) )
                 {
-                    projectPath = "";
+                    projectPath = Path::getWorkingDirectory();
                 }
 
                 fileDialog->setDialogMode( INativeFileDialog::DialogMode::Save );
@@ -92,12 +110,26 @@ namespace fb
 
         String SaveSceneJob::getFilePath() const
         {
+            SpinRWMutex::ScopedLock lock( m_mutex, false );
             return m_filePath;
         }
 
         void SaveSceneJob::setFilePath( const String &filePath )
         {
+            SpinRWMutex::ScopedLock lock( m_mutex, true );
             m_filePath = filePath;
+        }
+
+        bool SaveSceneJob::getSaveAs() const
+        {
+            SpinRWMutex::ScopedLock lock( m_mutex, false );
+            return m_saveAs;
+        }
+
+        void SaveSceneJob::setSaveAs( bool saveAs )
+        {
+            SpinRWMutex::ScopedLock lock( m_mutex, true );
+            m_saveAs = saveAs;
         }
 
     }  // namespace editor

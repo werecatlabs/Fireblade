@@ -2,7 +2,6 @@
 #include <ui/ResourceDatabaseDialog.h>
 #include <ui/ProjectTreeData.h>
 #include <editor/EditorManager.h>
-
 #include <FBCore/FBCore.h>
 
 namespace fb
@@ -11,17 +10,6 @@ namespace fb
     {
         ResourceDatabaseDialog::ResourceDatabaseDialog()
         {
-            // wxBoxSizer* baseSizer = new wxBoxSizer(wxVERTICAL);
-            // SetSizer(baseSizer);
-
-            // m_tree = new wxTreeCtrl(this, -1);
-            // baseSizer->Add(m_tree, 1, wxEXPAND);
-
-            // m_tree->Bind(wxEVT_TREE_SEL_CHANGED, &ResourceDatabaseDialog::handleTreeSelectionChanged,
-            // this, -1); m_tree->Bind(wxEVT_TREE_ITEM_ACTIVATED,
-            // &ResourceDatabaseDialog::handleTreeSelectionActivated, this, -1);
-
-            // populate();
         }
 
         ResourceDatabaseDialog::~ResourceDatabaseDialog()
@@ -91,6 +79,10 @@ namespace fb
                 selectButton->addObjectListener( uiListener );
                 selectButton->setElementId( Select );
                 m_selectButton = selectButton;
+
+                auto dragSource = fb::make_ptr<DragSource>();
+                dragSource->setOwner( this );
+                m_tree->setDragSource( dragSource );
 
                 populate();
 
@@ -327,7 +319,7 @@ namespace fb
             default:
             {
             }
-            };
+            }
         }
 
         void ResourceDatabaseDialog::populate()
@@ -693,6 +685,71 @@ namespace fb
         }
 
         void ResourceDatabaseDialog::UIElementListener::setOwner( ResourceDatabaseDialog *owner )
+        {
+            m_owner = owner;
+        }
+
+        Parameter ResourceDatabaseDialog::DragSource::handleEvent(
+            IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
+            SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
+        {
+            if( eventValue == IEvent::handleDrag )
+            {
+                auto dataStr = handleDrag( Vector2I::zero(), sender );
+                return Parameter( dataStr );
+            }
+
+            return Parameter();
+        }
+
+        String ResourceDatabaseDialog::DragSource::handleDrag( const Vector2I &position,
+                                                               SmartPtr<ui::IUIElement> element )
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            auto selectionManager = applicationManager->getSelectionManager();
+
+            if( element->isDerived<ui::IUITreeNode>() )
+            {
+                auto treeNode = fb::static_pointer_cast<ui::IUITreeNode>( element );
+                auto text = Util::getText( treeNode );
+
+                auto userData = treeNode->getNodeUserData();
+                if( userData )
+                {
+                    auto projectTreeData = fb::static_pointer_cast<ProjectTreeData>( userData );
+                    FB_ASSERT( projectTreeData );
+
+                    auto data = fb::make_ptr<Properties>();
+
+                    data->setProperty( "sourceId", treeNode->getTreeNodeId() );
+
+                    auto treeData =
+                        fb::static_pointer_cast<ProjectTreeData>( treeNode->getNodeUserData() );
+                    auto actor = treeData->getObjectData();
+
+                    if( actor )
+                    {
+                        if( auto handle = actor->getHandle() )
+                        {
+                            auto uuid = handle->getUUID();
+                            data->setProperty( "resourceId", handle->getInstanceId() );
+                            data->setProperty( "resourceUUID", uuid );
+                        }
+                    }
+
+                    return DataUtil::toString( data.get(), true );
+                }
+            }
+
+            return String();
+        }
+
+        ResourceDatabaseDialog *ResourceDatabaseDialog::DragSource::getOwner() const
+        {
+            return m_owner;
+        }
+
+        void ResourceDatabaseDialog::DragSource::setOwner( ResourceDatabaseDialog *owner )
         {
             m_owner = owner;
         }

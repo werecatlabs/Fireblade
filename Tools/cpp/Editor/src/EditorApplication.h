@@ -7,27 +7,39 @@
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Core/FSMListener.h>
 
-
-
 namespace fb
 {
     namespace editor
     {
 
-        /** The editor application. */
+        /**
+         * @brief Represents the main application for the editor.
+         *
+         * The EditorApplication class is derived from the core::Application class and
+         * serves as the entry point and manager for the editor application.
+         */
         class EditorApplication : public core::Application
         {
         public:
+            /**
+             * @brief Enumerates the possible states of the editor application.
+             */
             enum class State
             {
-                Loading,
-                Editor,
-                Shutdown,
-
-                Count
+                Loading,  /**< The application is in the loading state. */
+                Editor,   /**< The application is in the editor state. */
+                Shutdown, /**< The application is in the shutdown state. */
+                Count     /**< The total number of states. */
             };
 
+            /**
+             * @brief Default constructor for the EditorApplication class.
+             */
             EditorApplication();
+
+            /**
+             * @brief Destructor for the EditorApplication class.
+             */
             ~EditorApplication() override;
 
             void load( SmartPtr<ISharedObject> data ) override;
@@ -46,10 +58,22 @@ namespace fb
             IFSM::ReturnType handleEvent( u32 state, IFSM::Event eventType ) override;
 
             size_t getWindowHandle() const;
+
+            /**
+             * @brief Sets the window handle for the application.
+             *
+             * @param val The window handle to set.
+             */
             void setWindowHandle( size_t val );
 
-            // todo
+            /**
+             * @brief Enters play mode in the editor application.
+             */
             void enterPlayMode();
+
+            /**
+             * @brief Stops play mode in the editor application.
+             */
             void stopPlayMode();
 
             SmartPtr<render::ICamera> getUiCamera() const;
@@ -139,6 +163,8 @@ namespace fb
                                        SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
             };
 
+            void loadDebug( SmartPtr<ISharedObject> data );
+
             void createTimer() override;
 
             void createFsmManager() override;
@@ -146,6 +172,7 @@ namespace fb
 
             void createTaskManager() override;
 
+	        void createProfiler();
             void createThreadPool() override;
 
             void createStateManager() override;
@@ -175,10 +202,6 @@ namespace fb
             SmartPtr<render::ICamera> m_uiCamera;
             SmartPtr<render::ISceneNode> m_uiCameraSceneNode;
 
-            SmartPtr<render::ICamera> m_camera;
-            SmartPtr<render::ISceneNode> m_cameraSceneNode;
-
-            SmartPtr<render::IViewport> m_viewport;
             SmartPtr<render::IViewport> m_uiViewport;
             SmartPtr<render::IViewport> m_rttViewport;
 
@@ -191,8 +214,6 @@ namespace fb
 
             RawPtr<ApplicationFrame> m_frame = nullptr;
             SmartPtr<EditorManager> m_editorManager;
-
-            atomic_bool m_isRunning = true;
 
             SmartPtr<IStateContext> m_stateObject;
             SmartPtr<IStateListener> m_stateListener;

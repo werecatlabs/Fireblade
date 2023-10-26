@@ -23,8 +23,14 @@ namespace fb
 
             void setFilePath( const String &filePath );
 
+            bool getSaveAs() const;
+
+            void setSaveAs( bool saveAs );
+
         protected:
             String m_filePath;
+            bool m_saveAs = false;
+            mutable SpinRWMutex m_mutex;
         };
 
     }  // end namespace editor

@@ -2,7 +2,6 @@
 #include <ui/ActorWindow.h>
 #include <editor/EditorManager.h>
 #include <editor/Project.h>
-
 #include <editor/EditorManager.h>
 #include <ui/EventsWindow.h>
 #include <ui/ProjectTreeData.h>
@@ -14,7 +13,6 @@
 #include <ui/MaterialWindow.h>
 #include <ui/TerrainWindow.h>
 #include <FBCore/FBCore.h>
-
 
 #define TREE_ITEM_STATE_NOT_FOUND 0
 #define TREE_ITEM_STATE_EXPANDED 1
@@ -633,7 +631,7 @@ namespace fb
                     auto typeManager = TypeManager::instance();
                     FB_ASSERT( typeManager );
 
-                    auto className = typeManager->getName( typeinfo );
+                    auto className = typeManager->getLabel( typeinfo );
                     if( StringUtil::isNullOrEmpty( className ) )
                     {
                         className = "Untitled";
@@ -1375,12 +1373,6 @@ namespace fb
                             actor->setStatic( value );
                         }
                     }
-                }
-                break;
-                case WidgetId::AddComponent:
-                {
-                    int stop = 0;
-                    stop = 0;
                 }
                 break;
                 default:

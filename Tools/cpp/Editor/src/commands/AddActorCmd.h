@@ -50,8 +50,6 @@ namespace fb
             void redo() override;
             void execute() override;
 
-            String getCommandId() const;
-
             SmartPtr<scene::IActor> getActor() const;
             void setActor( SmartPtr<scene::IActor> actor );
 

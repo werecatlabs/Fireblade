@@ -72,59 +72,68 @@ namespace fb
 
         void EditorManager::loadProject( const String &filePath )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
+            FB_ASSERT( Path::isExistingFile( filePath ) );
 
-            auto timer = applicationManager->getTimer();
-            FB_ASSERT( timer );
-
-            timer->setTimeSinceLevelLoad( 0.0 );
-
-            auto editorManager = getSingletonPtr();
-            auto project = editorManager->getProject();
-            FB_ASSERT( project );
-
-            project->setProjectPath( filePath );
-
-            auto uiManager = editorManager->getUI();
-            FB_ASSERT( uiManager );
-
-            auto fileSystem = applicationManager->getFileSystem();
-            FB_ASSERT( fileSystem );
-
-            auto path = Path::getFilePath( filePath );
-            path = StringUtil::cleanupPath( path );
-
-            applicationManager->setProjectPath( path );
-
-            auto projectPath = applicationManager->getProjectPath();
-            if( StringUtil::isNullOrEmpty( projectPath ) )
+            if( Path::isExistingFile( filePath ) )
             {
-                projectPath = Path::getWorkingDirectory();
+                auto applicationManager = core::IApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto timer = applicationManager->getTimer();
+                FB_ASSERT( timer );
+
+                timer->setTimeSinceLevelLoad( 0.0 );
+
+                auto editorManager = getSingletonPtr();
+                auto project = editorManager->getProject();
+                FB_ASSERT( project );
+
+                project->setPath( filePath );
+
+                auto uiManager = editorManager->getUI();
+                FB_ASSERT( uiManager );
+
+                auto fileSystem = applicationManager->getFileSystem();
+                FB_ASSERT( fileSystem );
+
+                auto path = Path::getFilePath( filePath );
+                path = StringUtil::cleanupPath( path );
+
+                applicationManager->setProjectPath( path );
+
+                auto projectPath = applicationManager->getProjectPath();
+                if( StringUtil::isNullOrEmpty( projectPath ) )
+                {
+                    projectPath = Path::getWorkingDirectory();
+                }
+
+                fileSystem->addFolder( path, true );
+
+                auto cachePath = path + "/Cache/";
+                fileSystem->addFolder( cachePath, true );
+                applicationManager->setCachePath( cachePath );
+
+                auto settingsCachePath = path + "/SettingsCache/";
+                fileSystem->addFolder( settingsCachePath, true );
+                applicationManager->setSettingsCachePath( settingsCachePath );
+
+                project->loadFromFile( filePath );
+
+                auto editorSettings = applicationManager->getEditorSettings();
+                editorSettings->setProperty( "Project Path", filePath );
+
+                uiManager->rebuildSceneTree();
+
+                auto projectWindow = uiManager->getProjectWindow();
+                if( projectWindow )
+                {
+                    projectWindow->buildTree();
+                }
             }
-
-            fileSystem->addFolder( path, true );
-
-            auto cachePath = path + "/Cache/";
-            fileSystem->addFolder( cachePath, true );
-            applicationManager->setCachePath( cachePath );
-
-            auto settingsCachePath = path + "/SettingsCache/";
-            fileSystem->addFolder( settingsCachePath, true );
-            applicationManager->setSettingsCachePath( settingsCachePath );
-
-            auto relativeProjectPath = Path::getRelativePath( projectPath, filePath );
-            project->load( relativeProjectPath );
-
-            auto editorSettings = applicationManager->getEditorSettings();
-            editorSettings->setProperty( "Project Path", filePath );
-
-            uiManager->rebuildSceneTree();
-
-            auto projectWindow = uiManager->getProjectWindow();
-            if( projectWindow )
+            else
             {
-                projectWindow->buildTree();
+                FB_LOG_ERROR( "EditorManager::loadProject: Project file not found" );
+                MessageBoxUtil::show( "Project file not found" );
             }
         }
 

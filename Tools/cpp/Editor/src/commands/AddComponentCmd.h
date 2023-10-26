@@ -13,9 +13,6 @@ namespace fb
             AddComponentCmd() = default;
             ~AddComponentCmd() override = default;
 
-            void load( SmartPtr<ISharedObject> data ) override;
-            void unload( SmartPtr<ISharedObject> data ) override;
-
             void undo() override;
             void redo() override;
             void execute() override;
@@ -33,9 +30,9 @@ namespace fb
             void setActor( SmartPtr<scene::IActor> actor );
 
         protected:
-            AtomicSmartPtr<scene::IActor> m_actor;
-            AtomicSmartPtr<scene::IComponent> m_component;
-            AtomicSmartPtr<IFactory> m_factory;
+            SmartPtr<scene::IActor> m_actor;
+            SmartPtr<scene::IComponent> m_component;
+            SmartPtr<IFactory> m_factory;
         };
     }  // end namespace editor
 }  // end namespace fb

@@ -1,18 +1,17 @@
 #include <GameEditorPCH.h>
 #include <ui/ProjectAssetsWindow.h>
-#include <FBCore/FBCore.h>
-
+#include <commands/AddResourceCmd.h>
+#include <commands/DragDropActorCmd.h>
+#include <commands/AddActorCmd.h>
+#include <commands/AddNewScriptCmd.h>
+#include <commands/RemoveResourceCmd.h>
 #include <ui/FileWindow.h>
 #include <ui/ProjectTreeData.h>
 #include <ui/UIManager.h>
 #include <editor/EditorManager.h>
-#include <commands/AddResourceCmd.h>
-#include <commands/DragDropActorCmd.h>
-#include <commands/AddActorCmd.h>
-#include "commands/RemoveResourceCmd.h"
 #include <editor/Project.h>
-
-#include "jobs/FileSelectedJob.h"
+#include <jobs/FileSelectedJob.h>
+#include <FBCore/FBCore.h>
 
 #define TREE_ITEM_STATE_NOT_FOUND 0
 #define TREE_ITEM_STATE_EXPANDED 1
@@ -224,17 +223,9 @@ namespace fb
 
                     auto folderPath = listing->getFolderName();
 
-#if !FB_FINAL
-                    if( StringUtil::contains( folderPath, "Scripts" ) )
-                    {
-                        int stop = 0;
-                        stop = 0;
-                    }
-#endif
-
                     auto editorManager = EditorManager::getSingletonPtr();
                     auto project = editorManager->getProject();
-                    auto data = fb::make_ptr<ProjectTreeData>( "folder", folderPath, project, project );
+                    auto data = factoryManager->make_ptr<ProjectTreeData>( "folder", folderPath, project, project );
 
                     auto folderName = Path::getFileName( folderPath );
 
@@ -261,11 +252,12 @@ namespace fb
                             auto filePath = StringUtil::cleanupPath( file );
                             filePath = Path::getRelativePath( projectFolder, filePath );
                             //filePath = Path::lexically_relative( projectFolder, filePath );
+                            auto pathHash = StringUtil::getHash( filePath );
 
-                            auto pFileData = fb::make_ptr<Data<FileInfo>>();
+                            auto pFileData = factoryManager->make_ptr<Data<FileInfo>>();
 
                             FileInfo fileInfo;
-                            if( fileSystem->findFileInfo( filePath, fileInfo ) )
+                            if( fileSystem->findFileInfo( pathHash, fileInfo ) )
                             {
                                 pFileData->setData( &fileInfo );
                             }
@@ -584,7 +576,6 @@ namespace fb
             case MenuId::AddMaterial:
             {
                 auto filePath = owner->getSelectedPath();
-                filePath = Path::getFilePath( filePath );
 
                 const auto materialName = String( "NewMaterial.mat" );
 
@@ -600,23 +591,20 @@ namespace fb
             case MenuId::AddScript:
             {
                 auto filePath = owner->getSelectedPath();
-                filePath = Path::getFilePath( filePath );
 
                 const auto materialName = String( "NewScript.lua" );
 
-                auto cmd = fb::make_ptr<AddResourceCmd>();
+                auto cmd = fb::make_ptr<AddNewScriptCmd>();
 
                 auto materialPath = filePath + "/" + materialName;
-                cmd->setFilePath( materialPath );
+                cmd->setPath( materialPath );
 
-                cmd->setResourceType( AddResourceCmd::ResourceType::Script );
                 commandManager->addCommand( cmd );
             }
             break;
             case MenuId::AddTerrainDirector:
             {
                 auto filePath = owner->getSelectedPath();
-                filePath = Path::getFilePath( filePath );
 
                 const auto materialName = String( "NewTerrain.resource" );
 

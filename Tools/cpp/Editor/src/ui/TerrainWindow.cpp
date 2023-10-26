@@ -1,15 +1,15 @@
 #include <GameEditorPCH.h>
 #include "TerrainWindow.h"
-#include <FBCore/FBCore.h>
-
 #include <editor/EditorManager.h>
 #include <ui/UIManager.h>
 #include <ui/ResourceDatabaseDialog.h>
+#include <FBCore/FBCore.h>
 
 namespace fb
 {
     namespace editor
     {
+
         TerrainWindow::TerrainWindow()
         {
             auto className = String( "TerrainEditor" );
@@ -240,5 +240,6 @@ namespace fb
         {
             m_owner = owner;
         }
+
     }  // end namespace editor
 }  // end namespace fb

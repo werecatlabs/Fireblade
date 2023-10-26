@@ -2,7 +2,7 @@
 #define Project_h__
 
 #include <GameEditorPrerequisites.h>
-#include <FBCore/Interface/Resource/IResource.h>
+#include <FBCore/Interface/System/IProject.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Resource/Resource.h>
 #include <FBCore/Core/Map.h>
@@ -11,8 +11,7 @@ namespace fb
 {
     namespace editor
     {
-
-        class Project : public Resource<IResource>
+        class Project : public Resource<IProject>
         {
         public:
             static const String DEFAULT_PROJECT_NAME;
@@ -24,46 +23,41 @@ namespace fb
             Project();
             ~Project() override;
 
-            const String &getEditableType() const;
+            void load( SmartPtr<ISharedObject> data );
+            void unload( SmartPtr<ISharedObject> data );
 
             void create( const String &path );
-            void load( const String &filePath );
-            void save( const String &filePath );
-            void save();
+            void loadFromFile( const String &filePath ) override;
+            void saveToFile( const String &filePath ) override;
+            void save() override;
 
             String getLabel() const;
-            void setLabel( const String &val );
+            void setLabel( const String &label );
 
-            String getProjectDirectory() const;
-            void setProjectDirectory( const String &val );
-
-            String getProjectFilePath() const;
-            void setProjectPath( String val );
+            String getPath() const override;
+            void setPath( const String &projectDirectory ) override;
 
             String getWorkingDirectory() const;
-            void setWorkingDirectory( const String &val );
+            void setWorkingDirectory( const String &workingDirectory );
 
-            String getApplicationFilePath() const;
-            void setApplicationFilePath( const String &val );
-
-            String getEntitiesPath() const;
-            void setEntitiesPath( const String &val );
+            String getApplicationFilePath() const override;
+            void setApplicationFilePath( const String &applicationFilePath ) override;
 
             Array<String> getPaths() const;
-            void setPaths( Array<String> val );
-            void addPath( const String &val );
+            void setPaths( const Array<String> &paths );
+            void addPath( const String &path );
 
             void setProperties( const Properties &properties );
             void getProperties( Properties &properties ) const;
 
             Array<String> getMediaPaths() const;
-            void setMediaPaths( Array<String> val );
+            void setMediaPaths( const Array<String> &mediaPaths );
 
             bool isDirty() const;
             void setDirty( bool dirty );
 
             String getSelectedProjectPath() const;
-            void setSelectedProjectPath( const String &val );
+            void setSelectedProjectPath( const String &selectedProjectPath );
 
             void applyDefaults();
 
@@ -71,7 +65,7 @@ namespace fb
             void getOwner( SmartPtr<ISharedObject> owner );
 
             String getCurrentScenePath() const;
-            void setCurrentScenePath( const String &val );
+            void setCurrentScenePath( const String &currentScenePath );
 
             SmartPtr<ISharedObject> getDefaultData() const;
 
@@ -83,8 +77,34 @@ namespace fb
 
             void compile();
 
+            String getPluginHeader() const;
+
+            String getPluginSource() const;
+
+            SmartPtr<IPlugin> getPlugin() const;
+
+            void setPlugin( SmartPtr<IPlugin> plugin );
+
+            Array<String> getScriptFilePaths() const override;
+
+            void setScriptFilePaths( const Array<String> &val ) override;
+
+            Array<String> getResourceFolders() const override;
+
+            void setResourceFolders( const Array<String> &val ) override;
+
+            String getApplicationType() const override;
+
+            void setApplicationType( const String &val ) override;
+
+            bool isArchive() const override;
+
+            void setArchive( bool val ) override;
+
         protected:
             void addDefaultTasks();
+
+            SmartPtr<IPlugin> m_plugin;
 
             String m_currentScenePath;
 
@@ -98,6 +118,9 @@ namespace fb
 
             /// The working directory
             String m_projectDirectory;
+
+            /// The working directory
+            String m_workingDirectory;
 
             ///
             String m_projectPath;

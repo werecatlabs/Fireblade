@@ -63,7 +63,7 @@ namespace fb
 
             auto path = getPath();
             auto fileName = getFileName();
-            scriptGenerator.createCPlusPlusScript( path, fileName );
+            scriptGenerator.createScript( ScriptGenerator::LanguageType::LUA, path );
         }
 
         void AddNewScriptCmd::undo()

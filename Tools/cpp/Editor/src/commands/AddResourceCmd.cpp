@@ -5,7 +5,6 @@
 #include "ui/UIManager.h"
 #include <FBCore/FBCore.h>
 
-
 namespace fb
 {
     namespace editor

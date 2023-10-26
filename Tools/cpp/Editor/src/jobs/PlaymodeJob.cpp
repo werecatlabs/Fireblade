@@ -63,15 +63,24 @@ namespace fb
                     FB_ASSERT( !StringUtil::isNullOrEmpty( tempScenePath ) );
                     FB_ASSERT( !Path::isPathAbsolute( tempScenePath ) );
 
-                    //scene->saveScene( tempScenePath );
+                    auto currentScenePath = scene->getFilePath();
+                    if( !StringUtil::isNullOrEmpty( currentScenePath ) )
+                    {
+                        scene->clear();
+                        scene->loadScene( currentScenePath );
+                    }
+                    else
+                    {
+                        scene->saveScene( tempScenePath );
 
-                    // safety code
-                    // clear and load to make sure values are
-                    // loaded correctly in actors and components
-                    // can refactor to add playing events
+                        // safety code
+                        // clear and load to make sure values are
+                        // loaded correctly in actors and components
+                        // can refactor to add playing events
 
-                    //scene->clear();
-                    //scene->loadScene( tempScenePath );
+                        scene->clear();
+                        scene->loadScene( tempScenePath );
+                    }
 
                     applicationManager->setPlaying( true );
 

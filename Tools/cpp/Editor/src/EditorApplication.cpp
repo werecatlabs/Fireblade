@@ -46,11 +46,8 @@ namespace fb
     namespace editor
     {
 
-        EditorApplication::EditorApplication() : m_editorManager( nullptr ), m_isRunning( true )
+        EditorApplication::EditorApplication() : m_editorManager( nullptr )
         {
-            //gc.setMode( GarbageCollector::Mode::Balanced );
-            //gc.setMode( GarbageCollector::Mode::Deferred );
-            //gc.setMode( GarbageCollector::Mode::LowConsumption );
         }
 
         EditorApplication::~EditorApplication()
@@ -65,7 +62,7 @@ namespace fb
             }
         }
 
-        void EditorApplication::load( SmartPtr<ISharedObject> data )
+        void EditorApplication::loadDebug( SmartPtr<ISharedObject> data )
         {
             try
             {
@@ -77,7 +74,73 @@ namespace fb
                 auto task = Thread::Task::Primary;
                 Thread::setCurrentTask( task );
 
+                auto taskFlags = std::numeric_limits<u32>::max();
+                Thread::setTaskFlags( taskFlags );
+
                 auto applicationManager = fb::make_ptr<core::ApplicationManagerMT>();
+                core::IApplicationManager::setInstance( applicationManager );
+
+                applicationManager->setApplication( this );
+
+                core::Application::load( data );
+
+                if( auto camera = m_camera )
+                {
+                    camera->setRenderUI( true );
+                }
+
+                if( auto vp = m_viewport )
+                {
+                    vp->setEnableUI( true );
+                    vp->setEnableSceneRender( false );
+                }
+
+                auto taskManager = applicationManager->getTaskManager();
+                taskManager->setState( ITaskManager::State::FreeStep );
+
+                auto threadPool = applicationManager->getThreadPool();
+                threadPool->setState( IThreadPool::State::Start );
+
+                setLoadingState( LoadingState::Loaded );
+            }
+            catch( Exception &e )
+            {
+                FB_LOG_EXCEPTION( e );
+            }
+            catch( std::exception &e )
+            {
+                FB_LOG_EXCEPTION( e );
+            }
+        }
+
+        void EditorApplication::load( SmartPtr<ISharedObject> data )
+        {
+            //EditorApplication::loadDebug( data );
+            //return;
+
+            try
+            {
+                setLoadingState( LoadingState::Loading );
+
+                auto currentThreadId = Thread::ThreadId::Primary;
+                Thread::setCurrentThreadId( currentThreadId );
+
+                auto task = Thread::Task::Primary;
+                Thread::setCurrentTask( task );
+
+                auto taskFlags = std::numeric_limits<u32>::max();
+                Thread::setTaskFlags( taskFlags );
+
+                auto applicationManager = fb::make_ptr<core::ApplicationManagerMT>();
+
+#ifdef FB_PLATFORM_APPLE
+                auto macBundlePath = Path::macBundlePath();
+                auto path = Path::getAbsolutePath( macBundlePath, "../" );
+                Path::setWorkingDirectory( path );
+#endif
+
+                applicationManager->load( nullptr );
+
                 core::IApplicationManager::setInstance( applicationManager );
 
                 applicationManager->setApplication( this );
@@ -118,6 +181,10 @@ namespace fb
 
                 core::Application::load( data );
 
+                // todo move
+                auto processManager = fb::make_ptr<ProcessManager>();
+                applicationManager->setProcessManager( processManager );
+
                 loadScripts();
 
                 createDefaultMaterialUI();
@@ -150,8 +217,10 @@ namespace fb
                 auto pProject = fb::make_ptr<Project>();
                 m_editorManager->setProject( pProject );
 
-                auto renderUI = ui::FBRenderUI::createUIManager();
-                applicationManager->setRenderUI( renderUI );
+                //auto renderUI = ui::FBRenderUI::createUIManager();
+                //auto renderUI = factoryManager->make_object<ui::IUIManager>();
+                //FB_ASSERT(renderUI);
+                //applicationManager->setRenderUI( renderUI );
 
                 auto editorUiManager = fb::make_ptr<UIManager>();
                 m_editorManager->setUI( editorUiManager );
@@ -165,14 +234,17 @@ namespace fb
 
                 auto translateManipulator = factoryManager->make_ptr<TranslateManipulator>();
                 translateManipulator->load( nullptr );
+                translateManipulator->setVisible( false );
                 m_editorManager->setTranslateManipulator( translateManipulator );
 
                 auto rotateManipulator = factoryManager->make_ptr<RotateManipulator>();
                 rotateManipulator->load( nullptr );
+                rotateManipulator->setVisible( false );
                 m_editorManager->setRotateManipulator( rotateManipulator );
 
                 auto scaleManipulator = factoryManager->make_ptr<ScaleManipulator>();
                 scaleManipulator->load( nullptr );
+                scaleManipulator->setVisible( false );
                 m_editorManager->setScaleManipulator( scaleManipulator );
 
                 if( auto sceneManager = applicationManager->getSceneManager() )
@@ -247,8 +319,8 @@ namespace fb
                     }
                 }
 
-                auto resourceDatabase = applicationManager->getResourceDatabase();
-                resourceDatabase->build();
+                //auto resourceDatabase = applicationManager->getResourceDatabase();
+                //resourceDatabase->build();
 
                 if( m_sphericalCameraActor )
                 {
@@ -325,8 +397,7 @@ namespace fb
         {
             try
             {
-                const auto &loadingState = getLoadingState();
-                if( loadingState != LoadingState::Unloaded )
+                if( isLoaded() )
                 {
                     setLoadingState( LoadingState::Unloading );
 
@@ -749,7 +820,10 @@ namespace fb
                     }
                 }
 
-                m_editorManager->update( time, dt );
+                if( m_editorManager )
+                {
+                    m_editorManager->update( time, dt );
+                }
 
                 if( jobQueue )
                 {
@@ -785,8 +859,6 @@ namespace fb
                             {
                                 graphicsSystem->update();
                             }
-
-                            m_editorManager->update( t, dt );
                         }
                     }
 
@@ -835,28 +907,34 @@ namespace fb
             {
                 timer->addTimeSinceLevelLoad( dt );
 
-                auto translateManipulator = editorManager->getTranslateManipulator();
-                if( translateManipulator )
+                if( editorManager )
                 {
-                    translateManipulator->preUpdate();
-                    translateManipulator->update();
-                    translateManipulator->postUpdate();
-                }
+                    auto translateManipulator = editorManager->getTranslateManipulator();
+                    if( translateManipulator )
+                    {
+                        translateManipulator->preUpdate();
+                        translateManipulator->update();
+                        translateManipulator->postUpdate();
+                    }
 
-                auto rotateManipulator = editorManager->getRotateManipulator();
-                if( rotateManipulator )
-                {
-                    rotateManipulator->preUpdate();
-                    rotateManipulator->update();
-                    rotateManipulator->postUpdate();
-                }
+                    auto rotateManipulator = editorManager->getRotateManipulator();
+                    if( rotateManipulator )
+                    {
+                        rotateManipulator->preUpdate();
+                        rotateManipulator->update();
+                        rotateManipulator->postUpdate();
+                    }
 
-                m_editorManager->update( t, dt );
+                    editorManager->update( t, dt );
+                }
             }
             break;
             default:
             {
-                m_editorManager->update( t, dt );
+                if( editorManager )
+                {
+                    editorManager->update( t, dt );
+                }
             }
             }
 
@@ -927,9 +1005,8 @@ namespace fb
                     auto fileSystem = applicationManager->getFileSystem();
 
                     auto editorSettings = applicationManager->getEditorSettings();
-                    
+
                     auto editorManager = EditorManager::getSingletonPtr();
-                    FB_ASSERT( editorManager );
 
                     if( editorSettings )
                     {
@@ -1153,6 +1230,15 @@ namespace fb
             taskManager->load( nullptr );
         }
 
+        void EditorApplication::createProfiler()
+        {
+            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto profiler = fb::make_ptr<Profiler>();
+            applicationManager->setProfiler( profiler );
+        }
+
         void EditorApplication::createThreadPool()
         {
             auto applicationManager = core::IApplicationManager::instance();
@@ -1259,30 +1345,18 @@ namespace fb
 
 #if !FB_FINAL
 #    if defined FB_PLATFORM_WIN32
-#        if FB_GRAPHICS_SYSTEM_OGRENEXT
-                mediaPath = String( "../../../../Media/2.0" );
-#        elif FB_GRAPHICS_SYSTEM_OGRE
-                mediaPath = String( "../../../../Media/1.0" );
-#        endif
-
-                scriptsPath = String( "../../../../Media/Scripts/" );
+                mediaPath = String( "../../../../../Media" );
+                scriptsPath = String( "../../../../../Media/Scripts/" );
 #    elif defined FB_PLATFORM_APPLE
-#        if FB_GRAPHICS_SYSTEM_OGRENEXT
-                mediaPath = String( "../../../../../MediaOgreNext" );
-#        elif FB_GRAPHICS_SYSTEM_OGRE
-                mediaPath = String( "../../Media/1.0" );
-#        endif
-
+                mediaPath = String( "../../Media" );
                 scriptsPath = String( "../../Media/Scripts/" );
 #    else
-#        if FB_GRAPHICS_SYSTEM_OGRENEXT
-                mediaPath = String( "../../MediaOgreNext/" );
-#        elif FB_GRAPHICS_SYSTEM_OGRE
-                mediaPath = String( "../../Media/" );
-#        endif
+                mediaPath = String( "../../Media" );
+                scriptsPath = String( "../../Media/Scripts/" );
 #    endif
 
-                applicationManager->setMediaPath( mediaPath );
+                auto absoluteMediaPath = Path::lexically_normal( workingDirectory, mediaPath );
+                applicationManager->setMediaPath( absoluteMediaPath );
 
                 fileSystem->getFileNamesInFolder( mediaPath, fileNames );
                 for( u32 i = 0; i < fileNames.size(); ++i )
@@ -1304,15 +1378,15 @@ namespace fb
 
                 auto absoluteScriptsPath = Path::lexically_normal( workingDirectory, scriptsPath );
                 fileSystem->addFolder( scriptsPath, true );
-                fileSystem->addFolder( mediaPath, true );
+                fileSystem->addFolder( absoluteMediaPath, true );
 #else
-                applicationManager->setMediaPath( workingDirectory + "/Media/2.0" );
+                applicationManager->setMediaPath( workingDirectory + "/Media/OgreNext" );
                 mediaPath = String( "./Media" );
 
 #    if FB_GRAPHICS_SYSTEM_OGRENEXT
-                mediaPath = String( "Media/2.0" );
+                mediaPath = String( "Media/OgreNext" );
 #    elif FB_GRAPHICS_SYSTEM_OGRE
-                mediaPath = String( "Media/1.0" );
+                mediaPath = String( "Media/Ogre" );
 #    endif
 
                 auto mediaFolder = Path::lexically_normal( workingDirectory, "/Media" );
@@ -1420,7 +1494,6 @@ namespace fb
             auto resourceDatabase = fb::make_ptr<ResourceDatabase>();
             applicationManager->setResourceDatabase( resourceDatabase );
             resourceDatabase->load( nullptr );
-
 #endif
 
             return true;
@@ -1620,8 +1693,8 @@ namespace fb
                 auto physicsScene = physicsManager->addScene();
                 applicationManager->setPhysicsScene( physicsScene );
 
-                //auto vehicleManager = fb::make_ptr<CVehicleManager>();
-                //applicationManager->setVehicleManager( vehicleManager );
+                auto vehicleManager = fb::make_ptr<VehicleManager>();
+                applicationManager->setVehicleManager( vehicleManager );
             }
             catch( std::exception &e )
             {
@@ -1648,10 +1721,6 @@ namespace fb
         {
             try
             {
-#if defined FB_PLATFORM_APPLE
-                return;
-#endif
-
                 auto applicationManager = core::IApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
@@ -1735,13 +1804,12 @@ namespace fb
                 auto taskManager = applicationManager->getTaskManager();
                 FB_ASSERT( taskManager );
 
-                // todo move
-                auto profiler = fb::make_ptr<Profiler>();
-                applicationManager->setProfiler( profiler );
+                auto profiler = applicationManager->getProfiler();
 
                 if( auto primaryTask = taskManager->getTask( Thread::Task::Primary ) )
                 {
                     primaryTask->setTask( Thread::Task::Primary );
+                    primaryTask->setThreadTaskFlags( Thread::Primary_Flag );
                     primaryTask->setPrimary( true );
                     primaryTask->setEnabled( true );
                     primaryTask->setOwner( this );
@@ -1755,6 +1823,7 @@ namespace fb
                 if( auto applicationTask = taskManager->getTask( Thread::Task::Application ) )
                 {
                     applicationTask->setTask( Thread::Task::Application );
+                    applicationTask->setThreadTaskFlags( Thread::Application_Flag );
                     applicationTask->setPrimary( false );
                     applicationTask->setEnabled( true );
                     applicationTask->setOwner( this );
@@ -1768,10 +1837,15 @@ namespace fb
                 if( auto renderTask = taskManager->getTask( Thread::Task::Render ) )
                 {
                     renderTask->setTask( Thread::Task::Render );
+                    renderTask->setThreadTaskFlags( Thread::Render_Flag );
 
 #if FB_GRAPHICS_SYSTEM_OGRENEXT
-                    renderTask->setPrimary( false );
-                    //renderTask->setPrimary( true );
+#    ifdef FB_PLATFORM_WIN32
+                    //renderTask->setPrimary( false );
+                    renderTask->setPrimary( true );
+#    else
+                    renderTask->setPrimary( true );
+#    endif
 #elif FB_GRAPHICS_SYSTEM_OGRE
                     renderTask->setPrimary( true );
 #endif
@@ -1788,6 +1862,8 @@ namespace fb
                 if( auto physicsTask = taskManager->getTask( Thread::Task::Physics ) )
                 {
                     physicsTask->setTask( Thread::Task::Physics );
+                    physicsTask->setThreadTaskFlags( Thread::Physics_Flag );
+
                     physicsTask->setPrimary( false );
                     physicsTask->setEnabled( true );
                     physicsTask->setOwner( this );
@@ -1801,6 +1877,8 @@ namespace fb
                 if( auto garbageCollectTask = taskManager->getTask( Thread::Task::GarbageCollect ) )
                 {
                     garbageCollectTask->setTask( Thread::Task::GarbageCollect );
+                    garbageCollectTask->setThreadTaskFlags( Thread::GarbageCollect_Flag );
+
                     garbageCollectTask->setPrimary( false );
                     garbageCollectTask->setEnabled( true );
                     garbageCollectTask->setOwner( this );

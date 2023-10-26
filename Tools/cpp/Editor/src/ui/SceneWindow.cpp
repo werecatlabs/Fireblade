@@ -9,7 +9,6 @@
 #include <commands/RemoveSelectionCmd.h>
 #include <FBCore/FBCore.h>
 
-
 #include "commands/PromptCmd.h"
 #include "jobs/SceneDropJob.h"
 
@@ -44,7 +43,7 @@ namespace fb
                 auto window = ui->addElementByType<ui::IUIWindow>();
                 window->setLabel( "Scene" );
                 window->setHasBorder( true );
-                m_window = window;
+                setParentWindow( window );
 
                 if( parent )
                 {
@@ -96,77 +95,69 @@ namespace fb
                 m_applicationAddMenu = ui->addElementByType<ui::IUIMenu>();
                 m_applicationAddMenu->setLabel( "Add" );
 
-                Util::addMenuItem(
-                    m_applicationAddMenu, static_cast<s32>( MenuId::ADD_CAMERA ), "Camera", "Camera" );
-                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_CAR ),
-                                              "Car", "Car" );
-                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_CUBE ),
-                                              "Cube", "Cube" );
-                Util::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>( MenuId::ADD_CUBE_MESH ), "Cube Mesh",
-                                              "Cube Mesh" );
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_CAMERA ),
+                                   "Camera", "Camera" );
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_CAR ), "Car",
+                                   "Car" );
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_CUBE ), "Cube",
+                                   "Cube" );
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_CUBE_MESH ),
+                                   "Cube Mesh", "Cube Mesh" );
                 Util::addMenuSeparator( m_applicationAddMenu );
-                Util::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>( MenuId::ADD_CUBEMAP ), "Cubemap",
-                                              "Cubemap" );
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_CUBEMAP ),
+                                   "Cubemap", "Cubemap" );
 
                 Util::addMenuSeparator( m_applicationAddMenu );
 
                 Util::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>( MenuId::ADD_DIRECTIONAL_LIGHT ),
-                                              "Directional Light", "Directional Light" );
+                                   static_cast<s32>( MenuId::ADD_DIRECTIONAL_LIGHT ),
+                                   "Directional Light", "Directional Light" );
 
-                Util::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>( MenuId::ADD_POINT_LIGHT ), "Point Light",
-                                              "Point Light" );
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_POINT_LIGHT ),
+                                   "Point Light", "Point Light" );
                 Util::addMenuSeparator( m_applicationAddMenu );
 
-                Util::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>( MenuId::ADD_PARTICLESYSTEM ),
-                                              "Particle System", "Particle System" );
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_PARTICLESYSTEM ),
+                                   "Particle System", "Particle System" );
 
                 Util::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>( MenuId::ADD_PARTICLESYSTEM_SMOKE ),
-                                              "Particle System Smoke", "Particle System Smoke" );
+                                   static_cast<s32>( MenuId::ADD_PARTICLESYSTEM_SMOKE ),
+                                   "Particle System Smoke", "Particle System Smoke" );
 
                 Util::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>( MenuId::ADD_PARTICLESYSTEM_SAND ),
-                                              "Particle System Sand", "Particle System Sand" );
+                                   static_cast<s32>( MenuId::ADD_PARTICLESYSTEM_SAND ),
+                                   "Particle System Sand", "Particle System Sand" );
 
                 Util::addMenuSeparator( m_applicationAddMenu );
 
-                Util::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>( MenuId::ADD_PLANE ), "Plane", "Plane" );
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_PLANE ), "Plane",
+                                   "Plane" );
 
-                Util::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>( MenuId::ADD_PHYSICS_CUBE ),
-                                              "Physics Cube", "Physics Cube" );
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_PHYSICS_CUBE ),
+                                   "Physics Cube", "Physics Cube" );
 
-                Util::addMenuItem(
-                    m_applicationAddMenu, static_cast<s32>( MenuId::ADD_SKYBOX ), "Skybox", "Skybox" );
-                Util::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>( MenuId::ADD_NEW_TERRAIN ), "Terrain",
-                                              "Terrain" );
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_SKYBOX ),
+                                   "Skybox", "Skybox" );
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_NEW_TERRAIN ),
+                                   "Terrain", "Terrain" );
                 Util::addMenuSeparator( m_applicationAddMenu );
 
-                Util::addMenuItem(
-                    m_applicationAddMenu, static_cast<s32>( MenuId::ADD_BUTTON ), "Button", "Button" );
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_BUTTON ),
+                                   "Button", "Button" );
 
-                Util::addMenuItem(
-                    m_applicationAddMenu, static_cast<s32>( MenuId::ADD_CANVAS ), "Canvas", "Canvas" );
-                Util::addMenuItem( m_applicationAddMenu,
-                                              static_cast<s32>( MenuId::ADD_PANEL ), "Panel", "Panel" );
-                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_TEXT ),
-                                              "Text", "Text" );
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_CANVAS ),
+                                   "Canvas", "Canvas" );
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_PANEL ), "Panel",
+                                   "Panel" );
+                Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_TEXT ), "Text",
+                                   "Text" );
 
                 m_applicationMenu->addMenuItem( m_applicationAddMenu );
 
-                Util::addMenuItem( m_applicationMenu,
-                                              static_cast<s32>( MenuId::ADD_NEW_ENTITY ), "Add Actor",
-                                              "Add Actor" );
-                Util::addMenuItem( m_applicationMenu,
-                                              static_cast<s32>( MenuId::SCENE_REMOVE_ACTOR ), "Remove",
-                                              "Remove" );
+                Util::addMenuItem( m_applicationMenu, static_cast<s32>( MenuId::ADD_NEW_ENTITY ),
+                                   "Add Actor", "Add Actor" );
+                Util::addMenuItem( m_applicationMenu, static_cast<s32>( MenuId::SCENE_REMOVE_ACTOR ),
+                                   "Remove", "Remove" );
 
                 m_applicationMenu->addObjectListener( m_menuListener );
 
@@ -298,6 +289,8 @@ namespace fb
                 m_dataArray.clear();
 
                 auto applicationManager = core::IApplicationManager::instance();
+                auto factoryManager = applicationManager->getFactoryManager();
+
                 auto editorManager = EditorManager::getSingletonPtr();
 
                 auto sceneManager = applicationManager->getSceneManager();
@@ -313,6 +306,10 @@ namespace fb
                     {
                         Util::setText( rootNode, sceneName );
                         rootNode->setExpanded( true );
+
+                        auto treeNodeData = factoryManager->make_ptr<ProjectTreeData>(
+                            "scene", "scene", currentScene, currentScene );
+                        rootNode->setNodeUserData( treeNodeData );
 
                         auto actors = currentScene->getActors();
                         for( auto actor : actors )
@@ -407,7 +404,7 @@ namespace fb
             {
                 auto projectTreeData = fb::static_pointer_cast<ProjectTreeData>( data );
                 auto ownerType = projectTreeData->getOwnerType();
-                if( ownerType == "actor" )
+                if( ownerType == "actor" || ownerType == "scene" )
                 {
                     auto object = projectTreeData->getObjectData();
                     auto pObject = object->getSharedFromThis<ISharedObject>();

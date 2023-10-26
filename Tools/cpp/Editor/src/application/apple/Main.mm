@@ -280,8 +280,8 @@ int main( int argc, const char *argv[] )
 #if !FB_EDITOR_TESTS
 int main()
 {
-    fb::editor::Application app;
-    app.setActiveThreads(0);
+    fb::editor::EditorApplication app;
+    app.setActiveThreads(4);
     app.load( nullptr );
     app.run();
     return 0;

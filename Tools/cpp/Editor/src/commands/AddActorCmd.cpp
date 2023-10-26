@@ -3,10 +3,7 @@
 #include <editor/EditorManager.h>
 #include <editor/Project.h>
 #include <ui/UIManager.h>
-
 #include <FBCore/FBCore.h>
-
-
 
 namespace fb
 {
@@ -25,6 +22,8 @@ namespace fb
 
         void AddActorCmd::undo()
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
@@ -47,6 +46,8 @@ namespace fb
 
         void AddActorCmd::redo()
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
@@ -72,6 +73,8 @@ namespace fb
 
         void AddActorCmd::execute()
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
@@ -118,12 +121,6 @@ namespace fb
                 if( parent )
                 {
                     parent->addChild( actor );
-
-                    auto root = parent->getSceneRoot();
-                    if( root )
-                    {
-                        root->hierarchyChanged();
-                    }
                 }
                 else
                 {
@@ -132,6 +129,11 @@ namespace fb
                     {
                         scene->addActor( actor );
                     }
+                }
+
+                if( auto root = actor->getSceneRoot() )
+                {
+                    root->hierarchyChanged();
                 }
 
                 setActor( actor );
@@ -272,11 +274,11 @@ namespace fb
                         scene::LayoutTransform::VerticalAlignment::CENTER );
                 }
 
-                if( auto image = actor->addComponent<scene::Image>() )
-                {
-                    image->setTextureName( "panel.png" );
-                    //image->setTint(ColourF(0.0f, 0.5f, 0.0f, 1.0f));
-                }
+                //if( auto image = actor->addComponent<scene::Image>() )
+                //{
+                //    image->setTextureName( "panel.png" );
+                //    //image->setTint(ColourF(0.0f, 0.5f, 0.0f, 1.0f));
+                //}
 
                 auto button = actor->addComponent<scene::Button>();
                 button->setCascadeInput( false );
@@ -288,27 +290,27 @@ namespace fb
                     // material->setTint(ColourF(0.0f, 0.5f, 0.0f, 1.0f));
                 }
 
-                auto actorText = sceneManager->createActor();
-                actor->addChild( actorText );
+                //auto actorText = sceneManager->createActor();
+                //actor->addChild( actorText );
 
-                if( auto textCanvasTransform = actorText->addComponent<scene::LayoutTransform>() )
-                {
-                    auto textSize = Vector2F( 100, 20 );
-                    textCanvasTransform->setSize( textSize );
+                //if( auto textCanvasTransform = actorText->addComponent<scene::LayoutTransform>() )
+                //{
+                //    auto textSize = Vector2F( 100, 20 );
+                //    textCanvasTransform->setSize( textSize );
 
-                    textCanvasTransform->setHorizontalAlignment(
-                        scene::LayoutTransform::HorizontalAlignment::CENTER );
-                    textCanvasTransform->setVerticalAlignment(
-                        scene::LayoutTransform::VerticalAlignment::CENTER );
-                }
+                //    textCanvasTransform->setHorizontalAlignment(
+                //        scene::LayoutTransform::HorizontalAlignment::CENTER );
+                //    textCanvasTransform->setVerticalAlignment(
+                //        scene::LayoutTransform::VerticalAlignment::CENTER );
+                //}
 
-                if( auto text = actorText->addComponent<scene::Text>() )
-                {
-                    text->setText( "Button" );
+                //if( auto text = actorText->addComponent<scene::Text>() )
+                //{
+                //    text->setText( "Button" );
 
-                    auto textName = String( "Text" );
-                    actorText->setName( textName );
-                }
+                //    auto textName = String( "Text" );
+                //    actorText->setName( textName );
+                //}
 
                 return actor;
             }
@@ -561,48 +563,51 @@ namespace fb
             return nullptr;
         }
 
-        String AddActorCmd::getCommandId() const
-        {
-            return "AddEntityCmd";
-        }
-
         SmartPtr<IActor> AddActorCmd::getActor() const
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             return m_actor;
         }
 
         void AddActorCmd::setActor( SmartPtr<IActor> actor )
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             m_actor = actor;
         }
 
         SmartPtr<IActor> AddActorCmd::getParent() const
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             return m_parent;
         }
 
         void AddActorCmd::setParent( SmartPtr<IActor> parent )
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             m_parent = parent;
         }
 
         AddActorCmd::ActorType AddActorCmd::getActorType() const
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             return m_actorType;
         }
 
         void AddActorCmd::setActorType( ActorType actorType )
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             m_actorType = actorType;
         }
 
         String AddActorCmd::getFilePath() const
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             return m_filePath;
         }
 
         void AddActorCmd::setFilePath( const String &filePath )
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             FB_ASSERT( !Path::isPathAbsolute( filePath ) );
             m_filePath = filePath;
         }

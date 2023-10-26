@@ -47,6 +47,7 @@ namespace fb
                 SaveSceneAsId,
                 SaveAllId,
                 GenerateCMakeProjectId,
+                CompileId,
                 CreatePackageId,
                 CreateUnityBindings,
                 ProjectSettingsId,
@@ -62,10 +63,18 @@ namespace fb
                 ResourcesId,
                 InputWindowId,
                 ProfilerWindowId,
+                ObjectWindowId,
+                ProjectWindowId,
+                SceneWindowId,
 
                 UndoId,
                 RedoId,
                 GotoId,
+
+                CreatePluginCodeId,
+                LoadPluginId,
+                UnloadPluginId,
+                CopyEngineFilesId,
 
                 ImportJsonSceneId,
                 ImportUnityYamlId,
@@ -103,6 +112,10 @@ namespace fb
                 ReloadScriptsId,
                 ToggleEditorCameraId,
 
+                TranslateEditorCameraId,
+                RotateEditorCameraId,
+                ScaleEditorCameraId,
+
                 AssetImportId,
                 AssetReimportId,
                 AssetDatabaseBuildId,
@@ -122,12 +135,6 @@ namespace fb
             void unload( SmartPtr<ISharedObject> data ) override;
 
             void update( time_interval t, time_interval dt );
-
-            /** Returns a file path. */
-            String saveEntity( const String &fileName );
-
-            /** Returns a file path. */
-            String saveScript( const String &fileName );
 
             SmartPtr<SceneWindow> getSceneWindow() const;
             void setSceneWindow( SmartPtr<SceneWindow> sceneWindow );
@@ -212,11 +219,11 @@ namespace fb
                 void execute() override;
             };
 
-            class CUIMenuBarListener : public IEventListener
+            class MenuBarListener : public IEventListener
             {
             public:
-                CUIMenuBarListener();
-                ~CUIMenuBarListener() override;
+                MenuBarListener();
+                ~MenuBarListener() override;
 
                 Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
                                        const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,

@@ -5,13 +5,14 @@
 #include <FBCore/Interface/System/ICommand.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Properties.h>
+#include <commands/Command.h>
 
 namespace fb
 {
     namespace editor
     {
 
-        class AddNewScriptCmd : public ICommand
+        class AddNewScriptCmd : public Command
         {
         public:
             AddNewScriptCmd();
@@ -22,9 +23,6 @@ namespace fb
             void execute();
             void undo();
 
-            //SmartPtr<ScriptTemplate> getScriptTemplate() const;
-            //void setScriptTemplate( SmartPtr<ScriptTemplate> val );
-
             String getPath() const;
             void setPath( const String &val );
 
@@ -32,7 +30,6 @@ namespace fb
             void setFileName( const String &val );
 
         protected:
-            //SmartPtr<ScriptTemplate> m_scriptTemplate;
             Properties m_properties;
             String m_filePath;
             String m_fileName;

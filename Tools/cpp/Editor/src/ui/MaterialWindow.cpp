@@ -284,6 +284,25 @@ namespace fb
                                 }
                             }
                         }
+                        else if( selectedObject->isDerived<scene::Material>() )
+                        {
+                            auto materialComponent =
+                                fb::dynamic_pointer_cast<scene::Material>( selectedObject );
+                            auto material = materialComponent->getMaterial();
+                            if( material )
+                            {
+                                setMaterial( material );
+
+                                auto materialType = material->getMaterialType();
+                                m_dropdown->setSelectedOption( static_cast<u32>( materialType ) );
+
+                                auto rootNode = tree->addRoot();
+                                FB_ASSERT( rootNode );
+                                rootNode->setExpanded( true );
+
+                                addMaterialToTree( material, rootNode );
+                            }
+                        }
                     }
                 }
             }

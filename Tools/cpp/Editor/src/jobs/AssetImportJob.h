@@ -21,6 +21,4 @@ namespace fb
     }  // namespace editor
 }  // namespace fb
 
-
-
-#endif // AssetImportJob_h__
+#endif  // AssetImportJob_h__

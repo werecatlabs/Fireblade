@@ -2,18 +2,17 @@
 #include <commands/FileMenuCmd.h>
 #include <editor/EditorManager.h>
 #include <editor/Project.h>
+#include <jobs/OpenSceneJob.h>
+#include <jobs/CreateCodeProjectJob.h>
+#include "jobs/CompileProjectJob.h"
 #include <ui/UIManager.h>
-#include "ui/ProjectWindow.h"
-
+#include <ui/ProjectWindow.h>
 #include <FBCore/FBCore.h>
-
-#include "jobs/OpenSceneJob.h"
 
 namespace fb
 {
     namespace editor
     {
-
         FileMenuCmd::FileMenuCmd()
         {
         }
@@ -32,6 +31,8 @@ namespace fb
 
         void FileMenuCmd::execute()
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+
             auto applicationManager = core::IApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
@@ -43,6 +44,8 @@ namespace fb
 
             auto fileSystem = applicationManager->getFileSystem();
             FB_ASSERT( fileSystem );
+
+            auto jobQueue = applicationManager->getJobQueue();
 
             switch( auto eventId = getItemId() )
             {
@@ -61,6 +64,8 @@ namespace fb
             break;
             case UIManager::WidgetId::NewProjectId:
             {
+                auto project = editorManager->getProject();
+
                 if( auto fileDialog = fileSystem->openFileDialog() )
                 {
                     auto projectPath = Path::getWorkingDirectory();
@@ -76,12 +81,13 @@ namespace fb
                     auto result = fileDialog->openDialog();
                     if( result == INativeFileDialog::Result::Dialog_Okay )
                     {
-                        auto project = editorManager->getProject();
-
                         auto filePath = fileDialog->getFilePath();
                         if( !StringUtil::isNullOrEmpty( filePath ) )
                         {
                             project->create( filePath );
+
+                            auto projectFilePath = filePath + "/project.fbproject";
+                            editorManager->loadProject( projectFilePath );
                         }
                     }
                 }
@@ -202,7 +208,17 @@ namespace fb
             }
             break;
             case UIManager::WidgetId::GenerateCMakeProjectId:
-                break;
+            {
+                auto job = fb::make_ptr<CreateCodeProjectJob>();
+                jobQueue->addJob( job );
+            }
+            break;
+            case UIManager::WidgetId::CompileId:
+            {
+                auto job = fb::make_ptr<CompileProjectJob>();
+                jobQueue->addJob( job );
+            }
+            break;
             case UIManager::WidgetId::CreatePackageId:
                 break;
             case UIManager::WidgetId::ProjectSettingsId:
@@ -301,12 +317,14 @@ namespace fb
 
         UIManager::WidgetId FileMenuCmd::getItemId() const
         {
+            RecursiveMutex::ScopedLock lock( m_mutex );
             return m_itemId;
         }
 
-        void FileMenuCmd::setItemId( UIManager::WidgetId val )
+        void FileMenuCmd::setItemId( UIManager::WidgetId itemId )
         {
-            m_itemId = val;
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            m_itemId = itemId;
         }
 
     }  // end namespace editor

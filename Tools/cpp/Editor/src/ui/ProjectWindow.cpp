@@ -1,18 +1,17 @@
 #include <GameEditorPCH.h>
-#include "ui/ProjectWindow.h"
-#include "ui/FileWindow.h"
-#include "ui/ProjectAssetsWindow.h"
-#include "editor/EditorManager.h"
-#include "ui/ProjectTreeData.h"
-#include "ui/UIManager.h"
-#include "commands/DragDropActorCmd.h"
-#include "commands/RemoveResourceCmd.h"
-#include "commands/AddActorCmd.h"
-#include "commands/RemoveSelectionCmd.h"
-#include "commands/AddNewScriptCmd.h"
-#include "GameEditorTypes.h"
+#include <ui/ProjectWindow.h>
+#include <editor/EditorManager.h>
+#include <editor/Project.h>
+#include <ui/FileWindow.h>
+#include <ui/ProjectAssetsWindow.h>
+#include <ui/ProjectTreeData.h>
+#include <ui/UIManager.h>
+#include <commands/DragDropActorCmd.h>
+#include <commands/RemoveResourceCmd.h>
+#include <commands/AddActorCmd.h>
+#include <commands/RemoveSelectionCmd.h>
+#include <commands/AddNewScriptCmd.h>
 #include <FBCore/FBCore.h>
-#include "editor/Project.h"
 
 #define TREE_ITEM_STATE_NOT_FOUND 0
 #define TREE_ITEM_STATE_EXPANDED 1
@@ -29,6 +28,7 @@ namespace fb
 
         ProjectWindow::~ProjectWindow()
         {
+            unload( nullptr );
         }
 
         void ProjectWindow::load( SmartPtr<ISharedObject> data )

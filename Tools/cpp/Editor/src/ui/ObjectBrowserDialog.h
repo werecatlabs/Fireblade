@@ -34,6 +34,8 @@ namespace fb
             SmartPtr<ui::IUITreeCtrl> getTree() const;
             void setTree( SmartPtr<ui::IUITreeCtrl> tree );
 
+            void setWindowVisible( bool visible );
+
         protected:
             class UIElementListener : public IEventListener
             {

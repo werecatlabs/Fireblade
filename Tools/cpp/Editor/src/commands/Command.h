@@ -4,6 +4,7 @@
 #include <GameEditorPrerequisites.h>
 #include <FBCore/Interface/System/ICommand.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
+#include <FBCore/Thread/RecursiveMutex.h>
 
 namespace fb
 {
@@ -12,8 +13,8 @@ namespace fb
         class Command : public ICommand
         {
         public:
-            Command();
-            ~Command() override;
+            Command() = default;
+            ~Command() override = default;
 
             void undo() override;
 
@@ -26,6 +27,7 @@ namespace fb
             void setState( State state ) override;
 
         protected:
+            mutable RecursiveMutex m_mutex;
             State m_commandState = State::Allocated;
         };
     }  // namespace editor

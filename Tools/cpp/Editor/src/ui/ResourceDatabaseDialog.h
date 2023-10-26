@@ -150,6 +150,26 @@ namespace fb
                 ResourceDatabaseDialog *m_owner = nullptr;
             };
 
+            class DragSource : public ui::IUIDragSource
+            {
+            public:
+                DragSource() = default;
+                ~DragSource() override = default;
+
+                Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                       const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
+
+                String handleDrag( const Vector2I &position, SmartPtr<ui::IUIElement> element );
+
+                ResourceDatabaseDialog *getOwner() const;
+
+                void setOwner( ResourceDatabaseDialog *owner );
+
+            private:
+                ResourceDatabaseDialog *m_owner = nullptr;
+            };
+
             void handleTreeSelectionChanged();
             void handleTreeSelectionActivated();
 

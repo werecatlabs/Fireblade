@@ -330,6 +330,14 @@ namespace fb
                         m_propertyGrid->setProperties( properties );
                     }
                 }
+                else if( object->isDerived<core::IPrototype>() )
+                {
+                    auto prototype = fb::dynamic_pointer_cast<core::IPrototype>( object );
+                    if( auto properties = prototype->getProperties() )
+                    {
+                        m_propertyGrid->setProperties( properties );
+                    }
+                }
                 else if( object->isDerived<FileSelection>() )
                 {
                     auto fileSelection = fb::dynamic_pointer_cast<FileSelection>( object );
@@ -573,6 +581,14 @@ namespace fb
                             propertyGrid->setProperties( properties );
                         }
                     }
+                    else if( object->isDerived<core::IPrototype>() )
+                    {
+                        auto prototype = fb::dynamic_pointer_cast<core::IPrototype>( object );
+                        if( auto properties = prototype->getProperties() )
+                        {
+                            propertyGrid->setProperties( properties );
+                        }
+                    }
                     else if( object->isDerived<FileSelection>() )
                     {
                         auto fileSelection = fb::dynamic_pointer_cast<FileSelection>( object );
@@ -712,25 +728,25 @@ namespace fb
                     }
                 }
 
-                if( isButton )
-                {
-                    if( ui )
-                    {
-                        if( auto resourceDatabaseDialog = ui->getResourceDatabaseDialog() )
-                        {
-                            resourceDatabaseDialog->setResourceType( resourceType );
+                //if( isButton )
+                //{
+                //    if( ui )
+                //    {
+                //        if( auto resourceDatabaseDialog = ui->getResourceDatabaseDialog() )
+                //        {
+                //            resourceDatabaseDialog->setResourceType( resourceType );
 
-                            if( auto selected = getSelected() )
-                            {
-                                resourceDatabaseDialog->setCurrentObject( selected );
-                            }
+                //            if( auto selected = getSelected() )
+                //            {
+                //                resourceDatabaseDialog->setCurrentObject( selected );
+                //            }
 
-                            resourceDatabaseDialog->setPropertyName( name );
-                            resourceDatabaseDialog->setWindowVisible( true );
-                            resourceDatabaseDialog->populate();
-                        }
-                    }
-                }
+                //            resourceDatabaseDialog->setPropertyName( name );
+                //            resourceDatabaseDialog->setWindowVisible( true );
+                //            resourceDatabaseDialog->populate();
+                //        }
+                //    }
+                //}
 
                 setDirty( true );
             }
