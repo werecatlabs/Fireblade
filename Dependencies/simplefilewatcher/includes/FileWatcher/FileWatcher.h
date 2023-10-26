@@ -68,21 +68,22 @@ namespace FW
 		{}
 	};
 
-	/// Actions to listen for. Rename will send two events, one for
-	/// the deletion of the old file, and one for the creation of the
-	/// new file.
-	namespace Actions
-	{
-		enum Action
-		{
-			/// Sent when a file is created or renamed
-			Add = 1,
-			/// Sent when a file is deleted or renamed
-			Delete = 2,
-			/// Sent when a file is modified
-			Modified = 4
-		};
-	};
+    /// Actions to listen for. Rename will send two events, one for
+    /// the deletion of the old file, and one for the creation of the
+    /// new file.
+    namespace Actions
+    {
+        enum class Action
+        {
+            /// Sent when a file is created or renamed
+            Add = 1,
+            /// Sent when a file is deleted or renamed
+            Delete = 2,
+            /// Sent when a file is modified
+            Modified = 4
+        };
+    };
+
 	typedef Actions::Action Action;
 
 	/// Listens to files and directories and dispatches events

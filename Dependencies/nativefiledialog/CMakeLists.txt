@@ -1,3 +1,9 @@
+if (APPLE)
+	project(nativefiledialog C CXX OBJC)
+else()
+	project(nativefiledialog C CXX)
+endif()
+
 file(GLOB_RECURSE HEADER_FILES "./include/*.h")
 
 if (WIN32)

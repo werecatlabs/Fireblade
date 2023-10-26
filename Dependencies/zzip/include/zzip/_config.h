@@ -39,7 +39,7 @@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #ifndef ZZIP_HAVE_INTTYPES_H
-#    define ZZIP_HAVE_INTTYPES_H 1
+#    define ZZIP_HAVE_INTTYPES_H 0
 #endif
 
 /* Define to 1 if you have the <io.h> header file. */
@@ -55,12 +55,12 @@
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #ifndef ZZIP_HAVE_STDINT_H
-#    define ZZIP_HAVE_STDINT_H 1
+#    define ZZIP_HAVE_STDINT_H 0
 #endif
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #ifndef ZZIP_HAVE_STDLIB_H
-#    define ZZIP_HAVE_STDLIB_H 1
+#    define ZZIP_HAVE_STDLIB_H 0
 #endif
 
 /* Define to 1 if you have the `strcasecmp' function. */

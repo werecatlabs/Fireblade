@@ -180,8 +180,8 @@ namespace
         else
             RenderMode = FT_RENDER_MODE_NORMAL;
 
-        if (UserFlags & ImGuiFreeTypeBuilderFlags_LoadColor)
-            LoadFlags |= FT_LOAD_COLOR;
+        //if (UserFlags & ImGuiFreeTypeBuilderFlags_LoadColor)
+            //LoadFlags |= FT_LOAD_COLOR;
 
         memset(&Info, 0, sizeof(Info));
         SetPixelHeight((uint32_t)cfg.SizePixels);
@@ -268,7 +268,7 @@ namespace
         out_glyph_info->OffsetX = Face->glyph->bitmap_left;
         out_glyph_info->OffsetY = -Face->glyph->bitmap_top;
         out_glyph_info->AdvanceX = (float)FT_CEIL(slot->advance.x);
-        out_glyph_info->IsColored = (ft_bitmap->pixel_mode == FT_PIXEL_MODE_BGRA);
+        //out_glyph_info->IsColored = (ft_bitmap->pixel_mode == FT_PIXEL_MODE_BGRA);
 
         return ft_bitmap;
     }
@@ -316,33 +316,33 @@ namespace
                 }
                 break;
             }
-        case FT_PIXEL_MODE_BGRA:
-            {
-                // FIXME: Converting pre-multiplied alpha to straight. Doesn't smell good.
-                #define DE_MULTIPLY(color, alpha) (ImU32)(255.0f * (float)color / (float)alpha + 0.5f)
-                if (multiply_table == NULL)
-                {
-                    for (uint32_t y = 0; y < h; y++, src += src_pitch, dst += dst_pitch)
-                        for (uint32_t x = 0; x < w; x++)
-                        {
-                            uint8_t r = src[x * 4 + 2], g = src[x * 4 + 1], b = src[x * 4], a = src[x * 4 + 3];
-                            dst[x] = IM_COL32(DE_MULTIPLY(r, a), DE_MULTIPLY(g, a), DE_MULTIPLY(b, a), a);
-                        }
-                }
-                else
-                {
-                    for (uint32_t y = 0; y < h; y++, src += src_pitch, dst += dst_pitch)
-                    {
-                        for (uint32_t x = 0; x < w; x++)
-                        {
-                            uint8_t r = src[x * 4 + 2], g = src[x * 4 + 1], b = src[x * 4], a = src[x * 4 + 3];
-                            dst[x] = IM_COL32(multiply_table[DE_MULTIPLY(r, a)], multiply_table[DE_MULTIPLY(g, a)], multiply_table[DE_MULTIPLY(b, a)], multiply_table[a]);
-                        }
-                    }
-                }
-                #undef DE_MULTIPLY
-                break;
-            }
+        //case FT_PIXEL_MODE_BGRA:
+        //    {
+        //        // FIXME: Converting pre-multiplied alpha to straight. Doesn't smell good.
+        //        #define DE_MULTIPLY(color, alpha) (ImU32)(255.0f * (float)color / (float)alpha + 0.5f)
+        //        if (multiply_table == NULL)
+        //        {
+        //            for (uint32_t y = 0; y < h; y++, src += src_pitch, dst += dst_pitch)
+        //                for (uint32_t x = 0; x < w; x++)
+        //                {
+        //                    uint8_t r = src[x * 4 + 2], g = src[x * 4 + 1], b = src[x * 4], a = src[x * 4 + 3];
+        //                    dst[x] = IM_COL32(DE_MULTIPLY(r, a), DE_MULTIPLY(g, a), DE_MULTIPLY(b, a), a);
+        //                }
+        //        }
+        //        else
+        //        {
+        //            for (uint32_t y = 0; y < h; y++, src += src_pitch, dst += dst_pitch)
+        //            {
+        //                for (uint32_t x = 0; x < w; x++)
+        //                {
+        //                    uint8_t r = src[x * 4 + 2], g = src[x * 4 + 1], b = src[x * 4], a = src[x * 4 + 3];
+        //                    dst[x] = IM_COL32(multiply_table[DE_MULTIPLY(r, a)], multiply_table[DE_MULTIPLY(g, a)], multiply_table[DE_MULTIPLY(b, a)], multiply_table[a]);
+        //                }
+        //            }
+        //        }
+        //        #undef DE_MULTIPLY
+        //        break;
+        //    }
         default:
             IM_ASSERT(0 && "FreeTypeFont::BlitGlyph(): Unknown bitmap pixel mode!");
         }

@@ -1,5 +1,8 @@
-cmake_minimum_required(VERSION 2.8)
-project(OIS)
+if (APPLE)
+    project(OIS C CXX OBJC)
+else()
+    project(OIS C CXX)
+endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CmakeModules)
 
@@ -19,7 +22,7 @@ set(OIS_SOVERSION ${OIS_MAJOR_VERSION}.${OIS_MINOR_VERSION}.0)
 
 set(OIS_LIBRARY_NAME OIS)
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/includes/OISPrereqs.h.in ${CMAKE_CURRENT_SOURCE_DIR}/includes/OISPrereqs.h @ONLY)
+configure_file(includes/OISPrereqs.h.in includes/OISPrereqs.h @ONLY)
 
 option(OIS_BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(OIS_BUILD_DEMOS "Build demo applications" ON)

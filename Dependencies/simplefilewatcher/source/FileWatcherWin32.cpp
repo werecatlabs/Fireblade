@@ -249,14 +249,14 @@ namespace FW
 		{
 		case FILE_ACTION_RENAMED_NEW_NAME:
 		case FILE_ACTION_ADDED:
-			fwAction = Actions::Add;
+			fwAction = Actions::Action::Add;
 			break;
 		case FILE_ACTION_RENAMED_OLD_NAME:
 		case FILE_ACTION_REMOVED:
-			fwAction = Actions::Delete;
+			fwAction = Actions::Action::Delete;
 			break;
 		case FILE_ACTION_MODIFIED:
-			fwAction = Actions::Modified;
+			fwAction = Actions::Action::Modified;
 			break;
 		};
 

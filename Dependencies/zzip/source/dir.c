@@ -280,7 +280,13 @@ zzip_opendir_ext_io(zzip_char_t * filename, int o_modes,
                 } else
                 {
                     dir->realdir = realdir;
+
+#ifdef _MSC_VER 
+                    dir->realname = _strdup(filename);
+#else
                     dir->realname = strdup(filename);
+#endif
+
                     return dir;
                 }
             }
