@@ -19,6 +19,9 @@ namespace fb
     const hash_type IEvent::handleTreeNodeDoubleClicked =
         StringUtil::getHash( "handleTreeNodeDoubleClicked" );
 
+    const hash_type IEvent::addActor = StringUtil::getHash( "addActor" );
+    const hash_type IEvent::removeActor = StringUtil::getHash( "removeActor" );
+
     const hash_type IEvent::handlePropertyChanged = StringUtil::getHash( "handlePropertyChanged" );
     const hash_type IEvent::handleValueChanged = StringUtil::getHash( "handleValueChanged" );
 

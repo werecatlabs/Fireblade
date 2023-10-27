@@ -1320,10 +1320,14 @@ namespace fb
             if( it == times.end() )
             {
                 if( times.capacity() < maxElementCount )
+                {
                     times.reserve( maxElementCount * 2 );
+                }
 
                 if( transforms.capacity() < maxElementCount )
+                {
                     transforms.reserve( maxElementCount * 2 );
+                }
 
                 //m_transformTimes[id].push_back( time );
                 //m_transformStates[id].push_back( transform );
@@ -1337,12 +1341,14 @@ namespace fb
 
                 if( times.size() > maxElementCount )
                 {
-                    times.erase( times.begin() + maxElementCount, times.end() );
+                    times.resize( maxElementCount );
+                    //times.erase( times.begin() + maxElementCount, times.end() );
                 }
 
                 if( transforms.size() > maxElementCount )
                 {
-                    transforms.erase( transforms.begin() + maxElementCount, transforms.end() );
+                    transforms.resize( maxElementCount );
+                    //transforms.erase( transforms.begin() + maxElementCount, transforms.end() );
                 }
             }
         }

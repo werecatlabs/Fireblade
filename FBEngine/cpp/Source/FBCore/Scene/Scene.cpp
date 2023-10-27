@@ -483,6 +483,9 @@ namespace fb
                 {
                     FB_LOG_ERROR( "CScene::addActor null" );
                 }
+
+                applicationManager->triggerEvent( IEvent::Type::Scene, IEvent::addActor,
+                                                  Array<Parameter>(), this, actor, nullptr );
             }
             catch( std::exception &e )
             {
@@ -526,6 +529,9 @@ namespace fb
                 {
                     FB_LOG_ERROR( "CScene::removeActor null" );
                 }
+
+                applicationManager->triggerEvent( IEvent::Type::Scene, IEvent::removeActor,
+                                                  Array<Parameter>(), this, actor, nullptr );
             }
             catch( std::exception &e )
             {

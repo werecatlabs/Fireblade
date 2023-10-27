@@ -27,6 +27,9 @@ namespace fb
         static const hash_type loadScene;
         static const hash_type handlePropertyButtonClick;
 
+        static const hash_type addActor;
+        static const hash_type removeActor;
+
         static const hash_type handleTreeSelectionActivated;
         static const hash_type handleTreeSelectionRelease;
         static const hash_type handleTreeNodeDoubleClicked;

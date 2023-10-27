@@ -154,24 +154,6 @@ namespace fb
 
             auto task = Thread::getCurrentTask();
 
-            //if( task == Thread::Task::Render )
-            //{
-            //    int stop = 0;
-            //    stop = 0;
-            //}
-
-            //if( auto owner = getOwner() )
-            //{
-            //    if( owner->isDerived<render::IOverlay>() )
-            //    {
-            //        if( task == Thread::Task::Render )
-            //        {
-            //            int stop = 0;
-            //            stop = 0;
-            //        }
-            //    }
-            //}
-
             if( auto state = getState() )
             {
                 if( bool dirty = state->isDirty() )
