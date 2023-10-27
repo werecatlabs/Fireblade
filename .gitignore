@@ -45,3 +45,4 @@
 
 steam_appid.txt
 .vs
+/Dependencies/physx/Source/compiler/vc14win64/*.user
