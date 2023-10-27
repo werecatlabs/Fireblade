@@ -180,6 +180,14 @@ namespace fb
             {
                 setLoadingState( LoadingState::Loading );
 
+                auto applicationManager = core::IApplicationManager::instance();
+
+                auto applicationEventListener = fb::make_ptr<ApplicationEventListener>();
+                applicationEventListener->setOwner( this );
+                m_applicationEventListener = applicationEventListener;
+
+                applicationManager->addObjectListener( applicationEventListener );
+
                 setLoadingState( LoadingState::Loaded );
             }
             catch( std::exception &e )
@@ -201,6 +209,13 @@ namespace fb
 
                     auto ui = applicationManager->getUI();
                     FB_ASSERT( ui );
+
+                    if( m_applicationEventListener )
+                    {
+                        applicationManager->removeObjectListener( m_applicationEventListener );
+                        m_applicationEventListener->unload( nullptr );
+                        m_applicationEventListener = nullptr;
+                    }
 
                     if( m_window )
                     {
@@ -1028,6 +1043,49 @@ namespace fb
         }
 
         void SceneWindow::PromptListener::setOwner( SceneWindow *owner )
+        {
+            m_owner = owner;
+        }
+
+        SceneWindow::ApplicationEventListener::ApplicationEventListener()
+        {
+        }
+
+        SceneWindow::ApplicationEventListener::~ApplicationEventListener()
+        {
+        }
+
+        void SceneWindow::ApplicationEventListener::unload( SmartPtr<ISharedObject> data )
+        {
+            m_owner = nullptr;
+            setLoadingState( LoadingState::Unloaded );
+        }
+
+        Parameter SceneWindow::ApplicationEventListener::handleEvent(
+            IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
+            SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
+        {
+            auto task = Thread::getCurrentTask();
+            if( task == Thread::Task::Primary )
+            {
+                if( auto owner = getOwner() )
+                {
+                    if( eventValue == IEvent::addActor )
+                    {
+                        owner->buildTree();
+                    }
+                }
+            }
+
+            return Parameter();
+        }
+
+        SmartPtr<SceneWindow> SceneWindow::ApplicationEventListener::getOwner() const
+        {
+            return m_owner;
+        }
+
+        void SceneWindow::ApplicationEventListener::setOwner( SmartPtr<SceneWindow> owner )
         {
             m_owner = owner;
         }

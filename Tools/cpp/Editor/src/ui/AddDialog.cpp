@@ -8,7 +8,7 @@ namespace fb
     namespace editor
     {
 
-        AddEntityDialog::AddEntityDialog()
+        AddDialog::AddDialog()
         {
             // wxBoxSizer *baseSizer = new wxBoxSizer( wxVERTICAL );
             // SetSizer(baseSizer);
@@ -41,11 +41,11 @@ namespace fb
             // btnBox->Add(m_cancelBtn, 1, wxEXPAND);
         }
 
-        AddEntityDialog::~AddEntityDialog()
+        AddDialog::~AddDialog()
         {
         }
 
-        String AddEntityDialog::getLabel() const
+        String AddDialog::getLabel() const
         {
             //const Array<Property> &properties = m_propGrp.getPropertiesAsArray();
             //for( u32 i = 0; i < properties.size(); ++i )
@@ -63,28 +63,28 @@ namespace fb
             return "";
         }
 
-        void AddEntityDialog::OnCancelBtn()
+        void AddDialog::OnCancelBtn()
         {
             // this->Close();
         }
 
-        bool AddEntityDialog::getUseDefaults() const
+        bool AddDialog::getUseDefaults() const
         {
             // return m_useDefaultsChkBox->IsChecked();
             return false;
         }
 
-        void AddEntityDialog::setProperties( SmartPtr<Properties> properties )
+        void AddDialog::setProperties( SmartPtr<Properties> properties )
         {
             m_properties = properties;
         }
 
-        SmartPtr<Properties> AddEntityDialog::getProperties() const
+        SmartPtr<Properties> AddDialog::getProperties() const
         {
             return m_properties;
         }
 
-        void AddEntityDialog::OnPropertyChange()
+        void AddDialog::OnPropertyChange()
         {
             // wxPGProperty* p = event.GetProperty();
             // String propName = String(p->GetName().c_str());

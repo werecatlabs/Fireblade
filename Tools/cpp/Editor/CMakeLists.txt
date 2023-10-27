@@ -326,12 +326,12 @@ if (WIN32)
         target_link_libraries(Editor debug tbbmalloc_debug.lib optimized tbbmalloc.lib)
         target_link_libraries(Editor debug tbbmalloc_proxy_debug.lib optimized tbbmalloc_proxy.lib)
     elseif (FB_USE_TBB)
-        #target_link_libraries(Editor debug tbb_debug.lib optimized tbb.lib)
+        target_link_libraries(Editor tbb_static.lib)
+        target_link_libraries(Editor tbbmalloc_static.lib)
     endif()
 
     if (FB_BUILD_OISINPUT)
         target_link_libraries(Editor FBOISInput.lib)
-
         #target_link_libraries(Editor debug OIS_d.lib optimized OIS.lib)
         target_link_libraries(Editor dinput8.lib)
         target_link_libraries(Editor dxguid.lib)
@@ -359,20 +359,20 @@ if (WIN32)
         target_link_libraries(Editor tinyxml2.lib)
     endif()
 
+    if (FB_CODEC_FREEIMAGE)
+        target_link_libraries(Editor debug FreeImage_d.lib optimized FreeImage.lib)
+    endif()
+
+    if (FB_USE_FREETYPE)
+        target_link_libraries(Editor debug freetype_d.lib optimized freetype.lib)
+    endif()
+
     if (FB_GRAPHICS_SYSTEM_OGRENEXT)
         target_link_libraries(Editor FBGraphicsOgreNext.lib)
         target_link_libraries(Editor harfbuzz.lib)
         target_link_libraries(Editor harfbuzz-subset.lib)
         target_link_libraries(Editor icucommon.lib)
         target_link_libraries(Editor sds_library.lib)
-
-        if (FB_CODEC_FREEIMAGE)
-            target_link_libraries(Editor debug FreeImage_d.lib optimized FreeImage.lib)
-        endif()
-
-        if (FB_USE_FREETYPE)
-            target_link_libraries(Editor debug freetype_d.lib optimized freetype.lib)
-        endif()
 
         if (FB_BUILD_RENDERER_DX11)
             target_link_libraries(Editor d3d11.lib)
@@ -390,53 +390,6 @@ if (WIN32)
         endif()
     elseif(FB_GRAPHICS_SYSTEM_OGRE)
         target_link_libraries(Editor FBGraphicsOgre.lib)
-
-        if (FB_GRAPHICS_SYSTEM_USE_STATIC_LIBS)
-            target_link_libraries(Editor debug OgreMainStatic_d.lib
-                                optimized OgreMainStatic.lib)
-
-            target_link_libraries(Editor debug OgreOverlayStatic_d.lib
-                                optimized OgreOverlayStatic.lib)
-        
-            target_link_libraries(Editor debug RenderSystem_Direct3D9Static_d.lib
-                                optimized RenderSystem_Direct3D9Static.lib)
-
-            target_link_libraries(Editor debug RenderSystem_Direct3D11Static_d.lib
-                                optimized RenderSystem_Direct3D11Static.lib)
-
-            target_link_libraries(Editor debug RenderSystem_GL3PlusStatic_d.lib 
-                                optimized RenderSystem_GL3PlusStatic.lib)
-
-            target_link_libraries(Editor debug RenderSystem_GLStatic_d.lib
-                                optimized RenderSystem_GLStatic.lib)
-
-            target_link_libraries(Editor debug OgreGLSupportStatic_d.lib
-                                optimized OgreGLSupportStatic.lib)
-
-            #target_link_libraries(Editor OgreHLMSStatic_d.lib)
-
-            target_link_libraries(Editor debug OgreRTShaderSystemStatic_d.lib
-                                       optimized OgreRTShaderSystemStatic.lib)
-
-            target_link_libraries(Editor debug Codec_STBIStatic_d.lib
-                                       optimized Codec_STBIStatic.lib)
-
-            target_link_libraries(Editor debug OgreBitesStatic_d.lib
-                                       optimized OgreBitesStatic.lib)
-
-            #target_link_libraries(Editor debug OgreTerrainStatic_d.lib
-            #                            optimized OgreTerrainStatic.lib)
-    
-            #target_link_libraries(Editor Plugin_CgProgramManagerStatic_d.lib)
-            #target_link_libraries(Editor cg.lib)
-        endif()
-
-        if (FB_CODEC_FREEIMAGE)
-            target_link_libraries(Editor debug FreeImage_d.lib
-                                optimized FreeImage.lib)
-        endif ()
-
-        #target_link_libraries(Editor freetype.lib)
 
         if (FB_BUILD_RENDERER_DX9)
             target_link_libraries(Editor d3d9.lib)
@@ -474,8 +427,6 @@ if (WIN32)
         target_link_libraries(Editor FBGraphicsD3D11.lib)
     endif()
 
-    #target_link_libraries(Editor tinybind.lib)
-
     if (FB_BUILD_PHYSX)
         target_link_libraries(Editor FBPhysx.lib)
 
@@ -484,15 +435,19 @@ if (WIN32)
         target_link_libraries(Editor PhysX3Common.lib)
         target_link_libraries(Editor PhysX3Vehicle.lib)
         target_link_libraries(Editor PhysX3Cooking.lib)
-        target_link_libraries(Editor PhysXProfileSDK.lib)
         target_link_libraries(Editor PxTask.lib)
-        target_link_libraries(Editor PhysXVisualDebuggerSDK.lib)
         target_link_libraries(Editor PhysX3MetaData.lib)
         target_link_libraries(Editor PhysX3Foundation.lib)
         target_link_libraries(Editor PxSceneQuery.lib)
         target_link_libraries(Editor PxSimulationController.lib)
         target_link_libraries(Editor PhysX3LowLevel.lib)
         target_link_libraries(Editor PhysX3LowLevelCloth.lib)
+        target_link_libraries(Editor PhysXProfileSDK.lib)
+
+        if(FB_BUILD_PHYSICS_DEBUG)
+            target_link_libraries(Editor PhysXVisualDebuggerSDK.lib)
+            target_link_libraries(Editor PvdRuntime.lib)
+        endif()
     elseif(FB_BUILD_ODE)
         target_link_libraries(Editor FBODE3.lib)
     elseif(FB_BUILD_PHYSICS3)
@@ -523,11 +478,6 @@ if (WIN32)
     target_link_libraries(Editor yaml-cpp.lib)
     target_link_libraries(Editor zlib.lib)
     target_link_libraries(Editor zzip.lib)
-
-    if (FB_USE_TBB)
-        target_link_libraries(Editor tbb_static.lib)
-        target_link_libraries(Editor tbbmalloc_static.lib)
-    endif()
 elseif (APPLE)
     target_link_libraries(Editor libFBCore.a)
     target_link_libraries(Editor libFBMesh.a)
@@ -568,6 +518,25 @@ elseif (APPLE)
 
     if (FB_BUILD_WXWIDGETS)
         #target_link_libraries(Editor libFBWxWidgets.a)
+
+        target_link_libraries(Editor libwx_osx_cocoau_core-3.1.a)
+        target_link_libraries(Editor libwx_baseu-3.1.a)
+        target_link_libraries(Editor libwx_osx_cocoau_xrc-3.1.a)
+        target_link_libraries(Editor libwx_osx_cocoau_propgrid-3.1.a)
+        target_link_libraries(Editor libwx_osx_cocoau_richtext-3.1.a)
+        target_link_libraries(Editor libwxexpat-3.1.a)
+        target_link_libraries(Editor libwx_baseu_xml-3.1.a)
+        target_link_libraries(Editor libwx_baseu_net-3.1.a)
+        target_link_libraries(Editor libwx_osx_cocoau_webview-3.1.a)
+        target_link_libraries(Editor libwx_osx_cocoau_xrc-3.1.a)
+        target_link_libraries(Editor libwx_osx_cocoau_adv-3.1.a)
+        target_link_libraries(Editor libwx_osx_cocoau_aui-3.1.a)
+        target_link_libraries(Editor libwx_osx_cocoau_html-3.1.a)
+        target_link_libraries(Editor libwxtiff-3.1.a)
+        target_link_libraries(Editor libwxjpeg-3.1.a)
+        target_link_libraries(Editor libwxpng-3.1.a)
+
+        target_link_libraries(Editor libiconv.a)
     endif()
 
     target_link_libraries(Editor libFBRenderUI.a)
@@ -581,25 +550,6 @@ elseif (APPLE)
     target_link_libraries(Editor libboost_timer.a)
     target_link_libraries(Editor libboost_filesystem.a)
     target_link_libraries(Editor libboost_json.a)
-
-    target_link_libraries(Editor libwx_osx_cocoau_core-3.1.a)
-    target_link_libraries(Editor libwx_baseu-3.1.a)
-    target_link_libraries(Editor libwx_osx_cocoau_xrc-3.1.a)
-    target_link_libraries(Editor libwx_osx_cocoau_propgrid-3.1.a)
-    target_link_libraries(Editor libwx_osx_cocoau_richtext-3.1.a)
-    target_link_libraries(Editor libwxexpat-3.1.a)
-    target_link_libraries(Editor libwx_baseu_xml-3.1.a)
-    target_link_libraries(Editor libwx_baseu_net-3.1.a)
-    target_link_libraries(Editor libwx_osx_cocoau_webview-3.1.a)
-    target_link_libraries(Editor libwx_osx_cocoau_xrc-3.1.a)
-    target_link_libraries(Editor libwx_osx_cocoau_adv-3.1.a)
-    target_link_libraries(Editor libwx_osx_cocoau_aui-3.1.a)
-    target_link_libraries(Editor libwx_osx_cocoau_html-3.1.a)
-    target_link_libraries(Editor libwxtiff-3.1.a)
-    target_link_libraries(Editor libwxjpeg-3.1.a)
-    target_link_libraries(Editor libwxpng-3.1.a)
-
-    target_link_libraries(Editor libiconv.a)
 
     if (FB_BUILD_PHYSX)
         target_link_libraries(Editor FBPhysx.a)
@@ -713,7 +663,17 @@ set_target_properties(Editor PROPERTIES
 
         )
 
-add_dependencies(Editor FBGraphics FBCore FBRenderUI)
+add_dependencies(Editor FBAssimp)
+add_dependencies(Editor FBCore)
+add_dependencies(Editor FBGraphics)
+add_dependencies(Editor FBMesh)
+add_dependencies(Editor FBRenderUI)
+add_dependencies(Editor FBSQLite)
+
+if (FB_USE_TBB)
+    add_dependencies(Editor tbb_static)
+    add_dependencies(Editor tbbmalloc_static)
+endif()
 
 if (FB_ENABLE_LUA)
     add_dependencies(Editor FBLua)
@@ -729,23 +689,63 @@ endif()
 
 if (FB_BUILD_IMGUI)
     add_dependencies(Editor FBImGui)
+    add_dependencies(Editor imgui)
 endif()
 
 if (FB_BUILD_WXWIDGETS)
     #add_dependencies(Editor FBWxWidgets)
 endif()
 
+if (FB_BUILD_PHYSX)
+    add_dependencies(Editor FBPhysx)
+
+    add_dependencies(Editor PhysX3)
+    add_dependencies(Editor PhysX3Extensions)
+    add_dependencies(Editor PhysX3Common)
+    add_dependencies(Editor PhysX3Vehicle)
+    add_dependencies(Editor PhysX3Cooking)
+    add_dependencies(Editor PxTask)    
+    add_dependencies(Editor PhysX3MetaData)
+    add_dependencies(Editor PhysX3Foundation)
+    add_dependencies(Editor PxSceneQuery)
+    add_dependencies(Editor PxSimulationController)
+    add_dependencies(Editor PhysX3LowLevel)
+    add_dependencies(Editor PhysX3LowLevelCloth)
+    add_dependencies(Editor PhysXProfileSDK)
+
+    if(FB_BUILD_PHYSICS_DEBUG)
+        add_dependencies(Editor PhysXVisualDebuggerSDK)        
+        add_dependencies(Editor PvdRuntime)
+    endif()
+elseif(FB_BUILD_ODE)
+    add_dependencies(Editor FBODE3)
+elseif(FB_BUILD_PHYSICS3)
+    add_dependencies(Editor FBPhysics3)
+endif()
+
 if (FB_GRAPHICS_SYSTEM_OGRENEXT) 
     add_dependencies(Editor FBGraphicsOgreNext)
+    add_dependencies(Editor harfbuzz)
+    add_dependencies(Editor harfbuzz-subset)
+    add_dependencies(Editor icucommon)
+    add_dependencies(Editor sds_library)
 elseif (FB_GRAPHICS_SYSTEM_OGRE)
     add_dependencies(Editor FBGraphicsOgre)
 endif()
 
-if (FB_BUILD_ODE)
-    add_dependencies(Editor FBODE3)
-elseif (FB_BUILD_PHYSX)
-    add_dependencies(Editor FBPhysx)
-endif()
+add_dependencies(Editor boost_thread)
+add_dependencies(Editor boost_date_time)
+add_dependencies(Editor boost_chrono)
+add_dependencies(Editor boost_timer)
+add_dependencies(Editor boost_filesystem)
+add_dependencies(Editor boost_json)
+add_dependencies(Editor minizip)
+add_dependencies(Editor nativefiledialog)
+add_dependencies(Editor rttr)
+add_dependencies(Editor tinyxml) 
+add_dependencies(Editor yaml-cpp)
+add_dependencies(Editor zlib)
+add_dependencies(Editor zzip)
 
 if (WIN32)
     #set_property(TARGET Editor PROPERTY VS_DEBUGGER_COMMAND ${CMAKE_SOURCE_DIR}/Bin/windows/v142/x64/Debug/Editor.exe)

@@ -1,5 +1,5 @@
-#ifndef AddEntityDialog_h__
-#define AddEntityDialog_h__
+#ifndef AddDialog_h__
+#define AddDialog_h__
 
 #include <GameEditorPrerequisites.h>
 #include "ui/EditorWindow.h"
@@ -9,7 +9,7 @@ namespace fb
     namespace editor
     {
 
-        class AddEntityDialog : public EditorWindow
+        class AddDialog : public EditorWindow
         {
         public:
             enum
@@ -19,8 +19,8 @@ namespace fb
                 PropertiesId,
             };
 
-            AddEntityDialog();
-            ~AddEntityDialog();
+            AddDialog();
+            ~AddDialog();
 
             String getLabel() const;
             bool getUseDefaults() const;
@@ -44,4 +44,4 @@ namespace fb
     }  // end namespace editor
 }  // end namespace fb
 
-#endif  // AddEntityDialog_h__
+#endif  // AddDialog_h__

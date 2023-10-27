@@ -327,6 +327,7 @@ namespace fb
             }
 
             auto sceneWindow = fb::make_ptr<SceneWindow>( nullptr );
+            sceneWindow->load( nullptr );
             setSceneWindow( sceneWindow );
 
             auto objectWindow = fb::make_ptr<ObjectWindow>();

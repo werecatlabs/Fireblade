@@ -157,6 +157,26 @@ namespace fb
             void setDragDropActorCmd( SmartPtr<ICommand> dragDropActorCmd );
 
         protected:
+            class ApplicationEventListener : public IEventListener
+            {
+            public:
+                ApplicationEventListener();
+                ~ApplicationEventListener() override;
+
+                void unload( SmartPtr<ISharedObject> data );
+
+                Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                       const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
+
+                SmartPtr<SceneWindow> getOwner() const;
+
+                void setOwner( SmartPtr<SceneWindow> owner );
+
+            private:
+                AtomicSmartPtr<SceneWindow> m_owner;
+            };
+
             class TreeCtrlListener : public IEventListener
             {
             public:
@@ -264,6 +284,8 @@ namespace fb
 
             SmartPtr<ui::IUIWindow> m_window;
             SmartPtr<ui::IUIWindow> m_sceneWindow;
+
+            SmartPtr<IEventListener> m_applicationEventListener;
 
             SmartPtr<ui::IUITextEntry> m_inputText;
             SmartPtr<IEventListener> m_promptListener;
