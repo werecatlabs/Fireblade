@@ -4,6 +4,10 @@ file(GLOB_RECURSE SOURCE_FILES "./src/*.c" "./src/*.cpp")
 #add_compile_definitions (PX_PHYSX_CORE_EXPORTS)
 add_compile_definitions (DELAYIMP_INSECURE_WRITABLE_HOOKS)
 
+if(FB_BUILD_PHYSICS_DEBUG)
+	include_directories( ../../externals/nvToolsExt/1/include )
+endif()
+
 include_directories( ../../Include/foundation )
 include_directories( ../foundation/include )
 include_directories( ../../Include/physxprofilesdk )

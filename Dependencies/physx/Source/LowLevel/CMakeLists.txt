@@ -7,6 +7,10 @@ add_compile_definitions (DELAYIMP_INSECURE_WRITABLE_HOOKS)
 # Set the BOOST_INSTALL_LAYOUT
 set(BOOST_INSTALL_LAYOUT "SYSTEM" CACHE STRING "Boost install layout")
 
+if(FB_BUILD_PHYSICS_DEBUG)
+	include_directories( ../../externals/nvToolsExt/1/include )
+endif()
+
 #include_directories( ../../externals/nvToolsExt/1/include )
 #include_directories( ../../externals/nvToolsExt/1/include/stdint )
 include_directories( ../../Include/foundation )

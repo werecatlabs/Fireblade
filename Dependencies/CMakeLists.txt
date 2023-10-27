@@ -22,6 +22,23 @@ add_compile_definitions (PX_FOUNDATION_NO_EXPORTS)
 add_compile_definitions (PX_COOKING)
 #add_compile_definitions (PX_CALL_CONV)
 
+if(FB_BUILD_PHYSICS_DEBUG)
+	add_compile_definitions(
+		$<$<CONFIG:Debug>:PX_SUPPORT_VISUAL_DEBUGGER>
+	)
+	
+	add_compile_definitions(
+		$<$<CONFIG:Debug>:PX_DEBUG>
+	)
+	
+	add_compile_definitions(
+		$<$<CONFIG:Debug>:PX_CHECKED>
+	)
+	
+	add_compile_definitions(
+		$<$<CONFIG:Debug>:PX_NVTX>
+	)
+endif()
 
 # Set the BOOST_INSTALL_LAYOUT
 set(BOOST_INSTALL_LAYOUT "SYSTEM" CACHE STRING "Boost install layout")
