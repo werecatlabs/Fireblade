@@ -16,6 +16,8 @@
 #include <FBOISInput/Extern/OIS/OISJoyStick.h>
 #include <FBOISInput/Extern/OIS/OISMouse.h>
 
+#include "FBCore/Core/ConcurrentQueue.h"
+
 namespace fb
 {
     class OISInputManager : public IInputDeviceManager
@@ -112,6 +114,7 @@ namespace fb
         void setCursorVisible( bool visible ) override;
 
         OIS::InputManager *getInputManager() const;
+        bool isMouseButtonDown( u32 button ) const;
         void setInputManager( OIS::InputManager *inputManager );
 
         OIS::Mouse *getMouse() const;
@@ -144,18 +147,6 @@ namespace fb
         bool isShiftPressed() const override;
 
         void setShiftPressed( bool shiftPressed ) override;
-
-        bool isLeftPressed() const override;
-
-        void setLeftPressed( bool leftPressed ) override;
-
-        bool isRightPressed() const override;
-
-        void setRightPressed( bool rightPressed ) override;
-
-        bool isMiddlePressed() const override;
-
-        void setMiddlePressed( bool middlePressed ) override;
 
         f64 getLastClickTime() const override;
 
@@ -236,6 +227,8 @@ namespace fb
         SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> getListenersPtr() const;
 
         void setListenersPtr( SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> listeners );
+
+        Array<ConcurrentQueue<SmartPtr<IInputEvent>>> m_inputEventQueue;
 
         SmartPtr<IInputEvent> m_currentInputEvent;
         SmartPtr<IMouseState> m_currentMouseState;

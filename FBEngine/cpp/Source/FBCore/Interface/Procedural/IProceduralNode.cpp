@@ -2,11 +2,8 @@
 #include <FBCore/Interface/Procedural/IProceduralNode.h>
 #include <FBCore/System/RttiClassDefinition.h>
 
-namespace fb
+namespace fb::procedural
 {
-    namespace procedural
-    {
-        FB_CLASS_REGISTER_DERIVED( fb, IProceduralNode, IProceduralObject );
+    FB_CLASS_REGISTER_DERIVED( fb, IProceduralNode, IProceduralObject );
 
-    }  // namespace procedural
-}  // namespace fb
+}  // namespace fb::procedural

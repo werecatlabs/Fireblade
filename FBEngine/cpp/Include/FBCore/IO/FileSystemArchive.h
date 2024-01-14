@@ -1,7 +1,6 @@
 #ifndef CFileSystemArchive_h__
 #define CFileSystemArchive_h__
 
-
 #include <FBCore/Interface/IO/IArchive.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/ConcurrentArray.h>
@@ -33,6 +32,8 @@ namespace fb
 
         /** @copydoc IArchive::getFileList */
         SmartPtr<IFileList> getFileList() const override;
+
+        void setFileList( SmartPtr<IFileList> fileList );
 
         /** @copydoc IArchive::getFiles */
         Array<FileInfo> getFiles() const override;

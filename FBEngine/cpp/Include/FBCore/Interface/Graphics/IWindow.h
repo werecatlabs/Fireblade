@@ -14,8 +14,10 @@ namespace fb
         public:
             /** Hash identifier for resize events. */
             static const hash_type RESIZE_HASH;
+
             /** Hash identifier for reposition events. */
             static const hash_type REPOSITION_HASH;
+
             /** Hash identifier for moved or resized events. */
             static const hash_type MOVED_OR_RESIZED_HASH;
 

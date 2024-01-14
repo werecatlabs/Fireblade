@@ -3,83 +3,76 @@
 #include <FBCore/Interface/Scene/IComponentEventListener.h>
 #include <FBCore/Core/Properties.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+    ComponentEvent::ComponentEvent() = default;
+
+    ComponentEvent::~ComponentEvent() = default;
+
+    void ComponentEvent::addListener( SmartPtr<IComponentEventListener> listener )
     {
-        ComponentEvent::ComponentEvent()
-        {
-        }
+        m_listeners.push_back( listener );
+    }
 
-        ComponentEvent::~ComponentEvent()
+    void ComponentEvent::removeListener( SmartPtr<IComponentEventListener> listener )
+    {
+        auto it = std::find( m_listeners.begin(), m_listeners.end(), listener );
+        if( it != m_listeners.end() )
         {
+            m_listeners.erase( it );
         }
+    }
 
-        void ComponentEvent::addListener( SmartPtr<IComponentEventListener> listener )
-        {
-            m_listeners.push_back( listener );
-        }
+    void ComponentEvent::removeListeners()
+    {
+        m_listeners.clear();
+    }
 
-        void ComponentEvent::removeListener( SmartPtr<IComponentEventListener> listener )
-        {
-            auto it = std::find( m_listeners.begin(), m_listeners.end(), listener );
-            if( it != m_listeners.end() )
-            {
-                m_listeners.erase( it );
-            }
-        }
+    auto ComponentEvent::getListeners() const -> Array<SmartPtr<IComponentEventListener>>
+    {
+        return m_listeners;
+    }
 
-        void ComponentEvent::removeListeners()
-        {
-            m_listeners.clear();
-        }
+    void ComponentEvent::setListeners( const Array<SmartPtr<IComponentEventListener>> &listeners )
+    {
+        m_listeners = listeners;
+    }
 
-        Array<SmartPtr<IComponentEventListener>> ComponentEvent::getListeners() const
-        {
-            return m_listeners;
-        }
+    auto ComponentEvent::getLabel() const -> String
+    {
+        return m_label;
+    }
 
-        void ComponentEvent::setListeners( const Array<SmartPtr<IComponentEventListener>> &listeners )
-        {
-            m_listeners = listeners;
-        }
+    void ComponentEvent::setLabel( const String &label )
+    {
+        m_label = label;
+    }
 
-        String ComponentEvent::getLabel() const
-        {
-            return m_label;
-        }
+    auto ComponentEvent::toData() const -> SmartPtr<ISharedObject>
+    {
+        return nullptr;
+    }
 
-        void ComponentEvent::setLabel( const String &label )
-        {
-            m_label = label;
-        }
+    void ComponentEvent::fromData( SmartPtr<ISharedObject> data )
+    {
+    }
 
-        SmartPtr<ISharedObject> ComponentEvent::toData() const
-        {
-            return nullptr;
-        }
+    auto ComponentEvent::getProperties() const -> SmartPtr<Properties>
+    {
+        return nullptr;
+    }
 
-        void ComponentEvent::fromData( SmartPtr<ISharedObject> data )
-        {
-        }
+    void ComponentEvent::setProperties( SmartPtr<Properties> properties )
+    {
+    }
 
-        SmartPtr<Properties> ComponentEvent::getProperties() const
-        {
-            return nullptr;
-        }
+    auto ComponentEvent::getEventHash() const -> hash_type
+    {
+        return m_eventHash;
+    }
 
-        void ComponentEvent::setProperties( SmartPtr<Properties> properties )
-        {
-        }
-
-        hash_type ComponentEvent::getEventHash() const
-        {
-            return m_eventHash;
-        }
-
-        void ComponentEvent::setEventHash( hash_type eventHash )
-        {
-            m_eventHash = eventHash;
-        }
-    }  // namespace scene
-}  // namespace fb
+    void ComponentEvent::setEventHash( hash_type eventHash )
+    {
+        m_eventHash = eventHash;
+    }
+}  // namespace fb::scene

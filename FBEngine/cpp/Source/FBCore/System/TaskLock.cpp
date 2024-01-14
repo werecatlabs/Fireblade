@@ -42,10 +42,9 @@ namespace fb
         }
     }
 
-    SmartPtr<ITask> TaskLock::getTask() const
+    auto TaskLock::getTask() const -> SmartPtr<ITask>
     {
-        auto p = m_task.load();
-        return p.lock();
+        return m_task;
     }
 
     void TaskLock::setTask( SmartPtr<ITask> task )

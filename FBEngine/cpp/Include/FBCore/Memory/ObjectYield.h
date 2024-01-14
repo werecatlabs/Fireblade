@@ -1,5 +1,5 @@
-#ifndef CObjectYield_h__
-#define CObjectYield_h__
+#ifndef __ObjectYield_h__
+#define __ObjectYield_h__
 
 #include <FBCore/Interface/Memory/IObjectYield.h>
 #include <FBCore/Memory/RawPtr.h>
@@ -27,6 +27,7 @@ namespace fb
         atomic_s32 m_lineNumber;
         RawPtr<IObject> m_object;
     };
-}  // end namespace fb
 
-#endif  // CObjectYield_h__
+}  // namespace fb
+
+#endif  // __ObjectYield_h__

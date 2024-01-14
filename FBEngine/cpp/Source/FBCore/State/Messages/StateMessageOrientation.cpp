@@ -12,7 +12,7 @@ namespace fb
         m_orientation = val;
     }
 
-    QuaternionF StateMessageOrientation::getOrientation() const
+    auto StateMessageOrientation::getOrientation() const -> QuaternionF
     {
         return m_orientation;
     }

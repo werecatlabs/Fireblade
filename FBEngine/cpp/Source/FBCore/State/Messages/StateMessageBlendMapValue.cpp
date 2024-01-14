@@ -14,12 +14,10 @@ namespace fb
     }
 
     //--------------------------------------------
-    StateMessageBlendMapValue::~StateMessageBlendMapValue()
-    {
-    }
+    StateMessageBlendMapValue::~StateMessageBlendMapValue() = default;
 
     //--------------------------------------------
-    Vector2I StateMessageBlendMapValue::getCoordinates() const
+    auto StateMessageBlendMapValue::getCoordinates() const -> Vector2I
     {
         return m_coordinates;
     }
@@ -31,7 +29,7 @@ namespace fb
     }
 
     //--------------------------------------------
-    f32 StateMessageBlendMapValue::getBlendValue() const
+    auto StateMessageBlendMapValue::getBlendValue() const -> f32
     {
         return m_blendValue;
     }

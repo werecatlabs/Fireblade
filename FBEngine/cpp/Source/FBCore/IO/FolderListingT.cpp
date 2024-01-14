@@ -5,14 +5,10 @@ namespace fb
 {
 
     template <class TInterface, class T>
-    FolderListingT<TInterface, T>::FolderListingT()
-    {
-    }
+    FolderListingT<TInterface, T>::FolderListingT() = default;
 
     template <class TInterface, class T>
-    FolderListingT<TInterface, T>::~FolderListingT()
-    {
-    }
+    FolderListingT<TInterface, T>::~FolderListingT() = default;
 
     // explicit instantiation
     template class FolderListingT<IFolderExplorer, String>;

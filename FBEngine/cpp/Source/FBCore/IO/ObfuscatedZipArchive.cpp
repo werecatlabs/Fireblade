@@ -1,15 +1,15 @@
 #include <FBCore/FBCorePCH.h>
+#include <FBCore/IO/FileList.h>
+#include <FBCore/IO/FileSystem.h>
+#include <FBCore/IO/MemoryFile.h>
 #include <FBCore/IO/ObfuscatedZipArchive.h>
 #include <FBCore/IO/ObfuscatedZipFile.h>
-#include <FBCore/IO/MemoryFile.h>
-#include <FBCore/IO/FileSystem.h>
-#include <FBCore/IO/FileList.h>
-#include <FBCore/FBCore.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Core/Path.h>
 #include <cstdio>
-#include <zzip/zzip.h>
+#include <cstdlib>
 #include <zzip/plugin.h>
+#include <zzip/zzip.h>
 
 namespace fb
 {
@@ -28,10 +28,10 @@ namespace fb
     std::map<s32, SmartPtr<IStream>> gObfuscatedZipFiles;
 
     // Static method that un-obfuscates an obfuscated file.
-    static zzip_ssize_t xor_read( int fd, void *buf, zzip_size_t len )
+    static auto xor_read( int fd, void *buf, zzip_size_t len ) -> zzip_ssize_t
     {
-#if defined FB_PLATFORM_WIN32
-        auto bytes = read( fd, buf, static_cast<u32>( len ) );
+#if FB_COMPILER == FB_COMPILER_MSVC
+        auto bytes = _read( fd, buf, static_cast<u32>( len ) );
 #else
         auto bytes = read( fd, buf, len );
 #endif
@@ -46,7 +46,7 @@ namespace fb
     }
 
     ObfuscatedZipArchive::ObfuscatedZipArchive( const String &name, bool ignoreCase, bool ignorePaths ) :
-        mZzipDir( nullptr ),
+
         m_path( name )
     {
     }
@@ -153,7 +153,7 @@ namespace fb
                     //StringUtil::splitFilename(fileInfo.filename, fileInfo.basename, fileInfo.path);
                     // Set compressed size to -1 for folders; anyway nobody will check
                     // the compressed size of a folder, and if he does, its useless anyway
-                    fileInfo.compressedSize = u32( -1 );
+                    fileInfo.compressedSize = static_cast<u32>( -1 );
                 }
 
                 m_fileInfoList.push_back( fileInfo );
@@ -182,12 +182,12 @@ namespace fb
         setLoadingState( LoadingState::Unloaded );
     }
 
-    u8 ObfuscatedZipArchive::getType() const
+    auto ObfuscatedZipArchive::getType() const -> u8
     {
         return static_cast<u8>( IFileSystem::ArchiveType::ObfuscatedZip );
     }
 
-    String ObfuscatedZipArchive::getPassword() const
+    auto ObfuscatedZipArchive::getPassword() const -> String
     {
         return m_password;
     }
@@ -197,10 +197,10 @@ namespace fb
         m_password = password;
     }
 
-    SmartPtr<IStream> ObfuscatedZipArchive::open( const String &filename, bool input, bool binary,
-                                                  bool truncate, bool ignorePath )
+    auto ObfuscatedZipArchive::open( const String &filename, bool input, bool binary, bool truncate,
+                                     bool ignorePath ) -> SmartPtr<IStream>
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );  
+        RecursiveMutex::ScopedLock lock( m_mutex );
 
         auto filePath = filename;
         if( ignorePath )
@@ -228,17 +228,18 @@ namespace fb
         return fb::make_ptr<ObfuscatedZipFile>( this, filePath, zzipFile, static_cast<u32>( size ) );
     }
 
-    bool ObfuscatedZipArchive::exists( const String &filename, bool ignorePath, bool ignoreCase ) const
+    auto ObfuscatedZipArchive::exists( const String &filename, bool ignorePath, bool ignoreCase ) const
+        -> bool
     {
         return m_fileList->exists( filename, ignorePath, ignoreCase );
     }
 
-    bool ObfuscatedZipArchive::isReadOnly() const
+    auto ObfuscatedZipArchive::isReadOnly() const -> bool
     {
         return false;
     }
 
-    String ObfuscatedZipArchive::getPath() const
+    auto ObfuscatedZipArchive::getPath() const -> String
     {
         return String( m_path.c_str() );
     }
@@ -248,7 +249,7 @@ namespace fb
         m_path = path;
     }
 
-    bool ObfuscatedZipArchive::getIgnorePaths() const
+    auto ObfuscatedZipArchive::getIgnorePaths() const -> bool
     {
         return m_ignorePaths;
     }
@@ -258,7 +259,7 @@ namespace fb
         m_ignorePaths = ignorePaths;
     }
 
-    bool ObfuscatedZipArchive::getIgnoreCase() const
+    auto ObfuscatedZipArchive::getIgnoreCase() const -> bool
     {
         return m_ignoreCase;
     }
@@ -268,30 +269,30 @@ namespace fb
         m_ignoreCase = ignoreCase;
     }
 
-    bool ObfuscatedZipArchive::findFileInfo( const String &filePath, FileInfo &fileInfo,
-                                             bool ignorePath /*= false */ ) const
+    auto ObfuscatedZipArchive::findFileInfo( const String &filePath, FileInfo &fileInfo,
+                                             bool ignorePath /*= false */ ) const -> bool
     {
         return m_fileList->findFileInfo( filePath, fileInfo, ignorePath );
     }
 
-    bool ObfuscatedZipArchive::findFileInfo( hash64 id, FileInfo &fileInfo,
-                                             bool ignorePath /*= false */ ) const
+    auto ObfuscatedZipArchive::findFileInfo( hash64 id, FileInfo &fileInfo,
+                                             bool ignorePath /*= false */ ) const -> bool
     {
         return m_fileList->findFileInfo( id, fileInfo, ignorePath );
     }
 
-    SmartPtr<IFileList> ObfuscatedZipArchive::getFileList() const
+    auto ObfuscatedZipArchive::getFileList() const -> SmartPtr<IFileList>
     {
         return m_fileList;
     }
 
-    Array<FileInfo> ObfuscatedZipArchive::getFiles() const
+    auto ObfuscatedZipArchive::getFiles() const -> Array<FileInfo>
     {
         return m_fileList->getFiles();
     }
 
     /// Utility method to format out zzip errors
-    String ObfuscatedZipArchive::getZzipErrorDescription( s32 zzipError )
+    auto ObfuscatedZipArchive::getZzipErrorDescription( s32 zzipError ) -> String
     {
         String errorMsg;
         switch( zzipError )

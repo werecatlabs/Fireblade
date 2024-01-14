@@ -9,7 +9,6 @@ namespace fb
     namespace render
     {
 
-        //--------------------------------------------
         class GraphicsUtil
         {
         public:

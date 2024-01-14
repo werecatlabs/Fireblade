@@ -40,7 +40,7 @@ namespace fb
     const Vector3<f64> Vector3<f64>::UNIT( 1.0, 1.0, 1.0 );
 
     template <class T>
-    Vector3<T> Vector3<T>::fromCoords( T radius, T latitude, T longitude )
+    auto Vector3<T>::fromCoords( T radius, T latitude, T longitude ) -> Vector3<T>
     {
         auto xPos = radius * Math<T>::Cos( latitude ) * Math<T>::Cos( longitude );
         auto zPos = radius * Math<T>::Cos( latitude ) * Math<T>::Sin( longitude );
@@ -50,19 +50,19 @@ namespace fb
     }
 
     template <class T>
-    bool Vector3<T>::isValid() const
+    auto Vector3<T>::isValid() const -> bool
     {
         return isFinite();
     }
 
     template <class T>
-    bool Vector3<T>::isFinite() const
+    auto Vector3<T>::isFinite() const -> bool
     {
         return Math<T>::isFinite( x ) && Math<T>::isFinite( y ) && Math<T>::isFinite( z );
     }
 
     template <class T>
-    bool Vector3<T>::operator==( const Vector3<T> &other ) const
+    auto Vector3<T>::operator==( const Vector3<T> &other ) const -> bool
     {
         const auto values = ptr();
         return Math<T>::equals( values[0], other[0] ) && Math<T>::equals( values[1], other[1] ) &&
@@ -70,7 +70,7 @@ namespace fb
     }
 
     template <class T>
-    bool Vector3<T>::operator!=( const Vector3<T> &other ) const
+    auto Vector3<T>::operator!=( const Vector3<T> &other ) const -> bool
     {
         const auto values = ptr();
         return !Math<T>::equals( values[0], other[0] ) || !Math<T>::equals( values[1], other[1] ) ||

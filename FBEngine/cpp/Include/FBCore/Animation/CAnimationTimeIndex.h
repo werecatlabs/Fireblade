@@ -5,7 +5,7 @@
 
 namespace fb
 {
-        
+
     class CAnimationTimeIndex : public IAnimationTimeIndex
     {
     public:

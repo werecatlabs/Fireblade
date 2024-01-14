@@ -12,15 +12,13 @@ namespace fb
     class FactoryManager : public IFactoryManager
     {
     public:
-        /** Constructor.
-         */
+        /** Constructor. */
         FactoryManager();
 
-        /** */
+        /** Constructor. */
         FactoryManager( FactoryManager &other ) = delete;
 
-        /** Destructor.
-         */
+        /** Destructor. */
         ~FactoryManager() override;
 
         /** @copydoc IObject::load */
@@ -59,20 +57,11 @@ namespace fb
         /** @copydoc IFactoryManager::getFactories */
         Array<SmartPtr<IFactory>> getFactories() const override;
 
-        /** @copydoc IFactoryManager::_create */
-        SmartPtr<ISharedObject> createById( hash64 typeId ) const;
+        /** @copydoc IFactoryManager::createById */
+        SmartPtr<ISharedObject> createById( hash64 typeId ) const override;
 
-        /** @copydoc IFactoryManager::_create */
-        void *_create( const String &type ) override;
-
-        /** @copydoc IFactoryManager::_createById */
-        void *_createById( hash64 typeId ) override;
-
-        /** @copydoc IFactoryManager::_createFromPool */
-        void *_createFromPool( hash64 typeId ) override;
-
-        /** @copydoc IFactoryManager::_createArrayById */
-        void *_createArrayById( hash64 typeId, u32 numElements, u32 &objectSize ) override;
+        /** @copydoc IFactoryManager::createById */
+        SmartPtr<ISharedObject> createById( hash64 typeId, const String &hint ) const override;
 
         /** @copydoc IFactoryManager::setPoolSize */
         void setPoolSize( hash64 typeId, size_t size ) override;
@@ -85,10 +74,12 @@ namespace fb
         SharedPtr<ConcurrentArray<SmartPtr<IFactory>>> getFactoriesArray() const;
         void setFactoriesArray( SharedPtr<ConcurrentArray<SmartPtr<IFactory>>> ptr );
 
-        AtomicSharedPtr<ConcurrentArray<SmartPtr<IFactory>>> m_factories;
+        SharedPtr<ConcurrentArray<SmartPtr<IFactory>>> m_factories;
         bool m_autoCreateFactory = false;
         bool m_bEnableDebug = false;
+
+        mutable RecursiveMutex m_mutex;
     };
-}  // end namespace fb
+} // end namespace fb
 
 #endif

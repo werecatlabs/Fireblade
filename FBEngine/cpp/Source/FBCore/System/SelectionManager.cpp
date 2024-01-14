@@ -5,9 +5,7 @@
 namespace fb
 {
 
-    SelectionManager::SelectionManager()
-    {
-    }
+    SelectionManager::SelectionManager() = default;
 
     SelectionManager::~SelectionManager()
     {
@@ -68,7 +66,7 @@ namespace fb
         }
     }
 
-    Array<SmartPtr<ISharedObject>> SelectionManager::getSelection() const
+    auto SelectionManager::getSelection() const -> Array<SmartPtr<ISharedObject>>
     {
         return m_selection;
     }

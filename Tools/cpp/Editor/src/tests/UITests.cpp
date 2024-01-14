@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE( ui_test )
         app.load( nullptr );
         //app.run();
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto taskManager = applicationManager->getTaskManager();

@@ -5,78 +5,71 @@
 #include "ui/UIManager.h"
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    FileSelectedJob::FileSelectedJob() = default;
+
+    FileSelectedJob::~FileSelectedJob() = default;
+
+    void FileSelectedJob::execute()
     {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
 
-        FileSelectedJob::FileSelectedJob()
+        auto taskManager = applicationManager->getTaskManager();
+        FB_ASSERT( taskManager );
+
+        auto editorManager = EditorManager::getSingletonPtr();
+        FB_ASSERT( editorManager );
+
+        auto project = editorManager->getProject();
+        FB_ASSERT( project );
+
+        auto uiManager = editorManager->getUI();
+        FB_ASSERT( uiManager );
+
+        if( !applicationManager->isPlaying() )
         {
-        }
+            auto renderLock = taskManager->lockTask( Thread::Task::Render );
+            auto physicsLock = taskManager->lockTask( Thread::Task::Physics );
 
-        FileSelectedJob::~FileSelectedJob()
-        {
-        }
+            auto path = getFilePath();
 
-        void FileSelectedJob::execute()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto taskManager = applicationManager->getTaskManager();
-            FB_ASSERT( taskManager );
-
-            auto editorManager = EditorManager::getSingletonPtr();
-            FB_ASSERT( editorManager );
-
-            auto project = editorManager->getProject();
-            FB_ASSERT( project );
-
-            auto uiManager = editorManager->getUI();
-            FB_ASSERT( uiManager );
-
-            if( !applicationManager->isPlaying() )
+            auto projectPath = applicationManager->getProjectPath();
+            if( StringUtil::isNullOrEmpty( projectPath ) )
             {
-                auto renderLock = taskManager->lockTask( Thread::Task::Render );
-                auto physicsLock = taskManager->lockTask( Thread::Task::Physics );
-
-                auto path = getFilePath();
-
-                auto projectPath = applicationManager->getProjectPath();
-                if( StringUtil::isNullOrEmpty( projectPath ) )
-                {
-                    projectPath = Path::getWorkingDirectory();
-                }
-
-                auto scenePath = Path::lexically_normal( projectPath, path );
-                scenePath = StringUtil::cleanupPath( scenePath );
-                project->setCurrentScenePath( scenePath );
-
-                auto sceneManager = applicationManager->getSceneManager();
-
-                if( auto scene = sceneManager->getCurrentScene() )
-                {
-                    scene->clear();
-                    scene->loadScene( scenePath );
-                }
-
-                sceneManager->edit();
-
-                uiManager->rebuildSceneTree();
+                projectPath = Path::getWorkingDirectory();
             }
-        }
 
-        String FileSelectedJob::getFilePath() const
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-            return m_filePath;
-        }
+            auto scenePath = Path::lexically_normal( projectPath, path );
+            scenePath = StringUtil::cleanupPath( scenePath );
+            project->setCurrentScenePath( scenePath );
 
-        void FileSelectedJob::setFilePath( const String &filePath )
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-            m_filePath = filePath;
-        }
+            auto sceneManager = applicationManager->getSceneManager();
 
-    }  // namespace editor
-}  // namespace fb
+            if( auto scene = sceneManager->getCurrentScene() )
+            {
+                scene->clear();
+                scene->loadScene( scenePath );
+            }
+
+            sceneManager->edit();
+
+            uiManager->rebuildSceneTree();
+        }
+    }
+
+    auto FileSelectedJob::getFilePath() const -> String
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        return m_filePath;
+    }
+
+    void FileSelectedJob::setFilePath( const String &filePath )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_filePath = filePath;
+    }
+
+}  // namespace fb::editor

@@ -1,8 +1,8 @@
 #ifndef FBLuaAutoLink_h__
 #define FBLuaAutoLink_h__
 
-#    if FB_USE_AUTO_LINK
-#        if defined _FB_STATIC_LIB_
+#if FB_USE_AUTO_LINK
+#    if defined _FB_STATIC_LIB_
 #        ifdef _DEBUG
 #            pragma comment( lib, "FBLua_d.lib" )
 #            pragma comment( lib, "FBLuabind_d.lib" )
@@ -24,4 +24,4 @@
 #    endif
 #endif
 
-#endif // FBLuaAutoLink_h__
+#endif  // FBLuaAutoLink_h__

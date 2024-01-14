@@ -13,22 +13,22 @@ namespace fb
         {
         public:
             ImGuiEventWindow();
-            ~ImGuiEventWindow();
+            ~ImGuiEventWindow() override;
 
             /** @copydoc IUIEventWindow::getEvents */
-            virtual Array<SmartPtr<IEvent>> getEvents() const;
+            Array<SmartPtr<IEvent>> getEvents() const override;
 
             /** @copydoc IUIEventWindow::setEvents */
-            virtual void setEvents( const Array<SmartPtr<IEvent>> &events );
+            void setEvents( const Array<SmartPtr<IEvent>> &events ) override;
 
-            void update();
+            void update() override;
 
             FB_CLASS_REGISTER_DECL;
 
         protected:
             Array<SmartPtr<IEvent>> m_events;
         };
-    }  // end namespace ui
-}  // end namespace fb
+    } // end namespace ui
+}     // end namespace fb
 
 #endif  // ImGuiWindow_h__

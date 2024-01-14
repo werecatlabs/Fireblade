@@ -23,15 +23,13 @@ namespace fb
         // pass->setDepthFunction(Ogre::CompareFunction::CMPF_LESS);
     }
 
-    MaterialListener::~MaterialListener()
-    {
-    }
+    MaterialListener::~MaterialListener() = default;
 
-    Ogre::Technique *MaterialListener::handleSchemeNotFound( unsigned short schemeIndex,
-                                                             const Ogre::String &schemeName,
-                                                             Ogre::Material *originalMaterial,
-                                                             unsigned short lodIndex,
-                                                             const Ogre::Renderable *rend )
+    auto MaterialListener::handleSchemeNotFound( unsigned short schemeIndex,
+                                                 const Ogre::String &schemeName,
+                                                 Ogre::Material *originalMaterial,
+                                                 unsigned short lodIndex, const Ogre::Renderable *rend )
+        -> Ogre::Technique *
     {
         // if(schemeName == "depth")
         //{

@@ -2,7 +2,6 @@
 #define ISubComponent_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Interface/Resource/IResource.h>
 
 namespace fb
@@ -33,14 +32,23 @@ namespace fb
              *
              * @return A shared pointer to the parent component.
              */
-            virtual SmartPtr<IComponent> getParent() const = 0;
+            virtual SmartPtr<IComponent> getParentComponent() const = 0;
 
             /**
              * Set the parent component of this component.
              *
-             * @param parent A shared pointer to the parent component.
+             * @param parentComponent A shared pointer to the parent component.
              */
-            virtual void setParent( SmartPtr<IComponent> parent ) = 0;
+            virtual void setParentComponent( SmartPtr<IComponent> parentComponent ) = 0;
+
+            virtual SmartPtr<ISubComponent> getParent() const = 0;
+
+            virtual void setParent( SmartPtr<ISubComponent> parent ) = 0;
+
+            virtual void addChildByType( hash_type componentType ) = 0;
+            virtual void addChild( SmartPtr<ISubComponent> child ) = 0;
+            virtual void removeChild( SmartPtr<ISubComponent> child ) = 0;
+            virtual Array<SmartPtr<ISubComponent>> getChildren() const = 0;
 
             /**
              * Gets the data associated with the component as a properties object.

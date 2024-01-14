@@ -20,6 +20,6 @@ namespace fb
     protected:
         bool m_enabled = false;
     };
-} // namespace fb
+}  // namespace fb
 
 #endif  // CompositorState_h__

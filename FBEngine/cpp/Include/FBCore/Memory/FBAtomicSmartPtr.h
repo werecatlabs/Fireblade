@@ -23,9 +23,9 @@ namespace fb
         using value_type = T;                   ///< The value type of the pointed-to element.
         using pointer = T *;                    ///< The type of the pointer to the pointed-to element.
 
-        /** 
-        * Constructs an atomic smart pointer.
-        */
+        /**
+         * Constructs an atomic smart pointer.
+         */
         FBAtomicSmartPtr() = default;
 
         FBAtomicSmartPtr( const FBAtomicSmartPtr<T> &other );
@@ -77,9 +77,37 @@ namespace fb
          */
         FBSmartPtr<T> exchange( const FBSmartPtr<T> ptr );
 
-    protected:
+        /**
+         * @brief Accesses the members of the object that the smart pointer is managing.
+         *
+         * @return A pointer to the object that the smart pointer is managing.
+         */
+        T *operator->();
+
+        /**
+         * @brief Accesses the members of the object that the smart pointer is managing.
+         *
+         * @return A pointer to the object that the smart pointer is managing.
+         */
+        const T *operator->() const;
+
+        /**
+         * @brief Checks whether the smart pointer is null.
+         *
+         * @return `true` if the smart pointer is null, `false` otherwise.
+         */
+        bool operator!() const;
+
+        /**
+         * @brief Implicitly converts the smart pointer to a `bool` value.
+         *
+         * @return `true` if the smart pointer is not null, `false` otherwise.
+         */
+        operator bool() const;
+
         T *get();
 
+    protected:
         ///< The smart pointer that this atomic smart pointer holds.
         std::atomic<T *> m_pointer = nullptr;
     };
@@ -149,9 +177,51 @@ namespace fb
     }
 
     template <class T>
-    T* FBAtomicSmartPtr<T>::get()
+    T *FBAtomicSmartPtr<T>::get()
     {
         return m_pointer;
+    }
+
+    template <class T>
+    FBForceInline T *FBAtomicSmartPtr<T>::operator->()
+    {
+        FB_ASSERT( m_pointer );
+
+#if FB_ENABLE_PTR_EXCEPTIONS
+        if( !m_pointer )
+        {
+            throw Exception( "Null pointer exception." );
+        }
+#endif
+
+        return m_pointer;
+    }
+
+    template <class T>
+    FBForceInline const T *FBAtomicSmartPtr<T>::operator->() const
+    {
+        FB_ASSERT( m_pointer );
+
+#if FB_ENABLE_PTR_EXCEPTIONS
+        if( !m_pointer )
+        {
+            throw Exception( "Null pointer exception." );
+        }
+#endif
+
+        return m_pointer;
+    }
+
+    template <class T>
+    FBForceInline bool FBAtomicSmartPtr<T>::operator!() const
+    {
+        return m_pointer == nullptr;
+    }
+
+    template <class T>
+    FBForceInline FBAtomicSmartPtr<T>::operator bool() const
+    {
+        return m_pointer != nullptr;
     }
 
 }  // end namespace fb

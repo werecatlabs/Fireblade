@@ -20,7 +20,7 @@ namespace fb
         };
 
         StateMessageJobStatus();
-        StateMessageJobStatus( u32 status );
+        explicit StateMessageJobStatus( u32 status );
         ~StateMessageJobStatus() override;
 
         SmartPtr<IJob> getJob() const;

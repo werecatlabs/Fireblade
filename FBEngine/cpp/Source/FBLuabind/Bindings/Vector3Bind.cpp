@@ -32,13 +32,11 @@ namespace fb
                         .def( self + other<Vector3I>() )
                         .def( self - other<Vector3I>() )
                         .def( self * other<Vector3I>() )
-                        .def( self * f32() )
-                        .def( tostring( self ) )];
+                        .def( self * f32() )];
 
         module( L )[class_<Vector3F>( "Vector3F" )
                         .def( constructor<>() )
                         .def( constructor<f32, f32, f32>() )
-                        .def( tostring( const_self ) )
                         .def_readwrite( "x", &Vector3F::x )
                         .def_readwrite( "y", &Vector3F::y )
                         .def_readwrite( "z", &Vector3F::z )
@@ -69,10 +67,10 @@ namespace fb
                         .def( "isZeroLength", &Vector3F::isZeroLength )
                         .def( "normalisedCopy", &Vector3F::normaliseCopy )
                         .def( "crossProduct", &Vector3F::crossProduct )
-                        //.def( "getRotationTo", &Vector3F::getRotationTo )
-                        //.def( "getRotationTo", &Vector3F::getRotationTo )
-                        //.def( "getRotationTo", &Vector3F::getRotationTo )
-                        ];
+                    //.def( "getRotationTo", &Vector3F::getRotationTo )
+                    //.def( "getRotationTo", &Vector3F::getRotationTo )
+                    //.def( "getRotationTo", &Vector3F::getRotationTo )
+        ];
 
         module( L )[class_<Vector3D>( "Vector3D" )
                         .def( constructor<>() )
@@ -93,8 +91,7 @@ namespace fb
                         .def( self + other<Vector3D>() )
                         .def( self - other<Vector3D>() )
                         .def( self * other<Vector3D>() )
-                        .def( self * f64() )
-                        .def( tostring( self ) )];
+                        .def( self * f64() )];
 
         LUA_CONST_START( Vector3I )
         LUA_CONST( Vector3I, ZERO );

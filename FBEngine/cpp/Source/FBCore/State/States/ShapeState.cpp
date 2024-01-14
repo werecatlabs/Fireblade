@@ -5,22 +5,21 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, ShapeState, BaseState );
 
-    ShapeState::ShapeState()
-    {
-    }
+    ShapeState::ShapeState() = default;
 
-    ShapeState::~ShapeState()
-    {
-    }
+    ShapeState::~ShapeState() = default;
 
     void ShapeState::setLocalPose( const Transform3<real_Num> &pose )
     {
-        SpinRWMutex::ScopedLock lock( m_mutex );
-        m_localPose = pose;
-        setDirty( true );
+        if( getLocalPose() != pose )
+        {
+            SpinRWMutex::ScopedLock lock( m_mutex );
+            m_localPose = pose;
+            setDirty( true );
+        }
     }
 
-    Transform3<real_Num> ShapeState::getLocalPose() const
+    auto ShapeState::getLocalPose() const -> Transform3<real_Num>
     {
         SpinRWMutex::ScopedLock lock( m_mutex );
         return m_localPose;

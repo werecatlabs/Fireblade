@@ -70,7 +70,7 @@ namespace fb
         setMessageQueue( messageQueue );
     }
 
-    u32 StateQueue::getTaskId() const
+    auto StateQueue::getTaskId() const -> u32
     {
         return m_taskId;
     }
@@ -80,7 +80,7 @@ namespace fb
         m_taskId = taskId;
     }
 
-    bool StateQueue::isEmpty() const
+    auto StateQueue::isEmpty() const -> bool
     {
         auto messages = getMessageQueue();
         if( messages )
@@ -95,7 +95,7 @@ namespace fb
     {
     }
 
-    SmartPtr<IStateContext> StateQueue::getOwner() const
+    auto StateQueue::getOwner() const -> SmartPtr<IStateContext>
     {
         return m_owner;
     }
@@ -105,12 +105,12 @@ namespace fb
         m_owner = val;
     }
 
-    SharedPtr<ConcurrentArray<SmartPtr<IStateMessage>>> StateQueue::getMessages() const
+    auto StateQueue::getMessages() const -> SharedPtr<ConcurrentArray<SmartPtr<IStateMessage>>>
     {
         return m_messageQueue;
     }
 
-    SharedPtr<ConcurrentArray<SmartPtr<IStateMessage>>> StateQueue::getMessagesAndClear()
+    auto StateQueue::getMessagesAndClear() -> SharedPtr<ConcurrentArray<SmartPtr<IStateMessage>>>
     {
         auto messageQueue = boost::make_shared<ConcurrentArray<SmartPtr<IStateMessage>>>();
         return m_messageQueue.exchange( messageQueue );
@@ -121,7 +121,7 @@ namespace fb
         m_messageQueue = messageQueue;
     }
 
-    SharedPtr<ConcurrentArray<SmartPtr<IStateMessage>>> StateQueue::getMessageQueue() const
+    auto StateQueue::getMessageQueue() const -> SharedPtr<ConcurrentArray<SmartPtr<IStateMessage>>>
     {
         return m_messageQueue;
     }

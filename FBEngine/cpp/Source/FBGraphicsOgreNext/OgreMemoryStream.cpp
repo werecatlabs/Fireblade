@@ -5,20 +5,24 @@
 namespace fb
 {
 
-    Ogre::uchar *MemoryStream::getCurrentPtr( void )
+    auto MemoryStream::getCurrentPtr() -> Ogre::uchar *
     {
         return mPos;
     }
 
     //-----------------------------------------------------------------------
-    size_t MemoryStream::read( void *buf, size_t count )
+    auto MemoryStream::read( void *buf, size_t count ) -> size_t
     {
         size_t cnt = count;
         // Read over end of memory?
         if( mPos + cnt > mEnd )
+        {
             cnt = mEnd - mPos;
+        }
         if( cnt == 0 )
+        {
             return 0;
+        }
 
         assert( cnt <= count );
 
@@ -27,7 +31,7 @@ namespace fb
         return cnt;
     }
     //---------------------------------------------------------------------
-    size_t MemoryStream::write( const void *buf, size_t count )
+    auto MemoryStream::write( const void *buf, size_t count ) -> size_t
     {
         size_t written = 0;
         if( isWriteable() )
@@ -36,9 +40,13 @@ namespace fb
             // we only allow writing within the extents of allocated memory
             // check for buffer overrun & disallow
             if( mPos + written > mEnd )
+            {
                 written = mEnd - mPos;
+            }
             if( written == 0 )
+            {
                 return 0;
+            }
 
             memcpy( mPos, buf, written );
             mPos += written;
@@ -46,7 +54,7 @@ namespace fb
         return written;
     }
     //-----------------------------------------------------------------------
-    size_t MemoryStream::readLine( char *buf, size_t maxCount, const Ogre::String &delim )
+    auto MemoryStream::readLine( char *buf, size_t maxCount, const Ogre::String &delim ) -> size_t
     {
         // Deal with both Unix & Windows LFs
         bool trimCR = false;
@@ -83,7 +91,7 @@ namespace fb
         return pos;
     }
     //-----------------------------------------------------------------------
-    size_t MemoryStream::skipLine( const Ogre::String &delim )
+    auto MemoryStream::skipLine( const Ogre::String &delim ) -> size_t
     {
         size_t pos = 0;
 
@@ -103,7 +111,7 @@ namespace fb
     //-----------------------------------------------------------------------
     void MemoryStream::skip( long count )
     {
-        size_t newpos = (size_t)( ( mPos - mData ) + count );
+        auto newpos = static_cast<size_t>( ( mPos - mData ) + count );
         assert( mData + newpos <= mEnd );
 
         mPos = mData + newpos;
@@ -115,23 +123,23 @@ namespace fb
         mPos = mData + pos;
     }
     //-----------------------------------------------------------------------
-    size_t MemoryStream::tell( void ) const
+    auto MemoryStream::tell() const -> size_t
     {
         // mData is start, mPos is current location
         return mPos - mData;
     }
     //-----------------------------------------------------------------------
-    bool MemoryStream::eof( void ) const
+    auto MemoryStream::eof() const -> bool
     {
         return mPos >= mEnd;
     }
     //-----------------------------------------------------------------------
-    void MemoryStream::close( void )
+    void MemoryStream::close()
     {
         if( mData )
         {
             delete[] mData;
-            mData = 0;
+            mData = nullptr;
         }
     }
 
@@ -150,7 +158,7 @@ namespace fb
         close();
     }
 
-    Ogre::uchar *MemoryStream::getPtr( void )
+    auto MemoryStream::getPtr() -> Ogre::uchar *
     {
         return mData;
     }

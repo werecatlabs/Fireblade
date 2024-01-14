@@ -27,10 +27,10 @@ DecalCursor::DecalCursor( Ogre::SceneManager *man, Ogre::MaterialPtr terrainMat,
 
     :
     m_bVisible( false ),
-    m_nodeProj( 0 ),
-    m_pass( 0 ),
-    m_frustProj( 0 ),
-    m_texState( 0 ),
+    m_nodeProj( nullptr ),
+    m_pass( nullptr ),
+    m_frustProj( nullptr ),
+    m_texState( nullptr ),
     m_sceneMgr( man ),
     m_terrainMat( terrainMat ),
     m_pos( Ogre::Vector3::ZERO ),
@@ -47,7 +47,7 @@ DecalCursor::~DecalCursor()
     if( m_pass )
     {
         m_terrainMat->getTechnique( 0 )->removePass( m_pass->getIndex() );
-        m_pass = 0;
+        m_pass = nullptr;
     }
 
     // delete frustum
@@ -97,7 +97,7 @@ void DecalCursor::init( const Ogre::Vector2 &size, const std::string &tex )
     m_bVisible = false;
 }
 
-Ogre::Vector3 DecalCursor::getPosition() const
+auto DecalCursor::getPosition() const -> Ogre::Vector3
 {
     return m_pos;
 }
@@ -121,7 +121,7 @@ void DecalCursor::hide()
     }
 }
 
-bool DecalCursor::isVisible() const
+auto DecalCursor::isVisible() const -> bool
 {
     return m_bVisible;
 }
@@ -175,11 +175,11 @@ void DecalCursor::hideTerrainDecal()
     if( m_texState )
     {
         m_pass->removeTextureUnitState( m_pass->getTextureUnitStateIndex( m_texState ) );
-        m_texState = 0;
+        m_texState = nullptr;
     }
 }
 
-std::string DecalCursor::getTextureName() const
+auto DecalCursor::getTextureName() const -> std::string
 {
     return m_sTextureName;
 }

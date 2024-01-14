@@ -6,8 +6,8 @@
 #    include <random/randomc.h>
 #endif
 
-#include <float.h>
-#include <stdlib.h>  //for rand
+#include <cfloat>
+#include <cstdlib>  //for rand
 //#include <utility>
 
 #if FB_USE_BOOST
@@ -120,7 +120,7 @@ namespace fb
 
     // Returns a random number between min and max
     template <class T>
-    T ranged_random( T min, T max, [[maybe_unused]] int seed = 0 )
+    auto ranged_random( T min, T max, [[maybe_unused]] int seed = 0 ) -> T
     {
 #ifndef FB_USE_RANDOMC_LIB
         return min + ( max - min ) * rand() / 0x7fff;
@@ -136,7 +136,7 @@ namespace fb
     }
 
     template <>
-    bool Math<s32>::equals( const s32 af, const s32 bf, const s32 maxDiff )
+    auto Math<s32>::equals( const s32 af, const s32 bf, const s32 maxDiff ) -> bool
     {
 #if FB_USE_BOOST
         return boost::math::epsilon_difference( af, bf ) < maxDiff;
@@ -146,7 +146,7 @@ namespace fb
     }
 
     template <>
-    bool Math<s64>::equals( const s64 af, const s64 bf, const s64 maxDiff )
+    auto Math<s64>::equals( const s64 af, const s64 bf, const s64 maxDiff ) -> bool
     {
 #if FB_USE_BOOST
         return Abs( af - bf ) < maxDiff;
@@ -156,8 +156,8 @@ namespace fb
     }
 
     template <>
-    bool Math<long double>::equals( const long double af, const long double bf,
-                                    const long double maxDiff )
+    auto Math<long double>::equals( const long double af, const long double bf,
+                                    const long double maxDiff ) -> bool
     {
 #if FB_USE_BOOST
         return boost::math::epsilon_difference( af, bf ) < maxDiff;
@@ -167,7 +167,7 @@ namespace fb
     }
 
     template <>
-    bool Math<f32>::equals( const f32 af, const f32 bf, const f32 maxDiff )
+    auto Math<f32>::equals( const f32 af, const f32 bf, const f32 maxDiff ) -> bool
     {
         // from TAMING THE FLOATING POINT BEAST
 #if 0
@@ -196,7 +196,7 @@ namespace fb
     }
 
     template <>
-    bool Math<f64>::equals( const f64 af, const f64 bf, [[maybe_unused]] const f64 maxDiff )
+    auto Math<f64>::equals( const f64 af, const f64 bf, [[maybe_unused]] const f64 maxDiff ) -> bool
     {
 #if FB_USE_BOOST
         return boost::math::epsilon_difference( af, bf ) < maxDiff;
@@ -206,7 +206,7 @@ namespace fb
     }
 
     template <>
-    s32 Math<s32>::RangedRandom( s32 min, s32 max, s32 seed )
+    auto Math<s32>::RangedRandom( s32 min, s32 max, s32 seed ) -> s32
     {
         if( seed )
         {
@@ -217,7 +217,7 @@ namespace fb
     }
 
     template <>
-    s64 Math<s64>::RangedRandom( s64 min, s64 max, s32 seed )
+    auto Math<s64>::RangedRandom( s64 min, s64 max, s32 seed ) -> s64
     {
         if( seed )
         {
@@ -228,7 +228,7 @@ namespace fb
     }
 
     template <>
-    long double Math<long double>::RangedRandom( long double min, long double max, s32 seed )
+    auto Math<long double>::RangedRandom( long double min, long double max, s32 seed ) -> long double
     {
         if( seed )
         {
@@ -239,7 +239,7 @@ namespace fb
     }
 
     template <>
-    f32 Math<f32>::RangedRandom( f32 min, f32 max, s32 seed )
+    auto Math<f32>::RangedRandom( f32 min, f32 max, s32 seed ) -> f32
     {
         if( seed )
         {
@@ -250,7 +250,7 @@ namespace fb
     }
 
     template <>
-    f64 Math<f64>::RangedRandom( f64 min, f64 max, s32 seed )
+    auto Math<f64>::RangedRandom( f64 min, f64 max, s32 seed ) -> f64
     {
         if( seed )
         {
@@ -261,62 +261,62 @@ namespace fb
     }
 
     template <>
-    bool Math<s32>::isFinite( s32 value )
+    auto Math<s32>::isFinite( s32 value ) -> bool
     {
         return value > std::numeric_limits<s32>::min() && value < std::numeric_limits<s32>::max();
     }
 
     template <>
-    bool Math<s64>::isFinite( s64 value )
+    auto Math<s64>::isFinite( s64 value ) -> bool
     {
         return value > std::numeric_limits<s64>::min() && value < std::numeric_limits<s64>::max();
     }
 
     template <>
-    bool Math<long double>::isFinite( long double value )
+    auto Math<long double>::isFinite( long double value ) -> bool
     {
         return value > std::numeric_limits<long double>::min() &&
                value < std::numeric_limits<long double>::max();
     }
 
     template <>
-    bool Math<f32>::isFinite( f32 value )
+    auto Math<f32>::isFinite( f32 value ) -> bool
     {
         return std::isfinite( value );
     }
 
     template <>
-    bool Math<f64>::isFinite( f64 value )
+    auto Math<f64>::isFinite( f64 value ) -> bool
     {
         return std::isfinite( value );
     }
 
     template <>
-    bool Math<s32>::isNaN( s32 value )
+    auto Math<s32>::isNaN( s32 value ) -> bool
     {
         return value == value;
     }
 
     template <>
-    bool Math<f32>::isNaN( f32 value )
+    auto Math<f32>::isNaN( f32 value ) -> bool
     {
         return std::isnan( value );
     }
 
     template <>
-    bool Math<s64>::isNaN( s64 value )
+    auto Math<s64>::isNaN( s64 value ) -> bool
     {
         return value == value;
     }
 
     template <>
-    bool Math<f64>::isNaN( f64 value )
+    auto Math<f64>::isNaN( f64 value ) -> bool
     {
         return std::isnan( value );
     }
 
     template <>
-    bool Math<long double>::isNaN( long double value )
+    auto Math<long double>::isNaN( long double value ) -> bool
     {
         return std::isnan( static_cast<f64>( value ) );
     }
@@ -325,23 +325,25 @@ namespace fb
     void Math<T>::Limit( T &v, T val )
     {
         if( v > val )
+        {
             v = val;
+        }
     }
 
     template <class T>
-    T Math<T>::trunc( T value )
+    auto Math<T>::trunc( T value ) -> T
     {
         return static_cast<T>( std::trunc( static_cast<float>( value ) ) );
     }
 
     template <class T>
-    T Math<T>::epsilon()
+    auto Math<T>::epsilon() -> T
     {
         return std::numeric_limits<T>::epsilon();
     }
 
     template <class T>
-    T Math<T>::ASin( T fValue )
+    auto Math<T>::ASin( T fValue ) -> T
     {
         if( T( -1.0 ) < fValue )
         {
@@ -356,19 +358,19 @@ namespace fb
     }
 
     template <class T>
-    T Math<T>::wrapRadians( T r )
+    auto Math<T>::wrapRadians( T r ) -> T
     {
         return static_cast<T>( std::remainder( r, T( 2.0 ) * Math<T>::pi() ) );
     }
 
     template <class T>
-    T Math<T>::wrapDegrees( T degrees, T range )
+    auto Math<T>::wrapDegrees( T degrees, T range ) -> T
     {
         return static_cast<T>( std::remainder( degrees, T( 2.0 ) * range ) );
     }
 
     template <class T>
-    T Math<T>::wrapGradians( T r )
+    auto Math<T>::wrapGradians( T r ) -> T
     {
         float i;
         r = static_cast<T>( modff( static_cast<float>( r ), &i ) );
@@ -387,7 +389,7 @@ namespace fb
     }
 
     template <class T>
-    T Math<T>::wrap( T val, T lowerBound, T upperBound )
+    auto Math<T>::wrap( T val, T lowerBound, T upperBound ) -> T
     {
         if( val < lowerBound || val > upperBound )
         {
@@ -398,121 +400,125 @@ namespace fb
     }
 
     template <>
-    s32 Math<s32>::ACos( s32 fValue )
+    auto Math<s32>::ACos( s32 fValue ) -> s32
     {
         if( static_cast<s32>( -1.0 ) < fValue )
         {
             if( fValue < static_cast<s32>( 1.0 ) )
+            {
                 return static_cast<s32>( acos( static_cast<f32>( fValue ) ) );
+            }
             return static_cast<s32>( 0.0 );
         }
         return pi();
     }
 
     template <class T>
-    T Math<T>::ACos( T fValue )
+    auto Math<T>::ACos( T fValue ) -> T
     {
         if( T( -1.0 ) < fValue )
         {
             if( fValue < T( 1.0 ) )
+            {
                 return static_cast<T>( ::acos( fValue ) );
+            }
             return T( 0.0 );
         }
         return pi();
     }
 
     template <class T>
-    T Math<T>::Ln( T value )
+    auto Math<T>::Ln( T value ) -> T
     {
         return static_cast<T>( std::log( value ) );
     }
 
     template <class T>
-    s32 Math<T>::Round( T value )
+    auto Math<T>::Round( T value ) -> s32
     {
         return static_cast<s32>( ::floor( value + 0.5f ) );
     }
 
     template <class T>
-    T Math<T>::Sin( T value )
+    auto Math<T>::Sin( T value ) -> T
     {
         return static_cast<T>( sin( static_cast<f32>( value ) ) );
     }
 
     template <class T>
-    T Math<T>::Cos( T value )
+    auto Math<T>::Cos( T value ) -> T
     {
         return static_cast<T>( cos( static_cast<f32>( value ) ) );
     }
 
     template <class T>
-    T Math<T>::Tan( T value )
+    auto Math<T>::Tan( T value ) -> T
     {
         return static_cast<T>( tan( static_cast<f32>( value ) ) );
     }
 
     template <>
-    s32 Math<s32>::Atan( s32 x )
+    auto Math<s32>::Atan( s32 x ) -> s32
     {
         return static_cast<s32>( std::atan( static_cast<f32>( x ) ) );
     }
 
     template <class T>
-    T Math<T>::Atan( T x )
+    auto Math<T>::Atan( T x ) -> T
     {
         return static_cast<T>( std::atan( x ) );
     }
 
     template <>
-    s32 Math<s32>::ATan2( const s32 &y, const s32 &x )
+    auto Math<s32>::ATan2( const s32 &y, const s32 &x ) -> s32
     {
         return static_cast<s32>( std::atan2( static_cast<f32>( y ), static_cast<f32>( x ) ) );
     }
 
     template <class T>
-    T Math<T>::ATan2( const T &y, const T &x )
+    auto Math<T>::ATan2( const T &y, const T &x ) -> T
     {
         return static_cast<T>( std::atan2( y, x ) );
     }
 
     template <class T>
-    T Math<T>::Sqr( T value )
+    auto Math<T>::Sqr( T value ) -> T
     {
         return value * value;
     }
 
     template <class T>
-    T Math<T>::Sqrt( T value )
+    auto Math<T>::Sqrt( T value ) -> T
     {
         return std::sqrt( value );
     }
 
     template <>
-    s32 Math<s32>::Sqrt( s32 value )
+    auto Math<s32>::Sqrt( s32 value ) -> s32
     {
         return static_cast<s32>( std::sqrt( static_cast<f32>( value ) ) );
     }
 
     template <>
-    s64 Math<s64>::Sqrt( s64 value )
+    auto Math<s64>::Sqrt( s64 value ) -> s64
     {
         return static_cast<s64>( std::sqrt( static_cast<f32>( value ) ) );
     }
 
     template <class T>
-    T Math<T>::SqrtInv( T value )
+    auto Math<T>::SqrtInv( T value ) -> T
     {
         return T( 1.0 ) / Math<T>::Sqrt( value );
     }
 
     template <>
-    s32 Math<s32>::SqrtInv( s32 value )
+    auto Math<s32>::SqrtInv( s32 value ) -> s32
     {
         return static_cast<s32>( static_cast<float>( 1.0 ) / sqrt( static_cast<float>( value ) ) );
     }
 
     template <>
-    s64 Math<s64>::SqrtInv( s64 value )
+    auto Math<s64>::SqrtInv( s64 value ) -> s64
     {
         const auto sqrtValue = std::sqrt( static_cast<f32>( value ) );
         const auto fValue = static_cast<f32>( 1.0 ) / sqrtValue;
@@ -520,49 +526,49 @@ namespace fb
     }
 
     template <class T>
-    T Math<T>::Abs( T value )
+    auto Math<T>::Abs( T value ) -> T
     {
         return ( value < T( 0 ) ) ? -value : value;
     }
 
     template <class T>
-    T Math<T>::normalize( const T &value, const T &min, const T &max )
+    auto Math<T>::normalize( const T &value, const T &min, const T &max ) -> T
     {
         return ( ( value - min ) / ( max - min ) );
     }
 
     template <class T>
-    T Math<T>::min( const T a, const T b )
+    auto Math<T>::min( const T a, const T b ) -> T
     {
         return a < b ? a : b;
     }
 
     template <class T>
-    T Math<T>::max( const T a, const T b )
+    auto Math<T>::max( const T a, const T b ) -> T
     {
         return a < b ? b : a;
     }
 
     template <class T>
-    bool Math<T>::isZero( const T a, const T tolerance )
+    auto Math<T>::isZero( const T a, const T tolerance ) -> bool
     {
         return Math<T>::Abs( a ) < tolerance;
     }
 
     template <class T>
-    T Math<T>::DegToRad( const T &deg )
+    auto Math<T>::DegToRad( const T &deg ) -> T
     {
         return static_cast<T>( deg * deg_to_rad() );
     }
 
     template <class T>
-    T Math<T>::RadToDeg( const T &rad )
+    auto Math<T>::RadToDeg( const T &rad ) -> T
     {
         return static_cast<T>( rad * rad_to_deg() );
     }
 
     template <class T>
-    T Math<T>::RadToFullDegrees( const T &rad )
+    auto Math<T>::RadToFullDegrees( const T &rad ) -> T
     {
         T angleDegrees = static_cast<T>( rad * rad_to_deg() );
         if( angleDegrees < T( 0.0 ) )
@@ -606,7 +612,7 @@ namespace fb
     }
 
     template <class T>
-    T Math<T>::makeMultipleOf( T numToRound, T multiple )
+    auto Math<T>::makeMultipleOf( T numToRound, T multiple ) -> T
     {
         if( multiple == T( 0.0 ) )
         {
@@ -628,94 +634,96 @@ namespace fb
     }
 
     template <class T>
-    T Math<T>::nextPow2( T x )
+    auto Math<T>::nextPow2( T x ) -> T
     {
         T y;
         for( y = 1; y < x; y *= 2 )
+        {
             ;
+        }
         return y;
     }
 
     template <class T>
-    T Math<T>::Exp( T val )
+    auto Math<T>::Exp( T val ) -> T
     {
         return static_cast<T>( ::exp( val ) );
     }
 
     template <typename T>
-    s32 Math<T>::Sign( T val )
+    auto Math<T>::Sign( T val ) -> s32
     {
         return ( T( 0 ) < val ) - ( val < T( 0 ) );
     }
 
     template <class T>
-    T Math<T>::half_pi()
+    auto Math<T>::half_pi() -> T
     {
         return pi() / T( 2.0 );
     }
 
     template <class T>
-    T Math<T>::two_pi()
+    auto Math<T>::two_pi() -> T
     {
         return pi() * T( 2.0 );
     }
 
     template <class T>
-    T Math<T>::pi()
+    auto Math<T>::pi() -> T
     {
         return T( 3.14159265358979323846 );
     }
 
     template <class T>
-    T Math<T>::Floor( T val )
+    auto Math<T>::Floor( T val ) -> T
     {
         return static_cast<T>( std::floor( val ) );
     }
 
     template <class T>
-    s32 Math<T>::FloorToInt( T val )
+    auto Math<T>::FloorToInt( T val ) -> s32
     {
         return static_cast<s32>( std::floor( val ) );
     }
 
     template <>
-    s32 Math<s32>::Mod( s32 x, s32 y )
+    auto Math<s32>::Mod( s32 x, s32 y ) -> s32
     {
         return static_cast<s32>( std::fmod( static_cast<f32>( x ), static_cast<f32>( y ) ) );
     }
 
     template <class T>
-    T Math<T>::Mod( T x, T y )
+    auto Math<T>::Mod( T x, T y ) -> T
     {
         return static_cast<T>( std::fmod( x, y ) );
     }
 
     template <class T>
-    T Math<T>::Pow( T val, T powVal )
+    auto Math<T>::Pow( T val, T powVal ) -> T
     {
         return static_cast<T>( ::pow( val, powVal ) );
     }
 
     template <class T>
-    f32 Math<T>::roundToFloat( T value )
+    auto Math<T>::roundToFloat( T value ) -> f32
     {
         return static_cast<f32>( floor( static_cast<double>( value + T( 0.5 ) ) ) );
     }
 
     template <class T>
-    s32 Math<T>::roundToInt( T value )
+    auto Math<T>::roundToInt( T value ) -> s32
     {
         return static_cast<int>( floor( static_cast<double>( value + T( 0.5 ) ) ) );
     }
 
     template <class T>
-    T Math<T>::round( T value )
+    auto Math<T>::round( T value ) -> T
     {
         return static_cast<T>( floor( static_cast<double>( value + T( 0.5 ) ) ) );
     }
 
     template <class T>
-    T Math<T>::round( T value, u32 prec )
+    auto Math<T>::round( T value, u32 prec ) -> T
     {
         auto pow_10 = Math<T>::Pow( T( 10.0 ), static_cast<T>( prec ) );
         return Math<T>::round( value * pow_10 ) / pow_10;
@@ -739,7 +747,7 @@ namespace fb
     };
 
     template <class T>
-    T Math<T>::PerlinNoise( T x, T y )
+    auto Math<T>::PerlinNoise( T x, T y ) -> T
     {
         auto X = Math<T>::FloorToInt( x ) & 0xff;
         auto Y = Math<T>::FloorToInt( y ) & 0xff;
@@ -754,31 +762,31 @@ namespace fb
     }
 
     template <class T>
-    T Math<T>::Fade( T t )
+    auto Math<T>::Fade( T t ) -> T
     {
         return t * t * t * ( t * ( t * T( 6 ) - T( 15 ) ) + T( 10 ) );
     }
 
     template <class T>
-    T Math<T>::Lerp( T t, T a, T b )
+    auto Math<T>::Lerp( T t, T a, T b ) -> T
     {
         return a + t * ( b - a );
     }
 
     template <class T>
-    T Math<T>::Grad( int hash, T x )
+    auto Math<T>::Grad( int hash, T x ) -> T
     {
         return ( hash & 1 ) == 0 ? x : -x;
     }
 
     template <class T>
-    T Math<T>::Grad( int hash, T x, T y )
+    auto Math<T>::Grad( int hash, T x, T y ) -> T
     {
         return ( ( hash & 1 ) == 0 ? x : -x ) + ( ( hash & 2 ) == 0 ? y : -y );
     }
 
     template <class T>
-    T Math<T>::Grad( int hash, T x, T y, T z )
+    auto Math<T>::Grad( int hash, T x, T y, T z ) -> T
     {
         auto h = hash & 15;
         auto u = h < 8 ? x : y;
@@ -787,19 +795,19 @@ namespace fb
     }
 
     template <class T>
-    T Math<T>::deg_to_rad()
+    auto Math<T>::deg_to_rad() -> T
     {
         return Math<T>::pi() / T( 180.0 );
     }
 
     template <class T>
-    T Math<T>::rad_to_deg()
+    auto Math<T>::rad_to_deg() -> T
     {
         return T( 180.0 ) / Math<T>::pi();
     }
 
     template <class T>
-    const T Math<T>::clamp( const T value, const T low, const T high )
+    auto Math<T>::clamp( const T value, const T low, const T high ) -> const T
     {
 #if FB_USE_BOOST
         return boost::algorithm::clamp( value, low, high );

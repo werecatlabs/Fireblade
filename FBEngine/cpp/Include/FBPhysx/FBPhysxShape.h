@@ -27,34 +27,7 @@ namespace fb
             PhysxShape() = default;
             ~PhysxShape() override = default;
 
-            void unload( SmartPtr<ISharedObject> data )
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto physicsManager =
-                    fb::static_pointer_cast<PhysxManager>( applicationManager->getPhysicsManager() );
-                FB_ASSERT( physicsManager );
-
-                auto factoryManager = applicationManager->getFactoryManager();
-                FB_ASSERT( factoryManager );
-
-                auto physics = physicsManager->getPhysics();
-                FB_ASSERT( physics );
-
-                if( auto shape = getShape() )
-                {
-                    if( auto actor = getPxActor() )
-                    {
-                        actor->detachShape( *shape, false );
-                    }
-
-                    shape->release();
-                    setShape( nullptr );
-                }
-
-                PhysxSharedObject<T>::unload( data );
-            }
+            void unload( SmartPtr<ISharedObject> data );
 
             SmartPtr<IPhysicsMaterial3> getMaterial() const override
             {
@@ -112,16 +85,16 @@ namespace fb
                 return getShape() != nullptr;
             }
 
-            /** */
+            /** @copydoc IPhysicsShape::isTrigger */
             virtual bool isTrigger() const override
             {
                 return m_isTrigger;
             }
 
-            /** */
-            virtual void setTrigger( bool bIsTrigger ) override
+            /** @copydoc IPhysicsShape::setTrigger */
+            virtual void setTrigger( bool trigger ) override
             {
-                m_isTrigger = bIsTrigger;
+                m_isTrigger = trigger;
             }
 
             /** */
@@ -168,14 +141,14 @@ namespace fb
                 }
             }
 
-            SmartPtr<IStateContext> getStateObject() const
+            SmartPtr<IStateContext> getStateContext() const
             {
-                return m_stateObject;
+                return m_stateContext;
             }
 
-            void setStateObject( SmartPtr<IStateContext> stateObject )
+            void setStateContext( SmartPtr<IStateContext> stateContext )
             {
-                m_stateObject = stateObject;
+                m_stateContext = stateContext;
             }
 
             SmartPtr<IStateListener> getStateListener() const
@@ -212,6 +185,10 @@ namespace fb
             bool isValid() const override
             {
                 return true;
+            }
+
+            virtual void handleStateChanged( SmartPtr<IState> &state )
+            {
             }
 
             FB_CLASS_REGISTER_TEMPLATE_DECL( PhysxShape, T );
@@ -268,7 +245,7 @@ namespace fb
             SmartPtr<IPhysicsMaterial3> m_material;
             AtomicRawPtr<physx::PxShape> m_shape;
 
-            SmartPtr<IStateContext> m_stateObject;
+            SmartPtr<IStateContext> m_stateContext;
             SmartPtr<IStateListener> m_stateListener;
 
             physx::PxRigidActor *m_pxActor = nullptr;
@@ -277,9 +254,39 @@ namespace fb
         };
 
         template <class T>
+        void PhysxShape<T>::unload( SmartPtr<ISharedObject> data )
+            {
+                auto applicationManager = core::ApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto physicsManager =
+                    fb::static_pointer_cast<PhysxManager>( applicationManager->getPhysicsManager() );
+                FB_ASSERT( physicsManager );
+
+                auto factoryManager = applicationManager->getFactoryManager();
+                FB_ASSERT( factoryManager );
+
+                auto physics = physicsManager->getPhysics();
+                FB_ASSERT( physics );
+
+                if( auto shape = getShape() )
+                {
+                    if( auto actor = getPxActor() )
+                    {
+                        actor->detachShape( *shape, false );
+                    }
+
+                    shape->release();
+                    setShape( nullptr );
+                }
+
+                PhysxSharedObject<T>::unload( data );
+            }
+
+        template <class T>
         void PhysxShape<T>::setLocalPose( const Transform3<real_Num> &pose )
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
                 if( auto state = stateContext->template getStateByType<ShapeState>() )
                 {
@@ -291,7 +298,7 @@ namespace fb
         template <class T>
         Transform3<real_Num> PhysxShape<T>::getLocalPose() const
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
                 if( auto state = stateContext->template getStateByType<ShapeState>() )
                 {

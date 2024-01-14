@@ -26,11 +26,9 @@ namespace fb
         *this = other;
     }
 
-    Handle::~Handle()
-    {
-    }
+    Handle::~Handle() = default;
 
-    hash64 Handle::getHash() const
+    auto Handle::getHash() const -> hash64
     {
         return m_hash;
     }
@@ -40,7 +38,7 @@ namespace fb
         m_hash = hash;
     }
 
-    String Handle::getName() const
+    auto Handle::getName() const -> String
     {
         return m_name;
     }
@@ -51,7 +49,7 @@ namespace fb
         m_hash = StringUtil::getHash( name );
     }
 
-    String Handle::getUUID() const
+    auto Handle::getUUID() const -> String
     {
         return m_uuid;
     }
@@ -62,12 +60,12 @@ namespace fb
         m_uuid = uuid;
     }
 
-    bool Handle::operator==( const Handle &b )
+    auto Handle::operator==( const Handle &b ) -> bool
     {
         return m_hash == b.m_hash;
     }
 
-    u32 Handle::getId() const
+    auto Handle::getId() const -> u32
     {
         return m_id;
     }
@@ -82,7 +80,7 @@ namespace fb
         m_instanceId = instanceId;
     }
 
-    Handle &Handle::operator=( const Handle &other )
+    auto Handle::operator=( const Handle &other ) -> Handle &
     {
         m_id = other.m_id;
         m_instanceId = other.m_instanceId;
@@ -92,7 +90,7 @@ namespace fb
         return *this;
     }
 
-    String Handle::toString() const
+    auto Handle::toString() const -> String
     {
         std::stringstream stream;
         stream << "m_hash: " << m_hash << "\n";
@@ -100,7 +98,7 @@ namespace fb
         return stream.str().c_str();
     }
 
-    String Handle::getClassId() const
+    auto Handle::getClassId() const -> String
     {
         return m_classId;
     }
@@ -110,7 +108,7 @@ namespace fb
         m_classId = classId;
     }
 
-    String Handle::getFileId() const
+    auto Handle::getFileId() const -> String
     {
         return m_fileId;
     }

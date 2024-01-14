@@ -6,15 +6,11 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageTransform3, StateMessage );
 
-    StateMessageTransform3::StateMessageTransform3()
-    {
-    }
+    StateMessageTransform3::StateMessageTransform3() = default;
 
-    StateMessageTransform3::~StateMessageTransform3()
-    {
-    }
+    StateMessageTransform3::~StateMessageTransform3() = default;
 
-    Transform3<real_Num> StateMessageTransform3::getTransform() const
+    auto StateMessageTransform3::getTransform() const -> Transform3<real_Num>
     {
         return m_transform;
     }

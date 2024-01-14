@@ -22,6 +22,7 @@ namespace fb
             static LayoutTransform::VerticalAlignment getVerticalAlignment( const String &str );
             static String getVerticalAlignmentTypesString();
         };
+
     }  // namespace scene
 }  // end namespace fb
 

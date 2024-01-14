@@ -28,382 +28,438 @@
 #include "Terra/Hlms/OgreHlmsTerra.h"
 #include "Terra/TerraWorkspaceListener.h"
 
-namespace fb
+namespace fb::render
 {
-    namespace render
+    FB_CLASS_REGISTER_DERIVED( fb, Compositor, SharedGraphicsObject<ISharedObject> );
+
+    u32 Compositor::m_nameExt = 0;
+
+    Compositor::Compositor()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, Compositor, CSharedGraphicsObject<ISharedObject> );
-
-        u32 Compositor::m_nameExt = 0;
-
-        Compositor::Compositor()
+        if( auto handle = getHandle() )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto stateManager = applicationManager->getStateManager();
-            auto graphicsSystem = applicationManager->getGraphicsSystem();
-            auto factoryManager = applicationManager->getFactoryManager();
-
-            FB_ASSERT( stateManager );
-            FB_ASSERT( graphicsSystem );
-            FB_ASSERT( factoryManager );
-
-            auto stateObject = stateManager->addStateObject();
-            FB_ASSERT( stateObject );
-
-            setStateObject( stateObject );
-
-            auto stateListener = factoryManager->make_ptr<StateListener>();
-            stateListener->setOwner( this );
-            setStateListener( stateListener );
-            stateObject->addStateListener( stateListener );
-
-            auto state = factoryManager->make_ptr<CompositorState>();
-            state->setTaskId( Thread::Task::Render );
-            stateObject->setState( state );
-            stateObject->setOwner( this );
+            handle->setName( "Compositor" );
         }
 
-        Compositor::~Compositor()
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto stateManager = applicationManager->getStateManager();
+        auto graphicsSystem = applicationManager->getGraphicsSystem();
+        auto factoryManager = applicationManager->getFactoryManager();
+
+        FB_ASSERT( stateManager );
+        FB_ASSERT( graphicsSystem );
+        FB_ASSERT( factoryManager );
+
+        auto stateContext = stateManager->addStateObject();
+        FB_ASSERT( stateContext );
+
+        setStateContext( stateContext );
+
+        auto stateListener = factoryManager->make_ptr<StateListener>();
+        stateListener->setOwner( this );
+        setStateListener( stateListener );
+        stateContext->addStateListener( stateListener );
+
+        auto state = factoryManager->make_ptr<CompositorState>();
+        state->setTaskId( Thread::Task::Render );
+        stateContext->addState( state );
+        stateContext->setOwner( this );
+    }
+
+    Compositor::~Compositor()
+    {
+        unload( nullptr );
+        destroyStateContext();
+    }
+
+    void Compositor::load( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            unload( nullptr );
-            destroyStateContext();
-        }
-
-        void Compositor::load( SmartPtr<ISharedObject> data )
-        {
-            try
+            if( !isLoaded() )
             {
-                if( !isLoaded() )
-                {
-                    setLoadingState( LoadingState::Loading );
+                setLoadingState( LoadingState::Loading );
 
-                    auto applicationManager = core::IApplicationManager::instance();
-                    auto graphicsSystem = applicationManager->getGraphicsSystem();
+                auto applicationManager = core::ApplicationManager::instance();
+                auto graphicsSystem = applicationManager->getGraphicsSystem();
 
-                    ISharedObject::ScopedLock lock( graphicsSystem );
+                ISharedObject::ScopedLock lock( graphicsSystem );
 
-                    //m_compositorWorkspace = setupTestCompositor();
-                    m_compositorWorkspace = setupBasicCompositor();
-                    //m_compositorWorkspace = setupTerrainCompositor();
-
-                    setLoadingState( LoadingState::Loaded );
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void Compositor::reload( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-                setLoadingState( LoadingState::Unloading );
-
-                //m_compositorWorkspace = setupTestCompositor();
+                // m_compositorWorkspace = setupTestCompositor();
                 m_compositorWorkspace = setupBasicCompositor();
                 //m_compositorWorkspace = setupTerrainCompositor();
 
+                auto enabled = isEnabled();
+                setupEnabled( enabled );
+
                 setLoadingState( LoadingState::Loaded );
             }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
         }
-
-        void Compositor::unload( SmartPtr<ISharedObject> data )
+        catch( std::exception &e )
         {
-            try
-            {
-                setSceneManager( nullptr );
-                setCamera( nullptr );
-                setWindow( nullptr );
-
-                destroyStateContext();
-
-                if( isLoaded() )
-                {
-                    setLoadingState( LoadingState::Unloading );
-
-                    auto applicationManager = core::IApplicationManager::instance();
-                    auto graphicsSystem = applicationManager->getGraphicsSystem();
-
-                    ISharedObject::ScopedLock lock( graphicsSystem );
-
-                    auto root = Ogre::Root::getSingletonPtr();
-                    auto pCompositorManager = root->getCompositorManager2();
-
-                    if( m_compositorWorkspace )
-                    {
-                        pCompositorManager->removeWorkspace( m_compositorWorkspace );
-                        m_compositorWorkspace = nullptr;
-                    }
-
-                    CSharedGraphicsObject<ISharedObject>::unload( data );
-                    setLoadingState( LoadingState::Unloaded );
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        void Compositor::setEnabled( bool enabled )
+    void Compositor::reload( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            if( auto stateContext = getStateObject() )
-            {
-                if( auto state = stateContext->getStateByType<CompositorState>() )
-                {
-                    state->setEnabled( enabled );
-                }
-            }
+            setLoadingState( LoadingState::Unloading );
+
+            //m_compositorWorkspace = setupTestCompositor();
+            m_compositorWorkspace = setupBasicCompositor();
+            //m_compositorWorkspace = setupTerrainCompositor();
+
+            setLoadingState( LoadingState::Loaded );
         }
-
-        void Compositor::stopCompositor()
+        catch( std::exception &e )
         {
-            FB_ASSERT( Thread::getCurrentTask() == Thread::Task::Render );
-
-            if( m_compositorWorkspace )
-                m_compositorWorkspace->removeListener( mTerraWorkspaceListener );
-
-            delete mTerraWorkspaceListener;
-            mTerraWorkspaceListener = 0;
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        bool Compositor::setupEnabled( bool enabled )
+    void Compositor::unload( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            try
+            setSceneManager( nullptr );
+            setCamera( nullptr );
+            setWindow( nullptr );
+
+            destroyStateContext();
+
+            if( isLoaded() )
             {
-                FB_ASSERT( Thread::getCurrentTask() == Thread::Task::Render );
+                setLoadingState( LoadingState::Unloading );
 
-                auto applicationManager = core::IApplicationManager::instance();
-
-                auto pGraphicsSystem = applicationManager->getGraphicsSystem();
-                auto graphicsSystem =
-                    fb::static_pointer_cast<CGraphicsSystemOgreNext>( pGraphicsSystem );
+                auto applicationManager = core::ApplicationManager::instance();
+                auto graphicsSystem = applicationManager->getGraphicsSystem();
 
                 ISharedObject::ScopedLock lock( graphicsSystem );
 
                 auto root = Ogre::Root::getSingletonPtr();
-                auto *pOgreCompositorManager = root->getCompositorManager2();
+                auto pCompositorManager = root->getCompositorManager2();
 
-                if( enabled )
+                if( m_compositorWorkspace )
                 {
-                    if( !m_compositorWorkspace )
+                    pCompositorManager->removeWorkspace( m_compositorWorkspace );
+                    m_compositorWorkspace = nullptr;
+                }
+
+                SharedGraphicsObject<ISharedObject>::unload( data );
+                setLoadingState( LoadingState::Unloaded );
+            }
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void Compositor::setEnabled( bool enabled )
+    {
+        if( auto stateContext = getStateContext() )
+        {
+            if( auto state = stateContext->getStateByType<CompositorState>() )
+            {
+                state->setEnabled( enabled );
+            }
+        }
+    }
+
+    void Compositor::stopCompositor()
+    {
+        FB_ASSERT( Thread::getCurrentTask() == Thread::Task::Render );
+
+        if( m_compositorWorkspace )
+        {
+            m_compositorWorkspace->removeListener( mTerraWorkspaceListener );
+        }
+
+        delete mTerraWorkspaceListener;
+        mTerraWorkspaceListener = nullptr;
+    }
+
+    auto Compositor::setupEnabled( bool enabled ) -> bool
+    {
+        try
+        {
+            //FB_ASSERT( Thread::getCurrentTask() == Thread::Task::Render );
+
+            auto applicationManager = core::ApplicationManager::instance();
+
+            auto pGraphicsSystem = applicationManager->getGraphicsSystem();
+            auto graphicsSystem = fb::static_pointer_cast<CGraphicsSystemOgreNext>( pGraphicsSystem );
+
+            ISharedObject::ScopedLock lock( graphicsSystem );
+
+            auto root = Ogre::Root::getSingletonPtr();
+            auto *pOgreCompositorManager = root->getCompositorManager2();
+
+            if( enabled )
+            {
+                if( !m_compositorWorkspace )
+                {
+                    //if( StringUtil::isNullOrEmpty( m_workspaceName ) )
+                    //{
+                    //    setupTestCompositor();
+                    //    //setupTerrainCompositor();
+                    //}
+
+                    auto compositorManager = graphicsSystem->getCompositorManager();
+
+                    auto pCamera = getCamera();
+
+                    auto viewport = pCamera->getViewport();
+
+                    auto pSceneManager =
+                        fb::dynamic_pointer_cast<CSceneManagerOgreNext>( getSceneManager() );
+                    auto ogreCamera = fb::dynamic_pointer_cast<CCameraOgreNext>( pCamera );
+                    auto ogreWindow = fb::dynamic_pointer_cast<CWindowOgreNext>( getWindow() );
+
+                    auto sceneManager = pSceneManager->getSceneManager();
+                    auto renderWindow = ogreWindow->getWindow();
+                    auto camera = ogreCamera->getCamera();
+
+                    SmartPtr<CTextureOgreNext> targetTexture;
+                    if( camera )
                     {
-                        //if( StringUtil::isNullOrEmpty( m_workspaceName ) )
-                        //{
-                        //    setupTestCompositor();
-                        //    //setupTerrainCompositor();
-                        //}
+                        targetTexture = ogreCamera->getEditorTexture();
+                    }
 
-                        auto compositorManager = graphicsSystem->getCompositorManager();
+                    if( !targetTexture )
+                    {
+                        targetTexture = ogreCamera->getTargetTexture();
+                    }
 
-                        auto pCamera = getCamera();
+                    auto workspaceName = getWorkspaceName();
+                    if( StringUtil::isNullOrEmpty( workspaceName ) )
+                    {
+                        workspaceName = StringUtil::getUUID();
+                    }
 
-                        auto viewport = pCamera->getViewport();
-
-                        auto pSceneManager =
-                            fb::dynamic_pointer_cast<CSceneManagerOgreNext>( getSceneManager() );
-                        auto ogreCamera = fb::dynamic_pointer_cast<CCameraOgreNext>( pCamera );
-                        auto ogreWindow = fb::dynamic_pointer_cast<CWindowOgreNext>( getWindow() );
-
-                        auto sceneManager = pSceneManager->getSceneManager();
-                        auto renderWindow = ogreWindow->getWindow();
-                        auto camera = ogreCamera->getCamera();
-
-                        auto root = Ogre::Root::getSingletonPtr();
-                        auto *pOgreCompositorManager = root->getCompositorManager2();
-
-                        SmartPtr<CTextureOgreNext> targetTexture;
-                        if( camera )
+                    if( targetTexture )
+                    {
+                        if( targetTexture->isLoaded() )
                         {
-                            targetTexture = ogreCamera->getEditorTexture();
-                        }
-
-                        if( !targetTexture )
-                        {
-                            targetTexture = ogreCamera->getTargetTexture();
-                        }
-
-                        auto workspaceName = getWorkspaceName();
-                        if( StringUtil::isNullOrEmpty( workspaceName ) )
-                        {
-                            workspaceName = StringUtil::getUUID();
-                        }
-
-                        if( targetTexture )
-                        {
-                            if( targetTexture->isLoaded() )
+                            auto texture = targetTexture->getTexture();
+                            if( texture )
                             {
-                                auto texture = targetTexture->getTexture();
-                                if( texture )
-                                {
-                                    m_compositorWorkspace = pOgreCompositorManager->addWorkspace(
-                                        sceneManager, texture, camera, workspaceName, true );
-                                    FB_ASSERT( m_compositorWorkspace );
-                                }
-                                else
-                                {
-                                    FB_LOG_ERROR( "Compositor::setEnabled: Texture null." );
-
-                                    auto w = pOgreCompositorManager->addWorkspace(
-                                        sceneManager, renderWindow->getTexture(), camera, workspaceName,
-                                        true );
-                                    m_compositorWorkspace = w;
-                                    FB_ASSERT( m_compositorWorkspace );
-                                }
-
-                                return true;
+                                m_compositorWorkspace = pOgreCompositorManager->addWorkspace(
+                                    sceneManager, texture, camera, workspaceName, true );
+                                FB_ASSERT( m_compositorWorkspace );
                             }
-                        }
-                        else
-                        {
-                            auto w = pOgreCompositorManager->addWorkspace(
-                                sceneManager, renderWindow->getTexture(), camera, workspaceName, true );
-                            m_compositorWorkspace = w;
-                            FB_ASSERT( m_compositorWorkspace );
+                            else
+                            {
+                                FB_LOG_ERROR( "Compositor::setEnabled: Texture null." );
+
+                                auto w = pOgreCompositorManager->addWorkspace(
+                                    sceneManager, renderWindow->getTexture(), camera, workspaceName,
+                                    true );
+                                m_compositorWorkspace = w;
+                                FB_ASSERT( m_compositorWorkspace );
+                            }
 
                             return true;
                         }
                     }
+                    else
+                    {
+                        auto w = pOgreCompositorManager->addWorkspace(
+                            sceneManager, renderWindow->getTexture(), camera, workspaceName, true );
+                        m_compositorWorkspace = w;
+                        FB_ASSERT( m_compositorWorkspace );
+
+                        return true;
+                    }
                 }
                 else
                 {
-                    if( m_compositorWorkspace )
-                    {
-                        pOgreCompositorManager->removeWorkspace( m_compositorWorkspace );
-
-                        m_compositorWorkspace = nullptr;
-                    }
-
+                    //m_scenePassDef->mVisibilityMask = Ogre::VisibilityFlags::RESERVED_VISIBILITY_FLAGS;
+                    m_compositorWorkspace->setEnabled( true );
                     return true;
                 }
-
-                return false;
             }
-            catch( std::exception &e )
+            else
             {
-                FB_LOG_EXCEPTION( e );
-            }
-
-            return false;
-        }
-
-        bool Compositor::isEnabled() const
-        {
-            if( auto stateContext = getStateObject() )
-            {
-                if( auto state = stateContext->getStateByType<CompositorState>() )
+                if( m_compositorWorkspace )
                 {
-                    return state->isEnabled();
+                    //m_scenePassDef->mVisibilityMask = 0;
+                    m_compositorWorkspace->setEnabled( false );
+                    //pOgreCompositorManager->removeWorkspace( m_compositorWorkspace );
+
+                    //m_compositorWorkspace = nullptr;
                 }
+
+                if( m_compositorWorkspace )
+                {
+                    pOgreCompositorManager->removeWorkspace( m_compositorWorkspace );
+                    m_compositorWorkspace = nullptr;
+                }
+
+                return true;
             }
 
             return false;
         }
-
-        Ogre::CompositorWorkspace *Compositor::getCompositorWorkspace() const
+        catch( std::exception &e )
         {
-            return m_compositorWorkspace;
+            FB_LOG_EXCEPTION( e );
         }
 
-        void Compositor::setCompositorWorkspace( Ogre::CompositorWorkspace *compositorWorkspace )
+        return false;
+    }
+
+    auto Compositor::isEnabled() const -> bool
+    {
+        if( auto stateContext = getStateContext() )
         {
-            m_compositorWorkspace = compositorWorkspace;
+            if( auto state = stateContext->getStateByType<CompositorState>() )
+            {
+                return state->isEnabled();
+            }
         }
 
-        SmartPtr<IGraphicsScene> Compositor::getSceneManager() const
+        return false;
+    }
+
+    auto Compositor::getCompositorWorkspace() const -> Ogre::CompositorWorkspace *
+    {
+        return m_compositorWorkspace;
+    }
+
+    void Compositor::setCompositorWorkspace( Ogre::CompositorWorkspace *compositorWorkspace )
+    {
+        m_compositorWorkspace = compositorWorkspace;
+    }
+
+    auto Compositor::getSceneManager() const -> SmartPtr<IGraphicsScene>
+    {
+        auto p = m_sceneManager.load();
+        return p.lock();
+    }
+
+    void Compositor::setSceneManager( SmartPtr<IGraphicsScene> sceneManager )
+    {
+        m_sceneManager = sceneManager;
+    }
+
+    auto Compositor::getWindow() const -> SmartPtr<IWindow>
+    {
+        auto p = m_window.load();
+        return p.lock();
+    }
+
+    void Compositor::setWindow( SmartPtr<IWindow> window )
+    {
+        m_window = window;
+    }
+
+    auto Compositor::getCamera() const -> SmartPtr<ICamera>
+    {
+        auto p = m_camera.load();
+        return p.lock();
+    }
+
+    void Compositor::setCamera( SmartPtr<ICamera> camera )
+    {
+        m_camera = camera;
+    }
+
+    auto Compositor::getWorkspaceName() const -> String
+    {
+        return m_workspaceName;
+    }
+
+    void Compositor::setWorkspaceName( const String &workspaceName )
+    {
+        m_workspaceName = workspaceName;
+    }
+
+    auto Compositor::setupTestCompositor() -> Ogre::CompositorWorkspace *
+    {
+        FB_ASSERT( Thread::getCurrentTask() == Thread::Task::Render );
+
+        auto applicationManager = core::ApplicationManager::instance();
+        auto graphicsSystem =
+            fb::static_pointer_cast<CGraphicsSystemOgreNext>( applicationManager->getGraphicsSystem() );
+        auto pCompositorManager =
+            fb::static_pointer_cast<CompositorManager>( graphicsSystem->getCompositorManager() );
+
+        auto pCamera = getCamera();
+
+        auto pSceneManager = fb::dynamic_pointer_cast<CSceneManagerOgreNext>( getSceneManager() );
+        auto ogreCamera = fb::dynamic_pointer_cast<CCameraOgreNext>( pCamera );
+        auto ogreWindow = fb::dynamic_pointer_cast<CWindowOgreNext>( getWindow() );
+
+        auto sceneManager = pSceneManager->getSceneManager();
+        auto renderWindow = ogreWindow->getWindow();
+        auto camera = ogreCamera->getCamera();
+
+        using namespace Ogre;
+
+        // Setup a basic compositor with a blue clear colour
+        auto root = Root::getSingletonPtr();
+        auto compositorManager = root->getCompositorManager2();
+
+        auto workspaceName = getWorkspaceName();
+        const ColourValue backgroundColour( 0.2f, 0.4f, 0.6f );
+        //compositorManager->createBasicWorkspaceDef( workspaceName, backgroundColour, IdString("MainShadowNode") );
+        return compositorManager->addWorkspace( sceneManager, renderWindow->getTexture(), camera,
+                                                "PbsMaterialsWorkspace", true );
+    }
+
+    auto Compositor::getProperties() const -> fb::SmartPtr<fb::Properties>
+    {
+        auto properties = SharedGraphicsObject<ISharedObject>::getProperties();
+
+        if( auto stateContext = getStateContext() )
         {
-            auto p = m_sceneManager.load();
-            return p.lock();
+            if( auto state = stateContext->getStateByType<CompositorState>() )
+            {
+                properties->setProperty( "isEnabled", state->isEnabled() );
+            }
         }
 
-        void Compositor::setSceneManager( SmartPtr<IGraphicsScene> sceneManager )
+        return properties;
+    }
+
+    void Compositor::setProperties( SmartPtr<Properties> properties )
+    {
+        if( auto stateContext = getStateContext() )
         {
-            m_sceneManager = sceneManager;
+            if( auto state = stateContext->getStateByType<CompositorState>() )
+            {
+                bool enabled = false;
+                properties->getPropertyValue( "isEnabled", enabled );
+
+                setEnabled( enabled );
+            }
         }
+    }
 
-        SmartPtr<IWindow> Compositor::getWindow() const
-        {
-            auto p = m_window.load();
-            return p.lock();
-        }
+    auto Compositor::getChildObjects() const -> fb::Array<fb::SmartPtr<fb::ISharedObject>>
+    {
+        auto objects = SharedGraphicsObject<ISharedObject>::getChildObjects();
+        //objects.push_back( getCamera() );
+        objects.emplace_back( getWindow() );
+        objects.emplace_back( getSceneManager() );
+        return objects;
+    }
 
-        void Compositor::setWindow( SmartPtr<IWindow> window )
-        {
-            m_window = window;
-        }
-
-        SmartPtr<ICamera> Compositor::getCamera() const
-        {
-            auto p = m_camera.load();
-            return p.lock();
-        }
-
-        void Compositor::setCamera( SmartPtr<ICamera> camera )
-        {
-            m_camera = camera;
-        }
-
-        String Compositor::getWorkspaceName() const
-        {
-            return m_workspaceName;
-        }
-
-        void Compositor::setWorkspaceName( const String &workspaceName )
-        {
-            m_workspaceName = workspaceName;
-        }
-
-        Ogre::CompositorWorkspace *Compositor::setupTestCompositor()
-        {
-            FB_ASSERT( Thread::getCurrentTask() == Thread::Task::Render );
-
-            auto applicationManager = core::IApplicationManager::instance();
-            auto graphicsSystem = fb::static_pointer_cast<CGraphicsSystemOgreNext>(
-                applicationManager->getGraphicsSystem() );
-            auto pCompositorManager =
-                fb::static_pointer_cast<CompositorManager>( graphicsSystem->getCompositorManager() );
-
-            auto pCamera = getCamera();
-
-            auto pSceneManager = fb::dynamic_pointer_cast<CSceneManagerOgreNext>( getSceneManager() );
-            auto ogreCamera = fb::dynamic_pointer_cast<CCameraOgreNext>( pCamera );
-            auto ogreWindow = fb::dynamic_pointer_cast<CWindowOgreNext>( getWindow() );
-
-            auto sceneManager = pSceneManager->getSceneManager();
-            auto renderWindow = ogreWindow->getWindow();
-            auto camera = ogreCamera->getCamera();
-
-            using namespace Ogre;
-
-            // Setup a basic compositor with a blue clear colour
-            auto root = Root::getSingletonPtr();
-            auto compositorManager = root->getCompositorManager2();
-
-            auto workspaceName = getWorkspaceName();
-            const ColourValue backgroundColour( 0.2f, 0.4f, 0.6f );
-            compositorManager->createBasicWorkspaceDef( workspaceName, backgroundColour, IdString() );
-            return compositorManager->addWorkspace( sceneManager, renderWindow->getTexture(), camera,
-                                                    workspaceName, true );
-        }
-
-        Ogre::CompositorWorkspace *Compositor::setupBasicCompositor()
-        {
-            //FB_ASSERT(Thread::getCurrentTask() == Thread::Task::Render);
+    auto Compositor::setupBasicCompositor() -> Ogre::CompositorWorkspace *
+    {
+        //FB_ASSERT(Thread::getCurrentTask() == Thread::Task::Render);
 
 #if 0
 			using namespace Ogre;
 			auto root = Ogre::Root::getSingletonPtr();
 			auto compositorManager = root->getCompositorManager2();
 
-			auto applicationManager = core::IApplicationManager::instance();
+			auto applicationManager = core::ApplicationManager::instance();
 			auto graphicsSystem = fb::static_pointer_cast<CGraphicsSystemOgreNext>(applicationManager->getGraphicsSystem());
 			auto pCompositorManager = fb::static_pointer_cast<CCompositorManager>(graphicsSystem->getCompositorManager());
 
@@ -490,330 +546,335 @@ namespace fb
 			return w;
 
 #elif 1
-            using namespace Ogre;
+        using namespace Ogre;
 
-            auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
 
-            auto pGraphicsSystem = applicationManager->getGraphicsSystem();
-            auto graphicsSystem = fb::static_pointer_cast<CGraphicsSystemOgreNext>( pGraphicsSystem );
+        auto pGraphicsSystem = applicationManager->getGraphicsSystem();
+        auto graphicsSystem = fb::static_pointer_cast<CGraphicsSystemOgreNext>( pGraphicsSystem );
 
-            auto compositorManager = graphicsSystem->getCompositorManager();
+        auto compositorManager = graphicsSystem->getCompositorManager();
 
-            auto pCamera = getCamera();
+        auto pCamera = getCamera();
 
-            auto viewport = pCamera->getViewport();
+        auto viewport = pCamera->getViewport();
 
-            auto renderScene = true;
-            auto showOverlays = true;
-            auto showUI = true;
-            auto bgColour = ColourF::Blue;
+        auto renderScene = true;
+        auto showOverlays = true;
+        auto showUI = true;
+        auto bgColour = ColourF::Blue;
+        auto mask = Ogre::VisibilityFlags::RESERVED_VISIBILITY_FLAGS;
 
-            if( viewport )
-            {
-                renderScene = viewport->getEnableSceneRender();
-                showOverlays = viewport->getOverlaysEnabled();
-                showUI = viewport->getEnableUI();
-                bgColour = viewport->getBackgroundColour();
-            }
+        if( viewport )
+        {
+            renderScene = viewport->getEnableSceneRender();
+            showOverlays = viewport->getOverlaysEnabled();
+            showUI = viewport->getEnableUI();
+            bgColour = viewport->getBackgroundColour();
+            mask = viewport->getVisibilityMask();
+        }
 
-            auto pSceneManager = fb::dynamic_pointer_cast<CSceneManagerOgreNext>( getSceneManager() );
-            auto ogreCamera = fb::dynamic_pointer_cast<CCameraOgreNext>( pCamera );
-            auto ogreWindow = fb::dynamic_pointer_cast<CWindowOgreNext>( getWindow() );
+        auto pSceneManager = fb::dynamic_pointer_cast<CSceneManagerOgreNext>( getSceneManager() );
+        auto ogreCamera = fb::dynamic_pointer_cast<CCameraOgreNext>( pCamera );
+        auto ogreWindow = fb::dynamic_pointer_cast<CWindowOgreNext>( getWindow() );
 
-            auto sceneManager = pSceneManager->getSceneManager();
-            auto renderWindow = ogreWindow->getWindow();
-            auto camera = ogreCamera->getCamera();
+        auto sceneManager = pSceneManager->getSceneManager();
+        auto renderWindow = ogreWindow->getWindow();
+        auto camera = ogreCamera->getCamera();
 
-            //// Setup a basic compositor with a blue clear colour
-            auto root = Root::getSingletonPtr();
-            auto *pOgreCompositorManager = root->getCompositorManager2();
-            auto workspaceName = getWorkspaceName();
+        //// Setup a basic compositor with a blue clear colour
+        auto root = Root::getSingletonPtr();
+        auto *pOgreCompositorManager = root->getCompositorManager2();
+        auto workspaceName = getWorkspaceName();
 
-            const ColourValue backgroundColour( bgColour.r, bgColour.g, bgColour.b );
+        const ColourValue backgroundColour( bgColour.r, bgColour.g, bgColour.b );
 
-            auto shadowNodeName = IdString();
+        auto shadowNodeName = IdString( "MainShadowNode" );
 
 #    if 0
 			pOgreCompositorManager->createBasicWorkspaceDef(workspaceName, backgroundColour, shadowNodeName);
 #    else
-            CompositorNodeDef *nodeDef = pOgreCompositorManager->addNodeDefinition(
-                "AutoGen " + IdString( workspaceName + "/Node" ).getReleaseText() );
+        CompositorNodeDef *nodeDef = pOgreCompositorManager->addNodeDefinition(
+            "AutoGen " + IdString( workspaceName + "/Node" ).getReleaseText() );
 
-            SmartPtr<CTextureOgreNext> targetTexture;
-            if( camera )
+        SmartPtr<CTextureOgreNext> targetTexture;
+        if( camera )
+        {
+            targetTexture = ogreCamera->getEditorTexture();
+        }
+
+        // Input texture
+        nodeDef->addTextureSourceName( "WindowRT", 0, TextureDefinitionBase::TEXTURE_INPUT );
+
+        nodeDef->setNumTargetPass( 1 );
+        {
+            CompositorTargetDef *targetDef = nodeDef->addTargetPass( "WindowRT" );
+            targetDef->setNumPasses( 2 );
+
             {
-                targetTexture = ogreCamera->getEditorTexture();
-            }
-
-            // Input texture
-            nodeDef->addTextureSourceName( "WindowRT", 0, TextureDefinitionBase::TEXTURE_INPUT );
-
-            nodeDef->setNumTargetPass( 1 );
-            {
-                CompositorTargetDef *targetDef = nodeDef->addTargetPass( "WindowRT" );
-                targetDef->setNumPasses( 2 );
-
                 {
-                    {
-                        auto passScene =
-                            static_cast<CompositorPassSceneDef *>( targetDef->addPass( PASS_SCENE ) );
-                        passScene->mShadowNode = shadowNodeName;
-                        passScene->setAllClearColours( backgroundColour );
-                        passScene->setAllLoadActions( LoadAction::Clear );
-                        passScene->mStoreActionDepth = StoreAction::DontCare;
-                        passScene->mStoreActionStencil = StoreAction::DontCare;
-                        passScene->mIncludeOverlays = showOverlays;
+                    auto passScene =
+                        static_cast<CompositorPassSceneDef *>( targetDef->addPass( PASS_SCENE ) );
+                    passScene->mShadowNode = shadowNodeName;
+                    passScene->setAllClearColours( backgroundColour );
+                    passScene->setAllLoadActions( LoadAction::Clear );
+                    passScene->mStoreActionDepth = StoreAction::DontCare;
+                    passScene->mStoreActionStencil = StoreAction::DontCare;
+                    passScene->mIncludeOverlays = showOverlays;
 
-                        if( !renderScene )
-                        {
-                            passScene->mVisibilityMask = 0;
-                        }
+                    if( !renderScene )
+                    {
+                        passScene->mVisibilityMask = 0;
                     }
+                    //else
+                    //{
+                    //    passScene->mVisibilityMask = mask;
+                    //}
 
-                    if( renderScene )
+                    m_scenePassDef = passScene;
+                }
+
+                if( renderScene )
+                {
+                    auto passProvider = pOgreCompositorManager->getCompositorPassProvider();
+                    if( passProvider )
                     {
-                        auto passProvider = pOgreCompositorManager->getCompositorPassProvider();
-                        if( passProvider )
-                        {
-                            auto uiNodeName = String( "scene_gui" );
-                            auto passScene = targetDef->addPass( PASS_CUSTOM, IdString( uiNodeName ) );
-                        }
+                        auto uiNodeName = String( "scene_gui" );
+                        auto passScene = targetDef->addPass( PASS_CUSTOM, IdString( uiNodeName ) );
                     }
+                }
 
-                    if( showUI )
+                if( showUI )
+                {
+                    auto passProvider = pOgreCompositorManager->getCompositorPassProvider();
+                    if( passProvider )
                     {
-                        auto passProvider = pOgreCompositorManager->getCompositorPassProvider();
-                        if( passProvider )
-                        {
-                            auto uiNodeName = String( "app_gui" );
-                            auto passScene = targetDef->addPass( PASS_CUSTOM, IdString( uiNodeName ) );
-                        }
+                        auto uiNodeName = String( "app_gui" );
+                        auto passScene = targetDef->addPass( PASS_CUSTOM, IdString( uiNodeName ) );
                     }
                 }
             }
+        }
 
-            CompositorWorkspaceDef *workDef =
-                pOgreCompositorManager->addWorkspaceDefinition( workspaceName );
-            workDef->connectExternal( 0, nodeDef->getName(), 0 );
+        CompositorWorkspaceDef *workDef =
+            pOgreCompositorManager->addWorkspaceDefinition( workspaceName );
+        workDef->connectExternal( 0, nodeDef->getName(), 0 );
 #    endif
 
-            return nullptr;
+        return nullptr;
 
-            //setupEnabled( true );
-            //return m_compositorWorkspace;
+        //setupEnabled( true );
+        //return m_compositorWorkspace;
 
 #elif 0
-            using namespace Ogre;
+        using namespace Ogre;
 
-            auto applicationManager = core::IApplicationManager::instance();
-            auto graphicsSystem = fb::static_pointer_cast<CGraphicsSystemOgreNext>(
-                applicationManager->getGraphicsSystem() );
-            auto compositorManager =
-                fb::static_pointer_cast<CompositorManager>( graphicsSystem->getCompositorManager() );
+        auto applicationManager = core::ApplicationManager::instance();
+        auto graphicsSystem =
+            fb::static_pointer_cast<CGraphicsSystemOgreNext>( applicationManager->getGraphicsSystem() );
+        auto compositorManager =
+            fb::static_pointer_cast<CompositorManager>( graphicsSystem->getCompositorManager() );
 
-            auto pSceneManager = fb::dynamic_pointer_cast<CSceneManagerOgreNext>( getSceneManager() );
-            auto ogreCamera = fb::dynamic_pointer_cast<CCameraOgreNext>( getCamera() );
-            auto ogreWindow = fb::dynamic_pointer_cast<CWindowOgreNext>( getWindow() );
+        auto pSceneManager = fb::dynamic_pointer_cast<CSceneManagerOgreNext>( getSceneManager() );
+        auto ogreCamera = fb::dynamic_pointer_cast<CCameraOgreNext>( getCamera() );
+        auto ogreWindow = fb::dynamic_pointer_cast<CWindowOgreNext>( getWindow() );
 
-            auto sceneManager = pSceneManager->getSceneManager();
-            auto renderWindow = ogreWindow->getWindow();
-            auto camera = ogreCamera->getCamera();
+        auto sceneManager = pSceneManager->getSceneManager();
+        auto renderWindow = ogreWindow->getWindow();
+        auto camera = ogreCamera->getCamera();
 
-            //// Setup a basic compositor with a blue clear colour
-            auto root = Ogre::Root::getSingletonPtr();
-            Ogre::CompositorManager2 *pCompositorManager = root->getCompositorManager2();
-            const Ogre::ColourValue backgroundColour( 0.2f, 0.4f, 0.6f );
+        //// Setup a basic compositor with a blue clear colour
+        auto root = Ogre::Root::getSingletonPtr();
+        Ogre::CompositorManager2 *pCompositorManager = root->getCompositorManager2();
+        const Ogre::ColourValue backgroundColour( 0.2f, 0.4f, 0.6f );
 
-            auto workspaceName = "ui";
-            auto workspaceDefinition = pCompositorManager->addWorkspaceDefinition( workspaceName );
+        auto workspaceName = "ui";
+        auto workspaceDefinition = pCompositorManager->addWorkspaceDefinition( workspaceName );
 
-            auto uiNodeName = String( "colibri_gui" );
-            CompositorNodeDef *uiDef = pCompositorManager->addNodeDefinition( uiNodeName );
-            uiDef->addTextureSourceName( "rt_output", 0, TextureDefinitionBase::TEXTURE_INPUT );
+        auto uiNodeName = String( "colibri_gui" );
+        CompositorNodeDef *uiDef = pCompositorManager->addNodeDefinition( uiNodeName );
+        uiDef->addTextureSourceName( "rt_output", 0, TextureDefinitionBase::TEXTURE_INPUT );
 
-            uiDef->setNumTargetPass( 1 );
+        uiDef->setNumTargetPass( 1 );
 
-            auto uiTargetDef = uiDef->addTargetPass( "rt_output" );
-            uiTargetDef->setNumPasses( 1 );
+        auto uiTargetDef = uiDef->addTargetPass( "rt_output" );
+        uiTargetDef->setNumPasses( 1 );
 
-            CompositorPassDef *renderPass =
-                uiTargetDef->addPass( Ogre::CompositorPassType::PASS_SCENE, IdString( "render_scene" ) );
-            renderPass->setAllClearColours( backgroundColour );
+        CompositorPassDef *renderPass =
+            uiTargetDef->addPass( Ogre::CompositorPassType::PASS_SCENE, IdString( "render_scene" ) );
+        renderPass->setAllClearColours( backgroundColour );
 
-            uiDef->setNumOutputChannels( 1 );
-            uiDef->mapOutputChannel( 0, "rt_output" );
+        uiDef->setNumOutputChannels( 1 );
+        uiDef->mapOutputChannel( 0, "rt_output" );
 
-            SmartPtr<CTextureOgreNext> targetTexture;
-            if( camera )
+        SmartPtr<CTextureOgreNext> targetTexture;
+        if( camera )
+        {
+            targetTexture = ogreCamera->getTargetTexture();
+        }
+
+        if( targetTexture )
+        {
+            auto texture = targetTexture->getTexture();
+            return pCompositorManager->addWorkspace( sceneManager, texture, camera, workspaceName,
+                                                     true );
+        }
+        else
+        {
+            auto finalComposition = pCompositorManager->getNodeDefinition( "FinalComposition" );
+            if( finalComposition )
             {
-                targetTexture = ogreCamera->getTargetTexture();
+                // workspaceDef->connect("colibri_gui", "FinalComposition");
+                // auto uiDef = finalComposition->addTargetPass("colibri_gui");
             }
 
-            if( targetTexture )
+            // auto workDef = pCompositorManager->addWorkspaceDefinition(workspaceName);
+            // if (workDef)
             {
-                auto texture = targetTexture->getTexture();
-                return pCompositorManager->addWorkspace( sceneManager, texture, camera, workspaceName,
-                                                         true );
+                // workspaceDefinition->connectExternal(0, "FinalComposition", 0);
+                // workspaceDef->connect()
+                // workspaceDefinition->connectExternal(0, uiNodeName, 0);
+                workspaceDefinition->connectExternal( 0, uiNodeName, 0 );
             }
-            else
-            {
-                auto finalComposition = pCompositorManager->getNodeDefinition( "FinalComposition" );
-                if( finalComposition )
-                {
-                    // workspaceDef->connect("colibri_gui", "FinalComposition");
-                    // auto uiDef = finalComposition->addTargetPass("colibri_gui");
-                }
 
-                // auto workDef = pCompositorManager->addWorkspaceDefinition(workspaceName);
-                // if (workDef)
-                {
-                    // workspaceDefinition->connectExternal(0, "FinalComposition", 0);
-                    // workspaceDef->connect()
-                    // workspaceDefinition->connectExternal(0, uiNodeName, 0);
-                    workspaceDefinition->connectExternal( 0, uiNodeName, 0 );
-                }
-
-                auto w = pCompositorManager->addWorkspace( sceneManager, renderWindow->getTexture(),
-                                                           camera, workspaceName, true );
-                w->reconnectAllNodes();
-                return w;
-            }
+            auto w = pCompositorManager->addWorkspace( sceneManager, renderWindow->getTexture(), camera,
+                                                       workspaceName, true );
+            w->reconnectAllNodes();
+            return w;
+        }
 #endif
-        }
+    }
 
-        Ogre::CompositorWorkspace *Compositor::setupTerrainCompositor()
+    auto Compositor::setupTerrainCompositor() -> Ogre::CompositorWorkspace *
+    {
+        FB_ASSERT( Thread::getCurrentTask() == Thread::Task::Render );
+
+        using namespace Ogre;
+
+        auto applicationManager = core::ApplicationManager::instance();
+        auto graphicsSystem =
+            fb::static_pointer_cast<CGraphicsSystemOgreNext>( applicationManager->getGraphicsSystem() );
+
+        auto compositorManager =
+            fb::static_pointer_cast<CompositorManager>( graphicsSystem->getCompositorManager() );
+        auto pSceneManager = fb::dynamic_pointer_cast<CSceneManagerOgreNext>( getSceneManager() );
+        auto ogreCamera = fb::dynamic_pointer_cast<CCameraOgreNext>( getCamera() );
+        auto ogreWindow = fb::dynamic_pointer_cast<CWindowOgreNext>( getWindow() );
+
+        // The first time this function gets called Terra is not initialized. This is a very possible
+        // scenario i.e. load a level without Terrain, but we still need a workspace to render.
+        //
+        // Thus we pass a PF_NULL texture to the workspace as a dud that barely consumes any
+        // memory (it consumes no GPU memory btw) by specifying PF_NULL. Alternatively you
+        // could use a different workspace (either defined in script or programmatically) that
+        // doesn't require specifying a second external texture. But using a dud is just simpler.
+        //
+        // The second time we get called, Terra will be initialized and we can pass the
+        // proper external texture filled with the UAV so Ogre can place the right
+        // barriers.
+        //
+        // Note: We *could* delay the creation of the workspace in this sample until Terra
+        // is initialized; instead of creating the workspace unnecessarily twice.
+        // However we're doing this on purpose to show how to deal with perfectly valid &
+        // very common scenarios.
+        using namespace Ogre;
+
+        Root *root = Root::getSingletonPtr();
+
+        SceneManager *sceneManager = pSceneManager->getSceneManager();
+
+        Window *renderWindow = ogreWindow->getWindow();
+        Camera *camera = ogreCamera->getCamera();
+        CompositorManager2 *pCompositorManager = root->getCompositorManager2();
+
+        CompositorWorkspace *oldWorkspace = getCompositorWorkspace();
+        if( oldWorkspace )
         {
-            FB_ASSERT( Thread::getCurrentTask() == Thread::Task::Render );
-
-            using namespace Ogre;
-
-            auto applicationManager = core::IApplicationManager::instance();
-            auto graphicsSystem = fb::static_pointer_cast<CGraphicsSystemOgreNext>(
-                applicationManager->getGraphicsSystem() );
-
-            auto compositorManager =
-                fb::static_pointer_cast<CompositorManager>( graphicsSystem->getCompositorManager() );
-            auto pSceneManager = fb::dynamic_pointer_cast<CSceneManagerOgreNext>( getSceneManager() );
-            auto ogreCamera = fb::dynamic_pointer_cast<CCameraOgreNext>( getCamera() );
-            auto ogreWindow = fb::dynamic_pointer_cast<CWindowOgreNext>( getWindow() );
-
-            // The first time this function gets called Terra is not initialized. This is a very possible
-            // scenario i.e. load a level without Terrain, but we still need a workspace to render.
-            //
-            // Thus we pass a PF_NULL texture to the workspace as a dud that barely consumes any
-            // memory (it consumes no GPU memory btw) by specifying PF_NULL. Alternatively you
-            // could use a different workspace (either defined in script or programmatically) that
-            // doesn't require specifying a second external texture. But using a dud is just simpler.
-            //
-            // The second time we get called, Terra will be initialized and we can pass the
-            // proper external texture filled with the UAV so Ogre can place the right
-            // barriers.
-            //
-            // Note: We *could* delay the creation of the workspace in this sample until Terra
-            // is initialized; instead of creating the workspace unnecessarily twice.
-            // However we're doing this on purpose to show how to deal with perfectly valid &
-            // very common scenarios.
-            using namespace Ogre;
-
-            Root *root = Root::getSingletonPtr();
-
-            SceneManager *sceneManager = pSceneManager->getSceneManager();
-
-            Window *renderWindow = ogreWindow->getWindow();
-            Camera *camera = ogreCamera->getCamera();
-            CompositorManager2 *pCompositorManager = root->getCompositorManager2();
-
-            CompositorWorkspace *oldWorkspace = getCompositorWorkspace();
-            if( oldWorkspace )
+            TextureGpu *terraShadowTex = oldWorkspace->getExternalRenderTargets()[1];
+            pCompositorManager->removeWorkspace( oldWorkspace );
+            if( terraShadowTex->getPixelFormat() == PFG_NULL )
             {
-                TextureGpu *terraShadowTex = oldWorkspace->getExternalRenderTargets()[1];
-                pCompositorManager->removeWorkspace( oldWorkspace );
-                if( terraShadowTex->getPixelFormat() == PFG_NULL )
-                {
-                    TextureGpuManager *textureManager = root->getRenderSystem()->getTextureGpuManager();
-                    textureManager->destroyTexture( terraShadowTex );
-                }
-            }
-
-            CompositorChannelVec externalChannels( 2 );
-            // Render window
-            externalChannels[0] = renderWindow->getTexture();
-
-            // Terra's Shadow texture
-            // ResourceLayoutMap initialLayouts;
-            // ResourceAccessMap initialUavAccess;
-            if( graphicsSystem->getTerra() )
-            {
-                // Terra is initialized
-                const auto shadowMapper = graphicsSystem->getTerra()->getShadowMapper();
-                shadowMapper->fillUavDataForCompositorChannel( &externalChannels[1] );
-            }
-            else
-            {
-                // The texture is not available. Create a dummy dud.
                 TextureGpuManager *textureManager = root->getRenderSystem()->getTextureGpuManager();
-                TextureGpu *nullTex = textureManager->createOrRetrieveTexture(
-                    "DummyNull", GpuPageOutStrategy::Discard, TextureFlags::ManualTexture,
-                    TextureTypes::Type2D );
-                nullTex->setResolution( 1u, 1u );
-                nullTex->setPixelFormat( PFG_R10G10B10A2_UNORM );
-                nullTex->scheduleTransitionTo( GpuResidency::Resident );
-                externalChannels[1] = nullTex;
+                textureManager->destroyTexture( terraShadowTex );
             }
-
-            return pCompositorManager->addWorkspace( sceneManager, externalChannels, camera,
-                                                     "Tutorial_TerrainWorkspace", true, -1, nullptr );
         }
 
-        Compositor::StateListener::StateListener()
+        CompositorChannelVec externalChannels( 2 );
+        // Render window
+        externalChannels[0] = renderWindow->getTexture();
+
+        // Terra's Shadow texture
+        // ResourceLayoutMap initialLayouts;
+        // ResourceAccessMap initialUavAccess;
+        if( graphicsSystem->getTerra() )
         {
+            // Terra is initialized
+            const auto shadowMapper = graphicsSystem->getTerra()->getShadowMapper();
+            shadowMapper->fillUavDataForCompositorChannel( &externalChannels[1] );
+        }
+        else
+        {
+            // The texture is not available. Create a dummy dud.
+            TextureGpuManager *textureManager = root->getRenderSystem()->getTextureGpuManager();
+            TextureGpu *nullTex = textureManager->createOrRetrieveTexture(
+                "DummyNull", GpuPageOutStrategy::Discard, TextureFlags::ManualTexture,
+                TextureTypes::Type2D );
+            nullTex->setResolution( 1u, 1u );
+            nullTex->setPixelFormat( PFG_R10G10B10A2_UNORM );
+            nullTex->scheduleTransitionTo( GpuResidency::Resident );
+            externalChannels[1] = nullTex;
         }
 
-        Compositor::StateListener::~StateListener()
-        {
-            unload( nullptr );
-        }
+        return pCompositorManager->addWorkspace( sceneManager, externalChannels, camera,
+                                                 "Tutorial_TerrainWorkspace", true, -1, nullptr );
+    }
 
-        void Compositor::StateListener::unload( SmartPtr<ISharedObject> data )
-        {
-            m_owner = nullptr;
-        }
+    Compositor::StateListener::StateListener() = default;
 
-        void Compositor::StateListener::handleStateChanged( const SmartPtr<IStateMessage> &message )
-        {
-        }
+    Compositor::StateListener::~StateListener()
+    {
+        unload( nullptr );
+    }
 
-        void Compositor::StateListener::handleStateChanged( SmartPtr<IState> &state )
+    void Compositor::StateListener::unload( SmartPtr<ISharedObject> data )
+    {
+        m_owner = nullptr;
+    }
+
+    void Compositor::StateListener::handleStateChanged( const SmartPtr<IStateMessage> &message )
+    {
+    }
+
+    void Compositor::StateListener::handleStateChanged( SmartPtr<IState> &state )
+    {
+        auto postProcessingState = fb::static_pointer_cast<CompositorState>( state );
+        if( auto owner = getOwner() )
         {
-            auto postProcessingState = fb::static_pointer_cast<CompositorState>( state );
-            if( auto owner = getOwner() )
+            if( owner->isLoaded() )
             {
-                if( owner->isLoaded() )
-                {
-                    auto enabled = postProcessingState->isEnabled();
-                    auto ret = owner->setupEnabled( enabled );
+                auto enabled = postProcessingState->isEnabled();
+                auto ret = owner->setupEnabled( enabled );
 
-                    if( ret )
-                    {
-                        state->setDirty( false );
-                    }
+                if( ret )
+                {
+                    state->setDirty( false );
                 }
             }
         }
+    }
 
-        void Compositor::StateListener::handleQuery( SmartPtr<IStateQuery> &query )
-        {
-        }
+    void Compositor::StateListener::handleQuery( SmartPtr<IStateQuery> &query )
+    {
+    }
 
-        SmartPtr<Compositor> Compositor::StateListener::getOwner() const
-        {
-            auto p = m_owner.load();
-            return p.lock();
-        }
+    auto Compositor::StateListener::getOwner() const -> SmartPtr<Compositor>
+    {
+        auto p = m_owner.load();
+        return p.lock();
+    }
 
-        void Compositor::StateListener::setOwner( SmartPtr<Compositor> owner )
-        {
-            m_owner = owner;
-        }
-    }  // end namespace render
-}  // end namespace fb
+    void Compositor::StateListener::setOwner( SmartPtr<Compositor> owner )
+    {
+        m_owner = owner;
+    }
+}  // namespace fb::render

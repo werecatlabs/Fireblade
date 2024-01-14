@@ -36,9 +36,9 @@ namespace fb
             void addDebugEntity( const String &entityName, const Vector3F &scale = Vector3F::unit() );
             void removeDebugEntity();
 
-            SmartPtr<IStateContext> &getStateObject();
-            const SmartPtr<IStateContext> &getStateObject() const;
-            void setStateObject( SmartPtr<IStateContext> stateObject );
+            SmartPtr<IStateContext> &getStateContext();
+            const SmartPtr<IStateContext> &getStateContext() const;
+            void setStateContext( SmartPtr<IStateContext> stateContext );
 
         protected:
             class CDecalCursorStateListener : public IStateListener
@@ -55,7 +55,7 @@ namespace fb
                 CDecalCursor *m_owner = nullptr;
             };
 
-            SmartPtr<IStateContext> m_stateObject;
+            SmartPtr<IStateContext> m_stateContext;
             SmartPtr<IStateListener> m_stateListener;
 
             SmartPtr<IGraphicsMesh> m_entity;

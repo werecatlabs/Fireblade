@@ -17,20 +17,17 @@ namespace fb
 
         void update();
 
-        void addKeyFrame( const KeyFrameTransform3Ptr &keyFrame );
+        void addKeyFrame( const SmartPtr<KeyFrameTransform3> &keyFrame );
 
-        void addKeyFrames( const Array<KeyFrameTransform3Ptr> &keyFrames );
+        void addKeyFrames( const Array<SmartPtr<KeyFrameTransform3>> &keyFrames );
 
         void setAnimationLength( f32 animationLength );
 
-        KeyFrameTransform3Ptr getCurrentKeyFrame() const
-        {
-            return m_currentKeyFrame;
-        }
+        SmartPtr<KeyFrameTransform3> getCurrentKeyFrame() const;
 
     private:
-        KeyFrameTransform3Ptr m_currentKeyFrame;
-        Array<KeyFrameTransform3Ptr> m_keyFrames;
+        SmartPtr<KeyFrameTransform3> m_currentKeyFrame;
+        Array<SmartPtr<KeyFrameTransform3>> m_keyFrames;
 
         LinearSpline3F m_positionSpline;
         RotationalSpline3F m_orientationSpline;

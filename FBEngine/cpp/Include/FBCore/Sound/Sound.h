@@ -6,12 +6,12 @@
 
 namespace fb
 {
-
-	class Sound : public Resource<ISound>
-	{
-	public:
-		Sound();
-		~Sound();
+    /** Sound resource. */
+    class Sound : public Resource<ISound>
+    {
+    public:
+        Sound();
+        ~Sound() override;
 
         void play() override;
 
@@ -41,7 +41,6 @@ namespace fb
 
         void getMinMaxDistance( f32 &minDistance, f32 &maxDistance ) override;
     };
-
 }  // namespace fb
 
 #endif  // CSound_h__

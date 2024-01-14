@@ -16,7 +16,7 @@ namespace fb
         PoolData();
 
         /** Constructor with grow size. */
-        PoolData( size_t numElements );
+        explicit PoolData( size_t numElements );
 
         /** Destructor. */
         ~PoolData() override;

@@ -3,13 +3,10 @@
 #include <FBCore/System/RttiClassDefinition.h>
 #include <FBCore/Core/StringUtil.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
-    {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, ISceneManager, ISharedObject );
+    FB_CLASS_REGISTER_DERIVED( fb::scene, ISceneManager, ISharedObject );
 
-        const hash_type ISceneManager::sceneLoadedHash = StringUtil::getHash( "sceneLoaded" );
+    const hash_type ISceneManager::sceneLoadedHash = StringUtil::getHash( "sceneLoaded" );
 
-    }  // namespace scene
-}  // namespace fb
+}  // namespace fb::scene

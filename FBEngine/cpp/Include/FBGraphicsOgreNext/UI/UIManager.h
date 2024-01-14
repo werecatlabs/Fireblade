@@ -13,10 +13,13 @@ namespace fb
     namespace ui
     {
         /** Implementation of a ui system the uses the render system. */
-        class UIManager : public ui::IUIManager
+        class UIManager : public IUIManager
         {
         public:
+            /** Constructor. */
             UIManager();
+
+            /** Destructor. */
             ~UIManager() override;
 
             void load( SmartPtr<ISharedObject> data ) override;
@@ -27,36 +30,36 @@ namespace fb
 
             bool handleEvent( const SmartPtr<IInputEvent> &event );
 
-            void _getObject( void **ppObject );
-            void update();
+            void _getObject( void **ppObject ) override;
+            void update() override;
 
             size_t messagePump( SmartPtr<ISharedObject> data ) override;
 
-            SmartPtr<ui::IUIApplication> addApplication() override;
+            SmartPtr<IUIApplication> addApplication() override;
 
-            void removeApplication( SmartPtr<ui::IUIApplication> application ) override;
+            void removeApplication( SmartPtr<IUIApplication> application ) override;
 
-            SmartPtr<ui::IUIApplication> getApplication() const override;
+            SmartPtr<IUIApplication> getApplication() const override;
 
-            void setApplication( SmartPtr<ui::IUIApplication> application ) override;
+            void setApplication( SmartPtr<IUIApplication> application ) override;
 
-            SmartPtr<ui::IUIElement> addElement( hash64 type ) override;
+            SmartPtr<IUIElement> addElement( hash64 type ) override;
 
-            void removeElement( SmartPtr<ui::IUIElement> element ) override;
+            void removeElement( SmartPtr<IUIElement> element ) override;
 
             void clear() override;
 
-            SmartPtr<ui::IUICursor> getCursor() const override;
+            SmartPtr<IUICursor> getCursor() const override;
 
-            SmartPtr<ui::IUIElement> findElement( const String &id ) const override;
+            SmartPtr<IUIElement> findElement( const String &id ) const override;
 
             bool isDragging() const override;
 
             void setDragging( bool dragging ) override;
 
-            SmartPtr<ui::IUIWindow> getMainWindow() const override;
+            SmartPtr<IUIWindow> getMainWindow() const override;
 
-            void setMainWindow( SmartPtr<ui::IUIWindow> uiWindow ) override;
+            void setMainWindow( SmartPtr<IUIWindow> uiWindow ) override;
 
             void createScene02();
             void createScene01();
@@ -70,6 +73,16 @@ namespace fb
 
             void setLayoutWindow( Colibri::Window *layoutWindow );
 
+            SmartPtr<IFactoryManager> getFactoryManager() const;
+
+            void setFactoryManager( SmartPtr<IFactoryManager> factoryManager );
+
+            Array<SmartPtr<IUIElement>> getElements() const;
+
+            void setElements( Array<SmartPtr<IUIElement>> elements );
+
+            FB_CLASS_REGISTER_DECL;
+
         protected:
             class InputListener : public IEventListener
             {
@@ -78,26 +91,27 @@ namespace fb
 
                 Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
                                        const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
-                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
-                fb::SmartPtr<fb::ui::UIManager> getOwner() const;
+                SmartPtr<UIManager> getOwner() const;
 
-                void setOwner( fb::SmartPtr<fb::ui::UIManager> owner );
+                void setOwner( SmartPtr<UIManager> owner );
 
             private:
                 AtomicSmartPtr<UIManager> m_owner;
             };
 
+            SmartPtr<IFactoryManager> m_factoryManager;
             SmartPtr<IEventListener> m_inputListener;
 
-            Array<SmartPtr<ui::IUIElement>> m_elements;
+            Array<SmartPtr<IUIElement>> m_elements;
             Colibri::Window *m_layoutWindow = nullptr;
-            fb::SmartPtr<fb::ui::IUIWindow> m_mainWindow;
+            SmartPtr<IUIWindow> m_mainWindow;
             bool m_dragging = false;
-            Colibri::ColibriManager *m_colibriManager = 0;
+            Colibri::ColibriManager *m_colibriManager = nullptr;
             mutable RecursiveMutex m_mutex;
         };
-    }  // namespace ui
-}  // namespace fb
+    } // namespace ui
+}     // namespace fb
 
 #endif  // UIManager_h__

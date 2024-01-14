@@ -40,13 +40,14 @@ THE SOFTWARE.
 
 namespace Ogre
 {
-    const IdString PbsTerraProperty::TerraEnabled   = IdString( "terra_enabled" );
+    const IdString PbsTerraProperty::TerraEnabled = IdString( "terra_enabled" );
 
     HlmsPbsTerraShadows::HlmsPbsTerraShadows() :
-          mTerra( 0 )
-        , mTerraSamplerblock( 0 )
+        mTerra( 0 ),
+        mTerraSamplerblock( 0 )
 #if OGRE_DEBUG_MODE
-        , mSceneManager( 0 )
+        ,
+        mSceneManager( 0 )
 #endif
     {
     }
@@ -91,9 +92,9 @@ namespace Ogre
         }
     }
     //-----------------------------------------------------------------------------------
-    void HlmsPbsTerraShadows::preparePassHash( const CompositorShadowNode *shadowNode,
-                                               bool casterPass, bool dualParaboloid,
-                                               SceneManager *sceneManager, Hlms *hlms )
+    void HlmsPbsTerraShadows::preparePassHash( const CompositorShadowNode *shadowNode, bool casterPass,
+                                               bool dualParaboloid, SceneManager *sceneManager,
+                                               Hlms *hlms )
     {
         if( !casterPass )
         {
@@ -118,13 +119,12 @@ namespace Ogre
                                                    bool casterPass, bool dualParaboloid,
                                                    SceneManager *sceneManager ) const
     {
-        return (!casterPass && mTerra) ? 32u : 0u;
+        return ( !casterPass && mTerra ) ? 32u : 0u;
     }
     //-----------------------------------------------------------------------------------
-    float* HlmsPbsTerraShadows::preparePassBuffer( const CompositorShadowNode *shadowNode,
+    float *HlmsPbsTerraShadows::preparePassBuffer( const CompositorShadowNode *shadowNode,
                                                    bool casterPass, bool dualParaboloid,
-                                                   SceneManager *sceneManager,
-                                                   float *passBufferPtr )
+                                                   SceneManager *sceneManager, float *passBufferPtr )
     {
         if( !casterPass && mTerra )
         {
@@ -154,8 +154,8 @@ namespace Ogre
 
             //Bind the shadows' texture. Tex. slot must match with
             //the one in HlmsPbsTerraShadows::propertiesMergedPreGenerationStep
-            *commandBuffer->addCommand<CbTexture>() = CbTexture( texUnit++, terraShadowTex,
-                                                                 mTerraSamplerblock );
+            *commandBuffer->addCommand<CbTexture>() =
+                CbTexture( texUnit++, terraShadowTex, mTerraSamplerblock );
         }
     }
-}
+}  // namespace Ogre

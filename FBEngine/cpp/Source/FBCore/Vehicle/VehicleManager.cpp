@@ -5,18 +5,14 @@
 
 namespace fb
 {
-    VehicleManager::VehicleManager()
-    {
-    }
+    VehicleManager::VehicleManager() = default;
 
-    VehicleManager::~VehicleManager()
-    {
-    }
+    VehicleManager::~VehicleManager() = default;
 
     void VehicleManager::preUpdate()
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
-        for(auto vehicle : m_vehicles)
+        for( auto vehicle : m_vehicles )
         {
             vehicle->preUpdate();
         }
@@ -40,11 +36,11 @@ namespace fb
         }
     }
 
-    SmartPtr<IVehicleController> VehicleManager::createVehicle( hash64 type )
+    auto VehicleManager::createVehicle( hash64 type ) -> SmartPtr<IVehicleController>
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
         auto vehicleController = fb::make_ptr<VehicleController>();
-        m_vehicles.push_back( vehicleController );
+        m_vehicles.emplace_back( vehicleController );
         return vehicleController;
     }
 

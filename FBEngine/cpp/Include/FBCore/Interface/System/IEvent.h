@@ -19,6 +19,9 @@ namespace fb
             UI,
             Window,
             Scene,
+            Actor,
+            Component,
+            Application,
 
             Count
         };
@@ -50,6 +53,7 @@ namespace fb
 
         static const hash_type handleEnterFrame;
 
+        static const hash_type CLICK_HASH;
         static const hash_type ACTIVATE_HASH;
         static const hash_type DEACTIVATE_HASH;
 
@@ -100,6 +104,15 @@ namespace fb
         static const hash_type addSelectedObjects;
         static const hash_type deselectObjects;
         static const hash_type deselectAll;
+
+        //! Occurs when a command is added to the command stack
+        static const hash_type addCommand;
+
+        //! Occurs when the next command it retrieved
+        static const hash_type getNextCommand;
+
+        //! Occurs when the previous command it retrieved
+        static const hash_type getPreviousCommand;
 
         /** Virtual destructor. */
         ~IEvent() override = default;

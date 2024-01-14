@@ -9,13 +9,9 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, NativeFileDialog, INativeFileDialog );
 
-    NativeFileDialog::NativeFileDialog()
-    {
-    }
+    NativeFileDialog::NativeFileDialog() = default;
 
-    NativeFileDialog::~NativeFileDialog()
-    {
-    }
+    NativeFileDialog::~NativeFileDialog() = default;
 
     void NativeFileDialog::load( SmartPtr<ISharedObject> data )
     {
@@ -29,7 +25,7 @@ namespace fb
     {
     }
 
-    INativeFileDialog::Result NativeFileDialog::openDialog()
+    auto NativeFileDialog::openDialog() -> INativeFileDialog::Result
     {
         nfdchar_t *pOutPath = nullptr;
         auto result = static_cast<nfdresult_t>( 0 );
@@ -73,7 +69,7 @@ namespace fb
         return static_cast<INativeFileDialog::Result>( result );
     }
 
-    String NativeFileDialog::getFilePath() const
+    auto NativeFileDialog::getFilePath() const -> String
     {
         return m_filePath;
     }
@@ -83,7 +79,7 @@ namespace fb
         m_filePath = filePath;
     }
 
-    String NativeFileDialog::getFileExtension() const
+    auto NativeFileDialog::getFileExtension() const -> String
     {
         return m_fileExtension;
     }
@@ -93,7 +89,7 @@ namespace fb
         m_fileExtension = fileExtension;
     }
 
-    INativeFileDialog::DialogMode NativeFileDialog::getDialogMode() const
+    auto NativeFileDialog::getDialogMode() const -> INativeFileDialog::DialogMode
     {
         return m_dialogMode;
     }
@@ -103,7 +99,7 @@ namespace fb
         m_dialogMode = mode;
     }
 
-    INativeFileDialog::FilterMode NativeFileDialog::getFilterMode() const
+    auto NativeFileDialog::getFilterMode() const -> INativeFileDialog::FilterMode
     {
         return m_filterMode;
     }

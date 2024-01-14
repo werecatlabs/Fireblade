@@ -9,7 +9,7 @@ namespace fb
     {
 
         /**
-         * Manages a render window.
+         * Listens for render window events.
          */
         class IWindowListener : public IEventListener
         {

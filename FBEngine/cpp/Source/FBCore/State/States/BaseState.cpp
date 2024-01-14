@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/State/States/BaseState.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/Interface/System/IStateManager.h>
@@ -13,9 +13,7 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, BaseState, IState );
 
-    BaseState::BaseState()
-    {
-    }
+    BaseState::BaseState() = default;
 
     BaseState::~BaseState()
     {
@@ -29,7 +27,7 @@ namespace fb
             setLoadingState( LoadingState::Unloading );
 
             m_owner = nullptr;
-            m_stateObject = nullptr;
+            m_stateContext = nullptr;
 
             setLoadingState( LoadingState::Unloaded );
         }
@@ -39,7 +37,7 @@ namespace fb
         }
     }
 
-    time_interval BaseState::getTime() const
+    auto BaseState::getTime() const -> time_interval
     {
         return m_time;
     }
@@ -49,7 +47,7 @@ namespace fb
         m_time = time;
     }
 
-    bool BaseState::isDirty() const
+    auto BaseState::isDirty() const -> bool
     {
         return m_dirty > 0;
     }
@@ -60,11 +58,13 @@ namespace fb
         {
             ++m_dirty;
 
-            if( auto stateContext = getStateContext() )
+            if( auto &stateContext = getStateContext() )
             {
-                auto applicationManager = core::IApplicationManager::instance();
-                auto stateManager = applicationManager->getStateManager();
-                stateManager->addDirty( stateContext );
+                auto &applicationManager = core::ApplicationManager::instance();
+                auto &stateManager = applicationManager->getStateManager();
+
+                auto task = getTaskId();
+                stateManager->addDirty( stateContext, task );
             }
         }
         else
@@ -76,7 +76,7 @@ namespace fb
         }
     }
 
-    bool BaseState::isRegistered() const
+    auto BaseState::isRegistered() const -> bool
     {
         return m_isRegistered;
     }
@@ -86,18 +86,22 @@ namespace fb
         m_isRegistered = registered;
     }
 
-    SmartPtr<IStateContext> BaseState::getStateContext() const
+    auto BaseState::getStateContext() -> SmartPtr<IStateContext> &
     {
-        auto p = m_stateObject.load();
-        return p.lock();
+        return m_stateContext;
     }
 
-    void BaseState::setStateContext( SmartPtr<IStateContext> stateObject )
+    auto BaseState::getStateContext() const -> const SmartPtr<IStateContext> &
     {
-        m_stateObject = stateObject;
+        return m_stateContext;
     }
 
-    Thread::Task BaseState::getTaskId() const
+    void BaseState::setStateContext( SmartPtr<IStateContext> stateContext )
+    {
+        m_stateContext = stateContext;
+    }
+
+    auto BaseState::getTaskId() const -> Thread::Task
     {
         return m_taskId;
     }
@@ -107,9 +111,9 @@ namespace fb
         m_taskId = task;
     }
 
-    SmartPtr<Properties> BaseState::getProperties() const
+    auto BaseState::getProperties() const -> SmartPtr<Properties>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto factoryManager = applicationManager->getFactoryManager();
 
         auto properties = factoryManager->make_ptr<Properties>();
@@ -127,10 +131,9 @@ namespace fb
         m_time = time;
     }
 
-    SmartPtr<ISharedObject> BaseState::getOwner() const
+    auto BaseState::getOwner() const -> SmartPtr<ISharedObject>
     {
-        auto p = m_owner.load();
-        return p.lock();
+        return m_owner;
     }
 
     void BaseState::setOwner( SmartPtr<ISharedObject> owner )
@@ -138,7 +141,7 @@ namespace fb
         m_owner = owner;
     }
 
-    SmartPtr<IState> BaseState::clone() const
+    auto BaseState::clone() const -> SmartPtr<IState>
     {
         FB_ASSERT( false );  // derived clone not implemented
         auto state = fb::make_ptr<BaseState>();
@@ -154,7 +157,7 @@ namespace fb
         if( state )
         {
             state->m_owner = m_owner;
-            state->m_stateObject = m_stateObject;
+            state->m_stateContext = m_stateContext;
             state->m_taskId = m_taskId.load();
             state->m_time = m_time;
             state->m_dirty = m_dirty;

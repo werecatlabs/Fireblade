@@ -4,23 +4,16 @@
 
 namespace fb
 {
-    VertexElement::VertexElement()
-    {
-    }
 
     VertexElement::VertexElement( u16 source, u32 size, u32 offset,
                                   IVertexDeclaration::VertexElementSemantic semantic,
                                   VertexElementType type, u8 index ) :
         m_source( source ),
-        m_size( size )
-    {
-        m_offset = offset;
-        m_semantic = static_cast<u32>( semantic );
-        m_type = type;
-        m_index = index;
-    }
-
-    VertexElement::~VertexElement()
+        m_size( size ),
+        m_offset( offset ),
+        m_semantic( static_cast<u32>( semantic ) ),
+        m_type( type ),
+        m_index( index )
     {
     }
 
@@ -31,29 +24,26 @@ namespace fb
 
     void VertexElement::getElementData( void *vertexData, f32 **elementData ) const
     {
-        // The only way we can do this is to cast to char* in order to use byte offset
-        // then cast back to float*. However we have to go via void* because casting
-        // directly is not allowed
-        *elementData = static_cast<float *>(
-            static_cast<void *>( static_cast<unsigned char *>( vertexData ) + m_offset ) );
+        auto pData = static_cast<u8 *>( vertexData ) + m_offset;
+        *elementData = reinterpret_cast<f32 *>( pData );
     }
 
-    u32 VertexElement::getOffset() const
+    auto VertexElement::getOffset() const -> u32
     {
         return m_offset;
     }
 
-    u32 VertexElement::getSemantic() const
+    auto VertexElement::getSemantic() const -> u32
     {
         return m_semantic;
     }
 
-    IVertexElement::VertexElementType VertexElement::getType() const
+    auto VertexElement::getType() const -> IVertexElement::VertexElementType
     {
         return m_type;
     }
 
-    u8 VertexElement::getIndex() const
+    auto VertexElement::getIndex() const -> u8
     {
         return m_index;
     }
@@ -88,12 +78,12 @@ namespace fb
         m_index = index;
     }
 
-    bool VertexElement::compare( SmartPtr<IVertexElement> other ) const
+    auto VertexElement::compare( SmartPtr<IVertexElement> other ) const -> bool
     {
         return *this == *fb::static_pointer_cast<VertexElement>( other );
     }
 
-    bool VertexElement::operator==( const VertexElement &rhs ) const
+    auto VertexElement::operator==( const VertexElement &rhs ) const -> bool
     {
         if( m_type != rhs.m_type || m_index != rhs.m_index || m_offset != rhs.m_offset ||
             m_semantic != rhs.m_semantic || m_source != rhs.m_source )
@@ -104,12 +94,12 @@ namespace fb
         return true;
     }
 
-    u32 VertexElement::getSize() const
+    auto VertexElement::getSize() const -> u32
     {
         return m_size;
     }
 
-    u16 VertexElement::getSource() const
+    auto VertexElement::getSource() const -> u16
     {
         return m_source;
     }

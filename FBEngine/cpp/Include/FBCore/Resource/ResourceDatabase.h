@@ -10,18 +10,52 @@
 
 namespace fb
 {
-
+    /** ResourceDatabase
+     *  @brief
+     *    ResourceDatabase is a class that manages all resources in the engine.
+     *    It is responsible for loading and unloading resources, as well as
+     *    creating new resources.
+     */
     class ResourceDatabase : public IResourceDatabase
     {
     public:
+        class ImportFileJob : public Job
+        {
+        public:
+            ImportFileJob();
+            ~ImportFileJob() override;
+
+            void execute() override;
+
+            void setFilePath( const String &filePath );
+            String getFilePath() const;
+
+            FB_CLASS_REGISTER_DECL;
+
+        protected:
+            String m_filePath;
+        };
+
+        /** Constructor. */
         ResourceDatabase();
+
+        /** Destructor. */
         ~ResourceDatabase() override;
 
+        /** @copydoc ISharedObject::load */
         void load( SmartPtr<ISharedObject> data ) override;
+
+        /** @copydoc ISharedObject::unload */
         void unload( SmartPtr<ISharedObject> data ) override;
 
         void build() override;
         void refresh() override;
+
+        void optimise();
+
+        void clean();
+
+        void deleteCache();
 
         bool hasResource( SmartPtr<IResource> resource ) override;
         void addResource( SmartPtr<IResource> resource ) override;
@@ -33,22 +67,34 @@ namespace fb
         SmartPtr<IResource> cloneResource( u32 type, SmartPtr<IResource> resource,
                                            const String &path ) override;
 
-        void importFolder( SmartPtr<IFolderExplorer> folderListing );
+        void importFolder( SmartPtr<IFolderExplorer> folderListing ) override;
+
+        void importFolder( const String &path ) override;
         void importFile( const String &filePath ) override;
 
+        void importCache() override;
         void importAssets() override;
         void reimportAssets() override;
+        void calculateDependencies() override;
 
         Array<SmartPtr<scene::IDirector>> getResourceData() const override;
 
         Array<SmartPtr<IResource>> getResources() const override;
 
-	    void createActor( SmartPtr<scene::IActor> parent, SmartPtr<Properties> properties );
+        void createActor( SmartPtr<scene::IActor> parent, SmartPtr<Properties> properties );
         SmartPtr<IResource> loadResource( hash64 id ) override;
         SmartPtr<IResource> loadResource( const String &path ) override;
+
+        SmartPtr<scene::IDirector> loadDirector( const String &filePath ) override;
+
+        SmartPtr<scene::IDirector> loadDirectorFromResourcePath( const String &filePath ) override;
+        SmartPtr<scene::IDirector> loadDirectorFromResourcePath( const String &filePath,
+                                                                 u32 type ) override;
+
         SmartPtr<IResource> loadResourceById( const String &uuid ) override;
 
-        SmartPtr<IResource> createOrRetrieveResource( SmartPtr<IDatabaseQuery> query, bool bLoadResource );
+        SmartPtr<IResource> createOrRetrieveResource( SmartPtr<IDatabaseQuery> query,
+                                                      bool bLoadResource );
 
         SmartPtr<IDatabaseManager> getDatabaseManager() const override;
         void setDatabaseManager( SmartPtr<IDatabaseManager> databaseManager ) override;
@@ -65,10 +111,11 @@ namespace fb
 
         SmartPtr<ISharedObject> getObject( const String &uuid ) override;
 
-	    SmartPtr<Properties> loadAssetNode( SmartPtr<IDatabaseManager> db, SmartPtr<Properties> parent, hash64 id );
+        SmartPtr<Properties> loadAssetNode( SmartPtr<IDatabaseManager> db, SmartPtr<Properties> parent,
+                                            hash64 id );
         Array<SmartPtr<ISharedObject>> getSceneObjects() const;
         Array<SmartPtr<ISharedObject>> getReferenceObjects() const;
-	
+
         SmartPtr<ISharedObject> getObjectByFileId( const String &fileId ) const override;
 
         SharedPtr<Array<SmartPtr<IResource>>> getInstancesPtr() const;
@@ -85,7 +132,7 @@ namespace fb
         FB_CLASS_REGISTER_DECL;
 
     protected:
-        SmartPtr<Properties> loadAssetProperties(hash64 id);
+        SmartPtr<Properties> loadAssetProperties( hash64 id );
 
         void getSceneObjects( SmartPtr<scene::IActor> actor,
                               Array<SmartPtr<ISharedObject>> &objects ) const;
@@ -100,6 +147,8 @@ namespace fb
         SmartPtr<IDatabaseManager> m_databaseManager;
 
         mutable RecursiveMutex m_mutex;
+
+        static atomic_s32 m_numJobs;
     };
 }  // end namespace fb
 

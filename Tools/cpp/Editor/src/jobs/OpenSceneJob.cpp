@@ -7,101 +7,94 @@
 
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    OpenSceneJob::OpenSceneJob() = default;
+
+    OpenSceneJob::~OpenSceneJob() = default;
+
+    void OpenSceneJob::execute()
     {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
 
-        OpenSceneJob::OpenSceneJob()
+        auto resourceDatabase = applicationManager->getResourceDatabase();
+
+        auto editorManager = EditorManager::getSingletonPtr();
+        FB_ASSERT( editorManager );
+
+        auto uiManager = editorManager->getUI();
+        FB_ASSERT( uiManager );
+
+        auto fileSystem = applicationManager->getFileSystem();
+        FB_ASSERT( fileSystem );
+
+        if( auto fileDialog = fileSystem->openFileDialog() )
         {
-        }
-
-        OpenSceneJob::~OpenSceneJob()
-        {
-        }
-
-        void OpenSceneJob::execute()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto resourceDatabase = applicationManager->getResourceDatabase();
-
-            auto editorManager = EditorManager::getSingletonPtr();
-            FB_ASSERT( editorManager );
-
-            auto uiManager = editorManager->getUI();
-            FB_ASSERT( uiManager );
-
-            auto fileSystem = applicationManager->getFileSystem();
-            FB_ASSERT( fileSystem );
-
-            if( auto fileDialog = fileSystem->openFileDialog() )
+            auto projectPath = applicationManager->getProjectPath();
+            if( !fileSystem->isExistingFolder( projectPath ) )
             {
-                auto projectPath = applicationManager->getProjectPath();
-                if( !fileSystem->isExistingFolder( projectPath ) )
+                projectPath = "";
+            }
+
+            fileDialog->setDialogMode( INativeFileDialog::DialogMode::Open );
+            fileDialog->setFileExtension( ".fbscene" );
+            fileDialog->setFilePath( projectPath );
+
+            //auto result = fileDialog->openDialog();
+            //if( result == INativeFileDialog::Result::Dialog_Okay )
+            {
+                auto project = editorManager->getProject();
+                FB_ASSERT( project );
+
+                auto filePath = getFilePath();
+                if( !StringUtil::isNullOrEmpty( filePath ) )
                 {
-                    projectPath = "";
-                }
+                    auto fileSystem = applicationManager->getFileSystem();
+                    FB_ASSERT( fileSystem );
 
-                fileDialog->setDialogMode( INativeFileDialog::DialogMode::Open );
-                fileDialog->setFileExtension( ".fbscene" );
-                fileDialog->setFilePath( projectPath );
+                    auto path = Path::getFilePath( filePath );
+                    path = StringUtil::cleanupPath( path );
 
-                //auto result = fileDialog->openDialog();
-                //if( result == INativeFileDialog::Result::Dialog_Okay )
-                {
-                    auto project = editorManager->getProject();
-                    FB_ASSERT( project );
-
-                    auto filePath = getFilePath();
-                    if( !StringUtil::isNullOrEmpty( filePath ) )
+                    auto projectPath = applicationManager->getProjectPath();
+                    if( StringUtil::isNullOrEmpty( projectPath ) )
                     {
-                        auto fileSystem = applicationManager->getFileSystem();
-                        FB_ASSERT( fileSystem );
+                        projectPath = Path::getWorkingDirectory();
+                    }
 
-                        auto path = Path::getFilePath( filePath );
-                        path = StringUtil::cleanupPath( path );
+                    auto scenePath = Path::getRelativePath( projectPath, filePath );
+                    scenePath = StringUtil::cleanupPath( scenePath );
 
-                        auto projectPath = applicationManager->getProjectPath();
-                        if( StringUtil::isNullOrEmpty( projectPath ) )
-                        {
-                            projectPath = Path::getWorkingDirectory();
-                        }
+                    project->setCurrentScenePath( filePath );
 
-                        auto scenePath = Path::getRelativePath( projectPath, filePath );
-                        scenePath = StringUtil::cleanupPath( scenePath );
+                    auto sceneManager = applicationManager->getSceneManager();
+                    if( auto scene = sceneManager->getCurrentScene() )
+                    {
+                        scene->clear();
+                        scene->loadScene( scenePath );
+                    }
 
-                        project->setCurrentScenePath( filePath );
+                    resourceDatabase->refresh();
+                    uiManager->rebuildSceneTree();
 
-                        auto sceneManager = applicationManager->getSceneManager();
-                        if( auto scene = sceneManager->getCurrentScene() )
-                        {
-                            scene->clear();
-                            scene->loadScene( scenePath );
-                        }
-
-                        resourceDatabase->refresh();
-                        uiManager->rebuildSceneTree();
-
-                        if( auto projectWindow = uiManager->getProjectWindow() )
-                        {
-                            projectWindow->buildTree();
-                        }
+                    if( auto projectWindow = uiManager->getProjectWindow() )
+                    {
+                        projectWindow->buildTree();
                     }
                 }
             }
         }
+    }
 
-        String OpenSceneJob::getFilePath() const
-        {
-            return m_filePath;
-        }
+    auto OpenSceneJob::getFilePath() const -> String
+    {
+        return m_filePath;
+    }
 
-        void OpenSceneJob::setFilePath( const String &filePath )
-        {
-            m_filePath = filePath;
-        }
+    void OpenSceneJob::setFilePath( const String &filePath )
+    {
+        m_filePath = filePath;
+    }
 
-    }  // namespace editor
-}  // namespace fb
+}  // namespace fb::editor

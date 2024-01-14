@@ -3,15 +3,11 @@
 
 namespace fb
 {
-    TrackElement::TrackElement()
-    {
-    }
+    TrackElement::TrackElement() = default;
 
-    TrackElement::~TrackElement()
-    {
-    }
+    TrackElement::~TrackElement() = default;
 
-    Vector3F TrackElement::getCenter() const
+    auto TrackElement::getCenter() const -> Vector3F
     {
         return m_center;
     }
@@ -21,7 +17,7 @@ namespace fb
         m_center = val;
     }
 
-    Vector3F TrackElement::getStart() const
+    auto TrackElement::getStart() const -> Vector3F
     {
         return m_start;
     }
@@ -31,7 +27,7 @@ namespace fb
         m_start = val;
     }
 
-    Vector3F TrackElement::getEnd() const
+    auto TrackElement::getEnd() const -> Vector3F
     {
         return m_end;
     }
@@ -41,7 +37,7 @@ namespace fb
         m_end = val;
     }
 
-    Vector3F TrackElement::getDirection() const
+    auto TrackElement::getDirection() const -> Vector3F
     {
         return m_direction;
     }
@@ -51,7 +47,7 @@ namespace fb
         m_direction = val;
     }
 
-    Vector3F TrackElement::getExtents() const
+    auto TrackElement::getExtents() const -> Vector3F
     {
         return m_extents;
     }

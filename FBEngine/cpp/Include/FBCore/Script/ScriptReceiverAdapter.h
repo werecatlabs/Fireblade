@@ -3,14 +3,13 @@
 
 #include <FBCore/Interface/Script/IScriptReceiver.h>
 
-
 namespace fb
 {
     template <class T>
     class ScriptReceiverAdapter : public IScriptReceiver
     {
     public:
-        ScriptReceiverAdapter( T *listener ) : m_listener( listener )
+        explicit ScriptReceiverAdapter( T *listener ) : m_listener( listener )
         {
         }
 

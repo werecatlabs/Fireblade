@@ -8,6 +8,8 @@
 #include <FBCore/Interface/UI/IUIWindow.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IWindow.h>
+#include <FBCore/Interface/Input/IInputEvent.h>
+#include <FBCore/Interface/Input/IMouseState.h>
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/Interface/System/IStateManager.h>
 #include <FBCore/Interface/System/IStateListener.h>
@@ -19,7 +21,7 @@
 #include <FBCore/Core/Properties.h>
 #include <FBCore/Core/Parameter.h>
 #include <FBCore/Math/Vector2.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
 #include <FBCore/State/Messages/StateMessageObject.h>
 #include <FBCore/State/Messages/StateMessageMaterial.h>
@@ -96,6 +98,10 @@ namespace fb
             /** Checks if this gui item is selected. */
             bool isSelected() const;
 
+            void setHovered( bool hovered );
+
+            bool isHovered() const;
+
             /** Sets whether the gui item is visible or not. */
             virtual void setVisible( bool isVisible, bool cascade = true );
 
@@ -143,6 +149,8 @@ namespace fb
             /** Find a child by id. */
             virtual SmartPtr<IUIElement> findChildById( const String &id ) const;
 
+            s32 getSiblingIndex() const;
+
             SmartPtr<IUIElement> getLayout() const;
             void setLayout( SmartPtr<IUIElement> layout );
 
@@ -184,11 +192,13 @@ namespace fb
 
             void setDragDropSource( bool dragDropSource );
 
-            SmartPtr<IUIDragSource> getDragSource() const;
+            SmartPtr<IUIDragSource> &getDragSource();
+            const SmartPtr<IUIDragSource> &getDragSource() const;
 
             void setDragSource( SmartPtr<IUIDragSource> dragSource );
 
-            SmartPtr<IUIDropTarget> getDropTarget() const;
+            SmartPtr<IUIDropTarget> &getDropTarget();
+            const SmartPtr<IUIDropTarget> &getDropTarget() const;
 
             void setDropTarget( SmartPtr<IUIDropTarget> dropTarget );
 
@@ -234,9 +244,9 @@ namespace fb
 
             void setColour( const ColourF &colour );
 
-            SmartPtr<IStateContext> getStateObject() const;
+            SmartPtr<IStateContext> getStateContext() const;
 
-            void setStateObject( SmartPtr<IStateContext> stateObject );
+            void setStateContext( SmartPtr<IStateContext> stateContext );
 
             SmartPtr<IStateListener> getStateListener() const;
 
@@ -262,16 +272,9 @@ namespace fb
 
             void setWidget( Colibri::Widget *widget );
 
-            virtual void notifyWidgetAction( Colibri::Widget *widget, Colibri::Action::Action action )
-            {
-                if( action == Colibri::Action::Action::PrimaryActionPerform )
-                {
-                    if( auto layout = getLayout() )
-                    {
-                        layout->onActivate( this );
-                    }
-                }
-            }
+            virtual void notifyWidgetAction( Colibri::Widget *widget, Colibri::Action::Action action );
+
+            FB_CLASS_REGISTER_TEMPLATE_DECL( Prototype, T );
 
         protected:
             class ElementStateListener : public IStateListener
@@ -291,7 +294,7 @@ namespace fb
                 void setOwner( SmartPtr<UIElement<T>> owner );
 
             protected:
-                AtomicSmartPtr<UIElement<T>> m_owner;
+                SmartPtr<UIElement<T>> m_owner;
             };
 
             class WidgetListener : public Colibri::WidgetActionListener
@@ -316,13 +319,12 @@ namespace fb
                 }
 
                 void setOwner( SmartPtr<UIElement<T>> owner )
-
                 {
                     m_owner = owner;
                 }
 
             protected:
-                AtomicSmartPtr<UIElement<T>> m_owner;
+                SmartPtr<UIElement<T>> m_owner;
             };
 
             // general event
@@ -333,7 +335,7 @@ namespace fb
             Colibri::Widget *m_widget = nullptr;
             WidgetListener *m_widgetListener = nullptr;
 
-            AtomicSmartPtr<IStateContext> m_stateObject;
+            AtomicSmartPtr<IStateContext> m_stateContext;
             AtomicSmartPtr<IStateListener> m_stateListener;
 
             AtomicSmartPtr<ISharedObject> m_owner;
@@ -370,6 +372,8 @@ namespace fb
             /// To know if the element is selected.
             bool m_isSelected = false;
 
+            bool m_isHovered = false;
+
             bool m_dragDropSource = false;
 
             bool m_sameLine = false;
@@ -382,6 +386,8 @@ namespace fb
             /// The number of the next name extension.
             static u32 m_nextGeneratedNameExt;
         };
+
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, UIElement, T, core::Prototype<T> );
 
         template <class T>
         u32 UIElement<T>::m_nextGeneratedNameExt = 0;
@@ -417,7 +423,7 @@ namespace fb
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 auto ui = fb::static_pointer_cast<UIManager>( applicationManager->getRenderUI() );
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
 
@@ -466,7 +472,7 @@ namespace fb
                 return;
             }
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto timer = applicationManager->getTimer();
 
             auto task = Thread::getCurrentTask();
@@ -530,7 +536,7 @@ namespace fb
         template <class T>
         void UIElement<T>::addChild( SmartPtr<IUIElement> child )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             auto factoryManager = applicationManager->getFactoryManager();
             auto renderTask = graphicsSystem->getRenderTask();
@@ -543,7 +549,7 @@ namespace fb
             if( loadingState == LoadingState::Loaded && childLoadingState == LoadingState::Loaded &&
                 task == renderTask )
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto renderUI = applicationManager->getRenderUI();
@@ -582,9 +588,9 @@ namespace fb
 
                 auto childElement = fb::static_pointer_cast<UIElement>( child );
 
-                if( auto stateObject = childElement->getStateObject() )
+                if( auto stateContext = childElement->getStateContext() )
                 {
-                    stateObject->setDirty( true );
+                    stateContext->setDirty( true );
                 }
             }
             else
@@ -598,9 +604,9 @@ namespace fb
                 message->setType( IUIElement::STATE_MESSAGE_ADD_CHILD );
                 message->setObject( child );
 
-                if( auto stateObject = getStateObject() )
+                if( auto stateContext = getStateContext() )
                 {
-                    stateObject->addMessage( renderTask, message );
+                    stateContext->addMessage( renderTask, message );
                 }
             }
         }
@@ -665,7 +671,7 @@ namespace fb
         template <class T>
         void UIElement<T>::destroyAllChildren()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto ui = applicationManager->getUI();
 
             if( auto p = getChildren() )
@@ -1047,24 +1053,11 @@ namespace fb
         template <class T>
         void UIElement<T>::onActivate( SmartPtr<IUIElement> element )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             applicationManager->triggerEvent( IEvent::Type::UI, IEvent::ACTIVATE_HASH,
                                               Array<Parameter>(), this, element, nullptr );
 
-            if( auto p = UIElement<T>::getObjectListenersPtr() )
-            {
-                auto &listeners = *p;
-                if( !listeners.empty() )
-                {
-                    for( auto &listener : listeners )
-                    {
-                        listener->handleEvent( IEvent::Type::UI, IEvent::ACTIVATE_HASH,
-                                               Array<Parameter>(), this, element, nullptr );
-                    }
-                }
-            }
-
-            if( auto p = getChildren() )
+            if( auto p = element->getChildren() )
             {
                 auto children = *p;
                 for( auto &child : children )
@@ -1169,30 +1162,140 @@ namespace fb
         template <class T>
         bool UIElement<T>::handleEvent( const SmartPtr<IInputEvent> &event )
         {
-            auto enabled = isEnabled();
-            if( !enabled )
-            {
-                return false;
-            }
+            auto applicationManager = core::ApplicationManager::instance();
 
-            //for( u32 i = 0; i < m_inputListeners.size(); ++i )
-            //{
-            //    auto inputListener = m_inputListeners[i];
-            //    if( inputListener->onEvent( event ) )
-            //        return true;
-            //}
-
-            if( auto p = getChildren() )
+            switch( auto eventType = event->getEventType() )
             {
-                auto &children = *p;
-                for( auto &child : children )
+            case IInputEvent::EventType::Mouse:
+            {
+                //Mouse event
+                auto mouseState = event->getMouseState();
+                auto mouseEventType = mouseState->getEventType();
+
+                if( mouseEventType == IMouseState::Event::LeftPressed )
                 {
-                    if( child->handleEvent( event ) )
+                    auto ui = fb::static_pointer_cast<UIManager>( applicationManager->getUI() );
+                    if( ui )
                     {
-                        return true;
+                        auto relativeMousePosition = mouseState->getRelativePosition();
+
+                        if( auto uiWindow = ui->getMainWindow() )
+                        {
+                            if( auto mainWindow = applicationManager->getWindow() )
+                            {
+                                auto mainWindowSize = mainWindow->getSize();
+                                auto mainWindowSizeF =
+                                    Vector2F( (f32)mainWindowSize.x, (f32)mainWindowSize.y );
+
+                                auto pos = uiWindow->getPosition() / mainWindowSizeF;
+                                auto size = uiWindow->getSize() / mainWindowSizeF;
+
+                                auto aabb = AABB2F( pos, size, true );
+                                if( aabb.isInside( relativeMousePosition ) )
+                                {
+                                    if( auto element = getWidget() )
+                                    {
+                                        auto referenceSize =
+                                            Ogre::Vector2( mainWindowSizeF.x, mainWindowSizeF.y );
+                                        auto center = element->getCenter() / referenceSize;
+                                        auto widgetSize = element->getSize() / referenceSize;
+
+                                        auto postion =
+                                            Vector2( center.x, center.y );  //getAbsolutePosition();
+                                        auto elementSize =
+                                            Vector2( widgetSize.x, widgetSize.y );  //getSize();
+                                        auto rect = AABB2F( postion, elementSize, true );
+
+                                        auto point = ( relativeMousePosition - pos ) / size;
+
+                                        if( rect.isInside( point ) )
+                                        {
+                                            applicationManager->triggerEvent(
+                                                IEvent::Type::UI, IEvent::CLICK_HASH, Array<Parameter>(),
+                                                ui, this, event );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if( auto mainWindow = applicationManager->getWindow() )
+                            {
+                                auto mainWindowSize = mainWindow->getSize();
+                                auto mainWindowSizeF =
+                                    Vector2F( (f32)mainWindowSize.x, (f32)mainWindowSize.y );
+                                auto postion = getAbsolutePosition();
+                                auto rect = AABB2F( postion, postion + getSize() );
+
+                                auto point = ( relativeMousePosition - postion ) / mainWindowSizeF;
+
+                                if( rect.isInside( relativeMousePosition ) )
+                                {
+                                    applicationManager->triggerEvent(
+                                        IEvent::Type::UI, IEvent::CLICK_HASH, Array<Parameter>(), this,
+                                        this, nullptr );
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        auto relativeMousePosition = mouseState->getRelativePosition();
+
+                        if( auto mainWindow = applicationManager->getWindow() )
+                        {
+                            auto mainWindowSize = mainWindow->getSize();
+                            auto mainWindowSizeF =
+                                Vector2F( (f32)mainWindowSize.x, (f32)mainWindowSize.y );
+                            auto postion = getAbsolutePosition();
+                            auto rect = AABB2F( postion, postion + getSize() );
+
+                            auto point = ( relativeMousePosition - postion ) / mainWindowSizeF;
+
+                            if( rect.isInside( relativeMousePosition ) )
+                            {
+                                applicationManager->triggerEvent( IEvent::Type::UI, IEvent::CLICK_HASH,
+                                                                  Array<Parameter>(), this, this,
+                                                                  nullptr );
+                            }
+                        }
+                    }
+                }
+                else if( mouseEventType == IMouseState::Event::LeftReleased )
+                {
+                }
+                else if( mouseEventType == IMouseState::Event::MiddleReleased )
+                {
+                }
+                else if( mouseEventType == IMouseState::Event::Moved )
+                {
+                    Vector2F point( event->getMouseState()->getRelativePosition().X(),
+                                    event->getMouseState()->getRelativePosition().Y() );
+                    Vector2F postion = getAbsolutePosition();
+                    AABB2F rect( postion, postion + getSize() );
+                    if( rect.isInside( point ) )
+                    {
+                    }
+                    else
+                    {
                     }
                 }
             }
+            break;
+            case IInputEvent::EventType::User:
+            case IInputEvent::EventType::Key:
+            {
+            }
+            break;
+            case IInputEvent::EventType::Joystick:
+            {
+            }
+            break;
+            default:
+            {
+            }
+            };
 
             return false;
         }
@@ -1259,9 +1362,21 @@ namespace fb
         }
 
         template <class T>
+        void UIElement<T>::setHovered( bool hovered )
+        {
+            m_isHovered = hovered;
+        }
+
+        template <class T>
+        bool UIElement<T>::isHovered() const
+        {
+            return m_isHovered;
+        }
+
+        template <class T>
         void UIElement<T>::setVisible( bool visible, bool cascade )
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = UIElement<T>::getStateContext() )
             {
                 if( auto state = stateContext->template getStateByType<UIElementState>() )
                 {
@@ -1318,7 +1433,7 @@ namespace fb
         template <class T>
         bool UIElement<T>::isThreadSafe() const
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             auto renderTask = graphicsSystem->getRenderTask();
 
@@ -1332,13 +1447,13 @@ namespace fb
         template <class T>
         void UIElement<T>::addMessage( SmartPtr<IStateMessage> message )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto graphicsSystem = applicationManager->getGraphicsSystem();
 
-            if( auto stateObject = UIElement<T>::getStateObject() )
+            if( auto stateContext = UIElement<T>::getStateContext() )
             {
                 const auto stateTask = graphicsSystem->getStateTask();
-                stateObject->addMessage( stateTask, message );
+                stateContext->addMessage( stateTask, message );
             }
         }
 
@@ -1405,7 +1520,7 @@ namespace fb
         template <class T>
         void UIElement<T>::setPosition( const Vector2F &position )
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
                 if( auto state = stateContext->template getStateByType<UIElementState>() )
                 {
@@ -1417,7 +1532,7 @@ namespace fb
         template <class T>
         SmartPtr<Properties> UIElement<T>::getProperties() const
         {
-            auto properties = fb::make_ptr<Properties>();
+            auto properties = core::Prototype<T>::getProperties();
             properties->setProperty( "size", getSize() );
             properties->setProperty( "position", getPosition() );
             properties->setProperty( "enabled", m_isEnabled );
@@ -1428,6 +1543,8 @@ namespace fb
         template <class T>
         void UIElement<T>::setProperties( SmartPtr<Properties> properties )
         {
+            core::Prototype<T>::setProperties( properties );
+
             auto enabled = isEnabled();
             auto visible = isVisible();
             //properties->getPropertyValue( "size", m_size );
@@ -1445,9 +1562,9 @@ namespace fb
             auto objects = Array<SmartPtr<ISharedObject>>();
             objects.reserve( 32 );
 
-            //if( auto stateObject = m_stateObject.load() )
+            //if( auto stateContext = m_stateContext.load() )
             //{
-            //    objects.push_back( stateObject );
+            //    objects.push_back( stateContext );
             //}
 
             //if( auto stateListener = m_stateListener.load() )
@@ -1506,7 +1623,13 @@ namespace fb
         }
 
         template <class T>
-        SmartPtr<IUIDragSource> UIElement<T>::getDragSource() const
+        SmartPtr<IUIDragSource> &UIElement<T>::getDragSource()
+        {
+            return m_dragSource;
+        }
+
+        template <class T>
+        const SmartPtr<IUIDragSource> &UIElement<T>::getDragSource() const
         {
             return m_dragSource;
         }
@@ -1518,7 +1641,13 @@ namespace fb
         }
 
         template <class T>
-        SmartPtr<IUIDropTarget> UIElement<T>::getDropTarget() const
+        SmartPtr<IUIDropTarget> &UIElement<T>::getDropTarget()
+        {
+            return m_dropTarget;
+        }
+
+        template <class T>
+        const SmartPtr<IUIDropTarget> &UIElement<T>::getDropTarget() const
         {
             return m_dropTarget;
         }
@@ -1532,7 +1661,7 @@ namespace fb
         template <class T>
         u32 UIElement<T>::getOrder() const
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
                 if( auto state = stateContext->template getStateByType<UIElementState>() )
                 {
@@ -1551,7 +1680,7 @@ namespace fb
         template <class T>
         void UIElement<T>::setOrder( u32 order )
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
                 if( auto state = stateContext->template getStateByType<UIElementState>() )
                 {
@@ -1610,7 +1739,7 @@ namespace fb
         template <class T>
         Vector2F UIElement<T>::getPosition() const
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
                 if( auto state = stateContext->template getStateByType<UIElementState>() )
                 {
@@ -1624,7 +1753,7 @@ namespace fb
         template <class T>
         void UIElement<T>::setSize( const Vector2F &size )
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
                 if( auto state = stateContext->template getStateByType<UIElementState>() )
                 {
@@ -1636,7 +1765,7 @@ namespace fb
         template <class T>
         Vector2F UIElement<T>::getSize() const
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
                 if( auto state = stateContext->template getStateByType<UIElementState>() )
                 {
@@ -1656,7 +1785,7 @@ namespace fb
         template <class T>
         bool UIElement<T>::isVisible() const
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
                 if( auto state = stateContext->template getStateByType<UIElementState>() )
                 {
@@ -1692,6 +1821,28 @@ namespace fb
         }
 
         template <class T>
+        s32 UIElement<T>::getSiblingIndex() const
+        {
+            if( m_parent )
+            {
+                auto pThis = UIElement<T>::template getSharedFromThis<IUIElement>();
+                auto children = m_parent->getChildren();
+                if( children )
+                {
+                    for( u32 i = 0; i < children->size(); ++i )
+                    {
+                        if( children->at( i ) == pThis )
+                        {
+                            return i;
+                        }
+                    }
+                }
+            }
+
+            return -1;
+        }
+
+        template <class T>
         SmartPtr<IUIElement> UIElement<T>::getLayout() const
         {
             return m_layout;
@@ -1723,7 +1874,7 @@ namespace fb
         template <class T>
         void UIElement<T>::createStateContext()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto stateManager = applicationManager->getStateManager();
@@ -1735,18 +1886,18 @@ namespace fb
             auto factoryManager = applicationManager->getFactoryManager();
             FB_ASSERT( factoryManager );
 
-            auto stateObject = stateManager->addStateObject();
+            auto stateContext = stateManager->addStateObject();
 
             auto listener = factoryManager->make_ptr<ElementStateListener>();
             listener->setOwner( this );
-            stateObject->addStateListener( listener );
+            stateContext->addStateListener( listener );
 
             auto state = factoryManager->make_ptr<UIElementState>();
-            stateObject->setState( state );
+            stateContext->addState( state );
 
-            stateObject->setOwner( this );
+            stateContext->setOwner( this );
 
-            setStateObject( stateObject );
+            setStateContext( stateContext );
             setStateListener( listener );
 
             auto stateTask = graphicsSystem->getStateTask();
@@ -1756,7 +1907,7 @@ namespace fb
         template <class T>
         ColourF UIElement<T>::getColour() const
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
                 if( auto state = stateContext->template getStateByType<UIElementState>() )
                 {
@@ -1770,7 +1921,7 @@ namespace fb
         template <class T>
         void UIElement<T>::setColour( const ColourF &colour )
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
                 if( auto state = stateContext->template getStateByType<UIElementState>() )
                 {
@@ -1780,15 +1931,15 @@ namespace fb
         }
 
         template <class T>
-        SmartPtr<IStateContext> UIElement<T>::getStateObject() const
+        SmartPtr<IStateContext> UIElement<T>::getStateContext() const
         {
-            return m_stateObject;
+            return m_stateContext;
         }
 
         template <class T>
-        void UIElement<T>::setStateObject( SmartPtr<IStateContext> stateObject )
+        void UIElement<T>::setStateContext( SmartPtr<IStateContext> stateContext )
         {
-            m_stateObject = stateObject;
+            m_stateContext = stateContext;
         }
 
         template <class T>
@@ -1839,12 +1990,79 @@ namespace fb
         template <class T>
         void UIElement<T>::handleStateChanged( SmartPtr<IState> &state )
         {
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto renderUI = applicationManager->getRenderUI();
+            FB_ASSERT( renderUI );
+
+            IUIManager::ScopedLock lock( renderUI );
+
+            if( UIElement<T>::isLoaded() )
+            {
+                auto elementState = fb::static_pointer_cast<UIElementState>( state );
+
+                auto position = elementState->getPosition();
+                auto size = elementState->getSize();
+                auto zOrder = elementState->getZOrder();
+                auto inheritsPick = elementState->getHandleInputEvents();
+
+                auto iPosition = Vector2I::zero();
+                auto iSize = Vector2I::zero();
+
+                auto visible = elementState->isVisible();
+
+                if( auto uiWindow = applicationManager->getSceneRenderWindow() )
+                {
+                    auto sceneWindowPosition = uiWindow->getPosition();
+                    auto sceneWindowSize = uiWindow->getSize();
+
+                    sceneWindowSize = Vector2F( 1920, 1080 );
+
+                    auto pos = position * sceneWindowSize;
+                    auto sz = size * sceneWindowSize;
+
+                    iPosition = Vector2I( (s32)pos.X(), (s32)pos.Y() );
+                    iSize = Vector2I( (s32)sz.X(), (s32)sz.Y() );
+                }
+                else
+                {
+                    if( auto mainWindow = applicationManager->getWindow() )
+                    {
+                        auto mainWindowSize = mainWindow->getSize();
+                        auto mainWindowSizeF = Vector2F( (f32)mainWindowSize.x, (f32)mainWindowSize.y );
+
+                        auto pos = position * mainWindowSizeF;
+                        auto sz = size * mainWindowSizeF;
+
+                        iPosition = Vector2I( (s32)pos.X(), (s32)pos.Y() );
+                        iSize = Vector2I( (s32)sz.X(), (s32)sz.Y() );
+                    }
+                }
+
+                if( auto widget = getWidget() )
+                {
+                    if( widget->getZOrder() != zOrder )
+                    {
+                        widget->setZOrder( zOrder );
+                    }
+
+                    widget->setTransform(
+                        Ogre::Vector2( (Ogre::Real)iPosition.x, (Ogre::Real)iPosition.y ),
+                        Ogre::Vector2( (Ogre::Real)iSize.x, (Ogre::Real)iSize.y ) );
+                    widget->setHidden( !visible );
+
+                    elementState->setElementVisible( visible );
+                }
+
+                state->setDirty( false );
+            }
         }
 
         template <class T>
         bool UIElement<T>::getHandleInputEvents() const
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
                 if( auto state = stateContext->template getStateByType<UIElementState>() )
                 {
@@ -1858,7 +2076,7 @@ namespace fb
         template <class T>
         void UIElement<T>::setHandleInputEvents( bool handleInputEvents )
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
                 if( auto state = stateContext->template getStateByType<UIElementState>() )
                 {
@@ -1924,76 +2142,9 @@ namespace fb
         template <class T>
         void UIElement<T>::ElementStateListener::handleStateChanged( SmartPtr<IState> &state )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto renderUI = applicationManager->getRenderUI();
-            FB_ASSERT( renderUI );
-
-            IUIManager::ScopedLock lock( renderUI );
-
             if( auto owner = getOwner() )
             {
-                if( owner->isLoaded() )
-                {
-                    owner->handleStateChanged( state );
-
-                    auto elementState = fb::static_pointer_cast<UIElementState>( state );
-
-                    auto position = elementState->getPosition();
-                    auto size = elementState->getSize();
-                    auto zOrder = elementState->getZOrder();
-                    auto inheritsPick = elementState->getHandleInputEvents();
-
-                    auto iPosition = Vector2I::zero();
-                    auto iSize = Vector2I::zero();
-
-                    auto visible = elementState->isVisible();
-
-                    if( auto uiWindow = applicationManager->getSceneRenderWindow() )
-                    {
-                        auto sceneWindowPosition = uiWindow->getPosition();
-                        auto sceneWindowSize = uiWindow->getSize();
-
-                        sceneWindowSize = Vector2F( 1920, 1080 );
-
-                        auto pos = position * sceneWindowSize;
-                        auto sz = size * sceneWindowSize;
-
-                        iPosition = Vector2I( (s32)pos.X(), (s32)pos.Y() );
-                        iSize = Vector2I( (s32)sz.X(), (s32)sz.Y() );
-                    }
-                    else
-                    {
-                        if( auto mainWindow = applicationManager->getWindow() )
-                        {
-                            auto mainWindowSize = mainWindow->getSize();
-                            auto mainWindowSizeF =
-                                Vector2F( (f32)mainWindowSize.x, (f32)mainWindowSize.y );
-
-                            auto pos = position * mainWindowSizeF;
-                            auto sz = size * mainWindowSizeF;
-
-                            iPosition = Vector2I( (s32)pos.X(), (s32)pos.Y() );
-                            iSize = Vector2I( (s32)sz.X(), (s32)sz.Y() );
-                        }
-                    }
-
-                    if( auto widget = owner->getWidget() )
-                    {
-                        if( widget->getZOrder() != zOrder )
-                        {
-                            widget->setZOrder( zOrder );
-                        }
-
-                        widget->setTransform(
-                            Ogre::Vector2( (Ogre::Real)iPosition.x, (Ogre::Real)iPosition.y ),
-                            Ogre::Vector2( (Ogre::Real)iSize.x, (Ogre::Real)iSize.y ) );
-                        widget->setHidden( !visible );
-
-                        state->setDirty( false );
-                    }
-                }
+                owner->handleStateChanged( state );
             }
         }
 
@@ -2038,6 +2189,18 @@ namespace fb
             if( m_widget )
             {
                 m_widget->addActionListener( m_widgetListener );
+            }
+        }
+
+        template <class T>
+        void UIElement<T>::notifyWidgetAction( Colibri::Widget *widget, Colibri::Action::Action action )
+        {
+            if( action == Colibri::Action::Action::PrimaryActionPerform )
+            {
+                if( auto layout = getLayout() )
+                {
+                    layout->onActivate( this );
+                }
             }
         }
 

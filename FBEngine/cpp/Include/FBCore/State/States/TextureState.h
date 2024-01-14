@@ -10,8 +10,8 @@ namespace fb
     class TextureState : public BaseState
     {
     public:
-        TextureState() = default;
-        ~TextureState() override = default;
+        TextureState();
+        ~TextureState() override;
 
         SmartPtr<IState> clone();
 

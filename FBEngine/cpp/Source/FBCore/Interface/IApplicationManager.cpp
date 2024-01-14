@@ -3,24 +3,16 @@
 #include <FBCore/System/RttiClassDefinition.h>
 #include <FBCore/Core/DebugTrace.h>
 
-namespace fb
+namespace fb::core
 {
-    namespace core
+
+    FB_CLASS_REGISTER_DERIVED( fb, IApplicationManager, ISharedObject );
+
+    SmartPtr<IApplicationManager> IApplicationManager::m_instance;
+
+    void IApplicationManager::setInstance( SmartPtr<IApplicationManager> instance )
     {
+        m_instance = instance;
+    }
 
-        FB_CLASS_REGISTER_DERIVED( fb, IApplicationManager, ISharedObject );
-
-        AtomicSmartPtr<IApplicationManager> IApplicationManager::m_instance;
-
-        SmartPtr<IApplicationManager> IApplicationManager::instance()
-        {
-            return m_instance;
-        }
-
-        void IApplicationManager::setInstance( SmartPtr<IApplicationManager> instance )
-        {
-            m_instance = instance;
-        }
-
-    }  // namespace core
-}  // namespace fb
+}  // namespace fb::core

@@ -13,20 +13,18 @@ namespace fb
         AssetDatabaseManager();
         ~AssetDatabaseManager() override;
 
+        void load( SmartPtr<ISharedObject> data ) override;
         void unload( SmartPtr<ISharedObject> data ) override;
-
-        void setAssetDataFromPath( const String &path, SmartPtr<IData> data );
-        SmartPtr<IData> getAssetDataFromPath( const String &path );
 
         void clearDatabase();
 
-        bool hasResourceEntry( SmartPtr<ISharedObject> resource );
-        void addResourceEntry( SmartPtr<ISharedObject> resource );
-        void removeResourceEntry( SmartPtr<ISharedObject> resource );
+        bool hasResourceEntry( SmartPtr<ISharedObject> object );
+        void addResourceEntry( SmartPtr<ISharedObject> object );
+        void updateResourceEntry( SmartPtr<ISharedObject> object );
+        void removeResourceEntry( SmartPtr<ISharedObject> object );
 
-        SmartPtr<IResource> loadResourceById( const String &uuid );
-
-        SmartPtr<IResource> loadResource( const String &filePath );
+        SmartPtr<scene::IDirector> getResourceEntry( const String &uuid );
+        SmartPtr<scene::IDirector> getResourceEntryFromPath( const String &path );
 
         bool hasResourceById( const String &uuid );
 

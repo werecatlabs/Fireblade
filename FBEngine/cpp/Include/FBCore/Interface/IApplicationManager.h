@@ -85,32 +85,46 @@ namespace fb
             */
             virtual void setPaused( bool paused ) = 0;
 
-            /** Gets a boolean to know if the application is running. */
+            /** Gets a boolean to know if the application is running.
+            @return True if the application is running, false otherwise.
+            */
             virtual bool isRunning() const = 0;
 
-            /** Sets a boolean to know if the application is running. */
+            /** Sets a boolean to know if the application is running.
+            @param running True to run the application, false to stop it.
+            */
             virtual void setRunning( bool running ) = 0;
 
-            /** Gets a boolean to know if the application is quitting. */
+            /** Gets a boolean to know if the application is quitting.
+            @return True if the application is quitting, false otherwise.
+            */
             virtual bool getQuit() const = 0;
 
-            /** Sets a boolean to know if the application is quitting. */
+            /** Sets a boolean to know if the application is quitting.
+            @param quit True to quit the application, false to keep it running.
+            */
             virtual void setQuit( bool quit ) = 0;
 
-            /** Gets a boolean to know if there are any tasks running. */
+            /** Gets a boolean to know if there are any tasks running.
+            @return True if there are tasks running, false otherwise.
+            */
             virtual bool hasTasks() const = 0;
 
-            /** Gets the path of the cache folder. */
+            /** Gets the path of the cache folder.
+            @return The path of the cache folder.
+            */
             virtual String getCachePath() const = 0;
 
-            /** Sets the path of the cache folder. */
+            /** Sets the path of the cache folder.
+            @param cachePath The path of the cache folder.
+            */
             virtual void setCachePath( const String &cachePath ) = 0;
 
             /** Gets the path of the settings cache folder. */
-            virtual String getSettingsCachePath() const = 0;
+            virtual String getSettingsPath() const = 0;
 
             /** Sets the path of the settings cache folder. */
-            virtual void setSettingsCachePath( const String &cachePath ) = 0;
+            virtual void setSettingsPath( const String &cachePath ) = 0;
 
             /** Gets the path of the project. */
             virtual String getProjectPath() const = 0;
@@ -209,7 +223,13 @@ namespace fb
              * Gets the factory manager instance for the application.
              * @return A shared pointer to the factory manager instance.
              */
-            virtual SmartPtr<IFactoryManager> getFactoryManager() const = 0;
+            virtual SmartPtr<IFactoryManager> &getFactoryManager() = 0;
+
+            /**
+             * Gets the factory manager instance for the application.
+             * @return A shared pointer to the factory manager instance.
+             */
+            virtual const SmartPtr<IFactoryManager> &getFactoryManager() const = 0;
 
             /**
              * Sets the factory manager instance for the application.
@@ -257,13 +277,13 @@ namespace fb
              * Gets a pointer to the system settings for the application.
              * @return A SmartPtr to the system settings.
              */
-            virtual SmartPtr<ISystemManager> getSystemSettings() const = 0;
+            virtual SmartPtr<ISystemSettings> getSystemSettings() const = 0;
 
             /**
              * Sets the system settings for the application.
              * @param systemManager A SmartPtr to the system settings.
              */
-            virtual void setSystemSettings( SmartPtr<ISystemManager> systemManager ) = 0;
+            virtual void setSystemSettings( SmartPtr<ISystemSettings> systemManager ) = 0;
 
             /**
              * Gets a pointer to the application client.
@@ -281,7 +301,13 @@ namespace fb
              * Gets a pointer to the job queue for the application.
              * @return A SmartPtr to the job queue.
              */
-            virtual SmartPtr<IJobQueue> getJobQueue() const = 0;
+            virtual SmartPtr<IJobQueue> &getJobQueue() = 0;
+
+            /**
+             * Gets a pointer to the job queue for the application.
+             * @return A SmartPtr to the job queue.
+             */
+            virtual const SmartPtr<IJobQueue> &getJobQueue() const = 0;
 
             /**
              * Sets the job queue for the application.
@@ -293,7 +319,13 @@ namespace fb
              * Gets a pointer to the graphics system for the application.
              * @return A SmartPtr to the graphics system.
              */
-            virtual SmartPtr<render::IGraphicsSystem> getGraphicsSystem() const = 0;
+            virtual SmartPtr<render::IGraphicsSystem> &getGraphicsSystem() = 0;
+
+            /**
+             * Gets a pointer to the graphics system for the application.
+             * @return A SmartPtr to the graphics system.
+             */
+            virtual const SmartPtr<render::IGraphicsSystem> &getGraphicsSystem() const = 0;
 
             /**
              * Sets the graphics system for the application.
@@ -321,7 +353,13 @@ namespace fb
              * Gets a pointer to the file system for the application.
              * @return A SmartPtr to the file system.
              */
-            virtual SmartPtr<IFileSystem> getFileSystem() const = 0;
+            virtual SmartPtr<IFileSystem> &getFileSystem() = 0;
+
+            /**
+             * Gets a pointer to the file system for the application.
+             * @return A SmartPtr to the file system.
+             */
+            virtual const SmartPtr<IFileSystem> &getFileSystem() const = 0;
 
             /**
              * Sets the file system for the application.
@@ -331,18 +369,31 @@ namespace fb
 
             /**
              * Gets the timer used by the application.
+             @return The timer used by the application.
              */
-            virtual SmartPtr<ITimer> getTimer() const = 0;
+            virtual SmartPtr<ITimer> &getTimer() = 0;
+
+            /**
+             * Gets the timer used by the application.
+             @return The timer used by the application.
+             */
+            virtual const SmartPtr<ITimer> &getTimer() const = 0;
 
             /**
              * Sets the timer used by the application.
+             @param timer The timer used by the application.
              */
             virtual void setTimer( SmartPtr<ITimer> timer ) = 0;
 
             /**
              * Gets the finite state machine manager.
              */
-            virtual SmartPtr<IFSMManager> getFsmManager() const = 0;
+            virtual SmartPtr<IFSMManager> &getFsmManager() = 0;
+
+            /**
+             * Gets the finite state machine manager.
+             */
+            virtual const SmartPtr<IFSMManager> &getFsmManager() const = 0;
 
             /**
              * Sets the finite state machine manager.
@@ -488,7 +539,13 @@ namespace fb
              * Get the thread pool for the application.
              * @return The thread pool for the application.
              */
-            virtual SmartPtr<IThreadPool> getThreadPool() const = 0;
+            virtual SmartPtr<IThreadPool> &getThreadPool() = 0;
+
+            /**
+             * Get the thread pool for the application.
+             * @return The thread pool for the application.
+             */
+            virtual const SmartPtr<IThreadPool> &getThreadPool() const = 0;
 
             /**
              * Set the thread pool for the application.
@@ -524,7 +581,8 @@ namespace fb
              * @brief Gets the state manager.
              * @return A SmartPtr to the state manager.
              */
-            virtual SmartPtr<IStateManager> getStateManager() const = 0;
+            virtual SmartPtr<IStateManager> &getStateManager() = 0;
+            virtual const SmartPtr<IStateManager> &getStateManager() const = 0;
 
             /**
              * @brief Sets the state manager.
@@ -644,20 +702,6 @@ namespace fb
             virtual void setSoundManager( SmartPtr<ISoundManager> soundManager ) = 0;
 
             /**
-             * @brief Returns a SmartPtr to the IPluginInterface object used by the application.
-             *
-             * @return A SmartPtr to the IPluginInterface object used by the application.
-             */
-            virtual SmartPtr<IPluginInterface> getPluginInterface() const = 0;
-
-            /**
-             * @brief Sets the IPluginInterface object to be used by the application.
-             *
-             * @param pluginInterface A SmartPtr to the IPluginInterface object to be used by the application.
-             */
-            virtual void setPluginInterface( SmartPtr<IPluginInterface> pluginInterface ) = 0;
-
-            /**
              * @brief Returns a SmartPtr to the IUIManager object used by the application.
              *
              * @return A SmartPtr to the IUIManager object used by the application.
@@ -773,14 +817,14 @@ namespace fb
             /**
              * Gets the state object of the application manager.
              */
-            virtual SmartPtr<IStateContext> getStateObject() const = 0;
+            virtual SmartPtr<IStateContext> getStateContext() const = 0;
 
             /**
              * Sets the state object of the application manager.
              *
-             * @param stateObject The new state object.
+             * @param stateContext The new state object.
              */
-            virtual void setStateObject( SmartPtr<IStateContext> stateObject ) = 0;
+            virtual void setStateContext( SmartPtr<IStateContext> stateContext ) = 0;
 
             /**
              * Gets the main window of the application.
@@ -818,8 +862,14 @@ namespace fb
                                             SmartPtr<ISharedObject> sender,
                                             SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) = 0;
 
+            /** Gets the type manager.
+            @return A pointer to the type manager.
+            */
             virtual RawPtr<TypeManager> getTypeManager() const = 0;
 
+            /** Sets the type manager.
+            @param typeManager A pointer to the type manager.
+            */
             virtual void setTypeManager( RawPtr<TypeManager> typeManager ) = 0;
 
             /**
@@ -830,10 +880,22 @@ namespace fb
             template <class T>
             SmartPtr<T> getComponent() const;
 
+            /** Allocates memory. */
+            virtual void *allocateMemory( size_t size ) = 0;
+
+            /** Frees memory. */
+            virtual void freeMemory( void *ptr ) = 0;
+
+            template <class T>
+            SmartPtr<T> make_ptr();
+
+            template <class T, class... _Types>
+            SmartPtr<T> make_ptr( _Types &&..._Args );
+
             /**
              * Gets the application manager instance.
              */
-            static SmartPtr<IApplicationManager> instance();
+            static SmartPtr<IApplicationManager> &instance();
 
             /**
              * Sets the application manager instance.
@@ -847,7 +909,7 @@ namespace fb
             /**
              * The instance of the application manager, used for storing the singleton instance of this class.
              */
-            static AtomicSmartPtr<IApplicationManager> m_instance;
+            static SmartPtr<IApplicationManager> m_instance;
         };
 
         template <class T>
@@ -856,6 +918,35 @@ namespace fb
             auto typeInfo = T::typeInfo();
             auto component = getComponentByType( typeInfo );
             return fb::static_pointer_cast<T>( component );
+        }
+
+        template <class T>
+        SmartPtr<T> IApplicationManager::make_ptr()
+        {
+            auto size = sizeof( T );
+            auto ptr = allocateMemory( size );
+
+            auto object = new( ptr ) T();
+            auto p = SmartPtr<T>( object );
+            object->removeReference();
+            return p;
+        }
+
+        template <class T, class... _Types>
+        SmartPtr<T> IApplicationManager::make_ptr( _Types &&..._Args )
+        {
+            auto size = sizeof( T );
+            auto ptr = allocateMemory( size );
+
+            auto object = new( ptr ) T( std::forward<_Types>( _Args )... );
+            auto p = SmartPtr<T>( ptr );
+            object->removeReference();
+            return p;
+        }
+
+        inline SmartPtr<IApplicationManager> &IApplicationManager::instance()
+        {
+            return m_instance;
         }
 
     }  // namespace core

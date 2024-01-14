@@ -60,9 +60,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    MeshSerializerImpl::~MeshSerializerImpl()
-    {
-    }
+    MeshSerializerImpl::~MeshSerializerImpl() = default;
 
     //---------------------------------------------------------------------
     void MeshSerializerImpl::exportMesh( const Mesh *pMesh, SmartPtr<IStream> stream, u32 endianMode )
@@ -153,11 +151,11 @@ namespace fb
 
         // Write Submeshes
         auto subMeshes = pMesh->getSubMeshes();
-        for( unsigned short i = 0; i < subMeshes.size(); ++i )
+        for( const auto &subMeshe : subMeshes )
         {
             FB_LOG( "Writing submesh..." );
 
-            auto pSubMesh = subMeshes[i].get();
+            auto pSubMesh = subMeshe.get();
             writeSubMesh( static_cast<SubMesh *>( pSubMesh ) );
 
             FB_LOG( "Submesh exported." );
@@ -328,9 +326,8 @@ namespace fb
         bool has_extremes = false;
 
         auto subMeshes = pMesh->getSubMeshes();
-        for( unsigned short i = 0; i < subMeshes.size(); ++i )
+        for( auto sm : subMeshes )
         {
-            auto sm = subMeshes[i];
             // if (sm->extremityPoints.empty())
             //	continue;
 
@@ -408,7 +405,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcGeometrySize( const VertexBuffer *vertexData )
+    auto MeshSerializerImpl::calcGeometrySize( const VertexBuffer *vertexData ) -> u32
     {
         auto vertexDeclaration = vertexData->getVertexDeclaration();
         // calc size
@@ -433,7 +430,7 @@ namespace fb
             ( MSTREAM_OVERHEAD_SIZE +
               elemList.size() * ( MSTREAM_OVERHEAD_SIZE + sizeof( unsigned short ) * 5 ) );  // elements
 
-        auto numVerticies = vertexData->getNumVerticies();
+        auto numVerticies = vertexData->getNumVertices();
 
         // Buffer data
         for( u32 i = 0; i < dataArray.size(); ++i )
@@ -457,7 +454,7 @@ namespace fb
         auto geomSize = calcGeometrySize( vertexData );
         writeChunkHeader( M_GEOMETRY, geomSize );
 
-        auto vertexCount = vertexData->getNumVerticies();
+        auto vertexCount = vertexData->getNumVertices();
         writeInts( &vertexCount, 1 );
 
         // Vertex declaration
@@ -500,7 +497,7 @@ namespace fb
         auto vertexDataArray = vertexData->getDataArray();
         for( auto data : vertexDataArray )
         {
-            auto vbufSizeInBytes = vertexDeclaration->getSize() * vertexData->getNumVerticies();
+            auto vbufSizeInBytes = vertexDeclaration->getSize() * vertexData->getNumVertices();
             size = ( MSTREAM_OVERHEAD_SIZE * 2 ) + ( sizeof( u16 ) * 2 ) + vbufSizeInBytes;
 
             auto chunkId = static_cast<u16>( M_GEOMETRY_VERTEX_BUFFER );
@@ -524,16 +521,15 @@ namespace fb
                 auto tempData = new u8[vbufSizeInBytes];
                 memcpy( tempData, data, vbufSizeInBytes );
 
-                flipToLittleEndian( tempData, vertexData->getNumVerticies(),
-                                    vertexDeclaration->getSize(),
+                flipToLittleEndian( tempData, vertexData->getNumVertices(), vertexDeclaration->getSize(),
                                     vertexDeclaration->findElementsBySource( bindIndex ) );
 
-                writeData( tempData, vertexDeclaration->getSize(), vertexData->getNumVerticies() );
+                writeData( tempData, vertexDeclaration->getSize(), vertexData->getNumVertices() );
                 delete[] tempData;
             }
             else
             {
-                writeData( data, vertexDeclaration->getSize(), vertexData->getNumVerticies() );
+                writeData( data, vertexDeclaration->getSize(), vertexData->getNumVertices() );
             }
 
             bindIndex++;
@@ -541,7 +537,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcSubMeshNameTableSize( const Mesh *pMesh )
+    auto MeshSerializerImpl::calcSubMeshNameTableSize( const Mesh *pMesh ) -> u32
     {
         u32 size = MSTREAM_OVERHEAD_SIZE;
         // Figure out the size of the Name table.
@@ -562,7 +558,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcMeshSize( const Mesh *pMesh )
+    auto MeshSerializerImpl::calcMeshSize( const Mesh *pMesh ) -> u32
     {
         u32 size = MSTREAM_OVERHEAD_SIZE;
 
@@ -607,7 +603,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcSubMeshSize( const SubMesh *pSub )
+    auto MeshSerializerImpl::calcSubMeshSize( const SubMesh *pSub ) -> u32
     {
         u32 size = MSTREAM_OVERHEAD_SIZE;
 
@@ -652,13 +648,13 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcSubMeshOperationSize( const SubMesh *pSub )
+    auto MeshSerializerImpl::calcSubMeshOperationSize( const SubMesh *pSub ) -> u32
     {
         return MSTREAM_OVERHEAD_SIZE + sizeof( u16 );
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcSubMeshTextureAliasesSize( const SubMesh *pSub )
+    auto MeshSerializerImpl::calcSubMeshTextureAliasesSize( const SubMesh *pSub ) -> u32
     {
         u32 chunkSize = 0;
         // AliasTextureNamePairList::const_iterator i;
@@ -704,7 +700,7 @@ namespace fb
 
         unsigned int vertexCount = 0;
         readInts( stream, &vertexCount, 1 );
-        dest->setNumVerticies( vertexCount );
+        dest->setNumVertices( vertexCount );
 
         // Find optional geometry streams
         if( !stream->eof() )
@@ -849,9 +845,9 @@ namespace fb
 
         // Create / populate vertex buffer
         void *pBuf = dest->createVertexData( bindIndex );
-        stream->read( pBuf, dest->getNumVerticies() * vertexSize );
+        stream->read( pBuf, dest->getNumVertices() * vertexSize );
 
-        auto vertexCount = dest->getNumVerticies();
+        auto vertexCount = dest->getNumVertices();
         auto declaration = dest->getVertexDeclaration();
         auto element = declaration->findElementsBySource( bindIndex );
 
@@ -1134,7 +1130,9 @@ namespace fb
         String skelName = readString( stream );
 
         if( listener )
+        {
             listener->processSkeletonName( pMesh, &skelName );
+        }
 
         //  pMesh->setSkeletonName(skelName);
     }
@@ -1147,7 +1145,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcSkeletonLinkSize( const String &skelName )
+    auto MeshSerializerImpl::calcSkeletonLinkSize( const String &skelName ) -> u32
     {
         u32 size = MSTREAM_OVERHEAD_SIZE;
 
@@ -1214,7 +1212,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcBoneAssignmentSize( void )
+    auto MeshSerializerImpl::calcBoneAssignmentSize() -> u32
     {
         u32 size = MSTREAM_OVERHEAD_SIZE;
 
@@ -1654,7 +1652,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcEdgeListSize( const Mesh *pMesh )
+    auto MeshSerializerImpl::calcEdgeListSize( const Mesh *pMesh ) -> u32
     {
         u32 size = MSTREAM_OVERHEAD_SIZE;
 
@@ -2002,7 +2000,7 @@ namespace fb
     //    }
     //}
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcAnimationsSize( const Mesh *pMesh )
+    auto MeshSerializerImpl::calcAnimationsSize( const Mesh *pMesh ) -> u32
     {
         u32 size = MSTREAM_OVERHEAD_SIZE;
 
@@ -2087,7 +2085,7 @@ namespace fb
 
     //}
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcPoseKeyframePoseRefSize( void )
+    auto MeshSerializerImpl::calcPoseKeyframePoseRefSize() -> u32
     {
         u32 size = MSTREAM_OVERHEAD_SIZE;
         // unsigned short poseIndex
@@ -2099,7 +2097,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl::calcPosesSize( const Mesh *pMesh )
+    auto MeshSerializerImpl::calcPosesSize( const Mesh *pMesh ) -> u32
     {
         u32 size = MSTREAM_OVERHEAD_SIZE;
 
@@ -2644,9 +2642,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    MeshSerializerImpl_v1_41::~MeshSerializerImpl_v1_41()
-    {
-    }
+    MeshSerializerImpl_v1_41::~MeshSerializerImpl_v1_41() = default;
 
     //---------------------------------------------------------------------
     // void MeshSerializerImpl_v1_41::writeMorphKeyframe(const VertexMorphKeyFrame* kf, u32 vertexCount)
@@ -2773,7 +2769,7 @@ namespace fb
 
     //}
     //---------------------------------------------------------------------
-    u32 MeshSerializerImpl_v1_41::calcPoseVertexSize( void )
+    auto MeshSerializerImpl_v1_41::calcPoseVertexSize() -> u32
     {
         u32 size = MSTREAM_OVERHEAD_SIZE;
         // unsigned long vertexIndex
@@ -2806,9 +2802,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    MeshSerializerImpl_v1_4::~MeshSerializerImpl_v1_4()
-    {
-    }
+    MeshSerializerImpl_v1_4::~MeshSerializerImpl_v1_4() = default;
 
     //  //---------------------------------------------------------------------
     //  void MeshSerializerImpl_v1_4::writeLodSummary(unsigned short numLevels, bool manual, const
@@ -3016,9 +3010,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    MeshSerializerImpl_v1_3::~MeshSerializerImpl_v1_3()
-    {
-    }
+    MeshSerializerImpl_v1_3::~MeshSerializerImpl_v1_3() = default;
 
     ////---------------------------------------------------------------------
     // void MeshSerializerImpl_v1_3::readEdgeListLodInfo(SmartPtr<IStream>& stream,
@@ -3346,9 +3338,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    MeshSerializerImpl_v1_2::~MeshSerializerImpl_v1_2()
-    {
-    }
+    MeshSerializerImpl_v1_2::~MeshSerializerImpl_v1_2() = default;
 
     //---------------------------------------------------------------------
     void MeshSerializerImpl_v1_2::readMesh( SmartPtr<IStream> &stream, Mesh *pMesh,
@@ -3516,9 +3506,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    MeshSerializerImpl_v1_1::~MeshSerializerImpl_v1_1()
-    {
-    }
+    MeshSerializerImpl_v1_1::~MeshSerializerImpl_v1_1() = default;
 
     //---------------------------------------------------------------------
     void MeshSerializerImpl_v1_1::readGeometryTexCoords( unsigned short bindIdx,

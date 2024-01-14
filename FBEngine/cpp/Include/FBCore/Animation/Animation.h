@@ -5,7 +5,7 @@
 
 namespace fb
 {
-        
+
     class Animation : public IAnimation
     {
     public:
@@ -13,7 +13,7 @@ namespace fb
         ~Animation();
 
         String getName() const;
-        void setName( const String &val );
+        void setName( const String &name );
 
         f32 getLength() const;
         void setLength( f32 len );

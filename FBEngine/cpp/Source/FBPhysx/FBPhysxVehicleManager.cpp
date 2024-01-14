@@ -26,56 +26,50 @@ PX_FORCE_INLINE void setSpuRaycastShader( SampleVehicleSceneQueryData *sqDesc )
 #endif
 ///////////////////////////////////
 
-namespace fb
+namespace fb::physics
 {
-    namespace physics
+
+    PhysxVehicleManager::PhysxVehicleManager() : mNumVehicles( 0 ), mSqWheelRaycastBatchQuery( nullptr )
     {
+    }
 
-        PhysxVehicleManager::PhysxVehicleManager() :
-            mNumVehicles( 0 ),
-            mSqWheelRaycastBatchQuery( nullptr )
+    PhysxVehicleManager::~PhysxVehicleManager() = default;
+
+    void PhysxVehicleManager::init( PxPhysics &physics, const PxMaterial **drivableSurfaceMaterials,
+                                    const PxVehicleDrivableSurfaceType *drivableSurfaceTypes )
+    {
+        //Initialise the sdk.
+        PxInitVehicleSDK( physics );
+
+        //Set the basis vectors.
+        PxVec3 up( 0, 1, 0 );
+        PxVec3 forward( 0, 0, 1 );
+        PxVehicleSetBasisVectors( up, forward );
+
+        //Set the vehicle update mode to be immediate velocity changes.
+        PxVehicleSetUpdateMode( PxVehicleUpdateMode::eACCELERATION );
+
+        //Initialise all vehicle ptrs to null.
+        for( auto &mVehicle : mVehicles )
         {
+            mVehicle = nullptr;
         }
 
-        PhysxVehicleManager::~PhysxVehicleManager()
+        //Scene query data for to allow raycasts for all suspensions of all vehicles.
+        mSqData = SampleVehicleSceneQueryData::allocate( MAX_NUM_4W_VEHICLES * 4 );
+
+        //Set up the friction values arising from combinations of tire type and surface type.
+        mSurfaceTirePairs = PxVehicleDrivableSurfaceToTireFrictionPairs::allocate(
+            MAX_NUM_TIRE_TYPES, MAX_NUM_SURFACE_TYPES );
+        mSurfaceTirePairs->setup( MAX_NUM_TIRE_TYPES, MAX_NUM_SURFACE_TYPES, drivableSurfaceMaterials,
+                                  drivableSurfaceTypes );
+        for( PxU32 i = 0; i < MAX_NUM_SURFACE_TYPES; i++ )
         {
+            for( PxU32 j = 0; j < MAX_NUM_TIRE_TYPES; j++ )
+            {
+                mSurfaceTirePairs->setTypePairFriction( i, j, gTireFrictionMultipliers[i][j] );
+            }
         }
-
-        void PhysxVehicleManager::init( PxPhysics &physics, const PxMaterial **drivableSurfaceMaterials,
-                                        const PxVehicleDrivableSurfaceType *drivableSurfaceTypes )
-        {
-            //Initialise the sdk.
-            PxInitVehicleSDK( physics );
-
-            //Set the basis vectors.
-            PxVec3 up( 0, 1, 0 );
-            PxVec3 forward( 0, 0, 1 );
-            PxVehicleSetBasisVectors( up, forward );
-
-            //Set the vehicle update mode to be immediate velocity changes.
-            PxVehicleSetUpdateMode( PxVehicleUpdateMode::eACCELERATION );
-
-            //Initialise all vehicle ptrs to null.
-            for( PxU32 i = 0; i < MAX_NUM_4W_VEHICLES; i++ )
-            {
-                mVehicles[i] = nullptr;
-            }
-
-            //Scene query data for to allow raycasts for all suspensions of all vehicles.
-            mSqData = SampleVehicleSceneQueryData::allocate( MAX_NUM_4W_VEHICLES * 4 );
-
-            //Set up the friction values arising from combinations of tire type and surface type.
-            mSurfaceTirePairs = PxVehicleDrivableSurfaceToTireFrictionPairs::allocate(
-                MAX_NUM_TIRE_TYPES, MAX_NUM_SURFACE_TYPES );
-            mSurfaceTirePairs->setup( MAX_NUM_TIRE_TYPES, MAX_NUM_SURFACE_TYPES,
-                                      drivableSurfaceMaterials, drivableSurfaceTypes );
-            for( PxU32 i = 0; i < MAX_NUM_SURFACE_TYPES; i++ )
-            {
-                for( PxU32 j = 0; j < MAX_NUM_TIRE_TYPES; j++ )
-                {
-                    mSurfaceTirePairs->setTypePairFriction( i, j, gTireFrictionMultipliers[i][j] );
-                }
-            }
 
 #ifdef PX_PS3
             setSpuRaycastShader( mSqData );
@@ -212,10 +206,10 @@ namespace fb
                 PxTransform( chassisData.mCMOffset, PxQuat::createIdentity() ) );
         }
 
-        PxRigidDynamic *createVehicleActor4W( const PxVehicleChassisData &chassisData,
-                                              PxConvexMesh **wheelConvexMeshes,
-                                              PxConvexMesh *chassisConvexMesh, PxScene &scene,
-                                              PxPhysics &physics, const PxMaterial &material )
+        auto createVehicleActor4W( const PxVehicleChassisData &chassisData,
+                                   PxConvexMesh **wheelConvexMeshes, PxConvexMesh *chassisConvexMesh,
+                                   PxScene &scene, PxPhysics &physics, const PxMaterial &material )
+            -> PxRigidDynamic *
         {
             //We need a rigid body actor for the vehicle.
             //Don't forget to add the actor the scene after setting up the associated vehicle.
@@ -282,7 +276,7 @@ namespace fb
             }
         }
 
-        PxVec3 computeChassisAABBDimensions( const PxConvexMesh *chassisConvexMesh )
+        auto computeChassisAABBDimensions( const PxConvexMesh *chassisConvexMesh ) -> PxVec3
         {
             const PxU32 numChassisVerts = chassisConvexMesh->getNbVertices();
             const PxVec3 *chassisVerts = chassisConvexMesh->getVertices();
@@ -392,12 +386,12 @@ namespace fb
 
             //Let's set up the suspension data structures now.
             PxVehicleSuspensionData susps[4];
-            for( PxU32 i = 0; i < 4; i++ )
+            for( auto &susp : susps )
             {
-                susps[i].mMaxCompression = 0.3f;
-                susps[i].mMaxDroop = 0.1f;
-                susps[i].mSpringStrength = 35000.0f;
-                susps[i].mSpringDamperRate = 4500.0f;
+                susp.mMaxCompression = 0.3f;
+                susp.mMaxDroop = 0.1f;
+                susp.mSpringStrength = 35000.0f;
+                susp.mSpringDamperRate = 4500.0f;
             }
             susps[PxVehicleDrive4WWheelOrder::eFRONT_LEFT].mSprungMass = massFront * 0.5f;
             susps[PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mSprungMass = massFront * 0.5f;
@@ -470,11 +464,11 @@ namespace fb
             driveData.setAckermannGeometryData( ackermann );
         }
 
-        PxVehicleDrive4W *PhysxVehicleManager::create4WVehicle(
+        auto PhysxVehicleManager::create4WVehicle(
             PxScene &scene, PxPhysics &physics, PxCooking &cooking, const PxMaterial &material,
             const PxF32 chassisMass, const PxVec3 *wheelCentreOffsets4, PxConvexMesh *chassisConvexMesh,
             PxConvexMesh **wheelConvexMeshes4, const PxTransform &startTransform,
-            const bool useAutoGearFlag )
+            const bool useAutoGearFlag ) -> PxVehicleDrive4W *
         {
             PX_ASSERT( mNumVehicles < MAX_NUM_4W_VEHICLES );
 
@@ -525,5 +519,4 @@ namespace fb
             return car;
         }
 
-    }  // namespace physics
-}  // namespace fb
+}  // namespace fb::physics

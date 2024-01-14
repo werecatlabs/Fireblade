@@ -4,14 +4,14 @@
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
 #include <FBCore/Interface/Graphics/IOverlay.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Graphics/CSharedGraphicsObject.h>
+#include <FBCore/Graphics/SharedGraphicsObject.h>
 
 namespace fb
 {
     namespace render
     {
 
-        class COverlayOgreNext : public CSharedGraphicsObject<IOverlay>
+        class COverlayOgreNext : public SharedGraphicsObject<IOverlay>
         {
         public:
             COverlayOgreNext();

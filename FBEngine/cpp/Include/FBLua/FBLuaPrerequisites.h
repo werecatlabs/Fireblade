@@ -9,7 +9,7 @@ struct lua_State;
 
 namespace fb
 {
-    /// class forward decs
+
     class NullScriptObject;
     class LuaManager;
     class LuaObjectData;

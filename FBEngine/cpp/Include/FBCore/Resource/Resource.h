@@ -12,22 +12,36 @@
 namespace fb
 {
 
+    /** Resource class. A template class to provide the basic functionality of a resource. */
     template <class T>
     class Resource : public core::Prototype<T>
     {
     public:
+        /** Constructor. */
         Resource();
+
+        /** Destructor. */
         ~Resource() override;
 
+        /** Unloads the resource.
+         * @copydoc IResource::unload
+         */
         void unload( SmartPtr<ISharedObject> data ) override;
 
+        /** Saves the resource to a file. */
         void saveToFile( const String &filePath );
 
+        /** Loads the resource from a file. */
         void loadFromFile( const String &filePath );
 
-        /** Saves the resource. */
+        /** Saves the resource.
+         * @copydoc IResource::save
+         */
         void save() override;
 
+        /** Imports the resource.
+         * @copydoc IResource::import
+         */
         void import() override;
 
         /** Reimport the resource. */
@@ -60,9 +74,9 @@ namespace fb
         /** @copydoc IResource::setProperties */
         void setProperties( SmartPtr<Properties> properties ) override;
 
-        SmartPtr<IStateContext> getStateObject() const override;
+        SmartPtr<IStateContext> getStateContext() const override;
 
-        void setStateObject( SmartPtr<IStateContext> stateObject ) override;
+        void setStateContext( SmartPtr<IStateContext> stateContext ) override;
 
         SmartPtr<IStateListener> getStateListener() const;
 
@@ -80,31 +94,34 @@ namespace fb
         /** @copydoc IResource::setResourceTypeByName */
         virtual void setResourceTypeByName( const String &resourceTypeName );
 
+        /** @brief Gets the object. Return nullptr.
+         * @copydoc IResource::_getObject
+         */
         void _getObject( void **ppObject ) const override;
+
+        /** @copydoc IResource::getDependencies */
+        Array<SmartPtr<IResource>> getDependencies() const override;
 
         FB_CLASS_REGISTER_TEMPLATE_DECL( Resource, T );
 
     protected:
-        AtomicSmartPtr<IStateContext> m_stateObject;
-        AtomicSmartPtr<IStateListener> m_stateListener;
-        hash64 m_fileSystemId = 0;
-        hash64 m_settingsFileSystemId = 0;
+        SmartPtr<IStateContext> m_stateContext;
+        SmartPtr<IStateListener> m_stateListener;
+        atomic_s64 m_fileSystemId = 0;
+        atomic_s64 m_settingsFileSystemId = 0;
         IResource::ResourceType m_resourceType = IResource::ResourceType::None;
         String m_filePath;
+
+        mutable RecursiveMutex m_resourceMutex;
     };
 
     FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, Resource, T, core::Prototype<T> );
 
     template <class T>
-    Resource<T>::Resource()
-    {
-    }
+    Resource<T>::Resource() = default;
 
     template <class T>
-    Resource<T>::~Resource()
-    {
-        unload( nullptr );
-    }
+    Resource<T>::~Resource() = default;
 
     template <class T>
     void Resource<T>::unload( SmartPtr<ISharedObject> data )
@@ -112,22 +129,22 @@ namespace fb
         const auto &loadingState = core::Prototype<T>::getLoadingState();
         if( loadingState != LoadingState::Unloaded )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             if( auto stateManager = applicationManager->getStateManager() )
             {
-                if( auto stateObject = getStateObject() )
+                if( auto stateContext = getStateContext() )
                 {
                     if( auto stateListener = getStateListener() )
                     {
-                        stateObject->removeStateListener( stateListener );
+                        stateContext->removeStateListener( stateListener );
                     }
 
-                    stateManager->removeStateObject( stateObject );
+                    stateManager->removeStateObject( stateContext );
 
-                    stateObject->unload( nullptr );
-                    setStateObject( nullptr );
+                    stateContext->unload( nullptr );
+                    setStateContext( nullptr );
                 }
 
                 if( auto stateListener = getStateListener() )
@@ -179,12 +196,14 @@ namespace fb
     template <class T>
     String Resource<T>::getFilePath() const
     {
+        RecursiveMutex::ScopedLock lock( m_resourceMutex );
         return m_filePath;
     }
 
     template <class T>
     void Resource<T>::setFilePath( const String &filePath )
     {
+        RecursiveMutex::ScopedLock lock( m_resourceMutex );
         m_filePath = filePath;
     }
 
@@ -203,8 +222,8 @@ namespace fb
     template <class T>
     SmartPtr<ISharedObject> Resource<T>::toData() const
     {
-        auto p = fb::dynamic_pointer_cast<ISharedObject>( getProperties() );
-        if( p )
+        auto properties = getProperties();
+        if( auto p = fb::dynamic_pointer_cast<ISharedObject>( properties ) )
         {
             return p;
         }
@@ -215,8 +234,7 @@ namespace fb
     template <class T>
     void Resource<T>::fromData( SmartPtr<ISharedObject> data )
     {
-        auto properties = fb::dynamic_pointer_cast<Properties>( data );
-        if( properties )
+        if( auto properties = fb::dynamic_pointer_cast<Properties>( data ) )
         {
             setProperties( properties );
         }
@@ -225,14 +243,12 @@ namespace fb
     template <class T>
     SmartPtr<Properties> Resource<T>::getProperties() const
     {
-        static const auto nameStr = String("name");
-
         auto properties = core::Prototype<T>::getProperties();
 
         if( const auto handle = Resource<T>::getHandle() )
         {
             auto name = handle->getName();
-            properties->setProperty( nameStr, name );
+            properties->setProperty( IResource::nameStr, name );
         }
 
         return properties;
@@ -241,10 +257,8 @@ namespace fb
     template <class T>
     void Resource<T>::setProperties( SmartPtr<Properties> properties )
     {
-        static const auto nameStr = String("name");
-
         auto name = String();
-        properties->getProperty( nameStr, name );
+        properties->getPropertyValue( IResource::nameStr, name );
 
         if( const auto handle = Resource<T>::getHandle() )
         {
@@ -253,15 +267,15 @@ namespace fb
     }
 
     template <class T>
-    SmartPtr<IStateContext> Resource<T>::getStateObject() const
+    SmartPtr<IStateContext> Resource<T>::getStateContext() const
     {
-        return m_stateObject;
+        return m_stateContext;
     }
 
     template <class T>
-    void Resource<T>::setStateObject( SmartPtr<IStateContext> stateObject )
+    void Resource<T>::setStateContext( SmartPtr<IStateContext> stateContext )
     {
-        m_stateObject = stateObject;
+        m_stateContext = stateContext;
     }
 
     template <class T>
@@ -291,8 +305,7 @@ namespace fb
     template <class T>
     String Resource<T>::getResourceTypeByName() const
     {
-        auto type = getResourceType();
-        switch( type )
+        switch( getResourceType() )
         {
         case IResource::ResourceType::None:
             return "None";
@@ -306,6 +319,8 @@ namespace fb
             return "Component";
         case IResource::ResourceType::Texture:
             return "Texture";
+        default:
+            break;
         }
 
         return "";
@@ -348,6 +363,12 @@ namespace fb
     void Resource<T>::_getObject( void **ppObject ) const
     {
         *ppObject = nullptr;
+    }
+
+    template <class T>
+    Array<SmartPtr<IResource>> Resource<T>::getDependencies() const 
+    {
+        return Array<SmartPtr<IResource>>();
     }
 
 }  // namespace fb

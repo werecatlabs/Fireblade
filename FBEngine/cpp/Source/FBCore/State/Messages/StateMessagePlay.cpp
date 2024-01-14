@@ -7,12 +7,8 @@ namespace fb
     FB_CLASS_REGISTER_DERIVED( fb, StateMessagePlay, StateMessage );
 
     //---------------------------------------------
-    StateMessagePlay::StateMessagePlay()
-    {
-    }
+    StateMessagePlay::StateMessagePlay() = default;
 
     //---------------------------------------------
-    StateMessagePlay::~StateMessagePlay()
-    {
-    }
+    StateMessagePlay::~StateMessagePlay() = default;
 }  // end namespace fb

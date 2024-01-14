@@ -14,11 +14,9 @@ namespace fb
     {
     }
 
-    StatePhysicsVelocity2::StatePhysicsVelocity2()
-    {
-    }
+    StatePhysicsVelocity2::StatePhysicsVelocity2() = default;
 
-    Vector2<real_Num> StatePhysicsVelocity2::getVelocity() const
+    auto StatePhysicsVelocity2::getVelocity() const -> Vector2<real_Num>
     {
         return m_velocity;
     }
@@ -28,7 +26,7 @@ namespace fb
         m_velocity = val;
     }
 
-    Vector2<real_Num> StatePhysicsVelocity2::getRelativePosition() const
+    auto StatePhysicsVelocity2::getRelativePosition() const -> Vector2<real_Num>
     {
         return m_relativePosition;
     }

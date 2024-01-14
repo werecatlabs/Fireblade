@@ -1,23 +1,19 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/IO/FileListener.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/Script/IScriptManager.h>
 
 namespace fb
 {
-    FileListener::FileListener()
-    {
-    }
+    FileListener::FileListener() = default;
 
-    FileListener::~FileListener()
-    {
-    }
+    FileListener::~FileListener() = default;
 
     //--------------------------------------------
     // void FileListener::handleFileAction( FW::WatchID watchid, const FW::String& dirStr, const
     // FW::String& filenameStr, FW::Action action )
     //{
-    //	auto applicationManager = core::IApplicationManager::instance();
+    //	auto applicationManager = core::ApplicationManager::instance();
 
     //	String fileName = filenameStr.c_str();
     //	String ext = FileSystem::getFileExtension(fileName);
@@ -93,7 +89,7 @@ namespace fb
     //--------------------------------------------
     void FileListener::reloadLuaScripts()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto scriptManager = applicationManager->getScriptManager();
         scriptManager->reloadScripts();
     }
@@ -109,7 +105,8 @@ namespace fb
     }
 
     //--------------------------------------------
-    bool FileListener::reloadAResourceGroupWithoutDestroyingIt( const std::string &pResourceGroupName )
+    auto FileListener::reloadAResourceGroupWithoutDestroyingIt( const std::string &pResourceGroupName )
+        -> bool
     {
         // if(!resourceGroupExist(pResourceGroupName))
         //{
@@ -123,7 +120,7 @@ namespace fb
     }
 
     //--------------------------------------------
-    bool FileListener::resourceGroupExist( const std::string &pResourceGroupName )
+    auto FileListener::resourceGroupExist( const std::string &pResourceGroupName ) -> bool
     {
         // bool lIsPresent = false;
         // Ogre::ResourceGroupManager& resGroupMgr = Ogre::ResourceGroupManager::getSingleton();

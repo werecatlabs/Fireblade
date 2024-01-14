@@ -50,9 +50,9 @@ namespace fb
 
             bool fetchResults( bool block, u32 *errorState ) override;
 
-            SmartPtr<IStateContext> getStateObject() const override;
+            SmartPtr<IStateContext> getStateContext() const override;
 
-            void setStateObject( SmartPtr<IStateContext> stateObject ) override;
+            void setStateContext( SmartPtr<IStateContext> stateContext ) override;
         };
     }  // end namespace physics
 }  // end namespace fb

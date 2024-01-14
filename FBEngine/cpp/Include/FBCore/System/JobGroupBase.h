@@ -7,7 +7,7 @@
 
 namespace fb
 {
-    
+
     class JobGroupBase : public IJobGroup
     {
     public:

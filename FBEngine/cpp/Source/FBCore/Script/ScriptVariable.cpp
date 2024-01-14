@@ -4,15 +4,11 @@
 namespace fb
 {
 
-    ScriptVariable::ScriptVariable()
-    {
-    }
+    ScriptVariable::ScriptVariable() = default;
 
-    ScriptVariable::~ScriptVariable()
-    {
-    }
+    ScriptVariable::~ScriptVariable() = default;
 
-    String ScriptVariable::getType() const
+    auto ScriptVariable::getType() const -> String
     {
         return m_type;
     }
@@ -22,7 +18,7 @@ namespace fb
         m_type = type;
     }
 
-    String ScriptVariable::getName() const
+    auto ScriptVariable::getName() const -> String
     {
         return m_name;
     }

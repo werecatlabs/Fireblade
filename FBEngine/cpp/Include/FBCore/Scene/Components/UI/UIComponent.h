@@ -30,13 +30,13 @@ namespace fb
 
             /**
              * @brief Loads the UIComponent data.
-             * @copydoc BaseComponent::load
+             * @copydoc Component::load
              */
             void load( SmartPtr<ISharedObject> data ) override;
 
             /**
              * @brief Unloads the UIComponent data.
-             * @copydoc BaseComponent::unload
+             * @copydoc Component::unload
              */
             void unload( SmartPtr<ISharedObject> data ) override;
 
@@ -84,49 +84,35 @@ namespace fb
             /**
              * @brief Updates the materials of the UI component.
              */
-            virtual void updateMaterials();
-
-            /**
-             * @brief Handles visibility changes for the UI component.
-             * @copydoc BaseComponent::visibilityChanged
-             */
-            void visibilityChanged() override;
-
-            void hierarchyChanged() override;
-
-            /** @copydoc IComponent::childAddedInHierarchy */
-            void childAddedInHierarchy( SmartPtr<IActor> child ) override;
-
-            /** @copydoc IComponent::childRemovedInHierarchy */
-            void childRemovedInHierarchy( SmartPtr<IActor> child ) override;
+            void updateMaterials() override;
 
             /**
              * @brief Gets the child objects of the UI component.
-             * @copydoc BaseComponent::getChildObjects
+             * @copydoc Component::getChildObjects
              */
             Array<SmartPtr<ISharedObject>> getChildObjects() const override;
 
             /**
              * @brief Gets the properties of the UI component.
-             * @copydoc BaseComponent::getProperties
+             * @copydoc Component::getProperties
              */
             SmartPtr<Properties> getProperties() const override;
 
             /**
              * @brief Sets the properties of the UI component.
-             * @copydoc BaseComponent::setProperties
+             * @copydoc Component::setProperties
              */
             void setProperties( SmartPtr<Properties> properties ) override;
 
             /**
              * @brief Updates the dirty state of the UI component.
-             * @copydoc BaseComponent::updateDirty
+             * @copydoc Component::updateDirty
              */
-            void updateDirty( u32 flags, u32 oldFlags ) override;
+            void updateFlags( u32 flags, u32 oldFlags ) override;
 
             /**
              * @brief Updates the transform of the UI component.
-             * @copydoc BaseComponent::updateTransform
+             * @copydoc Component::updateTransform
              */
             void updateTransform() override;
 
@@ -149,9 +135,17 @@ namespace fb
 
             void setZOrder( u32 zOrder );
 
-            void childAdded( SmartPtr<IActor> child );
+            Array<SmartPtr<IActor>> getActorListeners() const;
 
-            void childRemoved( SmartPtr<IActor> child );
+            Array<SmartPtr<IComponent>> getComponentListeners() const;
+
+            void addActorListener( SmartPtr<IActor> actor );
+
+            void removeActorListener( SmartPtr<IActor> actor );
+
+            void addListener( SmartPtr<IComponent> component );
+
+            void removeListener( SmartPtr<IComponent> component );
 
             FB_CLASS_REGISTER_DECL;
 
@@ -196,20 +190,20 @@ namespace fb
                  *
                  * @return A pointer to the UIComponent that owns this UIElementListener.
                  */
-                UIComponent *getOwner() const;
+                SmartPtr<UIComponent> getOwner() const;
 
                 /**
                  * @brief Sets the owner of this UIElementListener.
                  *
                  * @param owner A pointer to the UIComponent that will own this UIElementListener.
                  */
-                void setOwner( UIComponent *owner );
+                void setOwner( SmartPtr<UIComponent> owner );
 
             protected:
                 /**
                  * @brief A pointer to the UIComponent that owns this UIElementListener.
                  */
-                UIComponent *m_owner = nullptr;
+                SmartPtr<UIComponent> m_owner;
             };
 
             /**
@@ -222,10 +216,9 @@ namespace fb
              * @param event A smart pointer to the event object.
              * @return A Parameter object as a result of handling the event.
              */
-            virtual Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
-                                           const Array<Parameter> &arguments,
-                                           SmartPtr<ISharedObject> sender,
-                                           SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
+            Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                   const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                   SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
             /**
              * @brief Handles component events within the context of the finite state machine (FSM).
@@ -268,6 +261,9 @@ namespace fb
              * management is needed.
              */
             virtual void updateElementState();
+
+            Array<SmartPtr<IActor>> m_actorListeners;
+            Array<SmartPtr<IComponent>> m_componentListeners;
 
             /**
              * @brief A smart pointer to the UIElementListener object responsible for handling UI events.

@@ -39,13 +39,13 @@ namespace fb
         setLoadingState( LoadingState::Unloaded );
     }
 
-    bool ObfuscatedZipFile::eof( void ) const
+    auto ObfuscatedZipFile::eof() const -> bool
     {
         auto pos = tell();
         return pos >= m_size;
     }
 
-    size_t ObfuscatedZipFile::read( void *buffer, size_t sizeToRead )
+    auto ObfuscatedZipFile::read( void *buffer, size_t sizeToRead ) -> size_t
     {
         // RecursiveMutex::ScopedLock lock(reader->Mutex);
         zzip_ssize_t r = zzip_file_read( m_zipFile, buffer, sizeToRead );
@@ -63,13 +63,13 @@ namespace fb
         return r;
     }
 
-    size_t ObfuscatedZipFile::write( [[maybe_unused]] const void *buffer,
-                                     [[maybe_unused]] size_t sizeToWrite )
+    auto ObfuscatedZipFile::write( [[maybe_unused]] const void *buffer,
+                                   [[maybe_unused]] size_t sizeToWrite ) -> size_t
     {
         return 0;
     }
 
-    bool ObfuscatedZipFile::seek( size_t finalPos )
+    auto ObfuscatedZipFile::seek( size_t finalPos ) -> bool
     {
         zzip_seek( m_zipFile, static_cast<zzip_off_t>( finalPos ), SEEK_SET );
         return true;
@@ -87,17 +87,17 @@ namespace fb
         }
     }
 
-    size_t ObfuscatedZipFile::size() const
+    auto ObfuscatedZipFile::size() const -> size_t
     {
         return m_size;
     }
 
-    size_t ObfuscatedZipFile::tell() const
+    auto ObfuscatedZipFile::tell() const -> size_t
     {
         return static_cast<size_t>( zzip_tell( m_zipFile ) );
     }
 
-    bool ObfuscatedZipFile::isOpen() const
+    auto ObfuscatedZipFile::isOpen() const -> bool
     {
         return m_zipFile != nullptr;
     }
@@ -115,17 +115,17 @@ namespace fb
     {
     }
 
-    bool ObfuscatedZipFile::isReadable() const
+    auto ObfuscatedZipFile::isReadable() const -> bool
     {
         return true;
     }
 
-    bool ObfuscatedZipFile::isWriteable() const
+    auto ObfuscatedZipFile::isWriteable() const -> bool
     {
         return false;
     }
 
-    bool ObfuscatedZipFile::isValid() const
+    auto ObfuscatedZipFile::isValid() const -> bool
     {
         return isOpen() && ( size() > 0 ) && ( size() < static_cast<size_t>( 2e+9 ) );
     }

@@ -2,10 +2,7 @@
 #include <FBCore/Interface/Scene/IScene.h>
 #include <FBCore/System/RttiClassDefinition.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
-    {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, IScene, IResource );
-    }  // namespace scene
-}  // namespace fb
+    FB_CLASS_REGISTER_DERIVED( fb::scene, IScene, IResource );
+}  // namespace fb::scene

@@ -4,9 +4,9 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, MeshShapeState, BaseState );
+    FB_CLASS_REGISTER_DERIVED( fb, MeshShapeState, ShapeState );
 
-    SmartPtr<IMeshResource> MeshShapeState::getMeshResource() const
+    auto MeshShapeState::getMeshResource() const -> SmartPtr<IMeshResource>
     {
         return m_meshResource;
     }

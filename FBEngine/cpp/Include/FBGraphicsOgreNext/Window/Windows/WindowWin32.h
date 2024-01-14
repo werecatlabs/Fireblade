@@ -2,7 +2,7 @@
 #define WindowWin32_h__
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
-#include "FBCore/Memory/SmartPtr.h"
+#include <FBCore/Memory/SmartPtr.h>
 #include <windef.h>
 
 namespace fb

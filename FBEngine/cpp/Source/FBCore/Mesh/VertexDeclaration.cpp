@@ -35,9 +35,9 @@ namespace fb
         }
     }
 
-    SmartPtr<IVertexElement> VertexDeclaration::addElement(
-        u16 source, u32 offset, VertexElementSemantic elementSemantic,
-        IVertexElement::VertexElementType elementType, u32 index /*= 0*/ )
+    auto VertexDeclaration::addElement( u16 source, u32 offset, VertexElementSemantic elementSemantic,
+                                        IVertexElement::VertexElementType elementType,
+                                        u32 index /*= 0*/ ) -> SmartPtr<IVertexElement>
     {
 #ifdef _DEBUG
         for( u32 i = 0; i < m_elements.size(); ++i )
@@ -97,7 +97,7 @@ namespace fb
 #endif
         }
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();
@@ -111,11 +111,11 @@ namespace fb
         element->setType( elementType );
         element->setIndex( index );
 
-        m_elements.push_back( element );
+        m_elements.emplace_back( element );
         return element;
     }
 
-    u32 VertexDeclaration::getSize( u16 source ) const
+    auto VertexDeclaration::getSize( u16 source ) const -> u32
     {
         u32 sz = 0;
 
@@ -130,8 +130,8 @@ namespace fb
         return sz;
     }
 
-    SmartPtr<IVertexElement> VertexDeclaration::findElementBySemantic(
-        VertexElementSemantic elementSemantic, u32 index )
+    auto VertexDeclaration::findElementBySemantic( VertexElementSemantic elementSemantic, u32 index )
+        -> SmartPtr<IVertexElement>
     {
         for( auto &element : m_elements )
         {
@@ -145,7 +145,7 @@ namespace fb
         return nullptr;
     }
 
-    Array<SmartPtr<IVertexElement>> VertexDeclaration::findElementsBySource( u16 source ) const
+    auto VertexDeclaration::findElementsBySource( u16 source ) const -> Array<SmartPtr<IVertexElement>>
     {
         Array<SmartPtr<IVertexElement>> retList;
         retList.reserve( m_elements.size() );
@@ -160,9 +160,9 @@ namespace fb
         return retList;
     }
 
-    SmartPtr<IVertexDeclaration> VertexDeclaration::clone() const
+    auto VertexDeclaration::clone() const -> SmartPtr<IVertexDeclaration>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();
@@ -174,17 +174,17 @@ namespace fb
         return vertexDec;
     }
 
-    const Array<SmartPtr<IVertexElement>> &VertexDeclaration::getElements() const
+    auto VertexDeclaration::getElements() const -> const Array<SmartPtr<IVertexElement>> &
     {
         return m_elements;
     }
 
-    Array<SmartPtr<IVertexElement>> &VertexDeclaration::getElements()
+    auto VertexDeclaration::getElements() -> Array<SmartPtr<IVertexElement>> &
     {
         return m_elements;
     }
 
-    bool VertexDeclaration::compare( SmartPtr<IVertexDeclaration> other ) const
+    auto VertexDeclaration::compare( SmartPtr<IVertexDeclaration> other ) const -> bool
     {
         auto otherElements = other->getElements();
         if( m_elements.size() != otherElements.size() )

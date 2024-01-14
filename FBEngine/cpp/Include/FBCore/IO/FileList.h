@@ -12,7 +12,7 @@ namespace fb
     class FileList : public IFileList
     {
     public:
-        /** Default constructor. */ 
+        /** Default constructor. */
         FileList() = default;
 
         //! Constructor

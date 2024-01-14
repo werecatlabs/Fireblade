@@ -9,12 +9,13 @@
 #include <iostream>
 #include <functional>
 #include <climits>
-#include <string.h>
+#include <cstring>
 #include <sstream>
 #include <cwchar>
 #include <cctype>
 #include <algorithm>
 #include <cmath>
+#include <utility>
 
 #include <sys/stat.h>
 
@@ -29,34 +30,32 @@
 #    include <dirent.h>
 #endif  // defined (WIN32) || defined (_WIN32)
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    ImGuiFileBrowser::ImGuiFileBrowser()
     {
-        ImGuiFileBrowser::ImGuiFileBrowser()
-        {
-            filter_mode = FilterMode_Files | FilterMode_Dirs;
+        filter_mode = FilterMode_Files | FilterMode_Dirs;
 
-            show_inputbar_combobox = false;
-            validate_file = false;
-            show_hidden = false;
-            is_dir = false;
-            filter_dirty = true;
-            is_appearing = true;
-            show_all_valid_files = false;
+        show_inputbar_combobox = false;
+        validate_file = false;
+        show_hidden = false;
+        is_dir = false;
+        filter_dirty = true;
+        is_appearing = true;
+        show_all_valid_files = false;
 
-            col_items_limit = 12;
-            selected_idx = -1;
-            selected_ext_idx = 0;
-            ext_box_width = -1.0f;
-            col_width = 280.0f;
-            min_size = ImVec2( 500, 300 );
+        col_items_limit = 12;
+        selected_idx = -1;
+        selected_ext_idx = 0;
+        ext_box_width = -1.0f;
+        col_width = 280.0f;
+        min_size = ImVec2( 500, 300 );
 
-            invfile_modal_id = "Invalid File!";
-            repfile_modal_id = "Replace File?";
-            selected_fn = "";
-            selected_path = "";
-            input_fn[0] = '\0';
+        invfile_modal_id = "Invalid File!";
+        repfile_modal_id = "Replace File?";
+        selected_fn = "";
+        selected_path = "";
+        input_fn[0] = '\0';
 
 #ifdef OSWIN
             current_path = "./";
@@ -65,9 +64,7 @@ namespace fb
 #endif
         }
 
-        ImGuiFileBrowser::~ImGuiFileBrowser()
-        {
-        }
+        ImGuiFileBrowser::~ImGuiFileBrowser() = default;
 
         void ImGuiFileBrowser::update()
         {
@@ -83,7 +80,7 @@ namespace fb
             showFileDialog( "FileBrowser", mode, ImVec2( 0, 0 ), fileExtension );
         }
 
-        bool ImGuiFileBrowser::show()
+        auto ImGuiFileBrowser::show() -> bool
         {
             triggerOpen = true;
             return true;
@@ -147,7 +144,7 @@ namespace fb
             //}
         }
 
-        String ImGuiFileBrowser::getFilePath() const
+        auto ImGuiFileBrowser::getFilePath() const -> String
         {
             return selected_path;
         }
@@ -157,7 +154,7 @@ namespace fb
             selected_path = filePath;
         }
 
-        String ImGuiFileBrowser::getFileExtension() const
+        auto ImGuiFileBrowser::getFileExtension() const -> String
         {
             return extension;
         }
@@ -167,8 +164,7 @@ namespace fb
             extension = fileExtension;
         }
 
-
-        IUIFileBrowser::DialogMode ImGuiFileBrowser::getDialogMode() const
+        auto ImGuiFileBrowser::getDialogMode() const -> IUIFileBrowser::DialogMode
         {
             return dialog_mode;
         }
@@ -178,7 +174,7 @@ namespace fb
             dialog_mode = mode;
         }
 
-        IUIFileBrowser::FilterMode ImGuiFileBrowser::getFilterMode() const
+        auto ImGuiFileBrowser::getFilterMode() const -> IUIFileBrowser::FilterMode
         {
             return static_cast<IUIFileBrowser::FilterMode>(filter_mode);
         }
@@ -188,8 +184,9 @@ namespace fb
             filter_mode = static_cast<int>(mode);
         }
 
-        bool ImGuiFileBrowser::showFileDialog( const std::string &label, const DialogMode mode,
+        auto ImGuiFileBrowser::showFileDialog( const std::string &label, const DialogMode mode,
                                                const ImVec2 &sz_xy, const std::string &valid_types )
+            -> bool
         {
             dialog_mode = mode;
 
@@ -203,10 +200,14 @@ namespace fb
                 ImGuiCond_Appearing );
 
             // Set Proper Filter Mode.
-            if(mode == DialogMode::Select)
+            if( mode == DialogMode::Select )
+            {
                 filter_mode = FilterMode_Dirs;
+            }
             else
+            {
                 filter_mode = FilterMode_Files | FilterMode_Dirs;
+            }
 
             bool showPopup = true;
             if(ImGui::BeginPopupModal(
@@ -240,7 +241,9 @@ namespace fb
 #endif  // OSWIN
                     }
                     else
+                    {
                         show_error |= !( readDIR( current_path ) );
+                    }
                     is_appearing = false;
                 }
 
@@ -261,10 +264,11 @@ namespace fb
                         selected_path.clear();
                     }
 
-                    else if(!check && dialog_mode == DialogMode::Save)
+                    else if( !check && dialog_mode == DialogMode::Save )
+                    {
                         ImGui::OpenPopup( repfile_modal_id.c_str() );
-
-                    else if(!check && dialog_mode == DialogMode::Select)
+                    }
+                    else if( !check && dialog_mode == DialogMode::Select )
                     {
                         selected_fn.clear();
                         selected_path.clear();
@@ -292,12 +296,16 @@ namespace fb
 
                 // We don't need to check as the modals will only be shown if OpenPopup is called
                 showInvalidFileModal();
-                if(showReplaceFileModal())
+                if( showReplaceFileModal() )
+                {
                     closeDialog();
+                }
 
                 // Show Error Modal if there was an error opening any directory
-                if(show_error)
+                if( show_error )
+                {
                     ImGui::OpenPopup( error_title.c_str() );
+                }
                 showErrorModal();
 
                 ImGui::EndPopup();
@@ -307,7 +315,7 @@ namespace fb
             return false;
         }
 
-        bool ImGuiFileBrowser::renderNavAndSearchBarRegion()
+        auto ImGuiFileBrowser::renderNavAndSearchBarRegion() -> bool
         {
             ImGuiStyle &style = ImGui::GetStyle();
             bool show_error = false;
@@ -329,8 +337,10 @@ namespace fb
                 if(ImGui::Button( current_dirlist[i].c_str() ))
                 {
                     // If last button clicked, nothing happens
-                    if(i != current_dirlist.size() - 1)
-                        show_error |= !( onNavigationButtonClick( (int)i ) );
+                    if( i != current_dirlist.size() - 1 )
+                    {
+                        show_error |= !( onNavigationButtonClick( static_cast<int>( i ) ) );
+                    }
                 }
 
                 // Draw Arrow Buttons
@@ -339,8 +349,10 @@ namespace fb
                     ImGui::SameLine( 0, 0 );
                     float next_label_width = ImGui::CalcTextSize( current_dirlist[i + 1].c_str() ).x;
 
-                    if(i + 1 < current_dirlist.size() - 1)
+                    if( i + 1 < current_dirlist.size() - 1 )
+                    {
                         next_label_width += frame_height + ImGui::CalcTextSize( ">>" ).x;
+                    }
 
                     if(ImGui::GetCursorPosX() + next_label_width >=
                        ( nw_size.x - style.WindowPadding.x * 3.0 ))
@@ -349,8 +361,10 @@ namespace fb
                         ImGui::PushStyleColor( ImGuiCol_Text, ImVec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
 
                         // Render a drop down of navigation items on button press
-                        if(ImGui::Button( ">>" ))
+                        if( ImGui::Button( ">>" ) )
+                        {
                             ImGui::OpenPopup( "##NavBarDropboxPopup" );
+                        }
                         if(ImGui::BeginPopup( "##NavBarDropboxPopup" ))
                         {
                             ImGui::PushStyleColor( ImGuiCol_FrameBg,
@@ -366,7 +380,8 @@ namespace fb
                                     if(ImGui::Selectable( current_dirlist[j].c_str(), false ) &&
                                        j != current_dirlist.size() - 1)
                                     {
-                                        show_error |= !( onNavigationButtonClick( (int)j ) );
+                                        show_error |=
+                                            !( onNavigationButtonClick( static_cast<int>( j ) ) );
                                         ImGui::CloseCurrentPopup();
                                     }
                                 }
@@ -397,12 +412,16 @@ namespace fb
 
             // Render Search/Filter bar
             float marker_width = ImGui::CalcTextSize( "(?)" ).x + style.ItemSpacing.x;
-            if(filter.Draw( "##SearchBar", sw_content_size.x - marker_width ) || filter_dirty)
+            if( filter.Draw( "##SearchBar", sw_content_size.x - marker_width ) || filter_dirty )
+            {
                 filterFiles( filter_mode );
+            }
 
             // If filter bar was focused clear selection
-            if(ImGui::GetFocusID() == ImGui::GetID( "##SearchBar" ))
+            if( ImGui::GetFocusID() == ImGui::GetID( "##SearchBar" ) )
+            {
                 selected_idx = -1;
+            }
 
             ImGui::SameLine();
             showHelpMarker( "Filter (inc, -exc)" );
@@ -411,7 +430,7 @@ namespace fb
             return show_error;
         }
 
-        bool ImGuiFileBrowser::renderFileListRegion()
+        auto ImGuiFileBrowser::renderFileListRegion() -> bool
         {
             ImGuiStyle &style = ImGui::GetStyle();
             ImVec2 pw_size = ImGui::GetWindowSize();
@@ -423,8 +442,10 @@ namespace fb
             float window_content_height = window_height - style.WindowPadding.y * 2.0f;
             float min_content_size = pw_size.x - style.WindowPadding.x * 4.0f;
 
-            if(window_content_height <= 0.0f)
+            if( window_content_height <= 0.0f )
+            {
                 return show_error;
+            }
 
             // Reinitialize the limit on number of selectables in one column based on height
             col_items_limit =
@@ -445,8 +466,10 @@ namespace fb
             }
 
             float content_width = num_cols * col_width;
-            if(content_width < min_content_size)
+            if( content_width < min_content_size )
+            {
                 content_width = 0;
+            }
 
             ImGui::SetNextWindowContentSize( ImVec2( content_width, 0 ) );
             ImGui::BeginChild( "##ScrollingRegion", ImVec2( 0, window_height ), true,
@@ -465,21 +488,25 @@ namespace fb
                                           selected_idx == static_cast<int>(i) && is_dir,
                                           ImGuiSelectableFlags_AllowDoubleClick ))
                     {
-                        selected_idx = (int)i;
+                        selected_idx = static_cast<int>( i );
                         is_dir = true;
 
                         // If dialog mode is SELECT then copy the selected dir name to the input text bar
-                        if(dialog_mode == DialogMode::Select)
+                        if( dialog_mode == DialogMode::Select )
+                        {
                             strcpy( input_fn, filtered_dirs[i]->name.c_str() );
+                        }
 
                         if(ImGui::IsMouseDoubleClicked( 0 ))
                         {
-                            show_error |= !( onDirClick( (int)i ) );
+                            show_error |= !( onDirClick( static_cast<int>( i ) ) );
                             break;
                         }
                     }
-                    if(( items ) % col_items_limit == 0)
+                    if( ( items ) % col_items_limit == 0 )
+                    {
                         ImGui::NextColumn();
+                    }
                 }
             }
             ImGui::PopStyleColor( 1 );
@@ -495,7 +522,7 @@ namespace fb
                                           ImGuiSelectableFlags_AllowDoubleClick ))
                     {
                         // int len = filtered_files[i]->name.length();
-                        selected_idx = (int)i;
+                        selected_idx = static_cast<int>( i );
                         is_dir = false;
 
                         // If dialog mode is OPEN/SAVE then copy the selected file name to the input text
@@ -508,8 +535,10 @@ namespace fb
                             validate_file = true;
                         }
                     }
-                    if(( items ) % col_items_limit == 0)
+                    if( ( items ) % col_items_limit == 0 )
+                    {
                         ImGui::NextColumn();
+                    }
                 }
             }
             ImGui::Columns( 1 );
@@ -518,7 +547,7 @@ namespace fb
             return show_error;
         }
 
-        bool ImGuiFileBrowser::renderInputTextAndExtRegion()
+        auto ImGuiFileBrowser::renderInputTextAndExtRegion() -> bool
         {
             std::string label = ( dialog_mode == DialogMode::Save ) ? "Save As:" : "Open:";
             ImGuiStyle &style = ImGui::GetStyle();
@@ -531,12 +560,16 @@ namespace fb
             float frame_height_spacing = ImGui::GetFrameHeightWithSpacing();
             float input_bar_width = pw_content_sz.x - label_width;
 
-            if(ext_box_width < 0.0)
+            if( ext_box_width < 0.0 )
+            {
                 ext_box_width = ImGui::CalcTextSize( "All Valid Files" ).x + style.ItemSpacing.x +
                                 ImGui::GetFrameHeightWithSpacing() + 10;
+            }
 
-            if(dialog_mode != DialogMode::Select)
+            if( dialog_mode != DialogMode::Select )
+            {
                 input_bar_width -= ( ext_box_width + style.ItemSpacing.x );
+            }
 
             bool show_error = false;
             ImGui::SetCursorPosY( pw_content_sz.y - frame_height_spacing * 2.0f );
@@ -546,7 +579,7 @@ namespace fb
             ImGui::SameLine();
 
             // Render Input Text Bar
-            input_combobox_pos = ImVec2( pw_pos + ImGui::GetCursorPos() );
+            input_combobox_pos = ( pw_pos + ImGui::GetCursorPos() );
             input_combobox_sz = ImVec2( input_bar_width, 0 );
             ImGui::PushItemWidth( input_bar_width );
             if(ImGui::InputTextWithHint(
@@ -592,11 +625,12 @@ namespace fb
                 if(dialog_mode == DialogMode::Open || dialog_mode == DialogMode::Save)
                 {
                     inputcb_filter_files.clear();
-                    for(Array<Info>::size_type i = 0; i < subfiles.size(); i++)
+                    for( auto &subfile : subfiles )
                     {
-                        if(ImStristr( subfiles[i].name.c_str(), nullptr, input_fn, nullptr ) !=
-                           nullptr)
-                            inputcb_filter_files.push_back( std::ref( subfiles[i].name ) );
+                        if( ImStristr( subfile.name.c_str(), nullptr, input_fn, nullptr ) != nullptr )
+                        {
+                            inputcb_filter_files.push_back( std::ref( subfile.name ) );
+                        }
                     }
                 }
 
@@ -604,18 +638,24 @@ namespace fb
                 else if(dialog_mode == DialogMode::Select)
                 {
                     inputcb_filter_files.clear();
-                    for(Array<Info>::size_type i = 0; i < subdirs.size(); i++)
+                    for( auto &subdir : subdirs )
                     {
-                        if(ImStristr( subdirs[i].name.c_str(), nullptr, input_fn, nullptr ) != nullptr)
-                            inputcb_filter_files.push_back( std::ref( subdirs[i].name ) );
+                        if( ImStristr( subdir.name.c_str(), nullptr, input_fn, nullptr ) != nullptr )
+                        {
+                            inputcb_filter_files.push_back( std::ref( subdir.name ) );
+                        }
                     }
                 }
 
                 // If filtered list has any items show dropdown
-                if(inputcb_filter_files.size() > 0)
+                if( inputcb_filter_files.size() > 0 )
+                {
                     show_inputbar_combobox = true;
+                }
                 else
+                {
                     show_inputbar_combobox = false;
+                }
             }
 
             // Render Extensions and File Types DropDown
@@ -633,7 +673,7 @@ namespace fb
             return show_error;
         }
 
-        bool ImGuiFileBrowser::renderButtonsAndCheckboxRegion()
+        auto ImGuiFileBrowser::renderButtonsAndCheckboxRegion() -> bool
         {
             ImVec2 pw_size = ImGui::GetWindowSize();
             ImGuiStyle &style = ImGui::GetStyle();
@@ -668,8 +708,10 @@ namespace fb
                 if(selected_idx != -1 && is_dir &&
                    ImGui::GetFocusID() != ImGui::GetID( "##FileNameInput" ))
                 {
-                    if(ImGui::Button( "Open", ImVec2( button_width, 0 ) ))
+                    if( ImGui::Button( "Open", ImVec2( button_width, 0 ) ) )
+                    {
                         show_error |= !( onDirClick( selected_idx ) );
+                    }
                 }
                 else if(ImGui::Button( "Save", ImVec2( button_width, 0 ) ) && strlen( input_fn ) > 0)
                 {
@@ -686,9 +728,11 @@ namespace fb
                     // file. Also note that we don't need to access the selected file through
                     // "selected_idx" since the if a file is selected, input bar will get populated with
                     // that name.
-                    if(selected_idx >= 0 && is_dir)
+                    if( selected_idx >= 0 && is_dir )
+                    {
                         show_error |= !( onDirClick( selected_idx ) );
-                    else if(strlen( input_fn ) > 0)
+                    }
+                    else if( strlen( input_fn ) > 0 )
                     {
                         selected_fn = std::string( input_fn );
                         validate_file = true;
@@ -713,13 +757,15 @@ namespace fb
 
             // Render Cancel Button
             ImGui::SameLine();
-            if(ImGui::Button( "Cancel", ImVec2( button_width, 0 ) ))
+            if( ImGui::Button( "Cancel", ImVec2( button_width, 0 ) ) )
+            {
                 closeDialog();
+            }
 
             return show_error;
         }
 
-        bool ImGuiFileBrowser::renderInputComboBox()
+        auto ImGuiFileBrowser::renderInputComboBox() -> bool
         {
             bool show_error = false;
             ImGuiStyle &style = ImGui::GetStyle();
@@ -794,25 +840,30 @@ namespace fb
                     for(Array<std::string>::size_type i = 0; i < valid_exts.size(); i++)
                     {
                         std::string label_text = valid_exts[i];
-                        if(label_text == "*.*")
+                        if( label_text == "*.*" )
+                        {
                             label_text = "All Files (*.*)";
+                        }
 
                         if(ImGui::Selectable( label_text.c_str(),
                                               selected_ext_idx == static_cast<int>(i) ))
                         {
                             show_all_valid_files = ( label_text == "All valid files" );
-                            selected_ext_idx = (int)i;
+                            selected_ext_idx = static_cast<int>( i );
                             // Automatically append extension to input filename when changing extensions
                             // from dropdown
                             if(dialog_mode == DialogMode::Save)
                             {
                                 std::string name( input_fn );
                                 size_t idx = name.find_last_of( "." );
-                                if(idx == std::string::npos)
+                                if( idx == std::string::npos )
+                                {
                                     idx = strlen( input_fn );
-                                for(Array<std::string>::size_type j = 0;
-                                    j < valid_exts[selected_ext_idx].size(); j++)
-                                    input_fn[idx++] = valid_exts[selected_ext_idx][j];
+                                }
+                                for( char j : valid_exts[selected_ext_idx] )
+                                {
+                                    input_fn[idx++] = j;
+                                }
                                 input_fn[idx++] = '\0';
                             }
                             filterFiles( FilterMode_Files );
@@ -826,7 +877,7 @@ namespace fb
             }
         }
 
-        bool ImGuiFileBrowser::onNavigationButtonClick( int idx )
+        auto ImGuiFileBrowser::onNavigationButtonClick( int idx ) -> bool
         {
             std::string new_path = "";
 
@@ -835,11 +886,13 @@ namespace fb
             if(idx == 0)
             {
 #ifdef OSWIN
-                if(!loadWindowsDrives())
+                if( !loadWindowsDrives() )
+                {
                     return false;
+                }
                 current_path.clear();
                 current_dirlist.clear();
-                current_dirlist.push_back( "Computer" );
+                current_dirlist.emplace_back( "Computer" );
                 return true;
 #else
                 new_path = "/";
@@ -847,14 +900,18 @@ namespace fb
             }
 #ifdef OSWIN
             // Clicked on a drive letter?
-            if(idx == 1)
+            if( idx == 1 )
+            {
                 new_path = current_path.substr( 0, 3 );
+            }
             else
             {
                 // Start from i=1 since at 0 lies "MyComputer" which is only virtual and shouldn't be
                 // read by readDIR
-                for(int i = 1; i <= idx; i++)
+                for( int i = 1; i <= idx; i++ )
+                {
                     new_path += current_dirlist[i] + "/";
+                }
             }
 #else
                 // Since UNIX absolute paths start at "/", we handle this separately to avoid adding a
@@ -873,7 +930,7 @@ namespace fb
             return false;
         }
 
-        bool ImGuiFileBrowser::onDirClick( int idx )
+        auto ImGuiFileBrowser::onDirClick( int idx ) -> bool
         {
             std::string name;
             std::string new_path( current_path );
@@ -895,17 +952,23 @@ namespace fb
             {
                 // Remember we displayed drives on Windows as *Local/Removable Disk: X* hence we need
                 // last char only
-                if(drives_shown)
+                if( drives_shown )
+                {
                     name = std::string( 1, name.back() ) + ":";
+                }
                 new_path += name + "/";
             }
 
             if(readDIR( new_path ))
             {
-                if(name == "..")
+                if( name == ".." )
+                {
                     current_dirlist.pop_back();
+                }
                 else
+                {
                     current_dirlist.push_back( name );
+                }
 
                 current_path = new_path;
                 return true;
@@ -913,7 +976,7 @@ namespace fb
             return false;
         }
 
-        bool ImGuiFileBrowser::readDIR( std::string pathdir )
+        auto ImGuiFileBrowser::readDIR( std::string pathdir ) -> bool
         {
             DIR *dir;
             struct dirent *ent;
@@ -966,8 +1029,10 @@ namespace fb
                     std::string name( ent->d_name );
 
                     // Ignore current directory
-                    if(name == ".")
+                    if( name == "." )
+                    {
                         continue;
+                    }
 
                     // Somehow there is a '..' present in root directory in linux.
 #ifndef OSWIN
@@ -980,20 +1045,28 @@ namespace fb
 #ifdef OSWIN
                         std::string dir = pathdir + std::string( ent->d_name );
                         // IF system file skip it...
-                        if(FILE_ATTRIBUTE_SYSTEM & GetFileAttributesA( dir.c_str() ))
+                        if( FILE_ATTRIBUTE_SYSTEM & GetFileAttributesA( dir.c_str() ) )
+                        {
                             continue;
-                        if(FILE_ATTRIBUTE_HIDDEN & GetFileAttributesA( dir.c_str() ))
+                        }
+                        if( FILE_ATTRIBUTE_HIDDEN & GetFileAttributesA( dir.c_str() ) )
+                        {
                             is_hidden = true;
+                        }
 #else
                         if( name[0] == '.' )
                             is_hidden = true;
 #endif  // OSWIN
                     }
                     // Store directories and files in separate vectors
-                    if(ent->d_type == DT_DIR)
-                        subdirs.push_back( Info( name, is_hidden ) );
-                    else if(ent->d_type == DT_REG && dialog_mode != DialogMode::Select)
-                        subfiles.push_back( Info( name, is_hidden ) );
+                    if( ent->d_type == DT_DIR )
+                    {
+                        subdirs.emplace_back( name, is_hidden );
+                    }
+                    else if( ent->d_type == DT_REG && dialog_mode != DialogMode::Select )
+                    {
+                        subfiles.emplace_back( name, is_hidden );
+                    }
                 }
                 closedir( dir );
                 std::sort( subdirs.begin(), subdirs.end(), alphaSortComparator );
@@ -1019,53 +1092,57 @@ namespace fb
             if(filter_mode | FilterMode_Dirs)
             {
                 filtered_dirs.clear();
-                for(Array<Info>::size_type i = 0; i < subdirs.size(); ++i)
+                for( auto &subdir : subdirs )
                 {
-                    if(filter.PassFilter( subdirs[i].name.c_str() ))
-                        filtered_dirs.push_back( &subdirs[i] );
+                    if( filter.PassFilter( subdir.name.c_str() ) )
+                    {
+                        filtered_dirs.push_back( &subdir );
+                    }
                 }
             }
             if(filter_mode | FilterMode_Files)
             {
                 filtered_files.clear();
-                for(Array<Info>::size_type i = 0; i < subfiles.size(); ++i)
+                for( auto &subfile : subfiles )
                 {
                     // If the option to show all supported formats is selected, filter all files
                     // supported
                     if(show_all_valid_files)
                     {
-                        if(filter.PassFilter( subfiles[i].name.c_str() ))
+                        if( filter.PassFilter( subfile.name.c_str() ) )
                         {
                             std::string ext =
-                                subfiles[i].name.find_last_of( '.' ) == std::string::npos
+                                subfile.name.find_last_of( '.' ) == std::string::npos
                                     ? ""
-                                    : subfiles[i].name.substr( subfiles[i].name.find_last_of( '.' ) );
+                                    : subfile.name.substr( subfile.name.find_last_of( '.' ) );
                             std::transform( ext.begin(), ext.end(), ext.begin(),
                                             []( unsigned char c ) { return std::tolower( c ); } );
                             if(ext.length() > 0 &&
                                find( valid_exts.begin(), valid_exts.end(), ext ) != valid_exts.end())
                             {
-                                filtered_files.push_back( &subfiles[i] );
+                                filtered_files.push_back( &subfile );
                             }
                         }
                     }
                     // If the option to show all files is selected, filter all files
                     else if(!valid_exts.empty() && valid_exts[selected_ext_idx] == "*.*")
                     {
-                        if(filter.PassFilter( subfiles[i].name.c_str() ))
-                            filtered_files.push_back( &subfiles[i] );
+                        if( filter.PassFilter( subfile.name.c_str() ) )
+                        {
+                            filtered_files.push_back( &subfile );
+                        }
                     }
                     // If any other extension is selected, filter files having only that extension
                     else
                     {
                         if(!valid_exts.empty())
                         {
-                            if(filter.PassFilter( subfiles[i].name.c_str() ) &&
-                               ( ImStristr( subfiles[i].name.c_str(), nullptr,
-                                            valid_exts[selected_ext_idx].c_str(), nullptr ) ) !=
-                               nullptr)
+                            if( filter.PassFilter( subfile.name.c_str() ) &&
+                                ( ImStristr( subfile.name.c_str(), nullptr,
+                                             valid_exts[selected_ext_idx].c_str(), nullptr ) ) !=
+                                    nullptr )
                             {
-                                filtered_files.push_back( &subfiles[i] );
+                                filtered_files.push_back( &subfile );
                             }
                         }
                     }
@@ -1098,13 +1175,15 @@ namespace fb
 
                 ImGui::Separator();
                 ImGui::SetCursorPosX( window_size.x / 2.0f - getButtonSize( "OK" ).x / 2.0f );
-                if(ImGui::Button( "OK", getButtonSize( "OK" ) ))
+                if( ImGui::Button( "OK", getButtonSize( "OK" ) ) )
+                {
                     ImGui::CloseCurrentPopup();
+                }
                 ImGui::EndPopup();
             }
         }
 
-        bool ImGuiFileBrowser::showReplaceFileModal()
+        auto ImGuiFileBrowser::showReplaceFileModal() -> bool
         {
             ImVec2 window_size( 250, 0 );
             ImGui::SetNextWindowSize( window_size );
@@ -1153,14 +1232,18 @@ namespace fb
                                        ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize ))
             {
                 std::string text = "";
-                if(valid_exts.back() == "*.*")
+                if( valid_exts.back() == "*.*" )
+                {
                     text =
                         "Selected file doesn't exist. Make sure the file you are trying to open exists "
                         "and the name matches including the extension.";
+                }
                 else
+                {
                     text =
                         "Selected file either doesn't exist or is not supported. Please select a file "
                         "with the following extensions...";
+                }
 
                 ImVec2 button_size = getButtonSize( "OK" );
 
@@ -1172,14 +1255,18 @@ namespace fb
                 if(valid_exts.back() != "*.*")
                 {
                     ImGui::BeginChild( "##SupportedExts", ImVec2( 0, cw_height ), true );
-                    for(Array<std::string>::size_type i = 0; i < valid_exts.size() - 1; i++)
+                    for( Array<std::string>::size_type i = 0; i < valid_exts.size() - 1; i++ )
+                    {
                         ImGui::BulletText( "%s", valid_exts[i].c_str() );
+                    }
                     ImGui::EndChild();
                 }
 
                 ImGui::SetCursorPosX( window_size.x / 2.0f - button_size.x / 2.0f );
-                if(ImGui::Button( "OK", button_size ))
+                if( ImGui::Button( "OK", button_size ) )
+                {
                     ImGui::CloseCurrentPopup();
+                }
                 ImGui::EndPopup();
             }
         }
@@ -1193,8 +1280,10 @@ namespace fb
             bool all_files = false;
             valid_exts.clear();
 
-            if(valid_types_string == "")
+            if( valid_types_string == "" )
+            {
                 return;
+            }
 
             std::string valid_str_lower( valid_types_string );
             std::transform( valid_str_lower.begin(), valid_str_lower.end(), valid_str_lower.begin(),
@@ -1204,22 +1293,30 @@ namespace fb
             std::istringstream iss( valid_str_lower );
             while(std::getline( iss, extension, ',' ))
             {
-                if(!extension.empty() && extension != "*.*")
+                if( !extension.empty() && extension != "*.*" )
+                {
                     valid_exts.push_back( extension );
-                else if(extension == "*.*")
+                }
+                else if( extension == "*.*" )
+                {
                     all_files = true;
+                }
             }
 
             // Add an option to support all valid extensions
-            if(valid_exts.size() > 1 && dialog_mode == DialogMode::Open)
-                valid_exts.push_back( "All valid files" );
+            if( valid_exts.size() > 1 && dialog_mode == DialogMode::Open )
+            {
+                valid_exts.emplace_back( "All valid files" );
+            }
 
             // Add all files option in last
-            if(all_files)
-                valid_exts.push_back( "*.*" );
+            if( all_files )
+            {
+                valid_exts.emplace_back( "*.*" );
+            }
         }
 
-        bool ImGuiFileBrowser::validateFile()
+        auto ImGuiFileBrowser::validateFile() -> bool
         {
             bool match = false;
 
@@ -1227,10 +1324,14 @@ namespace fb
             // other words) matches the selection.
             if(selected_idx >= 0)
             {
-                if(dialog_mode == DialogMode::Select)
+                if( dialog_mode == DialogMode::Select )
+                {
                     match = ( filtered_dirs[selected_idx]->name == selected_fn );
+                }
                 else
+                {
                     match = ( filtered_files[selected_idx]->name == selected_fn );
+                }
             }
 
             // If the input filename doesn't match we need to explicitly find the input filename..
@@ -1238,9 +1339,9 @@ namespace fb
             {
                 if(dialog_mode == DialogMode::Select)
                 {
-                    for(Array<Info>::size_type i = 0; i < subdirs.size(); i++)
+                    for( auto &subdir : subdirs )
                     {
-                        if(subdirs[i].name == selected_fn)
+                        if( subdir.name == selected_fn )
                         {
                             match = true;
                             break;
@@ -1249,9 +1350,9 @@ namespace fb
                 }
                 else
                 {
-                    for(Array<Info>::size_type i = 0; i < subfiles.size(); i++)
+                    for( auto &subfile : subfiles )
                     {
-                        if(subfiles[i].name == selected_fn)
+                        if( subfile.name == selected_fn )
                         {
                             match = true;
                             break;
@@ -1263,21 +1364,29 @@ namespace fb
             // If file doesn't match, return true on SAVE mode (since file doesn't exist, hence can be
             // saved directly) and return false on other modes (since file doesn't exist so cant
             // open/select)
-            if(!match)
+            if( !match )
+            {
                 return ( dialog_mode == DialogMode::Save );
+            }
 
             // If file matches, return false on SAVE, we need to show a replace file modal
-            if(dialog_mode == DialogMode::Save)
+            if( dialog_mode == DialogMode::Save )
+            {
                 return false;
+            }
 
             // Return true on SELECT, no need to validate extensions
-            if(dialog_mode == DialogMode::Select)
+            if( dialog_mode == DialogMode::Select )
+            {
                 return true;
+            }
             // If list of extensions has all types, no need to validate.
             for(auto ext : valid_exts)
             {
-                if(ext == "*.*")
+                if( ext == "*.*" )
+                {
                     return true;
+                }
             }
             size_t idx = selected_fn.find_last_of( '.' );
             std::string file_ext = idx == std::string::npos
@@ -1291,7 +1400,7 @@ namespace fb
                      valid_exts.end() );
         }
 
-        ImVec2 ImGuiFileBrowser::getButtonSize( std::string button_text )
+        auto ImGuiFileBrowser::getButtonSize( std::string button_text ) -> ImVec2
         {
             return ( ImGui::CalcTextSize( button_text.c_str() ) + ImGui::GetStyle().FramePadding * 2.0 );
         }
@@ -1302,7 +1411,7 @@ namespace fb
             std::string root = "";
 
 #ifdef OSWIN
-            current_dirlist.push_back( "Computer" );
+            current_dirlist.emplace_back( "Computer" );
 #else
             if( path[0] == '/' )
                 current_dirlist.push_back( "/" );
@@ -1311,12 +1420,14 @@ namespace fb
             std::istringstream iss( path );
             while(std::getline( iss, path_element, '/' ))
             {
-                if(!path_element.empty())
+                if( !path_element.empty() )
+                {
                     current_dirlist.push_back( path_element );
+                }
             }
         }
 
-        std::string ImGuiFileBrowser::wStringToString( const wchar_t *wchar_arr )
+        auto ImGuiFileBrowser::wStringToString( const wchar_t *wchar_arr ) -> std::string
         {
             auto state = std::mbstate_t();
 
@@ -1333,7 +1444,7 @@ namespace fb
             return ret_val;
         }
 
-        bool ImGuiFileBrowser::alphaSortComparator( const Info &a, const Info &b )
+        auto ImGuiFileBrowser::alphaSortComparator( const Info &a, const Info &b ) -> bool
         {
             const char *str1 = a.name.c_str();
             const char *str2 = b.name.c_str();
@@ -1345,14 +1456,16 @@ namespace fb
                 ca = std::tolower( std::toupper( ca ) );
                 cb = std::tolower( std::toupper( cb ) );
             } while(ca == cb && ca != '\0');
-            if(ca < cb)
+            if( ca < cb )
+            {
                 return true;
+            }
             return false;
         }
 
         // Windows Exclusive function
 #ifdef OSWIN
-        bool ImGuiFileBrowser::loadWindowsDrives()
+        auto ImGuiFileBrowser::loadWindowsDrives() -> bool
         {
             DWORD len = GetLogicalDriveStringsA( 0, nullptr );
             auto drives = new char[len];
@@ -1367,10 +1480,14 @@ namespace fb
             for(char *drv = nullptr; *temp != '\0'; temp++)
             {
                 drv = temp;
-                if(DRIVE_REMOVABLE == GetDriveTypeA( drv ))
-                    subdirs.push_back( { "Removable Disk: " + std::string( 1, drv[0] ), false } );
-                else if(DRIVE_FIXED == GetDriveTypeA( drv ))
-                    subdirs.push_back( { "Local Disk: " + std::string( 1, drv[0] ), false } );
+                if( DRIVE_REMOVABLE == GetDriveTypeA( drv ) )
+                {
+                    subdirs.emplace_back( "Removable Disk: " + std::string( 1, drv[0] ), false );
+                }
+                else if( DRIVE_FIXED == GetDriveTypeA( drv ) )
+                {
+                    subdirs.emplace_back( "Local Disk: " + std::string( 1, drv[0] ), false );
+                }
                 // Go to nullptr character
                 while(*( ++temp ));
             }
@@ -1417,9 +1534,8 @@ namespace fb
 #endif  // OSWIN
 
         ImGuiFileBrowser::Info::Info( std::string name, bool is_hidden ) :
-            name( name ),
+            name( std::move( name ) ),
             is_hidden( is_hidden )
         {
         }
-    } // end namespace ui
-}     // end namespace fb
+}  // namespace fb::ui

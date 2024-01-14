@@ -85,6 +85,7 @@ namespace fb
                 CreateOverlayTextTestId,
                 CreateOverlayButtonTestId,
 
+                CreateRigidBodies,
                 CreateRigidStaticMeshId,
                 CreateRigidDynamicMeshId,
                 CreateConstraintId,
@@ -119,6 +120,8 @@ namespace fb
                 AssetImportId,
                 AssetReimportId,
                 AssetDatabaseBuildId,
+                AssetDatabaseImportCacheId,
+                AssetDatabaseDeleteCacheId,
 
                 FileBrowserId,
                 CreateBoxTestId,
@@ -312,6 +315,9 @@ namespace fb
             SmartPtr<ProfilerWindow> m_profilerWindow;
 
             SmartPtr<IEventListener> m_menubarListener;
+
+            SmartPtr<ui::IUILabelTogglePair> m_playmodeToggle;
+            SmartPtr<ui::IUILabelTogglePair> m_editorCameraToggle;
         };
     }  // end namespace editor
 }  // end namespace fb

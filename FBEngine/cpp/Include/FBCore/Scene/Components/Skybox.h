@@ -59,7 +59,7 @@ namespace fb
              * @param flags The flags indicating the changes that occurred.
              * @param oldFlags The previous state's flags.
              */
-            void updateDirty( u32 flags, u32 oldFlags ) override;
+            void updateFlags( u32 flags, u32 oldFlags ) override;
 
             /**
              * @brief Get the properties associated with the Skybox component.
@@ -131,10 +131,18 @@ namespace fb
              */
             void setTextureByName( const String &textureName, u8 index );
 
-            void updateMaterials();
+            /** @copydoc Component::updateMaterials */
+            void updateMaterials() override;
 
+            /**
+            @brief Get the swap left and right flag.
+            @return True if the left and right textures are swapped, false otherwise.
+            */
             bool getSwapLeftRight() const;
 
+            /**
+            @brief Set the swap left and right flag.
+            */
             void setSwapLeftRight( bool swapLeftRight );
 
             /**
@@ -223,6 +231,9 @@ namespace fb
              */
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType ) override;
 
+            /**
+             * @brief Sets up the material used by the Skybox component.
+             */
             void setupMaterial();
 
             /**
@@ -273,9 +284,9 @@ namespace fb
              */
             f32 m_distance = 50000.0f;
 
+            // If true, swap left and right textures
             bool m_swapLeftRight = false;
         };
-
     }  // namespace scene
 }  // namespace fb
 

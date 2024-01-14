@@ -12,7 +12,7 @@ namespace fb
     class HashTable
     {
     public:
-        HashTable( u32 size );
+        explicit HashTable( u32 size );
         ~HashTable();
 
         void insert( const Key &key, const Value &value );

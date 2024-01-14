@@ -11,7 +11,9 @@
 
 namespace fb
 {
-    
+
+    /** CPU timer implementation.
+     */
     class TimerCPU : public ITimer
     {
     public:

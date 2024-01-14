@@ -6,69 +6,62 @@
 #include "ui/UIManager.h"
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    RemoveResourceCmd::RemoveResourceCmd() = default;
+
+    RemoveResourceCmd::~RemoveResourceCmd() = default;
+
+    void RemoveResourceCmd::undo()
     {
+    }
 
-        RemoveResourceCmd::RemoveResourceCmd()
+    void RemoveResourceCmd::redo()
+    {
+    }
+
+    void RemoveResourceCmd::execute()
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        auto resourceDatabase = applicationManager->getResourceDatabase();
+        auto fileSystem = applicationManager->getFileSystem();
+
+        auto path = getFilePath();
+        auto folder = Path::isFolder( path );
+        if( folder )
         {
-        }
-
-        RemoveResourceCmd::~RemoveResourceCmd()
-        {
-        }
-
-        void RemoveResourceCmd::undo()
-        {
-        }
-
-        void RemoveResourceCmd::redo()
-        {
-        }
-
-        void RemoveResourceCmd::execute()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto resourceDatabase = applicationManager->getResourceDatabase();
-            auto fileSystem = applicationManager->getFileSystem();
-
-            auto path = getFilePath();
-            auto folder = Path::isFolder( path );
-            if( folder )
+            auto files = fileSystem->getFiles( path );
+            for( auto file : files )
             {
-                auto files = fileSystem->getFiles( path );
-                for( auto file : files )
+                auto resource = resourceDatabase->loadResource( file );
+                if( resource )
                 {
-                    auto resource = resourceDatabase->loadResource( file );
-                    if( resource )
-                    {
-                        resourceDatabase->removeResource( resource );
-                    }
+                    resourceDatabase->removeResource( resource );
                 }
-
-                Path::deleteFolder( path );
-            }
-            else
-            {
-                auto resource = resourceDatabase->loadResource( path );
-                resourceDatabase->removeResource( resource );
-                fileSystem->deleteFile( m_filePath );
             }
 
-            auto editorManager = editor::EditorManager::getSingletonPtr();
-            editorManager->getUI()->rebuildResourceTree();
+            Path::deleteFolder( path );
         }
-
-        String RemoveResourceCmd::getFilePath() const
+        else
         {
-            return m_filePath;
+            auto resource = resourceDatabase->loadResource( path );
+            resourceDatabase->removeResource( resource );
+            fileSystem->deleteFile( m_filePath );
         }
 
-        void RemoveResourceCmd::setFilePath( const String &filePath )
-        {
-            m_filePath = filePath;
-        }
+        auto editorManager = editor::EditorManager::getSingletonPtr();
+        editorManager->getUI()->rebuildResourceTree();
+    }
 
-    }  // namespace editor
-}  // namespace fb
+    auto RemoveResourceCmd::getFilePath() const -> String
+    {
+        return m_filePath;
+    }
+
+    void RemoveResourceCmd::setFilePath( const String &filePath )
+    {
+        m_filePath = filePath;
+    }
+
+}  // namespace fb::editor

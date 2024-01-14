@@ -19,7 +19,13 @@ namespace fb
 
             /** @copydoc IObject::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
+
+            FB_CLASS_REGISTER_DECL;
+
+        protected:
+            void createUI() override;
         };
+
     }  // namespace scene
 }  // end namespace fb
 

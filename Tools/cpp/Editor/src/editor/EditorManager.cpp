@@ -6,302 +6,300 @@
 
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    SmartPtr<EditorManager> EditorManager::m_singleton = nullptr;
+
+    EditorManager::EditorManager() :
+        m_editTerrain( false ),
+        m_editFoliage( false ),
+        m_fileSaved( true ),
+        m_enablePhysics( false )
     {
+    }
 
-        SmartPtr<EditorManager> EditorManager::m_singleton = nullptr;
+    EditorManager::~EditorManager()
+    {
+        unload( nullptr );
+    }
 
-        EditorManager::EditorManager() :
-            m_editTerrain( false ),
-            m_editFoliage( false ),
-            m_fileSaved( true ),
-            m_enablePhysics( false )
+    void EditorManager::unload( SmartPtr<ISharedObject> data )
+    {
+        if( auto ui = getUI() )
         {
+            ui->unload( nullptr );
+            setUI( nullptr );
         }
 
-        EditorManager::~EditorManager()
+        if( m_translateManipulator )
         {
-            unload( nullptr );
+            m_translateManipulator->unload( data );
+            m_translateManipulator = nullptr;
         }
 
-        void EditorManager::unload( SmartPtr<ISharedObject> data )
+        if( m_rotateManipulator )
         {
-            if( auto ui = getUI() )
-            {
-                ui->unload( nullptr );
-                setUI( nullptr );
-            }
-
-            if( m_translateManipulator )
-            {
-                m_translateManipulator->unload( data );
-                m_translateManipulator = nullptr;
-            }
-
-            if( m_rotateManipulator )
-            {
-                m_rotateManipulator->unload( data );
-                m_rotateManipulator = nullptr;
-            }
-
-            if( m_scaleManipulator )
-            {
-                m_scaleManipulator->unload( data );
-                m_scaleManipulator = nullptr;
-            }
+            m_rotateManipulator->unload( data );
+            m_rotateManipulator = nullptr;
         }
 
-        void EditorManager::update( time_interval t, time_interval dt )
+        if( m_scaleManipulator )
         {
-            if( m_ui )
+            m_scaleManipulator->unload( data );
+            m_scaleManipulator = nullptr;
+        }
+    }
+
+    void EditorManager::update( time_interval t, time_interval dt )
+    {
+        if( m_ui )
+        {
+            m_ui->update( t, dt );
+        }
+
+        //if( m_sceneViewManager )
+        //{
+        //    m_sceneViewManager->update( t, dt );
+        //}
+    }
+
+    void EditorManager::importAssets()
+    {
+    }
+
+    void EditorManager::loadProject( const String &filePath )
+    {
+        FB_ASSERT( Path::isExistingFile( filePath ) );
+
+        if( Path::isExistingFile( filePath ) )
+        {
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto timer = applicationManager->getTimer();
+            FB_ASSERT( timer );
+
+            timer->setTimeSinceLevelLoad( 0.0 );
+
+            auto editorManager = getSingletonPtr();
+            auto project = editorManager->getProject();
+            FB_ASSERT( project );
+
+            project->setPath( filePath );
+
+            auto uiManager = editorManager->getUI();
+            FB_ASSERT( uiManager );
+
+            auto fileSystem = applicationManager->getFileSystem();
+            FB_ASSERT( fileSystem );
+
+            auto path = Path::getFilePath( filePath );
+            path = StringUtil::cleanupPath( path );
+
+            applicationManager->setProjectPath( path );
+
+            auto projectPath = applicationManager->getProjectPath();
+            if( StringUtil::isNullOrEmpty( projectPath ) )
             {
-                m_ui->update( t, dt );
+                projectPath = Path::getWorkingDirectory();
             }
 
-            //if( m_sceneViewManager )
-            //{
-            //    m_sceneViewManager->update( t, dt );
-            //}
-        }
+            fileSystem->addFolder( path, true );
 
-        void EditorManager::importAssets()
-        {
-        }
+            auto cachePath = path + "/Cache/";
+            fileSystem->addFolder( cachePath, true );
+            applicationManager->setCachePath( cachePath );
 
-        void EditorManager::loadProject( const String &filePath )
-        {
-            FB_ASSERT( Path::isExistingFile( filePath ) );
+            auto settingsCachePath = path + "/SettingsCache/";
+            fileSystem->addFolder( settingsCachePath, true );
+            applicationManager->setSettingsPath( settingsCachePath );
 
-            if( Path::isExistingFile( filePath ) )
+            project->loadFromFile( filePath );
+
+            if( auto editorSettings = applicationManager->getEditorSettings() )
             {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto timer = applicationManager->getTimer();
-                FB_ASSERT( timer );
-
-                timer->setTimeSinceLevelLoad( 0.0 );
-
-                auto editorManager = getSingletonPtr();
-                auto project = editorManager->getProject();
-                FB_ASSERT( project );
-
-                project->setPath( filePath );
-
-                auto uiManager = editorManager->getUI();
-                FB_ASSERT( uiManager );
-
-                auto fileSystem = applicationManager->getFileSystem();
-                FB_ASSERT( fileSystem );
-
-                auto path = Path::getFilePath( filePath );
-                path = StringUtil::cleanupPath( path );
-
-                applicationManager->setProjectPath( path );
-
-                auto projectPath = applicationManager->getProjectPath();
-                if( StringUtil::isNullOrEmpty( projectPath ) )
-                {
-                    projectPath = Path::getWorkingDirectory();
-                }
-
-                fileSystem->addFolder( path, true );
-
-                auto cachePath = path + "/Cache/";
-                fileSystem->addFolder( cachePath, true );
-                applicationManager->setCachePath( cachePath );
-
-                auto settingsCachePath = path + "/SettingsCache/";
-                fileSystem->addFolder( settingsCachePath, true );
-                applicationManager->setSettingsCachePath( settingsCachePath );
-
-                project->loadFromFile( filePath );
-
-                auto editorSettings = applicationManager->getEditorSettings();
                 editorSettings->setProperty( "Project Path", filePath );
-
-                uiManager->rebuildSceneTree();
-
-                auto projectWindow = uiManager->getProjectWindow();
-                if( projectWindow )
-                {
-                    projectWindow->buildTree();
-                }
             }
-            else
+
+            uiManager->rebuildSceneTree();
+
+            auto projectWindow = uiManager->getProjectWindow();
+            if( projectWindow )
             {
-                FB_LOG_ERROR( "EditorManager::loadProject: Project file not found" );
-                MessageBoxUtil::show( "Project file not found" );
+                projectWindow->buildTree();
             }
         }
-
-        String EditorManager::getProjectPath() const
+        else
         {
-            return m_projectPath;
+            FB_LOG_ERROR( "EditorManager::loadProject: Project file not found" );
+            MessageBoxUtil::show( "Project file not found" );
         }
+    }
 
-        void EditorManager::setProjectPath( const String &path )
-        {
-            m_projectPath = path;
-        }
+    auto EditorManager::getProjectPath() const -> String
+    {
+        return m_projectPath;
+    }
 
-        String EditorManager::getCachePath() const
-        {
-            return m_cachePath;
-        }
+    void EditorManager::setProjectPath( const String &path )
+    {
+        m_projectPath = path;
+    }
 
-        void EditorManager::setCachePath( const String &path )
-        {
-            m_cachePath = path;
-        }
+    auto EditorManager::getCachePath() const -> String
+    {
+        return m_cachePath;
+    }
 
-        SmartPtr<ProjectManager> EditorManager::getProjectManager() const
-        {
-            return m_projectManager;
-        }
+    void EditorManager::setCachePath( const String &path )
+    {
+        m_cachePath = path;
+    }
 
-        void EditorManager::setProjectManager( SmartPtr<ProjectManager> projectManager )
-        {
-            m_projectManager = projectManager;
-        }
+    auto EditorManager::getProjectManager() const -> SmartPtr<ProjectManager>
+    {
+        return m_projectManager;
+    }
 
-        SmartPtr<Project> EditorManager::getProject() const
-        {
-            return m_project;
-        }
+    void EditorManager::setProjectManager( SmartPtr<ProjectManager> projectManager )
+    {
+        m_projectManager = projectManager;
+    }
 
-        void EditorManager::setProject( SmartPtr<Project> val )
-        {
-            m_project = val;
-        }
+    auto EditorManager::getProject() const -> SmartPtr<Project>
+    {
+        return m_project;
+    }
 
-        SmartPtr<UIManager> EditorManager::getUI() const
-        {
-            return m_ui;
-        }
+    void EditorManager::setProject( SmartPtr<Project> val )
+    {
+        m_project = val;
+    }
 
-        void EditorManager::setUI( SmartPtr<UIManager> ui )
-        {
-            m_ui = ui;
-        }
+    auto EditorManager::getUI() const -> SmartPtr<UIManager>
+    {
+        return m_ui;
+    }
 
-        SmartPtr<render::IDecalCursor> EditorManager::getDecalCursor() const
-        {
-            return m_decalCursor;
-        }
+    void EditorManager::setUI( SmartPtr<UIManager> ui )
+    {
+        m_ui = ui;
+    }
 
-        void EditorManager::setDecalCursor( SmartPtr<render::IDecalCursor> val )
-        {
-            m_decalCursor = val;
-        }
+    auto EditorManager::getDecalCursor() const -> SmartPtr<render::IDecalCursor>
+    {
+        return m_decalCursor;
+    }
 
-        bool EditorManager::getEditTerrain() const
-        {
-            return m_editTerrain;
-        }
+    void EditorManager::setDecalCursor( SmartPtr<render::IDecalCursor> val )
+    {
+        m_decalCursor = val;
+    }
 
-        void EditorManager::setEditTerrain( bool val )
-        {
-            m_editTerrain = val;
-        }
+    auto EditorManager::getEditTerrain() const -> bool
+    {
+        return m_editTerrain;
+    }
 
-        bool EditorManager::getEditFoliage() const
-        {
-            return m_editFoliage;
-        }
+    void EditorManager::setEditTerrain( bool val )
+    {
+        m_editTerrain = val;
+    }
 
-        void EditorManager::setEditFoliage( bool val )
-        {
-            m_editFoliage = val;
-        }
+    auto EditorManager::getEditFoliage() const -> bool
+    {
+        return m_editFoliage;
+    }
 
-        bool EditorManager::getFileSaved() const
-        {
-            return m_fileSaved;
-        }
+    void EditorManager::setEditFoliage( bool val )
+    {
+        m_editFoliage = val;
+    }
 
-        void EditorManager::setFileSaved( bool val )
-        {
-            m_fileSaved = val;
-        }
+    auto EditorManager::getFileSaved() const -> bool
+    {
+        return m_fileSaved;
+    }
 
-        void EditorManager::previewAsset( const String &path )
+    void EditorManager::setFileSaved( bool val )
+    {
+        m_fileSaved = val;
+    }
+
+    void EditorManager::previewAsset( const String &path )
+    {
+        try
         {
-            try
+            if( ApplicationUtil::isSupportedMesh( path ) )
             {
-                auto ext = Path::getFileExtension( path );
-                if( ext == ".fbx" || ext == ".FBX" || ext == ".hda" || ext == ".HDA" )
+                auto applicationManager = core::ApplicationManager::instance();
+                auto sceneManager = applicationManager->getSceneManager();
+                auto scene = sceneManager->getCurrentScene();
+                auto prefabManager = applicationManager->getPrefabManager();
+
+                auto resource = prefabManager->loadPrefab( path );
+                if( resource )
                 {
-                    auto applicationManager = core::IApplicationManager::instance();
-                    auto sceneManager = applicationManager->getSceneManager();
-                    auto scene = sceneManager->getCurrentScene();
-                    auto prefabManager = applicationManager->getPrefabManager();
-
-                    auto resource = prefabManager->loadPrefab( path );
-                    if( resource )
+                    auto actor = resource->createActor();
+                    if( actor )
                     {
-                        auto actor = resource->createActor();
-                        if( actor )
-                        {
-                            scene->addActor( actor );
-                            scene->registerAllUpdates( actor );
-                        }
-                    }
-
-                    auto uiManager = getUI();
-                    if( uiManager )
-                    {
-                        uiManager->rebuildSceneTree();
+                        scene->addActor( actor );
+                        scene->registerAllUpdates( actor );
                     }
                 }
+
+                auto uiManager = getUI();
+                if( uiManager )
+                {
+                    uiManager->rebuildSceneTree();
+                }
             }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
         }
-
-        SmartPtr<EditorManager> EditorManager::getSingletonPtr()
+        catch( std::exception &e )
         {
-            return m_singleton;
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        void EditorManager::setSingletonPtr( SmartPtr<EditorManager> editorManager )
-        {
-            m_singleton = editorManager;
-        }
+    auto EditorManager::getSingletonPtr() -> SmartPtr<EditorManager>
+    {
+        return m_singleton;
+    }
 
-        SmartPtr<TranslateManipulator> EditorManager::getTranslateManipulator() const
-        {
-            return m_translateManipulator;
-        }
+    void EditorManager::setSingletonPtr( SmartPtr<EditorManager> editorManager )
+    {
+        m_singleton = editorManager;
+    }
 
-        void EditorManager::setTranslateManipulator( SmartPtr<TranslateManipulator> val )
-        {
-            m_translateManipulator = val;
-        }
+    auto EditorManager::getTranslateManipulator() const -> SmartPtr<TranslateManipulator>
+    {
+        return m_translateManipulator;
+    }
 
-        SmartPtr<RotateManipulator> EditorManager::getRotateManipulator() const
-        {
-            return m_rotateManipulator;
-        }
+    void EditorManager::setTranslateManipulator( SmartPtr<TranslateManipulator> val )
+    {
+        m_translateManipulator = val;
+    }
 
-        void EditorManager::setRotateManipulator( SmartPtr<RotateManipulator> val )
-        {
-            m_rotateManipulator = val;
-        }
+    auto EditorManager::getRotateManipulator() const -> SmartPtr<RotateManipulator>
+    {
+        return m_rotateManipulator;
+    }
 
-        SmartPtr<ScaleManipulator> EditorManager::getScaleManipulator() const
-        {
-            return m_scaleManipulator;
-        }
+    void EditorManager::setRotateManipulator( SmartPtr<RotateManipulator> val )
+    {
+        m_rotateManipulator = val;
+    }
 
-        void EditorManager::setScaleManipulator( SmartPtr<ScaleManipulator> val )
-        {
-            m_scaleManipulator = val;
-        }
+    auto EditorManager::getScaleManipulator() const -> SmartPtr<ScaleManipulator>
+    {
+        return m_scaleManipulator;
+    }
 
-    }  // end namespace editor
-}  // end namespace fb
+    void EditorManager::setScaleManipulator( SmartPtr<ScaleManipulator> val )
+    {
+        m_scaleManipulator = val;
+    }
+
+}  // namespace fb::editor

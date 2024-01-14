@@ -11,11 +11,14 @@ namespace fb
 {
     namespace physics
     {
-        
+        /** Implementation of a rigid dynamic body. */
         class PhysxRigidDynamic : public PhysxRigidBody3<IRigidDynamic3>
         {
         public:
+            /** Constructor. */
             PhysxRigidDynamic();
+
+            /** Destructor. */
             ~PhysxRigidDynamic() override;
 
             /** @copydoc ISharedObject::load */
@@ -63,10 +66,10 @@ namespace fb
             /** @copydoc IRigidDynamic3::setVelocity */
             Vector3<real_Num> getTorque() const;
 
-            void setMaterialId( u32 materialId );
-            u32 getMaterialId() const;
-
+            /** @copydoc IRigidDynamic3::getLocalAABB */
             AABB3<real_Num> getLocalAABB() const override;
+
+            /** @copydoc IRigidDynamic3::getWorldAABB */
             AABB3<real_Num> getWorldAABB() const override;
 
             real_Num getMass() const override;
@@ -113,7 +116,7 @@ namespace fb
 
             void setActorFlag( ActorFlag::Enum flag, bool value ) override;
             ActorFlag::Enum getActorFlags() const override;
-            
+
             void setKinematicTarget( const Transform3<real_Num> &destination ) override;
             bool getKinematicTarget( Transform3<real_Num> &target ) override;
 
@@ -165,9 +168,9 @@ namespace fb
             /** @copydoc IPhysicsBody3::setProperties */
             void setProperties( SmartPtr<Properties> properties ) override;
 
-            SmartPtr<IStateContext> getStateObject() const override;
+            SmartPtr<IStateContext> getStateContext() const override;
 
-            void setStateObject( SmartPtr<IStateContext> stateObject ) override;
+            void setStateContext( SmartPtr<IStateContext> stateContext ) override;
 
             FB_CLASS_REGISTER_DECL;
 
@@ -182,13 +185,13 @@ namespace fb
                 void handleStateChanged( SmartPtr<IState> &state ) override;
                 void handleQuery( SmartPtr<IStateQuery> &query ) override;
 
-                PhysxRigidDynamic *getOwner() const;
-                void setOwner( PhysxRigidDynamic *owner );
+                SmartPtr<PhysxRigidDynamic> getOwner() const;
+                void setOwner( SmartPtr<PhysxRigidDynamic> owner );
 
             protected:
-                RawPtr<PhysxRigidDynamic> m_owner = nullptr;
+                AtomicSmartPtr<PhysxRigidDynamic> m_owner;
             };
-            
+
             AABB3<real_Num> m_localAABB;
             AABB3<real_Num> m_worldAABB;
 
@@ -204,7 +207,7 @@ namespace fb
             bool m_enabled = true;
             bool m_kinematicMode = false;
         };
-    } // end namespace physics
-}     // end namespace fb
+    }  // end namespace physics
+}  // end namespace fb
 
 #endif  // FBPhysxRigidBody_h__

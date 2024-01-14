@@ -6,35 +6,31 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, MeshResource, IMeshResource );
 
-    MeshResource::MeshResource()
-    {
-    }
+    MeshResource::MeshResource() = default;
 
-    MeshResource::~MeshResource()
-    {
-    }
+    MeshResource::~MeshResource() = default;
 
-    bool MeshResource::hasSkeleton() const
+    auto MeshResource::hasSkeleton() const -> bool
     {
         return false;
     }
 
-    String MeshResource::getSkeletonName() const
+    auto MeshResource::getSkeletonName() const -> String
     {
         return "";
     }
 
-    u32 MeshResource::getNumLodLevels() const
+    auto MeshResource::getNumLodLevels() const -> u32
     {
         return 0;
     }
 
-    bool MeshResource::isEdgeListBuilt() const
+    auto MeshResource::isEdgeListBuilt() const -> bool
     {
         return false;
     }
 
-    bool MeshResource::hasVertexAnimation() const
+    auto MeshResource::hasVertexAnimation() const -> bool
     {
         return false;
     }
@@ -43,7 +39,7 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto fileSystem = applicationManager->getFileSystem();
@@ -74,7 +70,7 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto fileSystem = applicationManager->getFileSystem();
@@ -101,7 +97,9 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            setLoadingState( LoadingState::Loading );
+
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto fileSystem = applicationManager->getFileSystem();
@@ -139,6 +137,8 @@ namespace fb
                     FB_LOG_ERROR( "File not found: " + meshPath );
                 }
             }
+
+            setLoadingState( LoadingState::Loaded );
         }
         catch( std::exception &e )
         {
@@ -175,7 +175,7 @@ namespace fb
         }
     }
 
-    SmartPtr<Properties> MeshResource::getProperties() const
+    auto MeshResource::getProperties() const -> SmartPtr<Properties>
     {
         auto properties = fb::make_ptr<Properties>();
         properties->setProperty( "scale", m_scale );
@@ -194,13 +194,29 @@ namespace fb
 
     void MeshResource::setProperties( SmartPtr<Properties> properties )
     {
-        properties->getPropertyValue( "scale", m_scale );
-        properties->getPropertyValue( "constraints", m_constraints );
-        properties->getPropertyValue( "animation", m_animation );
-        properties->getPropertyValue( "visibility", m_visibility );
-        properties->getPropertyValue( "cameras", m_cameras );
-        properties->getPropertyValue( "lights", m_lights );
-        properties->getPropertyValue( "lightmapUVs", m_lightmapUVs );
+        auto scale = getScale();
+        auto constraints = getConstraints();
+        auto animation = getAnimation();
+        auto visibility = getVisibility();
+        auto cameras = getCameras();
+        auto lights = getLights();
+        auto lightmapUVs = getLightmapUVs();
+
+        properties->getPropertyValue( "scale", scale );
+        properties->getPropertyValue( "constraints", constraints );
+        properties->getPropertyValue( "animation", animation );
+        properties->getPropertyValue( "visibility", visibility );
+        properties->getPropertyValue( "cameras", cameras );
+        properties->getPropertyValue( "lights", lights );
+        properties->getPropertyValue( "lightmapUVs", lightmapUVs );
+
+        m_scale = scale;
+        m_constraints = constraints;
+        m_animation = animation;
+        m_visibility = visibility;
+        m_cameras = cameras;
+        m_lights = lights;
+        m_lightmapUVs = lightmapUVs;
 
         if( properties->hasProperty( "Save" ) )
         {
@@ -221,14 +237,14 @@ namespace fb
         }
     }
 
-    SmartPtr<IStateContext> MeshResource::getStateObject() const
+    auto MeshResource::getStateContext() const -> SmartPtr<IStateContext>
     {
-        return m_stateObject;
+        return m_stateContext;
     }
 
-    void MeshResource::setStateObject( SmartPtr<IStateContext> stateObject )
+    void MeshResource::setStateContext( SmartPtr<IStateContext> stateContext )
     {
-        m_stateObject = stateObject;
+        m_stateContext = stateContext;
     }
 
     void MeshResource::_getObject( void **ppObject ) const
@@ -236,7 +252,7 @@ namespace fb
         *ppObject = nullptr;
     }
 
-    f32 MeshResource::getScale() const
+    auto MeshResource::getScale() const -> f32
     {
         return m_scale;
     }
@@ -246,7 +262,7 @@ namespace fb
         m_scale = val;
     }
 
-    IMeshResource::MaterialNaming MeshResource::getMaterialNaming() const
+    auto MeshResource::getMaterialNaming() const -> IMeshResource::MaterialNaming
     {
         return m_materialNaming;
     }
@@ -256,7 +272,7 @@ namespace fb
         m_materialNaming = val;
     }
 
-    bool MeshResource::getConstraints() const
+    auto MeshResource::getConstraints() const -> bool
     {
         return m_constraints;
     }
@@ -266,7 +282,7 @@ namespace fb
         m_constraints = val;
     }
 
-    bool MeshResource::getAnimation() const
+    auto MeshResource::getAnimation() const -> bool
     {
         return m_animation;
     }
@@ -276,7 +292,7 @@ namespace fb
         m_animation = val;
     }
 
-    bool MeshResource::getVisibility() const
+    auto MeshResource::getVisibility() const -> bool
     {
         return m_visibility;
     }
@@ -286,7 +302,7 @@ namespace fb
         m_visibility = val;
     }
 
-    bool MeshResource::getCameras() const
+    auto MeshResource::getCameras() const -> bool
     {
         return m_cameras;
     }
@@ -296,7 +312,7 @@ namespace fb
         m_cameras = val;
     }
 
-    bool MeshResource::getLights() const
+    auto MeshResource::getLights() const -> bool
     {
         return m_lights;
     }
@@ -306,7 +322,7 @@ namespace fb
         m_lights = val;
     }
 
-    bool MeshResource::getLightmapUVs() const
+    auto MeshResource::getLightmapUVs() const -> bool
     {
         return m_lightmapUVs;
     }
@@ -316,7 +332,7 @@ namespace fb
         m_lightmapUVs = val;
     }
 
-    SmartPtr<IMesh> MeshResource::getMesh() const
+    auto MeshResource::getMesh() const -> SmartPtr<IMesh>
     {
         return m_mesh;
     }

@@ -12,13 +12,13 @@
 //    return 0;
 //}
 //#else
-int main()
+auto main() -> int
 {
     auto app = fb::make_ptr<fb::editor::EditorApplication>();
 
     const auto threads = fb::Thread::hardware_concurrency();
     app->setActiveThreads( threads );
-    //app->setActiveThreads( 2 );
+    //app->setActiveThreads( 0 );
 
     app->load( nullptr );
     app->run();

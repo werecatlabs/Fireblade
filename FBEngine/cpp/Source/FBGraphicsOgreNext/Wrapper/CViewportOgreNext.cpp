@@ -4,85 +4,91 @@
 #include <FBCore/FBCore.h>
 #include <OgreViewport.h>
 
-namespace fb
+namespace fb::render
 {
-    namespace render
+
+    CViewportOgreNext::CViewportOgreNext()
     {
-
-        CViewportOgreNext::CViewportOgreNext()
+        try
         {
-            try
+            if( auto handle = getHandle() )
             {
-                auto applicationManager = core::IApplicationManager::instance();
-                auto graphicsSystem = applicationManager->getGraphicsSystem();
-
-                auto stateManager = applicationManager->getStateManager();
-                auto threadPool = applicationManager->getThreadPool();
-                auto factoryManager = applicationManager->getFactoryManager();
-
-                auto state = factoryManager->make_ptr<ViewportState>();
-
-                auto stateTask = graphicsSystem->getStateTask();
-                state->setTaskId( stateTask );
-
-                auto stateObject = stateManager->addStateObject();
-
-                auto viewportStateListener = factoryManager->make_ptr<ViewportStateListener>();
-                viewportStateListener->setOwner( this );
-                setStateListener( viewportStateListener );
-
-                stateObject->setState( state );
-                stateObject->addStateListener( viewportStateListener );
-                setStateObject( stateObject );
+                handle->setName( "CViewportOgreNext" );
             }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
 
-        CViewportOgreNext::~CViewportOgreNext()
+            auto applicationManager = core::ApplicationManager::instance();
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+
+            auto stateManager = applicationManager->getStateManager();
+            auto threadPool = applicationManager->getThreadPool();
+            auto factoryManager = applicationManager->getFactoryManager();
+
+            auto state = factoryManager->make_ptr<ViewportState>();
+
+            auto stateTask = graphicsSystem->getStateTask();
+            state->setTaskId( stateTask );
+
+            auto stateContext = stateManager->addStateObject();
+
+            auto viewportStateListener = factoryManager->make_ptr<ViewportStateListener>();
+            viewportStateListener->setOwner( this );
+            setStateListener( viewportStateListener );
+
+            auto mask = 0xFFFFFFFF & ( ~Ogre::VisibilityFlags::LAYER_VISIBILITY );
+            state->setVisibilityMask( mask );
+
+            stateContext->addState( state );
+            stateContext->addStateListener( viewportStateListener );
+            setStateContext( stateContext );
+        }
+        catch( std::exception &e )
         {
-            unload( nullptr );
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        void CViewportOgreNext::initialise( Ogre::Viewport *viewport )
-        {
-            m_viewport = viewport;
-        }
+    CViewportOgreNext::~CViewportOgreNext()
+    {
+        unload( nullptr );
+    }
 
-        void CViewportOgreNext::update()
-        {
-            // m_viewport->update();
-        }
+    void CViewportOgreNext::initialise( Ogre::Viewport *viewport )
+    {
+        m_viewport = viewport;
+    }
 
-        void CViewportOgreNext::_getObject( void **ppObject ) const
-        {
-            *ppObject = m_viewport;
-        }
+    void CViewportOgreNext::update()
+    {
+        // m_viewport->update();
+    }
 
-        void CViewportOgreNext::ViewportStateListener::handleStateChanged(
-            const SmartPtr<IStateMessage> &message )
-        {
-        }
+    void CViewportOgreNext::_getObject( void **ppObject ) const
+    {
+        *ppObject = m_viewport;
+    }
 
-        void CViewportOgreNext::ViewportStateListener::handleStateChanged( SmartPtr<IState> &state )
-        {
-        }
+    void CViewportOgreNext::ViewportStateListener::handleStateChanged(
+        const SmartPtr<IStateMessage> &message )
+    {
+    }
 
-        void CViewportOgreNext::ViewportStateListener::handleQuery( SmartPtr<IStateQuery> &query )
-        {
-        }
+    void CViewportOgreNext::ViewportStateListener::handleStateChanged( SmartPtr<IState> &state )
+    {
+        state->setDirty( false );
+    }
 
-        CViewportOgreNext *CViewportOgreNext::ViewportStateListener::getOwner() const
-        {
-            return m_owner;
-        }
+    void CViewportOgreNext::ViewportStateListener::handleQuery( SmartPtr<IStateQuery> &query )
+    {
+    }
 
-        void CViewportOgreNext::ViewportStateListener::setOwner( CViewportOgreNext *owner )
-        {
-            m_owner = owner;
-        }
+    auto CViewportOgreNext::ViewportStateListener::getOwner() const -> CViewportOgreNext *
+    {
+        return m_owner;
+    }
 
-    }  // end namespace render
-}  // end namespace fb
+    void CViewportOgreNext::ViewportStateListener::setOwner( CViewportOgreNext *owner )
+    {
+        m_owner = owner;
+    }
+
+}  // namespace fb::render

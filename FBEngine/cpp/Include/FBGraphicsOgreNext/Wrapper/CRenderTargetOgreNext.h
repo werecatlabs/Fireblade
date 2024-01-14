@@ -1,15 +1,17 @@
-#ifndef _CRenderTarget_H
-#define _CRenderTarget_H
+#ifndef _CRenderTargetOgreNext_H
+#define _CRenderTargetOgreNext_H
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
 #include <FBCore/Interface/Graphics/IRenderTarget.h>
 #include <FBCore/Interface/Graphics/IViewport.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {
     namespace render
     {
+
         template <class T>
         class CRenderTargetOgreNext : public T
         {
@@ -19,18 +21,6 @@ namespace fb
 
             void load( SmartPtr<ISharedObject> data ) override;
             void unload( SmartPtr<ISharedObject> data ) override;
-
-            void initialise( Ogre::RenderTarget *renderTarget );
-
-            void preUpdate() override
-            {
-            }
-
-            void update() override;
-
-            void postUpdate() override
-            {
-            }
 
             void addRenderTargetListener( SmartPtr<IRenderTarget::Listener> listener );
             void removeRenderTargetListener( SmartPtr<IRenderTarget::Listener> listener );
@@ -59,31 +49,9 @@ namespace fb
             SmartPtr<IViewport> getViewport( u32 index ) override;
             SmartPtr<IViewport> getViewportById( hash32 id ) override;
 
-            SmartPtr<IViewport> getViewportByZOrder( s32 zorder ) const
-            {
-                for( auto [key, vp] : m_viewports )
-                {
-                    if( vp->getZOrder() == zorder )
-                    {
-                        return vp;
-                    }
-                }
+            SmartPtr<IViewport> getViewportByZOrder( s32 zorder ) const;
 
-                return nullptr;
-            }
-
-            bool hasViewportWithZOrder( s32 zorder ) const
-            {
-                for( auto [key, vp] : m_viewports )
-                {
-                    if( vp->getZOrder() == zorder )
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
+            bool hasViewportWithZOrder( s32 zorder ) const;
 
             Array<SmartPtr<IViewport>> getViewports() const override;
 
@@ -106,34 +74,17 @@ namespace fb
 
             void setColourDepth( u32 val ) override;
 
-            virtual SmartPtr<ITexture> getTexture() const
-            {
-                return nullptr;
-            }
+            virtual SmartPtr<ITexture> getTexture() const;
 
-            virtual void setTexture( SmartPtr<ITexture> texture )
-            {
-            }
+            virtual void setTexture( SmartPtr<ITexture> texture );
 
-            SmartPtr<IStateContext> getStateObject() const
-            {
-                return m_stateObject;
-            }
+            SmartPtr<IStateContext> getStateContext() const;
 
-            void setStateObject( SmartPtr<IStateContext> stateObject )
-            {
-                m_stateObject = stateObject;
-            }
+            void setStateContext( SmartPtr<IStateContext> stateContext );
 
-            SmartPtr<IStateListener> getStateListener() const
-            {
-                return m_stateListener;
-            }
+            SmartPtr<IStateListener> getStateListener() const;
 
-            void setStateListener( SmartPtr<IStateListener> stateListener )
-            {
-                m_stateListener = stateListener;
-            }
+            void setStateListener( SmartPtr<IStateListener> stateListener );
 
         protected:
             /** Sets up the state object. */
@@ -146,12 +97,109 @@ namespace fb
             using Viewports = std::map<u32, SmartPtr<IViewport>>;
             Viewports m_viewports;
 
-            SmartPtr<IStateContext> m_stateObject;
+            SmartPtr<IStateContext> m_stateContext;
             SmartPtr<IStateListener> m_stateListener;
         };
+
+        template <class T>
+        CRenderTargetOgreNext<T>::CRenderTargetOgreNext()
+        {
+        }
+
+        template <class T>
+        CRenderTargetOgreNext<T>::~CRenderTargetOgreNext()
+        {
+        }
+
+        template <class T>
+        void CRenderTargetOgreNext<T>::load( SmartPtr<ISharedObject> data )
+        {
+        }
+
+        template <class T>
+        void CRenderTargetOgreNext<T>::unload( SmartPtr<ISharedObject> data )
+        {
+            try
+            {
+                for( auto &[k, vp] : m_viewports )
+                {
+                    vp->unload( nullptr );
+                }
+
+                m_viewports.clear();
+
+                destroyedStateObject();
+            }
+            catch( std::exception &e )
+            {
+                FB_LOG_EXCEPTION( e );
+            }
+        }
+
+        template <class T>
+        SmartPtr<IViewport> CRenderTargetOgreNext<T>::getViewportByZOrder( s32 zorder ) const
+        {
+            for( auto [key, vp] : m_viewports )
+            {
+                if( vp->getZOrder() == zorder )
+                {
+                    return vp;
+                }
+            }
+
+            return nullptr;
+        }
+
+        template <class T>
+        bool CRenderTargetOgreNext<T>::hasViewportWithZOrder( s32 zorder ) const
+        {
+            for( auto [key, vp] : m_viewports )
+            {
+                if( vp->getZOrder() == zorder )
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        template <class T>
+        SmartPtr<ITexture> CRenderTargetOgreNext<T>::getTexture() const
+        {
+            return nullptr;
+        }
+
+        template <class T>
+        void CRenderTargetOgreNext<T>::setTexture( SmartPtr<ITexture> texture )
+        {
+        }
+
+        template <class T>
+        SmartPtr<IStateContext> CRenderTargetOgreNext<T>::getStateContext() const
+        {
+            return m_stateContext;
+        }
+
+        template <class T>
+        void CRenderTargetOgreNext<T>::setStateContext( SmartPtr<IStateContext> stateContext )
+        {
+            m_stateContext = stateContext;
+        }
+
+        template <class T>
+        SmartPtr<IStateListener> CRenderTargetOgreNext<T>::getStateListener() const
+        {
+            return m_stateListener;
+        }
+
+        template <class T>
+        void CRenderTargetOgreNext<T>::setStateListener( SmartPtr<IStateListener> stateListener )
+        {
+            m_stateListener = stateListener;
+        }
+
     }  // end namespace render
 }  // end namespace fb
-
-#include <FBGraphicsOgreNext/Wrapper/CRenderTargetOgreNext.inl>
 
 #endif

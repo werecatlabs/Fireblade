@@ -9,287 +9,238 @@
 #include <FBCore/Interface/Script/IScriptData.h>
 #include <FBCore/Core/LogManager.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+    FB_CLASS_REGISTER_DERIVED( fb::scene, UserComponent, Component );
+
+    const hash_type UserComponent::UPDATE_HASH = StringUtil::getHash( "update" );
+
+    UserComponent::UserComponent()
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, UserComponent, Component );
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+        FB_ASSERT( applicationManager->isValid() );
 
-        const hash_type UserComponent::UPDATE_HASH = StringUtil::getHash( "update" );
+        auto factoryManager = applicationManager->getFactoryManager();
+        FB_ASSERT( factoryManager );
+        FB_ASSERT( factoryManager->isValid() );
 
-        UserComponent::UserComponent()
+        auto invoker = fb::make_ptr<ScriptInvoker>( this );
+        setInvoker( invoker );
+
+        auto receiver = fb::make_ptr<ScriptReceiver>( this );
+        setReceiver( receiver );
+
+        auto updateEvent = fb::make_ptr<ScriptEvent>();
+        updateEvent->setFunction( "update" );
+        invoker->setEventFunction( UPDATE_HASH, updateEvent );
+
+        //createObject( const String &className, SmartPtr<ISharedObject> object )
+    }
+
+    UserComponent::~UserComponent()
+    {
+        unload( nullptr );
+    }
+
+    void UserComponent::load( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-            FB_ASSERT( applicationManager->isValid() );
+            setLoadingState( LoadingState::Loading );
 
-            auto factoryManager = applicationManager->getFactoryManager();
-            FB_ASSERT( factoryManager );
-            FB_ASSERT( factoryManager->isValid() );
-
-            auto invoker = fb::make_ptr<ScriptInvoker>( this );
-            setInvoker( invoker );
-
-            auto receiver = fb::make_ptr<ScriptReceiver>( this );
-            setReceiver( receiver );
-
-            auto updateEvent = fb::make_ptr<ScriptEvent>();
-            updateEvent->setFunction( "update" );
-            invoker->setEventFunction( UPDATE_HASH, updateEvent );
-
-            //createObject( const String &className, SmartPtr<ISharedObject> object )
-        }
-
-        UserComponent::~UserComponent()
-        {
-            unload( nullptr );
-        }
-
-        void UserComponent::load( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-                setLoadingState( LoadingState::Loading );
-
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto pSceneManager = applicationManager->getSceneManager();
-                auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-
-                createScriptData();
-
-                setLoadingState( LoadingState::Loaded );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void UserComponent::unload( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-                setLoadingState( LoadingState::Unloading );
-
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-                FB_ASSERT( applicationManager->isValid() );
-
-                auto pSceneManager = applicationManager->getSceneManager();
-                auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-
-                if( auto scriptManager = applicationManager->getScriptManager() )
-                {
-                    scriptManager->destroyObject( this );
-                }
-
-                setInvoker( nullptr );
-                setReceiver( nullptr );
-
-                setLoadingState( LoadingState::Unloaded );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void UserComponent::reload( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void UserComponent::updateComponents()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
             auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-        }
 
-        void UserComponent::update()
+            createScriptData();
+
+            setLoadingState( LoadingState::Loaded );
+        }
+        catch( std::exception &e )
         {
-            auto state = getState();
-            if( state == State::Play || getUpdateInEditMode() )
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void UserComponent::unload( SmartPtr<ISharedObject> data )
+    {
+        try
+        {
+            setLoadingState( LoadingState::Unloading );
+
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+            FB_ASSERT( applicationManager->isValid() );
+
+            auto pSceneManager = applicationManager->getSceneManager();
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
+
+            if( auto scriptManager = applicationManager->getScriptManager() )
             {
-                if( auto invoker = getInvoker() )
-                {
-                    invoker->event( UPDATE_HASH );
-                }
+                scriptManager->destroyObject( this );
+            }
+
+            setInvoker( nullptr );
+            setReceiver( nullptr );
+
+            setLoadingState( LoadingState::Unloaded );
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void UserComponent::reload( SmartPtr<ISharedObject> data )
+    {
+        try
+        {
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void UserComponent::updateComponents()
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto pSceneManager = applicationManager->getSceneManager();
+        auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
+    }
+
+    void UserComponent::update()
+    {
+        auto state = getState();
+        if( state == State::Play || getUpdateInEditMode() )
+        {
+            if( auto invoker = getInvoker() )
+            {
+                invoker->event( UPDATE_HASH );
             }
         }
+    }
 
-        SmartPtr<IScriptInvoker> UserComponent::getInvoker() const
+    auto UserComponent::getInvoker() const -> SmartPtr<IScriptInvoker>
+    {
+        return m_invoker;
+    }
+
+    void UserComponent::setInvoker( SmartPtr<IScriptInvoker> invoker )
+    {
+        m_invoker = invoker;
+    }
+
+    auto UserComponent::getReceiver() const -> SmartPtr<IScriptReceiver>
+    {
+        return m_receiver;
+    }
+
+    void UserComponent::setReceiver( SmartPtr<IScriptReceiver> receiver )
+    {
+        m_receiver = receiver;
+    }
+
+    auto UserComponent::getProperties() const -> SmartPtr<Properties>
+    {
+        auto properties = Component::getProperties();
+        properties->setProperty( "className", m_className );
+        properties->setProperty( "updateInEditMode", m_updateInEditMode );
+        return properties;
+    }
+
+    void UserComponent::setProperties( SmartPtr<Properties> properties )
+    {
+        auto className = String();
+        properties->getPropertyValue( "className", className );
+        properties->getPropertyValue( "updateInEditMode", m_updateInEditMode );
+
+        if( className != m_className )
         {
-            return m_invoker;
-        }
-
-        void UserComponent::setInvoker( SmartPtr<IScriptInvoker> invoker )
-        {
-            m_invoker = invoker;
-        }
-
-        SmartPtr<IScriptReceiver> UserComponent::getReceiver() const
-        {
-            return m_receiver;
-        }
-
-        void UserComponent::setReceiver( SmartPtr<IScriptReceiver> receiver )
-        {
-            m_receiver = receiver;
-        }
-
-        SmartPtr<Properties> UserComponent::getProperties() const
-        {
-            auto properties = Component::getProperties();
-            properties->setProperty( "className", m_className );
-            properties->setProperty( "updateInEditMode", m_updateInEditMode );
-            return properties;
-        }
-
-        void UserComponent::setProperties( SmartPtr<Properties> properties )
-        {
-            auto className = String();
-            properties->getPropertyValue( "className", className );
-            properties->getPropertyValue( "updateInEditMode", m_updateInEditMode );
-
-            if( className != m_className )
-            {
-                destroyScriptData();
-                m_className = className;
-                createScriptData();
-            }
-        }
-
-        bool UserComponent::getUpdateInEditMode() const
-        {
-            return m_updateInEditMode;
-        }
-
-        void UserComponent::setUpdateInEditMode( bool updateInEditMode )
-        {
-            m_updateInEditMode = updateInEditMode;
-        }
-
-        SmartPtr<IScriptClass> UserComponent::getScriptClass() const
-        {
-            return m_scriptClass;
-        }
-
-        void UserComponent::setScriptClass( SmartPtr<IScriptClass> scriptClass )
-        {
-            m_scriptClass = scriptClass;
-        }
-
-        String UserComponent::getClassName() const
-        {
-            return m_className;
-        }
-
-        void UserComponent::setClassName( const String &className )
-        {
+            destroyScriptData();
             m_className = className;
+            createScriptData();
         }
+    }
 
-        IFSM::ReturnType UserComponent::handleComponentEvent( u32 state, IFSM::Event eventType )
+    auto UserComponent::getUpdateInEditMode() const -> bool
+    {
+        return m_updateInEditMode;
+    }
+
+    void UserComponent::setUpdateInEditMode( bool updateInEditMode )
+    {
+        m_updateInEditMode = updateInEditMode;
+    }
+
+    auto UserComponent::getScriptClass() const -> SmartPtr<IScriptClass>
+    {
+        return m_scriptClass;
+    }
+
+    void UserComponent::setScriptClass( SmartPtr<IScriptClass> scriptClass )
+    {
+        m_scriptClass = scriptClass;
+    }
+
+    auto UserComponent::getClassName() const -> String
+    {
+        return m_className;
+    }
+
+    void UserComponent::setClassName( const String &className )
+    {
+        m_className = className;
+    }
+
+    auto UserComponent::handleComponentEvent( u32 state, IFSM::Event eventType ) -> IFSM::ReturnType
+    {
+        Component::handleComponentEvent( state, eventType );
+
+        switch( eventType )
         {
-            Component::handleComponentEvent( state, eventType );
-
-            switch( eventType )
+        case IFSM::Event::Change:
+        {
+        }
+        break;
+        case IFSM::Event::Enter:
+        {
+            auto eState = static_cast<State>( state );
+            switch( eState )
             {
-            case IFSM::Event::Change:
-            {
-            }
-            break;
-            case IFSM::Event::Enter:
-            {
-                auto eState = static_cast<State>( state );
-                switch( eState )
-                {
-                case State::Destroyed:
-                {
-                }
-                break;
-                case State::Edit:
-                case State::Play:
-                {
-                    createScriptData();
-                }
-                break;
-                default:
-                {
-                }
-                }
-            }
-            break;
-            case IFSM::Event::Leave:
-            {
-                auto eState = static_cast<State>( state );
-                switch( eState )
-                {
-                case State::Edit:
-                {
-                }
-                break;
-                case State::Play:
-                {
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-                    FB_ASSERT( applicationManager->isValid() );
-
-                    auto scriptManager = applicationManager->getScriptManager();
-                    FB_ASSERT( scriptManager );
-                    FB_ASSERT( scriptManager->isValid() );
-
-                    scriptManager->destroyObject( this );
-                }
-                break;
-                default:
-                {
-                }
-                }
-            }
-            break;
-            case IFSM::Event::Pending:
+            case State::Destroyed:
             {
             }
             break;
-            case IFSM::Event::Complete:
+            case State::Edit:
+            case State::Play:
             {
-            }
-            break;
-            case IFSM::Event::NewState:
-            {
-            }
-            break;
-            case IFSM::Event::WaitForChange:
-            {
+                createScriptData();
             }
             break;
             default:
             {
             }
-            break;
             }
-
-            return IFSM::ReturnType::Ok;
         }
-
-        void UserComponent::createScriptData()
+        break;
+        case IFSM::Event::Leave:
         {
-            auto scriptData = getScriptData();
-            if( !scriptData )
+            auto eState = static_cast<State>( state );
+            switch( eState )
             {
-                auto applicationManager = core::IApplicationManager::instance();
+            case State::Edit:
+            {
+            }
+            break;
+            case State::Play:
+            {
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
                 FB_ASSERT( applicationManager->isValid() );
 
@@ -297,96 +248,138 @@ namespace fb
                 FB_ASSERT( scriptManager );
                 FB_ASSERT( scriptManager->isValid() );
 
-                auto className = getClassName();
-                if( !StringUtil::isNullOrEmpty( className ) )
-                {
-                    scriptManager->createObject( className, this );
-                }
-            }
-        }
-
-        void UserComponent::destroyScriptData()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-
-            if( auto scriptManager = applicationManager->getScriptManager() )
-            {
                 scriptManager->destroyObject( this );
             }
+            break;
+            default:
+            {
+            }
+            }
         }
-
-        UserComponent::ScriptReceiver::ScriptReceiver()
+        break;
+        case IFSM::Event::Pending:
         {
         }
-
-        UserComponent::ScriptReceiver::ScriptReceiver( UserComponent *owner ) : m_owner( owner )
+        break;
+        case IFSM::Event::Complete:
         {
         }
-
-        UserComponent::ScriptReceiver::~ScriptReceiver()
+        break;
+        case IFSM::Event::NewState:
         {
         }
-
-        s32 UserComponent::ScriptReceiver::setProperty( hash_type hash, void *param )
+        break;
+        case IFSM::Event::WaitForChange:
         {
-            return 0;
+        }
+        break;
+        default:
+        {
+        }
+        break;
         }
 
-        s32 UserComponent::ScriptReceiver::setProperty( hash_type hash, const Parameters &params )
-        {
-            return 0;
-        }
+        return IFSM::ReturnType::Ok;
+    }
 
-        s32 UserComponent::ScriptReceiver::setProperty( hash_type hash, const Parameter &param )
+    void UserComponent::createScriptData()
+    {
+        auto scriptData = getScriptData();
+        if( !scriptData )
         {
-            return 0;
-        }
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+            FB_ASSERT( applicationManager->isValid() );
 
-        s32 UserComponent::ScriptReceiver::setProperty( hash_type hash, const String &value )
-        {
-            return 0;
-        }
+            auto scriptManager = applicationManager->getScriptManager();
+            FB_ASSERT( scriptManager );
+            FB_ASSERT( scriptManager->isValid() );
 
-        s32 UserComponent::ScriptReceiver::getProperty( hash_type hash, void *param ) const
-        {
-            return 0;
+            auto className = getClassName();
+            if( !StringUtil::isNullOrEmpty( className ) )
+            {
+                scriptManager->createObject( className, this );
+            }
         }
+    }
 
-        s32 UserComponent::ScriptReceiver::getProperty( hash_type hash, Parameters &params ) const
-        {
-            return 0;
-        }
+    void UserComponent::destroyScriptData()
+    {
+        auto applicationManager = core::ApplicationManager::instance();
 
-        s32 UserComponent::ScriptReceiver::getProperty( hash_type hash, Parameter &param ) const
+        if( auto scriptManager = applicationManager->getScriptManager() )
         {
-            return 0;
+            scriptManager->destroyObject( this );
         }
+    }
 
-        s32 UserComponent::ScriptReceiver::getProperty( hash_type hash, String &value ) const
-        {
-            return 0;
-        }
+    UserComponent::ScriptReceiver::ScriptReceiver() = default;
 
-        s32 UserComponent::ScriptReceiver::callFunction( hash_type hash, SmartPtr<ISharedObject> object,
-                                                         Parameters &results )
-        {
-            return 0;
-        }
+    UserComponent::ScriptReceiver::ScriptReceiver( UserComponent *owner ) : m_owner( owner )
+    {
+    }
 
-        s32 UserComponent::ScriptReceiver::callFunction( hash_type hash, const Parameters &params,
-                                                         Parameters &results )
-        {
-            return 0;
-        }
+    UserComponent::ScriptReceiver::~ScriptReceiver() = default;
 
-        UserComponent *UserComponent::ScriptReceiver::getOwner() const
-        {
-            return m_owner;
-        }
+    auto UserComponent::ScriptReceiver::setProperty( hash_type hash, void *param ) -> s32
+    {
+        return 0;
+    }
 
-        void UserComponent::ScriptReceiver::setOwner( UserComponent *owner )
-        {
-            m_owner = owner;
-        }
-    }  // namespace scene
-}  // end namespace fb
+    auto UserComponent::ScriptReceiver::setProperty( hash_type hash, const Parameters &params ) -> s32
+    {
+        return 0;
+    }
+
+    auto UserComponent::ScriptReceiver::setProperty( hash_type hash, const Parameter &param ) -> s32
+    {
+        return 0;
+    }
+
+    auto UserComponent::ScriptReceiver::setProperty( hash_type hash, const String &value ) -> s32
+    {
+        return 0;
+    }
+
+    auto UserComponent::ScriptReceiver::getProperty( hash_type hash, void *param ) const -> s32
+    {
+        return 0;
+    }
+
+    auto UserComponent::ScriptReceiver::getProperty( hash_type hash, Parameters &params ) const -> s32
+    {
+        return 0;
+    }
+
+    auto UserComponent::ScriptReceiver::getProperty( hash_type hash, Parameter &param ) const -> s32
+    {
+        return 0;
+    }
+
+    auto UserComponent::ScriptReceiver::getProperty( hash_type hash, String &value ) const -> s32
+    {
+        return 0;
+    }
+
+    auto UserComponent::ScriptReceiver::callFunction( hash_type hash, SmartPtr<ISharedObject> object,
+                                                      Parameters &results ) -> s32
+    {
+        return 0;
+    }
+
+    auto UserComponent::ScriptReceiver::callFunction( hash_type hash, const Parameters &params,
+                                                      Parameters &results ) -> s32
+    {
+        return 0;
+    }
+
+    auto UserComponent::ScriptReceiver::getOwner() const -> UserComponent *
+    {
+        return m_owner;
+    }
+
+    void UserComponent::ScriptReceiver::setOwner( UserComponent *owner )
+    {
+        m_owner = owner;
+    }
+}  // namespace fb::scene

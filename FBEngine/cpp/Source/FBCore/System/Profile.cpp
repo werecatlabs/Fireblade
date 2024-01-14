@@ -8,7 +8,7 @@ namespace fb
     const s32 Profile::DEFAULT_NUM_SAMPLES = 10;
     u32 Profile::m_idExt = 0;
 
-    Profile::Profile() : m_timeTaken( 0.f ), m_nextUpdate( 0 ), m_userData( nullptr )
+    Profile::Profile()
     {
         auto id = m_idExt++;
 
@@ -18,9 +18,7 @@ namespace fb
         }
     }
 
-    Profile::~Profile()
-    {
-    }
+    Profile::~Profile() = default;
 
     void Profile::start()
     {
@@ -49,7 +47,7 @@ namespace fb
         }
     }
 
-    f64 Profile::getAverageTimeTaken() const
+    auto Profile::getAverageTimeTaken() const -> f64
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
 
@@ -90,7 +88,7 @@ namespace fb
         m_label = label;
     }
 
-    String Profile::getLabel() const
+    auto Profile::getLabel() const -> String
     {
         return m_label;
     }
@@ -100,17 +98,17 @@ namespace fb
         m_userData = userData;
     }
 
-    void *Profile::getUserData() const
+    auto Profile::getUserData() const -> void *
     {
         return m_userData;
     }
 
-    float Profile::getTimeTaken() const
+    auto Profile::getTimeTaken() const -> float
     {
         return m_timeTaken;
     }
 
-    String Profile::getDescription() const
+    auto Profile::getDescription() const -> String
     {
         return m_description;
     }
@@ -120,7 +118,7 @@ namespace fb
         m_description = description;
     }
 
-    f64 Profile::getTotal() const
+    auto Profile::getTotal() const -> f64
     {
         return m_total;
     }

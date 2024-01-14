@@ -1,6 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Core/FSMListener.h>
 #include <FBCore/System/RttiClassDefinition.h>
+
 namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, FSMListener, IFSMListener );
@@ -19,13 +20,13 @@ namespace fb
         m_fsm = nullptr;
     }
 
-    IFSM::ReturnType FSMListener::handleEvent( [[maybe_unused]] u32 state,
-                                               [[maybe_unused]] IFSM::Event eventType )
+    auto FSMListener::handleEvent( [[maybe_unused]] u32 state, [[maybe_unused]] IFSM::Event eventType )
+        -> IFSM::ReturnType
     {
         return IFSM::ReturnType::Ok;
     }
 
-    SmartPtr<IFSM> FSMListener::getFSM() const
+    auto FSMListener::getFSM() const -> SmartPtr<IFSM>
     {
         auto fsm = m_fsm.load();
         return fsm.lock();

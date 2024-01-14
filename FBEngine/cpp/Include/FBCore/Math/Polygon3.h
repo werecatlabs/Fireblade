@@ -36,7 +36,7 @@ namespace fb
          *
          * @param points An array of 3D points.
          */
-        Polygon3( const Array<Vector3<T>> &points );
+        explicit Polygon3( const Array<Vector3<T>> &points );
 
         /**
          * @brief Destructor.

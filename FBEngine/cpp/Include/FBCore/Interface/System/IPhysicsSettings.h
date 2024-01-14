@@ -17,4 +17,4 @@ namespace fb
 
 }  // namespace fb
 
-#endif // IPhysicsSettings_h__
+#endif  // IPhysicsSettings_h__

@@ -3,7 +3,7 @@
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
 #include <FBCore/Interface/Graphics/IMaterialPass.h>
-#include <FBCore/Graphics/CMaterialPass.h>
+#include <FBCore/Graphics/MaterialPass.h>
 #include <FBCore/Interface/System/IStateListener.h>
 
 namespace fb
@@ -11,7 +11,7 @@ namespace fb
     namespace render
     {
 
-        class CMaterialPassOgreNext : public CMaterialPass
+        class CMaterialPassOgreNext : public MaterialPass
         {
         public:
             CMaterialPassOgreNext();

@@ -10,11 +10,9 @@ namespace fb
     const hash_type StatePhysicsForce2::ADD_FORCE_HASH = StringUtil::getHash( "addForce" );
     const hash_type StatePhysicsForce2::SET_FORCE_HASH = StringUtil::getHash( "setForce" );
 
-    StatePhysicsForce2::StatePhysicsForce2()
-    {
-    }
+    StatePhysicsForce2::StatePhysicsForce2() = default;
 
-    Vector2<real_Num> StatePhysicsForce2::getForce() const
+    auto StatePhysicsForce2::getForce() const -> Vector2<real_Num>
     {
         return m_force;
     }
@@ -24,7 +22,7 @@ namespace fb
         m_force = val;
     }
 
-    Vector2<real_Num> StatePhysicsForce2::getRelativePosition() const
+    auto StatePhysicsForce2::getRelativePosition() const -> Vector2<real_Num>
     {
         return m_relativePosition;
     }

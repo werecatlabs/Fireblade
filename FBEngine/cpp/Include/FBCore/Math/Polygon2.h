@@ -21,7 +21,7 @@ namespace fb
          *
          * @param numPoints The number of points.
          */
-        Polygon2( u32 numPoints = 8 );
+        explicit Polygon2( u32 numPoints = 8 );
 
         /**
          * @brief Creates a copy of the specified `Polygon2`.
@@ -35,7 +35,7 @@ namespace fb
          *
          * @param points The points of the polygon.
          */
-        Polygon2( const Array<Vector2<T>> &points );
+        explicit Polygon2( const Array<Vector2<T>> &points );
 
         ~Polygon2();
 

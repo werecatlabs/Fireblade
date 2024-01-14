@@ -3,16 +3,13 @@
 #include <FBCore/System/RttiClassDefinition.h>
 #include <FBCore/Core/StringUtil.h>
 
-namespace fb
+namespace fb::render
 {
-    namespace render
-    {
-        FB_CLASS_REGISTER_DERIVED( fb::render, IOverlay, ISharedObject );
+    FB_CLASS_REGISTER_DERIVED( fb::render, IOverlay, ISharedObject );
 
-        const hash_type IOverlay::STATE_MESSAGE_ATTACH_OBJECT = StringUtil::getHash( "attachObject" );
-        const hash_type IOverlay::STATE_MESSAGE_DETACH_OBJECT = StringUtil::getHash( "detachObject" );
-        const hash_type IOverlay::STATE_MESSAGE_DETACH_ALL_OBJECTS =
-            StringUtil::getHash( "detachAllObject" );
+    const hash_type IOverlay::STATE_MESSAGE_ATTACH_OBJECT = StringUtil::getHash( "attachObject" );
+    const hash_type IOverlay::STATE_MESSAGE_DETACH_OBJECT = StringUtil::getHash( "detachObject" );
+    const hash_type IOverlay::STATE_MESSAGE_DETACH_ALL_OBJECTS =
+        StringUtil::getHash( "detachAllObject" );
 
-    }  // end namespace render
-}  // end namespace fb
+}  // namespace fb::render

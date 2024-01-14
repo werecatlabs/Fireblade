@@ -2,7 +2,10 @@
 #define _FB_CONFIG_H
 
 // detect compiler
-#if defined( __GCCE__ )
+#if defined( __clang__ )
+#    define FB_COMPILER FB_COMPILER_CLANG
+#    define FB_COMP_VER ( ( (__clang_major__)*100 ) + ( __clang_minor__ * 10 ) + __clang_patchlevel__ )
+#elif defined( __GCCE__ )
 #    define FB_COMPILER FB_COMPILER_GCCE
 #    define FB_COMP_VER _MSC_VER
 //#	include <staticlibinit_gcce.h> // This is a GCCE toolchain workaround needed when compiling with GCCE
@@ -12,9 +15,6 @@
 #elif defined( _MSC_VER )
 #    define FB_COMPILER FB_COMPILER_MSVC
 #    define FB_COMP_VER _MSC_VER
-#elif defined( __clang__ )
-#    define FB_COMPILER FB_COMPILER_CLANG
-#    define FB_COMP_VER ( ( (__clang_major__)*100 ) + ( __clang_minor__ * 10 ) + __clang_patchlevel__ )
 #elif defined( __GNUC__ )
 #    define FB_COMPILER FB_COMPILER_GNUC
 #    define FB_COMP_VER ( ( (__GNUC__)*100 ) + ( __GNUC_MINOR__ * 10 ) + __GNUC_PATCHLEVEL__ )
@@ -99,13 +99,13 @@
 #endif
 
 // Declare the calling convention.
-#    ifndef _FB_STATIC_LIB_
-#if defined( _STDCALL_SUPPORTED )
-#    define FBCALLCONV __stdcall
+#ifndef _FB_STATIC_LIB_
+#    if defined( _STDCALL_SUPPORTED )
+#        define FBCALLCONV __stdcall
+#    else
+#        define FBCALLCONV __cdecl
+#    endif
 #else
-#    define FBCALLCONV  __cdecl
-#endif                  
-#else 
 #    define FBCALLCONV
 #endif
 
@@ -117,7 +117,7 @@
 #    endif
 #elif defined( __clang__ )
 #    if FB_USE_FORCE_INLINE
-#        define FBForceInline inline __attribute__((always_inline))
+#        define FBForceInline inline __attribute__( ( always_inline ) )
 #    else
 #        define FBForceInline inline
 #    endif
@@ -155,7 +155,7 @@
 #    define FB_NOEXCEPT _NOEXCEPT
 #endif
 
-#define NOMINMAX  
+#define NOMINMAX
 
 #if FB_ENABLE_MEMORY_TRACKER
 #    if FB_USE_CUSTOM_NEW_DELETE

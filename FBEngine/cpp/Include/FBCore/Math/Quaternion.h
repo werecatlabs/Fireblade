@@ -48,10 +48,10 @@ namespace fb
          * Constructs a Quaternion from the given rotation matrix.
          * \param mat The rotation matrix to be converted.
          */
-        Quaternion( const Matrix3<T> &mat );
+        explicit Quaternion( const Matrix3<T> &mat );
 
         //! Constructor from a pointer.
-        Quaternion( const T *ptr );
+        explicit Quaternion( const T *ptr );
 
         //! Copy constructor.
         Quaternion( const Quaternion &other );
@@ -137,10 +137,10 @@ namespace fb
         Quaternion &operator*=( const Quaternion &other );
 
         //! Cast operator to array.
-        operator const T *() const;
+        explicit operator const T *() const;
 
         //! Cast operator to array.
-        operator T *();
+        explicit operator T *();
 
         //! Subscript operator.
         T operator[]( int i ) const;
@@ -1206,7 +1206,7 @@ namespace fb
     template <typename T>
     bool Quaternion<T>::isSane() const
     {
-        constexpr auto defaultTolerance = T(0.001);
+        constexpr auto defaultTolerance = T( 0.001 );
         constexpr auto defaultMagnitude = T( 1.0 );
 
         auto tolerance = defaultTolerance * T( 1.0 );  // Adjust as needed

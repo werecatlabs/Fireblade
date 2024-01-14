@@ -8,7 +8,7 @@
 #include <FBCore/Core/UnorderedMap.h>
 #include <FBCore/Core/UtilityTypes.h>
 #include <FBCore/State/States/TransformState.h>
-#include "FBCore/Core/ConcurrentQueue.h"
+#include <FBCore/Core/ConcurrentQueue.h>
 
 namespace fb
 {
@@ -22,7 +22,10 @@ namespace fb
         class SceneManager : public ISceneManager
         {
         public:
+            /** Constructor. */
             SceneManager();
+
+            /** Destructor. */
             ~SceneManager() override;
 
             /** @copydoc ISceneManager::load */
@@ -40,16 +43,20 @@ namespace fb
             /** @copydoc ISceneManager::postUpdate */
             void postUpdate() override;
 
+            /** @copydoc ISceneManager::loadScene */
             void loadScene( const String &filePath ) override;
 
             /** @copydoc ISceneManager::getFsmManager */
-            SmartPtr<IFSMManager> getFsmManager() const override;
+            SmartPtr<IFSMManager> &getFsmManager() override;
+
+            /** @copydoc ISceneManager::getFsmManager */
+            const SmartPtr<IFSMManager> &getFsmManager() const override;
 
             /** @copydoc ISceneManager::setFsmManager */
             void setFsmManager( SmartPtr<IFSMManager> fsmManager ) override;
 
             /** @copydoc ISceneManager::getFsmManager */
-            SmartPtr<IFSMManager> getComponentFsmManager(u32 typeId);
+            SmartPtr<IFSMManager> getComponentFsmManager( u32 typeId );
 
             /** @copydoc ISceneManager::setFsmManager */
             void setComponentFsmManager( u32 typeId, SmartPtr<IFSMManager> fsmManager );
@@ -71,10 +78,16 @@ namespace fb
             /** @copydoc ISceneManager::destroyActor */
             void destroyActor( SmartPtr<IActor> actor ) override;
 
+            /** @copydoc ISceneManager::destroyActors */
             void destroyActors() override;
 
+            /** @copydoc ISceneManager::play */
             void play() override;
+
+            /** @copydoc ISceneManager::edit */
             void edit() override;
+
+            /** @copydoc ISceneManager::stop */
             void stop() override;
 
             u32 addTransformComponent( SmartPtr<Transform> transformComponent );
@@ -82,7 +95,7 @@ namespace fb
             u32 addComponent( SmartPtr<IComponent> component ) override;
             u32 removeComponent( SmartPtr<IComponent> component ) override;
 
-            void addSystem( u32 id, SmartPtr<ISystem> system );
+            void addSystem( u32 id, SmartPtr<IComponentSystem> system );
 
             void removeSystem( u32 id );
 
@@ -90,7 +103,6 @@ namespace fb
             SmartPtr<IActor> getActorByName( const String &name ) const override;
             SmartPtr<IActor> getActorByFileId( const String &id ) const override;
 
-            SmartPtr<IComponent> getComponent( u32 id ) const override;
             SmartPtr<IFSM> getFSM( u32 id ) const;
 
             SmartPtr<ITransform> createTransformComponent();
@@ -99,20 +111,29 @@ namespace fb
 
             SmartPtr<Transform> getTransform( u32 id ) const;
 
+            u32 *getCurrentFlagsPtr( u32 id );
+
             u32 getCurrentFlags( u32 id ) const;
             void setCurrentFlags( u32 id, u32 flags );
+
+            u32 *getNewFlagsPtr( u32 id );
 
             u32 getNewFlags( u32 id ) const;
             void setNewFlags( u32 id, u32 flags );
 
+            u32 *getPreviousFlagsPtr( u32 id );
             u32 getPreviousFlags( u32 id ) const;
             void setPreviousFlags( u32 id, u32 flags );
+
+            u32 *getFlagsPtr( u32 id );
 
             u32 getFlags( u32 id ) const;
             void setFlags( u32 id, u32 flags );
 
             void addDirty( SmartPtr<IActor> actor );
             void removeDirty( SmartPtr<IActor> actor );
+
+            void makeActorTransformsDirty();
 
             void addDirtyTransform( SmartPtr<IActor> actor );
             void addDirtyTransform( SmartPtr<ITransform> transform );
@@ -166,8 +187,6 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            void updateTransformStatesSize();
-
             s32 getLoadPriority( SmartPtr<ISharedObject> obj );
 
             mutable SpinRWMutex m_transformMutex;
@@ -193,7 +212,7 @@ namespace fb
             ConcurrentQueue<SmartPtr<ITransform>> m_dirtyActorTransforms;
 
             UnorderedMap<u32, Array<SmartPtr<IComponent>>> m_components;
-            UnorderedMap<u32, SmartPtr<ISystem>> m_systems;
+            UnorderedMap<u32, SmartPtr<IComponentSystem>> m_systems;
 
             Array<SmartPtr<ITransform>> m_transforms;
 
@@ -226,6 +245,17 @@ namespace fb
 
             mutable RecursiveMutex m_mutex;
         };
+
+        inline SmartPtr<IFSMManager> &SceneManager::getFsmManager()
+        {
+            return m_fsmManager;
+        }
+
+        inline const SmartPtr<IFSMManager> &SceneManager::getFsmManager() const
+        {
+            return m_fsmManager;
+        }
+
     }  // namespace scene
 }  // end namespace fb
 

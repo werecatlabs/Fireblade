@@ -8,7 +8,7 @@ namespace fb
 
     MemoryFile::MemoryFile( void *memory, long len, const String &fileName, bool d ) :
         m_buffer( static_cast<u8 *>( memory ) ),
-        m_position( nullptr ),
+
         m_length( len ),
         m_freeMemory( d )
     {
@@ -21,11 +21,11 @@ namespace fb
     {
         if( m_freeMemory )
         {
-            delete[](c8 *)m_buffer;
+            delete[] reinterpret_cast<c8 *>( m_buffer );
         }
     }
 
-    size_t MemoryFile::read( void *buffer, size_t sizeToRead )
+    auto MemoryFile::read( void *buffer, size_t sizeToRead ) -> size_t
     {
         size_t cnt = sizeToRead;
         // Read over end of memory?
@@ -46,7 +46,7 @@ namespace fb
         return cnt;
     }
 
-    size_t MemoryFile::write( const void *buffer, size_t sizeToWrite )
+    auto MemoryFile::write( const void *buffer, size_t sizeToWrite ) -> size_t
     {
         size_t written = 0;
 
@@ -73,24 +73,24 @@ namespace fb
         return written;
     }
 
-    bool MemoryFile::seek( size_t finalPos )
+    auto MemoryFile::seek( size_t finalPos ) -> bool
     {
         FB_ASSERT( m_position + finalPos < m_end );
         m_position = m_buffer + finalPos;
         return true;
     }
 
-    size_t MemoryFile::size() const
+    auto MemoryFile::size() const -> size_t
     {
         return m_length;
     }
 
-    size_t MemoryFile::tell() const
+    auto MemoryFile::tell() const -> size_t
     {
         return m_position - m_buffer;
     }
 
-    void *MemoryFile::getBuffer() const
+    auto MemoryFile::getBuffer() const -> void *
     {
         return m_buffer;
     }
@@ -100,7 +100,7 @@ namespace fb
         m_buffer = static_cast<u8 *>( val );
     }
 
-    long MemoryFile::getLength() const
+    auto MemoryFile::getLength() const -> long
     {
         return m_length;
     }
@@ -110,7 +110,7 @@ namespace fb
         m_length = val;
     }
 
-    bool MemoryFile::getFreeMemory() const
+    auto MemoryFile::getFreeMemory() const -> bool
     {
         return m_freeMemory;
     }
@@ -120,22 +120,22 @@ namespace fb
         m_freeMemory = freeMemory;
     }
 
-    void *MemoryFile::getData() const
+    auto MemoryFile::getData() const -> void *
     {
         return m_buffer;
     }
 
-    const c8 *MemoryFile::getCharPtr() const
+    auto MemoryFile::getCharPtr() const -> const c8 *
     {
-        return (char *)m_buffer;
+        return reinterpret_cast<char *>( m_buffer );
     }
 
-    bool MemoryFile::eof( void ) const
+    auto MemoryFile::eof() const -> bool
     {
         return m_position >= m_end;
     }
 
-    bool MemoryFile::isOpen() const
+    auto MemoryFile::isOpen() const -> bool
     {
         return true;
     }
@@ -144,7 +144,7 @@ namespace fb
     {
     }
 
-    size_t MemoryFile::skipLine( const String &delim )
+    auto MemoryFile::skipLine( const String &delim ) -> size_t
     {
         size_t pos = 0;
 

@@ -142,7 +142,7 @@ persons to whom the Software is furnished to do so, subject to the following con
 
 -(void)handleEvent:(NSEvent *)event
 {
-    auto applicationManager = fb::core::IApplicationManager::instance();
+    auto applicationManager = fb::core::ApplicationManager::instance();
     auto graphicsSystem = applicationManager->getGraphicsSystem();
     
     auto windows = graphicsSystem->getWindows();
@@ -166,7 +166,7 @@ persons to whom the Software is furnished to do so, subject to the following con
 
 - (void)capture
 {
-    auto applicationManager = fb::core::IApplicationManager::instance();
+    auto applicationManager = fb::core::ApplicationManager::instance();
     auto graphicsSystem = applicationManager->getGraphicsSystem();
     auto inputManager = applicationManager->getInputDeviceManager();
     auto window = graphicsSystem->getDefaultWindow();
@@ -180,7 +180,7 @@ persons to whom the Software is furnished to do so, subject to the following con
 
     using namespace fb;
 
-    auto applicationManager = fb::core::IApplicationManager::instance();
+    auto applicationManager = fb::core::ApplicationManager::instance();
     auto graphicsSystem = applicationManager->getGraphicsSystem();
     auto inputManager = applicationManager->getInputDeviceManager();
     auto window = graphicsSystem->getDefaultWindow();
@@ -219,7 +219,7 @@ persons to whom the Software is furnished to do so, subject to the following con
 
     using namespace fb;
 
-    auto applicationManager = fb::core::IApplicationManager::instance();
+    auto applicationManager = fb::core::ApplicationManager::instance();
     auto graphicsSystem = applicationManager->getGraphicsSystem();
     auto inputManager = applicationManager->getInputDeviceManager();
     auto window = graphicsSystem->getDefaultWindow();
@@ -259,7 +259,7 @@ persons to whom the Software is furnished to do so, subject to the following con
 
     using namespace fb;
 
-    auto applicationManager = fb::core::IApplicationManager::instance();
+    auto applicationManager = fb::core::ApplicationManager::instance();
     auto graphicsSystem = applicationManager->getGraphicsSystem();
     auto inputManager = applicationManager->getInputDeviceManager();
     auto window = graphicsSystem->getDefaultWindow();

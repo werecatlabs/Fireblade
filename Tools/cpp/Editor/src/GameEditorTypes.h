@@ -17,7 +17,10 @@ namespace fb
             Mesh,
             Material,
             MaterialNode,
+            Sound,
+            SharedObject,
             Terrain,
+            Texture,
             FileUnknown,
 
             Count

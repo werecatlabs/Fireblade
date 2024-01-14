@@ -6,6 +6,8 @@
 
 namespace fb
 {
+
+    /** Timer implementation using std::chrono */
     class TimerChrono : public Timer
     {
     public:

@@ -63,40 +63,23 @@ namespace fb
         template <class T>
         SmartPtr<T> createObjectFromType( const String &type );
 
-        /** Creates an object of the type passed.
-        @return
-            Returns the newly created object. Will return null if no object exists.
-        */
-        virtual void *_create( const String &type ) = 0;
-
         /** Creates an object of the type passed. */
         virtual SmartPtr<ISharedObject> createById( hash64 typeId ) const = 0;
 
-        /** Creates an object of the type passed.
-        @return
-            Returns the newly created object. Will return null if no object exists.
-        */
-        template <class T>
-        SmartPtr<T> createObjectById( hash64 typeId ) const;
-
-        /** Creates an object of the type passed.
-        @return
-            Returns the newly created object. Will return null if no object exists.
-        */
-        virtual void *_createById( hash64 typeId ) = 0;
-
-        /** Creates an object of the type passed.
-        @return
-            Returns the newly created object. Will return null if no object exists.
-        */
-        virtual void *_createFromPool( hash64 typeId ) = 0;
-
         /** Creates an object of the type passed. */
-        virtual void *_createArrayById( hash64 typeId, u32 numElements, u32 &objectSize ) = 0;
+        virtual SmartPtr<ISharedObject> createById( hash64 typeId, const String& hint ) const = 0;
 
         /** Creates an instance. */
         template <class T>
         SmartPtr<T> make_object();
+
+        /** Creates an instance. */
+        template <class T>
+        SmartPtr<T> make_object( const String &hint );
+
+        /** Creates an instance. */
+        template <class T>
+        SmartPtr<T> make_object( hash_type type );
 
         /** Creates an instance. */
         template <class T>
@@ -129,8 +112,39 @@ namespace fb
     {
         auto typeinfo = T::typeInfo();
         FB_ASSERT( typeinfo != 0 );
+        return IFactoryManager::make_object<T>( typeinfo );
+    }
 
-        auto p = createById( typeinfo );
+    template <class T>
+    SmartPtr<T> IFactoryManager::make_object( const String &hint )
+    {
+        auto typeinfo = T::typeInfo();
+        FB_ASSERT( typeinfo != 0 );
+
+        auto p = createById( typeinfo, hint );
+
+#if !FB_FINAL
+        if( p )
+        {
+            FB_ASSERT( fb::dynamic_pointer_cast<T>( p ) );
+        }
+#endif
+
+        return fb::static_pointer_cast<T>( p );
+    }
+
+    template <class T>
+    SmartPtr<T> IFactoryManager::make_object( hash_type type )
+    {
+        auto p = createById( type );
+
+#if !FB_FINAL
+        if( p )
+        {
+            FB_ASSERT( fb::dynamic_pointer_cast<T>( p ) );
+        }
+#endif
+
         return fb::static_pointer_cast<T>( p );
     }
 
@@ -150,13 +164,13 @@ namespace fb
         if( !factory )
         {
             auto typeName = typeManager->getName( typeinfo );
-            FB_ASSERT( !typeName.empty() );
-
             factory = getFactoryByName( typeName );
         }
 
         if( factory )
         {
+            FB_ASSERT( factory->isObjectDerivedFromByInfo( T::typeInfo() ) );
+
             auto p = factory->template make_ptr<T>();
             FB_ASSERT( fb::dynamic_pointer_cast<T>( p ) );
             return p;
@@ -189,10 +203,9 @@ namespace fb
     template <class T>
     SmartPtr<T> IFactoryManager::createObjectFromType( const String &type )
     {
-        auto factory = getFactoryByName( type );
-        if( factory )
+        if( auto factory = getFactoryByName( type ) )
         {
-            return factory->createObjectByType<T>();
+            return factory->make_object<T>();
         }
 
         return nullptr;

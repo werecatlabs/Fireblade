@@ -7,7 +7,7 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageMaterial, StateMessage );
 
-    SmartPtr<render::IMaterial> StateMessageMaterial::getMaterial() const
+    auto StateMessageMaterial::getMaterial() const -> SmartPtr<render::IMaterial>
     {
         return m_material;
     }
@@ -17,7 +17,7 @@ namespace fb
         m_material = material;
     }
 
-    s32 StateMessageMaterial::getIndex() const
+    auto StateMessageMaterial::getIndex() const -> s32
     {
         return m_index;
     }

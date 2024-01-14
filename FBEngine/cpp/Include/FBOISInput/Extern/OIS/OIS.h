@@ -24,7 +24,7 @@ following restrictions:
     3. This notice may not be removed or altered from any source distribution.   
 */
 
-/**\mainpage Object-oriented Input System
+/** Object-oriented Input System
  *
  * Welcome to the documentation of OIS. 
  *

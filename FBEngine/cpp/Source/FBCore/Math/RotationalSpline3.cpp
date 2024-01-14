@@ -10,9 +10,7 @@ namespace fb
     }
 
     template <class T>
-    RotationalSpline3<T>::~RotationalSpline3()
-    {
-    }
+    RotationalSpline3<T>::~RotationalSpline3() = default;
 
     template <class T>
     void RotationalSpline3<T>::addPoint( const Quaternion<T> &p )
@@ -25,11 +23,11 @@ namespace fb
     }
 
     template <class T>
-    Quaternion<T> RotationalSpline3<T>::interpolate( f32 t, bool useShortestPath )
+    auto RotationalSpline3<T>::interpolate( f32 t, bool useShortestPath ) -> Quaternion<T>
     {
         // Work out which segment this is in
         f32 fSeg = t * ( mPoints.size() - 1 );
-        unsigned int segIdx = static_cast<unsigned>( fSeg );
+        auto segIdx = static_cast<unsigned>( fSeg );
         // Apportion t
         t = fSeg - segIdx;
 
@@ -37,7 +35,7 @@ namespace fb
     }
 
     template <class T>
-    Quaternion<T> RotationalSpline3<T>::interpolate( u32 fromIndex, f32 t, bool useShortestPath )
+    auto RotationalSpline3<T>::interpolate( u32 fromIndex, f32 t, bool useShortestPath ) -> Quaternion<T>
     {
         if( ( fromIndex + 1 ) == mPoints.size() )
         {
@@ -68,7 +66,7 @@ namespace fb
     }
 
     template <class T>
-    void RotationalSpline3<T>::recalcTangents( void )
+    void RotationalSpline3<T>::recalcTangents()
     {
         // ShoeMake (1987) approach
         // Just like Catmull-Rom really, just more gnarly
@@ -147,7 +145,7 @@ namespace fb
     }
 
     template <class T>
-    const Quaternion<T> &RotationalSpline3<T>::getPoint( unsigned short index ) const
+    auto RotationalSpline3<T>::getPoint( unsigned short index ) const -> const Quaternion<T> &
     {
         FB_ASSERT( index < mPoints.size() && "Point index is out of bounds!!" );
 
@@ -155,13 +153,13 @@ namespace fb
     }
 
     template <class T>
-    unsigned short RotationalSpline3<T>::getNumPoints( void ) const
+    auto RotationalSpline3<T>::getNumPoints() const -> unsigned short
     {
         return static_cast<unsigned short>( mPoints.size() );
     }
 
     template <class T>
-    void RotationalSpline3<T>::clear( void )
+    void RotationalSpline3<T>::clear()
     {
         mPoints.clear();
         mTangents.clear();

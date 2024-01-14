@@ -16,7 +16,7 @@ BOOST_AUTO_TEST_CASE( editor_start )
     app.load( nullptr );
     //app.run();
 
-    auto applicationManager = core::IApplicationManager::instance();
+    auto applicationManager = core::ApplicationManager::instance();
     applicationManager->setQuit( true );
     applicationManager->setRunning( false );
 
@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE( editor_run )
         app.load( nullptr );
         //app.run();
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto taskManager = applicationManager->getTaskManager();
@@ -87,7 +87,7 @@ BOOST_AUTO_TEST_CASE( editor_run_single_threaded )
         app.load( nullptr );
         //app.run();
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto threadPool = applicationManager->getThreadPool();

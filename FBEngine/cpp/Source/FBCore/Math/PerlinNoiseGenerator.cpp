@@ -6,7 +6,7 @@
 namespace fb
 {
     template <class T>
-    Array<Array<T>> PerlinNoiseGenerator<T>::generate()
+    auto PerlinNoiseGenerator<T>::generate() -> Array<Array<T>>
     {
         T maxLocalNoiseHeight = T( 0.0 );
         T minLocalNoiseHeight = T( 0.0 );
@@ -14,14 +14,15 @@ namespace fb
     }
 
     template <class T>
-    Array<Array<T>> PerlinNoiseGenerator<T>::generate( T &maxLocalNoiseHeight, T &minLocalNoiseHeight )
+    auto PerlinNoiseGenerator<T>::generate( T &maxLocalNoiseHeight, T &minLocalNoiseHeight )
+        -> Array<Array<T>>
     {
         return generateNoise( maxLocalNoiseHeight, minLocalNoiseHeight );
     }
 
     template <class T>
-    Array<Array<T>> PerlinNoiseGenerator<T>::generateNoise( T &maxLocalNoiseHeight,
-                                                            T &minLocalNoiseHeight )
+    auto PerlinNoiseGenerator<T>::generateNoise( T &maxLocalNoiseHeight, T &minLocalNoiseHeight )
+        -> Array<Array<T>>
     {
         Array<Array<T>> noiseMap;
         noiseMap.resize( m_size );
@@ -93,7 +94,7 @@ namespace fb
     }
 
     template <class T>
-    int PerlinNoiseGenerator<T>::getSize() const
+    auto PerlinNoiseGenerator<T>::getSize() const -> int
     {
         return m_size;
     }
@@ -105,7 +106,7 @@ namespace fb
     }
 
     template <class T>
-    int PerlinNoiseGenerator<T>::getOctaves() const
+    auto PerlinNoiseGenerator<T>::getOctaves() const -> int
     {
         return m_octaves;
     }
@@ -117,7 +118,7 @@ namespace fb
     }
 
     template <class T>
-    T PerlinNoiseGenerator<T>::getScale() const
+    auto PerlinNoiseGenerator<T>::getScale() const -> T
     {
         return m_scale;
     }
@@ -129,7 +130,7 @@ namespace fb
     }
 
     template <class T>
-    T PerlinNoiseGenerator<T>::getOffset() const
+    auto PerlinNoiseGenerator<T>::getOffset() const -> T
     {
         return m_offset;
     }
@@ -141,7 +142,7 @@ namespace fb
     }
 
     template <class T>
-    T PerlinNoiseGenerator<T>::getPersistance() const
+    auto PerlinNoiseGenerator<T>::getPersistance() const -> T
     {
         return m_persistance;
     }
@@ -153,7 +154,7 @@ namespace fb
     }
 
     template <class T>
-    T PerlinNoiseGenerator<T>::getLacunarity() const
+    auto PerlinNoiseGenerator<T>::getLacunarity() const -> T
     {
         return m_lacunarity;
     }

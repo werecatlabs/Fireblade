@@ -4,16 +4,6 @@
 #include <boost/describe.hpp>
 #include <boost/mp11.hpp>
 
-/*template <class T>
-class ObjectSetup
-{
-public:
-    ObjectSetup()
-    {
-        T::setupTypeInfo();
-    }
-};*/
-
 #define FB_OBJECT_CLASS_REGISTER_DECL \
 public: \
     static void setTypeInfo( u32 id ); \
@@ -45,7 +35,7 @@ public: \
     static u32 typeInfo(); \
     static void setupTypeInfo(); \
     virtual u32 getTypeInfo() const override; \
-    static u32 m_typeInfo; 
+    static u32 m_typeInfo;
 
 #define FB_REGISTER_FACTORY_DECL \
 public: \
@@ -54,6 +44,5 @@ public: \
 
 #define FB_DESCRIBE_CLASS( C, Bases, Public, Protected, Private ) \
     BOOST_DESCRIBE_CLASS( C, Bases, Public, Protected, Private )
-
 
 #endif  // RttiClass_h__

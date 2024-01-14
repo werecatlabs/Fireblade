@@ -9,9 +9,9 @@
 #include <FBCore/IO/FileList.h>
 #include <FBCore/FBCore.h>
 
+#include <cstdio>
 #include <filesystem>
 #include <fstream>
-#include <stdio.h>
 
 #if FB_USE_BOOST
 #    include <boost/filesystem/operations.hpp>
@@ -28,6 +28,10 @@ namespace fb
 
     FileSystem::FileSystem()
     {
+        if( auto handle = getHandle() )
+        {
+            handle->setName( "FileSystem" );
+        }
     }
 
     FileSystem::~FileSystem()
@@ -113,13 +117,41 @@ namespace fb
         }
     }
 
-    bool FileSystem::isExistingFile( const String &filePath, bool ignorePath, bool ignoreCase ) const
+    auto FileSystem::isExistingFile( const String &filePath, bool ignorePath, bool ignoreCase ) const
+        -> bool
     {
         try
         {
             if( !Path::hasFileName( filePath ) )
             {
                 return false;
+            }
+
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto projectPath = applicationManager->getProjectPath();
+            if( StringUtil::isNullOrEmpty( projectPath ) )
+            {
+                projectPath = Path::getWorkingDirectory();
+            }
+
+            if( applicationManager->isEditor() )
+            {
+                auto existing = false;
+                if( Path::isPathAbsolute( filePath ) )
+                {
+                    existing = Path::isExistingFile( filePath );
+                }
+                else
+                {
+                    existing = Path::isExistingFile( projectPath + filePath );
+                }
+
+                if( existing )
+                {
+                    return true;
+                }
             }
 
             if( auto pFiles = getFilesPtr() )
@@ -149,15 +181,6 @@ namespace fb
 
                 if( Path::isPathAbsolute( filePath ) )
                 {
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto projectPath = applicationManager->getProjectPath();
-                    if( StringUtil::isNullOrEmpty( projectPath ) )
-                    {
-                        projectPath = Path::getWorkingDirectory();
-                    }
-
                     auto relativePath = Path::getRelativePath( projectPath, filePath );
 
                     for( auto &file : files )
@@ -209,13 +232,13 @@ namespace fb
         return false;
     }
 
-    bool FileSystem::isExistingFile( const String &path, const String &filePath, bool ignorePath,
-                                      bool ignoreCase ) const
+    auto FileSystem::isExistingFile( const String &path, const String &filePath, bool ignorePath,
+                                     bool ignoreCase ) const -> bool
     {
         return false;
     }
 
-    bool FileSystem::isExistingFolder( const String &path ) const
+    auto FileSystem::isExistingFolder( const String &path ) const -> bool
     {
         try
         {
@@ -227,7 +250,7 @@ namespace fb
                 return false;
 #endif
             }
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
 
             auto projectPath = applicationManager->getProjectPath();
             if( StringUtil::isNullOrEmpty( projectPath ) )
@@ -253,12 +276,12 @@ namespace fb
         return false;
     }
 
-    bool FileSystem::isExistingFile( const StringW &filePath ) const
+    auto FileSystem::isExistingFile( const StringW &filePath ) const -> bool
     {
         return false;
     }
 
-    bool FileSystem::isExistingFolder( const StringW &path ) const
+    auto FileSystem::isExistingFolder( const StringW &path ) const -> bool
     {
         return false;
     }
@@ -267,7 +290,7 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto cleanDst = String( "" );
@@ -321,9 +344,8 @@ namespace fb
     void FileSystem::deleteFilesFromPath( const String &path )
     {
         auto files = Path::getFiles( path );
-        for( u32 i = 0; i < files.size(); ++i )
+        for( auto fileName : files )
         {
-            std::string fileName = files[i];
             std::string filePath = path + std::string( "/" ) + fileName;
 
             boost::filesystem::path dir( filePath );
@@ -331,11 +353,10 @@ namespace fb
         }
 
         auto folders = Path::getFolders( path, false );
-        for( u32 i = 0; i < folders.size(); ++i )
+        for( auto folder : folders )
         {
             try
             {
-                std::string folder = folders[i];
                 std::string folderPath = path + "/" + folder + "/";
                 // deleteFiles(folderPath);
 
@@ -359,9 +380,8 @@ namespace fb
     void FileSystem::deleteFilesFromPathW( const StringW &path )
     {
         auto files = PathW::getFiles( path );
-        for( u32 i = 0; i < files.size(); ++i )
+        for( auto fileName : files )
         {
-            StringW fileName = files[i];
             StringW filePath = path + StringW( L"/" ) + fileName;
 
             boost::filesystem::path dir( filePath );
@@ -369,11 +389,10 @@ namespace fb
         }
 
         auto folders = PathW::getFolders( path, false );
-        for( u32 i = 0; i < folders.size(); ++i )
+        for( auto folder : folders )
         {
             try
             {
-                StringW folder = folders[i];
                 StringW folderPath = path + StringW( L"/" ) + folder + StringW( L"/" );
                 // deleteFiles(folderPath);
 
@@ -447,7 +466,9 @@ namespace fb
                     {
                         String fileName = StringUtil::toString( fileData.cFileName );
                         if( fileName != String( ".." ) )
+                        {
                             folderNames.push_back( fileName );
+                        }
                     }
                 }
 
@@ -462,7 +483,7 @@ namespace fb
 #endif
     }
 
-    bool FileSystem::isFolder( const String &path )
+    auto FileSystem::isFolder( const String &path ) -> bool
     {
 #if FB_USE_BOOST
         return boost::filesystem::is_directory( path );
@@ -474,7 +495,7 @@ namespace fb
 #endif
     }
 
-    bool FileSystem::setWorkingDirectory( const String &directory )
+    auto FileSystem::setWorkingDirectory( const String &directory ) -> bool
     {
 #if FB_USE_BOOST
         boost::filesystem::path path( directory );
@@ -485,7 +506,7 @@ namespace fb
 #endif
     }
 
-    String FileSystem::getWorkingDirectory()
+    auto FileSystem::getWorkingDirectory() -> String
     {
 #if FB_USE_BOOST
         return boost::filesystem::current_path().string();
@@ -494,9 +515,9 @@ namespace fb
 #endif
     }
 
-    bool FileSystem::addFileArchive( const String &filename, bool ignoreCase /*=true*/,
-                                      bool ignorePaths /*=true*/, ArchiveType archiveType /*=0*/,
-                                      const String &password /*= StringUtil::EmptyString*/ )
+    auto FileSystem::addFileArchive( const String &filename, bool ignoreCase /*=true*/,
+                                     bool ignorePaths /*=true*/, ArchiveType archiveType /*=0*/,
+                                     const String &password /*= StringUtil::EmptyString*/ ) -> bool
     {
         if( StringUtil::isNullOrEmpty( filename ) )
         {
@@ -507,12 +528,12 @@ namespace fb
         return true;
     }
 
-    SmartPtr<INativeFileDialog> FileSystem::openFileDialog()
+    auto FileSystem::openFileDialog() -> SmartPtr<INativeFileDialog>
     {
         return fb::make_ptr<NativeFileDialog>();
     }
 
-    SmartPtr<IStream> FileSystem::open( const String &filePath )
+    auto FileSystem::open( const String &filePath ) -> SmartPtr<IStream>
     {
         auto isBinary = true;
         auto fileExt = Path::getFileExtension( filePath );
@@ -531,7 +552,7 @@ namespace fb
         return open( filePath, true, isBinary, false, false, false );
     }
 
-    SmartPtr<IStream> FileSystem::openW( const StringW &filePath )
+    auto FileSystem::openW( const StringW &filePath ) -> SmartPtr<IStream>
     {
         auto str = StringUtil::toUTF16to8( filePath );
 
@@ -552,8 +573,8 @@ namespace fb
         return open( str, true, isBinary, false, false, false );
     }
 
-    SmartPtr<IStream> FileSystem::open( const String &filePath, bool input, bool binary, bool truncate,
-                                         bool ignorePath, bool ignoreCase )
+    auto FileSystem::open( const String &filePath, bool input, bool binary, bool truncate,
+                           bool ignorePath, bool ignoreCase ) -> SmartPtr<IStream>
     {
         try
         {
@@ -561,7 +582,7 @@ namespace fb
 
             FB_ASSERT( !StringUtil::isNullOrEmpty( filePath ) );
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto projectPath = applicationManager->getProjectPath();
@@ -728,7 +749,7 @@ namespace fb
         return nullptr;
     }
 
-    String FileSystem::getAbsolutePath( const String &filename ) const
+    auto FileSystem::getAbsolutePath( const String &filename ) const -> String
     {
 #if defined( _FB_WINDOWS_CE_PLATFORM_ )
         return filename;
@@ -769,7 +790,7 @@ namespace fb
 #endif
     }
 
-    Array<FileInfo> FileSystem::getFilesWithExtension( const String &extension ) const
+    auto FileSystem::getFilesWithExtension( const String &extension ) const -> Array<FileInfo>
     {
         Array<FileInfo> files;
         files.reserve( 128 );
@@ -833,8 +854,8 @@ namespace fb
         return files;
     }
 
-    Array<FileInfo> FileSystem::getFilesWithExtension( const String &path,
-                                                        const String &extension ) const
+    auto FileSystem::getFilesWithExtension( const String &path, const String &extension ) const
+        -> Array<FileInfo>
     {
         Array<FileInfo> files;
         files.reserve( 128 );
@@ -897,7 +918,7 @@ namespace fb
         return files;
     }
 
-    Array<String> FileSystem::getFileNamesWithExtension( const String &extension ) const
+    auto FileSystem::getFileNamesWithExtension( const String &extension ) const -> Array<String>
     {
         Array<String> fileNames;
         fileNames.reserve( 32 );
@@ -906,8 +927,7 @@ namespace fb
         return fileNames;
     }
 
-    void FileSystem::getFileNamesWithExtension( const String &extension,
-                                                 Array<String> &fileNames ) const
+    void FileSystem::getFileNamesWithExtension( const String &extension, Array<String> &fileNames ) const
     {
         if( auto pFiles = getFilesPtr() )
         {
@@ -966,14 +986,16 @@ namespace fb
         }
     }
 
-    s32 FileSystem::isInSameDirectory( const String &path, const String &file )
+    auto FileSystem::isInSameDirectory( const String &path, const String &file ) -> s32
     {
         size_t subA = 0;
         size_t subB = 0;
         size_t pos;
 
         if( path.length() && path != file )
+        {
             return -1;
+        }
 
         pos = 0;
         while( ( pos = path.find( '/', pos ) ) >= 0 )
@@ -992,7 +1014,7 @@ namespace fb
         return static_cast<s32>( subB - subA );
     }
 
-    String FileSystem::getFileDir( const String &filename ) const
+    auto FileSystem::getFileDir( const String &filename ) const -> String
     {
         FileInfo info;
 
@@ -1053,7 +1075,7 @@ namespace fb
         {
             FB_ASSERT( IArchive::typeInfo() != 0 );
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto factoryManager = applicationManager->getFactoryManager();
@@ -1107,7 +1129,7 @@ namespace fb
         }
     }
 
-    bool FileSystem::removeFileListener( SmartPtr<IFileListener> fileListener )
+    auto FileSystem::removeFileListener( SmartPtr<IFileListener> fileListener ) -> bool
     {
         return false;
     }
@@ -1116,37 +1138,37 @@ namespace fb
     {
     }
 
-    SmartPtr<IArchive> FileSystem::getFileArchive( u32 index )
+    auto FileSystem::getFileArchive( u32 index ) -> SmartPtr<IArchive>
     {
         return nullptr;
     }
 
-    bool FileSystem::moveFileArchive( u32 sourceIndex, s32 relative )
+    auto FileSystem::moveFileArchive( u32 sourceIndex, s32 relative ) -> bool
     {
         return NULL;
     }
 
-    bool FileSystem::removeFileArchive( const String &filename )
+    auto FileSystem::removeFileArchive( const String &filename ) -> bool
     {
         return false;
     }
 
-    bool FileSystem::removeFileArchive( u32 index )
+    auto FileSystem::removeFileArchive( u32 index ) -> bool
     {
         return false;
     }
 
-    u32 FileSystem::getFileArchiveCount() const
+    auto FileSystem::getFileArchiveCount() const -> u32
     {
         return 0;
     }
 
-    Array<u8> FileSystem::readAllBytes( const String &path )
+    auto FileSystem::readAllBytes( const String &path ) -> Array<u8>
     {
-        return Array<u8>();
+        return {};
     }
 
-    String FileSystem::readAllText( const String &path )
+    auto FileSystem::readAllText( const String &path ) -> String
     {
         if( Path::isPathAbsolute( path ) )
         {
@@ -1178,21 +1200,34 @@ namespace fb
         return String( "" );
     }
 
-    void FileSystem::writeAllBytes( const String &path, Array<u8> bytes )
+    void FileSystem::writeAllBytes( const String &path, u8 *bytes, u32 size )
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto projectPath = applicationManager->getProjectPath();
-            if( StringUtil::isNullOrEmpty( projectPath ) )
+            auto filePath = String();
+
+            if( Path::isPathAbsolute( path ) )
             {
-                projectPath = Path::getWorkingDirectory();
+                filePath = path;
+            }
+            else
+            {
+                auto applicationManager = core::ApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto projectPath = applicationManager->getProjectPath();
+                if( StringUtil::isNullOrEmpty( projectPath ) )
+                {
+                    projectPath = Path::getWorkingDirectory();
+                }
+
+                filePath = Path::lexically_relative( projectPath, path );
             }
 
-            auto filePath = Path::lexically_relative( projectPath, path );
-
             std::fstream fs;
-            fs.open( filePath, std::fstream::out );
+            fs.open( filePath, std::fstream::binary | std::fstream::out | std::fstream::trunc );
+
+            fs.write( reinterpret_cast<const char *>( bytes ), size );
 
             fs.close();
         }
@@ -1200,6 +1235,11 @@ namespace fb
         {
             FB_LOG_EXCEPTION( e );
         }
+    }
+
+    void FileSystem::writeAllBytes( const String &path, Array<u8> bytes )
+    {
+        writeAllBytes( path, bytes.data(), (u32)bytes.size() );
     }
 
     void FileSystem::writeAllText( const String &path, const String &contents )
@@ -1226,7 +1266,7 @@ namespace fb
             }
             else
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto projectPath = applicationManager->getProjectPath();
@@ -1251,7 +1291,7 @@ namespace fb
         }
     }
 
-    String FileSystem::getBase64String( SmartPtr<IStream> &pStream )
+    auto FileSystem::getBase64String( SmartPtr<IStream> &pStream ) -> String
     {
         std::string tempData;
         tempData.reserve( 4096 );
@@ -1267,7 +1307,7 @@ namespace fb
         return StringUtil::encodeBase64( (u8 *)tempData.c_str(), tempData.length() );
     }
 
-    String FileSystem::getBase64String( std::ifstream &is )
+    auto FileSystem::getBase64String( std::ifstream &is ) -> String
     {
         std::string tempData;
         tempData.reserve( 4096 );
@@ -1281,7 +1321,7 @@ namespace fb
         return StringUtil::encodeBase64( (u8 *)tempData.c_str(), tempData.length() );
     }
 
-    String FileSystem::getBytesString( SmartPtr<IStream> &pStream )
+    auto FileSystem::getBytesString( SmartPtr<IStream> &pStream ) -> String
     {
         constexpr int bufferSize = 4096;
 
@@ -1299,7 +1339,7 @@ namespace fb
         return tempData;
     }
 
-    String FileSystem::getBytesString( std::ifstream &is )
+    auto FileSystem::getBytesString( std::ifstream &is ) -> String
     {
         constexpr int bufferSize = 4096;
 
@@ -1333,7 +1373,7 @@ namespace fb
         }
         else
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto projectPath = applicationManager->getProjectPath();
@@ -1348,17 +1388,17 @@ namespace fb
         }
     }
 
-    String FileSystem::getFilePath( const String &path )
+    auto FileSystem::getFilePath( const String &path ) -> String
     {
         return Path::getFilePath( path );
     }
 
-    String FileSystem::getFileName( const String &path )
+    auto FileSystem::getFileName( const String &path ) -> String
     {
         return Path::getFileName( path );
     }
 
-    IFileSystem::ArchiveType FileSystem::getTypeFromTypeName( const String &typeName ) const
+    auto FileSystem::getTypeFromTypeName( const String &typeName ) const -> IFileSystem::ArchiveType
     {
         if( typeName == "FileSystem" )
         {
@@ -1372,7 +1412,7 @@ namespace fb
         return ArchiveType::Unknown;
     }
 
-    String FileSystem::getFileHash( const String &pFilePath )
+    auto FileSystem::getFileHash( const String &pFilePath ) -> String
     {
         // std::fstream is(filePath, std::ios::in | std::ios::binary);
         // if (is.is_open())
@@ -1416,12 +1456,12 @@ namespace fb
         return "";
     }
 
-    Array<String> FileSystem::getFolders( const String &path, bool recursive )
+    auto FileSystem::getFolders( const String &path, bool recursive ) -> Array<String>
     {
         return Path::getFolders( path, recursive );
     }
 
-    Array<StringW> FileSystem::getFoldersW( const StringW &path, bool recursive )
+    auto FileSystem::getFoldersW( const StringW &path, bool recursive ) -> Array<StringW>
     {
         try
         {
@@ -1466,10 +1506,10 @@ namespace fb
             FB_LOG_EXCEPTION( e );
         }
 
-        return Array<StringW>();
+        return {};
     }
 
-    Array<String> FileSystem::getFiles( const std::string &path, bool partialPathMatch )
+    auto FileSystem::getFiles( const std::string &path, bool partialPathMatch ) -> Array<String>
     {
         Array<String> results;
 
@@ -1555,12 +1595,12 @@ namespace fb
         return results;
     }
 
-    SharedPtr<ConcurrentArray<FileInfo>> FileSystem::getFilesPtr() const
+    auto FileSystem::getFilesPtr() const -> SharedPtr<ConcurrentArray<FileInfo>>
     {
         return m_files;
     }
 
-    SharedPtr<ConcurrentArray<SmartPtr<IArchive>>> FileSystem::getFolderArchivesPtr() const
+    auto FileSystem::getFolderArchivesPtr() const -> SharedPtr<ConcurrentArray<SmartPtr<IArchive>>>
     {
         return m_folderArchives;
     }
@@ -1570,12 +1610,12 @@ namespace fb
         m_folderArchives = p;
     }
 
-    SharedPtr<ConcurrentArray<SmartPtr<IArchive>>> FileSystem::getFileArchivesPtr() const
+    auto FileSystem::getFileArchivesPtr() const -> SharedPtr<ConcurrentArray<SmartPtr<IArchive>>>
     {
         return m_fileArchives;
     }
 
-    Array<FileInfo> FileSystem::getFiles() const
+    auto FileSystem::getFiles() const -> Array<FileInfo>
     {
         if( auto p = getFilesPtr() )
         {
@@ -1583,7 +1623,7 @@ namespace fb
             return Array<FileInfo>( files.begin(), files.end() );
         }
 
-        return Array<FileInfo>();
+        return {};
     }
 
     void FileSystem::setFiles( const Array<FileInfo> &files )
@@ -1694,7 +1734,7 @@ namespace fb
         }
     }
 
-    Array<String> FileSystem::getFilesAsAbsolutePaths( const String &path, bool recursive )
+    auto FileSystem::getFilesAsAbsolutePaths( const String &path, bool recursive ) -> Array<String>
     {
 #if FB_USE_BOOST
         Array<std::string> files;
@@ -1703,8 +1743,12 @@ namespace fb
         boost::filesystem::directory_iterator it( dir ), end;
 
         for( auto &entry : boost::make_iterator_range( it, end ) )
+        {
             if( !is_directory( entry ) )
+            {
                 files.push_back( entry.path().string() );
+            }
+        }
 
         return files;
 #else
@@ -1712,7 +1756,8 @@ namespace fb
 #endif
     }
 
-    Array<String> FileSystem::getFileNamesWithExtension( const String &path, const String &extension )
+    auto FileSystem::getFileNamesWithExtension( const String &path, const String &extension )
+        -> Array<String>
     {
 #if FB_USE_BOOST
         auto fileWithExtension = Array<String>();
@@ -1731,17 +1776,17 @@ namespace fb
 #endif
     }
 
-    Array<StringW> FileSystem::getFilesW( const StringW &path )
+    auto FileSystem::getFilesW( const StringW &path ) -> Array<StringW>
     {
-        return Array<StringW>();
+        return {};
     }
 
-    Array<StringW> FileSystem::getFilesAsAbsolutePathsW( const StringW &path, bool recursive )
+    auto FileSystem::getFilesAsAbsolutePathsW( const StringW &path, bool recursive ) -> Array<StringW>
     {
-        return Array<StringW>();
+        return {};
     }
 
-    Array<StringW> FileSystem::getFilesW( const StringW &path, const StringW &extension )
+    auto FileSystem::getFilesW( const StringW &path, const StringW &extension ) -> Array<StringW>
     {
 #if FB_USE_BOOST
         Array<StringW> files;
@@ -1750,8 +1795,12 @@ namespace fb
         boost::filesystem::directory_iterator it( dir ), end;
 
         for( auto &entry : boost::make_iterator_range( it, end ) )
+        {
             if( !is_directory( entry ) )
+            {
                 files.push_back( entry.path().wstring() );
+            }
+        }
 
         return files;
 #else
@@ -1759,7 +1808,7 @@ namespace fb
 #endif
     }
 
-    SmartPtr<IFolderExplorer> FileSystem::getFolderListing( const String &path )
+    auto FileSystem::getFolderListing( const String &path ) -> SmartPtr<IFolderExplorer>
     {
         try
         {
@@ -1788,7 +1837,8 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<IFolderExplorer> FileSystem::getFolderListing( const String &path, const String &ext )
+    auto FileSystem::getFolderListing( const String &path, const String &ext )
+        -> SmartPtr<IFolderExplorer>
     {
         try
         {
@@ -1816,7 +1866,7 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<IFolderExplorerW> FileSystem::getFolderListingW( const StringW &path )
+    auto FileSystem::getFolderListingW( const StringW &path ) -> SmartPtr<IFolderExplorerW>
     {
         try
         {
@@ -1844,7 +1894,8 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<IFolderExplorerW> FileSystem::getFolderListingW( const StringW &path, const StringW &ext )
+    auto FileSystem::getFolderListingW( const StringW &path, const StringW &ext )
+        -> SmartPtr<IFolderExplorerW>
     {
         try
         {
@@ -1933,7 +1984,7 @@ namespace fb
         }
     }
 
-    bool FileSystem::findFileInfo( hash64 id, FileInfo &fileInfo, bool ignorePath ) const
+    auto FileSystem::findFileInfo( hash64 id, FileInfo &fileInfo, bool ignorePath ) const -> bool
     {
         if( auto pFiles = getFilesPtr() )
         {
@@ -1975,11 +2026,12 @@ namespace fb
         return false;
     }
 
-    bool FileSystem::findFileInfo( const String &filePath, FileInfo &fileInfo, bool ignorePath ) const
+    auto FileSystem::findFileInfo( const String &filePath, FileInfo &fileInfo, bool ignorePath ) const
+        -> bool
     {
         if( Path::isPathAbsolute( filePath ) )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto projectPath = applicationManager->getProjectPath();
@@ -2052,7 +2104,7 @@ namespace fb
         return false;
     }
 
-    Array<FileInfo> FileSystem::getSystemFiles() const
+    auto FileSystem::getSystemFiles() const -> Array<FileInfo>
     {
         auto p = getFilesPtr();
         if( p )
@@ -2061,7 +2113,7 @@ namespace fb
             return Array<FileInfo>( files.begin(), files.end() );
         }
 
-        return Array<FileInfo>();
+        return {};
     }
 
     void FileSystem::refreshAll( bool async )
@@ -2087,7 +2139,7 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
 
             auto projectPath = applicationManager->getProjectPath();
             if( StringUtil::isNullOrEmpty( projectPath ) )
@@ -2116,7 +2168,7 @@ namespace fb
         }
     }
 
-    bool FileSystem::isValid() const
+    auto FileSystem::isValid() const -> bool
     {
         return true;
     }

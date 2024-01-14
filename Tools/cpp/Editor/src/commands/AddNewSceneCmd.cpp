@@ -2,35 +2,30 @@
 #include "commands/AddNewSceneCmd.h"
 #include <FBCore/Core/Properties.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    //--------------------------------------------
+    AddNewSceneCmd::AddNewSceneCmd( Properties properties ) : m_properties( properties )
     {
+    }
 
-        //--------------------------------------------
-        AddNewSceneCmd::AddNewSceneCmd( Properties properties ) : m_properties( properties )
-        {
-        }
+    //--------------------------------------------
+    AddNewSceneCmd::~AddNewSceneCmd() = default;
 
-        //--------------------------------------------
-        AddNewSceneCmd::~AddNewSceneCmd()
-        {
-        }
+    //--------------------------------------------
+    void AddNewSceneCmd::undo()
+    {
+    }
 
-        //--------------------------------------------
-        void AddNewSceneCmd::undo()
-        {
-        }
+    //--------------------------------------------
+    void AddNewSceneCmd::redo()
+    {
+    }
 
-        //--------------------------------------------
-        void AddNewSceneCmd::redo()
-        {
-        }
+    //--------------------------------------------
+    void AddNewSceneCmd::execute()
+    {
+    }
 
-        //--------------------------------------------
-        void AddNewSceneCmd::execute()
-        {
-        }
-
-    }  // end namespace editor
-}  // end namespace fb
+}  // namespace fb::editor

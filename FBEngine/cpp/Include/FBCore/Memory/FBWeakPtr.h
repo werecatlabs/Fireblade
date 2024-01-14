@@ -223,7 +223,7 @@ namespace fb
     {
         T *object = nullptr;
 
-#        if FB_ENABLE_PTR_EXCEPTIONS
+#if FB_ENABLE_PTR_EXCEPTIONS
         try
         {
             T *p = static_cast<T *>( pointer );  // static type checking
@@ -235,9 +235,9 @@ namespace fb
         {
             throw;
         }
-#        else
+#else
         object = static_cast<T *>( pointer );
-#        endif
+#endif
 
         if( object )
         {
@@ -255,7 +255,7 @@ namespace fb
     {
         T *object = nullptr;
 
-#        if FB_ENABLE_PTR_EXCEPTIONS
+#if FB_ENABLE_PTR_EXCEPTIONS
         try
         {
             B *pointer = rkPointer.get();
@@ -268,10 +268,10 @@ namespace fb
         {
             throw;
         }
-#        else
+#else
         B *pointer = rkPointer.get();
         object = static_cast<T *>( pointer );
-#        endif
+#endif
 
         if( object )
         {
@@ -289,7 +289,7 @@ namespace fb
     {
         T *object = nullptr;
 
-#        if FB_ENABLE_PTR_EXCEPTIONS
+#if FB_ENABLE_PTR_EXCEPTIONS
         try
         {
             B *pointer = other.get();
@@ -302,10 +302,10 @@ namespace fb
         {
             throw;
         }
-#        else
+#else
         B *pointer = other.get();
         object = static_cast<T *>( pointer );
-#        endif
+#endif
 
         if( object )
         {
@@ -323,11 +323,11 @@ namespace fb
         auto object = get();
         if( object )
         {
-#    if FB_TRACK_REFERENCES
+#if FB_TRACK_REFERENCES
             object->removeWeakReference( this, __FILE__, __LINE__, __FUNCTION__ );
-#    else
+#else
             object->removeWeakReference();
-#    endif
+#endif
 
             m_pointer = nullptr;
         }
@@ -338,12 +338,12 @@ namespace fb
     {
         FB_ASSERT( m_pointer );
 
-#    if FB_ENABLE_PTR_EXCEPTIONS
+#if FB_ENABLE_PTR_EXCEPTIONS
         if( !m_pointer )
         {
             throw Exception( "Null pointer exception." );
         }
-#    endif
+#endif
 
         return *m_pointer;
     }
@@ -353,12 +353,12 @@ namespace fb
     {
         FB_ASSERT( m_pointer );
 
-#    if FB_ENABLE_PTR_EXCEPTIONS
+#if FB_ENABLE_PTR_EXCEPTIONS
         if( !m_pointer )
         {
             throw Exception( "Null pointer exception." );
         }
-#    endif
+#endif
 
         return m_pointer;
     }
@@ -368,12 +368,12 @@ namespace fb
     {
         FB_ASSERT( m_pointer );
 
-#    if FB_ENABLE_PTR_EXCEPTIONS
+#if FB_ENABLE_PTR_EXCEPTIONS
         if( !m_pointer )
         {
             throw Exception( "Null pointer exception." );
         }
-#    endif
+#endif
 
         return m_pointer;
     }
@@ -398,11 +398,11 @@ namespace fb
             T *pNewObject = nullptr;
             if( other )
             {
-#    if FB_TRACK_REFERENCES
+#if FB_TRACK_REFERENCES
                 other->addWeakReference( this, __FILE__, __LINE__, __FUNCTION__ );
-#    else
+#else
                 other->addWeakReference();
-#    endif
+#endif
 
                 pNewObject = other;
             }
@@ -410,11 +410,11 @@ namespace fb
             auto pObject = this->get();
             if( pObject )
             {
-#    if FB_TRACK_REFERENCES
+#if FB_TRACK_REFERENCES
                 pObject->removeWeakReference( this, __FILE__, __LINE__, __FUNCTION__ );
-#    else
+#else
                 pObject->removeWeakReference();
-#    endif
+#endif
             }
 
             m_pointer = pNewObject;
@@ -427,25 +427,25 @@ namespace fb
     FBWeakPtr<T> &FBWeakPtr<T>::operator=( const FBWeakPtr &other ) throw()
     {
         T *pNewObject = nullptr;
-        
+
         if( auto otherObject = other.get() )
         {
-#    if FB_TRACK_REFERENCES
+#if FB_TRACK_REFERENCES
             otherObject->addWeakReference( this, __FILE__, __LINE__, __FUNCTION__ );
-#    else
+#else
             otherObject->addWeakReference();
-#    endif
+#endif
 
             pNewObject = otherObject;
         }
-        
+
         if( auto pObject = get() )
         {
-#    if FB_TRACK_REFERENCES
+#if FB_TRACK_REFERENCES
             pObject->removeWeakReference( this, __FILE__, __LINE__, __FUNCTION__ );
-#    else
+#else
             pObject->removeWeakReference();
-#    endif
+#endif
         }
 
         m_pointer = pNewObject;

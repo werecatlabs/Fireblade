@@ -22,6 +22,10 @@ namespace fb
             void load( SmartPtr<ISharedObject> data ) override;
             void unload( SmartPtr<ISharedObject> data ) override;
 
+            void setCustomStyle();
+            void setDarkGreenStyle();
+            void setDarkBlueStyle();
+
             size_t messagePump( SmartPtr<ISharedObject> data );
 
             void handleWindowEvent( SmartPtr<render::IWindowEvent> event ) override;
@@ -149,8 +153,6 @@ namespace fb
             Vector2I m_currentMousePosition;
 
             bool m_useInputEvents = false;
-
-
 
             void *m_emptyTexture = nullptr;
         };

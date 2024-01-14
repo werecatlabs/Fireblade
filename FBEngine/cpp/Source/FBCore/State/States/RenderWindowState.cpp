@@ -8,15 +8,11 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, RenderWindowState, BaseState );
 
-    RenderWindowState::RenderWindowState()
-    {
-    }
+    RenderWindowState::RenderWindowState() = default;
 
-    RenderWindowState::~RenderWindowState()
-    {
-    }
+    RenderWindowState::~RenderWindowState() = default;
 
-    SmartPtr<IState> RenderWindowState::clone() const
+    auto RenderWindowState::clone() const -> SmartPtr<IState>
     {
         auto state = fb::make_ptr<RenderWindowState>();
 
@@ -30,7 +26,7 @@ namespace fb
         return state;
     }
 
-    Vector2I RenderWindowState::getSize() const
+    auto RenderWindowState::getSize() const -> Vector2I
     {
         return m_size;
     }
@@ -41,7 +37,7 @@ namespace fb
         setDirty( true );
     }
 
-    u32 RenderWindowState::getColourDepth() const
+    auto RenderWindowState::getColourDepth() const -> u32
     {
         return m_colourDepth;
     }
@@ -52,7 +48,7 @@ namespace fb
         setDirty( true );
     }
 
-    bool RenderWindowState::isFullscreen() const
+    auto RenderWindowState::isFullscreen() const -> bool
     {
         return m_fullscreen;
     }
@@ -63,7 +59,7 @@ namespace fb
         setDirty( true );
     }
 
-    bool RenderWindowState::isVisible() const
+    auto RenderWindowState::isVisible() const -> bool
     {
         return m_visible;
     }
@@ -74,7 +70,7 @@ namespace fb
         setDirty( true );
     }
 
-    String RenderWindowState::getLabel() const
+    auto RenderWindowState::getLabel() const -> String
     {
         return m_label;
     }
@@ -85,7 +81,7 @@ namespace fb
         setDirty( true );
     }
 
-    String RenderWindowState::getWindowHandle() const
+    auto RenderWindowState::getWindowHandle() const -> String
     {
         return m_windowHandle;
     }

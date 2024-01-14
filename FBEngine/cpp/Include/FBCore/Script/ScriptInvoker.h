@@ -14,7 +14,7 @@ namespace fb
     {
     public:
         ScriptInvoker();
-        ScriptInvoker( SmartPtr<ISharedObject> scriptObject );
+        explicit ScriptInvoker( SmartPtr<ISharedObject> scriptObject );
         ~ScriptInvoker() override;
 
         /** Overridden from IScriptInvoker. */

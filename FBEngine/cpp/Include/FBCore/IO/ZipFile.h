@@ -5,7 +5,7 @@
 
 namespace fb
 {
-    
+
     class ZipFile : public DataStream
     {
     public:

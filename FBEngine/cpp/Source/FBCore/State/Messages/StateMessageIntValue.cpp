@@ -6,7 +6,7 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageIntValue, StateMessage );
 
-    s32 StateMessageIntValue::getValue() const
+    auto StateMessageIntValue::getValue() const -> s32
     {
         return m_value;
     }

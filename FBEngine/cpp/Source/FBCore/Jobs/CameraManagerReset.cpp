@@ -1,23 +1,23 @@
 #include <FBCore/FBCorePCH.h>
-#include "FBCore/Jobs/CameraManagerReset.h"
-#include <FBCore/FBCore.h>
+#include <FBCore/Jobs/CameraManagerReset.h>
+#include <FBCore/Scene/CameraManager.h>
+#include <FBCore/Interface/IApplicationManager.h>
 
 namespace fb
 {
+    CameraManagerReset::CameraManagerReset() = default;
 
-    CameraManagerReset::CameraManagerReset()
-    {
-    }
-
-    CameraManagerReset::~CameraManagerReset()
-    {
-    }
+    CameraManagerReset::~CameraManagerReset() = default;
 
     void CameraManagerReset::execute()
     {
-        //Thread::sleep( 1.0 );
+        auto delayTime = getDelayTime();
+        if( delayTime > 0.0f )
+        {
+            Thread::sleep( delayTime );
+        }
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto cameraManager = applicationManager->getCameraManager();
@@ -27,7 +27,7 @@ namespace fb
         }
     }
 
-    SmartPtr<ISharedObject> CameraManagerReset::getOwner() const
+    auto CameraManagerReset::getOwner() const -> SmartPtr<ISharedObject>
     {
         return m_owner;
     }
@@ -35,6 +35,16 @@ namespace fb
     void CameraManagerReset::setOwner( SmartPtr<ISharedObject> owner )
     {
         m_owner = owner;
+    }
+
+    auto CameraManagerReset::getDelayTime() const -> f32
+    {
+        return m_delayTime;
+    }
+
+    void CameraManagerReset::setDelayTime( f32 delayTime )
+    {
+        m_delayTime = delayTime;
     }
 
 }  // namespace fb

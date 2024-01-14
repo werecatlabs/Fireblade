@@ -2,7 +2,7 @@
 #define _CResourceGroupManager_H
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
-#include <FBCore/Graphics/CSharedGraphicsObject.h>
+#include <FBCore/Graphics/SharedGraphicsObject.h>
 #include <FBCore/Interface/Resource/IResourceGroupManager.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Set.h>
@@ -14,7 +14,7 @@ namespace fb
     namespace render
     {
 
-        class CResourceGroupManager : public CSharedGraphicsObject<IResourceGroupManager>
+        class CResourceGroupManager : public SharedGraphicsObject<IResourceGroupManager>
         {
         public:
             static const u32 RGMID_UNLOADRESOURCEGROUP;

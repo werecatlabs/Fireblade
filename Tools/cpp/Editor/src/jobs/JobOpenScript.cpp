@@ -9,33 +9,26 @@
 #include <FBCore/FBCore.h>
 #include <fstream>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    JobOpenScript::JobOpenScript() = default;
+
+    JobOpenScript::~JobOpenScript() = default;
+
+    void JobOpenScript::execute()
     {
+        /*
+        auto applicationManager = core::ApplicationManager::instance();
 
-        JobOpenScript::JobOpenScript()
-        {
-        }
+        auto appRoot = EditorManager::getSingletonPtr();
+        SmartPtr<Project> project = appRoot->getProject();
+        SmartPtr<UIManager> guiMgr = appRoot->getUI();
 
-        JobOpenScript::~JobOpenScript()
-        {
-        }
+        ApplicationFrame *appFrame = guiMgr->getApplicationFrame();
 
-        void JobOpenScript::execute()
-        {
-            /*
-            auto applicationManager = core::IApplicationManager::instance();
+        appFrame->openScript( getScriptTemplate() );
+         */
+    }
 
-            auto appRoot = EditorManager::getSingletonPtr();
-            SmartPtr<Project> project = appRoot->getProject();
-            SmartPtr<UIManager> guiMgr = appRoot->getUI();
-
-            ApplicationFrame *appFrame = guiMgr->getApplicationFrame();
-
-            appFrame->openScript( getScriptTemplate() );
-             */
-        }
-
-    }  // end namespace editor
-}  // end namespace fb
+}  // namespace fb::editor

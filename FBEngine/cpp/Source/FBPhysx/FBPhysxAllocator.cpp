@@ -3,35 +3,27 @@
 #include <FBCore/FBCore.h>
 #include <foundation/PxAssert.h>
 #include <foundation/PxErrorCallback.h>
-#include <stdio.h>
-#include <assert.h>
-
-
+#include <cstdio>
+#include <cassert>
 
 #if FB_USE_TBB
 #    include <tbb/scalable_allocator.h>
 #endif
 
-namespace fb
+namespace fb::physics
 {
-    namespace physics
+    PhysxAllocator::PhysxAllocator() = default;
+
+    PhysxAllocator::~PhysxAllocator() = default;
+
+    auto PhysxAllocator::allocate( size_t size, const char *typeName, const char *filename, int line )
+        -> void *
     {
-        PhysxAllocator::PhysxAllocator()
+        void *ptr = Memory::ScalableAlignedMalloc( size, 16 );
+        if( !ptr )
         {
+            std::terminate();
         }
-
-        PhysxAllocator::~PhysxAllocator()
-        {
-        }
-
-        void *PhysxAllocator::allocate( size_t size, const char *typeName, const char *filename,
-                                        int line )
-        {
-            void *ptr = Memory::ScalableAlignedMalloc( size, 16 );
-            if(!ptr)
-            {
-                std::terminate();
-            }
 
 #if FB_ENABLE_MEMORY_TRACKER
             auto &memoryTracker = MemoryTracker::get();
@@ -50,5 +42,4 @@ namespace fb
             memoryTracker._recordDealloc( ptr );
 #endif
         }
-    } // end namespace physics
-}     // end namespace fb
+}  // namespace fb::physics

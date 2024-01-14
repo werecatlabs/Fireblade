@@ -100,7 +100,7 @@ namespace fb
 #endif
     };
 
-        template <class T>
+    template <class T>
     AtomicObject<T>::AtomicObject()
     {
         m_value = T();

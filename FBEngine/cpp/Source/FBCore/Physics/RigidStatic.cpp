@@ -6,10 +6,3 @@
 #include <FBCore/Core/Properties.h>
 #include <FBCore/Interface/Physics/ISphereShape3.h>
 #include <FBCore/Interface/Physics/IPhysicsScene3.h>
-
-namespace fb
-{
-    namespace physics
-    {
-    }  // end namespace physics
-}  // end namespace fb

@@ -9,6 +9,7 @@
 namespace fb
 {
 
+    /** A shared mutex that allows multiple readers or one writer. */
     class SharedMutex
     {
     public:

@@ -5,7 +5,7 @@
 
 namespace fb
 {
-        
+
     class CAnimationInterface : public IAnimationInterface
     {
     public:

@@ -3,13 +3,13 @@
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
 #include <FBCore/Interface/Graphics/IMaterialTechnique.h>
-#include <FBCore/Graphics/CMaterialTechnique.h>
+#include <FBCore/Graphics/MaterialTechnique.h>
 
 namespace fb
 {
     namespace render
     {
-        class CMaterialTechniqueOgreNext : public CMaterialTechnique
+        class CMaterialTechniqueOgreNext : public MaterialTechnique
         {
         public:
             CMaterialTechniqueOgreNext();

@@ -3,69 +3,64 @@
 #include <FBCore/FBCore.h>
 #include <imgui.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    FB_CLASS_REGISTER_DERIVED( fb, ImGuiText, CImGuiElement<IUIText> );
+
+    ImGuiText::ImGuiText() = default;
+
+    ImGuiText::~ImGuiText()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, ImGuiText, CImGuiElement<IUIText> );
+        unload( nullptr );
+    }
 
-        ImGuiText::ImGuiText()
+    void ImGuiText::update()
+    {
+        auto str = getText();
+        if( StringUtil::isNullOrEmpty( str ) )
         {
+            str = "";
         }
 
-        ImGuiText::~ImGuiText()
-        {
-            unload( nullptr );
-        }
+        ImGui::Text( str.c_str() );
+    }
 
-        void ImGuiText::update()
-        {
-            auto str = getText();
-            if( StringUtil::isNullOrEmpty( str ) )
-            {
-                str = "";
-            }
+    void ImGuiText::setText( const String &text )
+    {
+        m_text = text;
+    }
 
-            ImGui::Text( str.c_str() );
-        }
+    void ImGuiText::setTextSize( f32 textSize )
+    {
+        m_textSize = textSize;
+    }
 
-        void ImGuiText::setText( const String &text )
-        {
-            m_text = text;
-        }
+    auto ImGuiText::getTextSize() const -> f32
+    {
+        return m_textSize;
+    }
 
-        void ImGuiText::setTextSize( f32 textSize )
-        {
-            m_textSize = textSize;
-        }
+    void ImGuiText::setVerticalAlignment( u8 alignment )
+    {
+    }
 
-        f32 ImGuiText::getTextSize() const
-        {
-            return m_textSize;
-        }
+    auto ImGuiText::getVerticalAlignment() const -> u8
+    {
+        return 0;
+    }
 
-        void ImGuiText::setVerticalAlignment( u8 alignment )
-        {
-        }
+    void ImGuiText::setHorizontalAlignment( u8 alignment )
+    {
+    }
 
-        u8 ImGuiText::getVerticalAlignment() const
-        {
-            return 0;
-        }
+    auto ImGuiText::getHorizontalAlignment() const -> u8
+    {
+        return 0;
+    }
 
-        void ImGuiText::setHorizontalAlignment( u8 alignment )
-        {
-        }
+    auto ImGuiText::getText() const -> String
+    {
+        return m_text;
+    }
 
-        u8 ImGuiText::getHorizontalAlignment() const
-        {
-            return 0;
-        }
-
-        String ImGuiText::getText() const
-        {
-            return m_text;
-        }
-
-    }  // end namespace ui
-}  // end namespace fb
+}  // namespace fb::ui

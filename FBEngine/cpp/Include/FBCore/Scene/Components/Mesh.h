@@ -13,6 +13,9 @@ namespace fb
         class Mesh : public Component
         {
         public:
+            static const String meshPathStr;
+            static const String meshStr;
+
             /**
              * Constructor.
              */
@@ -44,18 +47,6 @@ namespace fb
              * @param meshPath The path to the mesh file.
              */
             void setMeshPath( const String &meshPath );
-
-            /**
-             * Gets the mesh object.
-             * @return The mesh object.
-             */
-            SmartPtr<IMesh> getMesh() const;
-
-            /**
-             * Sets the mesh object.
-             * @param mesh The mesh object.
-             */
-            void setMesh( SmartPtr<IMesh> mesh );
 
             /**
              * Gets the mesh resource object.
@@ -91,9 +82,6 @@ namespace fb
              * @return The return value of the event.
              */
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType ) override;
-
-            /** The mesh object. */
-            SmartPtr<IMesh> m_mesh;
 
             /** The mesh resource. */
             SmartPtr<IMeshResource> m_meshResource;

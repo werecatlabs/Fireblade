@@ -2,7 +2,7 @@
 #define __CSceneNodeOgreNext_H
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
-#include <FBCore/Graphics/CSceneNode.h>
+#include <FBCore/Graphics/SceneNode.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Atomics/Atomics.h>
@@ -12,7 +12,7 @@ namespace fb
 {
     namespace render
     {
-        class CSceneNodeOgreNext : public CSceneNode
+        class CSceneNodeOgreNext : public SceneNode
         {
         public:
             CSceneNodeOgreNext();
@@ -114,11 +114,12 @@ namespace fb
                 void handleStateChanged( SmartPtr<IState> &state ) override;
                 void handleQuery( SmartPtr<IStateQuery> &query ) override;
 
-                SmartPtr<CSceneNodeOgreNext> getOwner() const;
+                SmartPtr<CSceneNodeOgreNext>& getOwner() ;
+                const SmartPtr<CSceneNodeOgreNext>& getOwner() const;
                 void setOwner( SmartPtr<CSceneNodeOgreNext> owner );
 
             protected:
-                AtomicSmartPtr<CSceneNodeOgreNext> m_owner;
+                SmartPtr<CSceneNodeOgreNext> m_owner;
             };
 
             class NodeListener : public Ogre::Node::Listener

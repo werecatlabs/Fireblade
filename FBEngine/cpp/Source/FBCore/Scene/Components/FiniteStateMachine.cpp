@@ -2,150 +2,145 @@
 #include <FBCore/Scene/Components/FiniteStateMachine.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+    FB_CLASS_REGISTER_DERIVED( fb::scene, FiniteStateMachine, Component );
+
+    FiniteStateMachine::FiniteStateMachine() = default;
+
+    FiniteStateMachine::~FiniteStateMachine()
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, FiniteStateMachine, Component );
+        unload( nullptr );
+    }
 
-        FiniteStateMachine::FiniteStateMachine()
+    void FiniteStateMachine::load( SmartPtr<ISharedObject> data )
+    {
+        try
         {
+            setLoadingState( LoadingState::Loading );
+
+            Component::load( data );
+
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto factoryManager = applicationManager->getFactoryManager();
+            FB_ASSERT( factoryManager );
+
+            auto sceneManager = applicationManager->getSceneManager();
+            FB_ASSERT( sceneManager );
+
+            auto fsmManager = sceneManager->getFsmManager();
+            FB_ASSERT( fsmManager );
+
+            m_fsm = fsmManager->createFSM();
+
+            setLoadingState( LoadingState::Loaded );
         }
-
-        FiniteStateMachine::~FiniteStateMachine()
+        catch( std::exception &e )
         {
-            unload( nullptr );
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        void FiniteStateMachine::load( SmartPtr<ISharedObject> data )
+    void FiniteStateMachine::unload( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            try
+            const auto &loadingState = getLoadingState();
+            if( loadingState != LoadingState::Unloaded )
             {
-                setLoadingState( LoadingState::Loading );
+                setLoadingState( LoadingState::Unloading );
 
-                Component::load( data );
-
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
-                auto factoryManager = applicationManager->getFactoryManager();
-                FB_ASSERT( factoryManager );
+                auto fsmManager = applicationManager->getFsmManager();
 
-                auto sceneManager = applicationManager->getSceneManager();
-                FB_ASSERT( sceneManager );
-
-                auto fsmManager = sceneManager->getFsmManager();
-                FB_ASSERT( fsmManager );
-
-                m_fsm = fsmManager->createFSM();
-
-                setLoadingState( LoadingState::Loaded );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void FiniteStateMachine::unload( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-                const auto &loadingState = getLoadingState();
-                if( loadingState != LoadingState::Unloaded )
+                if( fsmManager )
                 {
-                    setLoadingState( LoadingState::Unloading );
-
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto fsmManager = applicationManager->getFsmManager();
-
-                    if( fsmManager )
+                    if( m_fsm )
                     {
-                        if( m_fsm )
-                        {
-                            // if( m_componentFsmListener )
-                            //{
-                            //     m_componentFSM->removeListener( m_componentFsmListener );
-                            //     m_componentFsmListener = nullptr;
-                            // }
+                        // if( m_componentFsmListener )
+                        //{
+                        //     m_componentFSM->removeListener( m_componentFsmListener );
+                        //     m_componentFsmListener = nullptr;
+                        // }
 
-                            fsmManager->destroyFSM( m_fsm );
-                            m_fsm = nullptr;
-                        }
+                        fsmManager->destroyFSM( m_fsm );
+                        m_fsm = nullptr;
                     }
-
-                    Component::unload( data );
-
-                    setLoadingState( LoadingState::Unloaded );
                 }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
+
+                Component::unload( data );
+
+                setLoadingState( LoadingState::Unloaded );
             }
         }
-
-        void FiniteStateMachine::reload( SmartPtr<ISharedObject> data )
+        catch( std::exception &e )
         {
-            try
-            {
-                unload( data );
-                load( data );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        Array<SmartPtr<ISharedObject>> FiniteStateMachine::getChildObjects() const
+    void FiniteStateMachine::reload( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            auto objects = Array<SmartPtr<ISharedObject>>();
-            objects.reserve( 1 );
-
-            objects.push_back( m_fsm );
-            return objects;
+            unload( data );
+            load( data );
         }
-
-        SmartPtr<Properties> FiniteStateMachine::getProperties() const
+        catch( std::exception &e )
         {
-            auto properties = Component::getProperties();
-
-            if( m_fsm )
-            {
-                s32 newState = m_fsm->getNewState();
-                properties->setProperty( "newState", newState );
-
-                s32 previousState = m_fsm->getPreviousState();
-                properties->setProperty( "previousState", previousState );
-
-                s32 currentState = m_fsm->getCurrentState();
-                properties->setProperty( "currentState", currentState );
-            }
-
-            return properties;
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        void FiniteStateMachine::setProperties( SmartPtr<Properties> properties )
+    auto FiniteStateMachine::getChildObjects() const -> Array<SmartPtr<ISharedObject>>
+    {
+        auto objects = Array<SmartPtr<ISharedObject>>();
+        objects.reserve( 1 );
+
+        objects.emplace_back( m_fsm );
+        return objects;
+    }
+
+    auto FiniteStateMachine::getProperties() const -> SmartPtr<Properties>
+    {
+        auto properties = Component::getProperties();
+
+        if( m_fsm )
         {
-            if( m_fsm )
+            s32 newState = m_fsm->getNewState();
+            properties->setProperty( "newState", newState );
+
+            s32 previousState = m_fsm->getPreviousState();
+            properties->setProperty( "previousState", previousState );
+
+            s32 currentState = m_fsm->getCurrentState();
+            properties->setProperty( "currentState", currentState );
+        }
+
+        return properties;
+    }
+
+    void FiniteStateMachine::setProperties( SmartPtr<Properties> properties )
+    {
+        if( m_fsm )
+        {
+            s32 newState = m_fsm->getNewState();
+            properties->getPropertyValue( "newState", newState );
+
+            s32 previousState = m_fsm->getPreviousState();
+            properties->getPropertyValue( "previousState", previousState );
+
+            s32 currentState = m_fsm->getCurrentState();
+            properties->getPropertyValue( "currentState", currentState );
+
+            if( m_fsm->getNewState() != newState )
             {
-                s32 newState = m_fsm->getNewState();
-                properties->getPropertyValue( "newState", newState );
-
-                s32 previousState = m_fsm->getPreviousState();
-                properties->getPropertyValue( "previousState", previousState );
-
-                s32 currentState = m_fsm->getCurrentState();
-                properties->getPropertyValue( "currentState", currentState );
-
-                if( m_fsm->getNewState() != newState )
-                {
-                    m_fsm->setNewState( newState );
-                }
+                m_fsm->setNewState( newState );
             }
         }
-    }  // namespace scene
-}  // end namespace fb
+    }
+}  // namespace fb::scene

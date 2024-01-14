@@ -53,14 +53,21 @@ namespace fb
          *
          * @return The owner state context as a shared pointer to IStateContext.
          */
-        virtual SmartPtr<IStateContext> getStateContext() const = 0;
+        virtual SmartPtr<IStateContext> &getStateContext() = 0;
+
+        /**
+         * @brief Returns the owner state context.
+         *
+         * @return The owner state context as a shared pointer to IStateContext.
+         */
+        virtual const SmartPtr<IStateContext> &getStateContext() const = 0;
 
         /**
          * @brief Sets the owner state context.
          *
-         * @param stateObject The owner state context as a shared pointer to IStateContext.
+         * @param stateContext The owner state context as a shared pointer to IStateContext.
          */
-        virtual void setStateContext( SmartPtr<IStateContext> stateObject ) = 0;
+        virtual void setStateContext( SmartPtr<IStateContext> stateContext ) = 0;
 
         /**
          * @brief Returns the task used to update the state.

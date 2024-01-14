@@ -6,13 +6,9 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, TimerChrono, Timer );
 
-    TimerChrono::TimerChrono()
-    {
-    }
+    TimerChrono::TimerChrono() = default;
 
-    TimerChrono::~TimerChrono()
-    {
-    }
+    TimerChrono::~TimerChrono() = default;
 
     void TimerChrono::update()
     {
@@ -26,12 +22,12 @@ namespace fb
         setTime( elapsedTime );
     }
 
-    u32 TimerChrono::getTimeMilliseconds() const
+    auto TimerChrono::getTimeMilliseconds() const -> u32
     {
         return static_cast<u32>( getTime() * 1000.0 );
     }
 
-    u32 TimerChrono::getRealTime() const
+    auto TimerChrono::getRealTime() const -> u32
     {
         time_interval time =
             static_cast<f64>( std::chrono::steady_clock::now().time_since_epoch().count() ) /
@@ -39,24 +35,24 @@ namespace fb
         return static_cast<u32>( time * 1000.0 );
     }
 
-    u32 TimerChrono::getTimeIntervalMilliseconds() const
+    auto TimerChrono::getTimeIntervalMilliseconds() const -> u32
     {
         return static_cast<u32>( getTimeInterval() * 1000.0 );
     }
 
-    time_interval TimerChrono::now() const
+    auto TimerChrono::now() const -> time_interval
     {
         return static_cast<f64>( std::chrono::steady_clock::now().time_since_epoch().count() ) /
                static_cast<f64>( 1000000000LL );
     }
 
-    time_interval TimerChrono::getTime() const
+    auto TimerChrono::getTime() const -> time_interval
     {
         u32 time = m_time;
         return *reinterpret_cast<time_interval *>( &time );
     }
 
-    time_interval TimerChrono::getTimeInterval() const
+    auto TimerChrono::getTimeInterval() const -> time_interval
     {
         u32 deltaTime = m_deltaTime;
         return *reinterpret_cast<time_interval *>( &deltaTime );
@@ -67,7 +63,7 @@ namespace fb
         m_smoother.setInterval( static_cast<float>( milliSeconds ) / 1000.0f );
     }
 
-    u32 TimerChrono::getFrameSmoothingPeriod() const
+    auto TimerChrono::getFrameSmoothingPeriod() const -> u32
     {
         return static_cast<u32>( m_smoother.getInterval() * 1000.0f );
     }

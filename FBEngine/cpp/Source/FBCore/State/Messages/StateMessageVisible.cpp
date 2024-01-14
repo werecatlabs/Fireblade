@@ -7,7 +7,7 @@ namespace fb
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageVisible, StateMessage );
 
     //---------------------------------------------
-    bool StateMessageVisible::isVisible() const
+    auto StateMessageVisible::isVisible() const -> bool
     {
         return m_isVisible;
     }
@@ -19,7 +19,7 @@ namespace fb
     }
 
     //---------------------------------------------
-    bool StateMessageVisible::getCascade() const
+    auto StateMessageVisible::getCascade() const -> bool
     {
         return m_cascade;
     }

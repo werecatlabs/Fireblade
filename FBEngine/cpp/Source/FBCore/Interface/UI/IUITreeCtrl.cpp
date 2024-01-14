@@ -3,13 +3,10 @@
 #include <FBCore/Core/StringUtil.h>
 #include <FBCore/System/RttiClassDefinition.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
-    {
-        FB_CLASS_REGISTER_DERIVED( fb, IUITreeCtrl, IUIElement );
+    FB_CLASS_REGISTER_DERIVED( fb, IUITreeCtrl, IUIElement );
 
-        const hash_type IUITreeCtrl::clearHash = StringUtil::getHash( "clear" );
+    const hash_type IUITreeCtrl::clearHash = StringUtil::getHash( "clear" );
 
-    }  // end namespace ui
-}  // end namespace fb
+}  // namespace fb::ui

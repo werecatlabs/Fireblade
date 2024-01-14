@@ -9,7 +9,6 @@
 #include "FBGraphicsOgreNext/FBGraphicsOgreNextTypes.h"
 #include <FBCore/Interface/Particle/IParticleNode.h>
 
-
 namespace fb
 {
 
@@ -22,15 +21,15 @@ namespace fb
         m_creator( creator ),
         m_particleSystem( nullptr )
     {
-        auto engine = core::IApplicationManager::instance();
+        auto engine = core::ApplicationManager::instance();
         SmartPtr<IGraphicsSystem> graphicsSystem = engine->getGraphicsSystem();
 
         m_frameListener = SmartPtr<IFrameListener>( new ParticleSystemFrameListener( this ) );
 
-        SmartPtr<IStateContext> stateObject = engine->getPlatformManager()->createStateObject();
-        setStateObject( stateObject );
+        SmartPtr<IStateContext> stateContext = engine->getPlatformManager()->createStateObject();
+        setStateContext( stateContext );
 
-        stateObject->addStateListener(
+        stateContext->addStateListener(
             SmartPtr<IStateListener>( new ParticleSystemStateListener( this ) ), true );
     }
 
@@ -39,7 +38,7 @@ namespace fb
     {
         //
 
-        // auto engine = core::IApplicationManager::instance();
+        // auto engine = core::ApplicationManager::instance();
         // SmartPtr<IGraphicsSystem> graphicsSystem = engine->getGraphicsSystem();
 
         // SmartPtr<CSceneManagerOgre> smgr = m_creator;
@@ -293,7 +292,7 @@ namespace fb
             StateMessageVisiblePtr stateMessageVisible( new StateMessageVisible );
             stateMessageVisible->setVisible( isVisible );
             stateMessageVisible->setCascade( true );
-            m_stateObject->addMessage( Thread::Task::Render, stateMessageVisible );
+            m_stateContext->addMessage( Thread::Task::Render, stateMessageVisible );
         }
         else
         {
@@ -318,7 +317,7 @@ namespace fb
             StateMessageUIntValuePtr stateMessage( new StateMessageUIntValue );
             stateMessage->setType( STATE_MESSAGE_RENDER_QUEUE_GROUP );
             stateMessage->setValue( renderQueue );
-            m_stateObject->addMessage( Thread::Task::Render, stateMessage );
+            m_stateContext->addMessage( Thread::Task::Render, stateMessage );
         }
         else
         {
@@ -344,7 +343,7 @@ namespace fb
 
             message->setType( VISIBILITY_FLAGS_HASH );
             message->setTypeValue( flags );
-            m_stateObject->addMessage( Thread::Task::Render, message );
+            m_stateContext->addMessage( Thread::Task::Render, message );
         }
     }
 
@@ -438,7 +437,7 @@ namespace fb
             if( m_particleSystem )
                 m_particleSystem->start();
 
-            auto engine = core::IApplicationManager::instance();
+            auto engine = core::ApplicationManager::instance();
             SmartPtr<IGraphicsSystem> graphicsSystem = engine->getGraphicsSystem();
             graphicsSystem->addFrameListener( m_frameListener );
         }
@@ -451,7 +450,7 @@ namespace fb
 
             message->setType( START_HASH );
             message->setTypeValue( START_HASH );
-            m_stateObject->addMessage( Thread::Task::Render, message );
+            m_stateContext->addMessage( Thread::Task::Render, message );
         }
     }
 
@@ -463,7 +462,7 @@ namespace fb
             if( m_particleSystem )
                 m_particleSystem->stop();
 
-            auto engine = core::IApplicationManager::instance();
+            auto engine = core::ApplicationManager::instance();
             SmartPtr<IGraphicsSystem> graphicsSystem = engine->getGraphicsSystem();
             graphicsSystem->removeFrameListener( m_frameListener );
         }
@@ -476,7 +475,7 @@ namespace fb
 
             message->setType( STOP_HASH );
             message->setTypeValue( STOP_HASH );
-            m_stateObject->addMessage( Thread::Task::Render, message );
+            m_stateContext->addMessage( Thread::Task::Render, message );
         }
     }
 

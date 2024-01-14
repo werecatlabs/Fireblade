@@ -6,7 +6,8 @@
 
 namespace fb
 {
-    //---------------------------------------------
+
+    /** An interface to record a frame. */
     class IFrameGrabber : public ISharedObject
     {
     public:
@@ -15,6 +16,7 @@ namespace fb
         virtual void addFrame( SmartPtr<IStateMessage> message ) = 0;
         virtual SmartPtr<IStateMessage> popFrame() const = 0;
     };
+
 }  // end namespace fb
 
 #endif  // IFrameGrabber_h__

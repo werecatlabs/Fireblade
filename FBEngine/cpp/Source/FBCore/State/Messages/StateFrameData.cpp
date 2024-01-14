@@ -17,7 +17,7 @@ namespace fb
 
     StateFrameData::StateFrameData( int videoBufferSize, int soundBufferSize )
     {
-        m_videoBuffer = (u8 *)malloc( videoBufferSize );
+        m_videoBuffer = static_cast<u8 *>( malloc( videoBufferSize ) );
         m_videoBufferSize = videoBufferSize;
 
         m_soundBuffer = new unsigned char[soundBufferSize];
@@ -40,7 +40,7 @@ namespace fb
         }
     }
 
-    unsigned char *StateFrameData::getVideoBuffer() const
+    auto StateFrameData::getVideoBuffer() const -> unsigned char *
     {
         return m_videoBuffer;
     }
@@ -50,7 +50,7 @@ namespace fb
         m_videoBuffer = val;
     }
 
-    int StateFrameData::getVideoBufferSize() const
+    auto StateFrameData::getVideoBufferSize() const -> int
     {
         return m_videoBufferSize;
     }
@@ -66,7 +66,7 @@ namespace fb
             m_videoBuffer = nullptr;
         }
 
-        m_videoBuffer = (u8 *)malloc( m_videoBufferSize );
+        m_videoBuffer = static_cast<u8 *>( malloc( m_videoBufferSize ) );
 
         if( !m_videoBuffer )
         {
@@ -74,7 +74,7 @@ namespace fb
         }
     }
 
-    unsigned char *StateFrameData::getSoundBuffer() const
+    auto StateFrameData::getSoundBuffer() const -> unsigned char *
     {
         return m_soundBuffer;
     }
@@ -84,7 +84,7 @@ namespace fb
         m_soundBuffer = val;
     }
 
-    int StateFrameData::getSoundBufferSize() const
+    auto StateFrameData::getSoundBufferSize() const -> int
     {
         return m_soundBufferSize;
     }

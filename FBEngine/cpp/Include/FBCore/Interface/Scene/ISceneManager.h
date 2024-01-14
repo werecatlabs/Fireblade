@@ -4,6 +4,7 @@
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Interface/Scene/IActor.h>
 #include <FBCore/Interface/Scene/IScene.h>
+#include <FBCore/Core/Map.h>
 
 namespace fb
 {
@@ -33,7 +34,13 @@ namespace fb
              * Gets the FSM manager.
              * @return The FSM manager.
              */
-            virtual SmartPtr<IFSMManager> getFsmManager() const = 0;
+            virtual SmartPtr<IFSMManager> &getFsmManager() = 0;
+
+            /**
+             * Gets the FSM manager.
+             * @return The FSM manager.
+             */
+            virtual const SmartPtr<IFSMManager> &getFsmManager() const = 0;
 
             /**
              * Sets the FSM manager.
@@ -117,7 +124,7 @@ namespace fb
              */
             virtual Array<SmartPtr<IComponent>> getComponents() const = 0;
 
-            virtual void addSystem( u32 id, SmartPtr<ISystem> system ) = 0;
+            virtual void addSystem( u32 id, SmartPtr<IComponentSystem> system ) = 0;
 
             virtual void removeSystem( u32 id ) = 0;
 
@@ -136,13 +143,6 @@ namespace fb
             virtual SmartPtr<IActor> getActorByName( const String &name ) const = 0;
 
             virtual SmartPtr<IActor> getActorByFileId( const String &id ) const = 0;
-
-            /**
-             * Gets the component with the specified ID.
-             * @param id The ID of the component to retrieve.
-             * @return The component with the specified ID. Can be null.
-             */
-            virtual SmartPtr<IComponent> getComponent( u32 id ) const = 0;
 
             /**
              * Queues properties to be set on an object.
@@ -204,6 +204,10 @@ namespace fb
             virtual void unregisterAllComponent( SmartPtr<IComponent> component ) = 0;
 
             virtual s32 getNumActors() const = 0;
+
+            virtual void makeActorTransformsDirty() = 0;
+
+            virtual void addDirtyTransform( SmartPtr<IActor> actor ) = 0;
 
             /**
              * Returns an array of all components of the specified type attached to the actors in the current scene.

@@ -3,6 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/FBCoreTypes.h>
+#include <cstddef>
 
 namespace fb
 {

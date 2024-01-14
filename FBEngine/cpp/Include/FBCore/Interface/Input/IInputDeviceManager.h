@@ -115,41 +115,7 @@ namespace fb
          */
         virtual void setShiftPressed( bool shiftPressed ) = 0;
 
-        /**
-         * @brief Gets the status of the left mouse button.
-         * @return True if the left mouse button is currently pressed, false otherwise.
-         */
-        virtual bool isLeftPressed() const = 0;
-
-        /**
-         * @brief Sets the status of the left mouse button.
-         * @param leftPressed The new status of the left mouse button.
-         */
-        virtual void setLeftPressed( bool leftPressed ) = 0;
-
-        /**
-         * @brief Gets the status of the right mouse button.
-         * @return True if the right mouse button is currently pressed, false otherwise.
-         */
-        virtual bool isRightPressed() const = 0;
-
-        /**
-         * @brief Sets the status of the right mouse button.
-         * @param rightPressed The new status of the right mouse button.
-         */
-        virtual void setRightPressed( bool rightPressed ) = 0;
-
-        /**
-         * @brief Gets the status of the middle mouse button.
-         * @return True if the middle mouse button is currently pressed, false otherwise.
-         */
-        virtual bool isMiddlePressed() const = 0;
-
-        /**
-         * @brief Sets the status of the middle mouse button.
-         * @param middlePressed The new status of the middle mouse button.
-         */
-        virtual void setMiddlePressed( bool middlePressed ) = 0;
+        virtual bool isMouseButtonDown( u32 button ) const = 0;
 
         /**
          * @brief Gets the time of the last click event.

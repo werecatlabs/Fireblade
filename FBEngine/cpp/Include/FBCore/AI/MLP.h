@@ -77,9 +77,9 @@ namespace fb
         void setLearningRate( double learningRate );
 
     private:
-        unsigned long m_numInputs;      /**< Number of input neurons. */
-        unsigned long m_numHiddenNodes; /**< Number of hidden neurons. */
-        unsigned long ulNumberOfOutputs;     /**< Number of output neurons. */
+        unsigned long m_numInputs;       /**< Number of input neurons. */
+        unsigned long m_numHiddenNodes;  /**< Number of hidden neurons. */
+        unsigned long ulNumberOfOutputs; /**< Number of output neurons. */
 
         double **ppdwih; /**< Pointer to the weights to the hidden layer nodes. */
         double **ppdwho; /**< Pointer to the weights to the output nodes. */

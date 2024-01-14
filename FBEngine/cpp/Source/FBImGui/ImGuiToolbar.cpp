@@ -1,18 +1,13 @@
 #include <FBImGui/FBImGuiPCH.h>
 #include <FBImGui/ImGuiToolbar.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
-    {
-        FB_CLASS_REGISTER_DERIVED( fb, ImGuiToolbar, CImGuiElement<IUIToolbar> );
 
-        ImGuiToolbar::ImGuiToolbar()
-        {
-        }
+    FB_CLASS_REGISTER_DERIVED( fb, ImGuiToolbar, CImGuiElement<IUIToolbar> );
 
-        ImGuiToolbar::~ImGuiToolbar()
-        {
-        }
-    } // end namespace ui
-}     // end namespace fb
+    ImGuiToolbar::ImGuiToolbar() = default;
+
+    ImGuiToolbar::~ImGuiToolbar() = default;
+
+}  // namespace fb::ui

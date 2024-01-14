@@ -5,10 +5,10 @@
 #include <FBCore/Interface/Resource/IMeshManager.h>
 #include <FBCore/Interface/Mesh/IMesh.h>
 #include <FBCore/Core/Array.h>
+#include <FBCore/Core/ConcurrentArray.h>
 
 namespace fb
 {
-
     class MeshManager : public IMeshManager
     {
     public:
@@ -18,6 +18,13 @@ namespace fb
         void unload( SmartPtr<ISharedObject> data ) override;
 
         void addMesh( SmartPtr<IMesh> mesh );
+
+        void removeMesh( SmartPtr<IMesh> mesh );
+
+        void addMeshResource( SmartPtr<IMeshResource> meshResource );
+
+        void removeMeshResource( SmartPtr<IMeshResource> meshResource );
+
         SmartPtr<IMesh> findMesh( const String &name );
         SmartPtr<IMesh> loadMesh( const String &filePath ) override;
         void saveMesh( SmartPtr<IMesh> mesh, const String &filePath );
@@ -33,14 +40,14 @@ namespace fb
                                                           const String &type ) override;
 
         /** @copydoc IResourceManager::createOrRetrieve */
-        Pair<SmartPtr<IResource>, bool> createOrRetrieve( const String &path );
+        Pair<SmartPtr<IResource>, bool> createOrRetrieve( const String &path ) override;
 
         void saveToFile( const String &filePath, SmartPtr<IResource> resource ) override;
 
         /** @copydoc IResourceManager::loadFromFile */
         SmartPtr<IResource> loadFromFile( const String &filePath ) override;
 
-        SmartPtr<IResource> load( const String &name ) override;
+        SmartPtr<IResource> loadResource( const String &name ) override;
 
         SmartPtr<IResource> getByName( const String &name ) override;
 
@@ -48,9 +55,19 @@ namespace fb
 
         void _getObject( void **ppObject ) const override;
 
+        SharedPtr<ConcurrentArray<SmartPtr<IMesh>>> getMeshesPtr() const;
+
+        void setMeshesPtr( SharedPtr<ConcurrentArray<SmartPtr<IMesh>>> meshes );
+
+        SharedPtr<ConcurrentArray<SmartPtr<IMeshResource>>> getMeshResourcesPtr() const;
+
+        void setMeshResourcesPtr( SharedPtr<ConcurrentArray<SmartPtr<IMeshResource>>> meshResources );
+
+        FB_CLASS_REGISTER_DECL;
+
     private:
-        Array<SmartPtr<IMesh>> m_meshes;
-        Array<SmartPtr<IMeshResource>> m_meshResources;
+        AtomicSharedPtr<ConcurrentArray<SmartPtr<IMesh>>> m_meshes;
+        AtomicSharedPtr<ConcurrentArray<SmartPtr<IMeshResource>>> m_meshResources;
     };
 }  // end namespace fb
 

@@ -1,12 +1,11 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Vehicle/VehicleBody.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/System/ApplicationManager.h>
+#include <FBCore/Interface/Vehicle/IVehicleCallback.h>
 
 namespace fb
 {
-    VehicleBody::VehicleBody()
-    {
-    }
+    VehicleBody::VehicleBody() = default;
 
     VehicleBody::~VehicleBody()
     {
@@ -15,10 +14,10 @@ namespace fb
 
     void VehicleBody::unload( SmartPtr<ISharedObject> data )
     {
-        m_parentAircraft = nullptr;
+        m_parentVehicle = nullptr;
     }
 
-    Vector3<real_Num> VehicleBody::getVelocity() const
+    auto VehicleBody::getVelocity() const -> Vector3<real_Num>
     {
         return m_velocity;
     }
@@ -28,7 +27,7 @@ namespace fb
         m_velocity = val;
     }
 
-    Vector3<real_Num> VehicleBody::getAngularVelocity() const
+    auto VehicleBody::getAngularVelocity() const -> Vector3<real_Num>
     {
         return m_angularVelocity;
     }
@@ -38,7 +37,7 @@ namespace fb
         m_angularVelocity = val;
     }
 
-    Vector3<real_Num> VehicleBody::getWorldCenterOfMass() const
+    auto VehicleBody::getWorldCenterOfMass() const -> Vector3<real_Num>
     {
         return m_worldCenterOfMass;
     }
@@ -49,35 +48,36 @@ namespace fb
     }
 
     void VehicleBody::addLocalForceAtPosition( const Vector3<real_Num> &val,
-                                                const Vector3<real_Num> &pos,
-                                                physics::PhysicsTypes::ForceMode forceMode )
+                                               const Vector3<real_Num> &pos,
+                                               physics::PhysicsTypes::ForceMode forceMode )
     {
-        m_parentAircraft->addLocalForce( 0, val, pos );
+        m_parentVehicle->addLocalForce( 0, val, pos );
     }
 
     void VehicleBody::addLocalForceAtLocalPosition( const Vector3<real_Num> &val,
-                                                     const Vector3<real_Num> &pos )
+                                                    const Vector3<real_Num> &pos )
     {
-        m_parentAircraft->addLocalForce( 0, val, pos );
+        m_parentVehicle->addLocalForce( 0, val, pos );
     }
 
     void VehicleBody::addForceAtPosition( const Vector3<real_Num> &val, const Vector3<real_Num> &pos,
-                                           physics::PhysicsTypes::ForceMode forceMode )
+                                          physics::PhysicsTypes::ForceMode forceMode )
     {
-        m_parentAircraft->addForce( 0, val, pos );
+        m_parentVehicle->addForce( 0, val, pos );
     }
 
     void VehicleBody::addForceAtPosition( const Vector3<real_Num> &val, const Vector3<real_Num> &pos )
     {
-        m_parentAircraft->addForce( 0, val, pos );
+        m_parentVehicle->addForce( 0, val, pos );
     }
 
-    bool VehicleBody::castLocalRay( const Ray3<real_Num> &ray, SmartPtr<physics::IRaycastHit> &data )
+    auto VehicleBody::castLocalRay( const Ray3<real_Num> &ray, SmartPtr<physics::IRaycastHit> &data )
+        -> bool
     {
         FB_ASSERT( ray.isValid() );
         FB_ASSERT( data );
 
-        auto callback = m_parentAircraft->getVehicleCallback();
+        auto callback = m_parentVehicle->getVehicleCallback();
         if( callback )
         {
             return callback->castLocalRay( ray, data );
@@ -86,12 +86,13 @@ namespace fb
         return false;
     }
 
-    bool VehicleBody::castWorldRay( const Ray3<real_Num> &ray, SmartPtr<physics::IRaycastHit> &data )
+    auto VehicleBody::castWorldRay( const Ray3<real_Num> &ray, SmartPtr<physics::IRaycastHit> &data )
+        -> bool
     {
         FB_ASSERT( ray.isValid() );
         FB_ASSERT( data );
 
-        auto callback = m_parentAircraft->getVehicleCallback();
+        auto callback = m_parentVehicle->getVehicleCallback();
         if( callback )
         {
             return callback->castWorldRay( ray, data );
@@ -100,7 +101,7 @@ namespace fb
         return false;
     }
 
-    real_Num VehicleBody::getMass() const
+    auto VehicleBody::getMass() const -> real_Num
     {
         FB_ASSERT( m_mass > 0 );
         FB_ASSERT( m_mass < static_cast<real_Num>( 1e10 ) );
@@ -118,7 +119,7 @@ namespace fb
         FB_ASSERT( m_mass < static_cast<real_Num>( 1e10 ) );
     }
 
-    Vector3<real_Num> VehicleBody::getLocalVelocity() const
+    auto VehicleBody::getLocalVelocity() const -> Vector3<real_Num>
     {
         return m_localVelocity;
     }
@@ -128,7 +129,7 @@ namespace fb
         m_localVelocity = val;
     }
 
-    Vector3<real_Num> VehicleBody::getLocalAngularVelocity() const
+    auto VehicleBody::getLocalAngularVelocity() const -> Vector3<real_Num>
     {
         return m_localAngularVelocity;
     }
@@ -140,59 +141,60 @@ namespace fb
 
     void VehicleBody::addTorque( const Vector3<real_Num> &val )
     {
-        m_parentAircraft->addTorque( 0, val );
+        m_parentVehicle->addTorque( 0, val );
     }
 
     void VehicleBody::addLocalTorque( const Vector3<real_Num> &val )
     {
-        m_parentAircraft->addLocalTorque( 0, val );
+        m_parentVehicle->addLocalTorque( 0, val );
     }
 
-    SmartPtr<IVehicleController> &VehicleBody::getParentAircraft()
+    auto VehicleBody::getParentVehicle() -> SmartPtr<IVehicleController> &
     {
-        return m_parentAircraft;
+        return m_parentVehicle;
     }
 
-    const SmartPtr<IVehicleController> &VehicleBody::getParentAircraft() const
+    auto VehicleBody::getParentVehicle() const -> const SmartPtr<IVehicleController> &
     {
-        return m_parentAircraft;
+        return m_parentVehicle;
     }
 
     void VehicleBody::setParentVehicle( SmartPtr<IVehicleController> val )
     {
-        m_parentAircraft = val;
+        m_parentVehicle = val;
     }
 
     void VehicleBody::update()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto timer = applicationManager->getTimer();
 
         auto task = Thread::getCurrentTask();
         auto t = timer->getTime();
         auto dt = timer->getDeltaTime();
 
-        m_velocity = m_parentAircraft->getLinearVelocity();
-        m_angularVelocity = m_parentAircraft->getAngularVelocity();
+        m_velocity = m_parentVehicle->getLinearVelocity();
+        m_angularVelocity = m_parentVehicle->getAngularVelocity();
 
-        m_localVelocity = m_parentAircraft->getLocalLinearVelocity();
-        m_localAngularVelocity = m_parentAircraft->getLocalAngularVelocity();
+        m_localVelocity = m_parentVehicle->getLocalLinearVelocity();
+        m_localAngularVelocity = m_parentVehicle->getLocalAngularVelocity();
 
         FB_ASSERT( m_velocity.length() < 1e4 );
         FB_ASSERT( m_angularVelocity.length() < 1e4 );
 
-        auto aircraftWorldTransform = m_parentAircraft->getWorldTransform();
-        auto worldCenterOfMass = aircraftWorldTransform.transformPoint( m_parentAircraft->getCG() );
+        auto worldTransform = m_parentVehicle->getWorldTransform();
+        auto worldCenterOfMass = worldTransform.transformPoint( m_parentVehicle->getCG() );
+
         setWorldCenterOfMass( worldCenterOfMass );
     }
 
-    Vector3<real_Num> VehicleBody::getPointVelocity( const Vector3<real_Num> &p )
+    auto VehicleBody::getPointVelocity( const Vector3<real_Num> &p ) -> Vector3<real_Num>
     {
-        return m_parentAircraft->getPointVelocity( p );
+        return m_parentVehicle->getPointVelocity( p );
     }
 
-    bool VehicleBody::isValid() const
+    auto VehicleBody::isValid() const -> bool
     {
-        return m_parentAircraft != nullptr;
+        return m_parentVehicle != nullptr;
     }
 }  // namespace fb

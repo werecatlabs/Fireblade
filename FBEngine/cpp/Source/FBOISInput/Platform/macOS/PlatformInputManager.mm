@@ -29,7 +29,7 @@ namespace fb
 
     void PlatformInputManager::WindowListener::handleEvent( SmartPtr<render::IWindowEvent> pEvent )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto inputManager = applicationManager->getInputDeviceManager();

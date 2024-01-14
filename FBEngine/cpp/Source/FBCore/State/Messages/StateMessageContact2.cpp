@@ -6,15 +6,11 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageContact2, StateMessage );
 
-    StateMessageContact2::StateMessageContact2()
-    {
-    }
+    StateMessageContact2::StateMessageContact2() = default;
 
-    StateMessageContact2::~StateMessageContact2()
-    {
-    }
+    StateMessageContact2::~StateMessageContact2() = default;
 
-    hash32 StateMessageContact2::getContactType() const
+    auto StateMessageContact2::getContactType() const -> hash32
     {
         return m_contactType;
     }
@@ -24,7 +20,7 @@ namespace fb
         m_contactType = val;
     }
 
-    Vector2<real_Num> StateMessageContact2::getPosition() const
+    auto StateMessageContact2::getPosition() const -> Vector2<real_Num>
     {
         return m_position;
     }
@@ -34,7 +30,7 @@ namespace fb
         m_position = val;
     }
 
-    Vector2<real_Num> StateMessageContact2::getNormal() const
+    auto StateMessageContact2::getNormal() const -> Vector2<real_Num>
     {
         return m_normal;
     }

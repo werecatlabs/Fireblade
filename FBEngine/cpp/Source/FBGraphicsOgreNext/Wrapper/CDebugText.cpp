@@ -2,46 +2,39 @@
 #include <FBGraphicsOgre/Wrapper/CDebugText.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::render
 {
-    namespace render
+    FB_CLASS_REGISTER_DERIVED( fb::render, CDebugText, IDebugText );
+
+    CDebugText::CDebugText() = default;
+
+    CDebugText::~CDebugText() = default;
+
+    void CDebugText::load( SmartPtr<ISharedObject> data )
     {
-        FB_CLASS_REGISTER_DERIVED( fb::render, CDebugText, IDebugText );
+    }
 
-        CDebugText::CDebugText()
-        {
-        }
+    void CDebugText::unload( SmartPtr<ISharedObject> data )
+    {
+    }
 
-        CDebugText::~CDebugText()
-        {
-        }
+    auto CDebugText::getText() const -> String
+    {
+        return m_text;
+    }
 
-        void CDebugText::load( SmartPtr<ISharedObject> data )
-        {
-        }
+    void CDebugText::setText( const String &text )
+    {
+        m_text = text;
+    }
 
-        void CDebugText::unload( SmartPtr<ISharedObject> data )
-        {
-        }
+    auto CDebugText::getTextElement() const -> SmartPtr<IOverlayElementText>
+    {
+        return m_textElement;
+    }
 
-        String CDebugText::getText() const
-        {
-            return m_text;
-        }
-
-        void CDebugText::setText( const String &text )
-        {
-            m_text = text;
-        }
-
-        SmartPtr<IOverlayElementText> CDebugText::getTextElement() const
-        {
-            return m_textElement;
-        }
-
-        void CDebugText::setTextElement( SmartPtr<IOverlayElementText> textElement )
-        {
-            m_textElement = textElement;
-        }
-    } // namespace render
-}     // namespace fb
+    void CDebugText::setTextElement( SmartPtr<IOverlayElementText> textElement )
+    {
+        m_textElement = textElement;
+    }
+}  // namespace fb::render

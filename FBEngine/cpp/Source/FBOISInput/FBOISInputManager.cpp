@@ -673,6 +673,8 @@ namespace fb
             m_currentMouseState = fb::make_ptr<MouseState>();
             m_currentKeyboardState = fb::make_ptr<KeyboardState>();
 
+            m_inputEventQueue.resize( (u32)Thread::Task::Count );
+
             setLoadingState( LoadingState::Loaded );
         }
         catch( std::exception &e )
@@ -744,12 +746,32 @@ namespace fb
             }
         }
 
+        SmartPtr<IInputEvent> event;
+        while( m_inputEventQueue[(u32)task].try_pop( event ) )
+        {
+            if( event )
+            {
+                if( auto p = getListenersPtr() )
+                {
+                    auto &listeners = *p;
+                    for( auto listener : listeners )
+                    {
+                        if( listener )
+                        {
+                            listener->handleEvent( IEvent::Type::Input, IEvent::inputEvent,
+                                                   Array<Parameter>(), this, this, event );
+                        }
+                    }
+                }
+            }
+        }
+
         // FB_LOG("InputManager::update");
     }
 
     bool OISInputManager::mouseMoved( const OIS::MouseEvent &arg )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();
@@ -1018,7 +1040,8 @@ namespace fb
         return m_listeners;
     }
 
-    void OISInputManager::setListenersPtr( SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> listeners )
+    void OISInputManager::setListenersPtr(
+        SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> listeners )
     {
         m_listeners = listeners;
     }
@@ -1027,7 +1050,7 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto factoryManager = applicationManager->getFactoryManager();
@@ -1119,7 +1142,7 @@ namespace fb
 
     bool OISInputManager::buttonPressed( const OIS::JoyStickEvent &arg, int button )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();
@@ -1167,7 +1190,7 @@ namespace fb
 
     bool OISInputManager::sliderMoved( const OIS::JoyStickEvent &arg, int index )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();
@@ -1217,7 +1240,7 @@ namespace fb
     {
         if( isLoaded() )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto factoryManager = applicationManager->getFactoryManager();
@@ -1315,17 +1338,9 @@ namespace fb
 
     bool OISInputManager::postEvent( SmartPtr<IInputEvent> event )
     {
-        if( auto p = getListenersPtr() )
+        for( u32 i = 0; i < (u32)Thread::Task::Count; ++i )
         {
-            auto &listeners = *p;
-            for( auto listener : listeners )
-            {
-                if( listener )
-                {
-                    listener->handleEvent( IEvent::Type::Input, IEvent::inputEvent, Array<Parameter>(),
-                                           this, this, event );
-                }
-            }
+            m_inputEventQueue[i].push( event );
         }
 
         return false;
@@ -1382,14 +1397,15 @@ namespace fb
         auto p = getListenersPtr();
         if( p )
         {
-            auto listeners = Array<SmartPtr<IEventListener>>(p->begin(), p->end());
+            auto listeners = Array<SmartPtr<IEventListener>>( p->begin(), p->end() );
             auto it = std::find( listeners.begin(), listeners.end(), listener );
             if( it != listeners.end() )
             {
                 listeners.erase( it );
             }
 
-            p = fb::make_shared<ConcurrentArray<SmartPtr<IEventListener>>>( listeners.begin(), listeners.end() );
+            p = fb::make_shared<ConcurrentArray<SmartPtr<IEventListener>>>( listeners.begin(),
+                                                                            listeners.end() );
             setListenersPtr( p );
         }
     }
@@ -1409,33 +1425,6 @@ namespace fb
     }
 
     void OISInputManager::setShiftPressed( bool shiftPressed )
-    {
-    }
-
-    bool OISInputManager::isLeftPressed() const
-    {
-        return false;
-    }
-
-    void OISInputManager::setLeftPressed( bool leftPressed )
-    {
-    }
-
-    bool OISInputManager::isRightPressed() const
-    {
-        return false;
-    }
-
-    void OISInputManager::setRightPressed( bool rightPressed )
-    {
-    }
-
-    bool OISInputManager::isMiddlePressed() const
-    {
-        return false;
-    }
-
-    void OISInputManager::setMiddlePressed( bool middlePressed )
     {
     }
 
@@ -1551,6 +1540,16 @@ namespace fb
     OIS::InputManager *OISInputManager::getInputManager() const
     {
         return m_inputManager;
+    }
+
+    bool OISInputManager::isMouseButtonDown( u32 button ) const
+    {
+        if( m_mouse )
+        {
+            return m_mouse->getMouseState().buttonDown( (OIS::MouseButtonID)button );
+        }
+
+        return false;
     }
 
     bool OISInputManager::isKeyPressed( KeyCodes keyCode ) const

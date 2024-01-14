@@ -5,9 +5,11 @@
 #include <FBCore/Interface/Mesh/IMeshResource.h>
 #include <FBCore/Resource/Resource.h>
 
+#include "FBCore/Atomics/AtomicFloat.h"
+
 namespace fb
 {
-    
+
     /// Mesh resource implementation.
     class MeshResource : public Resource<IMeshResource>
     {
@@ -51,11 +53,11 @@ namespace fb
         /** @copydoc IResource::setProperties */
         void setProperties( SmartPtr<Properties> properties ) override;
 
-        /** @copydoc IResource::getStateObject */
-        SmartPtr<IStateContext> getStateObject() const override;
+        /** @copydoc IResource::getStateContext */
+        SmartPtr<IStateContext> getStateContext() const override;
 
-        /** @copydoc IResource::setStateObject */
-        void setStateObject( SmartPtr<IStateContext> stateObject ) override;
+        /** @copydoc IResource::setStateContext */
+        void setStateContext( SmartPtr<IStateContext> stateContext ) override;
 
         /** @copydoc IObject::_getObject */
         void _getObject( void **ppObject ) const override;
@@ -117,23 +119,23 @@ namespace fb
         FB_CLASS_REGISTER_DECL;
 
     protected:
-        SmartPtr<IStateContext> m_stateObject;
+        SmartPtr<IStateContext> m_stateContext;
         SmartPtr<IMesh> m_mesh;
 
-        f32 m_scale = 1.0f;
+        atomic_f32 m_scale = 1.0f;
 
         MaterialNaming m_materialNaming = MaterialNaming::MaterialName;
 
-        bool m_constraints = true;
-        bool m_animation = true;
-        bool m_visibility = true;
-        bool m_cameras = true;
-        bool m_lights = true;
+        atomic_bool m_constraints = true;
+        atomic_bool m_animation = true;
+        atomic_bool m_visibility = true;
+        atomic_bool m_cameras = true;
+        atomic_bool m_lights = true;
 
-        bool m_lightmapUVs = false;
+        atomic_bool m_lightmapUVs = false;
 
-        bool m_hasSharedVertexData = false;
+        atomic_bool m_hasSharedVertexData = false;
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif

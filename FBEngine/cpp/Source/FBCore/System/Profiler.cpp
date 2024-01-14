@@ -2,27 +2,25 @@
 #include <FBCore/System/Profiler.h>
 #include <FBCore/Core/StringUtil.h>
 #include <FBCore/Core/LogManager.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/IProfile.h>
 #include <FBCore/System/Timer.h>
 #include <FBCore/System/Profile.h>
 #include <FBCore/Thread/Threading.h>
 
+#include "FBCore/Memory/PointerUtil.h"
+
 namespace fb
 {
-    Profiler::Profiler() : m_nextUpdate( 0.f ), m_nextUpdateTime( 0.0 )
-    {
-    }
+    Profiler::Profiler() = default;
 
-    Profiler::~Profiler()
-    {
-    }
+    Profiler::~Profiler() = default;
 
     void Profiler::update()
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto timer = applicationManager->getTimer();
             auto task = Thread::getCurrentTask();
         }
@@ -32,11 +30,11 @@ namespace fb
         }
     }
 
-    SmartPtr<IProfile> Profiler::addProfile()
+    auto Profiler::addProfile() -> SmartPtr<IProfile>
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
         auto profile = fb::make_ptr<Profile>();
-        m_profiles.push_back( profile );
+        m_profiles.emplace_back( profile );
 
         return profile;
     }
@@ -51,7 +49,7 @@ namespace fb
         }
     }
 
-    SmartPtr<IProfile> Profiler::getProfile( hash64 id ) const
+    auto Profiler::getProfile( hash64 id ) const -> SmartPtr<IProfile>
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
         for( auto &p : m_profiles )
@@ -68,7 +66,7 @@ namespace fb
         return nullptr;
     }
 
-    Array<SmartPtr<IProfile>> Profiler::getProfiles() const
+    auto Profiler::getProfiles() const -> Array<SmartPtr<IProfile>>
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
         return m_profiles;

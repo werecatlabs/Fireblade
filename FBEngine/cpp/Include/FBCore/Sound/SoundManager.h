@@ -3,15 +3,16 @@
 
 #include <FBCore/Interface/Sound/ISoundManager.h>
 
-
 namespace fb
 {
 
+    /** Sound manager base implementation.
+     */
     class SoundManager : public ISoundManager
     {
     public:
         SoundManager();
-        ~SoundManager();
+        ~SoundManager() override;
 
         SmartPtr<ISound> addSound( const String &name, bool loop = true ) override;
 
@@ -56,15 +57,17 @@ namespace fb
 
         SmartPtr<IResource> loadFromFile( const String &filePath ) override;
 
-        SmartPtr<IResource> load( const String &name ) override;
+        SmartPtr<IResource> loadResource( const String &name ) override;
 
         SmartPtr<IResource> getByName( const String &name ) override;
 
         SmartPtr<IResource> getById( const String &uuid ) override;
 
         void _getObject( void **ppObject ) const override;
-    };
 
+    protected:
+        Array<SmartPtr<ISound>> m_sounds;
+    };
 }  // namespace fb
 
 #endif  // CSoundManager_h__

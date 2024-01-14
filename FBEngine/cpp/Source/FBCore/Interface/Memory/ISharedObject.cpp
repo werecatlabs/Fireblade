@@ -1,27 +1,28 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/System/RttiClassDefinition.h>
-#include <FBCore/Interface/Memory/ISharedObjectListener.h>
+#include <FBCore/Atomics/Atomics.h>
+#include <FBCore/Core/Handle.h>
+#include <FBCore/Core/Properties.h>
+#include <FBCore/Core/StringTypes.h>
 #include <FBCore/Interface/Memory/IData.h>
+#include <FBCore/Interface/Memory/ISharedObjectListener.h>
+#include <FBCore/Interface/System/IEventListener.h>
 #include <FBCore/Memory/Memory.h>
 #include <FBCore/Memory/ObjectTracker.h>
-#include <FBCore/Memory/TypeManager.h>
 #include <FBCore/Memory/PointerUtil.h>
+#include <FBCore/Memory/TypeManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/System/RttiClassDefinition.h>
-#include <FBCore/Atomics/Atomics.h>
-#include <FBCore/Core/StringTypes.h>
-#include <FBCore/Core/Handle.h>
-#include <FBCore/Interface/System/IEventListener.h>
-#include <FBCore/Interface/IApplicationManager.h>
 #include <boost/pool/singleton_pool.hpp>
+#include <utility>
 
 namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, ISharedObject, IObject );
-    typedef boost::singleton_pool<Handle, sizeof( Handle )> HandlePool;
+    using HandlePool = boost::singleton_pool<Handle, sizeof( Handle )>;
 
     ISharedObject::ScopedLock::ScopedLock( SmartPtr<ISharedObject> sharedObject ) :
-        m_sharedObject( sharedObject )
+        m_sharedObject( std::move( sharedObject ) )
     {
         if( m_sharedObject )
         {
@@ -80,7 +81,8 @@ namespace fb
     {
     }
 
-    s32 ISharedObject::addWeakReference( void *address, const c8 *file, u32 line, const c8 *func )
+    auto ISharedObject::addWeakReference( void *address, const c8 *file, u32 line, const c8 *func )
+        -> s32
     {
 #if FB_TRACK_REFERENCES
 #    if FB_TRACK_WEAK_REFERENCES
@@ -92,7 +94,7 @@ namespace fb
         return ++m_weakReferences;
     }
 
-    bool ISharedObject::removeWeakReference()
+    auto ISharedObject::removeWeakReference() -> bool
     {
 #if FB_TRACK_REFERENCES
 #    if FB_TRACK_WEAK_REFERENCES
@@ -109,7 +111,8 @@ namespace fb
         return --m_weakReferences == 0;
     }
 
-    bool ISharedObject::removeWeakReference( void *address, const c8 *file, u32 line, const c8 *func )
+    auto ISharedObject::removeWeakReference( void *address, const c8 *file, u32 line, const c8 *func )
+        -> bool
     {
 #if FB_TRACK_REFERENCES
 #    if FB_TRACK_WEAK_REFERENCES
@@ -123,7 +126,8 @@ namespace fb
         return --m_weakReferences == 0;
     }
 
-    bool ISharedObject::removeReference( void *address, const c8 *file, const u32 line, const c8 *func )
+    auto ISharedObject::removeReference( void *address, const c8 *file, const u32 line, const c8 *func )
+        -> bool
     {
 #if FB_TRACK_REFERENCES
         auto &objectTracker = ObjectTracker::instance();
@@ -160,7 +164,8 @@ namespace fb
         }
     }
 
-    s32 ISharedObject::addReference( void *address, const c8 *file, const u32 line, const c8 *func )
+    auto ISharedObject::addReference( void *address, const c8 *file, const u32 line, const c8 *func )
+        -> s32
     {
 #if FB_TRACK_REFERENCES
         auto references = ++( *m_references );
@@ -191,14 +196,14 @@ namespace fb
     {
     }
 
-    const Atomic<LoadingState> &ISharedObject::getLoadingState() const
+    auto ISharedObject::getLoadingState() const -> const Atomic<LoadingState> &
     {
         return m_loadingState;
     }
 
     void ISharedObject::setLoadingState( const Atomic<LoadingState> &state )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         if( applicationManager )
         {
             if( applicationManager->isLoaded() )
@@ -211,8 +216,8 @@ namespace fb
                     auto args = Array<Parameter>();
                     args.resize( 2 );
 
-                    args[0] = Parameter( (s32)oldState.load() );
-                    args[1] = Parameter( (s32)state.load() );
+                    args[0] = Parameter( static_cast<s32>( oldState.load() ) );
+                    args[1] = Parameter( static_cast<s32>( state.load() ) );
 
                     applicationManager->triggerEvent( IEvent::Type::Object, IEvent::loadingStateChanged,
                                                       args, this, this, nullptr );
@@ -229,17 +234,17 @@ namespace fb
         }
     }
 
-    bool ISharedObject::isLoading() const
+    auto ISharedObject::isLoading() const -> bool
     {
         return m_loadingState == LoadingState::Loading;
     }
 
-    bool ISharedObject::isLoadingQueued() const
+    auto ISharedObject::isLoadingQueued() const -> bool
     {
         return m_loadingState == LoadingState::LoadingQueued;
     }
 
-    bool ISharedObject::isThreadSafe() const
+    auto ISharedObject::isThreadSafe() const -> bool
     {
         return false;
     }
@@ -256,12 +261,12 @@ namespace fb
         }
     }
 
-    bool ISharedObject::isPoolElement() const
+    auto ISharedObject::isPoolElement() const -> bool
     {
         return ( m_objectFlags & GC_FLAG_POOL_ELEMENT ) != 0;
     }
 
-    SmartPtr<ISharedObject> ISharedObject::toData() const
+    auto ISharedObject::toData() const -> SmartPtr<ISharedObject>
     {
         return nullptr;
     }
@@ -270,12 +275,41 @@ namespace fb
     {
     }
 
-    Array<SmartPtr<ISharedObject>> ISharedObject::getChildObjects() const
+    auto ISharedObject::getProperties() const -> SmartPtr<Properties>
     {
-        return Array<SmartPtr<ISharedObject>>();
+        s32 references = getReferences();
+        s32 weakReferences = getWeakReferences();
+        auto loadingState = getLoadingState();
+        auto iLoadingState = static_cast<s32>( loadingState.load() );
+
+        auto properties = fb::make_ptr<Properties>();
+        properties->setProperty( "references", references );
+        properties->setProperty( "weakReferences", weakReferences );
+        properties->setProperty( "loadingState", iLoadingState );
+        return properties;
     }
 
-    Array<SmartPtr<IEventListener>> ISharedObject::getObjectListeners() const
+    void ISharedObject::setProperties( SmartPtr<Properties> properties )
+    {
+        s32 references = 0;
+        s32 weakReferences = 0;
+        s32 loadingState = 0;
+
+        properties->getPropertyValue( "references", references );
+        properties->getPropertyValue( "weakReferences", weakReferences );
+        properties->getPropertyValue( "loadingState", loadingState );
+
+        m_references = references;
+        m_weakReferences = weakReferences;
+        m_loadingState = static_cast<LoadingState>( loadingState );
+    }
+
+    auto ISharedObject::getChildObjects() const -> Array<SmartPtr<ISharedObject>>
+    {
+        return {};
+    }
+
+    auto ISharedObject::getObjectListeners() const -> Array<SmartPtr<IEventListener>>
     {
         if( auto p = getObjectListenersPtr() )
         {
@@ -283,21 +317,21 @@ namespace fb
             return Array<SmartPtr<IEventListener>>( listeners.begin(), listeners.end() );
         }
 
-        return Array<SmartPtr<IEventListener>>();
+        return {};
     }
 
-    u32 ISharedObject::getNumListeners() const
+    auto ISharedObject::getNumListeners() const -> u32
     {
         if( auto p = getObjectListenersPtr() )
         {
             auto &listeners = *p;
-            return (u32)listeners.size();
+            return static_cast<u32>( listeners.size() );
         }
 
         return 0;
     }
 
-    bool ISharedObject::hasObjectListener( SmartPtr<IEventListener> listener ) const
+    auto ISharedObject::hasObjectListener( SmartPtr<IEventListener> listener ) const -> bool
     {
         if( auto p = getObjectListenersPtr() )
         {
@@ -338,7 +372,7 @@ namespace fb
         setObjectListenersPtr( p );
     }
 
-    SmartPtr<IEventListener> ISharedObject::findObjectListener( const String &id ) const
+    auto ISharedObject::findObjectListener( const String &id ) const -> SmartPtr<IEventListener>
     {
         auto listeners = getObjectListeners();
         for( auto listener : listeners )
@@ -355,7 +389,7 @@ namespace fb
         return nullptr;
     }
 
-    ISharedObjectListener *ISharedObject::getSharedObjectListener() const
+    auto ISharedObject::getSharedObjectListener() const -> ISharedObjectListener *
     {
         return m_sharedObjectListener.load();
     }
@@ -365,7 +399,7 @@ namespace fb
         m_sharedObjectListener = listener;
     }
 
-    bool ISharedObject::getEnableReferenceTracking() const
+    auto ISharedObject::getEnableReferenceTracking() const -> bool
     {
         return ( m_objectFlags & GC_FLAG_ENABLE_REFERENCE_TRACKING ) != 0;
     }
@@ -382,7 +416,7 @@ namespace fb
         }
     }
 
-    bool ISharedObject::isGarbageCollected() const
+    auto ISharedObject::isGarbageCollected() const -> bool
     {
         return ( m_objectFlags & GC_FLAG_GARBAGE_COLLECTED ) != 0;
     }
@@ -407,7 +441,8 @@ namespace fb
     {
     }
 
-    SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> ISharedObject::getObjectListenersPtr() const
+    auto ISharedObject::getObjectListenersPtr() const
+        -> SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>>
     {
         return m_sharedEventListeners;
     }
@@ -417,7 +452,7 @@ namespace fb
         m_sharedEventListeners = p;
     }
 
-#if !FB_FINAL
+#if _DEBUG
     s32 ISharedObject::addWeakReference()
     {
 #    if FB_TRACK_REFERENCES

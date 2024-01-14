@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE( actor_component_test )
 
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto taskManager = applicationManager->getTaskManager();
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE( actor_component_test )
                     //if (factory->isObjectDerivedFrom<scene::IComponent>())
                     if( factory->isObjectDerivedFrom<scene::Mesh>() )
                     {
-                        auto component = factory->createInstance();
+                        auto component = factory->make_ptr<scene::Mesh>();
                         actor->addComponentInstance( component );
 
                         auto timer = applicationManager->getTimer();
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE( actor_test )
 
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             BOOST_CHECK( applicationManager );
 
             auto taskManager = applicationManager->getTaskManager();
@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE( actor_dragdrop_test )
 
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             BOOST_CHECK( applicationManager );
 
             auto taskManager = applicationManager->getTaskManager();
@@ -344,7 +344,7 @@ BOOST_AUTO_TEST_CASE( actor_prefab_test )
 
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             BOOST_CHECK( applicationManager );
 
             auto taskManager = applicationManager->getTaskManager();
@@ -480,7 +480,7 @@ BOOST_AUTO_TEST_CASE( actor_addremove_test )
 
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             BOOST_CHECK( applicationManager );
 
             auto taskManager = applicationManager->getTaskManager();

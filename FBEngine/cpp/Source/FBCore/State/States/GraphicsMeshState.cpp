@@ -7,15 +7,11 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, GraphicsMeshState, GraphicsObjectState );
 
-    GraphicsMeshState::GraphicsMeshState()
-    {
-    }
+    GraphicsMeshState::GraphicsMeshState() = default;
 
-    GraphicsMeshState::~GraphicsMeshState()
-    {
-    }
+    GraphicsMeshState::~GraphicsMeshState() = default;
 
-    SmartPtr<IState> GraphicsMeshState::clone() const
+    auto GraphicsMeshState::clone() const -> SmartPtr<IState>
     {
         auto state = fb::make_ptr<GraphicsMeshState>();
 

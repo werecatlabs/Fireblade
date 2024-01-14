@@ -1,5 +1,5 @@
 #include "FBLuabind/FBLuabindPCH.h"
-#include "FBLuabind/Bindings/ScriptObjectBind.h"
+#include "FBLuabind/Bindings/ObjectBind.h"
 #include <luabind/luabind.hpp>
 #include "FBLuabind/SmartPtrConverter.h"
 #include "FBLuabind/ParamConverter.h"

@@ -5,10 +5,8 @@
 #include <FBGraphicsOgreNext/Wrapper/CRenderTargetOgreNext.h>
 #include <FBCore/Interface/Graphics/IWindow.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Core/Map.h>
+#include <FBCore/Core/ConcurrentQueue.h>
 #include <OgreWindowEventUtilities.h>
-
-#include "FBCore/Core/ConcurrentQueue.h"
 
 namespace fb
 {
@@ -65,7 +63,7 @@ namespace fb
             // IWindow functions
             //
             void handleEvent( SmartPtr<IWindowEvent> event ) override;
-            
+
             /** @copydoc IWindow::getTitle */
             String getTitle() const override;
 
@@ -166,7 +164,7 @@ namespace fb
                 CWindowOgreNext *m_owner = nullptr;
             };
 
-            void handleQueuedEvent(SmartPtr<IWindowEvent> event);
+            void handleQueuedEvent( SmartPtr<IWindowEvent> event );
 
             ConcurrentQueue<SmartPtr<IWindowEvent>> m_eventQueue;
 

@@ -10,24 +10,25 @@
 
 namespace fb
 {
-    StateContext::StateContext()
-    {
-    }
+    StateContext::StateContext() = default;
 
-    StateContext::~StateContext()
-    {
-    }
+    StateContext::~StateContext() = default;
 
     void StateContext::setOwner( SmartPtr<ISharedObject> owner )
     {
     }
 
-    SmartPtr<ISharedObject> StateContext::getOwner() const
+    auto StateContext::getOwner() -> SmartPtr<ISharedObject> &
     {
-        return nullptr;
+        return m_owner;
     }
 
-    bool StateContext::isDirty() const
+    auto StateContext::getOwner() const -> const SmartPtr<ISharedObject> &
+    {
+        return m_owner;
+    }
+
+    auto StateContext::isDirty() const -> bool
     {
         return false;
     }
@@ -44,12 +45,12 @@ namespace fb
     {
     }
 
-    bool StateContext::removeStateListener( SmartPtr<IStateListener> stateListner )
+    auto StateContext::removeStateListener( SmartPtr<IStateListener> stateListner ) -> bool
     {
         return false;
     }
 
-    SharedPtr<ConcurrentArray<SmartPtr<IStateListener>>> StateContext::getStateListeners() const
+    auto StateContext::getStateListeners() const -> SharedPtr<ConcurrentArray<SmartPtr<IStateListener>>>
     {
         return nullptr;
     }
@@ -58,45 +59,104 @@ namespace fb
     {
     }
 
-    bool StateContext::removeEventListener( SmartPtr<IEventListener> eventListner )
+    auto StateContext::removeEventListener( SmartPtr<IEventListener> eventListner ) -> bool
     {
         return false;
     }
 
-    SharedPtr<Array<SmartPtr<IEventListener>>> StateContext::getEventListeners() const
+    auto StateContext::getEventListeners() const -> SharedPtr<Array<SmartPtr<IEventListener>>>
     {
         return nullptr;
     }
 
-    SmartPtr<IState> StateContext::getLatestOutputState() const
+    void StateContext::addState( SmartPtr<IState> state )
     {
-        return nullptr;
+        auto p = getStatesPtr();
+        if( !p )
+        {
+            p = fb::make_shared<ConcurrentArray<SmartPtr<IState>>>();
+            setStatesPtr( p );
+        }
+
+        if( p )
+        {
+            auto &states = *p;
+            states.push_back( state );
+        }
     }
 
-    SmartPtr<IState> StateContext::getOutputState( time_interval time ) const
+    void StateContext::removeState( SmartPtr<IState> state )
     {
-        return nullptr;
+        auto states = getStates();
+        states.erase( std::remove( states.begin(), states.end(), state ), states.end() );
+
+        auto newStates =
+            fb::make_shared<ConcurrentArray<SmartPtr<IState>>>( states.begin(), states.end() );
+        setStatesPtr( newStates );
     }
 
-    void StateContext::addOutputState( SmartPtr<IState> state )
+    auto StateContext::getStateByTypeId( u32 typeId ) -> SmartPtr<IState> &
     {
+        if( auto p = getStatesPtr() )
+        {
+            auto &states = *p;
+            for( auto &state : states )
+            {
+                if( state->getTypeInfo() == typeId )
+                {
+                    return state;
+                }
+            }
+        }
+
+        static SmartPtr<IState> nullState;
+        return nullState;
     }
 
-    SmartPtr<IState> StateContext::getState() const
+    auto StateContext::getStateByTypeId( u32 typeId ) const -> const SmartPtr<IState> &
     {
-        return m_state;
+        if( auto p = getStatesPtr() )
+        {
+            auto &states = *p;
+            for( auto &state : states )
+            {
+                if( state->getTypeInfo() == typeId )
+                {
+                    return state;
+                }
+            }
+        }
+
+        static SmartPtr<IState> nullState;
+        return nullState;
     }
 
-    void StateContext::setState( SmartPtr<IState> state )
+    auto StateContext::getStates() const -> Array<SmartPtr<IState>>
     {
-        m_state = state;
+        if( auto p = getStatesPtr() )
+        {
+            auto states = Array<SmartPtr<IState>>( p->begin(), p->end() );
+            return states;
+        }
+
+        return {};
+    }
+
+    auto StateContext::getStatesPtr() const -> SharedPtr<ConcurrentArray<SmartPtr<IState>>>
+    {
+        return m_states;
+    }
+
+    void StateContext::setStatesPtr( SharedPtr<ConcurrentArray<SmartPtr<IState>>> states )
+    {
+        m_states = states;
     }
 
     void StateContext::sendMessage( SmartPtr<IStateMessage> message )
     {
     }
 
-    SmartPtr<Properties> StateContext::getProperties() const
+    auto StateContext::getProperties() const -> SmartPtr<Properties>
     {
         return nullptr;
     }
@@ -105,10 +165,10 @@ namespace fb
     {
     }
 
-    Parameter StateContext::triggerEvent( IEvent::Type eventType, hash_type eventValue,
-                                          const Array<Parameter> &arguments,
-                                          SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object,
-                                          SmartPtr<IEvent> event )
+    auto StateContext::triggerEvent( IEvent::Type eventType, hash_type eventValue,
+                                     const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                     SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
+        -> Parameter
     {
         if( auto pEventListeners = getEventListeners() )
         {
@@ -119,7 +179,6 @@ namespace fb
             }
         }
 
-        return Parameter();
+        return {};
     }
-
 }  // end namespace fb

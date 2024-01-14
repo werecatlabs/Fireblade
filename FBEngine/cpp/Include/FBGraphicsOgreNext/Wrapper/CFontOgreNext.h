@@ -5,14 +5,14 @@
 #include <FBCore/Interface/Graphics/IFont.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Graphics/CResourceGraphics.h>
+#include <FBCore/Graphics/ResourceGraphics.h>
 #include <OgreFont.h>
 
 namespace fb
 {
     namespace render
     {
-        class CFontOgreNext : public CResourceGraphics<IFont>
+        class CFontOgreNext : public ResourceGraphics<IFont>
         {
         public:
             static const hash_type SET_TEXTURE_HASH;
@@ -29,8 +29,8 @@ namespace fb
             void reload( SmartPtr<ISharedObject> data ) override;
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            SmartPtr<IStateContext> getStateObject() const override;
-            void setStateObject( SmartPtr<IStateContext> stateObject ) override;
+            SmartPtr<IStateContext> getStateContext() const override;
+            void setStateContext( SmartPtr<IStateContext> stateContext ) override;
 
             String getName() const;
             void setName( const String &name );
@@ -90,7 +90,7 @@ namespace fb
             String m_name;
 
             SmartPtr<IMaterialNode> m_root;
-            SmartPtr<IStateContext> m_stateObject;
+            SmartPtr<IStateContext> m_stateContext;
             SmartPtr<IStateListener> m_stateListener;
 
             SmartPtr<IMaterialTechnique> m_technique;

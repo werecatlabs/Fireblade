@@ -9,25 +9,23 @@ namespace fb
 {
     namespace ui
     {
-
         class ImGuiTabBar : public CImGuiElement<IUITabBar>
         {
         public:
             ImGuiTabBar();
             ~ImGuiTabBar() override;
 
-            void update();
+            void update() override;
 
-            virtual SmartPtr<IUITabItem> addTabItem();
-            virtual void removeTabItem( SmartPtr<IUITabItem> tabItem );
+            SmartPtr<IUITabItem> addTabItem() override;
+            void removeTabItem( SmartPtr<IUITabItem> tabItem ) override;
 
             FB_CLASS_REGISTER_DECL;
 
         protected:
             Array<SmartPtr<IUITabItem>> m_tabItems;
         };
-
-    }  // end namespace ui
-}  // end namespace fb
+    } // end namespace ui
+}     // end namespace fb
 
 #endif  // ImGuiTabBar_h__

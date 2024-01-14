@@ -7,7 +7,6 @@
 namespace fb
 {
 
-    
     class KeyFrameTransform2 : public KeyFrame
     {
     public:

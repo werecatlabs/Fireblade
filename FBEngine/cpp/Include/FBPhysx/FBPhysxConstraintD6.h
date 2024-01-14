@@ -9,13 +9,14 @@ namespace fb
 {
     namespace physics
     {
-        
+
         class PhysxConstraintD6 : public PhysxConstraint<IConstraintD6>
         {
         public:
             PhysxConstraintD6() = default;
             ~PhysxConstraintD6() override;
 
+            void load( SmartPtr<ISharedObject> data ) override;
             void unload( SmartPtr<ISharedObject> data ) override;
 
             void update() override;
@@ -35,11 +36,17 @@ namespace fb
             void setMotion( D6Axis::Enum axis, D6Motion::Enum type ) override;
             D6Motion::Enum getMotion( D6Axis::Enum axis ) const override;
 
+            virtual void handleStateChanged( const SmartPtr<IStateMessage> &message );
+
+            virtual void handleStateChanged( SmartPtr<IState> &state );
+
+            virtual void handleQuery( SmartPtr<IStateQuery> &query );
+
         private:
             physx::PxD6Joint *m_joint = nullptr;
             Transform3<real_Num> m_drivePosition;
         };
-    } // end namespace physics
-}     // end namespace fb
+    }  // end namespace physics
+}  // end namespace fb
 
 #endif  // FBPhysxConstraintD6_h__

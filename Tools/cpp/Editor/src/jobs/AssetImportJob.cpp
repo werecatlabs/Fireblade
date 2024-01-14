@@ -2,29 +2,22 @@
 #include "jobs/AssetImportJob.h"
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    AssetImportJob::AssetImportJob() = default;
+
+    AssetImportJob::~AssetImportJob() = default;
+
+    void AssetImportJob::execute()
     {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
 
-        AssetImportJob::AssetImportJob()
-        {
-        }
+        auto resourceDatabase = applicationManager->getResourceDatabase();
+        FB_ASSERT( resourceDatabase );
 
-        AssetImportJob::~AssetImportJob()
-        {
-        }
+        resourceDatabase->importAssets();
+    }
 
-        void AssetImportJob::execute()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto resourceDatabase = applicationManager->getResourceDatabase();
-            FB_ASSERT( resourceDatabase );
-
-            resourceDatabase->importAssets();
-        }
-
-    }  // namespace editor
-}  // namespace fb
+}  // namespace fb::editor

@@ -6,7 +6,7 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, StatePhysicsDynamicState2, StateMessage );
 
-    Vector2<real_Num> StatePhysicsDynamicState2::getPosition() const
+    auto StatePhysicsDynamicState2::getPosition() const -> Vector2<real_Num>
     {
         return m_position;
     }
@@ -16,7 +16,7 @@ namespace fb
         m_position = val;
     }
 
-    Vector2<real_Num> StatePhysicsDynamicState2::getVelocity() const
+    auto StatePhysicsDynamicState2::getVelocity() const -> Vector2<real_Num>
     {
         return m_velocity;
     }
@@ -26,7 +26,7 @@ namespace fb
         m_velocity = val;
     }
 
-    Vector2<real_Num> StatePhysicsDynamicState2::getForce() const
+    auto StatePhysicsDynamicState2::getForce() const -> Vector2<real_Num>
     {
         return m_force;
     }
@@ -36,7 +36,7 @@ namespace fb
         m_force = val;
     }
 
-    real_Num StatePhysicsDynamicState2::getAngularVelocity() const
+    auto StatePhysicsDynamicState2::getAngularVelocity() const -> real_Num
     {
         return m_angularVelocity;
     }
@@ -46,7 +46,7 @@ namespace fb
         m_angularVelocity = val;
     }
 
-    real_Num StatePhysicsDynamicState2::getOrientation() const
+    auto StatePhysicsDynamicState2::getOrientation() const -> real_Num
     {
         return m_orientation;
     }

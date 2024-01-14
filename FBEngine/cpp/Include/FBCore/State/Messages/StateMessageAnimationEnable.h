@@ -5,7 +5,7 @@
 
 namespace fb
 {
-    
+
     class StateMessageAnimationEnable : public StateMessage
     {
     public:

@@ -5,20 +5,16 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageStringValue, StateMessage );
 
-    StateMessageStringValue::StateMessageStringValue()
-    {
-    }
+    StateMessageStringValue::StateMessageStringValue() = default;
 
-    StateMessageStringValue::~StateMessageStringValue()
-    {
-    }
+    StateMessageStringValue::~StateMessageStringValue() = default;
 
     void StateMessageStringValue::setValue( const String &val )
     {
         m_value = val;
     }
 
-    String StateMessageStringValue::getValue() const
+    auto StateMessageStringValue::getValue() const -> String
     {
         return m_value;
     }

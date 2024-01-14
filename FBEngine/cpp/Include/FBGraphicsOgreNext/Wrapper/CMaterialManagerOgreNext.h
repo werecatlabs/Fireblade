@@ -2,7 +2,7 @@
 #define CMaterialManagerOgreNext_h__
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
-#include <FBCore/Graphics/CMaterialManager.h>
+#include <FBCore/Graphics/MaterialManager.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/UtilityTypes.h>
@@ -13,7 +13,7 @@ namespace fb
     {
 
         /** Class used to manage materials. */
-        class CMaterialManagerOgreNext : public CMaterialManager
+        class CMaterialManagerOgreNext : public MaterialManager
         {
         public:
             /** Constructor. */

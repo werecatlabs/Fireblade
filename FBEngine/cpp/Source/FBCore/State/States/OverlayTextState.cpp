@@ -6,9 +6,9 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, OverlayTextState, BaseState );
+    FB_CLASS_REGISTER_DERIVED( fb, OverlayTextState, OverlayElementState );
 
-    String OverlayTextState::getText() const
+    auto OverlayTextState::getText() const -> String
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_text;
@@ -25,7 +25,7 @@ namespace fb
         }
     }
 
-    u32 OverlayTextState::getAlignment() const
+    auto OverlayTextState::getAlignment() const -> u32
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_alignment;

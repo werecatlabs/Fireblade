@@ -19,7 +19,7 @@
 
 namespace fb
 {
-    
+
     template <class T>
     class MathUtil
     {
@@ -192,7 +192,7 @@ namespace fb
 
     template <class T>
     Set<Vector2<T>> MathUtil<T>::orderPoints( const Set<Vector2<T>> &polygonPoints,
-                                                 const Vector2<T> &centerPoint, u8 pointOrdering )
+                                              const Vector2<T> &centerPoint, u8 pointOrdering )
     {
         FB_UNUSED( pointOrdering );
 
@@ -242,7 +242,7 @@ namespace fb
 
     template <class T>
     Array<Vector2<T>> MathUtil<T>::orderPoints( const Array<Vector2<T>> &polygonPoints,
-                                                   const Vector2<T> &centerPoint, u8 pointOrdering )
+                                                const Vector2<T> &centerPoint, u8 pointOrdering )
     {
         FB_UNUSED( pointOrdering );
 
@@ -293,7 +293,7 @@ namespace fb
 
     template <class T>
     void MathUtil<T>::getPolygonIntervals( const Polygon2F &polygon, const Vector2F &axis, f32 &min,
-                                              f32 &max )
+                                           f32 &max )
     {
         min = 1e10;
         max = -1e10;
@@ -318,7 +318,7 @@ namespace fb
 
     template <class T>
     void MathUtil<T>::getPolygonIntervals( const Polygon3F &polygon, const Vector3F &axis, f32 &min,
-                                              f32 &max )
+                                           f32 &max )
     {
         min = 1e10;
         max = -1e10;

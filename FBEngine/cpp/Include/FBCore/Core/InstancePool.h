@@ -23,7 +23,7 @@ namespace fb
         {
         public:
             Listener() = default;
-            Listener( InstancePool *owner );
+            explicit Listener( InstancePool *owner );
             Listener( const Listener &other );
             ~Listener() override;
 
@@ -48,7 +48,7 @@ namespace fb
         };
 
         InstancePool();
-        InstancePool( u32 numElements );
+        explicit InstancePool( u32 numElements );
         ~InstancePool() override;
 
         void allocate_data();
@@ -117,7 +117,7 @@ namespace fb
     template <class T>
     InstancePool<T>::~InstancePool()
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );  
+        RecursiveMutex::ScopedLock lock( m_mutex );
 
         auto pPool = m_pool.load();
         auto &pool = *pPool;
@@ -137,7 +137,7 @@ namespace fb
     template <class T>
     void InstancePool<T>::allocate_data()
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );  
+        RecursiveMutex::ScopedLock lock( m_mutex );
 
         if( m_growSize > 0 )
         {

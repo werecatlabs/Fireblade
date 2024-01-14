@@ -4,10 +4,9 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IFrameGrabber.h>
 
-
 namespace fb
 {
-    
+
     class FrameGrabberStandard : public IFrameGrabber
     {
     public:

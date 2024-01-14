@@ -5,47 +5,40 @@
 #include <ui/UIManager.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    CreatePluginCodeJob::CreatePluginCodeJob() = default;
+
+    CreatePluginCodeJob::~CreatePluginCodeJob() = default;
+
+    void CreatePluginCodeJob::execute()
     {
-
-        CreatePluginCodeJob::CreatePluginCodeJob()
+        try
         {
-        }
+            auto applicationManager = core::ApplicationManager::instance();
+            auto editorManager = EditorManager::getSingletonPtr();
+            auto projectManager = editorManager->getProjectManager();
 
-        CreatePluginCodeJob::~CreatePluginCodeJob()
-        {
-        }
+            auto path = applicationManager->getProjectPath();
 
-        void CreatePluginCodeJob::execute()
-        {
-            try
+            auto pluginPath = path + "/Plugin";
+            if( !Path::isExistingFolder( pluginPath ) )
             {
-                auto applicationManager = core::IApplicationManager::instance();
-                auto editorManager = EditorManager::getSingletonPtr();
-                auto projectManager = editorManager->getProjectManager();
-
-                auto path = applicationManager->getProjectPath();
-
-                auto pluginPath = path + "/Plugin";
-                if( !Path::isExistingFolder( pluginPath ) )
-                {
-                    Path::createDirectories( pluginPath );
-                }
-
-                auto project = editorManager->getProject();
-                auto pluginHeaderStr = project->getPluginHeader();
-                auto pluginSourceStr = project->getPluginSource();
-
-                Path::writeAllText( pluginPath + "/Plugin.h", pluginHeaderStr );
-                Path::writeAllText( pluginPath + "/Plugin.cpp", pluginSourceStr );
+                Path::createDirectories( pluginPath );
             }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
+
+            auto project = editorManager->getProject();
+            auto pluginHeaderStr = project->getPluginHeader();
+            auto pluginSourceStr = project->getPluginSource();
+
+            Path::writeAllText( pluginPath + "/Plugin.h", pluginHeaderStr );
+            Path::writeAllText( pluginPath + "/Plugin.cpp", pluginSourceStr );
         }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
 
-    }  // end namespace editor
-}  // end namespace fb
+}  // namespace fb::editor

@@ -12,6 +12,7 @@ namespace fb
         static void show( const String &text );
         static void show( const char *text );
     };
+
 }  // end namespace fb
 
 #endif  // MessageBox_h__

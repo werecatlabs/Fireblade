@@ -14,7 +14,6 @@ namespace fb
     FileSystemArchive::FileSystemArchive( const String &path, bool ignoreCase, bool ignorePaths ) :
         m_path( path )
     {
-        setEnableReferenceTracking( true );
     }
 
     FileSystemArchive::~FileSystemArchive()
@@ -28,7 +27,7 @@ namespace fb
         {
             setLoadingState( LoadingState::Loading );
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto factoryManager = applicationManager->getFactoryManager();
@@ -42,7 +41,7 @@ namespace fb
 
             m_fileList = factoryManager->make_ptr<FileList>();
             m_fileList->setPath( path );
-            FB_ASSERT( m_fileList->getReferences() == 1 );
+            //FB_ASSERT( m_fileList->getReferences() == 1 );
 
             auto files = Path::getFiles( path );
 
@@ -89,7 +88,7 @@ namespace fb
                 FB_ASSERT( Path::isPathAbsolute( absolutePath ) );
                 fileInfo.absolutePath = absolutePath;
 
-                fileInfo.isDirectory = Path::isFolder(absolutePath);
+                fileInfo.isDirectory = Path::isFolder( absolutePath );
 
                 fileInfo.fileId = StringUtil::getHash64( filePath );
 
@@ -104,7 +103,7 @@ namespace fb
                 addFilePtr( fileInfo );
             }
 
-            FB_ASSERT( m_fileList->getReferences() == 1 );
+            //FB_ASSERT( m_fileList->getReferences() == 1 );
 
             setLoadingState( LoadingState::Loaded );
         }
@@ -136,11 +135,11 @@ namespace fb
             {
                 setLoadingState( LoadingState::Unloading );
 
-                if( m_fileList )
+                if( auto fileList = getFileList() )
                 {
-                    m_fileList->setFilesPtr( nullptr );
-                    m_fileList->unload( nullptr );
-                    m_fileList = nullptr;
+                    fileList->setFilesPtr( nullptr );
+                    fileList->unload( nullptr );
+                    setFileList( nullptr );
                 }
 
                 setLoadingState( LoadingState::Unloaded );
@@ -152,12 +151,17 @@ namespace fb
         }
     }
 
-    SmartPtr<IFileList> FileSystemArchive::getFileList() const
+    auto FileSystemArchive::getFileList() const -> SmartPtr<IFileList>
     {
         return m_fileList;
     }
 
-    Array<FileInfo> FileSystemArchive::getFiles() const
+    void FileSystemArchive::setFileList( SmartPtr<IFileList> fileList )
+    {
+        m_fileList = fileList;
+    }
+
+    auto FileSystemArchive::getFiles() const -> Array<FileInfo>
     {
         if( auto p = getFilesPtr() )
         {
@@ -165,15 +169,15 @@ namespace fb
             return Array<FileInfo>( files.begin(), files.end() );
         }
 
-        return Array<FileInfo>();
+        return {};
     }
 
-    u8 FileSystemArchive::getType() const
+    auto FileSystemArchive::getType() const -> u8
     {
         return static_cast<u8>( IFileSystem::ArchiveType::Folder );
     }
 
-    String FileSystemArchive::getPassword() const
+    auto FileSystemArchive::getPassword() const -> String
     {
         return m_password;
     }
@@ -183,14 +187,14 @@ namespace fb
         m_password = val;
     }
 
-    SmartPtr<IStream> FileSystemArchive::open( const String &filePath, bool input, bool binary,
-                                                bool truncate, bool ignorePath )
+    auto FileSystemArchive::open( const String &filePath, bool input, bool binary, bool truncate,
+                                  bool ignorePath ) -> SmartPtr<IStream>
     {
         try
         {
             FB_ASSERT( !StringUtil::isNullOrEmpty( filePath ) );
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto projectPath = applicationManager->getProjectPath();
@@ -254,7 +258,8 @@ namespace fb
         return nullptr;
     }
 
-    bool FileSystemArchive::exists( const String &filePath, bool ignorePath, bool ignoreCase ) const
+    auto FileSystemArchive::exists( const String &filePath, bool ignorePath, bool ignoreCase ) const
+        -> bool
     {
         if( auto p = getFilesPtr() )
         {
@@ -334,12 +339,12 @@ namespace fb
         return false;
     }
 
-    bool FileSystemArchive::isReadOnly() const
+    auto FileSystemArchive::isReadOnly() const -> bool
     {
         return false;
     }
 
-    String FileSystemArchive::getPath() const
+    auto FileSystemArchive::getPath() const -> String
     {
         return m_path;
     }
@@ -351,32 +356,32 @@ namespace fb
         m_path = StringUtil::replaceAll( m_path.c_str(), "//", "/" );
     }
 
-    bool FileSystemArchive::findFileInfo( hash64 id, FileInfo &fileInfo, bool ignorePath ) const
+    auto FileSystemArchive::findFileInfo( hash64 id, FileInfo &fileInfo, bool ignorePath ) const -> bool
     {
-        if( m_fileList )
+        if( auto fileList = getFileList() )
         {
-            return m_fileList->findFileInfo( id, fileInfo, ignorePath );
+            return fileList->findFileInfo( id, fileInfo, ignorePath );
         }
 
         return false;
     }
 
-    bool FileSystemArchive::findFileInfo( const String &filePath, FileInfo &fileInfo,
-                                           bool ignorePath ) const
+    auto FileSystemArchive::findFileInfo( const String &filePath, FileInfo &fileInfo,
+                                          bool ignorePath ) const -> bool
     {
-        if( m_fileList )
+        if( auto fileList = getFileList() )
         {
-            return m_fileList->findFileInfo( filePath, fileInfo, ignorePath );
+            return fileList->findFileInfo( filePath, fileInfo, ignorePath );
         }
 
         return false;
     }
 
-    SharedPtr<ConcurrentArray<FileInfo>> FileSystemArchive::getFilesPtr() const
+    auto FileSystemArchive::getFilesPtr() const -> SharedPtr<ConcurrentArray<FileInfo>>
     {
-        if( m_fileList )
+        if( auto fileList = getFileList() )
         {
-            return m_fileList->getFilesPtr();
+            return fileList->getFilesPtr();
         }
 
         return nullptr;
@@ -384,9 +389,9 @@ namespace fb
 
     void FileSystemArchive::addFilePtr( const FileInfo &file )
     {
-        if( m_fileList )
+        if( auto fileList = getFileList() )
         {
-            m_fileList->addFilePtr( file );
+            fileList->addFilePtr( file );
         }
     }
 

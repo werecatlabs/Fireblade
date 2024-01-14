@@ -10,11 +10,9 @@ namespace fb
     {
     }
 
-    StateMessageAnimationEnable::~StateMessageAnimationEnable()
-    {
-    }
+    StateMessageAnimationEnable::~StateMessageAnimationEnable() = default;
 
-    String StateMessageAnimationEnable::getName() const
+    auto StateMessageAnimationEnable::getName() const -> String
     {
         return m_name;
     }
@@ -24,7 +22,7 @@ namespace fb
         m_name = name;
     }
 
-    f32 StateMessageAnimationEnable::getTime() const
+    auto StateMessageAnimationEnable::getTime() const -> f32
     {
         return m_time;
     }
@@ -34,7 +32,7 @@ namespace fb
         m_time = time;
     }
 
-    bool StateMessageAnimationEnable::getEnabled() const
+    auto StateMessageAnimationEnable::getEnabled() const -> bool
     {
         return m_isEnabled;
     }

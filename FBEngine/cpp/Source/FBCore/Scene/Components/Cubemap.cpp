@@ -3,98 +3,93 @@
 #include <FBCore/Interface/Graphics/ICubemap.h>
 #include <FBCore/Interface/System/ITimer.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+
+    FB_CLASS_REGISTER_DERIVED( fb::scene, Cubemap, Component );
+
+    Cubemap::Cubemap()
     {
+    }
 
-        FB_CLASS_REGISTER_DERIVED( fb::scene, Cubemap, Component );
+    Cubemap::~Cubemap() = default;
 
-        Cubemap::Cubemap() : m_cameraDistance( 0.0f ), m_distanceTheshold( 0.0f )
+    void Cubemap::load( SmartPtr<ISharedObject> data )
+    {
+    }
+
+    void Cubemap::reload( SmartPtr<ISharedObject> data )
+    {
+    }
+
+    void Cubemap::unload( SmartPtr<ISharedObject> data )
+    {
+    }
+
+    void Cubemap::update()
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto timer = applicationManager->getTimer();
+        FB_ASSERT( timer );
+
+        auto task = Thread::getCurrentTask();
+        switch( task )
         {
-        }
-
-        Cubemap::~Cubemap()
+        case Thread::Task::Application:
         {
-        }
-
-        void Cubemap::load( SmartPtr<ISharedObject> data )
-        {
-        }
-
-        void Cubemap::reload( SmartPtr<ISharedObject> data )
-        {
-        }
-
-        void Cubemap::unload( SmartPtr<ISharedObject> data )
-        {
-        }
-
-        void Cubemap::update()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto timer = applicationManager->getTimer();
-            FB_ASSERT( timer );
-
-            auto task = Thread::getCurrentTask();
-            switch( task )
+            if( m_cameraDistance < m_distanceTheshold )
             {
-            case Thread::Task::Application:
-            {
-                if( m_cameraDistance < m_distanceTheshold )
-                {
-                    //m_cubemapGenerator->setPosition( m_position );
+                //m_cubemapGenerator->setPosition( m_position );
 
-                    if( !m_cubemapGenerator->getEnable() )
-                    {
-                        m_cubemapGenerator->setEnable( true );
-                    }
-                }
-                else
+                if( !m_cubemapGenerator->getEnable() )
                 {
-                    if( m_cubemapGenerator->getEnable() )
-                    {
-                        m_cubemapGenerator->setEnable( false );
-                    }
+                    m_cubemapGenerator->setEnable( true );
                 }
             }
-            break;
-            default:
+            else
             {
+                if( m_cubemapGenerator->getEnable() )
+                {
+                    m_cubemapGenerator->setEnable( false );
+                }
             }
-            }
         }
-
-        SmartPtr<render::ICubemap> Cubemap::getCubemapGenerator() const
+        break;
+        default:
         {
-            return m_cubemapGenerator;
         }
+        }
+    }
 
-        void Cubemap::setCubemapGenerator( SmartPtr<render::ICubemap> cubemapGenerator )
-        {
-            m_cubemapGenerator = cubemapGenerator;
-        }
+    auto Cubemap::getCubemapGenerator() const -> SmartPtr<render::ICubemap>
+    {
+        return m_cubemapGenerator;
+    }
 
-        f32 Cubemap::getCameraDistance() const
-        {
-            return m_cameraDistance;
-        }
+    void Cubemap::setCubemapGenerator( SmartPtr<render::ICubemap> cubemapGenerator )
+    {
+        m_cubemapGenerator = cubemapGenerator;
+    }
 
-        void Cubemap::setCameraDistance( f32 cameraDistance )
-        {
-            m_cameraDistance = cameraDistance;
-        }
+    auto Cubemap::getCameraDistance() const -> f32
+    {
+        return m_cameraDistance;
+    }
 
-        f32 Cubemap::getEnableDistanceTheshold() const
-        {
-            return m_distanceTheshold;
-        }
+    void Cubemap::setCameraDistance( f32 cameraDistance )
+    {
+        m_cameraDistance = cameraDistance;
+    }
 
-        void Cubemap::setEnableDistanceTheshold( f32 distanceTheshold )
-        {
-            m_distanceTheshold = distanceTheshold;
-        }
-    }  // namespace scene
-}  // end namespace fb
+    auto Cubemap::getEnableDistanceTheshold() const -> f32
+    {
+        return m_distanceTheshold;
+    }
+
+    void Cubemap::setEnableDistanceTheshold( f32 distanceTheshold )
+    {
+        m_distanceTheshold = distanceTheshold;
+    }
+}  // namespace fb::scene

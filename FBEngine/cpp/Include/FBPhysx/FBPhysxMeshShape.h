@@ -4,7 +4,6 @@
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBCore/Interface/Physics/IMeshShape.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Array.h>
 #include <FBPhysx/FBPhysxShape.h>
 #include <geometry/PxBoxGeometry.h>
@@ -13,6 +12,7 @@ namespace fb
 {
     namespace physics
     {
+
         /** Implementation of a mesh shape. */
         class PhysxMeshShape : public PhysxShape<IMeshShape>
         {
@@ -40,7 +40,7 @@ namespace fb
 
             String getMeshCachePath( u32 subMeshIndex ) const;
 
-            void build();
+            void createMeshGeometry();
             void createShape() override;
 
             physx::PxBoxGeometry createGeometry();
@@ -61,6 +61,8 @@ namespace fb
 	        physx::PxOutputStream *getOutputStream() const;
 
             void setOutputStream( physx::PxOutputStream *outputStream );
+
+            void handleStateChanged( SmartPtr<IState> &state );
 
         protected:
             class MeshShapeStateListener : public ShapeStateListener
@@ -127,6 +129,7 @@ namespace fb
 
             atomic_bool m_isConvex;
         };
+
     } // end namespace physics
 }     // end namespace fb
 

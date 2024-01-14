@@ -9,6 +9,9 @@
 
 namespace fb
 {
+
+    /** Timer implementation based on boost::chrono::steady_clock.
+     */
     class TimerBoost : public Timer
     {
     public:

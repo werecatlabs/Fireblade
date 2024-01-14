@@ -61,7 +61,7 @@ namespace fb
 
         if( data )
         {
-            auto& dataArray = *data;
+            auto &dataArray = *data;
 
             for( size_t i = 0; i < size && i < dataArray.size(); ++i )
             {
@@ -70,6 +70,18 @@ namespace fb
         }
 
         return p;
+    }
+
+    template <class T, class B>
+    SmartPtr<T> &reinterpret_pointer_cast( SmartPtr<B> &obj )
+    {
+        return *reinterpret_cast<SmartPtr<T> *>( &obj );
+    }
+
+    template <class T, class B>
+    const SmartPtr<T> &reinterpret_pointer_cast( const SmartPtr<B> &obj )
+    {
+        return *reinterpret_cast<const SmartPtr<T> *>( &obj );
     }
 
     template <class T, class B>
@@ -127,12 +139,6 @@ namespace fb
     SmartPtr<T> ptr_to_smart( RawPtr<T> &other )
     {
         return SmartPtr<T>( other.get() );
-    }
-
-    template <class T, class B>
-    FBSmartPtr<B> reinterpret_pointer_cast( SmartPtr<T> &other )
-    {
-        return FBSmartPtr<B>( reinterpret_cast<B *>( other.get() ) );
     }
 
     template <class T>

@@ -42,9 +42,21 @@ namespace fb
              */
             ~EditorApplication() override;
 
+            /**
+             * @brief Loads the editor application.
+             * @param data The data to load.
+             */
             void load( SmartPtr<ISharedObject> data ) override;
+
+            /**
+             * @brief Unloads the editor application.
+             * @param data The data to unload.
+             */
             void unload( SmartPtr<ISharedObject> data ) override;
 
+            /**
+            * @brief Runs the editor application.
+            */
             void run() override;
             void iterate();
 
@@ -88,8 +100,8 @@ namespace fb
             SmartPtr<render::ISceneNode> getCameraSceneNode() const;
             void setCameraSceneNode( SmartPtr<render::ISceneNode> sceneNode );
 
-            SmartPtr<IStateContext> getStateObject() const;
-            void setStateObject( SmartPtr<IStateContext> stateObject );
+            SmartPtr<IStateContext> getStateContext() const;
+            void setStateContext( SmartPtr<IStateContext> stateContext );
 
             SmartPtr<IStateListener> getStateListener() const;
             void setStateListener( SmartPtr<IStateListener> stateListener );
@@ -99,11 +111,11 @@ namespace fb
             void setRttViewport( SmartPtr<render::IViewport> rttViewport );
 
         private:
-            class ApplicationInputListener : public IEventListener
+            class ApplicationListener : public IEventListener
             {
             public:
-                ApplicationInputListener( EditorApplication *app );
-                ~ApplicationInputListener() override;
+                ApplicationListener( EditorApplication *app );
+                ~ApplicationListener() override;
 
                 Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
                                        const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
@@ -172,7 +184,7 @@ namespace fb
 
             void createTaskManager() override;
 
-	        void createProfiler();
+            void createProfiler();
             void createThreadPool() override;
 
             void createStateManager() override;
@@ -215,7 +227,7 @@ namespace fb
             RawPtr<ApplicationFrame> m_frame = nullptr;
             SmartPtr<EditorManager> m_editorManager;
 
-            SmartPtr<IStateContext> m_stateObject;
+            SmartPtr<IStateContext> m_stateContext;
             SmartPtr<IStateListener> m_stateListener;
 
             SmartPtr<ui::IUIApplication> m_application;

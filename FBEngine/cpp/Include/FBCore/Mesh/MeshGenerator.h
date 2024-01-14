@@ -8,6 +8,8 @@
 
 namespace fb
 {
+
+    /** Mesh generator class. */
     class MeshGenerator
     {
     public:
@@ -27,7 +29,7 @@ namespace fb
         static SmartPtr<IIndexBuffer> createIndexBuffer( const Array<u32> &indices );
 
         static SmartPtr<ISubMesh> createSubMesh( SmartPtr<IVertexBuffer> vertexBuffer,
-                                          SmartPtr<IIndexBuffer> indexBuffer );
+                                                 SmartPtr<IIndexBuffer> indexBuffer );
         static SmartPtr<IMesh> createMesh( const Array<Vector3F> &vertices,
                                            const Array<Vector3F> &normals,
                                            const Array<Vector4F> &tangents, const Array<Vector3F> &uvs,

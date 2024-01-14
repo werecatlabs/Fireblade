@@ -18,7 +18,7 @@ namespace fb
     StringW currentZipFilePath;
     SmartPtr<IStream> currentZipFile;
 
-    int zzip_custom_open( zzip_char_t *name, int flags, ... )
+    auto zzip_custom_open( zzip_char_t *name, int flags, ... ) -> int
     {
         auto stream = new std::fstream( currentZipFilePath, std::fstream::in | std::fstream::binary );
 
@@ -33,14 +33,14 @@ namespace fb
         return 72;  // StringUtilW::getHash(currentZipFilePath);
     }
 
-    int zzip_custom_close( int fd )
+    auto zzip_custom_close( int fd ) -> int
     {
         currentZipFile->close();
         currentZipFile = nullptr;
         return 0;
     }
 
-    zzip_ssize_t zzip_custom_read( int fd, void *buf, zzip_size_t len )
+    auto zzip_custom_read( int fd, void *buf, zzip_size_t len ) -> zzip_ssize_t
     {
         auto dataStream = currentZipFile;
         auto bytesRead = dataStream->read( buf, len );
@@ -48,7 +48,7 @@ namespace fb
         return static_cast<zzip_ssize_t>( bytesRead );
     }
 
-    zzip_off_t zzip_custom_seeks( int fd, zzip_off_t offset, int whence )
+    auto zzip_custom_seeks( int fd, zzip_off_t offset, int whence ) -> zzip_off_t
     {
         zzip_size_t newPos = -1;
 
@@ -56,7 +56,7 @@ namespace fb
         {
         case SEEK_CUR:
         {
-            newPos = (zzip_size_t)(currentZipFile->tell() + offset);
+            newPos = static_cast<zzip_size_t>( currentZipFile->tell() + offset );
             currentZipFile->skip( offset );
         }
         break;
@@ -87,14 +87,13 @@ namespace fb
         return static_cast<zzip_off_t>( currentZipFile->tell() );
     }
 
-    zzip_off_t zzip_custom_filesize( int fd )
+    auto zzip_custom_filesize( int fd ) -> zzip_off_t
     {
         size_t size = currentZipFile->size();
         return static_cast<zzip_off_t>( size );
     }
 
-    
-    zzip_ssize_t zzip_custom_write( int fd, _zzip_const void *buf, zzip_size_t len )
+    auto zzip_custom_write( int fd, _zzip_const void *buf, zzip_size_t len ) -> zzip_ssize_t
     {
         // the files in this case are read only - return an error  - nonzero value.
         return -1;
@@ -194,19 +193,20 @@ namespace fb
 #        endif
     }
 
-    int ZipUtil::createZipFileFromPath( const StringW &destinationPath, const Array<StringW> &paths )
+    auto ZipUtil::createZipFileFromPath( const StringW &destinationPath, const Array<StringW> &paths )
+        -> int
     {
 #        if defined FB_PLATFORM_WIN32
         zipFile zf = zipOpen( std::string( destinationPath.begin(), destinationPath.end() ).c_str(),
                               APPEND_STATUS_CREATE );
         if( zf == nullptr )
+        {
             return 1;
+        }
 
         bool _return = true;
-        for( size_t i = 0; i < paths.size(); i++ )
+        for( auto path : paths )
         {
-            StringW path = paths[i];
-
             std::fstream file( path, std::ios::binary | std::ios::in );
             if( file.is_open() )
             {
@@ -226,10 +226,14 @@ namespace fb
                                     nullptr, 0, nullptr, 0, nullptr, Z_DEFLATED, Z_BEST_COMPRESSION ) )
                     {
                         if( zipWriteInFileInZip( zf, size == 0 ? "" : &buffer[0], size ) )
+                        {
                             _return = false;
+                        }
 
                         if( zipCloseFileInZip( zf ) )
+                        {
                             _return = false;
+                        }
 
                         file.close();
                         continue;
@@ -241,10 +245,14 @@ namespace fb
         }
 
         if( zipClose( zf, nullptr ) )
+        {
             return 3;
+        }
 
         if( !_return )
+        {
             return 4;
+        }
 
         return S_OK;
 #        else
@@ -252,8 +260,8 @@ namespace fb
 #        endif
     }
 
-    int ZipUtil::createZipFileFromPath( const StringW &destinationPath, const StringW &zipPath,
-                                        const Array<StringW> &paths )
+    auto ZipUtil::createZipFileFromPath( const StringW &destinationPath, const StringW &zipPath,
+                                         const Array<StringW> &paths ) -> int
     {
         std::string destinationPathCStr = StringUtil::toStringC( destinationPath );
         zipFile zf = zipOpen( destinationPathCStr.c_str(), APPEND_STATUS_CREATE );
@@ -263,10 +271,8 @@ namespace fb
         }
 
         bool _return = true;
-        for( size_t i = 0; i < paths.size(); i++ )
+        for( auto path : paths )
         {
-            StringW path = paths[i];
-
             std::fstream file( path, std::ios::binary | std::ios::in );
             if( file.is_open() )
             {
@@ -317,8 +323,8 @@ namespace fb
         return S_OK;
     }
 
-    int ZipUtil::createObfuscatedZipFileFromPath( const StringW &destinationPath,
-                                                  const Array<StringW> &paths )
+    auto ZipUtil::createObfuscatedZipFileFromPath( const StringW &destinationPath,
+                                                   const Array<StringW> &paths ) -> int
     {
         auto destinationTempPath = destinationPath + L".tempzip";
         createZipFileFromPath( destinationTempPath, paths );
@@ -354,8 +360,9 @@ namespace fb
         return 0;
     }
 
-    int ZipUtil::createObfuscatedZipFileFromPath( const StringW &destinationPath, const StringW &zipPath,
-                                                  const Array<StringW> &paths )
+    auto ZipUtil::createObfuscatedZipFileFromPath( const StringW &destinationPath,
+                                                   const StringW &zipPath, const Array<StringW> &paths )
+        -> int
     {
         StringW destinationTempPath = destinationPath + L".tempzip";
         createZipFileFromPath( destinationTempPath, zipPath, paths );
@@ -399,7 +406,7 @@ namespace fb
        level is supplied, Z_VERSION_ERROR if the version of zlib.h and the
        version of the library linked do not match, or Z_ERRNO if there is
        an error reading or writing the files. */
-    int ZipUtil::def( FILE *source, FILE *dest, int level )
+    auto ZipUtil::def( FILE *source, FILE *dest, int level ) -> int
     {
         int ret, flush;
         unsigned have;
@@ -413,7 +420,9 @@ namespace fb
         strm.opaque = nullptr;
         ret = deflateInit( &strm, level );
         if( ret != Z_OK )
+        {
             return ret;
+        }
 
         /* compress until end of file */
         do
@@ -459,7 +468,7 @@ namespace fb
        invalid or incomplete, Z_VERSION_ERROR if the version of zlib.h and
        the version of the library linked do not match, or Z_ERRNO if there
        is an error reading or writing the files. */
-    int ZipUtil::inf( FILE *source, FILE *dest )
+    auto ZipUtil::inf( FILE *source, FILE *dest ) -> int
     {
         int ret;
         unsigned have;
@@ -475,7 +484,9 @@ namespace fb
         strm.next_in = nullptr;
         ret = inflateInit( &strm );
         if( ret != Z_OK )
+        {
             return ret;
+        }
 
         /* decompress until deflate stream ends or end of file */
         do
@@ -487,7 +498,9 @@ namespace fb
                 return Z_ERRNO;
             }
             if( strm.avail_in == 0 )
+            {
                 break;
+            }
             strm.next_in = in;
 
             /* run inflate() on input until output buffer not full */

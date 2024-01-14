@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Core/Util.h>
 #include <FBCore/Thread/Threading.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/UI/IUIImage.h>
 #include <FBCore/Interface/UI/IUIManager.h>
 #include <FBCore/Interface/UI/IUIMenu.h>
@@ -135,7 +135,7 @@ namespace fb
 #endif
     }
 
-    __m128 Util::crossProduct( __m128 a, __m128 b )
+    auto Util::crossProduct( __m128 a, __m128 b ) -> __m128
     {
         return _mm_sub_ps( _mm_mul_ps( _mm_shuffle_ps( a, a, _MM_SHUFFLE( 3, 0, 2, 1 ) ),
                                        _mm_shuffle_ps( b, b, _MM_SHUFFLE( 3, 1, 0, 2 ) ) ),
@@ -143,12 +143,12 @@ namespace fb
                                        _mm_shuffle_ps( b, b, _MM_SHUFFLE( 3, 0, 2, 1 ) ) ) );
     }
 
-    s16 Util::compactFloat( f64 input, s32 range )
+    auto Util::compactFloat( f64 input, s32 range ) -> s16
     {
         return static_cast<s16>( Math<f64>::round( input * compact_range / range ) );
     }
 
-    f64 Util::expandToFloat( s16 input, s32 range )
+    auto Util::expandToFloat( s16 input, s32 range ) -> f64
     {
         return static_cast<f64>( input ) * range / compact_range;
     }
@@ -171,30 +171,43 @@ namespace fb
         }
     }
 
-    int Util::CalculateNearest2Pow( int input )
+    auto Util::CalculateNearest2Pow( int input ) -> int
     {
         if( input <= 32 )
+        {
             return 32;
+        }
         if( input <= 64 )
+        {
             return 64;
+        }
         if( input <= 128 )
+        {
             return 128;
+        }
         if( input <= 256 )
+        {
             return 256;
+        }
         if( input <= 512 )
+        {
             return 512;
+        }
         if( input <= 1024 )
+        {
             return 1024;
+        }
         if( input <= 2048 )
+        {
             return 2048;
+        }
         return input;
     }
 
-    SmartPtr<ui::IUIMenuItem> Util::addMenuItem( SmartPtr<ui::IUIMenu> menu, s32 itemid,
-                                                            const String &text, const String &help,
-                                                            ui::IUIMenuItem::Type type )
+    auto Util::addMenuItem( SmartPtr<ui::IUIMenu> menu, s32 itemid, const String &text,
+                            const String &help, ui::IUIMenuItem::Type type ) -> SmartPtr<ui::IUIMenuItem>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto ui = applicationManager->getUI();
 
         auto menuItem = ui->addElementByType<ui::IUIMenuItem>();
@@ -210,9 +223,9 @@ namespace fb
         return menuItem;
     }
 
-    SmartPtr<ui::IUIMenuItem> Util::addMenuSeparator( SmartPtr<ui::IUIMenu> menu )
+    auto Util::addMenuSeparator( SmartPtr<ui::IUIMenu> menu ) -> SmartPtr<ui::IUIMenuItem>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto ui = applicationManager->getUI();
@@ -229,12 +242,11 @@ namespace fb
         return menuItem;
     }
 
-    SmartPtr<ui::IUIElement> Util::setText( SmartPtr<ui::IUITreeNode> node,
-                                                       const String &text )
+    auto Util::setText( SmartPtr<ui::IUITreeNode> node, const String &text ) -> SmartPtr<ui::IUIElement>
     {
         if( node )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             if( auto ui = applicationManager->getUI() )
@@ -252,10 +264,10 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<ui::IUIElement> Util::setImage( SmartPtr<ui::IUITreeNode> node,
-                                                        const String &imagePath )
+    auto Util::setImage( SmartPtr<ui::IUITreeNode> node, const String &imagePath )
+        -> SmartPtr<ui::IUIElement>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto ui = applicationManager->getUI();
@@ -270,7 +282,7 @@ namespace fb
         return imageElement;
     }
 
-    SmartPtr<ui::IUIElement> Util::getFirstChild( SmartPtr<ui::IUIElement> element )
+    auto Util::getFirstChild( SmartPtr<ui::IUIElement> element ) -> SmartPtr<ui::IUIElement>
     {
         if( element )
         {
@@ -286,7 +298,7 @@ namespace fb
         return nullptr;
     }
 
-    String Util::getText( SmartPtr<ui::IUITreeNode> node )
+    auto Util::getText( SmartPtr<ui::IUITreeNode> node ) -> String
     {
         if( auto p = node->getChildren() )
         {

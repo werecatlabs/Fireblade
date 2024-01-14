@@ -6,23 +6,27 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageMaterialName, StateMessage );
 
-    String StateMessageMaterialName::getMaterialName() const
+    StateMessageMaterialName::StateMessageMaterialName() = default;
+
+    StateMessageMaterialName::~StateMessageMaterialName()  = default;
+
+    auto StateMessageMaterialName::getMaterialName() const -> String
     {
         return m_value;
     }
 
-    void StateMessageMaterialName::setMaterialName( const String &val )
+    void StateMessageMaterialName::setMaterialName( const String &value )
     {
-        m_value = val;
+        m_value = value;
     }
 
-    u32 StateMessageMaterialName::getIndex() const
+    auto StateMessageMaterialName::getIndex() const -> u32
     {
         return m_index;
     }
 
-    void StateMessageMaterialName::setIndex( u32 val )
+    void StateMessageMaterialName::setIndex( u32 index )
     {
-        m_index = val;
+        m_index = index;
     }
 }  // end namespace fb

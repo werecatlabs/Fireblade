@@ -13,9 +13,7 @@ namespace fb
         m_curTime = m_prevTime;
     }
 
-    TimerCPU::~TimerCPU()
-    {
-    }
+    TimerCPU::~TimerCPU() = default;
 
     void TimerCPU::update()
     {
@@ -31,22 +29,22 @@ namespace fb
 #    endif
     }
 
-    u32 TimerCPU::getTimeMilliseconds() const
+    auto TimerCPU::getTimeMilliseconds() const -> u32
     {
         return static_cast<u32>( m_time * 1000.0 );
     }
 
-    u32 TimerCPU::getRealTime() const
+    auto TimerCPU::getRealTime() const -> u32
     {
         return static_cast<u32>( m_time * 1000.0 );
     }
 
-    u32 TimerCPU::getTimeIntervalMilliseconds() const
+    auto TimerCPU::getTimeIntervalMilliseconds() const -> u32
     {
         return static_cast<u32>( m_deltaTime * 1000.0 );
     }
 
-    time_interval TimerCPU::getTimeInterval() const
+    auto TimerCPU::getTimeInterval() const -> time_interval
     {
         return m_deltaTime;
     }
@@ -55,7 +53,7 @@ namespace fb
     {
     }
 
-    u32 TimerCPU::getFrameSmoothingPeriod() const
+    auto TimerCPU::getFrameSmoothingPeriod() const -> u32
     {
         return static_cast<u32>( m_frameSmoothingTime );
     }
@@ -64,12 +62,12 @@ namespace fb
     {
     }
 
-    time_interval TimerCPU::getTime() const
+    auto TimerCPU::getTime() const -> time_interval
     {
         return m_time;
     }
 
-    time_interval TimerCPU::now() const
+    auto TimerCPU::now() const -> time_interval
     {
         return static_cast<f64>( m_timer.elapsed().wall ) / static_cast<f64>( 1000000000LL );
     }

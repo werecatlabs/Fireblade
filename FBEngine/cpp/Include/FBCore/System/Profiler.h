@@ -90,7 +90,7 @@ namespace fb
         time_interval m_nextUpdateTime = 0.0;  ///< The time of the next results log update.
 
         ///< The mutex used to protect the profiler data.
-        mutable RecursiveMutex m_mutex;  
+        mutable RecursiveMutex m_mutex;
     };
 
 }  // end namespace fb

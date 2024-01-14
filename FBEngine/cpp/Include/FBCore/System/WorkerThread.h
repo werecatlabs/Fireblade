@@ -14,7 +14,8 @@
 
 namespace fb
 {
-    
+
+    /** Worker thread implementation */
     class WorkerThread : public IWorkerThread
     {
     public:
@@ -80,6 +81,6 @@ namespace fb
         static s32 m_threadIdExt;
     };
 
-} // namespace fb
+}  // namespace fb
 
 #endif

@@ -10,15 +10,11 @@
 
 namespace fb
 {
-    RegistrySettings::RegistrySettings()
-    {
-    }
+    RegistrySettings::RegistrySettings() = default;
 
-    RegistrySettings::~RegistrySettings()
-    {
-    }
+    RegistrySettings::~RegistrySettings() = default;
 
-    SmartPtr<Properties> RegistrySettings::getProperties() const
+    auto RegistrySettings::getProperties() const -> SmartPtr<Properties>
     {
         return nullptr;
     }
@@ -28,15 +24,15 @@ namespace fb
     }
 
 #ifdef FB_PLATFORM_WIN32
-    LONG RegistrySettings::getStringRegKey( HKEY hKey, const StringW &strValueName, StringW &strValue,
-                                            const StringW &strDefaultValue )
+    auto RegistrySettings::getStringRegKey( HKEY hKey, const StringW &strValueName, StringW &strValue,
+                                            const StringW &strDefaultValue ) -> LONG
     {
         strValue = strDefaultValue;
         WCHAR szBuffer[512];
         DWORD dwBufferSize = sizeof( szBuffer );
         ULONG nError;
-        nError = RegQueryValueExW( hKey, strValueName.c_str(), nullptr, nullptr, (LPBYTE)szBuffer,
-                                   &dwBufferSize );
+        nError = RegQueryValueExW( hKey, strValueName.c_str(), nullptr, nullptr,
+                                   reinterpret_cast<LPBYTE>( szBuffer ), &dwBufferSize );
         if( ERROR_SUCCESS == nError )
         {
             strValue = szBuffer;
@@ -44,8 +40,8 @@ namespace fb
         return nError;
     }
 
-    LONG RegistrySettings::getBoolRegKey( HKEY hKey, const StringW &strValueName, bool &bValue,
-                                          bool bDefaultValue )
+    auto RegistrySettings::getBoolRegKey( HKEY hKey, const StringW &strValueName, bool &bValue,
+                                          bool bDefaultValue ) -> LONG
     {
         DWORD nDefValue( ( bDefaultValue ) ? 1 : 0 );
         DWORD nResult( nDefValue );
@@ -57,8 +53,8 @@ namespace fb
         return nError;
     }
 
-    LONG RegistrySettings::getDWORDRegKey( HKEY hKey, const StringW &strValueName, DWORD &nValue,
-                                           DWORD nDefaultValue )
+    auto RegistrySettings::getDWORDRegKey( HKEY hKey, const StringW &strValueName, DWORD &nValue,
+                                           DWORD nDefaultValue ) -> LONG
     {
         nValue = nDefaultValue;
         DWORD dwBufferSize( sizeof( DWORD ) );
@@ -72,7 +68,7 @@ namespace fb
         return nError;
     }
 
-    std::string RegistrySettings::getStringKeyValue( const std::string &strValueName )
+    auto RegistrySettings::getStringKeyValue( const std::string &strValueName ) -> std::string
     {
         StringW strValueNameW = StringUtil::toStringW( strValueName );
 
@@ -90,7 +86,7 @@ namespace fb
         return std::string( "" );
     }
 
-    StringW RegistrySettings::getStringKeyValue( const StringW &strValueName )
+    auto RegistrySettings::getStringKeyValue( const StringW &strValueName ) -> StringW
     {
         HKEY hKey;
         LONG lRes = RegOpenKeyExW( HKEY_CLASSES_ROOT, strValueName.c_str(), 0, KEY_READ, &hKey );
@@ -106,8 +102,8 @@ namespace fb
         return StringW( L"" );
     }
 
-    bool RegistrySettings::setStringKeyValue( HKEY hRootKey, const StringW &keyname, const StringW &name,
-                                              const StringW &value )
+    auto RegistrySettings::setStringKeyValue( HKEY hRootKey, const StringW &keyname, const StringW &name,
+                                              const StringW &value ) -> bool
     {
         bool retValue = false;
 
@@ -173,7 +169,8 @@ namespace fb
         }
     }
 
-    bool RegistrySettings::hasKeyValue( HKEY hRootKey, const StringW &keyname, const StringW &name )
+    auto RegistrySettings::hasKeyValue( HKEY hRootKey, const StringW &keyname, const StringW &name )
+        -> bool
     {
         HKEY hKey;
         LONG lRes = RegOpenKeyExW( hRootKey, keyname.c_str(), 0, KEY_READ, &hKey );

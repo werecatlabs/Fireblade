@@ -109,10 +109,10 @@ namespace fb
         static u32 getTaskFlags();
         static void setTaskFlags( u32 taskFlags );
 
-        static u32 getTaskFlags(Task task);
+        static u32 getTaskFlags( Task task );
         static void setTaskFlags( Task task, u32 taskFlags );
 
-        static bool getTaskFlag(u32 flag);
+        static bool getTaskFlag( u32 flag );
         static void setTaskFlag( u32 flag, bool value );
 
         /**
@@ -195,7 +195,7 @@ namespace fb
         static String getTaskName( Task id );
 
     private:
-        static FixedArray<u32, (u32)Task::Count> m_taskFlags;
+        static FixedArray<u32, static_cast<u32>( Task::Count )> m_taskFlags;
         static SpinRWMutex m_taskFlagsMutex;
     };
 }  // end namespace fb

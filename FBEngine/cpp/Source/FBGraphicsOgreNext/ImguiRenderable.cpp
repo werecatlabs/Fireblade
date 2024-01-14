@@ -75,10 +75,12 @@ void ImguiRenderable::updateVertexData(const ImDrawVert* vtxBuf, const ImDrawIdx
 	}
 
 	// Copy all vertices
-	ImDrawVert* vtxDst = (ImDrawVert*)(bind->getBuffer(0)->lock(Ogre::v1::HardwareBuffer::HBL_DISCARD));
-	ImDrawIdx* idxDst = (ImDrawIdx*)(mRenderOp.indexData->indexBuffer->lock(Ogre::v1::HardwareBuffer::HBL_DISCARD));
+    auto *vtxDst =
+        static_cast<ImDrawVert *>( bind->getBuffer( 0 )->lock( Ogre::v1::HardwareBuffer::HBL_DISCARD ) );
+    auto *idxDst = static_cast<ImDrawIdx *>(
+        mRenderOp.indexData->indexBuffer->lock( Ogre::v1::HardwareBuffer::HBL_DISCARD ) );
 
-	memcpy(vtxDst, vtxBuf, mVertexBufferSize * sizeof(ImDrawVert));
+    memcpy(vtxDst, vtxBuf, mVertexBufferSize * sizeof(ImDrawVert));
 	memcpy(idxDst, idxBuf, mIndexBufferSize * sizeof(ImDrawIdx));
 
 	mRenderOp.vertexData->vertexStart = 0;
@@ -106,7 +108,7 @@ void ImguiRenderable::getRenderOperation(Ogre::v1::RenderOperation& op, bool cas
 	op = mRenderOp;
 }
 
-const Ogre::LightList& ImguiRenderable::getLights(void) const
+auto ImguiRenderable::getLights() const -> const Ogre::LightList &
 {
 	static const Ogre::LightList l;
 	return l;

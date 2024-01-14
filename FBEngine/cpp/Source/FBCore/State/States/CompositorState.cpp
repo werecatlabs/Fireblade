@@ -7,23 +7,25 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, CompositorState, BaseState );
 
-    CompositorState::CompositorState()
-    {
-    }
+    CompositorState::CompositorState() = default;
 
-    CompositorState::~CompositorState()
-    {
-    }
+    CompositorState::~CompositorState() = default;
 
-    bool CompositorState::isEnabled() const
+    auto CompositorState::isEnabled() const -> bool
     {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_enabled;
     }
 
     void CompositorState::setEnabled( bool enabled )
     {
-        m_enabled = enabled;
-        setDirty( true );
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
+
+        if( m_enabled != enabled )
+        {
+            m_enabled = enabled;
+            setDirty( true );
+        }
     }
 
 }  // namespace fb

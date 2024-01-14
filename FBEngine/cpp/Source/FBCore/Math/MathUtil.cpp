@@ -6,39 +6,39 @@
 namespace fb
 {
     template <class T>
-    bool MathUtil<T>::equals( T f1, T f2 )
+    auto MathUtil<T>::equals( T f1, T f2 ) -> bool
     {
         return std::fabs( f1 - f2 ) <= std::numeric_limits<T>::epsilon();
     }
 
     template <class T>
-    bool MathUtil<T>::equals( T f1, T f2, T tolerance )
+    auto MathUtil<T>::equals( T f1, T f2, T tolerance ) -> bool
     {
         return std::fabs( f1 - f2 ) <= tolerance;
     }
 
     template <class T>
-    bool MathUtil<T>::equals( const Vector2<T> &a, const Vector2<T> &b )
+    auto MathUtil<T>::equals( const Vector2<T> &a, const Vector2<T> &b ) -> bool
     {
         return MathUtil::equals( a.X(), b.X() ) && MathUtil::equals( a.Y(), b.Y() );
     }
 
     template <class T>
-    bool MathUtil<T>::equals( const Vector3<T> &a, const Vector3<T> &b )
+    auto MathUtil<T>::equals( const Vector3<T> &a, const Vector3<T> &b ) -> bool
     {
         return MathUtil::equals( a.X(), b.X() ) && MathUtil::equals( a.Y(), b.Y() ) &&
                MathUtil::equals( a.Z(), b.Z() );
     }
 
     template <class T>
-    bool MathUtil<T>::equals( const Quaternion<T> &a, const Quaternion<T> &b )
+    auto MathUtil<T>::equals( const Quaternion<T> &a, const Quaternion<T> &b ) -> bool
     {
         return MathUtil::equals( a.W(), b.W() ) && MathUtil::equals( a.X(), b.X() ) &&
                MathUtil::equals( a.Y(), b.Y() ) && MathUtil::equals( a.Z(), b.Z() );
     }
 
     template <class T>
-    bool MathUtil<T>::equals( const Vector3<T> &a, const Vector3<T> &b, T tolerance )
+    auto MathUtil<T>::equals( const Vector3<T> &a, const Vector3<T> &b, T tolerance ) -> bool
     {
         return MathUtil::equals( a.X(), b.X(), tolerance ) &&
                MathUtil::equals( a.Y(), b.Y(), tolerance ) &&
@@ -46,7 +46,7 @@ namespace fb
     }
 
     template <class T>
-    bool MathUtil<T>::equals( const Quaternion<T> &a, const Quaternion<T> &b, T tolerance )
+    auto MathUtil<T>::equals( const Quaternion<T> &a, const Quaternion<T> &b, T tolerance ) -> bool
     {
         return MathUtil::equals( a.W(), b.W(), tolerance ) &&
                MathUtil::equals( a.X(), b.X(), tolerance ) &&
@@ -55,7 +55,7 @@ namespace fb
     }
 
     template <>
-    bool MathUtil<s32>::isFinite( const Vector3<s32> &val )
+    auto MathUtil<s32>::isFinite( const Vector3<s32> &val ) -> bool
     {
         return std::isfinite( static_cast<f32>( val.X() ) ) &&
                std::isfinite( static_cast<f32>( val.Y() ) ) &&
@@ -63,7 +63,7 @@ namespace fb
     }
 
     template <>
-    bool MathUtil<s32>::isFinite( const Quaternion<s32> &val )
+    auto MathUtil<s32>::isFinite( const Quaternion<s32> &val ) -> bool
     {
         return std::isfinite( static_cast<f32>( val.W() ) ) &&
                std::isfinite( static_cast<f32>( val.X() ) ) &&
@@ -72,21 +72,22 @@ namespace fb
     }
 
     template <class T>
-    bool MathUtil<T>::isFinite( const Vector3<T> &val )
+    auto MathUtil<T>::isFinite( const Vector3<T> &val ) -> bool
     {
         return std::isfinite( val.X() ) && std::isfinite( val.Y() ) && std::isfinite( val.Z() );
     }
 
     template <class T>
-    bool MathUtil<T>::isFinite( const Quaternion<T> &val )
+    auto MathUtil<T>::isFinite( const Quaternion<T> &val ) -> bool
     {
         return std::isfinite( val.W() ) && std::isfinite( val.X() ) && std::isfinite( val.Y() ) &&
                std::isfinite( val.Z() );
     }
 
     template <class T>
-    Quaternion<T> MathUtil<T>::getRotationTo( const Vector3<T> &src, const Vector3<T> &dest,
-                                              const Vector3<T> &fallbackAxis /*= Vector3<T>::ZERO*/ )
+    auto MathUtil<T>::getRotationTo( const Vector3<T> &src, const Vector3<T> &dest,
+                                     const Vector3<T> &fallbackAxis /*= Vector3<T>::ZERO*/ )
+        -> Quaternion<T>
     {
         // Based on Stan Melax's article in Game Programming Gems
         Quaternion<T> q;
@@ -113,8 +114,10 @@ namespace fb
             {
                 // Generate an axis
                 Vector3<T> axis = Vector3<T>::UNIT_X.crossProduct( src );
-                if( axis.isZeroLength() )  // pick another if collinear
+                if( axis.isZeroLength() )
+                {  // pick another if collinear
                     axis = Vector3<T>::UNIT_Y.crossProduct( src );
+                }
 
                 axis.normalise();
                 q.fromAngleAxis( Math<T>::pi(), axis );
@@ -137,10 +140,10 @@ namespace fb
     }
 
     template <class T>
-    Quaternion<T> MathUtil<T>::getOrientationFromDirection( const Vector3<T> &vec,
-                                                            const Vector3<T> &localDirectionVector,
-                                                            bool bYawFixed,
-                                                            const Vector3<T> &yawFixedAxis )
+    auto MathUtil<T>::getOrientationFromDirection( const Vector3<T> &vec,
+                                                   const Vector3<T> &localDirectionVector,
+                                                   bool bYawFixed, const Vector3<T> &yawFixedAxis )
+        -> Quaternion<T>
     {
         FB_ASSERT( vec.isValid() );
         FB_ASSERT( localDirectionVector.isValid() );
@@ -212,13 +215,13 @@ namespace fb
     }
 
     template <class T>
-    Vector3<T> MathUtil<T>::reflect( const Vector3<T> &vec, const Vector3<T> &normal )
+    auto MathUtil<T>::reflect( const Vector3<T> &vec, const Vector3<T> &normal ) -> Vector3<T>
     {
         return vec - T( 2.0 ) * normal * normal.dotProduct( vec );
     }
 
     template <class T>
-    Vector3<T> MathUtil<T>::toSpherical( const Vector3<T> &cartesian )
+    auto MathUtil<T>::toSpherical( const Vector3<T> &cartesian ) -> Vector3<T>
     {
         using CartesianType =
             boost::geometry::model::point<long double, 3, boost::geometry::cs::cartesian>;
@@ -239,7 +242,7 @@ namespace fb
     }
 
     template <class T>
-    Vector3<T> MathUtil<T>::toCartesian( const Vector3<T> &spherical )
+    auto MathUtil<T>::toCartesian( const Vector3<T> &spherical ) -> Vector3<T>
     {
         using SphericalType =
             boost::geometry::model::point<long double, 3,
@@ -261,8 +264,8 @@ namespace fb
     }
 
     template <class T>
-    Vector3<T> MathUtil<T>::toPosition( const Vector3<T> &rotation, Vector3<T> &up, Vector3<T> &pitchVec,
-                                        Vector3<T> &yawVec )
+    auto MathUtil<T>::toPosition( const Vector3<T> &rotation, Vector3<T> &up, Vector3<T> &pitchVec,
+                                  Vector3<T> &yawVec ) -> Vector3<T>
     {
         Quaternion<T> yaw;
         Quaternion<T> pitch;
@@ -278,8 +281,8 @@ namespace fb
     }
 
     template <class T>
-    Vector3<T> MathUtil<T>::toRotation( const Vector3<T> &cartesian, const Vector3<T> &pitchVec,
-                                        const Vector3<T> &yawVec )
+    auto MathUtil<T>::toRotation( const Vector3<T> &cartesian, const Vector3<T> &pitchVec,
+                                  const Vector3<T> &yawVec ) -> Vector3<T>
     {
         Vector3<T> spherical;
         spherical.X() = cartesian.length();
@@ -289,7 +292,7 @@ namespace fb
     }
 
     template <class T>
-    T MathUtil<T>::average( const Array<T> &v )
+    auto MathUtil<T>::average( const Array<T> &v ) -> T
     {
         auto sum = T( 0.0 );
         for( auto &value : v )
@@ -301,7 +304,7 @@ namespace fb
     }
 
     template <class T>
-    T MathUtil<T>::average( const std::deque<T> &v )
+    auto MathUtil<T>::average( const std::deque<T> &v ) -> T
     {
         auto sum = T( 0.0 );
         for( auto &value : v )
@@ -313,7 +316,7 @@ namespace fb
     }
 
     template <class T>
-    T MathUtil<T>::latlong_distance( const Vector2<T> &lat_long_1, const Vector2<T> &lat_long_2 )
+    auto MathUtil<T>::latlong_distance( const Vector2<T> &lat_long_1, const Vector2<T> &lat_long_2 ) -> T
     {
         auto lat1 = lat_long_1[0];
         auto lon1 = lat_long_1[1];
@@ -343,7 +346,7 @@ namespace fb
     }
 
     template <class T>
-    Vector3<T> MathUtil<T>::round( const Vector3<T> &v, s32 decimals )
+    auto MathUtil<T>::round( const Vector3<T> &v, s32 decimals ) -> Vector3<T>
     {
         auto val = Math<T>::Pow( T( 10 ), static_cast<T>( decimals ) );
         return Vector3<T>( Math<T>::round( v.X() * val ) / val, Math<T>::round( v.Y() * val ) / val,
@@ -402,13 +405,13 @@ namespace fb
     }
 
     template <class T>
-    Transform3<T> MathUtil<T>::transformFromPlaneEquation( const Plane3<T> plane )
+    auto MathUtil<T>::transformFromPlaneEquation( const Plane3<T> plane ) -> Transform3<T>
     {
         return Transform3<T>();
     }
 
     template <class T>
-    std::pair<bool, T> MathUtil<T>::intersects( const Ray3<T> &ray, const AABB3<T> &box )
+    auto MathUtil<T>::intersects( const Ray3<T> &ray, const AABB3<T> &box ) -> std::pair<bool, T>
     {
         if( box.isNull() )
         {
@@ -530,8 +533,8 @@ namespace fb
     }
 
     template <class T>
-    std::pair<bool, T> MathUtil<T>::intersects( const Ray3<T> &ray, const Sphere3<T> &sphere,
-                                                bool discardInside /*= true*/ )
+    auto MathUtil<T>::intersects( const Ray3<T> &ray, const Sphere3<T> &sphere,
+                                  bool discardInside /*= true*/ ) -> std::pair<bool, T>
     {
         // Adjust ray origin relative to sphere center
         auto rayorig = ray.getOrigin() - sphere.getCenter();
@@ -571,7 +574,8 @@ namespace fb
     }
 
     template <class T>
-    std::pair<bool, T> MathUtil<T>::intersects( const Ray3<T> &ray, const Cylinder3<T> &cylinder )
+    auto MathUtil<T>::intersects( const Ray3<T> &ray, const Cylinder3<T> &cylinder )
+        -> std::pair<bool, T>
     {
         T t[2];
         auto cylinderAxis = cylinder.getAxis();

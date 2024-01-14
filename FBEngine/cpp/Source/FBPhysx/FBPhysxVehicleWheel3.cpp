@@ -1,65 +1,57 @@
 #include <FBPhysx/FBPhysxPCH.h>
 #include <FBPhysx/FBPhysxVehicleWheel3.h>
 
-namespace fb
+namespace fb::physics
 {
-    namespace physics
+    PhysxVehicleWheel3::PhysxVehicleWheel3() = default;
+
+    PhysxVehicleWheel3::~PhysxVehicleWheel3() = default;
+
+    void PhysxVehicleWheel3::initialise( const Vector3F &pos, f32 radius, f32 width,
+                                         f32 suspensionRestLength, f32 suspension_Ks, f32 suspension_Kd,
+                                         bool powered, bool steering, bool brakes )
     {
-        PhysxVehicleWheel3::PhysxVehicleWheel3()
-        {
-        }
+    }
 
-        PhysxVehicleWheel3::~PhysxVehicleWheel3()
-        {
-        }
+    auto PhysxVehicleWheel3::getPosition() const -> Vector3F
+    {
+        return Vector3F::zero();
+    }
 
-        void PhysxVehicleWheel3::initialise( const Vector3F &pos, f32 radius, f32 width,
-                                             f32 suspensionRestLength, f32 suspension_Ks,
-                                             f32 suspension_Kd, bool powered, bool steering,
-                                             bool brakes )
-        {
-        }
+    auto PhysxVehicleWheel3::getOrientation() const -> QuaternionF
+    {
+        return QuaternionF::identity();
+    }
 
-        Vector3F PhysxVehicleWheel3::getPosition() const
-        {
-            return Vector3F::zero();
-        }
+    auto PhysxVehicleWheel3::getVelocity() const -> Vector3F
+    {
+        return Vector3F::zero();
+    }
 
-        QuaternionF PhysxVehicleWheel3::getOrientation() const
-        {
-            return QuaternionF::identity();
-        }
+    void PhysxVehicleWheel3::setMaterialId( u32 materialId )
+    {
+    }
 
-        Vector3F PhysxVehicleWheel3::getVelocity() const
-        {
-            return Vector3F::zero();
-        }
+    auto PhysxVehicleWheel3::getMaterialId() const -> u32
+    {
+        return 0;
+    }
 
-        void PhysxVehicleWheel3::setMaterialId( u32 materialId )
-        {
-        }
+    auto PhysxVehicleWheel3::getAngularVelocity() const -> f32
+    {
+        return 0;
+    }
 
-        u32 PhysxVehicleWheel3::getMaterialId() const
-        {
-            return 0;
-        }
+    auto PhysxVehicleWheel3::getLocalAABB() const -> AABB3F
+    {
+        return {};
+    }
 
-        f32 PhysxVehicleWheel3::getAngularVelocity() const
-        {
-            return 0;
-        }
+    auto PhysxVehicleWheel3::getWorldAABB() const -> AABB3F
+    {
+        return {};
+    }
 
-        AABB3F PhysxVehicleWheel3::getLocalAABB() const
-        {
-            return AABB3F();
-        }
-
-        AABB3F PhysxVehicleWheel3::getWorldAABB() const
-        {
-            return AABB3F();
-        }
-
-    }  // namespace physics
-}  // namespace fb
+}  // namespace fb::physics
 
 // end namespace fb

@@ -6,7 +6,7 @@
 namespace fb
 {
 
-    void bindSColorf( lua_State *L );
+    void bindColour( lua_State *L );
 
 }  // end namespace fb
 

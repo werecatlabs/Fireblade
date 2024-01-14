@@ -44,7 +44,7 @@ namespace fb
     {
         return doc->LoadFile( name );
     }
-    
+
     void bindXML( lua_State *L )
     {
         using namespace luabind;

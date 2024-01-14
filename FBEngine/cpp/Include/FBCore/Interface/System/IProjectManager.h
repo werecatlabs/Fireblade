@@ -14,19 +14,15 @@ namespace fb
         /** Destructor. */
         ~IProjectManager() override = default;
 
-        /*
-        virtual void addProject( const String &projectPath ) = 0;
-        virtual void removeProject( const String &projectPath ) = 0;
-        virtual void removeProject( const IProject *project ) = 0;
-        virtual void removeProject( size_t index ) = 0;
-        virtual void clearProjects() = 0;
+        virtual void generateProject() = 0;
 
-        virtual IProject *getProject( const String &projectPath ) const = 0;
-        virtual IProject *getProject( size_t index ) const = 0;
-        virtual size_t getProjectCount() const = 0;
+        virtual void addIncludeFolder( const String &includeFolder ) = 0;
 
-        virtual Array<IProject *> getProjects() const = 0;
-        */
+        virtual void removeIncludeFolder( const String &includeFolder ) = 0;
+
+        virtual void addLibraryFolder( const String &libraryFolder ) = 0;
+
+        virtual void removeLibraryFolder( const String &libraryFolder ) = 0;
 
         FB_CLASS_REGISTER_DECL;
     };

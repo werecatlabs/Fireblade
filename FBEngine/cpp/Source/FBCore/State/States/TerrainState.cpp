@@ -6,15 +6,11 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, TerrainState, BaseState );
 
-    TerrainState::TerrainState()
-    {
-    }
+    TerrainState::TerrainState() = default;
 
-    TerrainState::~TerrainState()
-    {
-    }
+    TerrainState::~TerrainState() = default;
 
-    Transform3<real_Num> TerrainState::getWorldTransform() const
+    auto TerrainState::getWorldTransform() const -> Transform3<real_Num>
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_worldTransform;

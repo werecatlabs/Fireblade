@@ -9,13 +9,9 @@
 
 namespace fb
 {
-    SubMesh::SubMesh()
-    {
-    }
+    SubMesh::SubMesh() = default;
 
-    SubMesh::~SubMesh()
-    {
-    }
+    SubMesh::~SubMesh() = default;
 
     void SubMesh::unload( SmartPtr<ISharedObject> data )
     {
@@ -37,7 +33,7 @@ namespace fb
         m_materialName = materialName;
     }
 
-    String SubMesh::getMaterialName() const
+    auto SubMesh::getMaterialName() const -> String
     {
         return m_materialName;
     }
@@ -47,7 +43,7 @@ namespace fb
         m_vertexBuffer = vertexBuffer;
     }
 
-    SmartPtr<IVertexBuffer> SubMesh::getVertexBuffer() const
+    auto SubMesh::getVertexBuffer() const -> SmartPtr<IVertexBuffer>
     {
         return m_vertexBuffer;
     }
@@ -57,7 +53,7 @@ namespace fb
         m_indexBuffer = indexBuffer;
     }
 
-    SmartPtr<IIndexBuffer> SubMesh::getIndexBuffer() const
+    auto SubMesh::getIndexBuffer() const -> SmartPtr<IIndexBuffer>
     {
         return m_indexBuffer;
     }
@@ -70,7 +66,7 @@ namespace fb
         auto posElem =
             vertexDec->findElementBySemantic( IVertexDeclaration::VertexElementSemantic::VES_POSITION );
 
-        auto numVerticies = vertexBuffer->getNumVerticies();
+        auto numVerticies = vertexBuffer->getNumVertices();
 
         if( numVerticies > 0 )
         {
@@ -92,12 +88,12 @@ namespace fb
         }
     }
 
-    AABB3F SubMesh::getAABB() const
+    auto SubMesh::getAABB() const -> AABB3F
     {
         return m_aabb;
     }
 
-    SmartPtr<ISubMesh> SubMesh::clone() const
+    auto SubMesh::clone() const -> SmartPtr<ISubMesh>
     {
         auto subMesh = fb::make_ptr<SubMesh>();
 
@@ -109,7 +105,7 @@ namespace fb
         return subMesh;
     }
 
-    bool SubMesh::getUseSharedVertices() const
+    auto SubMesh::getUseSharedVertices() const -> bool
     {
         return m_useSharedVertices;
     }
@@ -119,7 +115,7 @@ namespace fb
         m_useSharedVertices = useSharedVertices;
     }
 
-    bool SubMesh::compare( SmartPtr<ISubMesh> other ) const
+    auto SubMesh::compare( SmartPtr<ISubMesh> other ) const -> bool
     {
         return m_vertexBuffer->compare( other->getVertexBuffer() ) &&
                m_indexBuffer->compare( other->getIndexBuffer() );

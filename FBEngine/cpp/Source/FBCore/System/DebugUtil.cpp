@@ -8,7 +8,7 @@
 namespace fb
 {
 
-    String DebugUtil::getStackTrace()
+    auto DebugUtil::getStackTrace() -> String
     {
         std::stringstream strStream;
 
@@ -19,7 +19,7 @@ namespace fb
         return strStream.str();
     }
 
-    String DebugUtil::getStackTraceForException( std::exception &e )
+    auto DebugUtil::getStackTraceForException( std::exception &e ) -> String
     {
         std::stringstream strStream;
 

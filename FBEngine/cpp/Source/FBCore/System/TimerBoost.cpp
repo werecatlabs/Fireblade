@@ -111,7 +111,7 @@ namespace fb
         m_fixedTimePoints[task] = now;
     }
 
-    f64 TimerBoost::calculateEventTime( f64 fNow, std::deque<f64> &times )
+    auto TimerBoost::calculateEventTime( f64 fNow, std::deque<f64> &times ) -> f64
     {
         auto task = static_cast<s32>( Thread::getCurrentTask() );
 
@@ -120,7 +120,9 @@ namespace fb
         times.push_back( fNow );
 
         if( times.size() == 1 )
+        {
             return 0;
+        }
 
         // Find the oldest time to keep
         auto it = times.begin(),
@@ -128,9 +130,13 @@ namespace fb
         while( it != end )
         {
             if( fNow - *it > m_frameSmoothingTime[task] )
+            {
                 ++it;
+            }
             else
+            {
                 break;
+            }
         }
 
         // Remove old times
@@ -213,42 +219,42 @@ namespace fb
         }
     }
 
-    u32 TimerBoost::getTickCount()
+    auto TimerBoost::getTickCount() -> u32
     {
         auto task = static_cast<s32>( Thread::getCurrentTask() );
         return m_ticks[task];
     }
 
-    u32 TimerBoost::getTickCount( Thread::Task task )
+    auto TimerBoost::getTickCount( Thread::Task task ) -> u32
     {
         auto iTask = static_cast<s32>( task );
         return m_ticks[iTask];
     }
 
-    bool TimerBoost::isSteady() const
+    auto TimerBoost::isSteady() const -> bool
     {
         return boost::chrono::high_resolution_clock::is_steady;
     }
 
-    f64 TimerBoost::getDerivedFixedTime() const
+    auto TimerBoost::getDerivedFixedTime() const -> f64
     {
         auto task = static_cast<s32>( Thread::getCurrentTask() );
         s32 ticks = m_ticks[task];
         return static_cast<f64>( ticks ) * getFixedTimeInterval();
     }
 
-    f64 TimerBoost::getFixedTime() const
+    auto TimerBoost::getFixedTime() const -> f64
     {
         auto task = static_cast<s32>( Thread::getCurrentTask() );
         return m_fixedTime[task];
     }
 
-    f64 TimerBoost::getFixedTime( u32 task ) const
+    auto TimerBoost::getFixedTime( u32 task ) const -> f64
     {
         return m_fixedTime[task];
     }
 
-    f64 TimerBoost::getFixedTimeNow() const
+    auto TimerBoost::getFixedTimeNow() const -> f64
     {
         auto now = boost::chrono::high_resolution_clock::now();
         auto task = static_cast<s32>( Thread::getCurrentTask() );
@@ -258,7 +264,7 @@ namespace fb
         return getFixedTime() + seconds.count();
     }
 
-    f64 TimerBoost::getFixedTimeNow( u32 task ) const
+    auto TimerBoost::getFixedTimeNow( u32 task ) const -> f64
     {
         boost::chrono::duration<f64> p = m_fixedTimePoints[task] - m_startPoint;
         return getFixedTime( task ) + ( now() - p.count() );
@@ -270,13 +276,13 @@ namespace fb
         m_fixedTime[task] = val;
     }
 
-    f64 TimerBoost::getFixedTimeInterval( Thread::Task task ) const
+    auto TimerBoost::getFixedTimeInterval( Thread::Task task ) const -> f64
     {
         auto iTask = static_cast<s32>( task );
         return m_fixedTimeInterval[iTask];
     }
 
-    f64 TimerBoost::getFixedTimeInterval() const
+    auto TimerBoost::getFixedTimeInterval() const -> f64
     {
         auto task = static_cast<s32>( Thread::getCurrentTask() );
         return m_fixedTimeInterval[task];
@@ -304,7 +310,7 @@ namespace fb
         }
     }
 
-    float TimerBoost::getFrameSmoothingTime() const
+    auto TimerBoost::getFrameSmoothingTime() const -> float
     {
         auto task = static_cast<s32>( Thread::getCurrentTask() );
         return (f32)m_frameSmoothingTime[task];
@@ -316,20 +322,20 @@ namespace fb
         m_startPoint = boost::chrono::high_resolution_clock::now() - timeDuration;
     }
 
-    f64 TimerBoost::now128() const
+    auto TimerBoost::now128() const -> f64
     {
         boost::chrono::steady_clock::time_point end = boost::chrono::high_resolution_clock::now();
         boost::chrono::duration<f64> seconds = end - m_startPoint;
         return seconds.count();
     }
 
-    f64 TimerBoost::getSmoothTime() const
+    auto TimerBoost::getSmoothTime() const -> f64
     {
         auto task = static_cast<s32>( Thread::getCurrentTask() );
         return m_smoothTime[task];
     }
 
-    f64 TimerBoost::getSmoothDeltaTime() const
+    auto TimerBoost::getSmoothDeltaTime() const -> f64
     {
         auto task = static_cast<s32>( Thread::getCurrentTask() );
         return m_smoothDeltaTime[task];
@@ -343,7 +349,7 @@ namespace fb
         m_smoothTime[task] = m_smoothTime[task] + smoothDT;
     }
 
-    f64 TimerBoost::getMaxDeltaTime( Thread::Task task ) const
+    auto TimerBoost::getMaxDeltaTime( Thread::Task task ) const -> f64
     {
         return m_maxDeltaTime[static_cast<s32>( task )];
     }
@@ -353,7 +359,7 @@ namespace fb
         m_maxDeltaTime[static_cast<s32>( task )] = t;
     }
 
-    f64 TimerBoost::getMinDeltaTime( Thread::Task task ) const
+    auto TimerBoost::getMinDeltaTime( Thread::Task task ) const -> f64
     {
         return m_minDeltaTime[static_cast<s32>( task )];
     }
@@ -363,7 +369,7 @@ namespace fb
         m_minDeltaTime[static_cast<s32>( task )] = t;
     }
 
-    f64 TimerBoost::getStartOffset() const
+    auto TimerBoost::getStartOffset() const -> f64
     {
         auto task = static_cast<s32>( Thread::getCurrentTask() );
         return m_startOffset[task];
@@ -375,7 +381,7 @@ namespace fb
         m_startOffset[task] = val;
     }
 
-    f64 TimerBoost::getStartOffset( Thread::Task task ) const
+    auto TimerBoost::getStartOffset( Thread::Task task ) const -> f64
     {
         return m_startOffset[static_cast<s32>( task )];
     }
@@ -385,7 +391,7 @@ namespace fb
         m_startOffset[static_cast<s32>( task )] = val;
     }
 
-    f64 TimerBoost::getFixedOffset( Thread::Task task ) const
+    auto TimerBoost::getFixedOffset( Thread::Task task ) const -> f64
     {
         return m_fixedOffset[static_cast<s32>( task )];
     }
@@ -395,7 +401,7 @@ namespace fb
         m_fixedOffset[static_cast<s32>( task )] = offset;
     }
 
-    f64 TimerBoost::getAccumulated( Thread::Task task ) const
+    auto TimerBoost::getAccumulated( Thread::Task task ) const -> f64
     {
         return m_accumulated[static_cast<s32>( task )];
     }
@@ -410,7 +416,7 @@ namespace fb
         m_accumulated[static_cast<s32>( task )] += val;
     }
 
-    f64 TimerBoost::now() const
+    auto TimerBoost::now() const -> f64
     {
         auto t = boost::chrono::steady_clock::now();
         boost::chrono::duration<f64> interval = t - m_startPoint;

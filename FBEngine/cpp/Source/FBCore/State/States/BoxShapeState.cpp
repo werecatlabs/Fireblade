@@ -5,17 +5,13 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, BoxShapeState, BaseState );
+    FB_CLASS_REGISTER_DERIVED( fb, BoxShapeState, ShapeState );
 
-    BoxShapeState::BoxShapeState()
-    {
-    }
+    BoxShapeState::BoxShapeState() = default;
 
-    BoxShapeState::~BoxShapeState()
-    {
-    }
+    BoxShapeState::~BoxShapeState() = default;
 
-    Vector3<real_Num> BoxShapeState::getExtents() const
+    auto BoxShapeState::getExtents() const -> Vector3<real_Num>
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_extents;

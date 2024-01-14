@@ -4,29 +4,23 @@
 #include <ui/UIManager.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    CreateCodeProjectJob::CreateCodeProjectJob() = default;
+
+    CreateCodeProjectJob::~CreateCodeProjectJob() = default;
+
+    void CreateCodeProjectJob::execute()
     {
-
-        CreateCodeProjectJob::CreateCodeProjectJob()
+        try
         {
-        }
+            auto applicationManager = core::ApplicationManager::instance();
+            auto editorManager = EditorManager::getSingletonPtr();
+            auto projectManager = editorManager->getProjectManager();
 
-        CreateCodeProjectJob::~CreateCodeProjectJob()
-        {
-        }
-
-        void CreateCodeProjectJob::execute()
-        {
-            try
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                auto editorManager = EditorManager::getSingletonPtr();
-                auto projectManager = editorManager->getProjectManager();
-
-                auto workingDirectory = Path::getWorkingDirectory();
-                auto mediaPath = String();
+            auto workingDirectory = Path::getWorkingDirectory();
+            auto mediaPath = String();
 
 #if FB_FINAL
                 mediaPath += applicationManager->getMediaPath() + "Engine";
@@ -41,8 +35,15 @@ namespace fb
 #endif
 
                 auto absoluteMediaPath = Path::getAbsolutePath( workingDirectory, mediaPath );
+                auto proprietaryPath = Path::getAbsolutePath( workingDirectory, mediaPath + "../");
+
+                projectManager->clearLibraries();
 
                 projectManager->setEnginePath( absoluteMediaPath );
+                projectManager->addIncludeFolder( proprietaryPath + "/fireblade_proprietary/Libraries/cpp/Include" );
+                projectManager->addLibraryFolder( proprietaryPath + "/fireblade_proprietary/libs" );
+                projectManager->addLibrary("FBApplication");
+
                 projectManager->generateProject();
             }
             catch( std::exception &e )
@@ -51,5 +52,4 @@ namespace fb
             }
         }
 
-    }  // end namespace editor
-}  // end namespace fb
+}  // namespace fb::editor

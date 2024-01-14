@@ -21,7 +21,7 @@
 #else
 
 #    include <imgui.h>
-#    include <stdio.h>
+#    include <cstdio>
 
 #    if FB_BUILD_SDL2
 #        include <SDL.h>
@@ -35,8 +35,7 @@
 
 #if FB_GRAPHICS_SYSTEM_OGRENEXT
 
-#    include <FBImGui/ImguiOgre/ImguiManagerOgre.h>
-#    include <FBImGui/ImguiOgre/CompositorPassImGuiProvider.h>
+#    include <FBGraphicsOgreNext/ImguiManagerOgre.h>
 
 #    include <FBGraphicsOgreNext/Wrapper/CTextureOgreNext.h>
 
@@ -104,7 +103,7 @@
 //#include "ImZoomSlider.h"
 #include "ImCurveEdit.h"
 #include "GraphEditor.h"
-#include <math.h>
+#include <cmath>
 #include <vector>
 #include <algorithm>
 #include <imgui_impl_win32.h>
@@ -123,256 +122,254 @@ extern void ShowExampleAppDockSpace( bool *p_open );
 
 #if defined FB_PLATFORM_WIN32
 // Copy this line into your .cpp file to forward declare the function.
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler( HWND hWnd, UINT msg, WPARAM wParam,
-                                                              LPARAM lParam );
+extern IMGUI_IMPL_API auto ImGui_ImplWin32_WndProcHandler( HWND hWnd, UINT msg, WPARAM wParam,
+                                                           LPARAM lParam ) -> LRESULT;
 #endif
 
 // extern void ImGui_ImplDX11_SetWindowSize(ImGuiViewport* viewport, ImVec2 size);
 
 #ifdef FB_PLATFORM_WIN32
 #    include "minwindef.h"
-extern ImGuiKey ImGui_ImplWin32_VirtualKeyToImGuiKey( WPARAM wParam );
+extern auto ImGui_ImplWin32_VirtualKeyToImGuiKey( WPARAM wParam ) -> ImGuiKey;
 extern void ImGui_ImplWin32_AddKeyEvent( ImGuiKey key, bool down, int native_keycode,
                                          int native_scancode = -1 );
 #endif
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    class Test
     {
-        class Test
+    public:
+        enum class eImGuiKey
         {
-        public:
-            enum class eImGuiKey
-            {
-                // Keyboard
-                ImGuiKey_None = 0,
-                ImGuiKey_Tab = 512,
-                // == ImGuiKey_NamedKey_BEGIN
-                ImGuiKey_LeftArrow,
-                ImGuiKey_RightArrow,
-                ImGuiKey_UpArrow,
-                ImGuiKey_DownArrow,
-                ImGuiKey_PageUp,
-                ImGuiKey_PageDown,
-                ImGuiKey_Home,
-                ImGuiKey_End,
-                ImGuiKey_Insert,
-                ImGuiKey_Delete,
-                ImGuiKey_Backspace,
-                ImGuiKey_Space,
-                ImGuiKey_Enter,
-                ImGuiKey_Escape,
-                ImGuiKey_LeftCtrl,
-                ImGuiKey_LeftShift,
-                ImGuiKey_LeftAlt,
-                ImGuiKey_LeftSuper,
-                ImGuiKey_RightCtrl,
-                ImGuiKey_RightShift,
-                ImGuiKey_RightAlt,
-                ImGuiKey_RightSuper,
-                ImGuiKey_Menu,
-                ImGuiKey_0,
-                ImGuiKey_1,
-                ImGuiKey_2,
-                ImGuiKey_3,
-                ImGuiKey_4,
-                ImGuiKey_5,
-                ImGuiKey_6,
-                ImGuiKey_7,
-                ImGuiKey_8,
-                ImGuiKey_9,
-                ImGuiKey_A,
-                ImGuiKey_B,
-                ImGuiKey_C,
-                ImGuiKey_D,
-                ImGuiKey_E,
-                ImGuiKey_F,
-                ImGuiKey_G,
-                ImGuiKey_H,
-                ImGuiKey_I,
-                ImGuiKey_J,
-                ImGuiKey_K,
-                ImGuiKey_L,
-                ImGuiKey_M,
-                ImGuiKey_N,
-                ImGuiKey_O,
-                ImGuiKey_P,
-                ImGuiKey_Q,
-                ImGuiKey_R,
-                ImGuiKey_S,
-                ImGuiKey_T,
-                ImGuiKey_U,
-                ImGuiKey_V,
-                ImGuiKey_W,
-                ImGuiKey_X,
-                ImGuiKey_Y,
-                ImGuiKey_Z,
-                ImGuiKey_F1,
-                ImGuiKey_F2,
-                ImGuiKey_F3,
-                ImGuiKey_F4,
-                ImGuiKey_F5,
-                ImGuiKey_F6,
-                ImGuiKey_F7,
-                ImGuiKey_F8,
-                ImGuiKey_F9,
-                ImGuiKey_F10,
-                ImGuiKey_F11,
-                ImGuiKey_F12,
-                ImGuiKey_Apostrophe,
-                // '
-                ImGuiKey_Comma,
-                // ,
-                ImGuiKey_Minus,
-                // -
-                ImGuiKey_Period,
-                // .
-                ImGuiKey_Slash,
-                // /
-                ImGuiKey_Semicolon,
-                // ;
-                ImGuiKey_Equal,
-                // =
-                ImGuiKey_LeftBracket,
-                // [
-                ImGuiKey_Backslash,
-                // \ (this text inhibit multiline comment caused by backslash)
-                ImGuiKey_RightBracket,
-                // ]
-                ImGuiKey_GraveAccent,
-                // `
-                ImGuiKey_CapsLock,
-                ImGuiKey_ScrollLock,
-                ImGuiKey_NumLock,
-                ImGuiKey_PrintScreen,
-                ImGuiKey_Pause,
-                ImGuiKey_Keypad0,
-                ImGuiKey_Keypad1,
-                ImGuiKey_Keypad2,
-                ImGuiKey_Keypad3,
-                ImGuiKey_Keypad4,
-                ImGuiKey_Keypad5,
-                ImGuiKey_Keypad6,
-                ImGuiKey_Keypad7,
-                ImGuiKey_Keypad8,
-                ImGuiKey_Keypad9,
-                ImGuiKey_KeypadDecimal,
-                ImGuiKey_KeypadDivide,
-                ImGuiKey_KeypadMultiply,
-                ImGuiKey_KeypadSubtract,
-                ImGuiKey_KeypadAdd,
-                ImGuiKey_KeypadEnter,
-                ImGuiKey_KeypadEqual,
+            // Keyboard
+            ImGuiKey_None = 0,
+            ImGuiKey_Tab = 512,
+            // == ImGuiKey_NamedKey_BEGIN
+            ImGuiKey_LeftArrow,
+            ImGuiKey_RightArrow,
+            ImGuiKey_UpArrow,
+            ImGuiKey_DownArrow,
+            ImGuiKey_PageUp,
+            ImGuiKey_PageDown,
+            ImGuiKey_Home,
+            ImGuiKey_End,
+            ImGuiKey_Insert,
+            ImGuiKey_Delete,
+            ImGuiKey_Backspace,
+            ImGuiKey_Space,
+            ImGuiKey_Enter,
+            ImGuiKey_Escape,
+            ImGuiKey_LeftCtrl,
+            ImGuiKey_LeftShift,
+            ImGuiKey_LeftAlt,
+            ImGuiKey_LeftSuper,
+            ImGuiKey_RightCtrl,
+            ImGuiKey_RightShift,
+            ImGuiKey_RightAlt,
+            ImGuiKey_RightSuper,
+            ImGuiKey_Menu,
+            ImGuiKey_0,
+            ImGuiKey_1,
+            ImGuiKey_2,
+            ImGuiKey_3,
+            ImGuiKey_4,
+            ImGuiKey_5,
+            ImGuiKey_6,
+            ImGuiKey_7,
+            ImGuiKey_8,
+            ImGuiKey_9,
+            ImGuiKey_A,
+            ImGuiKey_B,
+            ImGuiKey_C,
+            ImGuiKey_D,
+            ImGuiKey_E,
+            ImGuiKey_F,
+            ImGuiKey_G,
+            ImGuiKey_H,
+            ImGuiKey_I,
+            ImGuiKey_J,
+            ImGuiKey_K,
+            ImGuiKey_L,
+            ImGuiKey_M,
+            ImGuiKey_N,
+            ImGuiKey_O,
+            ImGuiKey_P,
+            ImGuiKey_Q,
+            ImGuiKey_R,
+            ImGuiKey_S,
+            ImGuiKey_T,
+            ImGuiKey_U,
+            ImGuiKey_V,
+            ImGuiKey_W,
+            ImGuiKey_X,
+            ImGuiKey_Y,
+            ImGuiKey_Z,
+            ImGuiKey_F1,
+            ImGuiKey_F2,
+            ImGuiKey_F3,
+            ImGuiKey_F4,
+            ImGuiKey_F5,
+            ImGuiKey_F6,
+            ImGuiKey_F7,
+            ImGuiKey_F8,
+            ImGuiKey_F9,
+            ImGuiKey_F10,
+            ImGuiKey_F11,
+            ImGuiKey_F12,
+            ImGuiKey_Apostrophe,
+            // '
+            ImGuiKey_Comma,
+            // ,
+            ImGuiKey_Minus,
+            // -
+            ImGuiKey_Period,
+            // .
+            ImGuiKey_Slash,
+            // /
+            ImGuiKey_Semicolon,
+            // ;
+            ImGuiKey_Equal,
+            // =
+            ImGuiKey_LeftBracket,
+            // [
+            ImGuiKey_Backslash,
+            // \ (this text inhibit multiline comment caused by backslash)
+            ImGuiKey_RightBracket,
+            // ]
+            ImGuiKey_GraveAccent,
+            // `
+            ImGuiKey_CapsLock,
+            ImGuiKey_ScrollLock,
+            ImGuiKey_NumLock,
+            ImGuiKey_PrintScreen,
+            ImGuiKey_Pause,
+            ImGuiKey_Keypad0,
+            ImGuiKey_Keypad1,
+            ImGuiKey_Keypad2,
+            ImGuiKey_Keypad3,
+            ImGuiKey_Keypad4,
+            ImGuiKey_Keypad5,
+            ImGuiKey_Keypad6,
+            ImGuiKey_Keypad7,
+            ImGuiKey_Keypad8,
+            ImGuiKey_Keypad9,
+            ImGuiKey_KeypadDecimal,
+            ImGuiKey_KeypadDivide,
+            ImGuiKey_KeypadMultiply,
+            ImGuiKey_KeypadSubtract,
+            ImGuiKey_KeypadAdd,
+            ImGuiKey_KeypadEnter,
+            ImGuiKey_KeypadEqual,
 
-                // Gamepad (some of those are analog values, 0.0f to 1.0f) // NAVIGATION action
-                ImGuiKey_GamepadStart,
-                // Menu (Xbox)          + (Switch)   Start/Options (PS) // --
-                ImGuiKey_GamepadBack,
-                // View (Xbox)          - (Switch)   Share (PS)         // --
-                ImGuiKey_GamepadFaceUp,
-                // Y (Xbox)             X (Switch)   Triangle (PS)      // ->
-                // ImGuiNavInput_Input
-                ImGuiKey_GamepadFaceDown,
-                // A (Xbox)             B (Switch)   Cross (PS)         // ->
-                // ImGuiNavInput_Activate
-                ImGuiKey_GamepadFaceLeft,
-                // X (Xbox)             Y (Switch)   Square (PS)        // ->
-                // ImGuiNavInput_Menu
-                ImGuiKey_GamepadFaceRight,
-                // B (Xbox)             A (Switch)   Circle (PS)        // ->
-                // ImGuiNavInput_Cancel
-                ImGuiKey_GamepadDpadUp,
-                // D-pad Up                                             // ->
-                // ImGuiNavInput_DpadUp
-                ImGuiKey_GamepadDpadDown,
-                // D-pad Down                                           // ->
-                // ImGuiNavInput_DpadDown
-                ImGuiKey_GamepadDpadLeft,
-                // D-pad Left                                           // ->
-                // ImGuiNavInput_DpadLeft
-                ImGuiKey_GamepadDpadRight,
-                // D-pad Right                                          // ->
-                // ImGuiNavInput_DpadRight
-                ImGuiKey_GamepadL1,
-                // L Bumper (Xbox)      L (Switch)   L1 (PS)            // ->
-                // ImGuiNavInput_FocusPrev + ImGuiNavInput_TweakSlow
-                ImGuiKey_GamepadR1,
-                // R Bumper (Xbox)      R (Switch)   R1 (PS)            // ->
-                // ImGuiNavInput_FocusNext + ImGuiNavInput_TweakFast
-                ImGuiKey_GamepadL2,
-                // L Trigger (Xbox)     ZL (Switch)  L2 (PS) [Analog]
-                ImGuiKey_GamepadR2,
-                // R Trigger (Xbox)     ZR (Switch)  R2 (PS) [Analog]
-                ImGuiKey_GamepadL3,
-                // L Thumbstick (Xbox)  L3 (Switch)  L3 (PS)
-                ImGuiKey_GamepadR3,
-                // R Thumbstick (Xbox)  R3 (Switch)  R3 (PS)
-                ImGuiKey_GamepadLStickUp,
-                // [Analog]                                             // ->
-                // ImGuiNavInput_LStickUp
-                ImGuiKey_GamepadLStickDown,
-                // [Analog]                                             //
-                // -> ImGuiNavInput_LStickDown
-                ImGuiKey_GamepadLStickLeft,
-                // [Analog]                                             //
-                // -> ImGuiNavInput_LStickLeft
-                ImGuiKey_GamepadLStickRight,
-                // [Analog]                                             //
-                // -> ImGuiNavInput_LStickRight
-                ImGuiKey_GamepadRStickUp,
-                // [Analog]
-                ImGuiKey_GamepadRStickDown,
-                // [Analog]
-                ImGuiKey_GamepadRStickLeft,
-                // [Analog]
-                ImGuiKey_GamepadRStickRight,
-                // [Analog]
+            // Gamepad (some of those are analog values, 0.0f to 1.0f) // NAVIGATION action
+            ImGuiKey_GamepadStart,
+            // Menu (Xbox)          + (Switch)   Start/Options (PS) // --
+            ImGuiKey_GamepadBack,
+            // View (Xbox)          - (Switch)   Share (PS)         // --
+            ImGuiKey_GamepadFaceUp,
+            // Y (Xbox)             X (Switch)   Triangle (PS)      // ->
+            // ImGuiNavInput_Input
+            ImGuiKey_GamepadFaceDown,
+            // A (Xbox)             B (Switch)   Cross (PS)         // ->
+            // ImGuiNavInput_Activate
+            ImGuiKey_GamepadFaceLeft,
+            // X (Xbox)             Y (Switch)   Square (PS)        // ->
+            // ImGuiNavInput_Menu
+            ImGuiKey_GamepadFaceRight,
+            // B (Xbox)             A (Switch)   Circle (PS)        // ->
+            // ImGuiNavInput_Cancel
+            ImGuiKey_GamepadDpadUp,
+            // D-pad Up                                             // ->
+            // ImGuiNavInput_DpadUp
+            ImGuiKey_GamepadDpadDown,
+            // D-pad Down                                           // ->
+            // ImGuiNavInput_DpadDown
+            ImGuiKey_GamepadDpadLeft,
+            // D-pad Left                                           // ->
+            // ImGuiNavInput_DpadLeft
+            ImGuiKey_GamepadDpadRight,
+            // D-pad Right                                          // ->
+            // ImGuiNavInput_DpadRight
+            ImGuiKey_GamepadL1,
+            // L Bumper (Xbox)      L (Switch)   L1 (PS)            // ->
+            // ImGuiNavInput_FocusPrev + ImGuiNavInput_TweakSlow
+            ImGuiKey_GamepadR1,
+            // R Bumper (Xbox)      R (Switch)   R1 (PS)            // ->
+            // ImGuiNavInput_FocusNext + ImGuiNavInput_TweakFast
+            ImGuiKey_GamepadL2,
+            // L Trigger (Xbox)     ZL (Switch)  L2 (PS) [Analog]
+            ImGuiKey_GamepadR2,
+            // R Trigger (Xbox)     ZR (Switch)  R2 (PS) [Analog]
+            ImGuiKey_GamepadL3,
+            // L Thumbstick (Xbox)  L3 (Switch)  L3 (PS)
+            ImGuiKey_GamepadR3,
+            // R Thumbstick (Xbox)  R3 (Switch)  R3 (PS)
+            ImGuiKey_GamepadLStickUp,
+            // [Analog]                                             // ->
+            // ImGuiNavInput_LStickUp
+            ImGuiKey_GamepadLStickDown,
+            // [Analog]                                             //
+            // -> ImGuiNavInput_LStickDown
+            ImGuiKey_GamepadLStickLeft,
+            // [Analog]                                             //
+            // -> ImGuiNavInput_LStickLeft
+            ImGuiKey_GamepadLStickRight,
+            // [Analog]                                             //
+            // -> ImGuiNavInput_LStickRight
+            ImGuiKey_GamepadRStickUp,
+            // [Analog]
+            ImGuiKey_GamepadRStickDown,
+            // [Analog]
+            ImGuiKey_GamepadRStickLeft,
+            // [Analog]
+            ImGuiKey_GamepadRStickRight,
+            // [Analog]
 
-                // Keyboard Modifiers (explicitly submitted by backend via AddKeyEvent() calls)
-                // - This is mirroring the data also written to io.KeyCtrl, io.KeyShift, io.KeyAlt,
-                // io.KeySuper, in a format allowing
-                //   them to be accessed via standard key API, allowing calls such as IsKeyPressed(),
-                //   IsKeyReleased(), querying duration etc.
-                // - Code polling every keys (e.g. an interface to detect a key press for input mapping)
-                // might want to ignore those
-                //   and prefer using the real keys (e.g. ImGuiKey_LeftCtrl, ImGuiKey_RightCtrl instead
-                //   of ImGuiKey_ModCtrl).
-                // - In theory the value of keyboard modifiers should be roughly equivalent to a logical
-                // or of the equivalent left/right keys.
-                //   In practice: it's complicated; mods are often provided from different sources.
-                //   Keyboard layout, IME, sticky keys and backends tend to interfere and break that
-                //   equivalence. The safer decision is to relay that ambiguity down to the end-user...
-                ImGuiKey_ModCtrl,
-                ImGuiKey_ModShift,
-                ImGuiKey_ModAlt,
-                ImGuiKey_ModSuper,
+            // Keyboard Modifiers (explicitly submitted by backend via AddKeyEvent() calls)
+            // - This is mirroring the data also written to io.KeyCtrl, io.KeyShift, io.KeyAlt,
+            // io.KeySuper, in a format allowing
+            //   them to be accessed via standard key API, allowing calls such as IsKeyPressed(),
+            //   IsKeyReleased(), querying duration etc.
+            // - Code polling every keys (e.g. an interface to detect a key press for input mapping)
+            // might want to ignore those
+            //   and prefer using the real keys (e.g. ImGuiKey_LeftCtrl, ImGuiKey_RightCtrl instead
+            //   of ImGuiKey_ModCtrl).
+            // - In theory the value of keyboard modifiers should be roughly equivalent to a logical
+            // or of the equivalent left/right keys.
+            //   In practice: it's complicated; mods are often provided from different sources.
+            //   Keyboard layout, IME, sticky keys and backends tend to interfere and break that
+            //   equivalence. The safer decision is to relay that ambiguity down to the end-user...
+            ImGuiKey_ModCtrl,
+            ImGuiKey_ModShift,
+            ImGuiKey_ModAlt,
+            ImGuiKey_ModSuper,
 
-                // End of list
-                ImGuiKey_COUNT,
-                // No valid ImGuiKey is ever greater than this value
+            // End of list
+            ImGuiKey_COUNT,
+            // No valid ImGuiKey is ever greater than this value
 
-                // [Internal] Prior to 1.87 we required user to fill io.KeysDown[512] using their own
-                // native index + a io.KeyMap[] array. We are ditching this method but keeping a legacy
-                // path for user code doing e.g. IsKeyPressed(MY_NATIVE_KEY_CODE)
-                ImGuiKey_NamedKey_BEGIN = 512,
-                ImGuiKey_NamedKey_END = ImGuiKey_COUNT,
-                ImGuiKey_NamedKey_COUNT = ImGuiKey_NamedKey_END - ImGuiKey_NamedKey_BEGIN,
+            // [Internal] Prior to 1.87 we required user to fill io.KeysDown[512] using their own
+            // native index + a io.KeyMap[] array. We are ditching this method but keeping a legacy
+            // path for user code doing e.g. IsKeyPressed(MY_NATIVE_KEY_CODE)
+            ImGuiKey_NamedKey_BEGIN = 512,
+            ImGuiKey_NamedKey_END = ImGuiKey_COUNT,
+            ImGuiKey_NamedKey_COUNT = ImGuiKey_NamedKey_END - ImGuiKey_NamedKey_BEGIN,
 #ifdef IMGUI_DISABLE_OBSOLETE_KEYIO
-                ImGuiKey_KeysData_SIZE =
-                    ImGuiKey_NamedKey_COUNT,  // Size of KeysData[]: only hold named keys
-                ImGuiKey_KeysData_OFFSET = ImGuiKey_NamedKey_BEGIN  // First key stored in KeysData[0]
+            ImGuiKey_KeysData_SIZE =
+                ImGuiKey_NamedKey_COUNT,  // Size of KeysData[]: only hold named keys
+            ImGuiKey_KeysData_OFFSET = ImGuiKey_NamedKey_BEGIN  // First key stored in KeysData[0]
 #else
-                ImGuiKey_KeysData_SIZE = ImGuiKey_COUNT,
-                // Size of KeysData[]: hold legacy 0..512 keycodes + named keys
-                ImGuiKey_KeysData_OFFSET = 0  // First key stored in KeysData[0]
+            ImGuiKey_KeysData_SIZE = ImGuiKey_COUNT,
+            // Size of KeysData[]: hold legacy 0..512 keycodes + named keys
+            ImGuiKey_KeysData_OFFSET = 0  // First key stored in KeysData[0]
 #endif
 
 #ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
-                ,
-                ImGuiKey_KeyPadEnter = ImGuiKey_KeypadEnter  // Renamed in 1.87
+            ,
+            ImGuiKey_KeyPadEnter = ImGuiKey_KeypadEnter  // Renamed in 1.87
 #endif
-            };
+        };
         };
 
         float cameraView[16] = { 1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f,
@@ -434,7 +431,7 @@ namespace fb
             r[2] = a[0] * b[1] - a[1] * b[0];
         }
 
-        float Dot( const float *a, const float *b )
+        auto Dot( const float *a, const float *b ) -> float
         {
             return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
         }
@@ -576,7 +573,7 @@ namespace fb
             drawList->PopClipRect();
         }
 
-        bool ShowVector3( const char *label, Vector3F &vec )
+        auto ShowVector3( const char *label, Vector3F &vec ) -> bool
         {
 #if 1
             float label_width =
@@ -656,9 +653,7 @@ namespace fb
 #endif
         }
 
-        ImGuiApplication::ImGuiApplication()
-        {
-        }
+        ImGuiApplication::ImGuiApplication() = default;
 
         ImGuiApplication::~ImGuiApplication()
         {
@@ -670,7 +665,7 @@ namespace fb
             FB_ASSERT( isLoaded() == false );
 
 #if FB_GRAPHICS_SYSTEM_OGRENEXT
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -706,10 +701,10 @@ namespace fb
 
             m_hwnd = (void *)windowHandle;
 
-            auto root = Ogre::Root::getSingletonPtr();
-            auto compoProvider = OGRE_NEW Ogre::CompositorPassImGuiProvider();
-            auto compositorManager = root->getCompositorManager2();
-            compositorManager->setCompositorPassProvider( compoProvider );
+            //auto root = Ogre::Root::getSingletonPtr();
+            //auto compoProvider = OGRE_NEW Ogre::CompositorPassImGuiProvider();
+            //auto compositorManager = root->getCompositorManager2();
+            //compositorManager->setCompositorPassProvider( compoProvider );
 
             //m_imguiManagerOgre = new ImguiManagerOgre;
 
@@ -777,7 +772,7 @@ namespace fb
             // m_imguiManagerOgre->init(smgr)
 #elif FB_GRAPHICS_SYSTEM_OGRE
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -839,6 +834,7 @@ namespace fb
 #    else
             auto vpScale = 2.0f;  //Ogre::OverlayManager::getSingleton().getPixelRatio();
 #    endif
+
             //Ogre::OverlayManager::getSingleton().setPixelRatio(vpScale);
             ImGui::GetIO().FontGlobalScale =
                 std::round( vpScale );  // default font does not work with fractional scaling
@@ -1062,6 +1058,10 @@ namespace fb
             //ImGui::GetIO().Fonts->TexID = emptyTextureId;
             //setEmptyTexture( emptyTextureId );
 
+            //setCustomStyle();
+            //setDarkGreenStyle();
+            //setDarkBlueStyle();
+
             setLoadingState( LoadingState::Loaded );
         }
 
@@ -1069,9 +1069,10 @@ namespace fb
         {
             try
             {
-                const auto &loadingState = getLoadingState();
-                if( loadingState != LoadingState::Unloaded )
+                if( isLoaded() )
                 {
+                    setLoadingState( LoadingState::Unloading );
+
                     if( m_windowListener )
                     {
                         m_windowListener->unload( nullptr );
@@ -1116,7 +1117,178 @@ namespace fb
             }
         }
 
-        size_t ImGuiApplication::messagePump( SmartPtr<ISharedObject> data )
+        void ImGuiApplication::setCustomStyle()
+        {
+            ImGuiStyle &style = ImGui::GetStyle();
+
+            // Modify colors
+            ImVec4 *colors = style.Colors;
+            colors[ImGuiCol_Text] = ImVec4( 1.00f, 1.00f, 1.00f, 1.00f );
+            colors[ImGuiCol_TextDisabled] = ImVec4( 0.50f, 0.50f, 0.50f, 1.00f );
+            colors[ImGuiCol_WindowBg] = ImVec4( 0.06f, 0.06f, 0.06f, 0.94f );
+            colors[ImGuiCol_ChildBg] = ImVec4( 1.00f, 1.00f, 1.00f, 0.00f );
+            colors[ImGuiCol_PopupBg] = ImVec4( 0.08f, 0.08f, 0.08f, 0.94f );
+            colors[ImGuiCol_Border] = ImVec4( 0.43f, 0.43f, 0.50f, 0.50f );
+            colors[ImGuiCol_BorderShadow] = ImVec4( 0.00f, 0.00f, 0.00f, 0.00f );
+            colors[ImGuiCol_FrameBg] = ImVec4( 0.20f, 0.20f, 0.20f, 1.00f );
+            colors[ImGuiCol_FrameBgHovered] = ImVec4( 0.40f, 0.40f, 0.40f, 0.80f );
+            colors[ImGuiCol_FrameBgActive] = ImVec4( 0.28f, 0.28f, 0.28f, 1.00f );
+            colors[ImGuiCol_TitleBg] = ImVec4( 0.04f, 0.04f, 0.04f, 1.00f );
+            colors[ImGuiCol_TitleBgActive] = ImVec4( 0.29f, 0.29f, 0.29f, 1.00f );
+            colors[ImGuiCol_TitleBgCollapsed] = ImVec4( 0.00f, 0.00f, 0.00f, 0.51f );
+            colors[ImGuiCol_MenuBarBg] = ImVec4( 0.14f, 0.14f, 0.14f, 1.00f );
+            colors[ImGuiCol_ScrollbarBg] = ImVec4( 0.02f, 0.02f, 0.02f, 0.53f );
+            colors[ImGuiCol_ScrollbarGrab] = ImVec4( 0.31f, 0.31f, 0.31f, 1.00f );
+            colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4( 0.41f, 0.41f, 0.41f, 1.00f );
+            colors[ImGuiCol_ScrollbarGrabActive] = ImVec4( 0.51f, 0.51f, 0.51f, 1.00f );
+            colors[ImGuiCol_CheckMark] = ImVec4( 0.11f, 0.64f, 0.92f, 1.00f );
+            colors[ImGuiCol_SliderGrab] = ImVec4( 0.11f, 0.64f, 0.92f, 1.00f );
+            colors[ImGuiCol_SliderGrabActive] = ImVec4( 0.08f, 0.50f, 0.72f, 1.00f );
+            colors[ImGuiCol_Button] = ImVec4( 0.06f, 0.5f, 0.9f, 1.00f );
+            colors[ImGuiCol_ButtonHovered] = ImVec4( 0.20f, 0.72f, 1.00f, 1.00f );
+            colors[ImGuiCol_ButtonActive] = ImVec4( 0.06f, 0.53f, 0.98f, 1.00f );
+            colors[ImGuiCol_Header] = ImVec4( 0.11f, 0.64f, 0.92f, 1.00f );
+            colors[ImGuiCol_HeaderHovered] = ImVec4( 0.20f, 0.72f, 1.00f, 1.00f );
+            colors[ImGuiCol_HeaderActive] = ImVec4( 0.06f, 0.53f, 0.98f, 1.00f );
+            colors[ImGuiCol_Separator] = ImVec4( 0.50f, 0.50f, 0.50f, 0.60f );
+            colors[ImGuiCol_SeparatorHovered] = ImVec4( 0.60f, 0.60f, 0.60f, 0.70f );
+            colors[ImGuiCol_SeparatorActive] = ImVec4( 0.70f, 0.70f, 0.70f, 0.80f );
+            colors[ImGuiCol_ResizeGrip] = ImVec4( 0.26f, 0.59f, 0.98f, 0.25f );
+            colors[ImGuiCol_ResizeGripHovered] = ImVec4( 0.26f, 0.59f, 0.98f, 0.67f );
+            colors[ImGuiCol_ResizeGripActive] = ImVec4( 0.26f, 0.59f, 0.98f, 0.95f );
+            colors[ImGuiCol_Tab] = ImVec4( 0.11f, 0.5f, 0.9f, 1.00f );
+            colors[ImGuiCol_TabHovered] = ImVec4( 0.20f, 0.72f, 1.00f, 1.00f );
+            colors[ImGuiCol_TabActive] = ImVec4( 0.06f, 0.53f, 0.98f, 1.00f );
+            colors[ImGuiCol_TabUnfocused] = ImVec4( 0.11f, 0.64f, 0.92f, 1.00f );
+            //colors[ImGuiCol_TabUnfocusedHovered] = ImVec4(0.20f, 0.72f, 1.00f, 1.00f);
+            colors[ImGuiCol_TabUnfocusedActive] = ImVec4( 0.06f, 0.53f, 0.98f, 1.00f );
+            colors[ImGuiCol_PlotLines] = ImVec4( 1.00f, 1.00f, 1.00f, 1.00f );
+            colors[ImGuiCol_PlotLinesHovered] = ImVec4( 0.90f, 0.70f, 0.00f, 1.00f );
+            colors[ImGuiCol_PlotHistogram] = ImVec4( 0.90f, 0.70f, 0.00f, 1.00f );
+            colors[ImGuiCol_PlotHistogramHovered] = ImVec4( 1.00f, 0.60f, 0.00f, 1.00f );
+            colors[ImGuiCol_TextSelectedBg] = ImVec4( 0.26f, 0.59f, 0.98f, 0.35f );
+            colors[ImGuiCol_DragDropTarget] = ImVec4( 1.00f, 1.00f, 0.00f, 0.90f );
+            colors[ImGuiCol_NavHighlight] = ImVec4( 0.26f, 0.59f, 0.98f, 1.00f );
+            colors[ImGuiCol_NavWindowingHighlight] = ImVec4( 1.00f, 1.00f, 1.00f, 0.70f );
+            colors[ImGuiCol_NavWindowingDimBg] = ImVec4( 0.80f, 0.80f, 0.80f, 0.20f );
+            colors[ImGuiCol_ModalWindowDimBg] = ImVec4( 0.80f, 0.80f, 0.80f, 0.35f );
+        }
+
+        void ImGuiApplication::setDarkGreenStyle()
+        {
+            ImGuiStyle &style = ImGui::GetStyle();
+
+            // Modify colors for a dark green scheme
+            ImVec4 *colors = style.Colors;
+            colors[ImGuiCol_Text] = ImVec4( 0.80f, 0.80f, 0.80f, 1.00f );
+            colors[ImGuiCol_TextDisabled] = ImVec4( 0.50f, 0.50f, 0.50f, 1.00f );
+            colors[ImGuiCol_WindowBg] = ImVec4( 0.05f, 0.15f, 0.05f, 0.94f );
+            colors[ImGuiCol_ChildBg] = ImVec4( 0.10f, 0.20f, 0.10f, 0.00f );
+            colors[ImGuiCol_PopupBg] = ImVec4( 0.05f, 0.15f, 0.05f, 0.94f );
+            colors[ImGuiCol_Border] = ImVec4( 0.50f, 0.70f, 0.50f, 0.50f );
+            colors[ImGuiCol_BorderShadow] = ImVec4( 0.00f, 0.00f, 0.00f, 0.00f );
+            colors[ImGuiCol_FrameBg] = ImVec4( 0.10f, 0.20f, 0.10f, 1.00f );
+            colors[ImGuiCol_FrameBgHovered] = ImVec4( 0.20f, 0.30f, 0.20f, 0.80f );
+            colors[ImGuiCol_FrameBgActive] = ImVec4( 0.15f, 0.25f, 0.15f, 1.00f );
+            colors[ImGuiCol_TitleBg] = ImVec4( 0.05f, 0.15f, 0.05f, 1.00f );
+            colors[ImGuiCol_TitleBgActive] = ImVec4( 0.10f, 0.25f, 0.10f, 1.00f );
+            colors[ImGuiCol_TitleBgCollapsed] = ImVec4( 0.00f, 0.10f, 0.00f, 0.51f );
+            colors[ImGuiCol_MenuBarBg] = ImVec4( 0.10f, 0.20f, 0.10f, 1.00f );
+            colors[ImGuiCol_ScrollbarBg] = ImVec4( 0.02f, 0.10f, 0.02f, 0.53f );
+            colors[ImGuiCol_ScrollbarGrab] = ImVec4( 0.20f, 0.50f, 0.20f, 1.00f );
+            colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4( 0.30f, 0.60f, 0.30f, 1.00f );
+            colors[ImGuiCol_ScrollbarGrabActive] = ImVec4( 0.40f, 0.70f, 0.40f, 1.00f );
+            colors[ImGuiCol_CheckMark] = ImVec4( 0.50f, 1.00f, 0.50f, 1.00f );
+            colors[ImGuiCol_SliderGrab] = ImVec4( 0.20f, 0.50f, 0.20f, 1.00f );
+            colors[ImGuiCol_SliderGrabActive] = ImVec4( 0.30f, 0.60f, 0.30f, 1.00f );
+            colors[ImGuiCol_Button] = ImVec4( 0.20f, 0.50f, 0.20f, 1.00f );
+            colors[ImGuiCol_ButtonHovered] = ImVec4( 0.30f, 0.60f, 0.30f, 1.00f );
+            colors[ImGuiCol_ButtonActive] = ImVec4( 0.40f, 0.70f, 0.40f, 1.00f );
+            colors[ImGuiCol_Header] = ImVec4( 0.20f, 0.50f, 0.20f, 1.00f );
+            colors[ImGuiCol_HeaderHovered] = ImVec4( 0.30f, 0.60f, 0.30f, 1.00f );
+            colors[ImGuiCol_HeaderActive] = ImVec4( 0.40f, 0.70f, 0.40f, 1.00f );
+            colors[ImGuiCol_Separator] = ImVec4( 0.50f, 0.70f, 0.50f, 0.60f );
+            colors[ImGuiCol_SeparatorHovered] = ImVec4( 0.60f, 0.80f, 0.60f, 0.70f );
+            colors[ImGuiCol_SeparatorActive] = ImVec4( 0.70f, 0.90f, 0.70f, 0.80f );
+            colors[ImGuiCol_ResizeGrip] = ImVec4( 0.40f, 0.80f, 0.40f, 0.25f );
+            colors[ImGuiCol_ResizeGripHovered] = ImVec4( 0.50f, 0.90f, 0.50f, 0.67f );
+            colors[ImGuiCol_ResizeGripActive] = ImVec4( 0.60f, 1.00f, 0.60f, 0.95f );
+            colors[ImGuiCol_Tab] = ImVec4( 0.20f, 0.50f, 0.20f, 1.00f );
+            colors[ImGuiCol_TabHovered] = ImVec4( 0.30f, 0.60f, 0.30f, 1.00f );
+            colors[ImGuiCol_TabActive] = ImVec4( 0.40f, 0.70f, 0.40f, 1.00f );
+            colors[ImGuiCol_TabUnfocused] = ImVec4( 0.20f, 0.50f, 0.20f, 1.00f );
+            //colors[ImGuiCol_TabUnfocusedHovered] = ImVec4(0.30f, 0.60f, 0.30f, 1.00f);
+            colors[ImGuiCol_TabUnfocusedActive] = ImVec4( 0.40f, 0.70f, 0.40f, 1.00f );
+            colors[ImGuiCol_PlotLines] = ImVec4( 0.80f, 0.80f, 0.80f, 1.00f );
+            colors[ImGuiCol_PlotLinesHovered] = ImVec4( 0.70f, 0.90f, 0.70f, 1.00f );
+            colors[ImGuiCol_PlotHistogram] = ImVec4( 0.70f, 0.90f, 0.70f, 1.00f );
+            colors[ImGuiCol_PlotHistogramHovered] = ImVec4( 0.80f, 1.00f, 0.80f, 1.00f );
+            colors[ImGuiCol_TextSelectedBg] = ImVec4( 0.40f, 0.80f, 0.40f, 0.35f );
+            colors[ImGuiCol_DragDropTarget] = ImVec4( 0.80f, 1.00f, 0.80f, 0.90f );
+            colors[ImGuiCol_NavHighlight] = ImVec4( 0.40f, 0.80f, 0.40f, 1.00f );
+            colors[ImGuiCol_NavWindowingHighlight] = ImVec4( 0.80f, 1.00f, 0.80f, 0.70f );
+            colors[ImGuiCol_NavWindowingDimBg] = ImVec4( 0.60f, 0.80f, 0.60f, 0.20f );
+            colors[ImGuiCol_ModalWindowDimBg] = ImVec4( 0.60f, 0.80f, 0.60f, 0.35f );
+        }
+
+        void ImGuiApplication::setDarkBlueStyle()
+        {
+            ImGuiStyle &style = ImGui::GetStyle();
+
+            // Modify colors for a dark blue style
+            ImVec4 *colors = style.Colors;
+            colors[ImGuiCol_Text] = ImVec4( 0.80f, 0.80f, 0.80f, 1.00f );
+            colors[ImGuiCol_TextDisabled] = ImVec4( 0.50f, 0.50f, 0.50f, 1.00f );
+            colors[ImGuiCol_WindowBg] = ImVec4( 0.05f, 0.05f, 0.15f, 0.94f );
+            colors[ImGuiCol_ChildBg] = ImVec4( 0.10f, 0.10f, 0.20f, 0.00f );
+            colors[ImGuiCol_PopupBg] = ImVec4( 0.05f, 0.05f, 0.15f, 0.94f );
+            colors[ImGuiCol_Border] = ImVec4( 0.50f, 0.70f, 1.00f, 0.50f );
+            colors[ImGuiCol_BorderShadow] = ImVec4( 0.00f, 0.00f, 0.00f, 0.00f );
+            colors[ImGuiCol_FrameBg] = ImVec4( 0.10f, 0.10f, 0.20f, 1.00f );
+            colors[ImGuiCol_FrameBgHovered] = ImVec4( 0.20f, 0.20f, 0.30f, 0.80f );
+            colors[ImGuiCol_FrameBgActive] = ImVec4( 0.15f, 0.15f, 0.25f, 1.00f );
+            colors[ImGuiCol_TitleBg] = ImVec4( 0.05f, 0.05f, 0.15f, 1.00f );
+            colors[ImGuiCol_TitleBgActive] = ImVec4( 0.10f, 0.10f, 0.20f, 1.00f );
+            colors[ImGuiCol_TitleBgCollapsed] = ImVec4( 0.00f, 0.00f, 0.10f, 0.51f );
+            colors[ImGuiCol_MenuBarBg] = ImVec4( 0.10f, 0.10f, 0.20f, 1.00f );
+            colors[ImGuiCol_ScrollbarBg] = ImVec4( 0.02f, 0.02f, 0.10f, 0.53f );
+            colors[ImGuiCol_ScrollbarGrab] = ImVec4( 0.20f, 0.20f, 0.70f, 1.00f );
+            colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4( 0.30f, 0.30f, 0.90f, 1.00f );
+            colors[ImGuiCol_ScrollbarGrabActive] = ImVec4( 0.40f, 0.40f, 1.00f, 1.00f );
+            colors[ImGuiCol_CheckMark] = ImVec4( 0.50f, 1.00f, 1.00f, 1.00f );
+            colors[ImGuiCol_SliderGrab] = ImVec4( 0.20f, 0.20f, 0.70f, 1.00f );
+            colors[ImGuiCol_SliderGrabActive] = ImVec4( 0.30f, 0.30f, 0.90f, 1.00f );
+            colors[ImGuiCol_Button] = ImVec4( 0.20f, 0.20f, 0.70f, 1.00f );
+            colors[ImGuiCol_ButtonHovered] = ImVec4( 0.30f, 0.30f, 0.90f, 1.00f );
+            colors[ImGuiCol_ButtonActive] = ImVec4( 0.40f, 0.40f, 1.00f, 1.00f );
+            colors[ImGuiCol_Header] = ImVec4( 0.20f, 0.20f, 0.70f, 1.00f );
+            colors[ImGuiCol_HeaderHovered] = ImVec4( 0.30f, 0.30f, 0.90f, 1.00f );
+            colors[ImGuiCol_HeaderActive] = ImVec4( 0.40f, 0.40f, 1.00f, 1.00f );
+            colors[ImGuiCol_Separator] = ImVec4( 0.50f, 0.70f, 1.00f, 0.60f );
+            colors[ImGuiCol_SeparatorHovered] = ImVec4( 0.60f, 0.80f, 1.00f, 0.70f );
+            colors[ImGuiCol_SeparatorActive] = ImVec4( 0.70f, 0.90f, 1.00f, 0.80f );
+            colors[ImGuiCol_ResizeGrip] = ImVec4( 0.40f, 0.80f, 1.00f, 0.25f );
+            colors[ImGuiCol_ResizeGripHovered] = ImVec4( 0.50f, 0.90f, 1.00f, 0.67f );
+            colors[ImGuiCol_ResizeGripActive] = ImVec4( 0.60f, 1.00f, 1.00f, 0.95f );
+            colors[ImGuiCol_Tab] = ImVec4( 0.20f, 0.20f, 0.70f, 1.00f );
+            colors[ImGuiCol_TabHovered] = ImVec4( 0.30f, 0.30f, 0.90f, 1.00f );
+            colors[ImGuiCol_TabActive] = ImVec4( 0.40f, 0.40f, 1.00f, 1.00f );
+            colors[ImGuiCol_TabUnfocused] = ImVec4( 0.20f, 0.20f, 0.70f, 1.00f );
+            //colors[ImGuiCol_TabUnfocusedHovered] = ImVec4(0.30f, 0.30f, 0.90f, 1.00f);
+            colors[ImGuiCol_TabUnfocusedActive] = ImVec4( 0.40f, 0.40f, 1.00f, 1.00f );
+            colors[ImGuiCol_PlotLines] = ImVec4( 0.80f, 0.80f, 0.80f, 1.00f );
+            colors[ImGuiCol_PlotLinesHovered] = ImVec4( 0.70f, 0.90f, 0.90f, 1.00f );
+            colors[ImGuiCol_PlotHistogram] = ImVec4( 0.70f, 0.90f, 0.90f, 1.00f );
+            colors[ImGuiCol_PlotHistogramHovered] = ImVec4( 0.80f, 1.00f, 1.00f, 1.00f );
+            colors[ImGuiCol_TextSelectedBg] = ImVec4( 0.40f, 0.40f, 0.90f, 0.35f );
+            colors[ImGuiCol_DragDropTarget] = ImVec4( 0.80f, 1.00f, 1.00f, 0.90f );
+            colors[ImGuiCol_NavHighlight] = ImVec4( 0.40f, 0.40f, 0.90f, 1.00f );
+            colors[ImGuiCol_NavWindowingHighlight] = ImVec4( 0.80f, 1.00f, 1.00f, 0.70f );
+            colors[ImGuiCol_NavWindowingDimBg] = ImVec4( 0.60f, 0.80f, 1.00f, 0.20f );
+            colors[ImGuiCol_ModalWindowDimBg] = ImVec4( 0.60f, 0.80f, 1.00f, 0.35f );
+        }
+
+        auto ImGuiApplication::messagePump( SmartPtr<ISharedObject> data ) -> size_t
         {
 #if defined FB_PLATFORM_WIN32
             if( data )
@@ -1167,7 +1339,7 @@ namespace fb
             }
         }
 
-        bool ImGuiApplication::handleInputEvent( SmartPtr<IInputEvent> event )
+        auto ImGuiApplication::handleInputEvent( SmartPtr<IInputEvent> event ) -> bool
         {
             /*
             ImGuiIO &io = ImGui::GetIO();
@@ -1455,9 +1627,13 @@ namespace fb
                         ImGui::TableSetColumnIndex( 1 );
                         ImGui::SetNextItemWidth( -FLT_MIN );
                         if( i >= 5 )
+                        {
                             ImGui::InputFloat( "##value", &placeholder_members[i], 1.0f );
+                        }
                         else
+                        {
                             ImGui::DragFloat( "##value", &placeholder_members[i], 0.01f );
+                        }
                         ImGui::NextColumn();
                     }
                     ImGui::PopID();
@@ -1634,10 +1810,9 @@ namespace fb
                     {
                         ImGuiTreeCtrl::createElement( element );
                     }
-                    else if( element->isDerived<IUILabelCheckboxPair>() )
+                    else if( element->isDerived<IUILabelTogglePair>() )
                     {
-                        auto labelCheckboxPair =
-                            fb::static_pointer_cast<IUILabelCheckboxPair>( element );
+                        auto labelCheckboxPair = fb::static_pointer_cast<IUILabelTogglePair>( element );
                         auto label = labelCheckboxPair->getLabel();
                         auto value = labelCheckboxPair->getValue();
 
@@ -1655,16 +1830,36 @@ namespace fb
                         {
                             labelCheckboxPair->setValue( value );
 
-                            auto listeners = element->getObjectListeners();
-                            for( auto listener : listeners )
+                            if( auto parent = labelCheckboxPair->getParent() )
                             {
-                                auto args = Array<Parameter>();
-                                args.resize( 1 );
+                                if( parent->isDerived<IUIToolbar>() )
+                                {
+                                    auto toolbar = fb::static_pointer_cast<IUIToolbar>( parent );
+                                    FB_ASSERT( toolbar );
 
-                                args[0].object = element;
+                                    auto listeners = toolbar->getObjectListeners();
+                                    for( auto listener : listeners )
+                                    {
+                                        auto args = Array<Parameter>();
+                                        listener->handleEvent( IEvent::Type::UI, IEvent::handleValueChanged,
+                                                               args, toolbar, element, nullptr );
+                                    }
+                                }
+                                else
+                                {
+                                    auto listeners = element->getObjectListeners();
+                                    for( auto listener : listeners )
+                                    {
+                                        auto args = Array<Parameter>();
+                                        args.resize( 1 );
 
-                                listener->handleEvent( IEvent::Type::UI, IEvent::handleValueChanged,
-                                                       args, element, this, nullptr );
+                                        args[0].object = element;
+
+                                        listener->handleEvent( IEvent::Type::UI,
+                                                               IEvent::handleValueChanged, args, element,
+                                                               element, nullptr );
+                                    }
+                                }
                             }
                         }
                     }
@@ -1684,7 +1879,8 @@ namespace fb
                         FixedString<strSize> str;
                         str = value;
 
-                        if( ImGui::InputText( label.c_str(), (char *)str.c_str(), strSize ) )
+                        if( ImGui::InputText( label.c_str(), const_cast<char *>( str.c_str() ),
+                                              strSize ) )
                         {
                             labelTextInputPair->setValue( String( str.c_str() ) );
 
@@ -1711,11 +1907,11 @@ namespace fb
 
                         for( size_t i = 0; i < options.size(); ++i )
                         {
-                            optionsStr[i] = (char *)options[i].c_str();
+                            optionsStr[i] = const_cast<char *>( options[i].c_str() );
                         }
 
                         auto item_current = static_cast<s32>( dropdown->getSelectedOption() );
-                        auto strSize = (int)optionsStr.size();
+                        auto strSize = static_cast<int>( optionsStr.size() );
 
                         if( ImGui::Combo( "combo", &item_current, &optionsStr[0], strSize ) )
                         {
@@ -1884,7 +2080,7 @@ namespace fb
 
         void ImGuiApplication::ShowApp( bool *p_open )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto selectionManager = applicationManager->getSelectionManager();
@@ -2215,7 +2411,7 @@ namespace fb
 
                             // ImGui::Image((void*)texture, ImVec2(128, 128));
 
-                            auto matrix = (float *)&objectMatrix[matId];
+                            auto matrix = reinterpret_cast<float *>( &objectMatrix[matId] );
 
                             // ImGuizmo::DrawGrid(viewMatrix.ptr(), projectionMatrix.ptr(), identityMatrix,
                             // 100.f); ImGuizmo::DrawCubes(viewMatrix.ptr(), projectionMatrix.ptr(),
@@ -2327,7 +2523,7 @@ namespace fb
                                                 auto args = Array<Parameter>();
                                                 args.reserve( 1 );
 
-                                                args.push_back( Parameter( data ) );
+                                                args.emplace_back( data );
 
                                                 dropTarget->handleEvent( IEvent::Type::UI,
                                                                          IEvent::handleDrop, args,
@@ -2495,7 +2691,7 @@ namespace fb
             }
         }
 
-        void *ImGuiApplication::getEmptyTexture() const
+        auto ImGuiApplication::getEmptyTexture() const -> void *
         {
             return m_emptyTexture;
         }
@@ -2505,7 +2701,7 @@ namespace fb
             m_emptyTexture = emptyTexture;
         }
 
-        ImGuiOverlayOgre *ImGuiApplication::getOverlay()
+        auto ImGuiApplication::getOverlay() -> ImGuiOverlayOgre *
         {
             return m_overlay;
         }
@@ -2608,7 +2804,7 @@ namespace fb
             }
         }
 
-        Vector2I ImGuiApplication::getWindowSize() const
+        auto ImGuiApplication::getWindowSize() const -> Vector2I
         {
             return Vector2I::zero();
         }
@@ -2666,21 +2862,35 @@ namespace fb
             if( editTransformDecomposition )
             {
                 if( ImGui::IsKeyPressed( 90 ) )
+                {
                     mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+                }
                 if( ImGui::IsKeyPressed( 69 ) )
+                {
                     mCurrentGizmoOperation = ImGuizmo::ROTATE;
-                if( ImGui::IsKeyPressed( 82 ) )  // r Key
+                }
+                if( ImGui::IsKeyPressed( 82 ) )
+                {  // r Key
                     mCurrentGizmoOperation = ImGuizmo::SCALE;
+                }
                 if( ImGui::RadioButton( "Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE ) )
+                {
                     mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+                }
                 ImGui::SameLine();
                 if( ImGui::RadioButton( "Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE ) )
+                {
                     mCurrentGizmoOperation = ImGuizmo::ROTATE;
+                }
                 ImGui::SameLine();
                 if( ImGui::RadioButton( "Scale", mCurrentGizmoOperation == ImGuizmo::SCALE ) )
+                {
                     mCurrentGizmoOperation = ImGuizmo::SCALE;
+                }
                 if( ImGui::RadioButton( "Universal", mCurrentGizmoOperation == ImGuizmo::UNIVERSAL ) )
+                {
                     mCurrentGizmoOperation = ImGuizmo::UNIVERSAL;
+                }
                 float matrixTranslation[3], matrixRotation[3], matrixScale[3];
                 ImGuizmo::DecomposeMatrixToComponents( matrix, matrixTranslation, matrixRotation,
                                                        matrixScale );
@@ -2693,13 +2903,19 @@ namespace fb
                 if( mCurrentGizmoOperation != ImGuizmo::SCALE )
                 {
                     if( ImGui::RadioButton( "Local", mCurrentGizmoMode == ImGuizmo::LOCAL ) )
+                    {
                         mCurrentGizmoMode = ImGuizmo::LOCAL;
+                    }
                     ImGui::SameLine();
                     if( ImGui::RadioButton( "World", mCurrentGizmoMode == ImGuizmo::WORLD ) )
+                    {
                         mCurrentGizmoMode = ImGuizmo::WORLD;
+                    }
                 }
                 if( ImGui::IsKeyPressed( 83 ) )
+                {
                     useSnap = !useSnap;
+                }
 
                 // return;
                 // ImGui::Checkbox("", &useSnap);
@@ -2798,12 +3014,16 @@ namespace fb
             bool viewDirty = false;
 
             if( ImGui::RadioButton( "Perspective", isPerspective ) )
+            {
                 isPerspective = true;
+            }
 
             ImGui::SameLine();
 
             if( ImGui::RadioButton( "Orthographic", !isPerspective ) )
+            {
                 isPerspective = false;
+            }
 
             if( isPerspective )
             {
@@ -2887,20 +3107,28 @@ namespace fb
             ImGui::Begin( "Editor" );
 
             if( ImGui::RadioButton( "Full view", !useWindow ) )
+            {
                 useWindow = false;
+            }
 
             ImGui::SameLine();
 
             if( ImGui::RadioButton( "Window", useWindow ) )
+            {
                 useWindow = true;
+            }
 
             ImGui::Text( "Camera" );
             bool viewDirty = false;
             if( ImGui::RadioButton( "Perspective", isPerspective ) )
+            {
                 isPerspective = true;
+            }
             ImGui::SameLine();
             if( ImGui::RadioButton( "Orthographic", !isPerspective ) )
+            {
                 isPerspective = false;
+            }
             if( isPerspective )
             {
                 ImGui::SliderFloat( "Fov", &fov, 20.f, 110.f );
@@ -3132,9 +3360,13 @@ namespace fb
             window_class.DockNodeFlagsOverrideSet |= ImGuiDockNodeFlags_NoDockingOverMe;
             window_class.DockNodeFlagsOverrideSet |= ImGuiDockNodeFlags_NoDockingOverOther;
             if( toolbar_axis == ImGuiAxis_X )
+            {
                 window_class.DockNodeFlagsOverrideSet |= ImGuiDockNodeFlags_NoResizeY;
+            }
             else
+            {
                 window_class.DockNodeFlagsOverrideSet |= ImGuiDockNodeFlags_NoResizeX;
+            }
             ImGui::SetNextWindowClass( &window_class );
 
             // 3. Begin into the window
@@ -3158,8 +3390,12 @@ namespace fb
                     TOOLBAR_SIZE_WHEN_DOCKED;
 
                 if( TOOLBAR_AUTO_DIRECTION_WHEN_DOCKED )
+                {
                     if( node->ParentNode && node->ParentNode->SplitAxis != ImGuiAxis_None )
+                    {
                         toolbar_axis = static_cast<ImGuiAxis>( node->ParentNode->SplitAxis ^ 1 );
+                    }
+                }
             }
 
             // 5. Dummy populate tab bar
@@ -3208,10 +3444,14 @@ namespace fb
                     ImGui::Separator();
 
                     if( ImGui::MenuItem( "Horizontal", "", ( toolbar_axis == ImGuiAxis_X ) ) )
+                    {
                         toolbar_axis = ImGuiAxis_X;
+                    }
 
                     if( ImGui::MenuItem( "Vertical", "", ( toolbar_axis == ImGuiAxis_Y ) ) )
+                    {
                         toolbar_axis = ImGuiAxis_Y;
+                    }
 
                     ImGui::EndPopup();
                 }
@@ -3225,7 +3465,7 @@ namespace fb
 
         void ImGuiApplication::update()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto ui = applicationManager->getUI();
@@ -3371,7 +3611,7 @@ namespace fb
             if( showDockSpace )
             {
                 ShowApp( &showDockSpace );
-                //ShowExampleAppDockSpace(&showDockSpace);
+                //ImGui::ShowDemoWindow(&showDockSpace);
             }
 
             // Rendering
@@ -3494,12 +3734,12 @@ namespace fb
 #endif
         }
 
-        void *ImGuiApplication::getHWND() const
+        auto ImGuiApplication::getHWND() const -> void *
         {
             return m_hwnd;
         }
 
-        SmartPtr<IUIMenubar> ImGuiApplication::getMenubar() const
+        auto ImGuiApplication::getMenubar() const -> SmartPtr<IUIMenubar>
         {
             return m_menuBar;
         }
@@ -3509,7 +3749,7 @@ namespace fb
             m_menuBar = menubar;
         }
 
-        SmartPtr<IUIToolbar> ImGuiApplication::getToolbar() const
+        auto ImGuiApplication::getToolbar() const -> SmartPtr<IUIToolbar>
         {
             return m_toolbar;
         }
@@ -3532,16 +3772,18 @@ namespace fb
             }
         }
 
-        Parameter ImGuiApplication::WindowListener::handleEvent(
-            IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
-            SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
+        auto ImGuiApplication::WindowListener::handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                                            const Array<Parameter> &arguments,
+                                                            SmartPtr<ISharedObject> sender,
+                                                            SmartPtr<ISharedObject> object,
+                                                            SmartPtr<IEvent> event ) -> Parameter
         {
             if( eventValue == windowClosingHash )
             {
                 return Parameter( true );
             }
 
-            return Parameter();
+            return {};
         }
 
         void ImGuiApplication::WindowListener::setOwner( SmartPtr<ImGuiApplication> owner )
@@ -3549,10 +3791,9 @@ namespace fb
             m_owner = owner;
         }
 
-        SmartPtr<ImGuiApplication> ImGuiApplication::WindowListener::getOwner() const
+        auto ImGuiApplication::WindowListener::getOwner() const -> SmartPtr<ImGuiApplication>
         {
             auto p = m_owner.load();
             return p.lock();
         }
-    }  // end namespace ui
-}  // end namespace fb
+}  // namespace fb::ui

@@ -8,26 +8,24 @@ namespace fb
 {
     namespace editor
     {
-
         class LoadPluginJob : public Job
         {
         public:
             LoadPluginJob();
-            ~LoadPluginJob();
+            ~LoadPluginJob() override;
 
-            void execute();
+            void execute() override;
 
-	        String getPluginPath() const;
+            String getPluginPath() const;
 
-            void setPluginPath( const String& pluginPath );
+            void setPluginPath( const String &pluginPath );
 
             FB_CLASS_REGISTER_DECL;
 
         protected:
             String m_pluginPath;
         };
-
-    }  // namespace editor
-}  // namespace fb
+    } // namespace editor
+}     // namespace fb
 
 #endif  // LoadPluginJob_h__

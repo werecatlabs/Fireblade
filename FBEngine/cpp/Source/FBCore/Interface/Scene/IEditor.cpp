@@ -2,11 +2,8 @@
 #include <FBCore/Interface/Scene/IEditor.h>
 #include <FBCore/System/RttiClassDefinition.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
-    {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, IEditor, ISharedObject );
+    FB_CLASS_REGISTER_DERIVED( fb::scene, IEditor, ISharedObject );
 
-    }  // end namespace scene
-}  // end namespace fb
+}  // namespace fb::scene

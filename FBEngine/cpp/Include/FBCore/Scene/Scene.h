@@ -126,10 +126,8 @@ namespace fb
 
             mutable RecursiveMutex m_mutex;
 
-            State m_state;
-            SceneLoadingState m_sceneLoadingState;
-
-            Array<u32> m_actorFlags;
+            State m_state = State::None;
+            SceneLoadingState m_sceneLoadingState = SceneLoadingState::None;
 
             String m_filePath;
             String m_name;

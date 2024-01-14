@@ -36,7 +36,7 @@ namespace fb
          * Constructor.
          * @param ptr Pointer to an array of 3 coordinates.
          */
-        Vector3( const T *ptr );
+        explicit Vector3( const T *ptr );
 
         // operators
         Vector3<T> operator-() const;
@@ -70,8 +70,8 @@ namespace fb
         bool operator<( T val ) const;
         bool operator>( T val ) const;
 
-        operator const T *() const;
-        operator T *();
+        explicit operator const T *() const;
+        explicit operator T *();
         T operator[]( s32 i ) const;
         T &operator[]( s32 i );
 

@@ -52,6 +52,6 @@ namespace fb
 
     /** @} */
     /** @} */
-} // namespace fb
+}  // namespace fb
 
 #endif

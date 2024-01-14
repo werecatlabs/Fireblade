@@ -4,7 +4,7 @@
 #include <FBGraphicsOgreNext/Wrapper/COverlayElementOgre.h>
 #include <FBGraphicsOgreNext/Wrapper/COverlayElementContainer.h>
 #include <FBGraphicsOgreNext/Wrapper/COverlayElementText.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IMaterial.h>
 #include <FBCore/Core/LogManager.h>
@@ -14,249 +14,246 @@
 #include <OgreOverlayContainer.h>
 #include <OgreOverlay.h>
 
-namespace fb
+namespace fb::render
 {
-    namespace render
+
+    FB_CLASS_REGISTER_DERIVED( fb::render, COverlayManagerOgreNext, IOverlayManager );
+
+    u32 COverlayManagerOgreNext::m_nameExt = 0;
+
+    COverlayManagerOgreNext::COverlayManagerOgreNext()
     {
+        m_overlayMgr = Ogre::v1::OverlayManager::getSingletonPtr();
+    }
 
-        FB_CLASS_REGISTER_DERIVED( fb::render, COverlayManagerOgreNext, IOverlayManager );
+    COverlayManagerOgreNext::~COverlayManagerOgreNext()
+    {
+        unload( nullptr );
+    }
 
-        u32 COverlayManagerOgreNext::m_nameExt = 0;
+    void COverlayManagerOgreNext::load( SmartPtr<ISharedObject> data )
+    {
+    }
 
-        COverlayManagerOgreNext::COverlayManagerOgreNext()
+    void COverlayManagerOgreNext::unload( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            m_overlayMgr = Ogre::v1::OverlayManager::getSingletonPtr();
-        }
-
-        COverlayManagerOgreNext::~COverlayManagerOgreNext()
-        {
-            unload( nullptr );
-        }
-
-        void COverlayManagerOgreNext::load( SmartPtr<ISharedObject> data )
-        {
-        }
-
-        void COverlayManagerOgreNext::unload( SmartPtr<ISharedObject> data )
-        {
-            try
+            const auto &loadingState = getLoadingState();
+            if( loadingState != LoadingState::Unloaded )
             {
-                const auto &loadingState = getLoadingState();
-                if( loadingState != LoadingState::Unloaded )
+                setLoadingState( LoadingState::Unloading );
+
+                for( auto overlayElement : m_overlayElements )
                 {
-                    setLoadingState( LoadingState::Unloading );
-
-                    for( auto overlayElement : m_overlayElements )
-                    {
-                        overlayElement->unload( nullptr );
-                    }
-
-                    m_overlayElements.clear();
-
-                    for( auto overlay : m_overlays )
-                    {
-                        overlay->unload( nullptr );
-                    }
-
-                    m_overlays.clear();
-
-                    m_overlayMgr = nullptr;
-
-                    setLoadingState( LoadingState::Unloaded );
+                    overlayElement->unload( nullptr );
                 }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
+
+                m_overlayElements.clear();
+
+                for( auto overlay : m_overlays )
+                {
+                    overlay->unload( nullptr );
+                }
+
+                m_overlays.clear();
+
+                m_overlayMgr = nullptr;
+
+                setLoadingState( LoadingState::Unloaded );
             }
         }
-
-        void COverlayManagerOgreNext::update()
+        catch( std::exception &e )
         {
-            auto overlays = getOverlays();
-            for(auto overlay : overlays)
-            {
-                overlay->update();
-            }
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        SmartPtr<IOverlay> COverlayManagerOgreNext::addOverlay( const String &instanceName )
+    void COverlayManagerOgreNext::update()
+    {
+        auto overlays = getOverlays();
+        for( auto overlay : overlays )
         {
-            try
-            {
-                RecursiveMutex::ScopedLock lock( m_mutex );
-
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto graphicsSystem = applicationManager->getGraphicsSystem();
-                FB_ASSERT( graphicsSystem );
-
-                auto overlay = fb::make_ptr<COverlayOgreNext>();
-                overlay->setName( instanceName );
-                m_overlays.push_back( overlay );
-                graphicsSystem->loadObject( overlay );
-                return overlay;
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-
-            return nullptr;
+            overlay->update();
         }
+    }
 
-        bool COverlayManagerOgreNext::removeOverlay( const String &instanceName )
+    auto COverlayManagerOgreNext::addOverlay( const String &instanceName ) -> SmartPtr<IOverlay>
+    {
+        try
         {
             RecursiveMutex::ScopedLock lock( m_mutex );
 
-            auto count = 0;
-            for( auto e : m_overlays )
-            {
-                if( instanceName == e->getName() )
-                {
-                    auto it = m_overlays.begin();
-                    std::advance( it, count );
-                    m_overlays.erase( it );
-                    return true;
-                }
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
 
-                count++;
-            }
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            FB_ASSERT( graphicsSystem );
 
-            return false;
+            auto overlay = fb::make_ptr<COverlayOgreNext>();
+            overlay->setName( instanceName );
+            m_overlays.emplace_back( overlay );
+            graphicsSystem->loadObject( overlay );
+            return overlay;
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
         }
 
-        bool COverlayManagerOgreNext::removeOverlay( SmartPtr<IOverlay> overlay )
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
+        return nullptr;
+    }
 
-            auto it = std::find( m_overlays.begin(), m_overlays.end(), overlay );
-            if( it != m_overlays.end() )
+    auto COverlayManagerOgreNext::removeOverlay( const String &instanceName ) -> bool
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
+        auto count = 0;
+        for( auto e : m_overlays )
+        {
+            if( instanceName == e->getName() )
             {
+                auto it = m_overlays.begin();
+                std::advance( it, count );
                 m_overlays.erase( it );
                 return true;
             }
 
-            return false;
+            count++;
         }
 
-        SmartPtr<IOverlay> COverlayManagerOgreNext::findOverlay( const String &instanceName )
+        return false;
+    }
+
+    auto COverlayManagerOgreNext::removeOverlay( SmartPtr<IOverlay> overlay ) -> bool
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
+        auto it = std::find( m_overlays.begin(), m_overlays.end(), overlay );
+        if( it != m_overlays.end() )
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-
-            for( auto e : m_overlays )
-            {
-                if( instanceName == e->getName() )
-                {
-                    return e;
-                }
-            }
-
-            return nullptr;
+            m_overlays.erase( it );
+            return true;
         }
 
-        bool COverlayManagerOgreNext::hasOverlay( const String &instanceName )
+        return false;
+    }
+
+    auto COverlayManagerOgreNext::findOverlay( const String &instanceName ) -> SmartPtr<IOverlay>
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
+        for( auto e : m_overlays )
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-
-            for( auto e : m_overlays )
+            if( instanceName == e->getName() )
             {
-                if( instanceName == e->getName() )
-                {
-                    return true;
-                }
+                return e;
             }
-
-            return false;
         }
 
-        SmartPtr<IOverlayElement> COverlayManagerOgreNext::addElement( const String &typeName,
-                                                                   const String &instanceName )
+        return nullptr;
+    }
+
+    auto COverlayManagerOgreNext::hasOverlay( const String &instanceName ) -> bool
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
+        for( auto e : m_overlays )
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto graphicsSystem = applicationManager->getGraphicsSystem();
-            FB_ASSERT( graphicsSystem );
-
-            if( typeName == ( String( "Panel" ) ) )
+            if( instanceName == e->getName() )
             {
-                SmartPtr<COverlayElementContainer> container( new COverlayElementContainer );
-                container->setName( instanceName );
-                m_overlayElements.push_back( container );
-                graphicsSystem->loadObject( container );
-                return container;
-            }
-            else if( typeName == ( String( "TextArea" ) ) )
-            {
-                SmartPtr<COverlayElementText> container( new COverlayElementText );
-                container->setName( instanceName );
-                m_overlayElements.push_back( container );
-                graphicsSystem->loadObject( container );
-                return container;
-            }
-            else if( typeName == ( String( "VectorImage" ) ) )
-            {
-                return nullptr;
-            }
-            else
-            {
-                FB_LOG_ERROR( "COverlayManager::addElement - unknown element type." );
-            }
-
-            return nullptr;
-        }
-
-        SmartPtr<IOverlayElement> COverlayManagerOgreNext::findElement( const String &instanceName )
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-
-            for( auto e : m_overlayElements )
-            {
-                if( instanceName == e->getName() )
-                {
-                    return e;
-                }
-            }
-
-            return nullptr;
-        }
-
-        bool COverlayManagerOgreNext::removeElement( SmartPtr<IOverlayElement> element )
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto graphicsSystem = applicationManager->getGraphicsSystem();
-            FB_ASSERT( graphicsSystem );
-
-            graphicsSystem->unloadObject( element );
-
-            auto it = std::remove( m_overlayElements.begin(), m_overlayElements.end(), element );
-            if( it != m_overlayElements.end() )
-            {
-                m_overlayElements.erase(it, m_overlayElements.end());
                 return true;
             }
-
-            return false;
         }
 
-        void COverlayManagerOgreNext::_getObject( void **ppObject ) const
+        return false;
+    }
+
+    auto COverlayManagerOgreNext::addElement( const String &typeName, const String &instanceName )
+        -> SmartPtr<IOverlayElement>
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto graphicsSystem = applicationManager->getGraphicsSystem();
+        FB_ASSERT( graphicsSystem );
+
+        if( typeName == ( String( "Panel" ) ) )
         {
-            *ppObject = m_overlayMgr;
+            SmartPtr<COverlayElementContainer> container( new COverlayElementContainer );
+            container->setName( instanceName );
+            m_overlayElements.emplace_back( container );
+            graphicsSystem->loadObject( container );
+            return container;
         }
-
-        Array<SmartPtr<IOverlay>> COverlayManagerOgreNext::getOverlays() const
+        else if( typeName == ( String( "TextArea" ) ) )
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-            return m_overlays;
+            SmartPtr<COverlayElementText> container( new COverlayElementText );
+            container->setName( instanceName );
+            m_overlayElements.emplace_back( container );
+            graphicsSystem->loadObject( container );
+            return container;
+        }
+        else if( typeName == ( String( "VectorImage" ) ) )
+        {
+            return nullptr;
+        }
+        else
+        {
+            FB_LOG_ERROR( "COverlayManager::addElement - unknown element type." );
         }
 
-    }  // end namespace render
-}  // end namespace fb
+        return nullptr;
+    }
+
+    auto COverlayManagerOgreNext::findElement( const String &instanceName ) -> SmartPtr<IOverlayElement>
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
+        for( auto e : m_overlayElements )
+        {
+            if( instanceName == e->getName() )
+            {
+                return e;
+            }
+        }
+
+        return nullptr;
+    }
+
+    auto COverlayManagerOgreNext::removeElement( SmartPtr<IOverlayElement> element ) -> bool
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto graphicsSystem = applicationManager->getGraphicsSystem();
+        FB_ASSERT( graphicsSystem );
+
+        graphicsSystem->unloadObject( element );
+
+        auto it = std::remove( m_overlayElements.begin(), m_overlayElements.end(), element );
+        if( it != m_overlayElements.end() )
+        {
+            m_overlayElements.erase( it, m_overlayElements.end() );
+            return true;
+        }
+
+        return false;
+    }
+
+    void COverlayManagerOgreNext::_getObject( void **ppObject ) const
+    {
+        *ppObject = m_overlayMgr;
+    }
+
+    auto COverlayManagerOgreNext::getOverlays() const -> Array<SmartPtr<IOverlay>>
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        return m_overlays;
+    }
+
+}  // namespace fb::render

@@ -2,20 +2,39 @@
 #define CMaterialOgreNext_h__
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
-#include <FBCore/Graphics/CMaterial.h>
+#include <FBCore/Graphics/Material.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/System/Job.h>
 #include <OgreMaterial.h>
-//#include <OgreRenderTargetListener.h>
 
 namespace fb
 {
     namespace render
     {
-        class CMaterialOgreNext : public CMaterial
+        class CMaterialOgreNext : public Material
         {
         public:
+            class MaterialStateListener : public IStateListener
+            {
+            public:
+                MaterialStateListener();
+                MaterialStateListener( CMaterialOgreNext *material );
+                ~MaterialStateListener() override;
+
+                void handleStateChanged( const SmartPtr<IStateMessage> &message ) override;
+                void handleStateChanged( SmartPtr<IState> &state ) override;
+                void handleQuery( SmartPtr<IStateQuery> &query ) override;
+
+                SmartPtr<CMaterialOgreNext> getOwner() const;
+                void setOwner( SmartPtr<CMaterialOgreNext> owner );
+
+                FB_CLASS_REGISTER_DECL;
+
+            protected:
+                SmartPtr<CMaterialOgreNext> m_owner;
+            };
+
             CMaterialOgreNext();
             ~CMaterialOgreNext() override;
 
@@ -59,24 +78,6 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class MaterialStateListener : public IStateListener
-            {
-            public:
-                MaterialStateListener();
-                MaterialStateListener( CMaterialOgreNext *material );
-                ~MaterialStateListener() override;
-
-                void handleStateChanged( const SmartPtr<IStateMessage> &message ) override;
-                void handleStateChanged( SmartPtr<IState> &state ) override;
-                void handleQuery( SmartPtr<IStateQuery> &query ) override;
-
-                CMaterialOgreNext *getOwner() const;
-                void setOwner( CMaterialOgreNext *owner );
-
-            protected:
-                CMaterialOgreNext *m_owner = nullptr;
-            };
-
             void createMaterialByType() override;
 
             Ogre::HlmsDatablock *m_hlmsDatablock = nullptr;
@@ -91,7 +92,7 @@ namespace fb
 
             static u32 m_nameExt;
         };
-    } // end namespace render
-}     // end namespace fb
+    }  // end namespace render
+}  // end namespace fb
 
 #endif  // IMaterial_h__

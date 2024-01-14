@@ -7,22 +7,29 @@ namespace fb
 {
     namespace scene
     {
+
+        /** Collision mesh component. */
         class CollisionMesh : public Collision
         {
         public:
+            static const String meshStr;
+
+            /** Constructor. */
             CollisionMesh();
+
+            /** Destructor. */
             ~CollisionMesh() override;
 
-            /** @copydoc IObject::load */
+            /** @copydoc Collision::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::unload */
+            /** @copydoc Collision::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IComponent::getProperties */
+            /** @copydoc Collision::getProperties */
             SmartPtr<Properties> getProperties() const override;
 
-            /** @copydoc IComponent::setProperties */
+            /** @copydoc Collision::setProperties */
             void setProperties( SmartPtr<Properties> properties ) override;
 
             /** Gets the path of the mesh. */
@@ -37,19 +44,32 @@ namespace fb
             /** Sets the mesh resource. */
             void setMeshResource( SmartPtr<IMeshResource> meshResource );
 
+            bool isConvex() const;
+
+            void setConvex( bool convex );
+
+            /** @copydoc Collision::isValid */
             bool isValid() const override;
 
             FB_CLASS_REGISTER_DECL;
 
         protected:
+            /** @copydoc Collision::handleComponentEvent */
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType ) override;
 
-            void createPhysicsShape();
+            /** @copydoc Collision::createPhysicsShape */
+            void createPhysicsShape() override;
 
+            /** Sets up the physics mesh. */
             void setupMesh();
 
+            // Used to determine if the mesh is convex or not.
             bool m_isConvex = false;
+
+            // The path of the mesh.
             String m_meshPath;
+
+            // The mesh resource.
             SmartPtr<IMeshResource> m_meshResource;
         };
     }  // namespace scene

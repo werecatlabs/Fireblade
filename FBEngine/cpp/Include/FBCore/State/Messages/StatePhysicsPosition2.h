@@ -11,11 +11,11 @@ namespace fb
     {
     public:
         StatePhysicsPosition2();
-        StatePhysicsPosition2( u32 subjectId );
+        explicit StatePhysicsPosition2( u32 subjectId );
 
         StatePhysicsPosition2( u32 subjectId, const Vector2<real_Num> &position );
 
-        StatePhysicsPosition2( const Vector2<real_Num> &position );
+        explicit StatePhysicsPosition2( const Vector2<real_Num> &position );
 
         Vector2<real_Num> getPosition() const;
         void setPosition( const Vector2<real_Num> &val );

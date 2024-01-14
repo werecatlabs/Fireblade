@@ -40,6 +40,9 @@ namespace fb
 
             void setOwner( fb::SmartPtr<fb::editor::SceneWindow> owner );
 
+            s32 getSiblingIndex() const;
+            void setSiblingIndex( s32 siblingIndex );
+
         protected:
             SmartPtr<SceneWindow> m_owner;
             SmartPtr<ui::IUITreeCtrl> m_tree;
@@ -47,6 +50,7 @@ namespace fb
             SmartPtr<ICommand> m_dragDropActorCmd;
             String m_data;
             String m_filePath;
+            s32 m_siblingIndex = -1;
         };
     }  // end namespace editor
 }  // end namespace fb

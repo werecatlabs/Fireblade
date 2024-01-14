@@ -34,11 +34,16 @@ namespace fb
             String getData() const;
             void setData( const String &data );
 
+            s32 getSiblingIndex() const;
+
+            void setSiblingIndex( s32 siblingIndex );
+
         private:
             Vector2I m_position = Vector2I::zero();
             SmartPtr<ui::IUIElement> m_src;
             SmartPtr<ui::IUIElement> m_dst;
             String m_data;
+            s32 m_siblingIndex = -1;
         };
     }  // end namespace editor
 }  // end namespace fb

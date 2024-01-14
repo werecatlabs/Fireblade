@@ -1,24 +1,19 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Jobs/ObjectUpdateJob.h>
-#include <FBCore/FBCore.h>
 
 namespace fb
 {
 
-    ObjectUpdateJob::ObjectUpdateJob()
-    {
-    }
+    ObjectUpdateJob::ObjectUpdateJob() = default;
 
-    ObjectUpdateJob::~ObjectUpdateJob()
-    {
-    }
+    ObjectUpdateJob::~ObjectUpdateJob() = default;
 
     void ObjectUpdateJob::execute()
     {
         m_owner->update();
     }
 
-    SmartPtr<ISharedObject> ObjectUpdateJob::getOwner() const
+    auto ObjectUpdateJob::getOwner() const -> SmartPtr<ISharedObject>
     {
         return m_owner;
     }

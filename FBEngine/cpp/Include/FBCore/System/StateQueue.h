@@ -3,7 +3,6 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IStateQueue.h>
-
 #include <deque>
 
 namespace fb

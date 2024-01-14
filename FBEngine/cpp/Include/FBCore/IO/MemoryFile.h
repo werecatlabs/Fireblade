@@ -1,7 +1,6 @@
 #ifndef __CMemoryFile_h__
 #define __CMemoryFile_h__
 
-
 #include <FBCore/IO/DataStream.h>
 
 namespace fb

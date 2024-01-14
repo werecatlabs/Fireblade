@@ -8,6 +8,7 @@ namespace fb
 {
     namespace render
     {
+
         LRESULT CALLBACK _WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
         {
             if( uMsg == WM_CREATE )
@@ -222,6 +223,8 @@ namespace fb
 
         void WindowWin32::unload( SmartPtr<ISharedObject> data )
         {
+            setRenderWindow( nullptr );
+
             if( mHWnd )
             {
                 DestroyWindow( mHWnd );

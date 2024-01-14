@@ -57,7 +57,9 @@ namespace fb
 
             SmartPtr<IPhysicsBody3> clone() override;
 
-            void wakeUp(){}
+            void wakeUp()
+            {
+            }
 
             SmartPtr<Properties> getProperties() const override;
 

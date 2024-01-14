@@ -10,11 +10,11 @@ namespace fb
     namespace ui
     {
 
-        class ImGuiMenubar : public CImGuiElement<IUIMenubar>
+        class ImGuiMenuBar : public CImGuiElement<IUIMenubar>
         {
         public:
-            ImGuiMenubar();
-            ~ImGuiMenubar() override;
+            ImGuiMenuBar();
+            ~ImGuiMenuBar() override;
 
             void update() override;
 

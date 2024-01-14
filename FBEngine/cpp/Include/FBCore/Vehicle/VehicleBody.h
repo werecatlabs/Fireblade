@@ -8,17 +8,30 @@
 
 namespace fb
 {
+
+    /** Implementation of the vehicle body. */
     class VehicleBody : public VehicleComponent<IVehicleBody>
     {
     public:
+        /** Constructor. */
         VehicleBody();
+
+        /** Destructor. */
         ~VehicleBody() override;
 
+        /** @copydoc IVehicleBody::unload */
         void unload( SmartPtr<ISharedObject> data ) override;
 
+        /** @copydoc IVehicleBody::update */
+        void update() override;
+
+        /** @copydoc IVehicleBody::isValid */
         bool isValid() const override;
 
+        /** @copydoc IVehicleBody::getVelocity */
         Vector3<real_Num> getVelocity() const override;
+
+        /** @copydoc IVehicleBody::setVelocity */
         void setVelocity( const Vector3<real_Num> &val ) override;
 
         Vector3<real_Num> getAngularVelocity() const override;
@@ -34,11 +47,9 @@ namespace fb
         void addTorque( const Vector3<real_Num> &val ) override;
         void addLocalTorque( const Vector3<real_Num> &val ) override;
 
-        SmartPtr<IVehicleController> &getParentAircraft();
-        const SmartPtr<IVehicleController> &getParentAircraft() const;
+        SmartPtr<IVehicleController> &getParentVehicle();
+        const SmartPtr<IVehicleController> &getParentVehicle() const;
         void setParentVehicle( SmartPtr<IVehicleController> val );
-
-        void update() override;
 
         Vector3<real_Num> getPointVelocity( const Vector3<real_Num> &p ) override;
 
@@ -59,7 +70,7 @@ namespace fb
         void setLocalAngularVelocity( Vector3<real_Num> val ) override;
 
     protected:
-        SmartPtr<IVehicleController> m_parentAircraft;
+        SmartPtr<IVehicleController> m_parentVehicle;
 
         Vector3<real_Num> m_velocity;
         Vector3<real_Num> m_angularVelocity;

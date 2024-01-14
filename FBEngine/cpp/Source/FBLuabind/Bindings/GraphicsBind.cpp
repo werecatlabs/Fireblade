@@ -324,33 +324,6 @@ namespace fb
         module( L )[class_<IParticleTechnique, IScriptObject, SharedPtr<ISharedObject>>(
             "ParticleTechnique" )];
 
-        //module(
-        //    L )[class_<GraphicsContainer, IComponent, boost::shared_ptr<IObject>>( "GraphicsContainer" )
-        //            .def( "setObject", &GraphicsContainer::setObject )
-        //            .def( "setObject", GraphicsContainerHelper::_setObjectByName )
-        //            //.def("setObject", GraphicsContainerHelper::_setObjectSceneNode )
-        //            //.def("setObject", GraphicsContainerHelper::_setObjectSceneNodeHash )
-        //            //.def("setObject", GraphicsContainerHelper::_setObjectGfxObj )
-        //            //.def("setObject", GraphicsContainerHelper::_setObjectGfxObjHash )
-        //            //.def("setObject", GraphicsContainerHelper::_setObjectGfxMesh )
-        //            //.def("setObject", GraphicsContainerHelper::_setObjectGfxMeshHash )
-        //            //.def("setObject", GraphicsContainerHelper::_setObjectParticleSystem)
-        //            //.def("setObject", GraphicsContainerHelper::_setObjectParticleSystemHash )
-        //            //.def("setObject", GraphicsContainerHelper::_setObjectAnimationCtrl )
-        //            //.def("setObject", GraphicsContainerHelper::_setObjectAnimationCtrlHash )
-        //            //.def("setObject", GraphicsContainerHelper::_setObjectAnimationStateCtrl )
-        //            //.def("setObject", GraphicsContainerHelper::_setObjectAnimationStateCtrlHash )
-        //            .def( "getSceneNode", GraphicsContainerHelper::_getSceneNode )
-        //            .def( "getSceneNode", &GraphicsContainer::getSceneNode )
-        //            .def( "getGraphicsObject", &GraphicsContainer::getGraphicsObject )
-        //            .def( "getAnimationController", &GraphicsContainer::getAnimationController )
-        //            .def( "getAnimationStateControl",
-        //                  GraphicsContainerHelper::_getAnimationStateController )
-        //            .def( "getAnimationStateControl", &GraphicsContainer::getAnimationStateController )
-        //            .def( "getAnimationController", GraphicsContainerHelper::_getAnimationCtrl )
-        //            .def( "getMesh", GraphicsContainerHelper::_getMesh )
-        //            .def( "getMesh", GraphicsContainerHelper::_getMeshHash )];
-
         module(
             L )[class_<IResourceManager, IScriptObject, SharedPtr<ISharedObject>>( "IResourceManager" )
                     .def( "getById", &IResourceManager::getById )
@@ -363,20 +336,19 @@ namespace fb
         //                "MaterialManager" )
         //                .def( "cloneMaterial", &IMaterialManager::cloneMaterial )];
 
-        module( L )
-                 [class_<IMaterial::MaterialType>( "MaterialType" )
-                      .enum_( "values" )
-                          [value( "Standard", IMaterial::MaterialType::Standard ),
-                           value( "StandardSpecular", IMaterial::MaterialType::StandardSpecular ),
-                           value( "StandardTriPlanar", IMaterial::MaterialType::StandardTriPlanar ),
-                           value( "TerrainStandard", IMaterial::MaterialType::TerrainStandard ),
-                           value( "TerrainSpecular", IMaterial::MaterialType::TerrainSpecular ),
-                           value( "TerrainDiffuse", IMaterial::MaterialType::TerrainDiffuse ),
-                           value( "Skybox", IMaterial::MaterialType::Skybox ),
-                           value( "SkyboxCubemap", IMaterial::MaterialType::SkyboxCubemap ),
-                           value( "UI", IMaterial::MaterialType::UI ),
-                           value( "Custom", IMaterial::MaterialType::Custom ),
-                           value( "Count", IMaterial::MaterialType::Count )]];
+        module( L )[class_<IMaterial::MaterialType>( "MaterialType" )
+                        .enum_( "values" )
+                            [value( "Standard", IMaterial::MaterialType::Standard ),
+                             value( "StandardSpecular", IMaterial::MaterialType::StandardSpecular ),
+                             value( "StandardTriPlanar", IMaterial::MaterialType::StandardTriPlanar ),
+                             value( "TerrainStandard", IMaterial::MaterialType::TerrainStandard ),
+                             value( "TerrainSpecular", IMaterial::MaterialType::TerrainSpecular ),
+                             value( "TerrainDiffuse", IMaterial::MaterialType::TerrainDiffuse ),
+                             value( "Skybox", IMaterial::MaterialType::Skybox ),
+                             value( "SkyboxCubemap", IMaterial::MaterialType::SkyboxCubemap ),
+                             value( "UI", IMaterial::MaterialType::UI ),
+                             value( "Custom", IMaterial::MaterialType::Custom ),
+                             value( "Count", IMaterial::MaterialType::Count )]];
 
         module(
             L )[class_<IMaterial, IResource, SmartPtr<ISharedObject>>( "IMaterial" )
@@ -471,14 +443,6 @@ namespace fb
 
                         .def( "getPosition", &IWater::getPosition )
                         .def( "setPosition", &IWater::setPosition )];
-
-        //module(L)
-        //	[
-        //		class_<WaterStandard, IWater, WaterPtr>("WaterStandard")
-        //	];
-
-        //module(
-        //    L )[class_<IGraphicsScene, IScriptObject, boost::shared_ptr<IObject>>( "GraphicsScene" )];
 
         module( L )[class_<ITextureManager, IResourceManager, boost::shared_ptr<IObject>>(
                         "ITextureManager" )

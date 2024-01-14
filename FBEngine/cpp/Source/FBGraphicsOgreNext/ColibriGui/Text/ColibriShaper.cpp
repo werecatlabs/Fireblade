@@ -11,7 +11,7 @@
 #include "freetype/freetype.h"
 
 //#if HB_HAVE_FREETYPE
-#    include "hb-ft.h"
+#include "hb-ft.h"
 //#endif
 
 #include "utf16.h"

@@ -43,12 +43,16 @@ namespace fb
             bool isDocked() const override;
             void setDocked( bool docked ) override;
 
+            FB_CLASS_REGISTER_TEMPLATE_DECL( ImGuiWindowT, T );
+
         protected:
             String m_label;
             SmartPtr<IUIMenu> m_menu;
             bool m_hasBorder = false;
             bool m_isDocked = false;
         };
+
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb::ui, ImGuiWindowT, T, CImGuiElement<T> );
 
         template <class T>
         void ImGuiWindowT<T>::update()

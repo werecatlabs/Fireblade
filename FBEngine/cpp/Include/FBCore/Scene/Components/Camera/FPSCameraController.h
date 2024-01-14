@@ -1,13 +1,14 @@
 #ifndef _FPSCAMERACONTROLLER_H
 #define _FPSCAMERACONTROLLER_H
 
-#include "FBCore/Scene/Components/Camera/CameraController.h"
+#include <FBCore/Scene/Components/Camera/CameraController.h>
+#include <FBCore/Math/Ray3.h>
 
 namespace fb
 {
     namespace scene
     {
-        
+
         class FpsCameraController : public CameraController
         {
         public:

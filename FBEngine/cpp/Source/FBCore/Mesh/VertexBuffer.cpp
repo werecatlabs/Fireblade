@@ -4,8 +4,9 @@
 
 namespace fb
 {
-    VertexBuffer::VertexBuffer() : m_vertexData( 0 ), m_numVerticies( 0 )
+    VertexBuffer::VertexBuffer() : m_vertexData( 0 )
     {
+        m_vertexData.resize( 1 );
     }
 
     VertexBuffer::~VertexBuffer()
@@ -15,13 +16,13 @@ namespace fb
 
     void VertexBuffer::unload( SmartPtr<ISharedObject> data )
     {
-        for( u32 i = 0; i < m_vertexData.size(); ++i )
+        for( auto &i : m_vertexData )
         {
-            u8 *data = m_vertexData[i];
+            u8 *data = i;
             if( data )
             {
                 delete[] data;
-                m_vertexData[i] = nullptr;
+                i = nullptr;
             }
         }
 
@@ -39,22 +40,22 @@ namespace fb
         m_vertexDeclaration = vertexDeclaration;
     }
 
-    SmartPtr<IVertexDeclaration> VertexBuffer::getVertexDeclaration() const
+    auto VertexBuffer::getVertexDeclaration() const -> SmartPtr<IVertexDeclaration>
     {
         return m_vertexDeclaration;
     }
 
-    void VertexBuffer::setNumVerticies( u32 numVerticies )
+    void VertexBuffer::setNumVertices( u32 numVertices )
     {
-        m_numVerticies = numVerticies;
+        m_numVertices = numVertices;
     }
 
-    u32 VertexBuffer::getNumVerticies() const
+    auto VertexBuffer::getNumVertices() const -> u32
     {
-        return m_numVerticies;
+        return m_numVertices;
     }
 
-    void *VertexBuffer::createVertexData( s32 index )
+    auto VertexBuffer::createVertexData( s32 index ) -> void *
     {
         if( m_vertexDeclaration )
         {
@@ -70,7 +71,8 @@ namespace fb
                 }
             }
 
-            auto numBytes = m_vertexDeclaration->getSize( index ) * m_numVerticies;
+            auto vertexSize = m_vertexDeclaration->getSize( index );
+            auto numBytes = vertexSize * m_numVertices;
             auto buffer = new u8[numBytes];
             m_vertexData[index] = buffer;
             return buffer;
@@ -79,33 +81,33 @@ namespace fb
         return nullptr;
     }
 
-    void *VertexBuffer::getVertexData( int index ) const
+    auto VertexBuffer::getVertexData( int index ) const -> void *
     {
         return m_vertexData[index];
     }
 
-    Array<u8 *> VertexBuffer::getDataArray() const
+    auto VertexBuffer::getDataArray() const -> Array<u8 *>
     {
         return m_vertexData;
     }
 
-    SmartPtr<IVertexBuffer> VertexBuffer::clone() const
+    auto VertexBuffer::clone() const -> SmartPtr<IVertexBuffer>
     {
         auto newVertexBuffer = fb::make_ptr<VertexBuffer>();
 
         newVertexBuffer->setVertexDeclaration( m_vertexDeclaration->clone() );
-        newVertexBuffer->setNumVerticies( m_numVerticies );
+        newVertexBuffer->setNumVertices( m_numVertices );
         newVertexBuffer->createVertexData();
 
-        u32 numBytes = m_vertexDeclaration->getSize() * m_numVerticies;
+        u32 numBytes = m_vertexDeclaration->getSize() * m_numVertices;
         Memory::Memcpy( newVertexBuffer->m_vertexData[0], m_vertexData[0], numBytes );
 
         return newVertexBuffer;
     }
 
-    bool VertexBuffer::compare( SmartPtr<IVertexBuffer> other ) const
+    auto VertexBuffer::compare( SmartPtr<IVertexBuffer> other ) const -> bool
     {
-        if( m_numVerticies != other->getNumVerticies() )
+        if( m_numVertices != other->getNumVertices() )
         {
             return false;
         }

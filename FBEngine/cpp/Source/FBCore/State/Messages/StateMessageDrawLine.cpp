@@ -8,7 +8,7 @@ namespace fb
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageDrawLine, StateMessage );
     const hash_type StateMessageDrawLine::DRAW_LINE_HASH = StringUtil::getHash( "DrawLine" );
 
-    Vector3<real_Num> StateMessageDrawLine::getStart() const
+    auto StateMessageDrawLine::getStart() const -> Vector3<real_Num>
     {
         return m_start;
     }
@@ -18,7 +18,7 @@ namespace fb
         m_start = start;
     }
 
-    Vector3<real_Num> StateMessageDrawLine::getEnd() const
+    auto StateMessageDrawLine::getEnd() const -> Vector3<real_Num>
     {
         return m_end;
     }
@@ -28,7 +28,7 @@ namespace fb
         m_end = end;
     }
 
-    s32 StateMessageDrawLine::getLineId() const
+    auto StateMessageDrawLine::getLineId() const -> s32
     {
         return m_lineId;
     }
@@ -38,7 +38,7 @@ namespace fb
         m_lineId = lineId;
     }
 
-    u32 StateMessageDrawLine::getColour() const
+    auto StateMessageDrawLine::getColour() const -> u32
     {
         return m_colour;
     }

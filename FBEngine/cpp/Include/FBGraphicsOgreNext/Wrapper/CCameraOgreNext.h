@@ -129,6 +129,15 @@ namespace fb
             /** copydoc ICamera::getRenderUI */
             bool getRenderUI() const override;
 
+            /** @copydoc CGraphicsObjectOgreNext<ICamera>::getProperties */
+            SmartPtr<Properties> getProperties() const;
+
+            /** @copydoc CGraphicsObjectOgreNext<ICamera>::setProperties */
+            void setProperties( SmartPtr<Properties> properties );
+
+            /** @copydoc CGraphicsObjectOgreNext<ICamera>::getChildObjects */
+            Array<SmartPtr<ISharedObject>> getChildObjects() const;
+
             Ogre::Camera *getCamera() const;
             void setCamera( Ogre::Camera *camera );
 
@@ -159,6 +168,10 @@ namespace fb
             };
 
             void setupStateObject() override;
+
+            void createCompositor();
+
+            void destroyCompositor();
 
             SmartPtr<Compositor> m_compositor;
 
@@ -212,7 +225,7 @@ namespace fb
 
             static u32 m_nameExt;
         };
-    } // end namespace render
-}     // end namespace fb
+    }  // end namespace render
+}  // end namespace fb
 
 #endif

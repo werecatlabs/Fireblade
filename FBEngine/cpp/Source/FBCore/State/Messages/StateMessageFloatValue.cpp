@@ -13,7 +13,7 @@ namespace fb
     const hash_type StateMessageFloatValue::HEIGHT_HASH = StringUtil::getHash( "height" );
 
     //--------------------------------------------
-    f32 StateMessageFloatValue::getValue() const
+    auto StateMessageFloatValue::getValue() const -> f32
     {
         return m_value;
     }

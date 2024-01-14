@@ -22,6 +22,8 @@ namespace fb
                 AddScript,
                 AddTerrainDirector,
                 Remove,
+                Import,
+                Reimport,
 
                 Count
             };
@@ -136,12 +138,12 @@ namespace fb
 
                 void execute() override;
 
-                ProjectAssetsWindow *getOwner() const;
+                SmartPtr<ProjectAssetsWindow> getOwner() const;
 
-                void setOwner( ProjectAssetsWindow *owner );
+                void setOwner( SmartPtr<ProjectAssetsWindow> owner );
 
             private:
-                ProjectAssetsWindow *m_owner = nullptr;
+                SmartPtr<ProjectAssetsWindow> m_owner;
             };
 
             void buildTree();

@@ -44,7 +44,7 @@ namespace fb
          * Constructor with an orientation parameter.
          * \param orientation The orientation of the transformation.
          */
-        Transform3( const Quaternion<T> &orientation );
+        explicit Transform3( const Quaternion<T> &orientation );
 
         /** Copy constructor. */
         Transform3( const Transform3 &t );

@@ -17,6 +17,8 @@ namespace fb
             ~ImGuiWindow();
 
             virtual void update();
+
+            FB_CLASS_REGISTER_DECL;
         };
     }  // namespace ui
 }  // namespace fb

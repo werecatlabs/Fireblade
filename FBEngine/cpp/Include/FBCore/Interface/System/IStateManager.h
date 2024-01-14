@@ -4,7 +4,7 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/Thread/ThreadTypes.h>
@@ -50,10 +50,10 @@ namespace fb
         /**
          * @brief Removes a state object from the manager.
          *
-         * @param stateObject The state object to remove.
+         * @param stateContext The state object to remove.
          * @return True if the state object was successfully removed, false otherwise.
          */
-        virtual bool removeStateObject( SmartPtr<IStateContext> stateObject ) = 0;
+        virtual bool removeStateObject( SmartPtr<IStateContext> stateContext ) = 0;
 
         /**
          * @brief Finds a state object by ID.
@@ -68,7 +68,7 @@ namespace fb
          *
          * @return An array of state objects.
          */
-        virtual Array<SmartPtr<IStateContext>> getStateObjects() const = 0;
+        virtual Array<SmartPtr<IStateContext>> getStateContexts() const = 0;
 
         /**
          * @brief Gets a state queue by task.
@@ -118,7 +118,7 @@ namespace fb
         template <class T>
         SmartPtr<T> createStateContext()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto factoryManager = applicationManager->getFactoryManager();
@@ -130,7 +130,7 @@ namespace fb
             if( auto state = factoryManager->make_object<T>() )
             {
                 state->setStateContext( stateContext );
-                stateContext->setState( state );
+                stateContext->addState( state );
                 return state;
             }
 

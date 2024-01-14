@@ -7,10 +7,16 @@ namespace fb
 {
     namespace scene
     {
+
+        /** Button component. This component is used to create a button.
+         */
         class Button : public UIComponent
         {
         public:
+            /** Constructor. */
             Button();
+
+            /** Destructor. */
             ~Button() override;
 
             /** @copydoc UIComponent::load */
@@ -19,7 +25,7 @@ namespace fb
             /** @copydoc UIComponent::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::getChildObjects */
+            /** @copydoc UIComponent::getChildObjects */
             Array<SmartPtr<ISharedObject>> getChildObjects() const override;
 
             /** @copydoc UIComponent::getProperties */
@@ -28,8 +34,12 @@ namespace fb
             /** @copydoc UIComponent::setProperties */
             void setProperties( SmartPtr<Properties> properties ) override;
 
+            /** Gets the internal button object.
+             * @return The internal button object.
+             */
             SmartPtr<ui::IUIButton> getButton() const;
 
+            /** Sets the internal button object. */
             void setButton( SmartPtr<ui::IUIButton> button );
 
             bool isSimpleButton() const;
@@ -46,7 +56,7 @@ namespace fb
                                    SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
             void createUI() override;
-            void updateElementState();
+            void updateElementState() override;
             void updateCaption();
 
             SmartPtr<ui::IUIButton> m_button;

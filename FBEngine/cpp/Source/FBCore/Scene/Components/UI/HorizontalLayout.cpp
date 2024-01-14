@@ -1,30 +1,57 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/UI/HorizontalLayout.h>
+#include <FBCore/Scene/Components/UI/LayoutTransform.h>
+#include <FBCore/Interface/Scene/IActor.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+    FB_CLASS_REGISTER_DERIVED( fb::scene, HorizontalLayout, LayoutContainer );
+
+    HorizontalLayout::HorizontalLayout() = default;
+
+    void HorizontalLayout::updateTransform()
     {
+        auto offset = 0.0f;
 
-        HorizontalLayout::HorizontalLayout( int width ) : width( width )
+        if( auto actor = getActor() )
         {
-        }
+            auto p = actor->getChildrenPtr();
+            auto children = *p;
 
-        void HorizontalLayout::add_widget( const Widget &widget )
-        {
-            widgets.push_back( widget );
-        }
-
-        void HorizontalLayout::layout()
-        {
-            int x = 0, y = 0;
-            for( const auto &widget : widgets )
+            for( auto child : children )
             {
-                //widget.x = x;
-                //widget.y = y;
-                y += widget.height;
+                if( child->isEnabled() )
+                {
+                    auto transform = child->getComponent<LayoutTransform>();
+
+                    // Position the child vertically
+                    auto childPosition = transform->getPosition();
+                    auto childSize = transform->getSize();
+
+                    childPosition.x = offset;
+                    transform->setPosition( childPosition );
+
+                    // Update the offset for the next child
+                    offset += childSize.x + m_spacing;
+                }
             }
         }
+    }
 
-    }  // namespace scene
-}  // namespace fb
+    auto HorizontalLayout::getProperties() const -> SmartPtr<Properties>
+    {
+        auto properties = LayoutContainer::getProperties();
+        properties->setProperty( "spacing", m_spacing );
+        return properties;
+    }
+
+    void HorizontalLayout::setProperties( SmartPtr<Properties> properties )
+    {
+        LayoutContainer::setProperties( properties );
+
+        properties->getPropertyValue( "spacing", m_spacing );
+
+        updateTransform();
+    }
+
+}  // namespace fb::scene

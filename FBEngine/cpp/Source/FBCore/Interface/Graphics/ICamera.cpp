@@ -3,10 +3,7 @@
 #include <FBCore/Core/StringUtil.h>
 #include <FBCore/System/RttiClassDefinition.h>
 
-namespace fb
+namespace fb::render
 {
-    namespace render
-    {
-        FB_CLASS_REGISTER_DERIVED( fb, ICamera, IFrustum );
-    }  // end namespace render
-}  // end namespace fb
+    FB_CLASS_REGISTER_DERIVED( fb, ICamera, IFrustum );
+}  // namespace fb::render

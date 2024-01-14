@@ -11,8 +11,9 @@ namespace fb
 {
     namespace ui
     {
-        UIButton::UIButton()
-            : m_label("Button")
+        FB_CLASS_REGISTER_DERIVED( fb, UIButton, UIElement<IUIButton> );
+
+        UIButton::UIButton() : m_label( "Button" )
         {
             createStateContext();
         }
@@ -26,7 +27,7 @@ namespace fb
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 auto ui = fb::static_pointer_cast<UIManager>( applicationManager->getRenderUI() );
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
 
@@ -75,9 +76,9 @@ namespace fb
         {
             m_label = label;
 
-            if( auto stateObject = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
-                stateObject->setDirty( true );
+                stateContext->setDirty( true );
             }
         }
 
@@ -92,7 +93,13 @@ namespace fb
 
         void UIButton::handleStateChanged( SmartPtr<IState> &state )
         {
-            m_button->getLabel()->setText( m_label );
+            UIElement<IUIButton>::handleStateChanged( state );
+
+            if( m_button )
+            {
+                auto label = m_button->getLabel();
+                label->setText( m_label );
+            }
         }
 
     }  // namespace ui

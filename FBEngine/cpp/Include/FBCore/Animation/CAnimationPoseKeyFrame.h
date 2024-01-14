@@ -3,7 +3,6 @@
 
 #include "FBCore/Interface/Animation/IAnimationPoseKeyFrame.h"
 
-
 namespace fb
 {
     class CAnimationPoseKeyFrame : public IAnimationPoseKeyFrame

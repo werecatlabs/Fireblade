@@ -140,13 +140,13 @@ namespace fb
              * @brief Gets the state object.
              * @return The state object. Can be null.
              */
-            virtual SmartPtr<IStateContext> getStateObject() const = 0;
+            virtual SmartPtr<IStateContext> getStateContext() const = 0;
 
             /**
              * @brief Sets the state object.
-             * @param stateObject The state object. Can be null.
+             * @param stateContext The state object. Can be null.
              */
-            virtual void setStateObject( SmartPtr<IStateContext> stateObject ) = 0;
+            virtual void setStateContext( SmartPtr<IStateContext> stateContext ) = 0;
 
             FB_CLASS_REGISTER_DECL;
         };

@@ -90,8 +90,7 @@ namespace fb
         // NB this chunk is embedded within M_MESH and M_SUBMESH
         // unsigned int vertexCount
         M_GEOMETRY_VERTEX_DECLARATION = 0x5100,
-        M_GEOMETRY_VERTEX_ELEMENT =
-        0x5110,
+        M_GEOMETRY_VERTEX_ELEMENT = 0x5110,
         // Repeating section
         // unsigned short source;  	// buffer bind source
         // unsigned short type;    	// VertexElementType
@@ -249,7 +248,7 @@ namespace fb
         M_GEOMETRY_COLOURS = 0x5200,
         //(Optional)
         // unsigned long* pColours (RGBA 8888 format x numVertices)
-        M_GEOMETRY_TEXCOORDS = 0x5300 //(Optional, REPEATABLE, each one adds an extra set)
+        M_GEOMETRY_TEXCOORDS = 0x5300  //(Optional, REPEATABLE, each one adds an extra set)
         // unsigned short dimensions    (1 for 1D, 2 for 2D, 3 for 3D)
         // float* pTexCoords  (u [v] [w] order, dimensions x numVertices)
         /*
@@ -299,6 +298,6 @@ namespace fb
 
     /** @} */
     /** @} */
-} // namespace fb
+}  // namespace fb
 
 #endif

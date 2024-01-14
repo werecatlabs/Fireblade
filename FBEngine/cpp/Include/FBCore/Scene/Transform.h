@@ -10,14 +10,20 @@ namespace fb
     namespace scene
     {
 
+        /** Transformation implementation. */
         class Transform : public ITransform
         {
         public:
+            /** The hash type for the position property. */
             static const hash_type TRANSFORMATION_POSITION_HASH;
 
+            /** Constructor. */
             Transform();
+
+            /** Constructor. */
             Transform( const Transform &other ) = delete;
-            Transform( u32 componentId );
+
+            /** Destructor. */
             ~Transform() override;
 
             void load( SmartPtr<ISharedObject> data ) override;
@@ -73,8 +79,8 @@ namespace fb
             /** @copydoc ITransform::setProperties */
             void setProperties( SmartPtr<Properties> properties ) override;
 
-            SmartPtr<IStateContext> getStateObject() const;
-            void setStateObject( SmartPtr<IStateContext> stateObject );
+            SmartPtr<IStateContext> getStateContext() const;
+            void setStateContext( SmartPtr<IStateContext> stateContext );
 
             Transform3<real_Num> getLocalTransform() const override;
             void setLocalTransform( Transform3<real_Num> transform ) override;
@@ -108,7 +114,7 @@ namespace fb
             // SmartPtr<TransformState> m_state;
 
             SmartPtr<scene::IActor> m_actor;
-            SmartPtr<IStateContext> m_stateObject;
+            SmartPtr<IStateContext> m_stateContext;
 
             Transform3<real_Num> m_worldTransform;
             Transform3<real_Num> m_localTransform;

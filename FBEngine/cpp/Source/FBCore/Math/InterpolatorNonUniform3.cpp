@@ -14,7 +14,7 @@ namespace fb
     }
 
     template <class T>
-    Vector3<T> InterpolatorNonUniform3<T>::interpolate( const T &t )
+    auto InterpolatorNonUniform3<T>::interpolate( const T &t ) -> Vector3<T>
     {
         if( m_values.empty() )
         {
@@ -77,7 +77,7 @@ namespace fb
     }
 
     template <class T>
-    const Array<std::pair<T, Vector3<T>>> &InterpolatorNonUniform3<T>::getValues() const
+    auto InterpolatorNonUniform3<T>::getValues() const -> const Array<std::pair<T, Vector3<T>>> &
     {
         return m_values;
     }

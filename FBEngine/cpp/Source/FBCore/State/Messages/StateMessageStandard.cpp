@@ -4,7 +4,7 @@
 namespace fb
 {
     //---------------------------------------------
-    StateMessageStandard::StateMessageStandard() : m_subjectId( 0 )
+    StateMessageStandard::StateMessageStandard()
     {
     }
 
@@ -14,9 +14,7 @@ namespace fb
     }
 
     //---------------------------------------------
-    StateMessageStandard::~StateMessageStandard()
-    {
-    }
+    StateMessageStandard::~StateMessageStandard() = default;
 
     //---------------------------------------------
     void StateMessageStandard::setSubjectId( u32 id )
@@ -25,7 +23,7 @@ namespace fb
     }
 
     //---------------------------------------------
-    u32 StateMessageStandard::getSubjectId() const
+    auto StateMessageStandard::getSubjectId() const -> u32
     {
         return m_subjectId;
     }

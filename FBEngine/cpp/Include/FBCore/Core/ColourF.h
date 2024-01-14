@@ -16,7 +16,7 @@ namespace fb
     public:
         //! Constructs a color. All values are initialised with 0.0f, resulting
         //! in a black color.
-        ColourF() = default;
+        ColourF();
 
         //! Constructs a color from three color values: red, green and blue.
         //! \param r: Red color component. Should be a value between 0.0f meaning
@@ -43,7 +43,7 @@ namespace fb
         //! Constructs a color from 32 bit Color.
         //! \param c: 32 bit color value from which this Colorf class is
         //! constructed from.
-        ColourF( ColourI c );
+        explicit ColourF( ColourI c );
 
         //! Converts this color to a SColor without floats.
         ColourI toSColor() const;

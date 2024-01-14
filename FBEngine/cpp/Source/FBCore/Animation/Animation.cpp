@@ -5,24 +5,20 @@
 namespace fb
 {
 
-    Animation::~Animation()
-    {
-    }
+    Animation::~Animation() = default;
 
-    Animation::Animation()
-    {
-    }
+    Animation::Animation() = default;
 
-    String Animation::getName() const
+    auto Animation::getName() const -> String
     {
         return StringUtil::EmptyString;
     }
 
-    void Animation::setName( const String &val )
+    void Animation::setName( const String &name )
     {
     }
 
-    f32 Animation::getLength() const
+    auto Animation::getLength() const -> f32
     {
         return 0.0f;
     }

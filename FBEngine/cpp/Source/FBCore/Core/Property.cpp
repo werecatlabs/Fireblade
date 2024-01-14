@@ -6,7 +6,7 @@
 namespace fb
 {
 
-    Property::Property() : m_readOnly( false )
+    Property::Property()
     {
     }
 
@@ -19,8 +19,8 @@ namespace fb
         m_label( StringUtil::EmptyString ),
         m_name( name ),
         m_value( value ),
-        m_type( StringUtil::EmptyString ),
-        m_readOnly( false )
+        m_type( StringUtil::EmptyString )
+
     {
         static String defaultType( "string" );
         m_type = defaultType;
@@ -30,8 +30,8 @@ namespace fb
         m_label( StringUtil::EmptyString ),
         m_name( name ),
         m_value( value ),
-        m_type( type ),
-        m_readOnly( false )
+        m_type( type )
+
     {
     }
 
@@ -40,8 +40,8 @@ namespace fb
         m_label( label ),
         m_name( name ),
         m_value( value ),
-        m_type( type ),
-        m_readOnly( false )
+        m_type( type )
+
     {
     }
 
@@ -55,9 +55,7 @@ namespace fb
     {
     }
 
-    Property::~Property()
-    {
-    }
+    Property::~Property() = default;
 
     void Property::setName( const String &name )
     {
@@ -79,7 +77,7 @@ namespace fb
         m_readOnly = readOnly;
     }
 
-    bool Property::isReadOnly() const
+    auto Property::isReadOnly() const -> bool
     {
         return m_readOnly;
     }
@@ -89,40 +87,42 @@ namespace fb
         m_attributes[name] = value;
     }
 
-    const String &Property::getAttribute( const String &name ) const
+    auto Property::getAttribute( const String &name ) const -> const String &
     {
         auto it = m_attributes.find( name );
         if( it != m_attributes.end() )
+        {
             return it->second;
+        }
 
         return StringUtil::EmptyString;
     }
 
-    Array<Pair<String, String>> Property::getAttributes() const
+    auto Property::getAttributes() const -> Array<Pair<String, String>>
     {
         Array<std::pair<String, String>> attributes;
 
         for( auto attribute : m_attributes )
         {
-            attributes.push_back( Pair<String, String>( attribute.first, attribute.second ) );
+            attributes.emplace_back( attribute.first, attribute.second );
         }
 
         return attributes;
     }
 
-    Pair<String, String> Property::getAttributeByIndex( u32 index )
+    auto Property::getAttributeByIndex( u32 index ) -> Pair<String, String>
     {
         auto it = m_attributes.begin();
         std::advance( it, index );
         return Pair<String, String>( it->first, it->second );
     }
 
-    u32 Property::getNumAttributes() const
+    auto Property::getNumAttributes() const -> u32
     {
         return static_cast<u32>( m_attributes.size() );
     }
 
-    Any Property::getAny() const
+    auto Property::getAny() const -> Any
     {
         return m_any;
     }
@@ -132,7 +132,7 @@ namespace fb
         m_any = any;
     }
 
-    Property &Property::operator=( const Property &other )
+    auto Property::operator=( const Property &other ) -> Property &
     {
         if( &other != this )
         {
@@ -153,27 +153,27 @@ namespace fb
         m_label = label;
     }
 
-    bool Property::getValueAsBool() const
+    auto Property::getValueAsBool() const -> bool
     {
         return StringUtil::parseBool( m_value );
     }
 
-    s32 Property::getValueAsInt() const
+    auto Property::getValueAsInt() const -> s32
     {
         return StringUtil::parseInt( m_value );
     }
 
-    f32 Property::getValueAsFloat() const
+    auto Property::getValueAsFloat() const -> f32
     {
         return StringUtil::parseFloat( m_value );
     }
 
-    Vector3F Property::getValueAsVector3f() const
+    auto Property::getValueAsVector3f() const -> Vector3F
     {
         return StringUtil::parseVector3<f32>( m_value );
     }
 
-    Vector4F Property::getValueAsVector4f() const
+    auto Property::getValueAsVector4f() const -> Vector4F
     {
         return StringUtil::parseVector4<f32>( m_value );
     }

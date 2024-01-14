@@ -1,82 +1,76 @@
 #include <GameEditorPCH.h>
 #include <ai/PromptEvaluator.h>
 #include <FBCore/FBCore.h>
+
+#include <utility>
 #include "commands/AddActorCmd.h"
 #include "commands/RemoveSelectionCmd.h"
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    PromptEvaluator::PromptEvaluator( String label, const Array<String> &tags ) :
+
+        m_label( std::move( label ) ),
+        m_tags( tags )
     {
+    }
 
-        PromptEvaluator::PromptEvaluator( const String &label,
-                                          const Array<String> &tags ) :
-            
-            m_label( label ),
-            m_tags( tags )
+    PromptEvaluator::PromptEvaluator() = default;
+
+    PromptEvaluator::~PromptEvaluator() = default;
+
+    void PromptEvaluator::activateGoal()
+    {
+        //auto applicationManager = core::ApplicationManager::instance();
+        //auto commandManager = applicationManager->getCommandManager();
+
+        //auto cmd = fb::make_ptr<AddActorCmd>();
+        //cmd->setActorType( m_actorType );
+        //commandManager->addCommand( cmd );
+    }
+
+    auto PromptEvaluator::getRating() -> f32
+    {
+        auto rating = 0.0f;
+
+        for( auto entity : namedEntities )
         {
-        }
+            rating += entity.find( "add" ) != String::npos ? 1.0f : 0.0f;
+            rating += entity.find( "create" ) != String::npos ? 1.0f : 0.0f;
+            rating += entity.find( "make" ) != String::npos ? 1.0f : 0.0f;
 
-        PromptEvaluator::PromptEvaluator()
-        {
-        }
-
-        PromptEvaluator::~PromptEvaluator()
-        {
-        }
-
-        void PromptEvaluator::activateGoal()
-        {
-            //auto applicationManager = core::IApplicationManager::instance();
-            //auto commandManager = applicationManager->getCommandManager();
-
-            //auto cmd = fb::make_ptr<AddActorCmd>();
-            //cmd->setActorType( m_actorType );
-            //commandManager->addCommand( cmd );
-        }
-
-        f32 PromptEvaluator::getRating()
-        {
-            auto rating = 0.0f;
-
-            for( auto entity : namedEntities )
+            // Check if the entity matches any keyword for goals
+            for( auto tag : m_tags )
             {
-                rating += entity.find( "add" ) != String::npos ? 1.0f : 0.0f;
-                rating += entity.find( "create" ) != String::npos ? 1.0f : 0.0f;
-                rating += entity.find( "make" ) != String::npos ? 1.0f : 0.0f;
-
-                // Check if the entity matches any keyword for goals
-                for( auto tag : m_tags )
+                if( StringUtil::numCommonSubsequence( tag, entity ) > entity.size() * 0.5f )
                 {
-                    if( StringUtil::numCommonSubsequence( tag, entity ) > entity.size() * 0.5f )
-                    {
-                        rating += 0.5f;
-                    }
+                    rating += 0.5f;
                 }
             }
-
-            return rating;
         }
 
-        fb::SmartPtr<fb::ISharedObject> PromptEvaluator::getOwner() const
-{
-            return m_owner;
-        }
+        return rating;
+    }
 
-        void PromptEvaluator::setOwner( SmartPtr<ISharedObject> owner )
-        {
-            m_owner = owner;
-        }
+    auto PromptEvaluator::getOwner() const -> fb::SmartPtr<fb::ISharedObject>
+    {
+        return m_owner;
+    }
 
-        f32 PromptEvaluator::getBias() const
-        {
-            return m_bias;
-        }
+    void PromptEvaluator::setOwner( SmartPtr<ISharedObject> owner )
+    {
+        m_owner = owner;
+    }
 
-        void PromptEvaluator::setBias( f32 bias )
-        {
-            m_bias = bias;
-        }
+    auto PromptEvaluator::getBias() const -> f32
+    {
+        return m_bias;
+    }
 
-    }  // namespace editor
-}  // namespace fb
+    void PromptEvaluator::setBias( f32 bias )
+    {
+        m_bias = bias;
+    }
+
+}  // namespace fb::editor

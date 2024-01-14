@@ -9,19 +9,32 @@
 #include <FBCore/Interface/Resource/IResource.h>
 #include <FBCore/Interface/Scene/IActor.h>
 #include <FBCore/Interface/Scene/IComponent.h>
+#include <FBCore/Scene/Director.h>
 #include <FBCore/Core/FileInfo.h>
 #include <FBCore/Core/LogManager.h>
+
+#include "FBCore/Scene/Directors/ResourceDirector.h"
 
 namespace fb
 {
 
-    AssetDatabaseManager::AssetDatabaseManager()
-    {
-    }
+    AssetDatabaseManager::AssetDatabaseManager() = default;
 
     AssetDatabaseManager::~AssetDatabaseManager()
     {
         unload( nullptr );
+    }
+
+    void AssetDatabaseManager::load( SmartPtr<ISharedObject> data )
+    {
+        try
+        {
+            DatabaseManager::load( data );
+        }
+        catch( Exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
     }
 
     void AssetDatabaseManager::unload( SmartPtr<ISharedObject> data )
@@ -35,57 +48,13 @@ namespace fb
                 m_database->close();
                 m_database = nullptr;
             }
+
+            DatabaseManager::unload( data );
         }
         catch( Exception &e )
         {
             FB_LOG_EXCEPTION( e );
         }
-    }
-
-    void AssetDatabaseManager::setAssetDataFromPath( const String &path, SmartPtr<IData> data )
-    {
-        //auto importerData = data->getDataAsType<data::importer_data>();
-        //auto dataStr = String( "" );
-
-        //if( importerData->importerType == "mesh" )
-        //{
-        //    auto meshData = data->getDataAsType<data::mesh_importer_data>();
-        //    dataStr = DataUtil::toString( meshData );
-        //}
-        //else
-        //{
-        //    dataStr = DataUtil::toString( importerData );
-        //}
-
-        //auto sql = String( "UPDATE `assets` SET `data`='" ) + dataStr + String( "' WHERE `name`='" ) +
-        //           path + String( "'" );
-        //executeQuery( sql );
-    }
-
-    SmartPtr<IData> AssetDatabaseManager::getAssetDataFromPath( const String &path )
-    {
-        auto sql = String( "select * from assets where name = '" ) + path + String( "'" );
-        auto query = executeQuery( sql );
-        auto dataStr = query->getFieldValue( "data" );
-
-        //data::importer_data importerData;
-        //DataUtil::parse( dataStr, &importerData );
-
-        //if( importerData.importerType == "mesh" )
-        //{
-        //    data::mesh_importer_data meshImporterData;
-        //    DataUtil::parse( dataStr, &meshImporterData );
-
-        //    auto pData = fb::make_ptr<Data<data::mesh_importer_data>>();
-        //    pData->setData( &meshImporterData );
-        //    return pData;
-        //}
-
-        //auto pData = fb::make_ptr<Data<data::importer_data>>();
-        //pData->setData( &importerData );
-        //return pData;
-
-        return nullptr;
     }
 
     void AssetDatabaseManager::clearDatabase()
@@ -107,11 +76,11 @@ namespace fb
         }
     }
 
-    bool AssetDatabaseManager::hasResourceEntry( SmartPtr<ISharedObject> object )
+    auto AssetDatabaseManager::hasResourceEntry( SmartPtr<ISharedObject> object ) -> bool
     {
         FB_ASSERT( object );
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto fileSystem = applicationManager->getFileSystem();
@@ -189,7 +158,7 @@ namespace fb
                 return;
             }
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto fileSystem = applicationManager->getFileSystem();
@@ -253,11 +222,58 @@ namespace fb
         }
     }
 
+    void AssetDatabaseManager::updateResourceEntry( SmartPtr<ISharedObject> object )
+    {
+        FB_ASSERT( object );
+
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto fileSystem = applicationManager->getFileSystem();
+        FB_ASSERT( fileSystem );
+
+        auto handle = object->getHandle();
+        FB_ASSERT( handle );
+
+        auto uuid = handle->getUUID();
+        FB_ASSERT( !StringUtil::isNullOrEmpty( uuid ) );
+
+        auto filePath = String( "" );
+        if( object->isDerived<IResource>() )
+        {
+            auto resource = fb::static_pointer_cast<IResource>( object );
+            auto fileSystemId = resource->getFileSystemId();
+
+            FileInfo fileInfo;
+            if( fileSystem->findFileInfo( fileSystemId, fileInfo ) )
+            {
+                filePath = fileInfo.filePath.c_str();
+            }
+        }
+        else
+        {
+            filePath = String( "scene" );
+        }
+
+        auto sql =
+            String( "select * from resources where uuid = '" ) + uuid + "' or path = '" + filePath + "'";
+        auto query = executeQuery( sql );
+        if( query )
+        {
+            if( !query->eof() )
+            {
+                auto updateSql = String( "UPDATE `resources` SET `path`='" ) + filePath +
+                                 String( "' WHERE `uuid`='" ) + uuid + String( "'" );
+                executeQuery( updateSql );
+            }
+        }
+    }
+
     void AssetDatabaseManager::removeResourceEntry( SmartPtr<ISharedObject> object )
     {
         FB_ASSERT( object );
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto fileSystem = applicationManager->getFileSystem();
@@ -295,19 +311,9 @@ namespace fb
         }
     }
 
-    SmartPtr<IResource> AssetDatabaseManager::loadResourceById( const String &uuid )
+    auto AssetDatabaseManager::hasResourceById( const String &uuid ) -> bool
     {
-        return nullptr;
-    }
-
-    SmartPtr<IResource> AssetDatabaseManager::loadResource( const String &filePath )
-    {
-        return nullptr;
-    }
-
-    bool AssetDatabaseManager::hasResourceById( const String &uuid )
-    {
-        auto sql = String( "select * from 'resources' where uuid='" + uuid + "'" );
+        auto sql = static_cast<String>( "select * from 'resources' where uuid='" + uuid + "'" );
         auto query = executeQuery( sql );
         if( query )
         {
@@ -318,5 +324,41 @@ namespace fb
         }
 
         return false;
+    }
+
+    SmartPtr<scene::IDirector> AssetDatabaseManager::getResourceEntry( const String &uuid )
+    {
+        auto sql = String( "select * from resources where uuid = '" ) + uuid + String( "'" );
+        auto query = executeQuery( sql );
+
+        auto idStr = query->getFieldValue( "id" );
+        auto uuidStr = query->getFieldValue( "uuid" );
+        auto pathStr = query->getFieldValue( "path" );
+        auto typeStr = query->getFieldValue( "type" );
+
+        auto director = fb::make_ptr<scene::ResourceDirector>();
+        director->setResourcePath( pathStr );
+        director->setResourceUUID( uuidStr );
+        return director;
+    }
+
+    SmartPtr<scene::IDirector> AssetDatabaseManager::getResourceEntryFromPath( const String &path )
+    {
+        auto sql = String( "select * from resources where path = '" ) + path + String( "'" );
+        auto query = executeQuery( sql );
+        if( query )
+        {
+            auto idStr = query->getFieldValue( "id" );
+            auto uuidStr = query->getFieldValue( "uuid" );
+            auto pathStr = query->getFieldValue( "path" );
+            auto typeStr = query->getFieldValue( "type" );
+
+            auto director = fb::make_ptr<scene::ResourceDirector>();
+            director->setResourcePath( pathStr );
+            director->setResourceUUID( uuidStr );
+            return director;
+        }
+
+        return nullptr;
     }
 }  // end namespace fb

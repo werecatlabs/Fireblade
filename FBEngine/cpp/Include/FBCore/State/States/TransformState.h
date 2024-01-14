@@ -13,27 +13,33 @@ namespace fb
         TransformState() = default;
         ~TransformState() override = default;
 
+        Vector3<real_Num> getPosition() const;
+
+        void setPosition( const Vector3<real_Num> &position );
+
+        Vector3<real_Num> getScale() const;
+
+        void setScale( const Vector3<real_Num> &scale );
+
+        Quaternion<real_Num> getOrientation() const;
+
+        void setOrientation( const Quaternion<real_Num> &orientation );
+
+        Transform3<real_Num> getActualTransform() const;
+
+        void setActualTransform( const Transform3<real_Num> &actualTransform );
+
+        Transform3<real_Num> getLocalTransform() const;
+
+        void setLocalTransform( const Transform3<real_Num> &localTransform );
+
         SmartPtr<IState> clone();
 
         FB_CLASS_REGISTER_DECL;
 
-        SmartPtr<scene::IActor> parent;
-        SmartPtr<TransformState> parentTransformState;
-
-        SmartPtr<scene::IActor> m_actor;
-
-        Transform3<real_Num> m_parentTransform;
+    protected:
         Transform3<real_Num> m_localTransform;
-        Transform3<real_Num> m_worldTransform;
-
-        /// To know if the transform is dirty.
-        atomic_bool m_isLocalDirty = false;
-
-        /// To know if the transform is dirty.
-        atomic_bool m_isDirty = false;
-
-        /// To know if the component is enabled.
-        atomic_bool m_enabled = true;
+        Transform3<real_Num> m_actualTransform;
     };
 }  // end namespace fb
 

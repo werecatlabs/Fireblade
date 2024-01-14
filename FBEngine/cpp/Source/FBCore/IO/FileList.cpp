@@ -20,7 +20,7 @@ namespace fb
         setFilesPtr( nullptr );
     }
 
-    u32 FileList::getNumFiles() const
+    auto FileList::getNumFiles() const -> u32
     {
         if( auto p = getFilesPtr() )
         {
@@ -36,7 +36,7 @@ namespace fb
         std::sort( getFiles().begin(), getFiles().end() );
     }
 
-    String FileList::getFileName( u32 index ) const
+    auto FileList::getFileName( u32 index ) const -> String
     {
         if( auto p = getFilesPtr() )
         {
@@ -53,7 +53,7 @@ namespace fb
     }
 
     //! Gets the full name of a file in the list, String included, based on an index.
-    String FileList::getFullFileName( u32 index ) const
+    auto FileList::getFullFileName( u32 index ) const -> String
     {
         if( auto p = getFilesPtr() )
         {
@@ -69,7 +69,7 @@ namespace fb
         return "";
     }
 
-    u32 FileList::getFileSize( u32 index ) const
+    auto FileList::getFileSize( u32 index ) const -> u32
     {
         if( auto p = getFilesPtr() )
         {
@@ -78,14 +78,14 @@ namespace fb
 
             if( index < size )
             {
-                return (u32)( index < size ? files[index].uncompressedSize : 0 );
+                return static_cast<u32>( index < size ? files[index].uncompressedSize : 0 );
             }
         }
 
         return 0;
     }
 
-    u32 FileList::getFileOffset( u32 index ) const
+    auto FileList::getFileOffset( u32 index ) const -> u32
     {
         if( auto p = getFilesPtr() )
         {
@@ -94,14 +94,14 @@ namespace fb
 
             if( index < size )
             {
-                return (u32)( index < size ? files[index].offset : 0 );
+                return ( index < size ? files[index].offset : 0 );
             }
         }
 
         return 0;
     }
 
-    s32 FileList::findFile( const String &filename, bool isDirectory = false ) const
+    auto FileList::findFile( const String &filename, bool isDirectory = false ) const -> s32
     {
         if( auto p = getFilesPtr() )
         {
@@ -112,7 +112,7 @@ namespace fb
                 const auto &file = files[i];
                 if( file.fileName == filename || file.fileNameLowerCase == filename )
                 {
-                    return (s32)i;
+                    return static_cast<s32>( i );
                 }
             }
         }
@@ -120,12 +120,12 @@ namespace fb
         return -1;
     }
 
-    String FileList::getPath() const
+    auto FileList::getPath() const -> String
     {
         return m_path;
     }
 
-    Array<FileInfo> FileList::getFiles() const
+    auto FileList::getFiles() const -> Array<FileInfo>
     {
         if( auto p = getFilesPtr() )
         {
@@ -133,7 +133,7 @@ namespace fb
             return Array<FileInfo>( files.begin(), files.end() );
         }
 
-        return Array<FileInfo>();
+        return {};
     }
 
     void FileList::setFiles( Array<FileInfo> files )
@@ -150,7 +150,7 @@ namespace fb
         m_path = path;
     }
 
-    SharedPtr<ConcurrentArray<FileInfo>> FileList::getFilesPtr() const
+    auto FileList::getFilesPtr() const -> SharedPtr<ConcurrentArray<FileInfo>>
     {
         return m_files;
     }
@@ -196,7 +196,7 @@ namespace fb
         }
     }
 
-    bool FileList::findFileInfo( hash64 id, FileInfo &fileInfo, bool ignorePath ) const
+    auto FileList::findFileInfo( hash64 id, FileInfo &fileInfo, bool ignorePath ) const -> bool
     {
         if( auto pFiles = getFilesPtr() )
         {
@@ -214,7 +214,8 @@ namespace fb
         return false;
     }
 
-    bool FileList::findFileInfo( const String &filePath, FileInfo &fileInfo, bool ignorePath ) const
+    auto FileList::findFileInfo( const String &filePath, FileInfo &fileInfo, bool ignorePath ) const
+        -> bool
     {
         if( auto pFiles = getFilesPtr() )
         {
@@ -272,7 +273,7 @@ namespace fb
         return false;
     }
 
-    bool FileList::exists( const String &filePath, bool ignorePath, bool ignoreCase ) const
+    auto FileList::exists( const String &filePath, bool ignorePath, bool ignoreCase ) const -> bool
     {
         if( auto p = getFilesPtr() )
         {

@@ -3,6 +3,7 @@
 
 #include <FBCore/Scene/Components/Camera/CameraController.h>
 #include <FBCore/Core/Array.h>
+#include "FBCore/Math/Ray3.h"
 
 namespace fb
 {
@@ -86,13 +87,13 @@ namespace fb
             class InputListener : public IEventListener
             {
             public:
-                InputListener( SphericalCameraController *owner );
+                explicit InputListener( SphericalCameraController *owner );
 
-                bool inputEvent( SmartPtr<IInputEvent> event ) ;
-                bool updateEvent( const SmartPtr<IInputEvent> &event ) ;
+                bool inputEvent( SmartPtr<IInputEvent> event );
+                bool updateEvent( const SmartPtr<IInputEvent> &event );
 
-                s32 getPriority() const ;
-                void setPriority( s32 priority ) ;
+                s32 getPriority() const;
+                void setPriority( s32 priority );
 
             protected:
                 SphericalCameraController *m_owner = nullptr;

@@ -13,7 +13,7 @@ namespace fb
         {
             setLoadingState( LoadingState::Loading );
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto factoryManager = applicationManager->getFactoryManager();

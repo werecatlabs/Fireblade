@@ -25,8 +25,11 @@ namespace fb
             /** @copydoc IDirector::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
+            /** @copydoc IDirector::save */
+            void save() override;
+
             /** @copydoc IDirector::toData */
-            SmartPtr<ISharedObject> toData() const;
+            SmartPtr<ISharedObject> toData() const override;
 
             /** @copydoc IDirector::fromData */
             void fromData( SmartPtr<ISharedObject> data ) override;
@@ -56,7 +59,7 @@ namespace fb
             SmartPtr<IDirector> findChild( const String &name ) override;
 
             /** @copydoc IDirector::getChildren */
-            Array<SmartPtr<IDirector>> getChildren() const;
+            Array<SmartPtr<IDirector>> getChildren() const override;
 
             /** @copydoc IDirector::getChildrenPtr */
             SharedPtr<ConcurrentArray<SmartPtr<IDirector>>> getChildrenPtr() const override;
@@ -64,11 +67,10 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
+            // The director children.
             SharedPtr<ConcurrentArray<SmartPtr<IDirector>>> m_children;
 
-            /**
-             * \brief String pair values.
-             */
+            // String pair values.
             SmartPtr<Properties> m_properties;
         };
     }  // namespace scene

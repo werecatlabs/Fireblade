@@ -1,9 +1,8 @@
 #ifndef FactoryUtil_h__
 #define FactoryUtil_h__
 
-#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Memory/TypeManager.h>
-#include <FBCore/Memory/FactoryTemplate.h>
+#include <FBCore/System/FactoryTemplate.h>
 #include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
 #include <FBCore/Core/StringUtil.h>
@@ -32,10 +31,10 @@ namespace fb
     template <class T>
     void FactoryUtil::addFactory()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto &applicationManager = core::IApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
-        auto factoryManager = applicationManager->getFactoryManager();
+        auto &factoryManager = applicationManager->getFactoryManager();
         FB_ASSERT( factoryManager );
 
         auto typeManager = TypeManager::instance();
@@ -45,7 +44,7 @@ namespace fb
         auto name = typeManager->getName( typeInfo );
         auto hash = typeManager->getHash( typeInfo );
 
-        auto pFactory = fb::make_ptr<FactoryTemplate<T>>();
+        auto pFactory = applicationManager->make_ptr<FactoryTemplate<T>>();
         pFactory->setObjectType( name );
         pFactory->setObjectTypeId( hash );
         pFactory->load( nullptr );
@@ -56,15 +55,15 @@ namespace fb
     template <class T>
     void FactoryUtil::addFactoryByName( const String &name )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto &applicationManager = core::IApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
-        auto factoryManager = applicationManager->getFactoryManager();
+        auto &factoryManager = applicationManager->getFactoryManager();
         FB_ASSERT( factoryManager );
 
         auto hash = StringUtil::getHash64( name );
 
-        auto pFactory = fb::make_ptr<FactoryTemplate<T>>();
+        auto pFactory = applicationManager->make_ptr<FactoryTemplate<T>>();
         pFactory->setObjectType( name );
         pFactory->setObjectTypeId( hash );
         pFactory->load( nullptr );
@@ -75,15 +74,15 @@ namespace fb
     template <class T>
     void FactoryUtil::addFactoryByName( const String &name, u32 poolSize )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto &applicationManager = core::IApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
-        auto factoryManager = applicationManager->getFactoryManager();
+        auto &factoryManager = applicationManager->getFactoryManager();
         FB_ASSERT( factoryManager );
 
         auto hash = StringUtil::getHash64( name );
 
-        auto pFactory = fb::make_ptr<FactoryTemplate<T>>();
+        auto pFactory = applicationManager->make_ptr<FactoryTemplate<T>>();
         pFactory->setObjectType( name );
         pFactory->setObjectTypeId( hash );
         pFactory->load( nullptr );
@@ -95,10 +94,10 @@ namespace fb
     template <class T>
     void FactoryUtil::removeFactory()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto &applicationManager = core::IApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
-        auto factoryManager = applicationManager->getFactoryManager();
+        auto &factoryManager = applicationManager->getFactoryManager();
         FB_ASSERT( factoryManager );
 
         auto typeManager = TypeManager::instance();

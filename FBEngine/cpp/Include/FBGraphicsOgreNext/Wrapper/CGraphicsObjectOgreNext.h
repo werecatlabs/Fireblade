@@ -2,7 +2,7 @@
 #define CGraphicsObject_h__
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
-#include <FBCore/Graphics/CGraphicsObject.h>
+#include <FBCore/Graphics/GraphicsObject.h>
 #include <FBCore/Interface/Graphics/IGraphicsObject.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/BitUtil.h>
@@ -22,7 +22,7 @@ namespace fb
     {
 
         template <class T>
-        class CGraphicsObjectOgreNext : public CGraphicsObject<T>
+        class CGraphicsObjectOgreNext : public GraphicsObject<T>
         {
         public:
             CGraphicsObjectOgreNext() = default;

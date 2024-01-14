@@ -7,7 +7,7 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, RenderTextureState, BaseState );
 
-    SmartPtr<IState> RenderTextureState::clone()
+    auto RenderTextureState::clone() -> SmartPtr<IState>
     {
         return nullptr;
     }

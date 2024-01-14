@@ -5,7 +5,7 @@
 namespace fb
 {
 
-    Parameters ParameterUtil::setVector2( const Vector2F &vec )
+    auto ParameterUtil::setVector2( const Vector2F &vec ) -> Parameters
     {
         Parameters params;
         params[0].data.fData = vec.X();
@@ -13,25 +13,25 @@ namespace fb
         return params;
     }
 
-    Vector2F ParameterUtil::getVector2( const Parameters &params )
+    auto ParameterUtil::getVector2( const Parameters &params ) -> Vector2F
     {
-        return Vector2F( params[0].data.fData, params[1].data.fData );
+        return { params[0].data.fData, params[1].data.fData };
     }
 
-    Vector3F ParameterUtil::getVector3( const Parameters &params )
+    auto ParameterUtil::getVector3( const Parameters &params ) -> Vector3F
     {
-        return Vector3F( params[0].data.fData, params[1].data.fData, params[2].data.fData );
+        return { params[0].data.fData, params[1].data.fData, params[2].data.fData };
     }
 
-    AABB2F ParameterUtil::getAABB2( const Parameters &params )
+    auto ParameterUtil::getAABB2( const Parameters &params ) -> AABB2F
     {
-        return AABB2F( params[0].data.fData, params[1].data.fData, params[2].data.fData,
-                       params[3].data.fData );
+        return { params[0].data.fData, params[1].data.fData, params[2].data.fData,
+                 params[3].data.fData };
     }
 
-    String ParameterUtil::getParamTypeAsString( u32 paramType )
+    auto ParameterUtil::getParamTypeAsString( u32 paramType ) -> String
     {
-        auto eParamType = (Parameter::ParameterType)paramType;
+        auto eParamType = static_cast<Parameter::ParameterType>( paramType );
         switch( eParamType )
         {
         case Parameter::ParameterType::PARAM_TYPE_NULL:
@@ -75,16 +75,16 @@ namespace fb
         }
         }
 
-        return String();
+        return {};
     }
 
-    u32 ParameterUtil::getParamTypeFromString( const String &paramTypeStr )
+    auto ParameterUtil::getParamTypeFromString( const String &paramTypeStr ) -> u32
     {
         if( paramTypeStr == String( "null" ) )
         {
-            return (u32)Parameter::ParameterType::PARAM_TYPE_NULL;
+            return static_cast<u32>( Parameter::ParameterType::PARAM_TYPE_NULL );
         }
 
-        return (u32)Parameter::ParameterType::PARAM_TYPE_NULL;
+        return static_cast<u32>( Parameter::ParameterType::PARAM_TYPE_NULL );
     }
 }  // namespace fb

@@ -1,31 +1,24 @@
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPCH.h>
 #include "FBGraphicsOgreNext/Wrapper/CAnimationControllerListener.h"
 
-namespace fb
+namespace fb::render
 {
-    namespace render
+
+    //--------------------------------------------
+    CAnimationControllerListener::CAnimationControllerListener() = default;
+
+    //--------------------------------------------
+    CAnimationControllerListener::~CAnimationControllerListener() = default;
+
+    //--------------------------------------------
+    void CAnimationControllerListener::update( const s32 &task, const time_interval &t,
+                                               const time_interval &dt )
     {
+    }
 
-        //--------------------------------------------
-        CAnimationControllerListener::CAnimationControllerListener()
-        {
-        }
+    //--------------------------------------------
+    void CAnimationControllerListener::OnAnimationEnd( const String &name )
+    {
+    }
 
-        //--------------------------------------------
-        CAnimationControllerListener::~CAnimationControllerListener()
-        {
-        }
-
-        //--------------------------------------------
-        void CAnimationControllerListener::update( const s32 &task, const time_interval &t,
-                                                   const time_interval &dt )
-        {
-        }
-
-        //--------------------------------------------
-        void CAnimationControllerListener::OnAnimationEnd( const String &name )
-        {
-        }
-
-    }  // namespace render
-}  // end namespace fb
+}  // namespace fb::render

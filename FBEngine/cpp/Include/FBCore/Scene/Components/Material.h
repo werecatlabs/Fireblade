@@ -11,22 +11,26 @@ namespace fb
         class Material : public Component
         {
         public:
+            static const String mainTextureStr;
+            static const String materialStr;
+            static const String indexStr;
+
             Material();
             ~Material() override;
 
-            /** @copydoc BaseComponent::load */
+            /** @copydoc Component::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc BaseComponent::unload */
+            /** @copydoc Component::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IComponent::updateDirty */
-            void updateDirty( u32 flags, u32 oldFlags ) override;
+            /** @copydoc Component::updateDirty */
+            void updateFlags( u32 flags, u32 oldFlags ) override;
 
-            /** @copydoc BaseComponent::getProperties */
+            /** @copydoc Component::getProperties */
             SmartPtr<Properties> getProperties() const override;
 
-            /** @copydoc BaseComponent::setProperties */
+            /** @copydoc Component::setProperties */
             void setProperties( SmartPtr<Properties> properties ) override;
 
             Array<SmartPtr<ISharedObject>> getChildObjects() const override;
@@ -76,7 +80,7 @@ namespace fb
             {
             public:
                 MaterialStateListener() = default;
-                MaterialStateListener( Material *owner );
+                explicit MaterialStateListener( Material *owner );
                 ~MaterialStateListener() override;
 
                 void handleStateChanged( const SmartPtr<IStateMessage> &message ) override;
@@ -90,7 +94,7 @@ namespace fb
                 AtomicSmartPtr<Material> m_owner;
             };
 
-            void updateDirty();
+            void updateFlags();
 
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType ) override;
 

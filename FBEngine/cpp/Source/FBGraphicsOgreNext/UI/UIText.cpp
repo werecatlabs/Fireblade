@@ -11,8 +11,9 @@ namespace fb
     namespace ui
     {
 
-        UIText::UIText()
-            : m_text("Text")
+        FB_CLASS_REGISTER_DERIVED( fb::ui, UIText, UIElement<IUIText> );
+
+        UIText::UIText() : m_text( "Text" )
         {
             createStateContext();
         }
@@ -26,7 +27,7 @@ namespace fb
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 auto ui = fb::static_pointer_cast<UIManager>( applicationManager->getRenderUI() );
 
                 auto window = ui->getLayoutWindow();
@@ -69,9 +70,9 @@ namespace fb
         {
             m_text = text;
 
-            if( auto stateObject = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
-                stateObject->setDirty( true );
+                stateContext->setDirty( true );
             }
         }
 
@@ -112,12 +113,17 @@ namespace fb
 
         void UIText::handleStateChanged( SmartPtr<IState> &state )
         {
-            m_label->setDefaultFontSize( Colibri::FontSize( m_textSize ) );
-            m_label->setText( m_text );
-            m_label->setTextVertAlignment(
-                (Colibri::TextVertAlignment::TextVertAlignment)m_verticalAlignment );
-            m_label->setTextHorizAlignment(
-                (Colibri::TextHorizAlignment::TextHorizAlignment)m_horizontalAlignment );
+            UIElement<IUIText>::handleStateChanged( state );
+
+            if( m_label )
+            {
+                m_label->setDefaultFontSize( Colibri::FontSize( m_textSize ) );
+                m_label->setText( m_text );
+                m_label->setTextVertAlignment(
+                    (Colibri::TextVertAlignment::TextVertAlignment)m_verticalAlignment );
+                m_label->setTextHorizAlignment(
+                    (Colibri::TextHorizAlignment::TextHorizAlignment)m_horizontalAlignment );
+            }
         }
 
     }  // namespace ui

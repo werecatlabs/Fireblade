@@ -16,7 +16,7 @@ namespace fb
 
     void OISInput::load( SmartPtr<ISharedObject> data )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();

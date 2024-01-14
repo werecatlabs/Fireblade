@@ -8,15 +8,13 @@ namespace fb
     namespace ui
     {
 
-        /**
-        @brief Interface for a toolbar.
-        */
+        /** @brief Interface for a toolbar.
+         */
         class IUIToolbar : public IUIElement
         {
         public:
-            /*
-            @brief Virtual destructor.
-            */
+            /* @brief Virtual destructor.
+             */
             ~IUIToolbar() override = default;
 
             FB_CLASS_REGISTER_DECL;

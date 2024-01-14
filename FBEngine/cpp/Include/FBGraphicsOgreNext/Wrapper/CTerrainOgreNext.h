@@ -2,17 +2,15 @@
 #define CTerrainOgre_h__
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
-#include <FBCore/Graphics/CTerrain.h>
+#include <FBCore/Graphics/Terrain.h>
 #include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <OgreVector3.h>
 
 namespace fb
 {
     namespace render
     {
-
-        class CTerrainOgreNext : public CTerrain
+        class CTerrainOgreNext : public Terrain
         {
         public:
             CTerrainOgreNext();
@@ -23,6 +21,9 @@ namespace fb
 
             /** @copydoc ISharedObject::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
+
+            /** @copydoc ISharedObject::reload */
+            void reload( SmartPtr<ISharedObject> data ) override;
 
             void postUpdate() override;
 
@@ -55,8 +56,12 @@ namespace fb
 
             void _getObject( void **ppObject ) const override;
 
-            SmartPtr<IGraphicsScene> getSceneManager() const;
-            void setSceneManager( SmartPtr<IGraphicsScene> sceneManger );
+            SmartPtr<ITexture> getHeightMap() const;
+
+            void setHeightMap( SmartPtr<ITexture> heightMap );
+
+            SmartPtr<IGraphicsScene> getSceneManager() const override;
+            void setSceneManager( SmartPtr<IGraphicsScene> sceneManger ) override;
 
             void setTextureLayer( s32 layer, const String &textureName ) override;
 
@@ -88,10 +93,11 @@ namespace fb
 
             void setupMaterial();
 
-            void setupMaterial2();
-
             void createTerraInstance();
 
+            Array<f32> m_heightData;
+
+            SmartPtr<ITexture> m_heightMap;
             SmartPtr<IGraphicsScene> m_sceneManager;
 
             Ogre::SceneNode *m_sceneNode = nullptr;
@@ -109,12 +115,12 @@ namespace fb
             time_interval m_nextUpdateTime = 0.0;
             f32 m_lightEpsilon = 1e-6f;
 
-            String heightmap = String( "heightfield_0_heightmap.png" );
+            String m_heightMapPath;
             String m_materialName;
 
             atomic_bool m_isVisible = true;
         };
-    }  // end namespace render
-}  // end namespace fb
+    } // end namespace render
+}     // end namespace fb
 
 #endif  // CTerrainOgre_h__

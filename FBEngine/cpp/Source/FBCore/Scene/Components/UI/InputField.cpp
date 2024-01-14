@@ -1,25 +1,28 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/UI/InputField.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+
+    FB_CLASS_REGISTER_DERIVED( fb::scene, InputField, UIComponent );
+
+    InputField::InputField() = default;
+
+    InputField::~InputField()
     {
-        InputField::InputField()
-        {
-        }
+        unload( nullptr );
+    }
 
-        InputField::~InputField()
-        {
-            unload( nullptr );
-        }
+    void InputField::load( SmartPtr<ISharedObject> data )
+    {
+    }
 
-        void InputField::load( SmartPtr<ISharedObject> data )
-        {
-        }
+    void InputField::unload( SmartPtr<ISharedObject> data )
+    {
+    }
 
-        void InputField::unload( SmartPtr<ISharedObject> data )
-        {
-        }
-    }  // namespace scene
-}  // end namespace fb
+    void InputField::createUI()
+    {
+    }
+
+}  // namespace fb::scene

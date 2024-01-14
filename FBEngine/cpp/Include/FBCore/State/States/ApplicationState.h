@@ -3,7 +3,6 @@
 
 #include <FBCore/State/States/BaseState.h>
 
-
 namespace fb
 {
     class ApplicationState : public BaseState

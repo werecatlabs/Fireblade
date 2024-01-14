@@ -25,7 +25,10 @@ namespace fb
         class PhysxManager : public PhysicsManager
         {
         public:
+            /** Constructor */
             PhysxManager();
+
+            /** Destructor */
             ~PhysxManager() override;
 
             /** @copydoc IObject::load */
@@ -63,22 +66,20 @@ namespace fb
 
             /** @copydoc IPhysicsManager3::createCollisionShapeByType */
             SmartPtr<IPhysicsShape3> addCollisionShapeByType( hash64 type,
-                                                                 SmartPtr<ISharedObject> data );
+                                                              SmartPtr<ISharedObject> data );
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
             SmartPtr<IRigidStatic3> addRigidStatic( const Transform3<real_Num> &transform ) override;
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
-            SmartPtr<IRigidDynamic3> addRigidDynamic(
-                const Transform3<real_Num> &transform ) override;
+            SmartPtr<IRigidDynamic3> addRigidDynamic( const Transform3<real_Num> &transform ) override;
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
-            SmartPtr<IRigidStatic3> addRigidStatic(
-                SmartPtr<IPhysicsShape3> collisionShape ) override;
+            SmartPtr<IRigidStatic3> addRigidStatic( SmartPtr<IPhysicsShape3> collisionShape ) override;
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
             SmartPtr<IRigidStatic3> addRigidStatic( SmartPtr<IPhysicsShape3> collisionShape,
-                                                       SmartPtr<Properties> properties ) override;
+                                                    SmartPtr<Properties> properties ) override;
 
             /** @copydoc IPhysicsManager3::destroyMaterial */
             SmartPtr<IPhysicsSoftBody3> addSoftBody( const String &filePath ) override;
@@ -114,13 +115,13 @@ namespace fb
                              u32 collisionMask = 0 ) override;
 
             /** @copydoc IPhysicsManager3::d6JointCreate */
-            SmartPtr<IConstraintD6> addJointD6( SmartPtr<IPhysicsBody3> actor0,
-                                                   const Transform3<real_Num> &localFrame0,
-                                                   SmartPtr<IPhysicsBody3> actor1,
-                                                   const Transform3<real_Num> &localFrame1 ) override;
+            SmartPtr<IConstraintD6> addConstraintD6( SmartPtr<IPhysicsBody3> actor0,
+                                                     const Transform3<real_Num> &localFrame0,
+                                                     SmartPtr<IPhysicsBody3> actor1,
+                                                     const Transform3<real_Num> &localFrame1 ) override;
 
             /** @copydoc IPhysicsManager3::fixedJointCreate */
-            SmartPtr<IConstraintFixed3> addFixedJoint(
+            SmartPtr<IConstraintFixed3> addFixedConstraint(
                 SmartPtr<IPhysicsBody3> actor0, const Transform3<real_Num> &localFrame0,
                 SmartPtr<IPhysicsBody3> actor1, const Transform3<real_Num> &localFrame1 ) override;
 
@@ -128,7 +129,8 @@ namespace fb
             SmartPtr<IConstraintDrive> addConstraintDrive() override;
 
             /** @copydoc IPhysicsManager3::createConstraintLinearLimit */
-            SmartPtr<IConstraintLinearLimit> addConstraintLinearLimit(real_Num extent, real_Num contactDist = real_Num(-1.0)) override;
+            SmartPtr<IConstraintLinearLimit> addConstraintLinearLimit(
+                real_Num extent, real_Num contactDist = real_Num( -1.0 ) ) override;
 
             /** @copydoc IPhysicsManager3::createRaycastHitData */
             SmartPtr<IRaycastHit> addRaycastHitData() override;
@@ -161,12 +163,6 @@ namespace fb
             void setCooker( PhysxCooker *val );
 
             physx::PxMaterial *getStandardMaterials() const;
-
-            /** Locks the object for thread safety. */
-            virtual void lock();
-
-            /** Unlocks the object for thread safety. */
-            virtual void unlock();
 
             FB_CLASS_REGISTER_DECL;
 
@@ -227,7 +223,6 @@ namespace fb
             Array<SmartPtr<ITerrainShape>> m_terrainShapes;
             Array<SmartPtr<IPlaneShape3>> m_planeShapes;
 
-            Array<SmartPtr<IPhysicsConstraint3>> m_constraints;
             Array<SmartPtr<PhysxRigidDynamic>> m_rigidBodies;
             Array<SmartPtr<PhysxRigidStatic>> m_staticBodies;
             Array<SmartPtr<PhysxCharacterController>> m_characters;
@@ -236,8 +231,6 @@ namespace fb
             Array<SmartPtr<PhysxScene>> m_scenes;
 
             bool m_enableDebugDraw = false;
-
-            mutable RecursiveMutex PhysxMutex;
         };
     }  // end namespace physics
 }  // end namespace fb

@@ -4,7 +4,6 @@
 #include "FBLuabind/SmartPtrConverter.h"
 #include <FBCore/FBCore.h>
 
-
 namespace fb
 {
 

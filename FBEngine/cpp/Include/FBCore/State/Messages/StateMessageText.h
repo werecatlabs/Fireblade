@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     class StateMessageText : public StateMessage
     {
     public:

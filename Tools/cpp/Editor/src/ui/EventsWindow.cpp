@@ -3,118 +3,113 @@
 #include "ui/EventWindow.h"
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    EventsWindow::EventsWindow() = default;
+
+    EventsWindow::~EventsWindow()
     {
+        unload( nullptr );
+    }
 
-        EventsWindow::EventsWindow()
+    void EventsWindow::load( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-        }
+            setLoadingState( LoadingState::Loading );
 
-        EventsWindow::~EventsWindow()
-        {
-            unload( nullptr );
-        }
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
 
-        void EventsWindow::load( SmartPtr<ISharedObject> data )
-        {
-            try
+            auto ui = applicationManager->getUI();
+            FB_ASSERT( ui );
+
+            auto parent = getParent();
+
+            auto parentWindow = ui->addElementByType<ui::IUIWindow>();
+            FB_ASSERT( parentWindow );
+
+            setParentWindow( parentWindow );
+            parentWindow->setLabel( "EventsWindowChild" );
+            parentWindow->setSize( Vector2F( 0.0f, 300.0f ) );
+            parentWindow->setHasBorder( true );
+
+            if( parent )
             {
-                setLoadingState( LoadingState::Loading );
+                parent->addChild( parentWindow );
+            }
 
-                auto applicationManager = core::IApplicationManager::instance();
+            setLoadingState( LoadingState::Loaded );
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void EventsWindow::unload( SmartPtr<ISharedObject> data )
+    {
+    }
+
+    void EventsWindow::updateSelection()
+    {
+        try
+        {
+            if( isWindowVisible() )
+            {
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto ui = applicationManager->getUI();
                 FB_ASSERT( ui );
 
-                auto parent = getParent();
+                auto selectionManager = applicationManager->getSelectionManager();
+                FB_ASSERT( selectionManager );
 
-                auto parentWindow = ui->addElementByType<ui::IUIWindow>();
-                FB_ASSERT( parentWindow );
+                //m_eventsWindow->removeAllChildren();
 
-                setParentWindow( parentWindow );
-                parentWindow->setLabel( "EventsWindowChild" );
-                parentWindow->setSize( Vector2F( 0.0f, 300.0f ) );
-                parentWindow->setHasBorder( true );
-
-                if( parent )
+                for( auto window : m_eventWindows )
                 {
-                    parent->addChild( parentWindow );
+                    window->unload( nullptr );
                 }
 
-                setLoadingState( LoadingState::Loaded );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
+                m_eventWindows.clear();
 
-        void EventsWindow::unload( SmartPtr<ISharedObject> data )
-        {
-        }
-
-        void EventsWindow::updateSelection()
-        {
-            try
-            {
-                if( isWindowVisible() )
+                auto selection = selectionManager->getSelection();
+                for( auto object : selection )
                 {
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto ui = applicationManager->getUI();
-                    FB_ASSERT( ui );
-
-                    auto selectionManager = applicationManager->getSelectionManager();
-                    FB_ASSERT( selectionManager );
-
-                    //m_eventsWindow->removeAllChildren();
-
-                    for( auto window : m_eventWindows )
+                    if( object->isDerived<scene::IComponent>() )
                     {
-                        window->unload( nullptr );
-                    }
-
-                    m_eventWindows.clear();
-
-                    auto selection = selectionManager->getSelection();
-                    for( auto object : selection )
-                    {
-                        if( object->isDerived<scene::IComponent>() )
+                        auto component = fb::static_pointer_cast<scene::IComponent>( object );
+                        auto events = component->getEvents();
+                        for( auto event : events )
                         {
-                            auto component = fb::static_pointer_cast<scene::IComponent>( object );
-                            auto events = component->getEvents();
-                            for( auto event : events )
-                            {
-                                auto eventWindow = fb::make_ptr<EventWindow>();
-                                eventWindow->setParent( getParentWindow() );
-                                eventWindow->load( nullptr );
-                                m_eventWindows.push_back( eventWindow );
+                            auto eventWindow = fb::make_ptr<EventWindow>();
+                            eventWindow->setParent( getParentWindow() );
+                            eventWindow->load( nullptr );
+                            m_eventWindows.push_back( eventWindow );
 
-                                eventWindow->setEvent( event );
-                                eventWindow->updateSelection();
-                            }
+                            eventWindow->setEvent( event );
+                            eventWindow->updateSelection();
                         }
                     }
                 }
-                else
-                {
-                    for( auto window : m_eventWindows )
-                    {
-                        window->unload( nullptr );
-                    }
-
-                    m_eventWindows.clear();
-                }
             }
-            catch( std::exception &e )
+            else
             {
-                FB_LOG_EXCEPTION( e );
+                for( auto window : m_eventWindows )
+                {
+                    window->unload( nullptr );
+                }
+
+                m_eventWindows.clear();
             }
         }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
 
-    }  // namespace editor
-}  // namespace fb
+}  // namespace fb::editor

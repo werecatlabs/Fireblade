@@ -3,51 +3,59 @@
 #include <FBCore/FBCore.h>
 #include "extensions/PxFixedJoint.h"
 
-namespace fb
+namespace fb::physics
 {
-    namespace physics
+    PhysxConstraintFixed3::PhysxConstraintFixed3() = default;
+
+    PhysxConstraintFixed3::~PhysxConstraintFixed3()
     {
-        PhysxConstraintFixed3::PhysxConstraintFixed3()
-        {
-        }
+        unload( nullptr );
+    }
 
-        PhysxConstraintFixed3::~PhysxConstraintFixed3()
+    void PhysxConstraintFixed3::unload( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            unload( nullptr );
-        }
+            setLoadingState( LoadingState::Unloading );
 
-        void PhysxConstraintFixed3::unload( SmartPtr<ISharedObject> data )
-        {
-            try
+            if( m_joint )
             {
-                setLoadingState( LoadingState::Unloading );
-
-                if(m_joint)
-                {
-                    m_joint->release();
-                    m_joint = nullptr;
-                }
-
-                setLoadingState( LoadingState::Unloaded );
+                m_joint->release();
+                m_joint = nullptr;
             }
-            catch(Exception &e)
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
 
-        void PhysxConstraintFixed3::update()
-        {
+            setLoadingState( LoadingState::Unloaded );
         }
+        catch( Exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
 
-        RawPtr<physx::PxFixedJoint> PhysxConstraintFixed3::getJoint() const
-        {
-            return m_joint;
-        }
+    void PhysxConstraintFixed3::update()
+    {
+    }
 
-        void PhysxConstraintFixed3::setJoint( RawPtr<physx::PxFixedJoint> joint )
-        {
-            m_joint = joint;
-        }
-    } // end namespace physics
-}     // end namespace fb
+    auto PhysxConstraintFixed3::getJoint() const -> RawPtr<physx::PxFixedJoint>
+    {
+        return m_joint;
+    }
+
+    void PhysxConstraintFixed3::setJoint( RawPtr<physx::PxFixedJoint> joint )
+    {
+        m_joint = joint;
+    }
+
+    void PhysxConstraintFixed3::handleStateChanged( SmartPtr<IState> &state )
+    {
+    }
+
+    void PhysxConstraintFixed3::handleStateChanged( const SmartPtr<IStateMessage> &message )
+    {
+    }
+
+    void PhysxConstraintFixed3::handleQuery( SmartPtr<IStateQuery> &query )
+    {
+    }
+
+}  // namespace fb::physics

@@ -4,7 +4,6 @@
 #include "FBLuabind/SmartPtrConverter.h"
 #include "FBLuabind/ParamConverter.h"
 #include <FBCore/FBCore.h>
-#include "FBLuabind/Bindings/PropertiesBinding.h"
 
 namespace fb
 {
@@ -19,57 +18,9 @@ namespace fb
         return val0 << val1;
     }
 
-    //boost::shared_ptr<IObject> _create(IFactory* factory, const char* factoryName)
-    //{
-    //	return boost::shared_ptr<IObject>(factory->create(factoryName));
-    //}
-
-    //void _createFromScript(IFactory* factory, const char* factoryName)
-    //{
-    //	Engine* engine = core::IApplicationManager::instance();
-    //	ScriptManagerPtr scriptMgr = engine->getScriptManager();
-    //	if(!scriptMgr)
-    //		FB_EXCEPTION("No script manager.");
-
-    //	lua_State* L = nullptr;
-    //	scriptMgr->_getObject((void**)&L);
-
-    //	luabind::object* instance = static_cast<luabind::object*>(scriptMgr->createInstance(factoryName));
-    //	if(instance)
-    //	{
-    //		instance->push(L);
-    //	}
-    //	else
-    //	{
-    //		luabind::object object;
-    //		object.push(L);
-    //	}
-    //}
-
-    //boost::shared_ptr<IObject> _createById(IFactory* factory, hash32 factoryId)
-    //{
-    //	boost::shared_ptr<IObject> scriptObject(factory->createById(factoryId));
-    //	return scriptObject;
-    //}
-
-    //class PoolHelper
-    //{
-    //public:
-    //    static void addPoolNamed( PoolPtr pool, String typeName, u32 numElements, BuilderPtr builder )
-    //    {
-    //        hash32 type = StringUtil::getHash( typeName );
-    //        pool->addPool( type, numElements, builder );
-    //    }
-
-    //    static void addPool( PoolPtr pool, hash32 type, lua_Integer numElements, BuilderPtr builder )
-    //    {
-    //        pool->addPool( type, numElements, builder );
-    //    }
-    //};
-
     void include( const String &fileName )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto scriptManager = applicationManager->getScriptManager();
         scriptManager->loadScript( fileName );
     }
@@ -90,10 +41,6 @@ namespace fb
         module( L )[class_<IFactory, ISharedObject, SmartPtr<IFactory>>( "IFactory" )
                         .def( "getTypeName", &IFactory::getTypeName )
                         .def( "setTypeName", &IFactory::setTypeName )];
-
-        module( L )[class_<PropertiesBinding, IScriptObject, PropertiesBindingPtr>( "PropertiesBinding" )
-                        .def( "setProperty", &PropertiesBinding::setProperty )
-                        .def( "test", &PropertiesBinding::test )];
 
         module( L )[class_<Handle>( "Handle" )
                         .def( "getHash", &Handle::getHash )

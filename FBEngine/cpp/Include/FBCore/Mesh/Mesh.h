@@ -6,12 +6,15 @@
 
 namespace fb
 {
-    
+
     /// Implementation of a mesh.
     class Mesh : public IMesh
     {
     public:
+        /** Constructor. */
         Mesh();
+
+        /** Destructor. */
         ~Mesh() override;
 
         /** @copydoc ISharedObject::unload */
@@ -78,11 +81,18 @@ namespace fb
         bool compare( SmartPtr<IMesh> other ) const override;
 
     protected:
+        // The animation interface.
         SmartPtr<IAnimationInterface> m_animationInterface;
+
+        // The submeshes.
         Array<SmartPtr<ISubMesh>> m_subMeshes;
+
+        // The bounding box.
         AABB3F m_aabb;
+
+        // To know if the vertex data is shared between submeshes.
         bool m_hasSharedVertexData = false;
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif

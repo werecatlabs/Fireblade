@@ -2,7 +2,7 @@
 #define _CGraphicsSystemOgreNext_H
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
-#include <FBCore/Graphics/CGraphicsSystem.h>
+#include <FBCore/Graphics/GraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <OgreWindowEventUtilities.h>
@@ -19,7 +19,7 @@ namespace fb
     {
        
         /** Graphics system implementation to wrap ogre next functionality. */
-        class CGraphicsSystemOgreNext : public CGraphicsSystem
+        class CGraphicsSystemOgreNext : public GraphicsSystem
         {
         public:
             CGraphicsSystemOgreNext();
@@ -151,7 +151,8 @@ namespace fb
 
             SmartPtr<IGraphicsSettings> createConfiguration() override;
 
-            SmartPtr<IDebug> getDebug() const override;
+            SmartPtr<IDebug>& getDebug() override;
+            const SmartPtr<IDebug>& getDebug() const override;
             void setDebug( SmartPtr<IDebug> debug ) override;
 
             RenderApi getRenderApi() const ;
@@ -191,6 +192,8 @@ namespace fb
             static OSStatus _CarbonWindowHandler( EventHandlerCallRef nextHandler, EventRef event,
                                                   void *wnd );
 #endif
+
+            FB_CLASS_REGISTER_DECL;
 
         protected:
             class AppFrameListener : public Ogre::FrameListener
@@ -240,9 +243,9 @@ namespace fb
 
             ConcurrentArray<SmartPtr<ISharedObject>> m_graphicsObjects;
 
-            AtomicSmartPtr<IGraphicsScene> m_sceneManager;
+            SmartPtr<IGraphicsScene> m_sceneManager;
 
-            AtomicSmartPtr<IDebug> m_debug;
+            SmartPtr<IDebug> m_debug;
 
             ///
             AtomicSmartPtr<IOverlayManager> m_overlayMgr;

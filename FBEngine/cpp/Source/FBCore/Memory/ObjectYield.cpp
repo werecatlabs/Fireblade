@@ -14,16 +14,14 @@ namespace fb
         m_lineNumber = 0;
     }
 
-    ObjectYield::~ObjectYield()
-    {
-    }
+    ObjectYield::~ObjectYield() = default;
 
     void ObjectYield::operator()()
     {
         FB_ASSERT( false );  // please use macro yield
     }
 
-    s32 ObjectYield::getLineNumber() const
+    auto ObjectYield::getLineNumber() const -> s32
     {
         return m_lineNumber;
     }

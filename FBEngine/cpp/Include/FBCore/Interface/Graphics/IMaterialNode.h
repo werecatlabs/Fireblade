@@ -90,13 +90,18 @@ namespace fb
             /** Gets the state object associated with this material node.
              * @return A smart pointer to the state object associated with this material node.
              */
-            virtual SmartPtr<IStateContext> getStateObject() const = 0;
+            virtual SmartPtr<IStateContext> &getStateContext() = 0;
+
+            /** Gets the state object associated with this material node.
+             * @return A smart pointer to the state object associated with this material node.
+             */
+            virtual const SmartPtr<IStateContext> &getStateContext() const = 0;
 
             /**
              * Sets the state object associated with this overlay element.
              * @param stateContext A pointer to the state object.
              */
-            virtual void setStateObject( SmartPtr<IStateContext> stateContext ) = 0;
+            virtual void setStateContext( SmartPtr<IStateContext> stateContext ) = 0;
 
             /**
              * Gets the state listener for this overlay element.

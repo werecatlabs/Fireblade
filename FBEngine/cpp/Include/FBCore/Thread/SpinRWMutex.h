@@ -34,7 +34,7 @@ namespace fb
             /**
              * Returns true if the lock was successfully acquired; false otherwise.
              */
-            operator bool();
+            operator bool() const;
 
         protected:
             SpinRWMutex &m_mutex;
@@ -49,22 +49,22 @@ namespace fb
         /**
          * Locks the mutex for shared read access.
          */
-        void lock_read();
+        void lockRead();
 
         /**
          * Unlocks the shared read lock.
          */
-        void unlock_read();
+        void unlockRead();
 
         /**
          * Locks the mutex for exclusive write access.
          */
-        void lock_write();
+        void lockWrite();
 
         /**
          * Unlocks the exclusive write lock.
          */
-        void unlock_write();
+        void unlockWrite();
 
     protected:
         ///< The number of readers currently holding a shared lock.
@@ -74,7 +74,7 @@ namespace fb
         std::atomic<s32> writers;         
 
         ///< True if there are pending write lock requests.
-        std::atomic<bool> write_request;  
+        std::atomic<bool> writeRequest;  
     };
 
 }  // end namespace fb

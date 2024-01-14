@@ -14,8 +14,7 @@ namespace fb
         public:
             PromptEvaluator();
 
-            PromptEvaluator( const String &label,
-                             const Array<String> &tags );
+            PromptEvaluator( String label, const Array<String> &tags );
 
             ~PromptEvaluator();
 

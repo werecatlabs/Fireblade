@@ -5,7 +5,8 @@
 
 namespace fb
 {
-    
+
+    /** Implementation of a vertex declaration. */
     class VertexDeclaration : public IVertexDeclaration
     {
     public:
@@ -20,8 +21,8 @@ namespace fb
                                              u32 index = 0 ) override;
         u32 getSize( u16 source = 0 ) const override;
 
-        SmartPtr<IVertexElement> findElementBySemantic(
-            VertexElementSemantic elementSemantic, u32 index = 0 ) override;
+        SmartPtr<IVertexElement> findElementBySemantic( VertexElementSemantic elementSemantic,
+                                                        u32 index = 0 ) override;
 
         Array<SmartPtr<IVertexElement>> findElementsBySource( u16 source ) const override;
 
@@ -35,6 +36,6 @@ namespace fb
     private:
         Array<SmartPtr<IVertexElement>> m_elements;
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif  // CVertexDeclaration_h__

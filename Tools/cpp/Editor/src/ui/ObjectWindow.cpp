@@ -9,221 +9,270 @@
 #include <ui/UIManager.h>
 #include <editor/EditorManager.h>
 #include <FBCore/FBCore.h>
-
-
 #include "GameEditorTypes.h"
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+    ObjectWindow::ObjectWindow() = default;
+
+    ObjectWindow::ObjectWindow( SmartPtr<ui::IUIWindow> parent )
     {
-        ObjectWindow::ObjectWindow()
-        {
-        }
+        setParent( parent );
+    }
 
-        ObjectWindow::ObjectWindow( SmartPtr<ui::IUIWindow> parent )
-        {
-            setParent( parent );
-        }
+    ObjectWindow::~ObjectWindow()
+    {
+        unload( nullptr );
+    }
 
-        ObjectWindow::~ObjectWindow()
+    void ObjectWindow::load( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            unload( nullptr );
-        }
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
 
-        void ObjectWindow::load( SmartPtr<ISharedObject> data )
-        {
-            try
+            auto ui = applicationManager->getUI();
+            FB_ASSERT( ui );
+
+            auto editorManager = EditorManager::getSingletonPtr();
+            auto editorUI = editorManager->getUI();
+
+            auto parent = getParent();
+
+            auto parentWindow = ui->addElementByType<ui::IUIWindow>();
+            parentWindow->setLabel( "Object" );
+            setParentWindow( parentWindow );
+
+            if( parent )
             {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto ui = applicationManager->getUI();
-                FB_ASSERT( ui );
-
-                auto editorManager = EditorManager::getSingletonPtr();
-                auto editorUI = editorManager->getUI();
-
-                auto parent = getParent();
-
-                auto parentWindow = ui->addElementByType<ui::IUIWindow>();
-                parentWindow->setLabel( "Object" );
-                setParentWindow( parentWindow );
-
-                if( parent )
-                {
-                    parent->addChild( parentWindow );
-                }
-
-                auto actorWindow = fb::make_ptr<ActorWindow>( parentWindow );
-                actorWindow->load( data );
-                m_actorWindow = actorWindow;
-
-                editorUI->setActorWindow( actorWindow );
-
-                auto materialWindow = fb::make_ptr<MaterialWindow>( parentWindow );
-                materialWindow->load( data );
-                m_materialWindow = materialWindow;
-
-                auto fileViewWindow = fb::make_ptr<FileViewWindow>( parentWindow );
-                fileViewWindow->load( data );
-                m_fileViewWindow = fileViewWindow;
-
-                auto resourceWindow = fb::make_ptr<ResourceWindow>( parentWindow );
-                resourceWindow->load( data );
-                m_resourceWindow = resourceWindow;
-
-                //terrainWindow->setWindowVisible( true );
-
-                m_actorWindow->setWindowVisible( false );
-                m_materialWindow->setWindowVisible( false );
-                m_fileViewWindow->setWindowVisible( false );
-                m_resourceWindow->setWindowVisible( false );
-
-                setLoadingState( LoadingState::Loaded );
+                parent->addChild( parentWindow );
             }
-            catch( std::exception e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
+
+            auto actorWindow = fb::make_ptr<ActorWindow>( parentWindow );
+            actorWindow->load( data );
+            m_actorWindow = actorWindow;
+
+            editorUI->setActorWindow( actorWindow );
+
+            auto materialWindow = fb::make_ptr<MaterialWindow>( parentWindow );
+            materialWindow->load( data );
+            m_materialWindow = materialWindow;
+
+            auto fileViewWindow = fb::make_ptr<FileViewWindow>( parentWindow );
+            fileViewWindow->load( data );
+            m_fileViewWindow = fileViewWindow;
+
+            auto resourceWindow = fb::make_ptr<ResourceWindow>( parentWindow );
+            resourceWindow->load( data );
+            m_resourceWindow = resourceWindow;
+
+            auto propertiesWindow = fb::make_ptr<PropertiesWindow>();
+            propertiesWindow->setParent( parentWindow );
+            propertiesWindow->load( data );
+            m_propertiesWindow = propertiesWindow;
+
+            //terrainWindow->setWindowVisible( true );
+
+            m_actorWindow->setWindowVisible( false );
+            m_materialWindow->setWindowVisible( false );
+            m_fileViewWindow->setWindowVisible( false );
+            m_resourceWindow->setWindowVisible( false );
+            m_propertiesWindow->setWindowVisible( false );
+
+            setLoadingState( LoadingState::Loaded );
+        }
+        catch( std::exception e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void ObjectWindow::reload( SmartPtr<ISharedObject> data )
+    {
+        if( m_actorWindow )
+        {
+            m_actorWindow->reload( data );
         }
 
-        void ObjectWindow::reload( SmartPtr<ISharedObject> data )
+        if( m_materialWindow )
+        {
+            m_materialWindow->reload( data );
+        }
+
+        if( m_fileViewWindow )
+        {
+            m_fileViewWindow->reload( data );
+        }
+
+        if( m_resourceWindow )
+        {
+            m_resourceWindow->reload( data );
+        }
+
+        EditorWindow::reload( data );
+    }
+
+    void ObjectWindow::unload( SmartPtr<ISharedObject> data )
+    {
+        try
         {
             if( m_actorWindow )
             {
-                m_actorWindow->reload( data );
+                m_actorWindow->unload( nullptr );
+                m_actorWindow = nullptr;
             }
 
             if( m_materialWindow )
             {
-                m_materialWindow->reload( data );
+                m_materialWindow->unload( nullptr );
+                m_materialWindow = nullptr;
             }
 
             if( m_fileViewWindow )
             {
-                m_fileViewWindow->reload( data );
+                m_fileViewWindow->unload( nullptr );
+                m_fileViewWindow = nullptr;
             }
 
             if( m_resourceWindow )
             {
-                m_resourceWindow->reload( data );
+                m_resourceWindow->unload( nullptr );
+                m_resourceWindow = nullptr;
             }
 
-            EditorWindow::reload( data );
-        }
-
-        void ObjectWindow::unload( SmartPtr<ISharedObject> data )
-        {
-            try
+            for( auto data : m_dataArray )
             {
-                if( m_actorWindow )
-                {
-                    m_actorWindow->unload( nullptr );
-                    m_actorWindow = nullptr;
-                }
-
-                if( m_materialWindow )
-                {
-                    m_materialWindow->unload( nullptr );
-                    m_materialWindow = nullptr;
-                }
-
-                if( m_fileViewWindow )
-                {
-                    m_fileViewWindow->unload( nullptr );
-                    m_fileViewWindow = nullptr;
-                }
-
-                if( m_resourceWindow )
-                {
-                    m_resourceWindow->unload( nullptr );
-                    m_resourceWindow = nullptr;
-                }
-
-                for( auto data : m_dataArray )
-                {
-                    data->unload( nullptr );
-                }
-
-                m_dataArray.clear();
-
-                setLoadingState( LoadingState::Unloaded );
+                data->unload( nullptr );
             }
-            catch( std::exception e )
+
+            m_dataArray.clear();
+
+            setLoadingState( LoadingState::Unloaded );
+        }
+        catch( std::exception e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    auto ObjectWindow::getWindow() const -> SmartPtr<ui::IUIWindow>
+    {
+        return m_window;
+    }
+
+    void ObjectWindow::setWindow( SmartPtr<ui::IUIWindow> window )
+    {
+        m_window = window;
+    }
+
+    void ObjectWindow::updateSelection()
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto selectionManager = applicationManager->getSelectionManager();
+        FB_ASSERT( selectionManager );
+
+        auto selection = selectionManager->getSelection();
+        if( !selection.empty() )
+        {
+            auto selected = selection.front();
+
+            if( selected->isDerived<scene::IActor>() )
             {
-                FB_LOG_EXCEPTION( e );
+                m_objectType = ObjectType::Actor;
             }
-        }
 
-        SmartPtr<ui::IUIWindow> ObjectWindow::getWindow() const
-        {
-            return m_window;
-        }
-
-        void ObjectWindow::setWindow( SmartPtr<ui::IUIWindow> window )
-        {
-            m_window = window;
-        }
-
-        void ObjectWindow::updateSelection()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto selectionManager = applicationManager->getSelectionManager();
-            FB_ASSERT( selectionManager );
-
-            auto selection = selectionManager->getSelection();
-            if( !selection.empty() )
+            else if( selected->isDerived<scene::TerrainSystem>() )
             {
-                auto selected = selection.front();
+                m_objectType = ObjectType::Terrain;
+            }
+            else if( selected->isDerived<FileSelection>() )
+            {
+                auto fileSelection = fb::static_pointer_cast<FileSelection>( selected );
+                auto filePath = fileSelection->getFilePath();
+                auto fileExt = Path::getFileExtension( filePath );
+                fileExt = StringUtil::make_lower( fileExt );
 
-                if( selected->isDerived<scene::IActor>() )
+                m_objectType = ObjectType::Resource;
+
+                if( fileExt == ".mat" )
                 {
-                    m_objectType = ObjectType::Actor;
+                    m_resourceType = ObjectType::Material;
+                    //m_resourceType = ObjectWindow::ObjectType::Resource;
                 }
-
-                else if( selected->isDerived<scene::TerrainSystem>() )
+                else if( ApplicationUtil::isSupportedMesh( filePath ) )
                 {
-                    m_objectType = ObjectType::Terrain;
+                    m_resourceType = ObjectType::Mesh;
                 }
-                else if( selected->isDerived<FileSelection>() )
+                else if( ApplicationUtil::isSupportedTexture( filePath ) )
                 {
-                    auto fileSelection = fb::static_pointer_cast<FileSelection>( selected );
-                    auto filePath = fileSelection->getFilePath();
-                    auto fileExt = Path::getFileExtension( filePath );
-                    fileExt = StringUtil::make_lower( fileExt );
-
-                    m_objectType = ObjectType::Resource;
-
-                    if( fileExt == ".mat" )
-                    {
-                        m_resourceType = ObjectType::Material;
-                        //m_resourceType = ObjectWindow::ObjectType::Resource;
-                    }
-                    else if( fileExt == ".fbx" )
-                    {
-                        m_resourceType = ObjectType::Mesh;
-                    }
-                    else if( fileExt == ".resource" )
-                    {
-                        m_resourceType = ObjectType::Resource;
-                    }
-                    else
-                    {
-                        m_resourceType = ObjectType::FileUnknown;
-                        m_objectType = ObjectType::FileUnknown;
-                    }
+                    m_resourceType = ObjectType::Texture;
                 }
-                else if( selected->isDerived<IResource>() )
+                else if( ApplicationUtil::isSupportedSound( filePath ) )
+                {
+                    m_resourceType = ObjectType::Sound;
+                }
+                else if( fileExt == ".resource" )
                 {
                     m_resourceType = ObjectType::Resource;
-                    m_objectType = ObjectType::Resource;
+                }
+                else
+                {
+                    m_resourceType = ObjectType::FileUnknown;
+                    m_objectType = ObjectType::FileUnknown;
                 }
             }
+            else if( selected->isDerived<IResource>() )
+            {
+                m_resourceType = ObjectType::Resource;
+                m_objectType = ObjectType::Resource;
+            }
+            else if( selected->isDerived<ISharedObject>() )
+            {
+                m_resourceType = ObjectType::SharedObject;
+                m_objectType = ObjectType::SharedObject;
+            }
+        }
 
-            switch( m_objectType )
+        switch( m_objectType )
+        {
+        case ObjectType::None:
+        {
+        }
+        break;
+        case ObjectType::Actor:
+        {
+            if( m_actorWindow )
+            {
+                m_actorWindow->setWindowVisible( true );
+            }
+
+            if( m_materialWindow )
+            {
+                m_materialWindow->setWindowVisible( false );
+            }
+
+            if( m_fileViewWindow )
+            {
+                m_fileViewWindow->setWindowVisible( false );
+            }
+
+            if( m_resourceWindow )
+            {
+                m_resourceWindow->setWindowVisible( false );
+            }
+
+            if( m_actorWindow )
+            {
+                m_actorWindow->updateSelection();
+            }
+        }
+        break;
+        case ObjectType::Resource:
+        {
+            switch( m_resourceType )
             {
             case ObjectType::None:
             {
@@ -231,9 +280,18 @@ namespace fb
             break;
             case ObjectType::Actor:
             {
+            }
+            break;
+            case ObjectType::SharedObject:
+            {
+                if( m_propertiesWindow )
+                {
+                    m_propertiesWindow->setWindowVisible( true );
+                }
+
                 if( m_actorWindow )
                 {
-                    m_actorWindow->setWindowVisible( true );
+                    m_actorWindow->setWindowVisible( false );
                 }
 
                 if( m_materialWindow )
@@ -251,185 +309,213 @@ namespace fb
                     m_resourceWindow->setWindowVisible( false );
                 }
 
-                if( m_actorWindow )
+                if( m_propertiesWindow )
                 {
-                    m_actorWindow->updateSelection();
+                    m_propertiesWindow->updateSelection();
                 }
             }
             break;
             case ObjectType::Resource:
             {
-                switch( m_resourceType )
+                if( m_propertiesWindow )
                 {
-                case ObjectType::None:
-                {
+                    m_propertiesWindow->setWindowVisible( false );
                 }
-                break;
-                case ObjectType::Actor:
+
+                if( m_actorWindow )
                 {
+                    m_actorWindow->setWindowVisible( false );
                 }
-                break;
-                case ObjectType::Resource:
+
+                if( m_materialWindow )
                 {
-                    if( m_actorWindow )
-                    {
-                        m_actorWindow->setWindowVisible( false );
-                    }
-
-                    if( m_materialWindow )
-                    {
-                        m_materialWindow->setWindowVisible( false );
-                    }
-
-                    if( m_fileViewWindow )
-                    {
-                        m_fileViewWindow->setWindowVisible( false );
-                    }
-
-                    if( m_resourceWindow )
-                    {
-                        m_resourceWindow->setWindowVisible( true );
-                    }
-
-                    if( m_resourceWindow )
-                    {
-                        m_resourceWindow->updateSelection();
-                    }
+                    m_materialWindow->setWindowVisible( false );
                 }
-                break;
-                case ObjectType::FileUnknown:
+
+                if( m_fileViewWindow )
                 {
-                    if( m_actorWindow )
-                    {
-                        m_actorWindow->setWindowVisible( false );
-                    }
-
-                    if( m_materialWindow )
-                    {
-                        m_materialWindow->setWindowVisible( false );
-                    }
-
-                    if( m_fileViewWindow )
-                    {
-                        m_fileViewWindow->setWindowVisible( true );
-                    }
-
-                    if( m_resourceWindow )
-                    {
-                        m_resourceWindow->setWindowVisible( false );
-                    }
-
-                    if( m_fileViewWindow )
-                    {
-                        m_fileViewWindow->updateSelection();
-                    }
+                    m_fileViewWindow->setWindowVisible( false );
                 }
-                break;
-                case ObjectType::Mesh:
+
+                if( m_resourceWindow )
                 {
-                    if( m_actorWindow )
-                    {
-                        m_actorWindow->setWindowVisible( false );
-                    }
-
-                    if( m_materialWindow )
-                    {
-                        m_materialWindow->setWindowVisible( false );
-                    }
-
-                    if( m_fileViewWindow )
-                    {
-                        m_fileViewWindow->setWindowVisible( false );
-                    }
-
-                    if( m_resourceWindow )
-                    {
-                        m_resourceWindow->setWindowVisible( true );
-                    }
-
-                    if( m_actorWindow )
-                    {
-                        m_resourceWindow->updateSelection();
-                    }
+                    m_resourceWindow->setWindowVisible( true );
                 }
-                break;
-                case ObjectType::Material:
+
+                if( m_resourceWindow )
                 {
-                    if( m_actorWindow )
-                    {
-                        m_actorWindow->setWindowVisible( false );
-                    }
-
-                    if( m_materialWindow )
-                    {
-                        m_materialWindow->setWindowVisible( true );
-                    }
-
-                    if( m_fileViewWindow )
-                    {
-                        m_fileViewWindow->setWindowVisible( false );
-                    }
-
-                    if( m_resourceWindow )
-                    {
-                        m_resourceWindow->setWindowVisible( false );
-                    }
-
-                    if( m_materialWindow )
-                    {
-                        m_materialWindow->updateSelection();
-                    }
+                    m_resourceWindow->updateSelection();
                 }
-                break;
-                case ObjectType::MaterialNode:
+            }
+            break;
+            case ObjectType::FileUnknown:
+            {
+                if( m_propertiesWindow )
                 {
+                    m_propertiesWindow->setWindowVisible( false );
                 }
-                break;
-                case ObjectType::Terrain:
+
+                if( m_actorWindow )
                 {
-                    if( m_actorWindow )
-                    {
-                        m_actorWindow->setWindowVisible( false );
-                    }
-
-                    if( m_materialWindow )
-                    {
-                        m_materialWindow->setWindowVisible( false );
-                    }
-
-                    if( m_fileViewWindow )
-                    {
-                        m_fileViewWindow->setWindowVisible( false );
-                    }
-
-                    if( m_resourceWindow )
-                    {
-                        m_resourceWindow->setWindowVisible( false );
-                    }
-
-                    if( m_materialWindow )
-                    {
-                        m_materialWindow->updateSelection();
-                    }
+                    m_actorWindow->setWindowVisible( false );
                 }
-                break;
-                default:
+
+                if( m_materialWindow )
                 {
+                    m_materialWindow->setWindowVisible( false );
                 }
-                break;
+
+                if( m_fileViewWindow )
+                {
+                    m_fileViewWindow->setWindowVisible( true );
+                }
+
+                if( m_resourceWindow )
+                {
+                    m_resourceWindow->setWindowVisible( false );
+                }
+
+                if( m_fileViewWindow )
+                {
+                    m_fileViewWindow->updateSelection();
                 }
             }
             break;
             case ObjectType::Mesh:
             {
+                if( m_propertiesWindow )
+                {
+                    m_propertiesWindow->setWindowVisible( false );
+                }
+
+                if( m_actorWindow )
+                {
+                    m_actorWindow->setWindowVisible( false );
+                }
+
+                if( m_materialWindow )
+                {
+                    m_materialWindow->setWindowVisible( false );
+                }
+
+                if( m_fileViewWindow )
+                {
+                    m_fileViewWindow->setWindowVisible( false );
+                }
+
+                if( m_resourceWindow )
+                {
+                    m_resourceWindow->setWindowVisible( true );
+                }
+
+                if( m_actorWindow )
+                {
+                    m_resourceWindow->updateSelection();
+                }
             }
             break;
             case ObjectType::Material:
             {
+                if( m_propertiesWindow )
+                {
+                    m_propertiesWindow->setWindowVisible( false );
+                }
+
+                if( m_actorWindow )
+                {
+                    m_actorWindow->setWindowVisible( false );
+                }
+
+                if( m_materialWindow )
+                {
+                    m_materialWindow->setWindowVisible( true );
+                }
+
+                if( m_fileViewWindow )
+                {
+                    m_fileViewWindow->setWindowVisible( false );
+                }
+
+                if( m_resourceWindow )
+                {
+                    m_resourceWindow->setWindowVisible( false );
+                }
+
+                if( m_materialWindow )
+                {
+                    m_materialWindow->updateSelection();
+                }
             }
             break;
             case ObjectType::MaterialNode:
             {
+            }
+            break;
+            case ObjectType::Terrain:
+            {
+                if( m_propertiesWindow )
+                {
+                    m_propertiesWindow->setWindowVisible( false );
+                }
+
+                if( m_actorWindow )
+                {
+                    m_actorWindow->setWindowVisible( false );
+                }
+
+                if( m_materialWindow )
+                {
+                    m_materialWindow->setWindowVisible( false );
+                }
+
+                if( m_fileViewWindow )
+                {
+                    m_fileViewWindow->setWindowVisible( false );
+                }
+
+                if( m_resourceWindow )
+                {
+                    m_resourceWindow->setWindowVisible( false );
+                }
+
+                if( m_materialWindow )
+                {
+                    m_materialWindow->updateSelection();
+                }
+            }
+            break;
+            case ObjectType::Sound:
+            case ObjectType::Texture:
+            {
+                if( m_propertiesWindow )
+                {
+                    m_propertiesWindow->setWindowVisible( false );
+                }
+
+                if( m_actorWindow )
+                {
+                    m_actorWindow->setWindowVisible( false );
+                }
+
+                if( m_materialWindow )
+                {
+                    m_materialWindow->setWindowVisible( false );
+                }
+
+                if( m_fileViewWindow )
+                {
+                    m_fileViewWindow->setWindowVisible( false );
+                }
+
+                if( m_resourceWindow )
+                {
+                    m_resourceWindow->setWindowVisible( true );
+                }
+
+                if( m_actorWindow )
+                {
+                    m_resourceWindow->updateSelection();
+                }
             }
             break;
             default:
@@ -438,5 +524,23 @@ namespace fb
             break;
             }
         }
-    }  // end namespace editor
-}  // end namespace fb
+        break;
+        case ObjectType::Mesh:
+        {
+        }
+        break;
+        case ObjectType::Material:
+        {
+        }
+        break;
+        case ObjectType::MaterialNode:
+        {
+        }
+        break;
+        default:
+        {
+        }
+        break;
+        }
+    }
+}  // namespace fb::editor

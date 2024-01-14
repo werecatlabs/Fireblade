@@ -19,14 +19,13 @@
 #include <FBCore/Core/PluginMacros.h>
 #include <FBCore/Core/Properties.h>
 #include <FBCore/Core/VectorUtil.h>
-#include <FBCore/Core/SingletonPool.h>
 #include <FBCore/Core/XmlUtil.h>
 
 #include <FBCore/Database/DatabaseManager.h>
 #include <FBCore/Database/AssetDatabaseManager.h>
 
 #include <FBCore/Interface/IApplication.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 
 // ai
 #include <FBCore/Interface/Ai/IAi.h>
@@ -41,19 +40,18 @@
 #include <FBCore/Interface/Ai/IPathNode2.h>
 
 // aero
-#include <FBCore/Interface/Aerodynamics/IAircraft.h>
-#include <FBCore/Interface/Aerodynamics/IAircraftControlSurface.h>
-#include <FBCore/Interface/Aerodynamics/IAircraftPropWash.h>
-#include <FBCore/Interface/Aerodynamics/IAircraftWing.h>
-#include <FBCore/Interface/Aerodynamics/IAerodymanicsWind.h>
-#include <FBCore/Interface/Aerodynamics/IAircraftCallback.h>
-#include <FBCore/Interface/Aerodynamics/IAircraftPowerUnit.h>
-#include <FBCore/Interface/Aerodynamics/IAircraftPropeller.h>
-#include <FBCore/Interface/Aerodynamics/IAircraftPropellerUnit.h>
+#include <FBCore/Interface/Vehicle/IAircraft.h>
+#include <FBCore/Interface/Vehicle/IAircraftControlSurface.h>
+#include <FBCore/Interface/Vehicle/IAircraftPropWash.h>
+#include <FBCore/Interface/Vehicle/IAircraftWing.h>
+#include <FBCore/Interface/Vehicle/IAerodymanicsWind.h>
+#include <FBCore/Interface/Vehicle/IAircraftCallback.h>
+#include <FBCore/Interface/Vehicle/IAircraftPowerUnit.h>
+#include <FBCore/Interface/Vehicle/IAircraftPropeller.h>
+#include <FBCore/Interface/Vehicle/IAircraftPropellerUnit.h>
 
 // actor
 #include <FBCore/Interface/Scene/IActor.h>
-#include <FBCore/Interface/Scene/ICameraController.h>
 #include <FBCore/Interface/Scene/ICameraManager.h>
 #include <FBCore/Interface/Scene/IComponent.h>
 #include <FBCore/Interface/Scene/IComponentEvent.h>
@@ -81,8 +79,6 @@
 // command
 #include <FBCore/Interface/System/ICommand.h>
 #include <FBCore/Interface/System/ICommandManager.h>
-#include <FBCore/Interface/System/ICommandManagerListener.h>
-#include <FBCore/Interface/System/IMouseCommand.h>
 
 // core
 #include <FBCore/Interface/System/IEvent.h>
@@ -107,6 +103,7 @@
 #include <FBCore/Interface/Graphics/ICamera.h>
 #include <FBCore/Interface/Graphics/ICubemap.h>
 #include <FBCore/Interface/Graphics/IDebug.h>
+#include <FBCore/Interface/Graphics/IDebugCircle.h>
 #include <FBCore/Interface/Graphics/IDebugLine.h>
 #include <FBCore/Interface/Graphics/IDecalCursor.h>
 #include <FBCore/Interface/Graphics/IDynamicLines.h>
@@ -193,7 +190,7 @@
 #include <FBCore/Interface/UI/IUIImage.h>
 #include <FBCore/Interface/UI/IUIImageArray.h>
 #include <FBCore/Interface/UI/IUIInputManager.h>
-#include <FBCore/Interface/UI/IUILabelCheckboxPair.h>
+#include <FBCore/Interface/UI/IUILabelTogglePair.h>
 #include <FBCore/Interface/UI/IUILabelDropdownPair.h>
 #include <FBCore/Interface/UI/IUILabelSliderPair.h>
 #include <FBCore/Interface/UI/IUILabelTextInputPair.h>
@@ -207,6 +204,7 @@
 #include <FBCore/Interface/UI/IUIPropertyGrid.h>
 #include <FBCore/Interface/UI/IUIRenderWindow.h>
 #include <FBCore/Interface/UI/IUIScrollingText.h>
+#include <FBCore/Interface/UI/IUISlider.h>
 #include <FBCore/Interface/UI/IUISpinner.h>
 #include <FBCore/Interface/UI/IUITabBar.h>
 #include <FBCore/Interface/UI/IUITabItem.h>
@@ -214,7 +212,7 @@
 #include <FBCore/Interface/UI/IUITextEntry.h>
 #include <FBCore/Interface/UI/IUITerrainEditor.h>
 #include <FBCore/Interface/UI/IUIToolbar.h>
-#include <FBCore/Interface/UI/IUIToggleButton.h>
+#include <FBCore/Interface/UI/IUIToggle.h>
 #include <FBCore/Interface/UI/IUIToggleGroup.h>
 #include <FBCore/Interface/UI/IUITreeCtrl.h>
 #include <FBCore/Interface/UI/IUITreeNode.h>
@@ -264,6 +262,7 @@
 #include <FBCore/Interface/Net/INetworkListener.h>
 #include <FBCore/Interface/Net/INetworkStream.h>
 #include <FBCore/Interface/Net/INetworkView.h>
+#include <FBCore/Interface/Net/INetworkPlayer.h>
 #include <FBCore/Interface/Net/IPacket.h>
 #include <FBCore/Interface/Net/ISystemAddress.h>
 
@@ -371,7 +370,6 @@
 #include <FBCore/Interface/System/IJob.h>
 #include <FBCore/Interface/System/IJobGroup.h>
 #include <FBCore/Interface/System/IJobQueue.h>
-#include <FBCore/Interface/System/IOutputManager.h>
 #include <FBCore/Interface/System/ITask.h>
 #include <FBCore/Interface/System/ITaskManager.h>
 #include <FBCore/Interface/System/IThreadPool.h>
@@ -382,18 +380,14 @@
 #include <FBCore/Interface/System/IStateManager.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Interface/System/IStateMessage.h>
-#include <FBCore/Interface/System/ITransformNode.h>
 #include <FBCore/Interface/System/IProfiler.h>
 #include <FBCore/Interface/System/IProfile.h>
+#include <FBCore/Interface/System/IPluginManager.h>
 #include <FBCore/Interface/System/IFrameGrabber.h>
-#include <FBCore/Interface/System/IScheduler.h>
 #include <FBCore/Interface/System/IFrameStatistics.h>
 #include <FBCore/Interface/System/IWorkerThread.h>
 #include <FBCore/Interface/System/ISelectionManager.h>
-#include <FBCore/Interface/System/ISystemManager.h>
-#include <FBCore/Interface/System/ITransformNode.h>
-#include <FBCore/Interface/System/ITransformManager.h>
-#include <FBCore/Interface/System/ITransformRoot.h>
+#include <FBCore/Interface/System/ISystemSettings.h>
 
 // video
 #include <FBCore/Interface/Video/IVideo.h>
@@ -414,14 +408,12 @@
 #include <FBCore/Interface/Vehicle/IESController.h>
 #include <FBCore/Interface/Vehicle/IVehicleBody.h>
 
-// plugin
-#include <FBCore/Interface/System/IPluginEvent.h>
-#include <FBCore/Interface/System/IPluginInterface.h>
-
 #include <FBCore/IO/FileSystem.h>
 #include <FBCore/IO/ZipUtil.h>
 
 #include <FBCore/Jobs/CameraManagerReset.h>
+#include <FBCore/Jobs/CreateRigidBodies.h>
+#include <FBCore/Jobs/EventJob.h>
 #include <FBCore/Jobs/FlagSetJob.h>
 #include <FBCore/Jobs/ObjectUpdateJob.h>
 
@@ -438,10 +430,6 @@
 #include <FBCore/Math/Vector2.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Vector4.h>
-
-#include <FBCore/Manipulators/ScaleManipulator.h>
-#include <FBCore/Manipulators/TranslateManipulator.h>
-#include <FBCore/Manipulators/RotateManipulator.h>
 
 #include <FBCore/Mesh/Mesh.h>
 #include <FBCore/Mesh/VertexBuffer.h>
@@ -461,8 +449,6 @@
 #include <FBCore/Mesh/VertexDeclaration.h>
 
 #include <FBCore/Memory/Data.h>
-#include <FBCore/Memory/FactoryRegistration.h>
-#include <FBCore/Memory/FactoryTemplate.h>
 #include <FBCore/Memory/FactoryUtil.h>
 #include <FBCore/Memory/MemoryTracker.h>
 #include <FBCore/Memory/ObjectTracker.h>
@@ -499,6 +485,8 @@
 #include <FBCore/Scene/Components/SubComponent.h>
 #include <FBCore/Scene/Components/WheelController.h>
 
+#include <FBCore/Scene/Components/Camera/CameraFollow.h>
+#include <FBCore/Scene/Components/Camera/CameraTarget.h>
 #include <FBCore/Scene/Components/Camera/FPSCameraController.h>
 #include <FBCore/Scene/Components/Camera/EditorCameraController.h>
 #include <FBCore/Scene/Components/Camera/SphericalCameraController.h>
@@ -514,9 +502,19 @@
 #include <FBCore/Scene/Components/UI/Layout.h>
 #include <FBCore/Scene/Components/UI/Image.h>
 #include <FBCore/Scene/Components/UI/InputField.h>
+#include <FBCore/Scene/Components/UI/Slider.h>
+#include <FBCore/Scene/Components/UI/TableLayout.h>
 #include <FBCore/Scene/Components/UI/Text.h>
+#include <FBCore/Scene/Components/UI/Toggle.h>
+#include <FBCore/Scene/Components/UI/ToggleGroup.h>
 #include <FBCore/Scene/Components/UI/Layout.h>
 #include <FBCore/Scene/Components/UI/LayoutTransform.h>
+#include <FBCore/Scene/Components/UI/HorizontalLayout.h>
+#include <FBCore/Scene/Components/UI/VerticalLayout.h>
+
+#include <FBCore/Scene/Directors/MeshResourceDirector.h>
+#include <FBCore/Scene/Directors/SoundResourceDirector.h>
+#include <FBCore/Scene/Directors/TextureResourceDirector.h>
 
 #include <FBCore/Scene/Systems/UI/LayoutTransformSystem.h>
 
@@ -535,7 +533,6 @@
 #include <FBCore/Script/ScriptReceiverAdapter.h>
 #include <FBCore/Script/ScriptVariable.h>
 
-#include <FBCore/State/Messages/CommonStateChangeMsgs.h>
 #include <FBCore/State/Messages/StateMessageBuffer.h>
 #include <FBCore/State/Messages/StateMessageBlendMapValue.h>
 #include <FBCore/State/Messages/StateMessageContact2.h>
@@ -603,12 +600,13 @@
 #include <FBCore/State/States/UITransformState.h>
 
 #include <FBCore/System/ApplicationManager.h>
-#include <FBCore/System/ApplicationManagerMT.h>
 #include <FBCore/System/CommandManager.h>
 #include <FBCore/System/CommandManagerMT.h>
 #include <FBCore/System/SelectionManager.h>
 #include <FBCore/System/DebugUtil.h>
-#include <FBCore/System/EventJob.h>
+
+#include <FBCore/System/Factory.h>
+#include <FBCore/System/FactoryTemplate.h>
 #include <FBCore/System/FactoryManager.h>
 #include <FBCore/System/FileSelection.h>
 #include <FBCore/System/FrameStatistics.h>
@@ -616,9 +614,11 @@
 #include <FBCore/System/JobQueue.h>
 #include <FBCore/System/JobQueueTBB.h>
 #include <FBCore/System/JobCoroutine.h>
+#include <FBCore/System/ScaleManipulator.h>
+#include <FBCore/System/TranslateManipulator.h>
+#include <FBCore/System/RotateManipulator.h>
 #include <FBCore/System/MessageBox.h>
 #include <FBCore/System/Plugin.h>
-#include <FBCore/System/PluginEvent.h>
 #include <FBCore/System/PluginManager.h>
 #include <FBCore/System/ProjectManager.h>
 #include <FBCore/System/ProcessManager.h>

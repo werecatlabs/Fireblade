@@ -6,12 +6,8 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, SkyboxState, BaseState );
 
-    SkyboxState::SkyboxState()
-    {
-    }
+    SkyboxState::SkyboxState() = default;
 
-    SkyboxState::~SkyboxState()
-    {
-    }
+    SkyboxState::~SkyboxState() = default;
 
 }  // namespace fb

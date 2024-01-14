@@ -5,7 +5,7 @@
 #include <FBCore/Core/StringUtil.h>
 #include <FBCore/Interface/FSM/IFSMListener.h>
 #include <FBCore/Interface/FSM/IFSMManager.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/ITimer.h>
 #include <FBCore/System/RttiClassDefinition.h>
 
@@ -13,9 +13,7 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, FSM, IFSM );
 
-    FSM::FSM()
-    {
-    }
+    FSM::FSM() = default;
 
     FSM::~FSM()
     {
@@ -28,7 +26,7 @@ namespace fb
         {
             setLoadingState( LoadingState::Loading );
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto fsmManager = getFsmManager();
@@ -75,7 +73,7 @@ namespace fb
         }
     }
 
-    SmartPtr<IFSMManager> FSM::getFsmManager() const
+    auto FSM::getFsmManager() const -> SmartPtr<IFSMManager>
     {
         const auto fsmManager = m_fsmManager.load();
         return fsmManager.lock();
@@ -86,7 +84,7 @@ namespace fb
         m_fsmManager = fsmManager;
     }
 
-    time_interval FSM::getStateTime() const
+    auto FSM::getStateTime() const -> time_interval
     {
         auto fsmManager = getFsmManager();
         FB_ASSERT( fsmManager );
@@ -112,9 +110,9 @@ namespace fb
         return fsmManager->setStateTime( id, stateTime );
     }
 
-    time_interval FSM::getStateTimeElapsed() const
+    auto FSM::getStateTimeElapsed() const -> time_interval
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto timer = applicationManager->getTimer();
@@ -122,7 +120,7 @@ namespace fb
         return timer->getTime() - getStateTime();
     }
 
-    u8 FSM::getPreviousState() const
+    auto FSM::getPreviousState() const -> u8
     {
         auto fsmManager = getFsmManager();
         FB_ASSERT( fsmManager );
@@ -135,7 +133,7 @@ namespace fb
         return fsmManager->getPreviousState( id );
     }
 
-    u8 FSM::getCurrentState() const
+    auto FSM::getCurrentState() const -> u8
     {
         const auto fsmManager = getFsmManager();
         FB_ASSERT( fsmManager );
@@ -147,7 +145,7 @@ namespace fb
         return fsmManager->getCurrentState( id );
     }
 
-    u8 FSM::getNewState() const
+    auto FSM::getNewState() const -> u8
     {
         const auto fsmManager = getFsmManager();
         FB_ASSERT( fsmManager );
@@ -175,7 +173,7 @@ namespace fb
     {
     }
 
-    bool FSM::isPending() const
+    auto FSM::isPending() const -> bool
     {
         return BitUtil::getFlagValue( *m_flags, IFSM::isPendingFlag );
     }
@@ -215,7 +213,7 @@ namespace fb
         }
     }
 
-    bool FSM::isStateChangeComplete() const
+    auto FSM::isStateChangeComplete() const -> bool
     {
         return BitUtil::getFlagValue( *m_flags, IFSM::isStateChangeCompleteFlag );
     }
@@ -261,7 +259,7 @@ namespace fb
         }
     }
 
-    bool FSM::getAutoChangeState() const
+    auto FSM::getAutoChangeState() const -> bool
     {
         return BitUtil::getFlagValue( *m_flags, IFSM::autoChangeStateFlag );
     }
@@ -271,7 +269,7 @@ namespace fb
         BitUtil::setFlagValue( *m_flags, IFSM::autoChangeStateFlag, autoChangeState );
     }
 
-    bool FSM::getAllowStateChange() const
+    auto FSM::getAllowStateChange() const -> bool
     {
         return BitUtil::getFlagValue( *m_flags, IFSM::allowStateChangeFlag );
     }
@@ -281,7 +279,7 @@ namespace fb
         BitUtil::setFlagValue( *m_flags, IFSM::allowStateChangeFlag, allowStateChange );
     }
 
-    bool FSM::getAutoTriggerEnterStateComplete() const
+    auto FSM::getAutoTriggerEnterStateComplete() const -> bool
     {
         return false;
     }
@@ -290,12 +288,12 @@ namespace fb
     {
     }
 
-    s32 FSM::getStateTicks( Thread::Task task ) const
+    auto FSM::getStateTicks( Thread::Task task ) const -> s32
     {
         return m_stateTicks;
     }
 
-    s32 FSM::getStateTicks() const
+    auto FSM::getStateTicks() const -> s32
     {
         return m_stateTicks;
     }
@@ -305,7 +303,7 @@ namespace fb
         m_stateTicks = val;
     }
 
-    SharedPtr<Array<SmartPtr<IFSMListener>>> FSM::getListeners() const
+    auto FSM::getListeners() const -> SharedPtr<Array<SmartPtr<IFSMListener>>>
     {
         auto fsmManager = getFsmManager();
         FB_ASSERT( fsmManager );

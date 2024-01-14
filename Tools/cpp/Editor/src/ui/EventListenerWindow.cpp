@@ -4,90 +4,84 @@
 #include "ui/PropertiesWindow.h"
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+    EventListenerWindow::EventListenerWindow() = default;
+
+    EventListenerWindow::~EventListenerWindow() = default;
+
+    void EventListenerWindow::load( SmartPtr<ISharedObject> data )
     {
-        EventListenerWindow::EventListenerWindow()
+        try
         {
-        }
+            setLoadingState( LoadingState::Loading );
 
-        EventListenerWindow::~EventListenerWindow()
-        {
-        }
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
 
-        void EventListenerWindow::load( SmartPtr<ISharedObject> data )
+            auto ui = applicationManager->getUI();
+            FB_ASSERT( ui );
+
+            auto parent = getParent();
+
+            setParentWindow( parent );
+
+            m_propertiesWindow = fb::make_ptr<PropertiesWindow>();
+            m_propertiesWindow->setParent( parent );
+            m_propertiesWindow->load( data );
+
+            setLoadingState( LoadingState::Loaded );
+        }
+        catch( std::exception &e )
         {
-            try
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void EventListenerWindow::unload( SmartPtr<ISharedObject> data )
+    {
+        try
+        {
+            setLoadingState( LoadingState::Unloading );
+
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto ui = applicationManager->getUI();
+            FB_ASSERT( ui );
+
+            if( m_propertiesWindow )
             {
-                setLoadingState( LoadingState::Loading );
-
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto ui = applicationManager->getUI();
-                FB_ASSERT( ui );
-
-                auto parent = getParent();
-
-                setParentWindow( parent );
-
-                m_propertiesWindow = fb::make_ptr<PropertiesWindow>();
-                m_propertiesWindow->setParent( parent );
-                m_propertiesWindow->load( data );
-
-                setLoadingState( LoadingState::Loaded );
+                m_propertiesWindow->setWindowVisible( false );
+                m_propertiesWindow->unload( nullptr );
+                m_propertiesWindow = nullptr;
             }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
 
-        void EventListenerWindow::unload( SmartPtr<ISharedObject> data )
+            setLoadingState( LoadingState::Unloaded );
+        }
+        catch( std::exception &e )
         {
-            try
-            {
-                setLoadingState( LoadingState::Unloading );
-
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto ui = applicationManager->getUI();
-                FB_ASSERT( ui );
-
-                if( m_propertiesWindow )
-                {
-                    m_propertiesWindow->setWindowVisible( false );
-                    m_propertiesWindow->unload( nullptr );
-                    m_propertiesWindow = nullptr;
-                }
-
-                setLoadingState( LoadingState::Unloaded );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        void EventListenerWindow::updateSelection()
-        {
-            auto listener = getEventListener();
-            m_propertiesWindow->setSelected( listener );
+    void EventListenerWindow::updateSelection()
+    {
+        auto listener = getEventListener();
+        m_propertiesWindow->setSelected( listener );
 
-            m_propertiesWindow->updateSelection();
-        }
+        m_propertiesWindow->updateSelection();
+    }
 
-        SmartPtr<scene::IComponentEventListener> EventListenerWindow::getComponentEventListener() const
-        {
-            return m_componentEventListener;
-        }
+    auto EventListenerWindow::getComponentEventListener() const
+        -> SmartPtr<scene::IComponentEventListener>
+    {
+        return m_componentEventListener;
+    }
 
-        void EventListenerWindow::setComponentEventListener(
-            SmartPtr<scene::IComponentEventListener> eventListener )
-        {
-            m_componentEventListener = eventListener;
-        }
-    }  // namespace editor
-}  // namespace fb
+    void EventListenerWindow::setComponentEventListener(
+        SmartPtr<scene::IComponentEventListener> eventListener )
+    {
+        m_componentEventListener = eventListener;
+    }
+}  // namespace fb::editor

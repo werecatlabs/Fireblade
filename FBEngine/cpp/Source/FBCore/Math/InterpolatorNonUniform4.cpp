@@ -4,17 +4,13 @@
 namespace fb
 {
     template <class T>
-    InterpolatorNonUniform4<T>::InterpolatorNonUniform4()
-    {
-    }
+    InterpolatorNonUniform4<T>::InterpolatorNonUniform4() = default;
 
     template <class T>
-    InterpolatorNonUniform4<T>::~InterpolatorNonUniform4()
-    {
-    }
+    InterpolatorNonUniform4<T>::~InterpolatorNonUniform4() = default;
 
     template <class T>
-    Vector4<T> InterpolatorNonUniform4<T>::interpolate( const T &t )
+    auto InterpolatorNonUniform4<T>::interpolate( const T &t ) -> Vector4<T>
     {
         if( m_values.empty() )
         {

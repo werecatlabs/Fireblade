@@ -10,376 +10,237 @@
 #include <FBCore/Core/Properties.h>
 #include <rttr/registration>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+    FB_CLASS_REGISTER_DERIVED( fb::scene, Actor, Resource<IActor> );
+    u32 Actor::m_idExt = 0;
+
+    Actor::Actor()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, Actor, Resource<IActor> );
-        u32 Actor::m_idExt = 0;
-
-        Actor::Actor()
+        if( auto handle = getHandle() )
         {
-            setResourceType( ResourceType::Actor );
-
-            m_children = fb::make_shared<ConcurrentArray<SmartPtr<IActor>>>();
-            m_components = fb::make_shared<ConcurrentArray<SmartPtr<IComponent>>>();
+            handle->setName( "Actor" );
         }
 
-        Actor::~Actor()
+        setResourceType( ResourceType::Actor );
+
+        m_children = fb::make_shared<ConcurrentArray<SmartPtr<IActor>>>();
+        m_components = fb::make_shared<ConcurrentArray<SmartPtr<IComponent>>>();
+    }
+
+    Actor::~Actor()
+    {
+        unload( nullptr );
+    }
+
+    auto Actor::getName() const -> String
+    {
+        auto handle = getHandle();
+        FB_ASSERT( handle );
+
+        return handle->getName();
+    }
+
+    void Actor::setName( const String &name )
+    {
+        auto handle = getHandle();
+        FB_ASSERT( handle );
+
+        handle->setName( name );
+    }
+
+    auto Actor::getWorldTransform( time_interval t ) const -> Transform3<real_Num>
+    {
+        if( auto &transform = getTransform() )
         {
-            unload( nullptr );
+            return transform->getWorldTransform();
         }
 
-        String Actor::getName() const
-        {
-            auto handle = getHandle();
-            FB_ASSERT( handle );
+        return {};
+    }
 
-            return handle->getName();
+    auto Actor::getWorldTransform() const -> Transform3<real_Num>
+    {
+        if( auto &transform = getTransform() )
+        {
+            return transform->getWorldTransform();
         }
 
-        void Actor::setName( const String &name )
-        {
-            auto handle = getHandle();
-            FB_ASSERT( handle );
+        return {};
+    }
 
-            handle->setName( name );
+    auto Actor::getLocalTransform( time_interval t ) const -> Transform3<real_Num>
+    {
+        if( auto &transform = getTransform() )
+        {
+            return transform->getLocalTransform();
         }
 
-        Transform3<real_Num> Actor::getWorldTransform( time_interval t ) const
-        {
-            if( auto transform = getTransform() )
-            {
-                return transform->getWorldTransform();
-            }
+        return {};
+    }
 
-            return Transform3<real_Num>();
+    auto Actor::getLocalTransform() const -> Transform3<real_Num>
+    {
+        if( auto &transform = getTransform() )
+        {
+            return transform->getLocalTransform();
         }
 
-        Transform3<real_Num> Actor::getWorldTransform() const
-        {
-            if( auto transform = getTransform() )
-            {
-                return transform->getWorldTransform();
-            }
+        return {};
+    }
 
-            return Transform3<real_Num>();
+    auto Actor::getLocalPosition() const -> Vector3<real_Num>
+    {
+        if( auto &transform = getTransform() )
+        {
+            return transform->getLocalPosition();
         }
 
-        Transform3<real_Num> Actor::getLocalTransform( time_interval t ) const
-        {
-            if( auto transform = getTransform() )
-            {
-                return transform->getLocalTransform();
-            }
+        return Vector3<real_Num>::zero();
+    }
 
-            return Transform3<real_Num>();
+    void Actor::setLocalPosition( const Vector3<real_Num> &localPosition )
+    {
+        if( auto &transform = getTransform() )
+        {
+            transform->setLocalPosition( localPosition );
+            transform->setDirty( true );
         }
 
-        Transform3<real_Num> Actor::getLocalTransform() const
-        {
-            if( auto transform = getTransform() )
-            {
-                return transform->getLocalTransform();
-            }
+        updateTransform();
+    }
 
-            return Transform3<real_Num>();
+    auto Actor::getLocalScale() const -> Vector3<real_Num>
+    {
+        if( auto &transform = getTransform() )
+        {
+            return transform->getLocalScale();
         }
 
-        Vector3<real_Num> Actor::getLocalPosition() const
-        {
-            if( auto transform = getTransform() )
-            {
-                return transform->getLocalPosition();
-            }
+        return Vector3<real_Num>::zero();
+    }
 
-            return Vector3<real_Num>::zero();
+    void Actor::setLocalScale( const Vector3<real_Num> &localScale )
+    {
+        if( auto &transform = getTransform() )
+        {
+            transform->setLocalScale( localScale );
+            transform->setDirty( true );
         }
 
-        void Actor::setLocalPosition( const Vector3<real_Num> &localPosition )
+        updateTransform();
+    }
+
+    auto Actor::getLocalOrientation() const -> Quaternion<real_Num>
+    {
+        if( auto &transform = getTransform() )
         {
-            if( auto transform = getTransform() )
-            {
-                transform->setLocalPosition( localPosition );
-                transform->setDirty( true );
-            }
+            return transform->getLocalOrientation();
         }
 
-        Vector3<real_Num> Actor::getLocalScale() const
-        {
-            auto transform = getTransform();
-            if( transform )
-            {
-                return transform->getLocalScale();
-            }
+        return Quaternion<real_Num>::identity();
+    }
 
-            return Vector3<real_Num>::zero();
+    void Actor::setLocalOrientation( const Quaternion<real_Num> &localOrientation )
+    {
+        if( auto &transform = getTransform() )
+        {
+            transform->setLocalOrientation( localOrientation );
+            transform->setDirty( true );
         }
 
-        void Actor::setLocalScale( const Vector3<real_Num> &localScale )
+        updateTransform();
+    }
+
+    auto Actor::getPosition() const -> Vector3<real_Num>
+    {
+        if( auto &transform = getTransform() )
         {
-            auto transform = getTransform();
-            if( transform )
-            {
-                transform->setLocalScale( localScale );
-                transform->setDirty( true );
-            }
+            return transform->getPosition();
         }
 
-        Quaternion<real_Num> Actor::getLocalOrientation() const
-        {
-            auto transform = getTransform();
-            if( transform )
-            {
-                return transform->getLocalOrientation();
-            }
+        return Vector3<real_Num>::zero();
+    }
 
-            return Quaternion<real_Num>::identity();
+    void Actor::lookAt( const Vector3<real_Num> &position )
+    {
+        auto vec = position - getPosition();
+        auto rot = MathUtil<real_Num>::getRotationTo( -Vector3<real_Num>::unitZ(), vec );
+        setOrientation( rot );
+    }
+
+    void Actor::lookAt( const Vector3<real_Num> &position, const Vector3<real_Num> &yawAxis )
+    {
+        auto vec = position - getPosition();
+        auto rot = MathUtil<real_Num>::getOrientationFromDirection( vec, -Vector3<real_Num>::unitZ(),
+                                                                    true, yawAxis );
+        setOrientation( rot );
+    }
+
+    void Actor::setPosition( const Vector3<real_Num> &position )
+    {
+        if( auto &transform = getTransform() )
+        {
+            transform->setPosition( position );
+            transform->setLocalDirty( true );
         }
 
-        void Actor::setLocalOrientation( const Quaternion<real_Num> &localOrientation )
+        updateTransform();
+    }
+
+    auto Actor::getScale() const -> Vector3<real_Num>
+    {
+        if( auto &transform = getTransform() )
         {
-            auto transform = getTransform();
-            if( transform )
-            {
-                transform->setLocalOrientation( localOrientation );
-                transform->setDirty( true );
-            }
+            return transform->getScale();
         }
 
-        Vector3<real_Num> Actor::getPosition() const
-        {
-            auto transform = getTransform();
-            if( transform )
-            {
-                return transform->getPosition();
-            }
+        return Vector3<real_Num>::zero();
+    }
 
-            return Vector3<real_Num>::zero();
+    void Actor::setScale( const Vector3<real_Num> &scale )
+    {
+        if( auto &transform = getTransform() )
+        {
+            transform->setScale( scale );
+            transform->setLocalDirty( true );
         }
 
-        void Actor::lookAt( const Vector3<real_Num> &position )
+        updateTransform();
+    }
+
+    auto Actor::getOrientation() const -> Quaternion<real_Num>
+    {
+        if( auto &transform = getTransform() )
         {
-            auto vec = position - getPosition();
-            auto rot = MathUtil<real_Num>::getRotationTo( -Vector3<real_Num>::unitZ(), vec );
-            setOrientation( rot );
+            return transform->getOrientation();
         }
 
-        void Actor::lookAt( const Vector3<real_Num> &position, const Vector3<real_Num> &yawAxis )
+        return Quaternion<real_Num>::identity();
+    }
+
+    void Actor::setOrientation( const Quaternion<real_Num> &orientation )
+    {
+        if( auto &transform = getTransform() )
         {
-            auto vec = position - getPosition();
-            auto rot = MathUtil<real_Num>::getOrientationFromDirection( vec, -Vector3<real_Num>::unitZ(),
-                                                                        true, yawAxis );
-            setOrientation( rot );
+            transform->setOrientation( orientation );
+            transform->setLocalDirty( true );
         }
 
-        void Actor::setPosition( const Vector3<real_Num> &position )
-        {
-            auto transform = getTransform();
-            if( transform )
-            {
-                transform->setPosition( position );
-                transform->setLocalDirty( true );
-            }
-        }
+        updateTransform();
+    }
 
-        Vector3<real_Num> Actor::getScale() const
-        {
-            auto transform = getTransform();
-            if( transform )
-            {
-                return transform->getPosition();
-            }
-
-            return Vector3<real_Num>::zero();
-        }
-
-        void Actor::setScale( const Vector3<real_Num> &scale )
-        {
-            auto transform = getTransform();
-            if( transform )
-            {
-                transform->setPosition( scale );
-                transform->setLocalDirty( true );
-            }
-        }
-
-        Quaternion<real_Num> Actor::getOrientation() const
-        {
-            auto transform = getTransform();
-            if( transform )
-            {
-                return transform->getOrientation();
-            }
-
-            return Quaternion<real_Num>::identity();
-        }
-
-        void Actor::setOrientation( const Quaternion<real_Num> &orientation )
-        {
-            auto transform = getTransform();
-            if( transform )
-            {
-                transform->setOrientation( orientation );
-                transform->setLocalDirty( true );
-            }
-        }
-
-        void Actor::levelWasLoaded( SmartPtr<IScene> scene )
-        {
-            try
-            {
-                auto components = getComponents();
-                for( auto component : components )
-                {
-                    if( component )
-                    {
-                        auto c = fb::static_pointer_cast<Component>( component );
-                        c->levelWasLoaded( 0 );
-                    }
-                }
-
-                if( auto p = getChildrenPtr() )
-                {
-                    auto &children = *p;
-                    for( auto &child : children )
-                    {
-                        child->levelWasLoaded( scene );
-                    }
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void Actor::hierarchyChanged()
-        {
-            try
-            {
-                auto components = getComponents();
-                for( auto component : components )
-                {
-                    if( component )
-                    {
-                        auto c = fb::static_pointer_cast<Component>( component );
-                        c->hierarchyChanged();
-                    }
-                }
-
-                if( auto p = getChildrenPtr() )
-                {
-                    auto &children = *p;
-                    for( auto child : children )
-                    {
-                        child->hierarchyChanged();
-                    }
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void Actor::childAdded( SmartPtr<IActor> child )
-        {
-            try
-            {
-                auto components = getComponents();
-                for( auto component : components )
-                {
-                    if( component )
-                    {
-                        auto c = fb::static_pointer_cast<Component>( component );
-                        c->childAdded( child );
-                    }
-                }
-
-                if( auto p = getChildrenPtr() )
-                {
-                    auto &children = *p;
-                    for( auto child : children )
-                    {
-                        child->childAdded( child );
-                    }
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void Actor::childRemoved( SmartPtr<IActor> child )
-        {
-            try
-            {
-                auto components = getComponents();
-                for( auto component : components )
-                {
-                    if( component )
-                    {
-                        auto c = fb::static_pointer_cast<Component>( component );
-                        c->childRemoved( child );
-                    }
-                }
-
-                if( auto p = getChildrenPtr() )
-                {
-                    auto &children = *p;
-                    for( auto child : children )
-                    {
-                        child->childRemoved( child );
-                    }
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void Actor::preUpdate()
-        {
-            preUpdateDirtyComponents();
-
-            auto components = getComponents();
-            for( auto &c : components )
-            {
-                if( c )
-                {
-                    c->preUpdate();
-                }
-            }
-
-            if( auto p = getChildrenPtr() )
-            {
-                auto children = *p;
-                for( auto child : children )
-                {
-                    if( child )
-                    {
-                        child->preUpdate();
-                    }
-                }
-            }
-        }
-
-        SharedPtr<ConcurrentArray<SmartPtr<IComponent>>> Actor::getComponentsPtr() const
-        {
-            return m_components;
-        }
-
-        void Actor::updateDirty( u32 flags, u32 oldFlags )
+    void Actor::levelWasLoaded( SmartPtr<IScene> scene )
+    {
+        try
         {
             auto components = getComponents();
-            for( auto &component : components )
+            for( auto component : components )
             {
                 if( component )
                 {
-                    component->updateDirty( flags, oldFlags );
+                    component->handleEvent( IEvent::Type::Actor, IComponent::sceneWasLoaded,
+                                            Array<Parameter>(), this, component, nullptr );
                 }
             }
 
@@ -388,200 +249,297 @@ namespace fb
                 auto &children = *p;
                 for( auto &child : children )
                 {
-                    if( child )
-                    {
-                        child->updateDirty( flags, oldFlags );
-                    }
+                    child->levelWasLoaded( scene );
                 }
             }
         }
-
-        void Actor::update()
+        catch( std::exception &e )
         {
-            updateDirtyComponents();
+            FB_LOG_EXCEPTION( e );
+        }
+    }
 
+    void Actor::hierarchyChanged()
+    {
+        try
+        {
             auto components = getComponents();
-            for( auto &c : components )
+            for( auto component : components )
             {
-                if( c )
+                if( component )
                 {
-                    c->update();
+                    component->handleEvent( IEvent::Type::Actor, IComponent::hierarchyChanged,
+                                            Array<Parameter>(), this, component, nullptr );
+                }
+            }
+
+            if( auto p = getChildrenPtr() )
+            {
+                auto &children = *p;
+                for( auto child : children )
+                {
+                    child->hierarchyChanged();
                 }
             }
         }
-
-        void Actor::postUpdate()
+        catch( std::exception &e )
         {
-            postUpdateDirtyComponents();
+            FB_LOG_EXCEPTION( e );
+        }
+    }
 
+    void Actor::childAdded( SmartPtr<IActor> child )
+    {
+        try
+        {
             auto components = getComponents();
-            for( auto &c : components )
+            for( auto component : components )
             {
-                if( c )
+                if( component )
                 {
-                    c->postUpdate();
+                    component->handleEvent( IEvent::Type::Actor, IComponent::childAdded,
+                                            Array<Parameter>(), this, child, nullptr );
+                }
+            }
+
+            if( auto p = getChildrenPtr() )
+            {
+                auto &children = *p;
+                for( auto child : children )
+                {
+                    child->childAdded( child );
                 }
             }
         }
-
-        void Actor::addComponentInstance( SmartPtr<IComponent> component )
+        catch( std::exception &e )
         {
-            try
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void Actor::childRemoved( SmartPtr<IActor> child )
+    {
+        try
+        {
+            auto components = getComponents();
+            for( auto component : components )
             {
-                FB_ASSERT( component );
-
-                component->setActor( this );
-
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto sceneManager = applicationManager->getSceneManager();
-                FB_ASSERT( sceneManager );
-
-                sceneManager->addComponent( component );
-
-                if( auto p = getComponentsPtr() )
+                if( component )
                 {
-                    auto &components = *p;
-                    components.push_back( component );
+                    component->handleEvent( IEvent::Type::Actor, IComponent::childRemoved,
+                                            Array<Parameter>(), this, child, nullptr );
                 }
             }
-            catch( std::exception &e )
+
+            if( auto p = getChildrenPtr() )
             {
-                FB_LOG_EXCEPTION( e );
+                auto &children = *p;
+                for( auto child : children )
+                {
+                    child->childRemoved( child );
+                }
+            }
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void Actor::preUpdate()
+    {
+        auto components = getComponents();
+        for( auto &c : components )
+        {
+            if( c )
+            {
+                c->preUpdate();
             }
         }
 
-        void Actor::removeComponentInstance( SmartPtr<IComponent> component )
+        if( auto p = getChildrenPtr() )
+        {
+            auto children = *p;
+            for( auto child : children )
+            {
+                if( child )
+                {
+                    child->preUpdate();
+                }
+            }
+        }
+    }
+
+    auto Actor::getComponentsPtr() const -> SharedPtr<ConcurrentArray<SmartPtr<IComponent>>>
+    {
+        return m_components;
+    }
+
+    void Actor::updateDirty( u32 flags, u32 oldFlags )
+    {
+        auto components = getComponents();
+        for( auto &component : components )
+        {
+            if( component )
+            {
+                component->updateFlags( flags, oldFlags );
+            }
+        }
+
+        if( auto p = getChildrenPtr() )
+        {
+            auto &children = *p;
+            for( auto &child : children )
+            {
+                if( child )
+                {
+                    child->updateDirty( flags, oldFlags );
+                }
+            }
+        }
+    }
+
+    void Actor::update()
+    {
+        auto components = getComponents();
+        for( auto &c : components )
+        {
+            if( c )
+            {
+                c->update();
+            }
+        }
+    }
+
+    void Actor::postUpdate()
+    {
+        auto components = getComponents();
+        for( auto &c : components )
+        {
+            if( c )
+            {
+                c->postUpdate();
+            }
+        }
+    }
+
+    void Actor::addComponentInstance( SmartPtr<IComponent> component )
+    {
+        try
         {
             FB_ASSERT( component );
 
-            if( auto p = getComponentsPtr() )
-            {
-                auto components = Array<SmartPtr<IComponent>>( p->begin(), p->end() );
-                auto it = std::find( components.begin(), components.end(), component );
-                if( it != components.end() )
-                {
-                    components.erase( it );
-                }
+            component->setActor( this );
 
-                auto newComponents = fb::make_shared<ConcurrentArray<SmartPtr<IComponent>>>(
-                    components.begin(), components.end() );
-                m_components = newComponents;
-            }
-
-            component->unload( nullptr );
-
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto sceneManager = applicationManager->getSceneManager();
             FB_ASSERT( sceneManager );
 
-            sceneManager->removeComponent( component );
-        }
+            sceneManager->addComponent( component );
 
-        bool Actor::hasComponent( int handle )
-        {
-            auto components = getComponents();
-            for( auto component : components )
+            if( auto p = getComponentsPtr() )
             {
-                auto pHandle = component->getHandle();
-                auto componentId = pHandle->getId();
+                auto &components = *p;
+                components.push_back( component );
+            }
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
 
-                if( componentId == handle )
-                {
-                    return true;
-                }
+    void Actor::removeComponentInstance( SmartPtr<IComponent> component )
+    {
+        FB_ASSERT( component );
+
+        if( auto p = getComponentsPtr() )
+        {
+            auto components = Array<SmartPtr<IComponent>>( p->begin(), p->end() );
+            auto it = std::find( components.begin(), components.end(), component );
+            if( it != components.end() )
+            {
+                components.erase( it );
             }
 
-            return false;
+            auto newComponents = fb::make_shared<ConcurrentArray<SmartPtr<IComponent>>>(
+                components.begin(), components.end() );
+            m_components = newComponents;
         }
 
-        SmartPtr<IComponent> Actor::getComponent( int handle ) const
+        component->unload( nullptr );
+
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto sceneManager = applicationManager->getSceneManager();
+        FB_ASSERT( sceneManager );
+
+        sceneManager->removeComponent( component );
+    }
+
+    auto Actor::hasComponent( int handle ) -> bool
+    {
+        auto components = getComponents();
+        for( auto component : components )
         {
-            // for (auto component : m_components)
-            //{
-            //	auto pHandle = component->getHandle();
-            //	auto componentId = pHandle->getId();
+            auto pHandle = component->getHandle();
+            auto componentId = pHandle->getId();
 
-            //	if (componentId == handle)
-            //	{
-            //		return component;
-            //	}
-            //}
-
-            return nullptr;
-        }
-
-        bool Actor::isMine() const
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-            FB_ASSERT( sceneManager );
-
-            auto handle = getHandle();
-            FB_ASSERT( handle );
-
-            auto id = handle->getInstanceId();
-            FB_ASSERT( id != std::numeric_limits<u32>::max() );
-
-            auto flags = sceneManager->getCurrentFlags( id );
-            return BitUtil::getFlagValue( flags, ActorFlagMine );
-        }
-
-        void Actor::setMine( bool val )
-        {
-            // m_isMine = val;
-        }
-
-        bool Actor::isStatic() const
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-            FB_ASSERT( sceneManager );
-
-            auto handle = getHandle();
-            FB_ASSERT( handle );
-
-            auto id = handle->getInstanceId();
-            FB_ASSERT( id != std::numeric_limits<u32>::max() );
-
-            auto flags = sceneManager->getCurrentFlags( id );
-            return BitUtil::getFlagValue( flags, ActorFlagStatic );
-        }
-
-        void Actor::setStatic( bool isstatic )
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-            FB_ASSERT( sceneManager );
-            FB_ASSERT( sceneManager->isValid() );
-            FB_ASSERT( sceneManager->isLoaded() );
-
-            auto handle = getHandle();
-            FB_ASSERT( handle );
-
-            auto id = handle->getInstanceId();
-            FB_ASSERT( id != std::numeric_limits<u32>::max() );
-
-            auto flags = sceneManager->getNewFlags( id );
-
-            if( BitUtil::getFlagValue( flags, ActorFlagStatic ) != isstatic )
+            if( componentId == handle )
             {
-                auto newFlags = BitUtil::setFlagValue( flags, ActorFlagStatic, isstatic );
-                sceneManager->setNewFlags( id, newFlags );
-                sceneManager->addDirty( this );
+                return true;
             }
+        }
+
+        return false;
+    }
+
+    auto Actor::getComponent( int handle ) const -> SmartPtr<IComponent>
+    {
+        auto components = getComponents();
+        for( auto component : components )
+        {
+            auto pHandle = component->getHandle();
+            auto componentId = pHandle->getId();
+
+            if( componentId == handle )
+            {
+                return component;
+            }
+        }
+
+        return nullptr;
+    }
+
+    auto Actor::isMine() const -> bool
+    {
+        auto flags = getFlags();
+        return BitUtil::getFlagValue( flags, ActorFlagMine );
+    }
+
+    void Actor::setMine( bool mine )
+    {
+        auto flags = getFlags();
+        auto newFlags = BitUtil::setFlagValue( flags, ActorFlagMine, mine );
+        setFlags( newFlags );
+    }
+
+    auto Actor::isStatic() const -> bool
+    {
+        auto flags = getFlags();
+        return BitUtil::getFlagValue( flags, ActorFlagStatic );
+    }
+
+    void Actor::setStatic( bool isstatic )
+    {
+        if( isStatic() != isstatic )
+        {
+            auto flags = getFlags();
+            auto newFlags = BitUtil::setFlagValue( flags, ActorFlagStatic, isstatic );
+            setFlags( newFlags );
 
             if( auto p = getChildrenPtr() )
             {
@@ -592,1318 +550,970 @@ namespace fb
                 }
             }
         }
+    }
 
-        bool Actor::isEnabledInScene() const
+    auto Actor::isEnabledInScene() const -> bool
+    {
+        auto enabledInScene = isEnabled();
+        if( enabledInScene )
         {
-            auto enabledInScene = isEnabled();
-            if( enabledInScene )
+            auto count = 0;
+            auto parent = getParent();
+            while( parent && count++ < 1000 )
             {
-                auto count = 0;
-                auto parent = getParent();
-                while( parent && count++ < 1000 )
+                if( !parent->isEnabled() )
                 {
-                    if( !parent->isEnabled() )
-                    {
-                        return false;
-                    }
-
-                    parent = parent->getParent();
+                    return false;
                 }
-            }
 
-            return enabledInScene;
+                parent = parent->getParent();
+            }
         }
 
-        bool Actor::isEnabled() const
+        return enabledInScene;
+    }
+
+    auto Actor::isEnabled() const -> bool
+    {
+        auto flags = getFlags();
+        return BitUtil::getFlagValue( flags, ActorFlagEnabled );
+    }
+
+    void Actor::setEnabled( bool enabled )
+    {
+        if( isEnabled() != enabled )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-            FB_ASSERT( sceneManager );
-
-            auto handle = getHandle();
-            FB_ASSERT( handle );
-
-            auto id = handle->getInstanceId();
-            FB_ASSERT( id != std::numeric_limits<u32>::max() );
-
-            auto flags = sceneManager->getCurrentFlags( id );
-            return BitUtil::getFlagValue( flags, ActorFlagEnabled );
-        }
-
-        void Actor::setEnabled( bool enabled )
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-            FB_ASSERT( sceneManager );
-            FB_ASSERT( sceneManager->isValid() );
-            FB_ASSERT( sceneManager->isLoaded() );
-
-            auto handle = getHandle();
-            FB_ASSERT( handle );
-
-            auto id = handle->getInstanceId();
-            FB_ASSERT( id != std::numeric_limits<u32>::max() );
-
-            auto flags = sceneManager->getNewFlags( id );
-
-            if( BitUtil::getFlagValue( flags, ActorFlagEnabled ) != enabled )
-            {
-                auto newFlags = BitUtil::setFlagValue( flags, ActorFlagEnabled, enabled );
-                sceneManager->setNewFlags( id, newFlags );
-
-                sceneManager->addDirty( this );
-
-                auto children = getAllChildren();
-                for( auto &child : children )
-                {
-                    sceneManager->addDirty( child );
-                }
-            }
+            auto flags = getFlags();
+            auto newFlags = BitUtil::setFlagValue( flags, ActorFlagEnabled, enabled );
+            setFlags( newFlags );
 
             updateVisibility();
         }
+    }
 
-        bool Actor::isVisible() const
+    auto Actor::isVisible() const -> bool
+    {
+        auto flags = getFlags();
+        return BitUtil::getFlagValue( flags, ActorFlagVisible );
+    }
+
+    void Actor::setVisible( bool visible, bool cacade )
+    {
+        auto flags = getFlags();
+        auto newFlags = BitUtil::setFlagValue( flags, ActorFlagVisible, visible );
+        setFlags( newFlags );
+
+        if( cacade )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-            FB_ASSERT( sceneManager );
-
-            auto handle = getHandle();
-            FB_ASSERT( handle );
-
-            auto id = handle->getInstanceId();
-            FB_ASSERT( id != std::numeric_limits<u32>::max() );
-
-            auto flags = sceneManager->getCurrentFlags( id );
-            return BitUtil::getFlagValue( flags, ActorFlagVisible );
-        }
-
-        void Actor::setVisible( bool visible, bool cacade )
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-            FB_ASSERT( sceneManager );
-            FB_ASSERT( sceneManager->isValid() );
-            FB_ASSERT( sceneManager->isLoaded() );
-
-            auto handle = getHandle();
-            FB_ASSERT( handle );
-
-            auto id = handle->getInstanceId();
-            FB_ASSERT( id != std::numeric_limits<u32>::max() );
-
-            auto flags = sceneManager->getNewFlags( id );
-            if( BitUtil::getFlagValue( flags, ActorFlagVisible ) != visible )
-            {
-                auto newFlags = BitUtil::setFlagValue( flags, ActorFlagVisible, visible );
-                sceneManager->setNewFlags( id, newFlags );
-
-                if( cacade )
-                {
-                    if( auto p = getChildrenPtr() )
-                    {
-                        auto &children = *p;
-                        for( auto child : children )
-                        {
-                            child->setVisible( visible, cacade );
-                        }
-                    }
-                }
-            }
-        }
-
-        bool Actor::isDirty() const
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-            FB_ASSERT( sceneManager );
-
-            auto handle = getHandle();
-            FB_ASSERT( handle );
-
-            auto id = handle->getInstanceId();
-            FB_ASSERT( id != std::numeric_limits<u32>::max() );
-
-            auto flags = sceneManager->getCurrentFlags( id );
-            return BitUtil::getFlagValue( flags, ActorFlagDirty );
-        }
-
-        void Actor::setDirty( bool dirty )
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-            FB_ASSERT( sceneManager );
-            FB_ASSERT( sceneManager->isValid() );
-            FB_ASSERT( sceneManager->isLoaded() );
-
-            auto handle = getHandle();
-            FB_ASSERT( handle );
-
-            auto id = handle->getInstanceId();
-            FB_ASSERT( id != std::numeric_limits<u32>::max() );
-
-            auto flags = sceneManager->getCurrentFlags( id );
-            auto newFlags = BitUtil::setFlagValue( flags, ActorFlagDirty, dirty );
-            sceneManager->setNewFlags( id, newFlags );
-        }
-
-        bool Actor::isValid() const
-        {
-            return true;
-        }
-
-        void Actor::updateTransform()
-        {
-            if( auto transform = getTransform() )
-            {
-                transform->updateTransform();
-            }
-
-            auto components = getComponents();
-            for( auto component : components )
-            {
-                component->updateTransform();
-            }
-
             if( auto p = getChildrenPtr() )
             {
                 auto &children = *p;
                 for( auto child : children )
                 {
-                    child->updateTransform();
+                    child->setVisible( visible, cacade );
                 }
             }
         }
+    }
 
-        Array<SmartPtr<IComponent>> Actor::getComponents() const
+    auto Actor::isDirty() const -> bool
+    {
+        auto flags = getFlags();
+        return BitUtil::getFlagValue( flags, ActorFlagDirty );
+    }
+
+    void Actor::setDirty( bool dirty )
+    {
+        if( isDirty() != dirty )
         {
-            if( auto p = getComponentsPtr() )
+            auto flags = getFlags();
+            auto newFlags = BitUtil::setFlagValue( flags, ActorFlagDirty, dirty );
+            setFlags( newFlags );
+        }
+    }
+
+    auto Actor::isValid() const -> bool
+    {
+        return true;
+    }
+
+    void Actor::updateTransform()
+    {
+        if( auto transform = getTransform() )
+        {
+            transform->updateTransform();
+        }
+
+        auto components = getComponents();
+        for( auto component : components )
+        {
+            component->updateTransform();
+        }
+
+        if( auto p = getChildrenPtr() )
+        {
+            auto &children = *p;
+            for( auto child : children )
             {
-                auto components = *p;
-                return Array<SmartPtr<IComponent>>( components.begin(), components.end() );
-            }
-
-            return Array<SmartPtr<IComponent>>();
-        }
-
-        void Actor::updateComponents()
-        {
-            // for (auto component : m_components)
-            //{
-            //	component->update();
-            // }
-        }
-
-        void Actor::rebuildComponentCache()
-        {
-            // auto applicationManager = core::IApplicationManager::instance();
-            // auto factoryManager = applicationManager->getFactoryManager();
-
-            // Array<SmartPtr<IComponent>> componentCache;
-            // componentCache.reserve(m_components.size());
-
-            // for (auto component : m_components)
-            //{
-            //	if (component)
-            //	{
-            //		componentCache.push_back(component);
-            //	}
-            // }
-
-            // auto p = boost::make_shared<ConcurrentArray<SmartPtr<IComponent>>>();
-            //*p = ConcurrentArray<SmartPtr<IComponent>>(componentCache.begin(),
-            // componentCache.end()); m_componentCache = p;
-        }
-
-        void Actor::preUpdateDirtyComponent( SmartPtr<IComponent> &component )
-        {
-            if( component )
-            {
-                auto task = Thread::getCurrentTask();
-
-                // component->preUpdateDirty();
-
-                // auto& dirtySibling =
-                // component->getDirtySibling(Thread::UpdateState::PreUpdate, task);
-                // preUpdateDirtyComponent(dirtySibling);
-
-                // SmartPtr<IComponent> nullComponent = nullptr;
-                // component->setDirtySibling(Thread::UpdateState::PreUpdate, task,
-                // nullComponent);
+                child->updateTransform();
             }
         }
+    }
 
-        void Actor::updateDirtyComponent( SmartPtr<IComponent> &component )
+    auto Actor::getComponents() const -> Array<SmartPtr<IComponent>>
+    {
+        if( auto p = getComponentsPtr() )
         {
-            if( component )
-            {
-                auto task = Thread::getCurrentTask();
-
-                // component->updateDirty();
-
-                // auto& dirtySibling =
-                // component->getDirtySibling(Thread::UpdateState::Update, task);
-                // updateDirtyComponent(dirtySibling);
-
-                // SmartPtr<IComponent> nullComponent = nullptr;
-                // component->setDirtySibling(Thread::UpdateState::Update, task,
-                // nullComponent);
-            }
+            auto components = *p;
+            return Array<SmartPtr<IComponent>>( components.begin(), components.end() );
         }
 
-        void Actor::postUpdateDirtyComponent( SmartPtr<IComponent> &component )
+        return {};
+    }
+
+    auto Actor::handleActorEvent( u32 state, IFSM::Event eventType ) -> IFSM::ReturnType
+    {
+        switch( eventType )
         {
-            if( component )
-            {
-                auto task = Thread::getCurrentTask();
-
-                // component->postUpdateDirty();
-
-                // auto& dirtySibling =
-                // component->getDirtySibling(Thread::UpdateState::PostUpdate, task);
-                // postUpdateDirtyComponent(dirtySibling);
-
-                // SmartPtr<IComponent> nullComponent = nullptr;
-                // component->setDirtySibling(Thread::UpdateState::PostUpdate, task,
-                // nullComponent);
-            }
-        }
-
-        IFSM::ReturnType Actor::handleActorEvent( u32 state, IFSM::Event eventType )
-        {
-            switch( eventType )
-            {
-            case IFSM::Event::Change:
-                break;
-            case IFSM::Event::Enter:
-            {
-                auto eState = static_cast<State>( state );
-                switch( eState )
-                {
-                case State::Create:
-                case State::Destroyed:
-                case State::Edit:
-                {
-                    bool cascade = getParent() == nullptr;
-                    auto transform = getTransform();
-                    if( transform )
-                    {
-                        transform->setDirty( true, cascade );
-                    }
-
-                    auto components = getComponents();
-                    for( auto component : components )
-                    {
-                        component->setState( IComponent::State::Edit );
-                    }
-                }
-                break;
-                case State::Play:
-                {
-                    bool cascade = getParent() == nullptr;
-                    auto transform = getTransform();
-                    if( transform )
-                    {
-                        transform->setDirty( true, cascade );
-                    }
-
-                    auto components = getComponents();
-                    for( auto component : components )
-                    {
-                        component->setState( IComponent::State::Play );
-                    }
-                }
-                break;
-                default:
-                {
-                }
-                break;
-                }
-            }
+        case IFSM::Event::Change:
             break;
-            case IFSM::Event::Leave:
+        case IFSM::Event::Enter:
+        {
+            auto eState = static_cast<State>( state );
+            switch( eState )
             {
-                auto eState = static_cast<State>( state );
-                switch( eState )
+            case State::Create:
+            case State::Destroyed:
+            case State::Edit:
+            {
+                bool cascade = getParent() == nullptr;
+                auto transform = getTransform();
+                if( transform )
                 {
-                case State::Create:
-                case State::Destroyed:
-                case State::Edit:
-                case State::Play:
-                {
-                }
-                break;
-                default:
-                {
-                }
-                break;
-                }
-            }
-            break;
-            case IFSM::Event::Pending:
-                break;
-            case IFSM::Event::Complete:
-                break;
-            case IFSM::Event::NewState:
-                break;
-            case IFSM::Event::WaitForChange:
-                break;
-            case IFSM::Event::Count:
-                break;
-            default:
-                break;
-            }
-
-            return IFSM::ReturnType::Ok;
-        }
-
-        IFSM::ReturnType Actor::handleActorGameEvent( u32 state, IFSM::Event eventType )
-        {
-            switch( eventType )
-            {
-            case IFSM::Event::Change:
-                break;
-            case IFSM::Event::Enter:
-                break;
-            case IFSM::Event::Leave:
-                break;
-            case IFSM::Event::Pending:
-                break;
-            case IFSM::Event::Complete:
-                break;
-            case IFSM::Event::NewState:
-                break;
-            case IFSM::Event::WaitForChange:
-                break;
-            default:
-                break;
-            }
-
-            return IFSM::ReturnType::Ok;
-        }
-
-        void Actor::preUpdateDirtyComponents()
-        {
-            // auto applicationManager = core::IApplicationManager::instance();
-            // FB_ASSERT(applicationManager);
-
-            // auto task = Thread::getCurrentTask();
-
-            // auto& component = m_dirtyComponent[(int)Thread::UpdateState::PreUpdate][(int)task];
-            // if (component)
-            //{
-            //	preUpdateDirtyComponent(component);
-            //	component = nullptr;
-            // }
-
-            // auto& lastDirtyComponent =
-            // m_lastDirtyComponent[(int)Thread::UpdateState::PreUpdate][(int)task]; lastDirtyComponent =
-            // nullptr;
-        }
-
-        void Actor::updateDirtyComponents()
-        {
-            // auto applicationManager = core::IApplicationManager::instance();
-            // FB_ASSERT(applicationManager);
-
-            // auto task = Thread::getCurrentTask();
-
-            // auto& component = m_dirtyComponent[(int)Thread::UpdateState::Update][(int)task];
-            // if (component)
-            //{
-            //	updateDirtyComponent(component);
-            //	component = nullptr;
-            // }
-
-            // auto& lastDirtyComponent = m_lastDirtyComponent[(int)Thread::UpdateState::Update][(int)task];
-            // lastDirtyComponent = nullptr;
-        }
-
-        void Actor::postUpdateDirtyComponents()
-        {
-            // auto applicationManager = core::IApplicationManager::instance();
-            // FB_ASSERT(applicationManager);
-
-            // auto task = Thread::getCurrentTask();
-
-            // auto& component = m_dirtyComponent[(int)Thread::UpdateState::PostUpdate][(int)task];
-            // if (component)
-            //{
-            //	postUpdateDirtyComponent(component);
-            //	component = nullptr;
-            // }
-
-            // auto& lastDirtyComponent =
-            // m_lastDirtyComponent[(int)Thread::UpdateState::PostUpdate][(int)task]; lastDirtyComponent =
-            // nullptr;
-        }
-
-        bool Actor::compareTag( const String &tag ) const
-        {
-            // auto it = std::find(m_tags.begin(), m_tags.end(), tag);
-            // if (it != m_tags.end())
-            //{
-            //	return true;
-            // }
-
-            return false;
-        }
-
-        SmartPtr<IActor> Actor::getSceneRoot() const
-        {
-            auto parent = getParent();
-            while( parent )
-            {
-                auto root = parent->getSceneRoot();
-                if( root == nullptr )
-                {
-                    return parent;
-                }
-
-                parent = root;
-            }
-
-            return nullptr;
-        }
-
-        u32 Actor::getSceneLevel() const
-        {
-            auto sceneLevel = 0;
-            auto parent = getParent();
-            while( parent )
-            {
-                auto root = parent->getSceneRoot();
-                if( root == nullptr )
-                {
-                    return sceneLevel;
-                }
-
-                ++sceneLevel;
-                parent = root;
-            }
-
-            return sceneLevel;
-        }
-
-        SmartPtr<ITransform> Actor::getTransform() const
-        {
-            auto p = m_transform.load();
-            return p;
-        }
-
-        void Actor::setTransform( SmartPtr<ITransform> transform )
-        {
-            m_transform = transform;
-        }
-
-        void Actor::load( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-                setLoadingState( LoadingState::Loading );
-
-                auto isDummy = getFlag( ActorFlagDummy );
-                if( !isDummy )
-                {
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto pSceneManager = applicationManager->getSceneManager();
-                    auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-                    if( sceneManager )
-                    {
-                        FB_ASSERT( sceneManager->isLoaded() );
-
-                        auto transform = sceneManager->createTransformComponent();
-                        setTransform( transform );
-
-                        if( transform )
-                        {
-                            transform->setActor( this );
-                        }
-                    }
-
-                    setEnabled( true );
-                    setVisible( true );
-                }
-
-                setLoadingState( LoadingState::Loaded );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void Actor::reload( SmartPtr<ISharedObject> data )
-        {
-        }
-
-        void Actor::unload( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-                const auto &loadingState = getLoadingState();
-                if( loadingState != LoadingState::Unloaded )
-                {
-                    setLoadingState( LoadingState::Unloading );
-
-                    auto isDummy = getFlag( ActorFlagDummy );
-                    if( !isDummy )
-                    {
-                        auto applicationManager = core::IApplicationManager::instance();
-                        FB_ASSERT( applicationManager );
-
-                        auto pSceneManager = applicationManager->getSceneManager();
-                        auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-
-                        if( auto transform = getTransform() )
-                        {
-                            transform->unload( nullptr );
-                        }
-
-                        if( auto p = getChildrenPtr() )
-                        {
-                            auto &children = *p;
-                            for( auto child : children )
-                            {
-                                if( child )
-                                {
-                                    child->unload( data );
-                                }
-                            }
-                        }
-
-                        auto components = getComponents();
-                        for( auto component : components )
-                        {
-                            try
-                            {
-                                if( component )
-                                {
-                                    component->unload( nullptr );
-                                }
-                            }
-                            catch( std::exception &e )
-                            {
-                                FB_LOG_EXCEPTION( e );
-                            }
-                        }
-
-                        m_scene = nullptr;
-                        m_parent = nullptr;
-                        m_transform = nullptr;
-
-                        if( auto p = getChildrenPtr() )
-                        {
-                            auto &children = *p;
-                            children.clear();
-                        }
-
-                        if( auto p = getComponentsPtr() )
-                        {
-                            auto &components = *p;
-                            components.clear();
-                        }
-
-                        // for (u32 x = 0; x < int(Thread::UpdateState::Count); ++x)
-                        //{
-                        //	for (u32 y = 0; y < int(Thread::Task::Count); ++y)
-                        //	{
-                        //		m_updateComponents[x][y] = nullptr;
-                        //	}
-                        // }
-
-                        if( auto scene = getScene() )
-                        {
-                            auto pThis = getSharedFromThis<Actor>();
-                            scene->unregisterAll( pThis );
-                        }
-
-                        setScene( nullptr );
-
-                        if( sceneManager )
-                        {
-                            auto transform = getTransform();
-                            sceneManager->destroyTransformComponent( transform );
-                            setTransform( nullptr );
-                        }
-
-                        // m_componentCache = nullptr;
-                        // m_parent = nullptr;
-
-                        for( auto component : components )
-                        {
-                            if( component )
-                            {
-                                auto c = fb::static_pointer_cast<Component>( component );
-                                if( c )
-                                {
-                                    c->actorUnload();
-                                }
-                            }
-                        }
-                    }
-
-                    setStateObject( nullptr );
-
-                    setLoadingState( LoadingState::Unloaded );
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        bool Actor::getPerpetual() const
-        {
-            return m_perpetual;
-        }
-
-        void Actor::setPerpetual( bool perpetual )
-        {
-            m_perpetual = perpetual;
-        }
-
-        bool Actor::getAutoUpdateComponents() const
-        {
-            return m_autoUpdateComponents;
-        }
-
-        void Actor::setAutoUpdateComponents( bool autoUpdateComponents )
-        {
-            m_autoUpdateComponents = autoUpdateComponents;
-        }
-
-        SmartPtr<IScene> Actor::getScene() const
-        {
-            auto p = m_scene.load();
-            return p.lock();
-        }
-
-        void Actor::setScene( SmartPtr<IScene> scene )
-        {
-            m_scene = scene;
-        }
-
-        void Actor::triggerEnter( SmartPtr<IComponent> collision )
-        {
-            // boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> p =
-            // m_componentCache; ConcurrentArray<SmartPtr<IComponent>>& componentCache =
-            // *p; ConcurrentArray<SmartPtr<IComponent>>::iterator it =
-            // componentCache.begin(); for (; it != componentCache.end(); ++it)
-            //{
-            //	auto component = fb::static_pointer_cast<BaseComponent>(*it);
-            //	component->triggerEnter(collision);
-            // }
-        }
-
-        void Actor::triggerLeave( SmartPtr<IComponent> collision )
-        {
-            // boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> p =
-            // m_componentCache; ConcurrentArray<SmartPtr<IComponent>>& componentCache =
-            // *p; ConcurrentArray<SmartPtr<IComponent>>::iterator it =
-            // componentCache.begin(); for (; it != componentCache.end(); ++it)
-            //{
-            //	auto component = fb::static_pointer_cast<BaseComponent>(*it);
-            //	component->triggerLeave(collision);
-            // }
-        }
-
-        void Actor::componentLoaded( SmartPtr<IComponent> component )
-        {
-            // boost::shared_ptr<ConcurrentArray<SmartPtr<IComponent>>> p =
-            // m_componentCache; ConcurrentArray<SmartPtr<IComponent>>& componentCache =
-            // *p; ConcurrentArray<SmartPtr<IComponent>>::iterator it =
-            // componentCache.begin(); for (; it != componentCache.end(); ++it)
-            //{
-            //	auto component = fb::static_pointer_cast<BaseComponent>(*it);
-            //	component->componentLoaded(component);
-            // }
-        }
-
-        SmartPtr<IActor> Actor::getChildByIndex( u32 index ) const
-        {
-            if( auto p = getChildrenPtr() )
-            {
-                auto &children = *p;
-                return children[index];
-            }
-
-            return nullptr;
-        }
-
-        u32 Actor::getNumChildren() const
-        {
-            if( auto p = getChildrenPtr() )
-            {
-                auto &children = *p;
-                return static_cast<u32>( children.size() );
-            }
-
-            return 0;
-        }
-
-        s32 Actor::getSiblingIndex() const
-        {
-            auto parentTransform = getParent();
-            if( parentTransform == nullptr )
-            {
-                return 0;
-            }
-
-            for( u32 i = 0; i < parentTransform->getNumChildren(); i++ )
-            {
-                const auto child = parentTransform->getChildByIndex( i );
-                if( child == getSharedFromThis<IActor>() )
-                {
-                    return i;
-                }
-            }
-
-            return -1;
-        }
-
-        void Actor::addChild( SmartPtr<IActor> child )
-        {
-            FB_ASSERT( child );
-
-            if( auto parent = child->getParent() )
-            {
-                parent->removeChild( child );
-            }
-
-            auto handle = child->getHandle();
-            auto id = handle->getInstanceId();
-
-            FB_ASSERT( id != std::numeric_limits<u32>::max() );
-            FB_ASSERT( id != getHandle()->getInstanceId() );  // child id matches parent
-
-            if( auto p = getChildrenPtr() )
-            {
-                auto &children = *p;
-                children.push_back( child );
-
-                //FB_ASSERT( CoreUtil::hasDuplicates( children ) == false );
-            }
-
-            auto pThis = getSharedFromThis<IActor>();
-            child->setParent( pThis );
-
-            if( auto p = getComponentsPtr() )
-            {
-                auto components = *p;
-                for( auto &component : components )
-                {
-                    component->childAdded( child );
-                }
-            }
-
-            if( auto p = getChildrenPtr() )
-            {
-                auto children = *p;
-                for( auto &c : children )
-                {
-                    c->childAddedInHierarchy( child );
-                }
-            }
-        }
-
-        void Actor::removeChild( SmartPtr<IActor> child )
-        {
-            if( auto p = getChildrenPtr() )
-            {
-                auto &children = *p;
-
-                auto childrenArray = Array<SmartPtr<IActor>>( children.begin(), children.end() );
-                const auto it = std::find( childrenArray.begin(), childrenArray.end(), child );
-                if( it != childrenArray.end() )
-                {
-                    childrenArray.erase( it );
-                }
-
-                m_children = fb::make_shared<ConcurrentArray<SmartPtr<IActor>>>( childrenArray.begin(),
-                                                                                 childrenArray.end() );
-                child->setParent( nullptr );
-            }
-
-            if( auto p = getComponentsPtr() )
-            {
-                auto &components = *p;
-                for( auto &component : components )
-                {
-                    component->childRemoved( child );
-                }
-            }
-
-            if( auto p = getChildrenPtr() )
-            {
-                auto &children = *p;
-                for( auto &c : children )
-                {
-                    c->childRemovedInHierarchy( child );
-                }
-            }
-        }
-
-        void Actor::childAddedInHierarchy( SmartPtr<IActor> child )
-        {
-            if( auto p = getComponentsPtr() )
-            {
-                auto components = *p;
-                for( auto &component : components )
-                {
-                    component->childAddedInHierarchy( child );
-                }
-            }
-
-            if( auto p = getChildrenPtr() )
-            {
-                auto children = *p;
-                for( auto &c : children )
-                {
-                    c->childAddedInHierarchy( child );
-                }
-            }
-        }
-
-        void Actor::childRemovedInHierarchy( SmartPtr<IActor> child )
-        {
-            if( auto p = getComponentsPtr() )
-            {
-                auto &components = *p;
-                for( auto &component : components )
-                {
-                    component->childRemovedInHierarchy( child );
-                }
-            }
-
-            if( auto p = getChildrenPtr() )
-            {
-                auto &children = *p;
-                for( auto &c : children )
-                {
-                    c->childRemovedInHierarchy( child );
-                }
-            }
-        }
-
-        void Actor::removeChildren()
-        {
-            if( auto p = getChildrenPtr() )
-            {
-                auto &children = *p;
-                for( auto &child : children )
-                {
-                    auto pChild = fb::static_pointer_cast<Actor>( child );
-                    pChild->setParent( nullptr );
-                }
-            }
-        }
-
-        SmartPtr<IActor> Actor::findChild( const String &name )
-        {
-            if( auto p = getChildrenPtr() )
-            {
-                auto &children = *p;
-                for( auto &child : children )
-                {
-                    if( child->getName() == name )
-                    {
-                        return child;
-                    }
-                }
-            }
-
-            return nullptr;
-        }
-
-        SharedPtr<ConcurrentArray<SmartPtr<IActor>>> Actor::getChildrenPtr() const
-        {
-            return m_children;
-        }
-
-        Array<SmartPtr<IActor>> Actor::getAllChildren( SmartPtr<IActor> parent ) const
-        {
-            Array<SmartPtr<IActor>> children;
-            children.reserve( 128 );
-
-            auto childCount = parent->getNumChildren();
-
-            for( u32 i = 0; i < childCount; i++ )
-            {
-                auto child = parent->getChildByIndex( i );
-                children.push_back( child );
-
-                auto childChildren = getAllChildren( child );
-
-                children.insert( children.end(), childChildren.begin(), childChildren.end() );
-            }
-
-            return children;
-        }
-
-        Array<SmartPtr<IActor>> Actor::getAllChildren() const
-        {
-            auto thisActor = getSharedFromThis<IActor>();
-            return getAllChildren( thisActor );
-        }
-
-        SmartPtr<IActor> Actor::getParent() const
-        {
-            auto p = m_parent.load();
-            return p.lock();
-        }
-
-        void Actor::setParent( SmartPtr<IActor> parent )
-        {
-            auto p = getParent();
-            if( p != parent )
-            {
-                m_parent = parent;
-
-                if( auto transform = getTransform() )
-                {
-                    transform->parentChanged( parent, p );
+                    transform->setDirty( true, cascade );
                 }
 
                 auto components = getComponents();
                 for( auto component : components )
                 {
-                    component->parentChanged( parent, p );
+                    component->setState( IComponent::State::Edit );
+                }
+            }
+            break;
+            case State::Play:
+            {
+                bool cascade = getParent() == nullptr;
+                auto transform = getTransform();
+                if( transform )
+                {
+                    transform->setDirty( true, cascade );
+                }
+
+                auto components = getComponents();
+                for( auto component : components )
+                {
+                    component->setState( IComponent::State::Play );
+                }
+            }
+            break;
+            default:
+            {
+            }
+            break;
+            }
+        }
+        break;
+        case IFSM::Event::Leave:
+        {
+            auto eState = static_cast<State>( state );
+            switch( eState )
+            {
+            case State::Create:
+            case State::Destroyed:
+            case State::Edit:
+            case State::Play:
+            {
+            }
+            break;
+            default:
+            {
+            }
+            break;
+            }
+        }
+        break;
+        case IFSM::Event::Pending:
+            break;
+        case IFSM::Event::Complete:
+            break;
+        case IFSM::Event::NewState:
+            break;
+        case IFSM::Event::WaitForChange:
+            break;
+        case IFSM::Event::Count:
+            break;
+        default:
+            break;
+        }
+
+        return IFSM::ReturnType::Ok;
+    }
+
+    auto Actor::handleActorGameEvent( u32 state, IFSM::Event eventType ) -> IFSM::ReturnType
+    {
+        switch( eventType )
+        {
+        case IFSM::Event::Change:
+            break;
+        case IFSM::Event::Enter:
+            break;
+        case IFSM::Event::Leave:
+            break;
+        case IFSM::Event::Pending:
+            break;
+        case IFSM::Event::Complete:
+            break;
+        case IFSM::Event::NewState:
+            break;
+        case IFSM::Event::WaitForChange:
+            break;
+        default:
+            break;
+        }
+
+        return IFSM::ReturnType::Ok;
+    }
+
+    auto Actor::compareTag( const String &tag ) const -> bool
+    {
+        auto it = std::find( m_tags.begin(), m_tags.end(), tag );
+        if( it != m_tags.end() )
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    auto Actor::getSceneRoot() const -> SmartPtr<IActor>
+    {
+        auto parent = getParent();
+        while( parent )
+        {
+            auto root = parent->getSceneRoot();
+            if( root == nullptr )
+            {
+                return parent;
+            }
+
+            parent = root;
+        }
+
+        return nullptr;
+    }
+
+    auto Actor::getSceneLevel() const -> u32
+    {
+        auto sceneLevel = 0;
+        auto parent = getParent();
+        while( parent )
+        {
+            auto root = parent->getSceneRoot();
+            if( root == nullptr )
+            {
+                return sceneLevel;
+            }
+
+            ++sceneLevel;
+            parent = root;
+        }
+
+        return sceneLevel;
+    }
+
+    auto Actor::getTransform() -> SmartPtr<ITransform> &
+    {
+        return m_transform;
+    }
+
+    auto Actor::getTransform() const -> const SmartPtr<ITransform> &
+    {
+        return m_transform;
+    }
+
+    void Actor::setTransform( SmartPtr<ITransform> transform )
+    {
+        m_transform = transform;
+    }
+
+    void Actor::load( SmartPtr<ISharedObject> data )
+    {
+        try
+        {
+            setLoadingState( LoadingState::Loading );
+
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto pSceneManager = applicationManager->getSceneManager();
+            FB_ASSERT( pSceneManager );
+
+            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
+
+            auto handle = getHandle();
+            FB_ASSERT( handle );
+
+            auto id = handle->getInstanceId();
+            FB_ASSERT( id != std::numeric_limits<u32>::max() );
+
+            m_flags = sceneManager->getFlagsPtr( id );
+
+            FB_ASSERT( sceneManager->isLoaded() );
+
+            auto transform = sceneManager->createTransformComponent();
+            setTransform( transform );
+
+            if( transform )
+            {
+                transform->setActor( this );
+            }
+
+            setEnabled( true );
+            setVisible( true );
+
+            setLoadingState( LoadingState::Loaded );
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void Actor::reload( SmartPtr<ISharedObject> data )
+    {
+        unload( data );
+        load( data );
+    }
+
+    void Actor::unload( SmartPtr<ISharedObject> data )
+    {
+        try
+        {
+            const auto &loadingState = getLoadingState();
+            if( loadingState != LoadingState::Unloaded )
+            {
+                setLoadingState( LoadingState::Unloading );
+
+                auto isDummy = getFlag( ActorFlagDummy );
+                if( !isDummy )
+                {
+                    auto applicationManager = core::ApplicationManager::instance();
+                    FB_ASSERT( applicationManager );
+
+                    auto pSceneManager = applicationManager->getSceneManager();
+                    auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
+
+                    if( auto transform = getTransform() )
+                    {
+                        transform->unload( nullptr );
+                    }
+
+                    if( auto p = getChildrenPtr() )
+                    {
+                        auto &children = *p;
+                        for( auto child : children )
+                        {
+                            if( child )
+                            {
+                                child->unload( data );
+                            }
+                        }
+                    }
+
+                    auto components = getComponents();
+                    for( auto component : components )
+                    {
+                        try
+                        {
+                            if( component )
+                            {
+                                component->unload( nullptr );
+                            }
+                        }
+                        catch( std::exception &e )
+                        {
+                            FB_LOG_EXCEPTION( e );
+                        }
+                    }
+
+                    m_scene = nullptr;
+                    m_parent = nullptr;
+                    m_transform = nullptr;
+
+                    if( auto p = getChildrenPtr() )
+                    {
+                        auto &children = *p;
+                        children.clear();
+                    }
+
+                    if( auto p = getComponentsPtr() )
+                    {
+                        auto &components = *p;
+                        components.clear();
+                    }
+
+                    // for (u32 x = 0; x < int(Thread::UpdateState::Count); ++x)
+                    //{
+                    //	for (u32 y = 0; y < int(Thread::Task::Count); ++y)
+                    //	{
+                    //		m_updateComponents[x][y] = nullptr;
+                    //	}
+                    // }
+
+                    if( auto scene = getScene() )
+                    {
+                        auto pThis = getSharedFromThis<Actor>();
+                        scene->unregisterAll( pThis );
+                    }
+
+                    setScene( nullptr );
+
+                    if( sceneManager )
+                    {
+                        auto transform = getTransform();
+                        sceneManager->destroyTransformComponent( transform );
+                        setTransform( nullptr );
+                    }
+
+                    // m_componentCache = nullptr;
+                    // m_parent = nullptr;
+
+                    for( auto component : components )
+                    {
+                        if( component )
+                        {
+                            component->handleEvent( IEvent::Type::Actor, IComponent::actorUnload,
+                                                    Array<Parameter>(), this, component, nullptr );
+                        }
+                    }
+                }
+
+                setStateContext( nullptr );
+
+                setLoadingState( LoadingState::Unloaded );
+            }
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    auto Actor::getPerpetual() const -> bool
+    {
+        return m_perpetual;
+    }
+
+    void Actor::setPerpetual( bool perpetual )
+    {
+        m_perpetual = perpetual;
+    }
+
+    auto Actor::getAutoUpdateComponents() const -> bool
+    {
+        return m_autoUpdateComponents;
+    }
+
+    void Actor::setAutoUpdateComponents( bool autoUpdateComponents )
+    {
+        m_autoUpdateComponents = autoUpdateComponents;
+    }
+
+    auto Actor::getScene() const -> SmartPtr<IScene>
+    {
+        auto p = m_scene.load();
+        return p.lock();
+    }
+
+    void Actor::setScene( SmartPtr<IScene> scene )
+    {
+        m_scene = scene;
+    }
+
+    void Actor::triggerEnter( SmartPtr<IComponent> collision )
+    {
+        auto components = getComponents();
+        for( auto component : components )
+        {
+            component->handleEvent( IEvent::Type::Actor, IComponent::triggerCollisionEnter,
+                                    Array<Parameter>(), this, collision, nullptr );
+        }
+    }
+
+    void Actor::triggerLeave( SmartPtr<IComponent> collision )
+    {
+        auto components = getComponents();
+        for( auto component : components )
+        {
+            component->handleEvent( IEvent::Type::Actor, IComponent::triggerCollisionLeave,
+                                    Array<Parameter>(), this, collision, nullptr );
+        }
+    }
+
+    void Actor::componentLoaded( SmartPtr<IComponent> loadedComponent )
+    {
+        auto components = getComponents();
+        for( auto component : components )
+        {
+            component->handleEvent( IEvent::Type::Actor, IComponent::componentLoaded, Array<Parameter>(),
+                                    this, loadedComponent, nullptr );
+        }
+    }
+
+    auto Actor::getChildByIndex( u32 index ) const -> SmartPtr<IActor>
+    {
+        if( auto p = getChildrenPtr() )
+        {
+            auto &children = *p;
+            return children[index];
+        }
+
+        return nullptr;
+    }
+
+    auto Actor::getNumChildren() const -> u32
+    {
+        if( auto p = getChildrenPtr() )
+        {
+            auto &children = *p;
+            return static_cast<u32>( children.size() );
+        }
+
+        return 0;
+    }
+
+    auto Actor::getSiblingIndex() const -> s32
+    {
+        auto parentTransform = getParent();
+        if( parentTransform == nullptr )
+        {
+            return 0;
+        }
+
+        for( u32 i = 0; i < parentTransform->getNumChildren(); i++ )
+        {
+            const auto child = parentTransform->getChildByIndex( i );
+            if( child == getSharedFromThis<IActor>() )
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    void Actor::addChild( SmartPtr<IActor> child )
+    {
+        FB_ASSERT( child );
+
+        if( auto parent = child->getParent() )
+        {
+            parent->removeChild( child );
+        }
+
+        auto handle = child->getHandle();
+        auto id = handle->getInstanceId();
+
+        FB_ASSERT( id != std::numeric_limits<u32>::max() );
+        FB_ASSERT( id != getHandle()->getInstanceId() );  // child id matches parent
+
+        if( auto p = getChildrenPtr() )
+        {
+            auto &children = *p;
+            children.push_back( child );
+
+            //FB_ASSERT( CoreUtil::hasDuplicates( children ) == false );
+        }
+
+        auto pThis = getSharedFromThis<IActor>();
+        child->setParent( pThis );
+
+        if( auto p = getComponentsPtr() )
+        {
+            auto components = *p;
+            for( auto &component : components )
+            {
+                component->handleEvent( IEvent::Type::Actor, IComponent::childAdded, Array<Parameter>(),
+                                        this, child, nullptr );
+            }
+        }
+
+        if( auto p = getChildrenPtr() )
+        {
+            auto children = *p;
+            for( auto &c : children )
+            {
+                c->childAddedInHierarchy( child );
+            }
+        }
+    }
+
+    void Actor::removeChild( SmartPtr<IActor> child )
+    {
+        if( auto p = getChildrenPtr() )
+        {
+            auto &children = *p;
+
+            auto childrenArray = Array<SmartPtr<IActor>>( children.begin(), children.end() );
+            const auto it = std::find( childrenArray.begin(), childrenArray.end(), child );
+            if( it != childrenArray.end() )
+            {
+                childrenArray.erase( it );
+            }
+
+            m_children = fb::make_shared<ConcurrentArray<SmartPtr<IActor>>>( childrenArray.begin(),
+                                                                             childrenArray.end() );
+            child->setParent( nullptr );
+        }
+
+        if( auto p = getComponentsPtr() )
+        {
+            auto &components = *p;
+            for( auto &component : components )
+            {
+                component->handleEvent( IEvent::Type::Actor, IComponent::childRemoved,
+                                        Array<Parameter>(), this, child, nullptr );
+            }
+        }
+
+        if( auto p = getChildrenPtr() )
+        {
+            auto &children = *p;
+            for( auto &c : children )
+            {
+                c->childRemovedInHierarchy( child );
+            }
+        }
+    }
+
+    void Actor::childAddedInHierarchy( SmartPtr<IActor> child )
+    {
+        if( auto p = getComponentsPtr() )
+        {
+            auto components = *p;
+            for( auto &component : components )
+            {
+                component->handleEvent( IEvent::Type::Actor, IComponent::childAddedInHierarchy,
+                                        Array<Parameter>(), this, child, nullptr );
+            }
+        }
+
+        if( auto p = getChildrenPtr() )
+        {
+            auto children = *p;
+            for( auto &c : children )
+            {
+                c->childAddedInHierarchy( child );
+            }
+        }
+    }
+
+    void Actor::childRemovedInHierarchy( SmartPtr<IActor> child )
+    {
+        if( auto p = getComponentsPtr() )
+        {
+            auto &components = *p;
+            for( auto &component : components )
+            {
+                component->handleEvent( IEvent::Type::Actor, IComponent::childRemovedInHierarchy,
+                                        Array<Parameter>(), this, child, nullptr );
+            }
+        }
+
+        if( auto p = getChildrenPtr() )
+        {
+            auto &children = *p;
+            for( auto &c : children )
+            {
+                c->childRemovedInHierarchy( child );
+            }
+        }
+    }
+
+    void Actor::removeChildren()
+    {
+        if( auto p = getChildrenPtr() )
+        {
+            auto &children = *p;
+            for( auto &child : children )
+            {
+                auto pChild = fb::static_pointer_cast<Actor>( child );
+                pChild->setParent( nullptr );
+            }
+        }
+    }
+
+    auto Actor::findChild( const String &name ) -> SmartPtr<IActor>
+    {
+        if( auto p = getChildrenPtr() )
+        {
+            auto &children = *p;
+            for( auto &child : children )
+            {
+                if( child->getName() == name )
+                {
+                    return child;
                 }
             }
         }
 
-        SmartPtr<ISharedObject> Actor::toData() const
+        return nullptr;
+    }
+
+    auto Actor::getChildren() const -> Array<SmartPtr<IActor>>
+    {
+        if( auto p = getChildrenPtr() )
         {
-            auto typeManager = TypeManager::instance();
+            auto &children = *p;
+            return Array<SmartPtr<IActor>>( children.begin(), children.end() );
+        }
 
-            //FB_ASSERT( getLoadingState() == LoadingState::Unloaded );
-            //FB_ASSERT( getHandle()->getInstanceId() != std::numeric_limits<u32>::max() );
+        return {};
+    }
 
-            auto actorData = fb::make_ptr<Properties>();
+    auto Actor::getChildrenPtr() const -> SharedPtr<ConcurrentArray<SmartPtr<IActor>>>
+    {
+        return m_children;
+    }
 
-            auto label = getName();
-            auto bStatic = isStatic();
-            auto visible = isVisible();
-            auto enabled = isEnabled();
+    auto Actor::getAllChildren( SmartPtr<IActor> parent ) const -> Array<SmartPtr<IActor>>
+    {
+        Array<SmartPtr<IActor>> children;
+        children.reserve( 128 );
 
-            actorData->setProperty( "label", label );
-            actorData->setProperty( "static", bStatic );
-            actorData->setProperty( "visible", visible );
-            actorData->setProperty( "enabled", enabled );
+        auto childCount = parent->getNumChildren();
 
-            if( auto handle = getHandle() )
+        for( u32 i = 0; i < childCount; i++ )
+        {
+            auto child = parent->getChildByIndex( i );
+            children.push_back( child );
+
+            auto childChildren = getAllChildren( child );
+
+            children.insert( children.end(), childChildren.begin(), childChildren.end() );
+        }
+
+        return children;
+    }
+
+    auto Actor::getAllChildren() const -> Array<SmartPtr<IActor>>
+    {
+        auto thisActor = getSharedFromThis<IActor>();
+        return getAllChildren( thisActor );
+    }
+
+    void Actor::setSiblingIndex( s32 index )
+    {
+        auto parent = getParent();
+        if( parent != nullptr )
+        {
+            parent->setChildSiblingIndex( this, index );
+        }
+    }
+
+    void Actor::setChildSiblingIndex( SmartPtr<IActor> child, s32 index )
+    {
+        auto p = getChildrenPtr();
+        if( p != nullptr )
+        {
+            auto &children = *p;
+            if( index < children.size() )
             {
-                auto uuid = handle->getUUID();
-                if( StringUtil::isNullOrEmpty( uuid ) )
-                {
-                    uuid = StringUtil::getUUID();
-                }
-
-                actorData->setProperty( "uuid", uuid );
+                auto array = Array<SmartPtr<IActor>>( children.begin(), children.end() );
+                array.erase( std::remove( array.begin(), array.end(), child ), array.end() );
+                array.insert( array.begin() + index, child );
+                m_children =
+                    fb::make_shared<ConcurrentArray<SmartPtr<IActor>>>( array.begin(), array.end() );
             }
+        }
+    }
+
+    auto Actor::getParent() const -> SmartPtr<IActor>
+    {
+        auto p = m_parent.load();
+        return p.lock();
+    }
+
+    void Actor::setParent( SmartPtr<IActor> parent )
+    {
+        auto p = getParent();
+        if( p != parent )
+        {
+            m_parent = parent;
 
             if( auto transform = getTransform() )
             {
-                auto localTransform = transform->getLocalTransform();
-                auto worldTransform = transform->getWorldTransform();
-
-                auto localTransformProperties = localTransform.getProperties();
-                localTransformProperties->setName( "localTransform" );
-                actorData->addChild( localTransformProperties );
-
-                auto worldTransformProperties = worldTransform.getProperties();
-                worldTransformProperties->setName( "worldTransform" );
-                actorData->addChild( worldTransformProperties );
-            }
-
-            if( auto p = this->getChildrenPtr() )
-            {
-                auto &children = *p;
-                for( auto child : children )
-                {
-                    if( child )
-                    {
-                        FB_ASSERT( child->getHandle()->getInstanceId() !=
-                                   std::numeric_limits<u32>::max() );
-
-                        auto pChildActorData = fb::static_pointer_cast<Properties>( child->toData() );
-                        pChildActorData->setName( "child" );
-                        actorData->addChild( pChildActorData );
-                    }
-                }
+                transform->parentChanged( parent, p );
             }
 
             auto components = getComponents();
             for( auto component : components )
             {
-                auto componentData = fb::static_pointer_cast<Properties>( component->toData() );
-                if( componentData )
-                {
-                    componentData->setName( "component" );
+                Array<Parameter> arguments;
+                arguments.resize( 2 );
 
-                    auto typeinfo = component->getTypeInfo();
-                    auto className = typeManager->getName( typeinfo );
+                arguments[0].object = parent;
+                arguments[1].object = p;
 
-                    auto componentType = StringUtil::replaceAll( className, "class ", "" );
-                    componentData->setProperty( "componentType", componentType );
-
-                    actorData->addChild( componentData );
-                }
+                component->handleEvent( IEvent::Type::Actor, IComponent::parentChanged, arguments, this,
+                                        component, nullptr );
             }
-
-            return actorData;
         }
+    }
 
-        void Actor::fromData( SmartPtr<ISharedObject> data )
+    auto Actor::toData() const -> SmartPtr<ISharedObject>
+    {
+        auto typeManager = TypeManager::instance();
+
+        //FB_ASSERT( getLoadingState() == LoadingState::Unloaded );
+        //FB_ASSERT( getHandle()->getInstanceId() != std::numeric_limits<u32>::max() );
+
+        auto actorData = fb::make_ptr<Properties>();
+
+        auto label = getName();
+        auto bStatic = isStatic();
+        auto visible = isVisible();
+        auto enabled = isEnabled();
+
+        actorData->setProperty( "label", label );
+        actorData->setProperty( "static", bStatic );
+        actorData->setProperty( "visible", visible );
+        actorData->setProperty( "enabled", enabled );
+
+        if( auto handle = getHandle() )
         {
-            try
+            auto uuid = handle->getUUID();
+            if( StringUtil::isNullOrEmpty( uuid ) )
             {
-                FB_ASSERT( data );
-
-                if( !data )
-                {
-                    FB_LOG_ERROR( "CActor::fromData data null." );
-                    return;
-                }
-
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto factoryManager = applicationManager->getFactoryManager();
-                FB_ASSERT( factoryManager );
-
-                auto sceneManager = applicationManager->getSceneManager();
-                FB_ASSERT( sceneManager );
-
-                auto actorData = fb::static_pointer_cast<Properties>( data );
-
-                auto label = String();
-                auto enabled = true;
-                auto visible = true;
-                auto bStatic = false;
-
-                actorData->getPropertyValue( "label", label );
-                actorData->getPropertyValue( "enabled", enabled );
-                actorData->getPropertyValue( "visible", visible );
-                actorData->getPropertyValue( "static", bStatic );
-
-                setName( label );
-                setEnabled( enabled );
-                setVisible( visible );
-                setStatic( bStatic );
-
-                if( auto handle = getHandle() )
-                {
-                    auto uuid = String();
-                    actorData->getPropertyValue( "uuid", uuid );
-
-                    if( StringUtil::isNullOrEmpty( uuid ) )
-                    {
-                        uuid = StringUtil::getUUID();
-                    }
-
-                    handle->setUUID( uuid );
-                }
-
-                if( auto transform = getTransform() )
-                {
-                    if( auto localTransformChild = actorData->getChild( "localTransform" ) )
-                    {
-                        auto localTransform = transform->getLocalTransform();
-                        localTransform.setProperties( localTransformChild );
-
-                        transform->setLocalTransform( localTransform );
-                    }
-
-                    if( auto worldTransformChild = actorData->getChild( "worldTransform" ) )
-                    {
-                        auto worldTransform = transform->getWorldTransform();
-                        worldTransform.setProperties( worldTransformChild );
-
-                        //transform->setWorldTransform( worldTransform );
-                    }
-                }
-
-                auto componentsData = actorData->getChildrenByName( "component" );
-
-                auto components = Array<SmartPtr<IComponent>>();
-                components.reserve( componentsData.size() );
-
-                for( auto &component : componentsData )
-                {
-                    auto componentType = String();
-                    component->getPropertyValue( "componentType", componentType );
-
-                    auto pComponent = factoryManager->createObjectFromType<IComponent>( componentType );
-                    if( !pComponent )
-                    {
-                        auto componentTypeClean = StringUtil::replaceAll( componentType, "fb::", "" );
-                        pComponent =
-                            factoryManager->createObjectFromType<IComponent>( componentTypeClean );
-                    }
-
-                    if( !pComponent )
-                    {
-                        auto componentTypeClean = sceneManager->getComponentFactoryType( componentType );
-                        pComponent =
-                            factoryManager->createObjectFromType<IComponent>( componentTypeClean );
-                    }
-
-                    if( pComponent )
-                    {
-                        components.push_back( pComponent );
-                    }
-                }
-
-                for( size_t i = 0; i < components.size(); ++i )
-                {
-                    try
-                    {
-                        auto &pComponent = components[i];
-                        addComponentInstance( pComponent );
-                    }
-                    catch( std::exception &e )
-                    {
-                        FB_LOG_EXCEPTION( e );
-                    }
-                }
-
-                for( size_t i = 0; i < components.size(); ++i )
-                {
-                    try
-                    {
-                        auto &pComponent = components[i];
-                        auto &pComponentData = componentsData[i];
-                        // FB_ASSERT(pComponent);
-
-                        if( pComponent )
-                        {
-                            pComponent->setActor( this );
-
-                            pComponent->fromData( pComponentData );
-
-                            pComponent->load( nullptr );
-                            componentLoaded( pComponent );
-                        }
-                    }
-                    catch( std::exception &e )
-                    {
-                        FB_LOG_EXCEPTION( e );
-                    }
-                }
-
-                auto childrenData = actorData->getChildrenByName( "child" );
-                for( auto &child : childrenData )
-                {
-                    auto childActor = sceneManager->createActor();
-                    FB_ASSERT( childActor );
-
-                    childActor->fromData( child );
-                    addChild( childActor );
-
-                    //FB_ASSERT( getChildrenPtr()->size() == childrenData.size() );
-                    // FB_ASSERT(childActor->getComponents<IComponent>().size() ==
-                    // child.components.size());
-                }
-
-                updateTransform();
+                uuid = StringUtil::getUUID();
             }
-            catch( std::exception &e )
+
+            actorData->setProperty( "uuid", uuid );
+        }
+
+        if( auto transform = getTransform() )
+        {
+            auto localTransform = transform->getLocalTransform();
+            auto worldTransform = transform->getWorldTransform();
+
+            auto localTransformProperties = localTransform.getProperties();
+            localTransformProperties->setName( "localTransform" );
+            actorData->addChild( localTransformProperties );
+
+            auto worldTransformProperties = worldTransform.getProperties();
+            worldTransformProperties->setName( "worldTransform" );
+            actorData->addChild( worldTransformProperties );
+        }
+
+        if( auto p = this->getChildrenPtr() )
+        {
+            auto &children = *p;
+            for( auto child : children )
             {
-                FB_LOG_EXCEPTION( e );
+                if( child )
+                {
+                    FB_ASSERT( child->getHandle()->getInstanceId() != std::numeric_limits<u32>::max() );
+
+                    auto pChildActorData = fb::static_pointer_cast<Properties>( child->toData() );
+                    pChildActorData->setName( "child" );
+                    actorData->addChild( pChildActorData );
+                }
             }
         }
 
-        SmartPtr<Properties> Actor::getProperties() const
+        auto components = getComponents();
+        for( auto component : components )
         {
-            auto properties = Resource<IActor>::getProperties();
+            auto componentData = fb::static_pointer_cast<Properties>( component->toData() );
+            if( componentData )
+            {
+                componentData->setName( "component" );
 
-            properties->setProperty( "name", getName() );
+                auto typeinfo = component->getTypeInfo();
+                auto className = typeManager->getName( typeinfo );
 
-            bool bIsStatic = isStatic();
-            properties->setProperty( "static", bIsStatic );
+                auto componentType = StringUtil::replaceAll( className, "class ", "" );
+                componentData->setProperty( "componentType", componentType );
 
-            auto enabled = isEnabled();
-            properties->setProperty( "enabled", enabled );
-
-            return properties;
+                actorData->addChild( componentData );
+            }
         }
 
-        void Actor::setProperties( SmartPtr<Properties> properties )
+        return actorData;
+    }
+
+    void Actor::fromData( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            FB_ASSERT( data );
+
+            if( !data )
+            {
+                FB_LOG_ERROR( "CActor::fromData data null." );
+                return;
+            }
+
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto factoryManager = applicationManager->getFactoryManager();
+            FB_ASSERT( factoryManager );
+
             auto sceneManager = applicationManager->getSceneManager();
+            FB_ASSERT( sceneManager );
 
-            auto name = String();
-            properties->getPropertyValue( "label", name );
-            setName( name );
+            auto actorData = fb::static_pointer_cast<Properties>( data );
 
-            if( name == "Vehicle" )
-            {
-                int a = 0;
-                a = 0;
-            }
+            auto label = String();
+            auto enabled = true;
+            auto visible = true;
+            auto bStatic = false;
 
-            bool bIsStatic = false;
-            properties->getPropertyValue( "static", bIsStatic );
-            setStatic( bIsStatic );
+            actorData->getPropertyValue( "label", label );
+            actorData->getPropertyValue( "enabled", enabled );
+            actorData->getPropertyValue( "visible", visible );
+            actorData->getPropertyValue( "static", bStatic );
 
-            auto enabled = isEnabled();
-            properties->getPropertyValue( "enabled", enabled );
+            setName( label );
             setEnabled( enabled );
+            setVisible( visible );
+            setStatic( bStatic );
 
             if( auto handle = getHandle() )
             {
                 auto uuid = String();
-                if( properties->getPropertyValue( "uuid", uuid ) )
-                {
-                    if( StringUtil::isNullOrEmpty( uuid ) )
-                    {
-                        uuid = StringUtil::getUUID();
-                    }
+                actorData->getPropertyValue( "uuid", uuid );
 
-                    handle->setUUID( uuid );
+                if( StringUtil::isNullOrEmpty( uuid ) )
+                {
+                    uuid = StringUtil::getUUID();
                 }
+
+                handle->setUUID( uuid );
             }
 
             if( auto transform = getTransform() )
             {
-                if( auto localTransformChild = properties->getChild( "localTransform" ) )
+                if( auto localTransformChild = actorData->getChild( "localTransform" ) )
                 {
                     auto localTransform = transform->getLocalTransform();
                     localTransform.setProperties( localTransformChild );
 
                     transform->setLocalTransform( localTransform );
-                    transform->setDirty( true );
                 }
 
-                if( auto worldTransformChild = properties->getChild( "worldTransform" ) )
+                if( auto worldTransformChild = actorData->getChild( "worldTransform" ) )
                 {
                     auto worldTransform = transform->getWorldTransform();
                     worldTransform.setProperties( worldTransformChild );
@@ -1912,30 +1522,27 @@ namespace fb
                 }
             }
 
-            auto componentsData = properties->getChildrenByName( "components" );
-            auto componentsDataAlt = properties->getChildrenByName( "component" );
-            componentsData.insert( componentsData.end(), componentsDataAlt.begin(),
-                                   componentsDataAlt.end() );
+            auto componentsData = actorData->getChildrenByName( "component" );
 
             auto components = Array<SmartPtr<IComponent>>();
             components.reserve( componentsData.size() );
 
-            for( auto componentData : componentsData )
+            for( auto &component : componentsData )
             {
                 auto componentType = String();
-                componentData->getPropertyValue( "componentType", componentType );
+                component->getPropertyValue( "componentType", componentType );
 
-                auto pComponent = factoryManager->createObjectFromType<Component>( componentType );
+                auto pComponent = factoryManager->createObjectFromType<IComponent>( componentType );
                 if( !pComponent )
                 {
-                    componentType = StringUtil::replaceAll( componentType, "fb::", "" );
-                    pComponent = factoryManager->createObjectFromType<IComponent>( componentType );
+                    auto componentTypeClean = StringUtil::replaceAll( componentType, "fb::", "" );
+                    pComponent = factoryManager->createObjectFromType<IComponent>( componentTypeClean );
                 }
 
                 if( !pComponent )
                 {
-                    componentType = sceneManager->getComponentFactoryType( componentType );
-                    pComponent = factoryManager->createObjectFromType<IComponent>( componentType );
+                    auto componentTypeClean = sceneManager->getComponentFactoryType( componentType );
+                    pComponent = factoryManager->createObjectFromType<IComponent>( componentTypeClean );
                 }
 
                 if( pComponent )
@@ -1944,11 +1551,10 @@ namespace fb
                 }
             }
 
-            for( size_t i = 0; i < components.size(); ++i )
+            for( auto &pComponent : components )
             {
                 try
                 {
-                    auto &pComponent = components[i];
                     addComponentInstance( pComponent );
                 }
                 catch( std::exception &e )
@@ -1957,36 +1563,20 @@ namespace fb
                 }
             }
 
-            //FB_ASSERT( components.size() == componentsData.size() );
-
             for( size_t i = 0; i < components.size(); ++i )
             {
                 try
                 {
                     auto &pComponent = components[i];
-                    auto &componentData = componentsData[i];
+                    auto &pComponentData = componentsData[i];
+                    // FB_ASSERT(pComponent);
 
                     if( pComponent )
                     {
                         pComponent->setActor( this );
-                        pComponent->fromData( componentData );
-                    }
-                }
-                catch( std::exception &e )
-                {
-                    FB_LOG_EXCEPTION( e );
-                }
-            }
 
-            for( size_t i = 0; i < components.size(); ++i )
-            {
-                try
-                {
-                    auto &pComponent = components[i];
-                    auto &componentData = componentsData[i];
+                        pComponent->fromData( pComponentData );
 
-                    if( pComponent )
-                    {
                         pComponent->load( nullptr );
                         componentLoaded( pComponent );
                     }
@@ -1997,79 +1587,215 @@ namespace fb
                 }
             }
 
-            auto childrenData = properties->getChildrenByName( "children" );
-            auto childrenDataAlt = properties->getChildrenByName( "child" );
-            childrenData.insert( childrenData.end(), childrenDataAlt.begin(), childrenDataAlt.end() );
-
-            for( auto &childData : childrenData )
+            auto childrenData = actorData->getChildrenByName( "child" );
+            for( auto &child : childrenData )
             {
                 auto childActor = sceneManager->createActor();
                 FB_ASSERT( childActor );
 
-                childActor->setProperties( childData );
+                childActor->fromData( child );
                 addChild( childActor );
 
-                //FB_ASSERT( childActor->getChildren()->size() == childrenData.size() );
+                //FB_ASSERT( getChildrenPtr()->size() == childrenData.size() );
                 // FB_ASSERT(childActor->getComponents<IComponent>().size() ==
                 // child.components.size());
             }
 
             updateTransform();
         }
-
-        void Actor::setState( State state )
+        catch( std::exception &e )
         {
-            if( getState() != state )
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    auto Actor::getProperties() const -> SmartPtr<Properties>
+    {
+        auto properties = Resource<IActor>::getProperties();
+
+        properties->setProperty( "name", getName() );
+
+        bool bIsStatic = isStatic();
+        properties->setProperty( "static", bIsStatic );
+
+        auto enabled = isEnabled();
+        properties->setProperty( "enabled", enabled );
+
+        return properties;
+    }
+
+    void Actor::setProperties( SmartPtr<Properties> properties )
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto factoryManager = applicationManager->getFactoryManager();
+        auto sceneManager = applicationManager->getSceneManager();
+
+        auto name = String();
+        properties->getPropertyValue( "label", name );
+        setName( name );
+
+        bool bIsStatic = false;
+        properties->getPropertyValue( "static", bIsStatic );
+        setStatic( bIsStatic );
+
+        auto enabled = isEnabled();
+        properties->getPropertyValue( "enabled", enabled );
+        setEnabled( enabled );
+
+        if( auto handle = getHandle() )
+        {
+            auto uuid = String();
+            if( properties->getPropertyValue( "uuid", uuid ) )
             {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto pSceneManager = applicationManager->getSceneManager();
-                auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-                FB_ASSERT( sceneManager );
-
-                auto handle = getHandle();
-                auto id = handle->getInstanceId();
-                auto fsm = sceneManager->getFSM( id );
-                if( fsm )
+                if( StringUtil::isNullOrEmpty( uuid ) )
                 {
-                    fsm->setState<State>( state );
+                    uuid = StringUtil::getUUID();
                 }
 
-                if( auto p = getChildrenPtr() )
+                handle->setUUID( uuid );
+            }
+        }
+
+        if( auto transform = getTransform() )
+        {
+            if( auto localTransformChild = properties->getChild( "localTransform" ) )
+            {
+                auto localTransform = transform->getLocalTransform();
+                localTransform.setProperties( localTransformChild );
+
+                transform->setLocalTransform( localTransform );
+                transform->setDirty( true );
+            }
+
+            if( auto worldTransformChild = properties->getChild( "worldTransform" ) )
+            {
+                auto worldTransform = transform->getWorldTransform();
+                worldTransform.setProperties( worldTransformChild );
+
+                //transform->setWorldTransform( worldTransform );
+            }
+        }
+
+        auto componentsData = properties->getChildrenByName( "components" );
+        auto componentsDataAlt = properties->getChildrenByName( "component" );
+        componentsData.insert( componentsData.end(), componentsDataAlt.begin(),
+                               componentsDataAlt.end() );
+
+        auto components = Array<SmartPtr<IComponent>>();
+        components.reserve( componentsData.size() );
+
+        for( auto componentData : componentsData )
+        {
+            auto componentType = String();
+            componentData->getPropertyValue( "componentType", componentType );
+
+            auto pComponent = factoryManager->createObjectFromType<Component>( componentType );
+            if( !pComponent )
+            {
+                auto nameSplit = StringUtil::split( componentType, "::" );
+                std::reverse( nameSplit.begin(), nameSplit.end() );
+
+                for( auto componentTypeName : nameSplit )
                 {
-                    auto &children = *p;
-                    for( auto &child : children )
+                    pComponent = factoryManager->createObjectFromType<Component>( componentTypeName );
+                    if( pComponent )
                     {
-                        child->setState( state );
+                        break;
                     }
                 }
             }
-        }
 
-        IActor::State Actor::getState() const
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-            FB_ASSERT( sceneManager );
-
-            auto handle = getHandle();
-            auto id = handle->getInstanceId();
-            auto fsm = sceneManager->getFSM( id );
-            if( fsm )
+            if( !pComponent )
             {
-                return fsm->getState<State>();
+                componentType = sceneManager->getComponentFactoryType( componentType );
+                pComponent = factoryManager->createObjectFromType<IComponent>( componentType );
             }
 
-            return static_cast<State>( 0 );
+            if( pComponent )
+            {
+                components.emplace_back( pComponent );
+            }
         }
 
-        void Actor::setGameState( GameState state )
+        for( auto &pComponent : components )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            try
+            {
+                addComponentInstance( pComponent );
+            }
+            catch( std::exception &e )
+            {
+                FB_LOG_EXCEPTION( e );
+            }
+        }
+
+        //FB_ASSERT( components.size() == componentsData.size() );
+
+        for( size_t i = 0; i < components.size(); ++i )
+        {
+            try
+            {
+                auto &pComponent = components[i];
+                auto &componentData = componentsData[i];
+
+                if( pComponent )
+                {
+                    pComponent->setActor( this );
+                    pComponent->fromData( componentData );
+                }
+            }
+            catch( std::exception &e )
+            {
+                FB_LOG_EXCEPTION( e );
+            }
+        }
+
+        for( size_t i = 0; i < components.size(); ++i )
+        {
+            try
+            {
+                auto &pComponent = components[i];
+                auto &componentData = componentsData[i];
+
+                if( pComponent )
+                {
+                    pComponent->load( nullptr );
+                    componentLoaded( pComponent );
+                }
+            }
+            catch( std::exception &e )
+            {
+                FB_LOG_EXCEPTION( e );
+            }
+        }
+
+        auto childrenData = properties->getChildrenByName( "children" );
+        auto childrenDataAlt = properties->getChildrenByName( "child" );
+        childrenData.insert( childrenData.end(), childrenDataAlt.begin(), childrenDataAlt.end() );
+
+        for( auto &childData : childrenData )
+        {
+            auto childActor = sceneManager->createActor();
+            FB_ASSERT( childActor );
+
+            childActor->setProperties( childData );
+            addChild( childActor );
+
+            //FB_ASSERT( childActor->getChildren()->size() == childrenData.size() );
+            // FB_ASSERT(childActor->getComponents<IComponent>().size() ==
+            // child.components.size());
+        }
+
+        updateTransform();
+    }
+
+    void Actor::setState( State state )
+    {
+        if( getState() != state )
+        {
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto pSceneManager = applicationManager->getSceneManager();
@@ -2081,7 +1807,7 @@ namespace fb
             auto fsm = sceneManager->getFSM( id );
             if( fsm )
             {
-                fsm->setState<GameState>( state );
+                fsm->setState<State>( state );
             }
 
             if( auto p = getChildrenPtr() )
@@ -2089,220 +1815,244 @@ namespace fb
                 auto &children = *p;
                 for( auto &child : children )
                 {
-                    child->setGameState( state );
+                    child->setState( state );
                 }
             }
         }
+    }
 
-        IActor::GameState Actor::getGameState() const
+    auto Actor::getState() const -> IActor::State
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto pSceneManager = applicationManager->getSceneManager();
+        auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
+        FB_ASSERT( sceneManager );
+
+        auto handle = getHandle();
+        auto id = handle->getInstanceId();
+        auto fsm = sceneManager->getFSM( id );
+        if( fsm )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-            FB_ASSERT( sceneManager );
-
-            auto handle = getHandle();
-            auto id = handle->getInstanceId();
-            auto fsm = sceneManager->getFSM( id );
-            if( fsm )
-            {
-                return fsm->getState<GameState>();
-            }
-
-            return static_cast<GameState>( 0 );
+            return fsm->getState<State>();
         }
 
-        u32 Actor::getFlags() const
+        return static_cast<State>( 0 );
+    }
+
+    void Actor::setGameState( GameState state )
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto pSceneManager = applicationManager->getSceneManager();
+        auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
+        FB_ASSERT( sceneManager );
+
+        auto handle = getHandle();
+        auto id = handle->getInstanceId();
+        auto fsm = sceneManager->getFSM( id );
+        if( fsm )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-
-            auto handle = getHandle();
-            auto id = handle->getInstanceId();
-            if( id != std::numeric_limits<u32>::max() )
-            {
-                if( sceneManager )
-                {
-                    return sceneManager->getCurrentFlags( id );
-                }
-            }
-
-            return 0;
+            fsm->setState<GameState>( state );
         }
 
-        void Actor::setFlags( u32 flags )
+        if( auto p = getChildrenPtr() )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-            FB_ASSERT( sceneManager );
-
-            auto handle = getHandle();
-            auto id = handle->getInstanceId();
-            sceneManager->setFlags( id, flags );
-        }
-
-        bool Actor::getFlag( u32 flag ) const
-        {
-            return ( getFlags() & flag ) != 0;
-        }
-
-        void Actor::setFlag( u32 flag, bool value )
-        {
-            auto flags = getFlags();
-            if( value )
+            auto &children = *p;
+            for( auto &child : children )
             {
-                flags |= flag;
-            }
-            else
-            {
-                flags &= ~flag;
-            }
-
-            setFlags( flags );
-        }
-
-        u32 Actor::getNewFlags() const
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-            FB_ASSERT( sceneManager );
-
-            auto handle = getHandle();
-            auto id = handle->getInstanceId();
-            if( id != std::numeric_limits<u32>::max() )
-            {
-                return sceneManager->getNewFlags( id );
-            }
-
-            return 0;
-        }
-
-        void Actor::setNewFlags( u32 flags )
-        {
-            if( getNewFlags() != flags )
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto pSceneManager = applicationManager->getSceneManager();
-                auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-                FB_ASSERT( sceneManager );
-
-                auto handle = getHandle();
-                auto id = handle->getInstanceId();
-                sceneManager->setNewFlags( id, flags );
-
-                sceneManager->addDirty( this );
+                child->setGameState( state );
             }
         }
+    }
 
-        bool Actor::getNewFlag( u32 flag ) const
+    auto Actor::getGameState() const -> IActor::GameState
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto pSceneManager = applicationManager->getSceneManager();
+        auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
+        FB_ASSERT( sceneManager );
+
+        auto handle = getHandle();
+        auto id = handle->getInstanceId();
+        auto fsm = sceneManager->getFSM( id );
+        if( fsm )
         {
-            return ( getNewFlags() & flag ) != 0;
+            return fsm->getState<GameState>();
         }
 
-        void Actor::setNewFlag( u32 flag, bool value )
-        {
-            auto flags = getNewFlags();
-            if( value )
-            {
-                flags |= flag;
-            }
-            else
-            {
-                flags &= ~flag;
-            }
+        return static_cast<GameState>( 0 );
+    }
 
-            setNewFlags( flags );
+    auto Actor::getFlags() const -> u32
+    {
+        return *m_flags;
+    }
+
+    void Actor::setFlags( u32 flags )
+    {
+        const auto currentFlags = getFlags();
+        if( currentFlags != flags )
+        {
+            Array<Parameter> arguments;
+            arguments.resize( 2 );
+
+            arguments[0].setU32( currentFlags );
+            arguments[1].setU32( flags );
+
+            *m_flags = flags;
+
+            sendEvent( IEvent::Type::Actor, IComponent::actorFlagsChanged, arguments, this, nullptr,
+                       nullptr );
+        }
+    }
+
+    auto Actor::getFlag( u32 flag ) const -> bool
+    {
+        auto flags = getFlags();
+        return ( flags & flag ) != 0;
+    }
+
+    void Actor::setFlag( u32 flag, bool value )
+    {
+        auto flags = getFlags();
+        if( value )
+        {
+            flags |= flag;
+        }
+        else
+        {
+            flags &= ~flag;
         }
 
-        void Actor::updateVisibility()
+        setFlags( flags );
+    }
+
+    void Actor::updateVisibility()
+    {
+        auto enabledInScene = isEnabledInScene();
+        setFlag( ActorFlagEnabledInScene, enabledInScene );
+
+        if( auto p = getChildrenPtr() )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto pSceneManager = applicationManager->getSceneManager();
-            auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-            FB_ASSERT( sceneManager );
-            FB_ASSERT( sceneManager->isValid() );
-            FB_ASSERT( sceneManager->isLoaded() );
-
-            auto handle = getHandle();
-            FB_ASSERT( handle );
-
-            auto id = handle->getInstanceId();
-            FB_ASSERT( id != std::numeric_limits<u32>::max() );
-
-            auto flags = sceneManager->getNewFlags( id );
-
-            auto enabledInScene = isEnabledInScene();
-            if( BitUtil::getFlagValue( flags, ActorFlagEnabledInScene ) != enabledInScene )
+            auto &children = *p;
+            for( auto &child : children )
             {
-                auto newFlags = BitUtil::setFlagValue( flags, ActorFlagEnabledInScene, enabledInScene );
-                sceneManager->setNewFlags( id, newFlags );
-                sceneManager->addDirty( this );
+                child->updateVisibility();
             }
+        }
+    }
 
-            if( auto p = getChildrenPtr() )
+    auto Actor::handleEvent( IEvent::Type eventType, hash_type eventValue,
+                             const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                             SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) -> Parameter
+    {
+        if( auto p = getComponentsPtr() )
+        {
+            auto &components = *p;
+            for( auto component : components )
             {
-                auto &children = *p;
-                for( auto &child : children )
-                {
-                    child->updateVisibility();
-                }
+                component->handleEvent( eventType, eventValue, arguments, sender, object, event );
             }
         }
 
-        IFSM::ReturnType Actor::ActorFsmListener::handleEvent( u32 state, IFSM::Event eventType )
+        if( auto p = getChildrenPtr() )
         {
-            FB_ASSERT( m_owner );
-            return m_owner->handleActorEvent( state, eventType );
+            auto &children = *p;
+            for( auto &child : children )
+            {
+                child->handleEvent( eventType, eventValue, arguments, sender, object, event );
+            }
         }
 
-        Actor *Actor::ActorFsmListener::getOwner() const
+        return {};
+    }
+
+    auto Actor::sendEvent( IEvent::Type eventType, hash_type eventValue,
+                           const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                           SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) -> Parameter
+    {
+        if( auto p = getComponentsPtr() )
         {
-            return m_owner;
+            auto &components = *p;
+            for( auto component : components )
+            {
+                component->handleEvent( eventType, eventValue, arguments, sender, object, event );
+            }
         }
 
-        void Actor::ActorFsmListener::setOwner( Actor *owner )
+        if( auto p = getChildrenPtr() )
         {
-            m_owner = owner;
+            auto &children = *p;
+            for( auto &child : children )
+            {
+                child->sendEvent( eventType, eventValue, arguments, sender, object, event );
+            }
         }
 
-        IFSM::ReturnType Actor::ActorGameFsmListener::handleEvent( u32 state, IFSM::Event eventType )
+        return {};
+    }
+
+    void Actor::ActorFsmListener::unload( SmartPtr<ISharedObject> data )
+    {
+        setOwner( nullptr );
+    }
+
+    auto Actor::ActorFsmListener::handleEvent( u32 state, IFSM::Event eventType ) -> IFSM::ReturnType
+    {
+        if( auto owner = getOwner() )
         {
-            FB_ASSERT( m_owner );
-            return m_owner->handleActorGameEvent( state, eventType );
+            return owner->handleActorEvent( state, eventType );
         }
 
-        Actor *Actor::ActorGameFsmListener::getOwner() const
+        return IFSM::ReturnType::NotHandled;
+    }
+
+    auto Actor::ActorFsmListener::getOwner() const -> SmartPtr<Actor>
+    {
+        return m_owner;
+    }
+
+    void Actor::ActorFsmListener::setOwner( SmartPtr<Actor> owner )
+    {
+        m_owner = owner;
+    }
+
+    void Actor::ActorGameFsmListener::unload( SmartPtr<ISharedObject> data )
+    {
+        setOwner( nullptr );
+    }
+
+    auto Actor::ActorGameFsmListener::handleEvent( u32 state, IFSM::Event eventType ) -> IFSM::ReturnType
+    {
+        if( auto owner = getOwner() )
         {
-            return m_owner;
+            return owner->handleActorGameEvent( state, eventType );
         }
 
-        void Actor::ActorGameFsmListener::setOwner( Actor *owner )
-        {
-            m_owner = owner;
-        }
+        return IFSM::ReturnType::NotHandled;
+    }
 
-        void Actor::registerClass()
-        {
-            using namespace fb;
-            using namespace rttr;
+    auto Actor::ActorGameFsmListener::getOwner() const -> SmartPtr<Actor>
+    {
+        return m_owner;
+    }
 
-            //registration::class_<Actor>( "Actor" ).property( "transform", &Actor::m_transform );
-        }
+    void Actor::ActorGameFsmListener::setOwner( SmartPtr<Actor> owner )
+    {
+        m_owner = owner;
+    }
 
-    }  // namespace scene
-}  // end namespace fb
+    void Actor::registerClass()
+    {
+        using namespace fb;
+        using namespace rttr;
+
+        //registration::class_<Actor>( "Actor" ).property( "transform", &Actor::m_transform );
+    }
+
+}  // namespace fb::scene

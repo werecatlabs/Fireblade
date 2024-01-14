@@ -17,4 +17,4 @@ namespace fb
 
 }  // namespace fb
 
-#endif // IAudioSettings_h__
+#endif  // IAudioSettings_h__

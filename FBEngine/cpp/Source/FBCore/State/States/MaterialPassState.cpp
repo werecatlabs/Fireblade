@@ -7,15 +7,11 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, MaterialPassState, BaseState );
 
-    MaterialPassState::MaterialPassState()
-    {
-    }
+    MaterialPassState::MaterialPassState() = default;
 
-    MaterialPassState::~MaterialPassState()
-    {
-    }
+    MaterialPassState::~MaterialPassState() = default;
 
-    SmartPtr<IState> MaterialPassState::clone() const
+    auto MaterialPassState::clone() const -> SmartPtr<IState>
     {
         auto state = fb::make_ptr<MaterialPassState>();
 
@@ -45,7 +41,7 @@ namespace fb
         m_roughness = materialPassState->m_roughness;
     }
 
-    ColourF MaterialPassState::getTint() const
+    auto MaterialPassState::getTint() const -> ColourF
     {
         return m_tint;
     }
@@ -56,7 +52,7 @@ namespace fb
         setDirty( true );
     }
 
-    ColourF MaterialPassState::getAmbient() const
+    auto MaterialPassState::getAmbient() const -> ColourF
     {
         return m_ambient;
     }
@@ -67,7 +63,7 @@ namespace fb
         setDirty( true );
     }
 
-    ColourF MaterialPassState::getDiffuse() const
+    auto MaterialPassState::getDiffuse() const -> ColourF
     {
         return m_diffuse;
     }
@@ -81,7 +77,7 @@ namespace fb
         }
     }
 
-    ColourF MaterialPassState::getSpecular() const
+    auto MaterialPassState::getSpecular() const -> ColourF
     {
         return m_specular;
     }
@@ -92,7 +88,7 @@ namespace fb
         setDirty( true );
     }
 
-    ColourF MaterialPassState::getEmissive() const
+    auto MaterialPassState::getEmissive() const -> ColourF
     {
         return m_emissive;
     }
@@ -103,7 +99,7 @@ namespace fb
         setDirty( true );
     }
 
-    f32 MaterialPassState::getMetalness() const
+    auto MaterialPassState::getMetalness() const -> f32
     {
         return m_metalness;
     }
@@ -114,7 +110,7 @@ namespace fb
         setDirty( true );
     }
 
-    f32 MaterialPassState::getRoughness() const
+    auto MaterialPassState::getRoughness() const -> f32
     {
         return m_roughness;
     }
@@ -125,7 +121,7 @@ namespace fb
         setDirty( true );
     }
 
-    bool MaterialPassState::isLightingEnabled() const
+    auto MaterialPassState::isLightingEnabled() const -> bool
     {
         return m_lightingEnabled;
     }

@@ -2,7 +2,7 @@
 #include <FBCore/System/FrameStatistics.h>
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/Core/StringUtil.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IOverlay.h>
 #include <FBCore/Interface/Graphics/IOverlayElement.h>
@@ -14,9 +14,7 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, FrameStatistics, IFrameStatistics );
 
-    FrameStatistics::FrameStatistics()
-    {
-    }
+    FrameStatistics::FrameStatistics() = default;
 
     FrameStatistics::~FrameStatistics()
     {
@@ -25,7 +23,7 @@ namespace fb
 
     void FrameStatistics::update()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto timer = applicationManager->getTimer();
@@ -110,7 +108,7 @@ namespace fb
         {
             setLoadingState( LoadingState::Loading );
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -182,7 +180,7 @@ namespace fb
             {
                 setLoadingState( LoadingState::Unloading );
 
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -224,7 +222,7 @@ namespace fb
         }
     }
 
-    bool FrameStatistics::isValid() const
+    auto FrameStatistics::isValid() const -> bool
     {
         const auto &loadingState = getLoadingState();
         if( loadingState == LoadingState::Loaded )
@@ -268,7 +266,7 @@ namespace fb
         }
     }
 
-    bool FrameStatistics::isVisible() const
+    auto FrameStatistics::isVisible() const -> bool
     {
         if( m_statsOverlay )
         {

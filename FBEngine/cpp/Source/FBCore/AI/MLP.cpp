@@ -22,7 +22,7 @@ namespace fb
     using namespace std;
 
     MLP::MLP( const unsigned long ulNewNumberOfInputs, const unsigned long ulNewNumberOfHiddenNodes,
-                const unsigned long ulNewNumberOfOutputs )
+              const unsigned long ulNewNumberOfOutputs )
     {
         //Record the structure (number of inputs, hidden neurons, and outputs) of the network
         m_numInputs = ulNewNumberOfInputs;
@@ -39,7 +39,7 @@ namespace fb
         m_learningRate = 0.1;
     }
 
-    void MLP::AllocateMemory( void )
+    void MLP::AllocateMemory()
     {
         unsigned long i;
         pdah = new double[m_numHiddenNodes];
@@ -61,7 +61,7 @@ namespace fb
         }
     }
 
-    void MLP::DeallocateMemory( void )
+    void MLP::DeallocateMemory()
     {
         //Deallocate the storage used for current and best weight values.
         unsigned long i;
@@ -85,7 +85,7 @@ namespace fb
         DeallocateMemory();
     }
 
-    void MLP::Reset( void )
+    void MLP::Reset()
     {
         unsigned long i, j;
 
@@ -113,7 +113,7 @@ namespace fb
 
     //This is where the neural network calculates its outputs (Q(a,s) estimates). It is passed a vector containing
     //a and s and returns its estimate of Q(a,s) in the first element of the Array pdao
-    double *MLP::pdGetOutputs( const double *const pdInputs )
+    auto MLP::pdGetOutputs( const double *const pdInputs ) -> double *
     {
         unsigned long i, j;
         double dStimulus;
@@ -203,7 +203,7 @@ namespace fb
         delete[] pddah;
     }
 
-    int MLP::Save( const char *const pFileName )
+    auto MLP::Save( const char *const pFileName ) -> int
     {
         unsigned long i, j;
         assert( pFileName );
@@ -265,7 +265,7 @@ namespace fb
         return 1;
     }
 
-    int MLP::Load( const char *const pFileName )
+    auto MLP::Load( const char *const pFileName ) -> int
     {
         unsigned long i, j;
         //assert(pFileName);
@@ -325,7 +325,7 @@ namespace fb
         return 1;
     }
 
-double MLP::getLearningRate() const
+    auto MLP::getLearningRate() const -> double
     {
         return m_learningRate;
     }

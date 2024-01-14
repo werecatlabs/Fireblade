@@ -14,7 +14,7 @@
 namespace fb
 {
 
-    ObjectTracker::ObjectTracker() : m_logReferences( true ), m_isRunning( true )
+    ObjectTracker::ObjectTracker() : m_isRunning( true )
     {
         m_thread = new std::thread( threadFunc );
     }
@@ -314,7 +314,7 @@ namespace fb
         }
     }
 
-    void ObjectTracker::threadFunc( void )
+    void ObjectTracker::threadFunc()
     {
         while( instance().m_isRunning )
         {
@@ -332,7 +332,7 @@ namespace fb
         }
     }
 
-    ObjectTracker &ObjectTracker::instance()
+    auto ObjectTracker::instance() -> ObjectTracker &
     {
         static ObjectTracker objectTracker;
         return objectTracker;
@@ -348,9 +348,7 @@ namespace fb
     {
     }
 
-    ObjectTracker::ObjectRecord::ObjectRecord()
-    {
-    }
+    ObjectTracker::ObjectRecord::ObjectRecord() = default;
 
     ObjectTracker::ReferenceRecord::ReferenceRecord( void *address, const char *file, const u32 line,
                                                      const char *func, const String &s ) :
@@ -362,7 +360,5 @@ namespace fb
     {
     }
 
-    ObjectTracker::ReferenceRecord::ReferenceRecord()
-    {
-    }
+    ObjectTracker::ReferenceRecord::ReferenceRecord() = default;
 }  // end namespace fb

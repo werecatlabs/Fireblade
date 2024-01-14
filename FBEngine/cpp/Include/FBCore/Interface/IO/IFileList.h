@@ -133,6 +133,13 @@ namespace fb
          */
         virtual void removeFilePtr( const FileInfo &file ) = 0;
 
+        /** Finds file info. */
+        virtual bool findFileInfo( hash64 id, FileInfo &fileInfo, bool ignorePath = false ) const = 0;
+
+        /** Finds file info. */
+        virtual bool findFileInfo( const String &filePath, FileInfo &fileInfo,
+                                   bool ignorePath = false ) const = 0;
+
         /**
          * Checks whether a file with the specified file path exists in this file list.
          *

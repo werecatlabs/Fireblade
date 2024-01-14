@@ -20,6 +20,6 @@ namespace fb
     private:
         SmartPtr<IMeshResource> m_meshResource;
     };
-} // namespace fb
+}  // namespace fb
 
 #endif  // MeshShapeState_h__

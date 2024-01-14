@@ -4,9 +4,10 @@
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IStateContext.h>
 
-
 namespace fb
 {
+
+    /** StateObject is a base class for state objects. */
     class StateContext : public IStateContext
     {
     public:
@@ -15,7 +16,8 @@ namespace fb
 
         void setOwner( SmartPtr<ISharedObject> owner ) override;
 
-        SmartPtr<ISharedObject> getOwner() const override;
+        SmartPtr<ISharedObject> &getOwner() override;
+        const SmartPtr<ISharedObject> &getOwner() const override;
 
         bool isDirty() const override;
 
@@ -38,15 +40,19 @@ namespace fb
         /** @copydoc IStateObject::addEventListener */
         SharedPtr<Array<SmartPtr<IEventListener>>> getEventListeners() const override;
 
-        SmartPtr<IState> getLatestOutputState() const override;
+        SmartPtr<IState> getState() const;
 
-        SmartPtr<IState> getOutputState( time_interval time ) const override;
+        void addState( SmartPtr<IState> state ) override;
+        void removeState( SmartPtr<IState> state );
 
-        void addOutputState( SmartPtr<IState> state ) override;
+        SmartPtr<IState> &getStateByTypeId( u32 typeId ) override;
+        const SmartPtr<IState> &getStateByTypeId( u32 typeId ) const override;
 
-        SmartPtr<IState> getState() const override;
+        Array<SmartPtr<IState>> getStates() const override;
 
-        void setState( SmartPtr<IState> state ) override;
+        SharedPtr<ConcurrentArray<SmartPtr<IState>>> getStatesPtr() const override;
+
+        void setStatesPtr( SharedPtr<ConcurrentArray<SmartPtr<IState>>> states ) override;
 
         void sendMessage( SmartPtr<IStateMessage> message ) override;
 
@@ -56,11 +62,13 @@ namespace fb
 
         /** @copydoc StateObject::triggerEvent */
         Parameter triggerEvent( IEvent::Type eventType, hash_type eventValue,
-                                const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object,
-                                SmartPtr<IEvent> event );
+                                const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
     protected:
+        SmartPtr<ISharedObject> m_owner;
         SmartPtr<IState> m_state;
+        SharedPtr<ConcurrentArray<SmartPtr<IState>>> m_states;
         SharedPtr<Array<SmartPtr<IEventListener>>> m_eventListeners;
     };
 }  // end namespace fb

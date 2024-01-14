@@ -5,69 +5,69 @@
 #include <ui/UIManager.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    void DragDropActorCmd::undo()
     {
+    }
 
-        void DragDropActorCmd::undo()
+    void DragDropActorCmd::redo()
+    {
+    }
+
+    void DragDropActorCmd::execute()
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto sceneManager = applicationManager->getSceneManager();
+        auto scene = sceneManager->getCurrentScene();
+
+        auto dragSrc = getSrc();
+        auto dropDst = getDst();
+
+        auto isSrcTreeNode = false;
+        auto isDstTreeNode = false;
+
+        if( dragSrc )
         {
+            isSrcTreeNode = dragSrc->isDerived<ui::IUITreeNode>();
         }
 
-        void DragDropActorCmd::redo()
+        if( dropDst )
         {
+            isDstTreeNode = dropDst->isDerived<ui::IUITreeNode>();
         }
 
-        void DragDropActorCmd::execute()
+        if( isSrcTreeNode && isDstTreeNode )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
+            auto dragSrcNode = fb::static_pointer_cast<ui::IUITreeNode>( dragSrc );
+            auto dropDstNode = fb::static_pointer_cast<ui::IUITreeNode>( dropDst );
 
-            auto sceneManager = applicationManager->getSceneManager();
-            auto scene = sceneManager->getCurrentScene();
+            auto dragSrcData = dragSrcNode->getNodeUserData();
+            auto dropDstData = dropDstNode->getNodeUserData();
 
-            auto dragSrc = getSrc();
-            auto dropDst = getDst();
-
-            auto isSrcTreeNode = false;
-            auto isDstTreeNode = false;
-
-            if( dragSrc )
+            if( dragSrcData && dropDstData )
             {
-                isSrcTreeNode = dragSrc->isDerived<ui::IUITreeNode>();
-            }
+                auto dragSrcProjectData = fb::static_pointer_cast<ProjectTreeData>( dragSrcData );
 
-            if( dropDst )
-            {
-                isDstTreeNode = dropDst->isDerived<ui::IUITreeNode>();
-            }
+                auto dropDstProjectData = fb::static_pointer_cast<ProjectTreeData>( dropDstData );
 
-            if( isSrcTreeNode && isDstTreeNode )
-            {
-                auto dragSrcNode = fb::static_pointer_cast<ui::IUITreeNode>( dragSrc );
-                auto dropDstNode = fb::static_pointer_cast<ui::IUITreeNode>( dropDst );
+                auto dragSrcObject = dragSrcProjectData->getObjectData();
+                auto dropDstObject = dropDstProjectData->getObjectData();
 
-                auto dragSrcData = dragSrcNode->getNodeUserData();
-                auto dropDstData = dropDstNode->getNodeUserData();
-
-                if( dragSrcData && dropDstData )
+                if( dragSrcObject && dropDstObject )
                 {
-                    auto dragSrcProjectData = fb::static_pointer_cast<ProjectTreeData>( dragSrcData );
-
-                    auto dropDstProjectData = fb::static_pointer_cast<ProjectTreeData>( dropDstData );
-
-                    auto dragSrcObject = dragSrcProjectData->getObjectData();
-                    auto dropDstObject = dropDstProjectData->getObjectData();
-
-                    if( dragSrcObject && dropDstObject )
+                    if( dragSrcObject->isDerived<scene::IActor>() &&
+                        dropDstObject->isDerived<scene::IActor>() )
                     {
-                        if( dragSrcObject->isDerived<scene::IActor>() &&
-                            dropDstObject->isDerived<scene::IActor>() )
-                        {
-                            auto dragSrcActor = fb::static_pointer_cast<scene::IActor>( dragSrcObject );
-                            auto dropDstActor = fb::static_pointer_cast<scene::IActor>( dropDstObject );
+                        auto dragSrcActor = fb::static_pointer_cast<scene::IActor>( dragSrcObject );
+                        auto dropDstActor = fb::static_pointer_cast<scene::IActor>( dropDstObject );
 
-                            auto parent = dragSrcActor->getParent();
+                        auto parent = dragSrcActor->getParent();
+                        if( parent != dropDstActor )
+                        {
                             if( parent )
                             {
                                 parent->removeChild( dragSrcActor );
@@ -105,70 +105,108 @@ namespace fb
                     }
                 }
             }
-            else if( dragSrc->isDerived<ui::IUIWindow>() )
+        }
+        else if( dragSrc->isDerived<ui::IUIWindow>() )
+        {
+            auto selectionManager = applicationManager->getSelectionManager();
+            auto selection = selectionManager->getSelection();
+            for( auto selected : selection )
             {
-                auto selectionManager = applicationManager->getSelectionManager();
-                auto selection = selectionManager->getSelection();
-                for( auto selected : selection )
+                if( selected->isDerived<scene::IActor>() )
                 {
-                    if( selected->isDerived<scene::IActor>() )
+                    auto actor = fb::static_pointer_cast<scene::IActor>( selected );
+                    auto parent = actor->getParent();
+                    if( parent )
                     {
-                        auto actor = fb::static_pointer_cast<scene::IActor>( selected );
-                        auto parent = actor->getParent();
-                        if( parent )
-                        {
-                            parent->removeChild( actor );
+                        parent->removeChild( actor );
 
-                            scene->addActor( actor );
+                        scene->addActor( actor );
+                    }
+                }
+            }
+        }
+
+        if( isSrcTreeNode )
+        {
+            auto dragSrcNode = fb::static_pointer_cast<ui::IUITreeNode>( dragSrc );
+
+            auto dragSrcData = dragSrcNode->getNodeUserData();
+            if( dragSrcData )
+            {
+                auto dragSrcProjectData = fb::static_pointer_cast<ProjectTreeData>( dragSrcData );
+
+                auto dragSrcObject = dragSrcProjectData->getObjectData();
+                if( dragSrcObject )
+                {
+                    if( dragSrcObject->isDerived<scene::IActor>() )
+                    {
+                        auto dragSrcActor = fb::static_pointer_cast<scene::IActor>( dragSrcObject );
+
+                        auto siblingIndex = getSiblingIndex();
+                        if( siblingIndex >= 0 )
+                        {
+                            dragSrcActor->setSiblingIndex( siblingIndex );
                         }
                     }
                 }
             }
-
-            auto editorManager = EditorManager::getSingletonPtr();
-            auto ui = editorManager->getUI();
-            ui->rebuildSceneTree();
         }
 
-        Vector2I DragDropActorCmd::getPosition() const
-        {
-            return m_position;
-        }
+        sceneManager->makeActorTransformsDirty();
 
-        void DragDropActorCmd::setPosition( const Vector2I &position )
-        {
-            m_position = position;
-        }
+        auto editorManager = EditorManager::getSingletonPtr();
+        auto ui = editorManager->getUI();
+        ui->rebuildSceneTree();
+    }
 
-        SmartPtr<ui::IUIElement> DragDropActorCmd::getSrc() const
-        {
-            return m_src;
-        }
+    auto DragDropActorCmd::getPosition() const -> Vector2I
+    {
+        return m_position;
+    }
 
-        void DragDropActorCmd::setSrc( SmartPtr<ui::IUIElement> src )
-        {
-            m_src = src;
-        }
+    void DragDropActorCmd::setPosition( const Vector2I &position )
+    {
+        m_position = position;
+    }
 
-        SmartPtr<ui::IUIElement> DragDropActorCmd::getDst() const
-        {
-            return m_dst;
-        }
+    auto DragDropActorCmd::getSrc() const -> SmartPtr<ui::IUIElement>
+    {
+        return m_src;
+    }
 
-        void DragDropActorCmd::setDst( SmartPtr<ui::IUIElement> dst )
-        {
-            m_dst = dst;
-        }
+    void DragDropActorCmd::setSrc( SmartPtr<ui::IUIElement> src )
+    {
+        m_src = src;
+    }
 
-        String DragDropActorCmd::getData() const
-        {
-            return m_data;
-        }
+    auto DragDropActorCmd::getDst() const -> SmartPtr<ui::IUIElement>
+    {
+        return m_dst;
+    }
 
-        void DragDropActorCmd::setData( const String &data )
-        {
-            m_data = data;
-        }
+    void DragDropActorCmd::setDst( SmartPtr<ui::IUIElement> dst )
+    {
+        m_dst = dst;
+    }
 
-    }  // namespace editor
-}  // namespace fb
+    auto DragDropActorCmd::getData() const -> String
+    {
+        return m_data;
+    }
+
+    void DragDropActorCmd::setData( const String &data )
+    {
+        m_data = data;
+    }
+
+    auto DragDropActorCmd::getSiblingIndex() const -> s32
+    {
+        return m_siblingIndex;
+    }
+
+    void DragDropActorCmd::setSiblingIndex( s32 siblingIndex )
+    {
+        m_siblingIndex = siblingIndex;
+    }
+
+}  // namespace fb::editor

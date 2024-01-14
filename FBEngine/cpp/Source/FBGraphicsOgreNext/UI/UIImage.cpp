@@ -18,6 +18,8 @@ namespace fb
 {
     namespace ui
     {
+        FB_CLASS_REGISTER_DERIVED( fb, UIImage, UIElement<IUIImage> );
+
         UIImage::UIImage()
         {
             createStateContext();
@@ -34,7 +36,7 @@ namespace fb
             {
                 setLoadingState( LoadingState::Loading );
 
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 auto ui = fb::static_pointer_cast<UIManager>( applicationManager->getRenderUI() );
 
                 auto window = ui->getLayoutWindow();
@@ -49,7 +51,7 @@ namespace fb
                 m_renderable->setTransform( Ogre::Vector2( 0, 0 ), Ogre::Vector2( 1920, 1080 ) );
                 m_renderable->setSkin( "EmptyBg" );
 
-                m_renderable->setKeyboardNavigable(false);
+                m_renderable->setKeyboardNavigable( false );
 
                 createDatablock();
                 m_renderable->setDatablock( m_datablock );
@@ -111,9 +113,9 @@ namespace fb
         {
             m_texture = texture;
 
-            if( auto stateObject = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
-                stateObject->setDirty( true );
+                stateContext->setDirty( true );
             }
         }
 
@@ -124,16 +126,16 @@ namespace fb
 
         void UIImage::setMaterialName( const String &materialName )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             ScopedLock lock( graphicsSystem );
 
             m_renderable->setDatablockOrMaterialName(
                 materialName, Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME );
 
-            if( auto stateObject = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
-                stateObject->setDirty( true );
+                stateContext->setDirty( true );
             }
         }
 
@@ -146,7 +148,7 @@ namespace fb
         {
             if( m_material )
             {
-                auto materialStateObject = m_material->getStateObject();
+                auto materialStateObject = m_material->getStateContext();
                 if( materialStateObject )
                 {
                     materialStateObject->removeStateListener( m_materialStateListener );
@@ -157,16 +159,16 @@ namespace fb
 
             if( m_material )
             {
-                auto materialStateObject = m_material->getStateObject();
+                auto materialStateObject = m_material->getStateContext();
                 if( materialStateObject )
                 {
                     materialStateObject->addStateListener( m_materialStateListener );
                 }
             }
 
-            if( auto stateObject = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
-                stateObject->setDirty( true );
+                stateContext->setDirty( true );
             }
         }
 
@@ -177,14 +179,19 @@ namespace fb
 
         void UIImage::handleStateChanged( SmartPtr<IState> &state )
         {
-            updateMaterial();
+            if( isLoaded() )
+            {
+                UIElement<IUIImage>::handleStateChanged( state );
+
+                updateMaterial();
+            }
         }
 
         void UIImage::setupMaterial( SmartPtr<render::IMaterial> material )
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -202,7 +209,7 @@ namespace fb
                 {
                     if( m_material )
                     {
-                        auto materialStateObject = m_material->getStateObject();
+                        auto materialStateObject = m_material->getStateContext();
                         if( materialStateObject )
                         {
                             materialStateObject->removeStateListener( m_materialStateListener );
@@ -213,7 +220,7 @@ namespace fb
 
                     if( m_material )
                     {
-                        auto materialStateObject = m_material->getStateObject();
+                        auto materialStateObject = m_material->getStateContext();
                         if( materialStateObject )
                         {
                             materialStateObject->addStateListener( m_materialStateListener );
@@ -243,9 +250,9 @@ namespace fb
                             auto message = factoryManager->make_ptr<StateMessageMaterial>();
                             message->setMaterial( material );
 
-                            if( auto stateObject = getStateObject() )
+                            if( auto stateContext = getStateContext() )
                             {
-                                stateObject->addMessage( stateTask, message );
+                                stateContext->addMessage( stateTask, message );
                             }
                         }
                     }
@@ -255,9 +262,9 @@ namespace fb
                     auto message = factoryManager->make_ptr<StateMessageMaterial>();
                     message->setMaterial( material );
 
-                    if( auto stateObject = getStateObject() )
+                    if( auto stateContext = getStateContext() )
                     {
-                        stateObject->addMessage( stateTask, message );
+                        stateContext->addMessage( stateTask, message );
                     }
                 }
             }
@@ -274,7 +281,7 @@ namespace fb
 
         void UIImage::updateMaterial()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto graphicsSystem = applicationManager->getGraphicsSystem();
 
             ScopedLock lock( graphicsSystem );

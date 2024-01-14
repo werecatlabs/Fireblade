@@ -3,7 +3,6 @@
 
 #include <FBLua/FBLuaPrerequisites.h>
 #include <FBCore/Interface/Script/IScriptManager.h>
-#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Memory/RawPtr.h>
@@ -86,9 +85,6 @@ namespace fb
         void *createInstance( const String &className ) override;
 
         void destroyInstance( void *instance ) override;
-
-        void setTaskId( u32 taskId );
-        u32 getTaskId() const;
 
         void reloadScripts() override;
 
@@ -184,15 +180,12 @@ namespace fb
 
         time_interval m_timeTaken;
 
-        ///
-        u32 m_taskId;
+        s32 m_callCounter;
 
-        int m_callCounter;
-
-        ///
+        /// Used to determine if a reload is pending
         atomic_bool m_bReload;
 
-        ///
+        /// Used to determine if full debug is enabled
         bool m_enableFullDebug;
 
         bool m_delayedCreation;
@@ -201,6 +194,7 @@ namespace fb
 
         bool m_bError;
 
+        /// Mutex for thread safety.
         mutable RecursiveMutex m_scriptMutex;
 
         ///

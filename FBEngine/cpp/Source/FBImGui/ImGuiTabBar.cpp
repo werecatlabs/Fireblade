@@ -5,48 +5,41 @@
 
 #include "ImGuiTabItem.h"
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    FB_CLASS_REGISTER_DERIVED( fb, ImGuiTabBar, CImGuiElement<IUITabBar> );
+
+    ImGuiTabBar::ImGuiTabBar() = default;
+
+    ImGuiTabBar::~ImGuiTabBar() = default;
+
+    void ImGuiTabBar::update()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, ImGuiTabBar, CImGuiElement<IUITabBar> );
-
-        ImGuiTabBar::ImGuiTabBar()
+        auto name = getName();
+        if( ImGui::BeginTabBar( name.c_str() ) )
         {
-        }
-
-        ImGuiTabBar::~ImGuiTabBar()
-        {
-        }
-
-        void ImGuiTabBar::update()
-        {
-            auto name = getName();
-            if( ImGui::BeginTabBar( name.c_str() ) )
+            for( auto &tabItem : m_tabItems )
             {
-                for( auto &tabItem : m_tabItems )
-                {
-                    tabItem->update();
-                }
-
-                ImGui::EndTabBar();
+                tabItem->update();
             }
-        }
 
-        SmartPtr<IUITabItem> ImGuiTabBar::addTabItem()
-        {
-            auto tabItem = fb::make_ptr<ImGuiTabItem>();
-            m_tabItems.push_back( tabItem );
-            return tabItem;
+            ImGui::EndTabBar();
         }
+    }
 
-        void ImGuiTabBar::removeTabItem( SmartPtr<IUITabItem> tabItem )
+    auto ImGuiTabBar::addTabItem() -> SmartPtr<IUITabItem>
+    {
+        auto tabItem = fb::make_ptr<ImGuiTabItem>();
+        m_tabItems.emplace_back( tabItem );
+        return tabItem;
+    }
+
+    void ImGuiTabBar::removeTabItem( SmartPtr<IUITabItem> tabItem )
+    {
+        auto it = std::find( m_tabItems.begin(), m_tabItems.end(), tabItem );
+        if( it != m_tabItems.end() )
         {
-            auto it = std::find( m_tabItems.begin(), m_tabItems.end(), tabItem );
-            if( it != m_tabItems.end() )
-            {
-                m_tabItems.erase( it );
-            }
+            m_tabItems.erase( it );
         }
-    }  // end namespace ui
-}  // end namespace fb
+    }
+}  // namespace fb::ui

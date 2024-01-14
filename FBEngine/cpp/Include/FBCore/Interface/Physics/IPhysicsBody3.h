@@ -101,12 +101,12 @@ namespace fb
             virtual void setProperties( SmartPtr<Properties> properties ) = 0;
 
             /** Gets the state object. */
-            virtual SmartPtr<IStateContext> getStateObject() const = 0;
+            virtual SmartPtr<IStateContext> getStateContext() const = 0;
 
             /** Sets the state object. */
-            virtual void setStateObject( SmartPtr<IStateContext> stateObject ) = 0;
+            virtual void setStateContext( SmartPtr<IStateContext> stateContext ) = 0;
 
-            virtual void _getObject( void** object ) const = 0;
+            virtual void _getObject( void **object ) const = 0;
 
             FB_CLASS_REGISTER_DECL;
         };

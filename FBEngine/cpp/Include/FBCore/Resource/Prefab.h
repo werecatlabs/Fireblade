@@ -13,7 +13,7 @@ namespace fb
         class Prefab : public Resource<IPrefab>
         {
         public:
-            Prefab() = default;
+            Prefab();
             ~Prefab() override;
 
             /** @copydoc IObject::load */

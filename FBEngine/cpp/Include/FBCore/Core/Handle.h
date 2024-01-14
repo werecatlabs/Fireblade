@@ -25,7 +25,7 @@ namespace fb
         /** Constructs a new Handle with the given name.
          *  @param name: The name of the Handle.
          */
-        Handle( const String &name );
+        explicit Handle( const String &name );
 
         /** Destroys this handle. */
         ~Handle();
@@ -97,13 +97,13 @@ namespace fb
          */
         String toString() const;
 
-	    String getClassId() const;
+        String getClassId() const;
 
-        void setClassId( const String& classId );
+        void setClassId( const String &classId );
 
-	    String getFileId() const;
+        String getFileId() const;
 
-        void setFileId( const String& fileId );
+        void setFileId( const String &fileId );
 
     private:
         /** The ID of the handle. */

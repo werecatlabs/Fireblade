@@ -14,6 +14,10 @@
 #include <FBCore/Core/FSMManager.h>
 #include <FBCore/System/TaskLock.h>
 
+#include <utility>
+
+#include "FBCore/Memory/PointerUtil.h"
+
 namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, TaskManager, ITaskManager );
@@ -21,7 +25,10 @@ namespace fb
 
     TaskManager::TaskManager()
     {
-        //setGarbageCollected( false );
+        if( auto handle = getHandle() )
+        {
+            handle->setName( "TaskManager" );
+        }
     }
 
     TaskManager::~TaskManager()
@@ -124,26 +131,28 @@ namespace fb
 
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto &applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
-            auto threadPool = applicationManager->getThreadPool();
-            FB_ASSERT( threadPool );
+            auto &threadPool = applicationManager->getThreadPool();
 
-            auto timer = applicationManager->getTimer();
+            auto &timer = applicationManager->getTimer();
             auto t = timer->now();
 
-            auto taskCount = 0;
-            const auto numThreads = threadPool->getNumThreads();
-            for( size_t i = 0; i < m_threadHint.size(); ++i )
+            if( threadPool )
             {
-                auto &hint = m_threadHint[i];
-
-                auto id = i;
-                if( const auto enabled = getFlags( static_cast<u32>( id ), Task::enabled_flag ) )
+                auto taskCount = 0;
+                const auto numThreads = threadPool->getNumThreads();
+                for( size_t i = 0; i < m_threadHint.size(); ++i )
                 {
-                    hint = MathI::Mod( taskCount, numThreads );
-                    taskCount++;
+                    auto &hint = m_threadHint[i];
+
+                    auto id = i;
+                    if( const auto enabled = getFlags( static_cast<u32>( id ), Task::enabled_flag ) )
+                    {
+                        hint = MathI::Mod( taskCount, numThreads );
+                        taskCount++;
+                    }
                 }
             }
 
@@ -168,7 +177,6 @@ namespace fb
             {
             case State::FreeStep:
             {
-                auto threadPool = applicationManager->getThreadPool();
                 if( threadPool )
                 {
                     switch( threadId )
@@ -222,6 +230,41 @@ namespace fb
                     break;
                     default:
                     {
+                        if( !m_threadHint.empty() )
+                        {
+                            auto numTasks = static_cast<size_t>( Thread::Task::Count );
+                            for( size_t i = 0; i < numTasks; ++i )
+                            {
+                                if( m_threadHint[i] == static_cast<u32>( threadId ) )
+                                {
+                                    auto id = i;
+
+                                    auto enabled =
+                                        getFlags( static_cast<u32>( id ), Task::enabled_flag );
+                                    if( enabled )
+                                    {
+                                        auto primary =
+                                            getFlags( static_cast<u32>( id ), Task::primary_flag );
+                                        if( !primary )
+                                        {
+                                            auto &pTask = m_tasks[i];
+
+                                            if( m_nextUpdateTimes[i] < t )
+                                            {
+                                                pTask->update();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    };
+                }
+                else
+                {
+                    if( !m_threadHint.empty() )
+                    {
                         auto numTasks = static_cast<size_t>( Thread::Task::Count );
                         for( size_t i = 0; i < numTasks; ++i )
                         {
@@ -232,40 +275,12 @@ namespace fb
                                 auto enabled = getFlags( static_cast<u32>( id ), Task::enabled_flag );
                                 if( enabled )
                                 {
-                                    auto primary =
-                                        getFlags( static_cast<u32>( id ), Task::primary_flag );
-                                    if( !primary )
+                                    auto &pTask = m_tasks[i];
+
+                                    if( m_nextUpdateTimes[i] < t )
                                     {
-                                        auto &pTask = m_tasks[i];
-
-                                        if( m_nextUpdateTimes[i] < t )
-                                        {
-                                            pTask->update();
-                                        }
+                                        pTask->update();
                                     }
-                                }
-                            }
-                        }
-                    }
-                    }
-                }
-                else
-                {
-                    auto numTasks = static_cast<size_t>( Thread::Task::Count );
-                    for( size_t i = 0; i < numTasks; ++i )
-                    {
-                        if( m_threadHint[i] == static_cast<u32>( threadId ) )
-                        {
-                            auto id = i;
-
-                            auto enabled = getFlags( static_cast<u32>( id ), Task::enabled_flag );
-                            if( enabled )
-                            {
-                                auto &pTask = m_tasks[i];
-
-                                if( m_nextUpdateTimes[i] < t )
-                                {
-                                    pTask->update();
                                 }
                             }
                         }
@@ -291,14 +306,14 @@ namespace fb
         m_affinity[id] = affinity;
     }
 
-    u32 TaskManager::getAffinity( u32 id ) const
+    auto TaskManager::getAffinity( u32 id ) const -> u32
     {
         FB_ASSERT( !MathI::isFinite( id ) );
         FB_ASSERT( id < m_affinity.size() );
         return m_affinity[id];
     }
 
-    SmartPtr<ITask> TaskManager::getTask( Thread::Task taskId ) const
+    auto TaskManager::getTask( Thread::Task taskId ) const -> SmartPtr<ITask>
     {
         if( isLoaded() )
         {
@@ -314,12 +329,12 @@ namespace fb
         m_state = state;
     }
 
-    ITaskManager::State TaskManager::getState() const
+    auto TaskManager::getState() const -> ITaskManager::State
     {
         return m_state;
     }
 
-    u32 TaskManager::getTaskFlags( u32 id ) const
+    auto TaskManager::getTaskFlags( u32 id ) const -> u32
     {
         FB_ASSERT( id < m_taskFlags.size() );
         return m_taskFlags[id];
@@ -331,7 +346,7 @@ namespace fb
         m_taskFlags[id] = flags;
     }
 
-    Thread::Task TaskManager::getTaskId( u32 id ) const
+    auto TaskManager::getTaskId( u32 id ) const -> Thread::Task
     {
         FB_ASSERT( id < m_taskIds.size() );
         return m_taskIds[id];
@@ -352,12 +367,12 @@ namespace fb
         m_taskFlags[id] = BitUtil::setFlagValue( flags, flag, value );
     }
 
-    atomic_u32 *TaskManager::getFlagsPtr( u32 id ) const
+    auto TaskManager::getFlagsPtr( u32 id ) const -> atomic_u32 *
     {
-        return (atomic_u32 *)&m_taskFlags[id];
+        return const_cast<atomic_u32 *>( &m_taskFlags[id] );
     }
 
-    f64 TaskManager::getTargetFPS( u32 id ) const
+    auto TaskManager::getTargetFPS( u32 id ) const -> f64
     {
         FB_ASSERT( id < m_targetfps.size() );
         return m_targetfps[id];
@@ -369,7 +384,7 @@ namespace fb
         m_targetfps[id] = targetfps;
     }
 
-    f64 TaskManager::getNextUpdateTime( u32 id ) const
+    auto TaskManager::getNextUpdateTime( u32 id ) const -> f64
     {
         return m_nextUpdateTimes[id];
     }
@@ -379,7 +394,7 @@ namespace fb
         m_nextUpdateTimes[id] = nextUpdateTime;
     }
 
-    Thread::Task TaskManager::getTaskIds( u32 id ) const
+    auto TaskManager::getTaskIds( u32 id ) const -> Thread::Task
     {
         FB_ASSERT( id < m_taskIds.size() );
         return m_taskIds[id];
@@ -391,7 +406,7 @@ namespace fb
         m_taskIds[id] = taskId;
     }
 
-    ITask::State TaskManager::getTaskState( u32 id ) const
+    auto TaskManager::getTaskState( u32 id ) const -> ITask::State
     {
         FB_ASSERT( id < m_states.size() );
         return m_states[id];
@@ -403,7 +418,7 @@ namespace fb
         m_states[id] = state;
     }
 
-    SmartPtr<ISharedObject> TaskManager::getOwner( u32 id ) const
+    auto TaskManager::getOwner( u32 id ) const -> SmartPtr<ISharedObject>
     {
         FB_ASSERT( id < m_owners.size() );
         return m_owners[id];
@@ -415,14 +430,9 @@ namespace fb
         m_owners[id] = owner;
     }
 
-    bool TaskManager::isValid() const
+    auto TaskManager::isValid() const -> bool
     {
         return true;
-    }
-
-    SmartPtr<IFSMManager> TaskManager::getFSMManager() const
-    {
-        return m_fsmManager;
     }
 
     void TaskManager::setFSMManager( SmartPtr<IFSMManager> fsmManager )
@@ -436,13 +446,13 @@ namespace fb
         m_states[id] = state;
     }
 
-    ITask::State TaskManager::getState( u32 id ) const
+    auto TaskManager::getState( u32 id ) const -> ITask::State
     {
         FB_ASSERT( id < m_states.size() );
         return m_states[id];
     }
 
-    Array<SmartPtr<ITask>> TaskManager::getTasks() const
+    auto TaskManager::getTasks() const -> Array<SmartPtr<ITask>>
     {
         return Array<SmartPtr<ITask>>( m_tasks.begin(), m_tasks.end() );
     }
@@ -460,7 +470,7 @@ namespace fb
 
     void TaskManager::stop()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         if( applicationManager->isRunning() )
         {
             for( auto &t : m_tasks )
@@ -478,17 +488,17 @@ namespace fb
         }
     }
 
-    TaskLock TaskManager::lockTask( Thread::Task taskId )
+    auto TaskManager::lockTask( Thread::Task taskId ) -> TaskLock
     {
         if( auto task = getTask( taskId ) )
         {
             return TaskLock( task );
         }
 
-        return TaskLock();
+        return {};
     }
 
-    u32 TaskManager::getNumTasks() const
+    auto TaskManager::getNumTasks() const -> u32
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
 
@@ -505,7 +515,8 @@ namespace fb
         return count;
     }
 
-    TaskManager::Lock::Lock( SmartPtr<ITaskManager> taskManager ) : m_taskManager( taskManager )
+    TaskManager::Lock::Lock( SmartPtr<ITaskManager> taskManager ) :
+        m_taskManager( std::move( taskManager ) )
     {
         auto tasks = m_taskManager->getTasks();
         for( auto task : tasks )
@@ -517,9 +528,7 @@ namespace fb
         }
     }
 
-    TaskManager::Lock::Lock()
-    {
-    }
+    TaskManager::Lock::Lock() = default;
 
     TaskManager::Lock::~Lock()
     {

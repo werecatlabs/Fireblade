@@ -29,9 +29,13 @@ namespace fb
         */
         virtual void addCommand( SmartPtr<ICommand> command ) = 0;
 
+        /** Removes a command from the command history. */
         virtual void removeCommand( SmartPtr<ICommand> command ) = 0;
 
+        /** Checks if the command is in the command history. */
         virtual bool hasCommand( SmartPtr<ICommand> command ) = 0;
+
+        /** Checks if the command is queued in the command history. */
         virtual bool isCommandQueued( SmartPtr<ICommand> command ) = 0;
 
         /** Retrieves the next command returns null=0 if
@@ -46,17 +50,6 @@ namespace fb
 
         /** Clears all the commands. */
         virtual void clearAll() = 0;
-
-        /** Adds a listener.
-        @param listener The listener instance.
-        */
-        virtual void addListener( SmartPtr<ICommandManagerListener> listener ) = 0;
-
-        /** Removes a listener.
-        @param listener The listener instance.
-        @return Returns true if the listener was removed.
-        */
-        virtual bool removeListener( SmartPtr<ICommandManagerListener> listener ) = 0;
     };
 }  // end namespace fb
 

@@ -21,6 +21,8 @@ namespace fb
          * @param pan The new pan of the sound.
          */
         virtual void setPan( f32 pan ) = 0;
+
+        FB_CLASS_REGISTER_DECL;
     };
 }  // end namespace fb
 

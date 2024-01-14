@@ -62,7 +62,7 @@ namespace fb
          * @brief Construct a matrix from a pointer to an array of 16 elements in row-major order.
          * @param p The pointer to the array of 16 elements.
          */
-        Matrix4( const T *p );
+        explicit Matrix4( const T *p );
 
         /**
          * @brief Destructor.

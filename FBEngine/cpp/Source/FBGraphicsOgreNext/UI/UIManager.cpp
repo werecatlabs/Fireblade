@@ -8,7 +8,9 @@
 #include "UIElement.h"
 #include "UIImage.h"
 #include "UILayout.h"
+#include "UISlider.h"
 #include "UIText.h"
+#include "UIToggle.h"
 #include "ColibriGui/ColibriButton.h"
 #include "ColibriGui/ColibriCheckbox.h"
 #include "ColibriGui/ColibriEditbox.h"
@@ -114,9 +116,11 @@ namespace fb
 {
     namespace ui
     {
+        FB_CLASS_REGISTER_DERIVED( fb::ui, UIManager, IUIManager );
+
         UIManager::UIManager()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto factoryManager = applicationManager->getFactoryManager();
@@ -133,6 +137,21 @@ namespace fb
 
         void UIManager::load( SmartPtr<ISharedObject> data )
         {
+            setLoadingState( LoadingState::Loading );
+
+            auto factoryManager = fb::make_ptr<FactoryManager>();
+            setFactoryManager( factoryManager );
+
+            ApplicationUtil::addFactory<ui::UILayout>( factoryManager );
+            ApplicationUtil::addFactory<ui::UIText>( factoryManager );
+            ApplicationUtil::addFactory<ui::UIImage>( factoryManager );
+            ApplicationUtil::addFactory<ui::UISlider>( factoryManager );
+            ApplicationUtil::addFactory<ui::UIButton>( factoryManager );
+            ApplicationUtil::addFactory<ui::UIToggle>( factoryManager );
+
+            factoryManager->setPoolSizeByType<ui::UIButton>( 4 );
+            factoryManager->setPoolSizeByType<ui::UIImage>( 4 );
+
             struct ShaperSettings
             {
                 const char *locale;
@@ -157,7 +176,7 @@ namespace fb
                 }
             };
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             auto sceneManager = graphicsSystem->getGraphicsScene();
 
@@ -205,9 +224,9 @@ namespace fb
 
             const float aspectRatioColibri =
                 static_cast<float>( canvasSize.y ) / static_cast<float>( canvasSize.x );
-            m_colibriManager->setCanvasSize(
-                Ogre::Vector2( 1920.0f, 1920.0f * aspectRatioColibri ),
-                Ogre::Vector2( (Ogre::Real)canvasSize.x, (Ogre::Real)canvasSize.y ) );
+            m_colibriManager->setCanvasSize( Ogre::Vector2( 1920.0f, 1920.0f * aspectRatioColibri ),
+                                             Ogre::Vector2( static_cast<Ogre::Real>( canvasSize.x ),
+                                                            static_cast<Ogre::Real>( canvasSize.y ) ) );
 
             Ogre::SceneManager *smgr = nullptr;
             sceneManager->_getObject( (void **)&smgr );
@@ -244,91 +263,105 @@ namespace fb
 
         void UIManager::unload( SmartPtr<ISharedObject> data )
         {
+            setLoadingState( LoadingState::Unloading );
+
+            setLoadingState( LoadingState::Unloaded );
         }
 
         bool UIManager::handleEvent( const SmartPtr<IInputEvent> &event )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto colibriManager = getColibriManager();
-
-            if( event->getEventType() == IInputEvent::EventType::Mouse )
+            auto task = Thread::getCurrentTask();
+            if( task == Thread::Task::Render )
             {
-                if( auto mouseState = event->getMouseState() )
+                auto applicationManager = core::ApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto colibriManager = getColibriManager();
+
+                if( event->getEventType() == IInputEvent::EventType::Mouse )
                 {
-                    auto absolutePosition = mouseState->getAbsolutePosition();
-                    auto x = static_cast<f32>( absolutePosition.X() );
-                    auto y = static_cast<f32>( absolutePosition.Y() );
-                    auto z = 0;
-
-                    auto relativePosition = mouseState->getRelativePosition();
-
-                    if( auto uiWindow = applicationManager->getSceneRenderWindow() )
+                    if( auto mouseState = event->getMouseState() )
                     {
-                        if( auto mainWindow = applicationManager->getWindow() )
+                        auto absolutePosition = mouseState->getAbsolutePosition();
+                        auto x = absolutePosition.X();
+                        auto y = absolutePosition.Y();
+                        auto z = 0;
+
+                        auto relativePosition = mouseState->getRelativePosition();
+
+                        if( auto uiWindow = applicationManager->getSceneRenderWindow() )
                         {
-                            auto mainWindowSize = mainWindow->getSize();
-                            auto mainWindowSizeF = Vector2F( static_cast<f32>( mainWindowSize.x ),
-                                                             static_cast<f32>( mainWindowSize.y ) );
-
-                            auto sceneWindowPosition = uiWindow->getPosition();
-                            auto sceneWindowSize = uiWindow->getSize();
-
-                            auto pos = sceneWindowPosition / mainWindowSizeF;
-                            auto size = sceneWindowSize / mainWindowSizeF;
-
-                            auto aabb = AABB2F( pos, size, true );
-                            if( aabb.isInside( relativePosition ) )
+                            if( auto mainWindow = applicationManager->getWindow() )
                             {
-                                x = static_cast<f32>(
-                                    ( absolutePosition.X() - sceneWindowPosition.X() ) / size.X() );
-                                y = static_cast<f32>(
-                                    ( absolutePosition.Y() - sceneWindowPosition.Y() ) / size.Y() );
+                                auto mainWindowSize = mainWindow->getSize();
+                                auto mainWindowSizeF = Vector2F( static_cast<f32>( mainWindowSize.x ),
+                                                                 static_cast<f32>( mainWindowSize.y ) );
 
-                                Ogre::Vector2 mousePos( x, y );
-                                auto canvasSize = colibriManager->getCanvasSize();
-                                auto canvasPoint = mousePos / canvasSize;
+                                auto sceneWindowPosition = uiWindow->getPosition();
+                                auto sceneWindowSize = uiWindow->getSize();
 
-                                if( mouseState->getEventType() == IMouseState::Event::Moved )
+                                auto pos = sceneWindowPosition / mainWindowSizeF;
+                                auto size = sceneWindowSize / mainWindowSizeF;
+
+                                auto aabb = AABB2F( pos, size, true );
+                                if( aabb.isInside( relativePosition ) )
                                 {
-                                    colibriManager->setMouseCursorMoved( mousePos );
-                                }
+                                    x = ( absolutePosition.X() - sceneWindowPosition.X() ) / size.X();
+                                    y = ( absolutePosition.Y() - sceneWindowPosition.Y() ) / size.Y();
 
-                                if( mouseState->getEventType() == IMouseState::Event::LeftPressed )
-                                {
-                                    colibriManager->setMouseCursorMoved( mousePos );
-                                    colibriManager->setMouseCursorPressed( true, false );
-                                }
+                                    Ogre::Vector2 mousePos( x, y );
+                                    auto canvasSize = colibriManager->getCanvasSize();
+                                    auto canvasPoint = mousePos / canvasSize;
 
-                                if( mouseState->getEventType() == IMouseState::Event::LeftReleased )
-                                {
-                                    colibriManager->setMouseCursorReleased();
+                                    if( mouseState->getEventType() == IMouseState::Event::Moved )
+                                    {
+                                        colibriManager->setMouseCursorMoved( mousePos );
+                                    }
+
+                                    if( mouseState->getEventType() == IMouseState::Event::LeftPressed )
+                                    {
+                                        colibriManager->setMouseCursorMoved( mousePos );
+                                        colibriManager->setMouseCursorPressed( true, false );
+                                    }
+
+                                    if( mouseState->getEventType() == IMouseState::Event::LeftReleased )
+                                    {
+                                        colibriManager->setMouseCursorReleased();
+                                    }
                                 }
                             }
                         }
+                        else
+                        {
+                            if( mouseState->getEventType() == IMouseState::Event::Moved )
+                            {
+                                Ogre::Vector2 mousePos( x, y );
+                                colibriManager->setMouseCursorMoved( mousePos *
+                                                                     colibriManager->getCanvasSize() );
+                            }
+
+                            if( mouseState->getEventType() == IMouseState::Event::LeftPressed )
+                            {
+                                Ogre::Vector2 mousePos( x, y );
+                                colibriManager->setMouseCursorMoved( mousePos *
+                                                                     colibriManager->getCanvasSize() );
+                                colibriManager->setMouseCursorPressed( true, false );
+                            }
+
+                            if( mouseState->getEventType() == IMouseState::Event::LeftReleased )
+                            {
+                                colibriManager->setMouseCursorReleased();
+                            }
+                        }
                     }
-                    else
+                }
+
+                auto elements = getElements();
+                for( auto &element : elements )
+                {
+                    if( element )
                     {
-                        if( mouseState->getEventType() == IMouseState::Event::Moved )
-                        {
-                            Ogre::Vector2 mousePos( x, y );
-                            colibriManager->setMouseCursorMoved( mousePos *
-                                                                 colibriManager->getCanvasSize() );
-                        }
-
-                        if( mouseState->getEventType() == IMouseState::Event::LeftPressed )
-                        {
-                            Ogre::Vector2 mousePos( x, y );
-                            colibriManager->setMouseCursorMoved( mousePos *
-                                                                 colibriManager->getCanvasSize() );
-                            colibriManager->setMouseCursorPressed( true, false );
-                        }
-
-                        if( mouseState->getEventType() == IMouseState::Event::LeftReleased )
-                        {
-                            colibriManager->setMouseCursorReleased();
-                        }
+                        element->handleEvent( event );
                     }
                 }
             }
@@ -355,71 +388,62 @@ namespace fb
             return 0;
         }
 
-        SmartPtr<ui::IUIApplication> UIManager::addApplication()
+        SmartPtr<IUIApplication> UIManager::addApplication()
         {
             return nullptr;
         }
 
-        void UIManager::removeApplication( SmartPtr<ui::IUIApplication> application )
+        void UIManager::removeApplication( SmartPtr<IUIApplication> application )
         {
         }
 
-        SmartPtr<ui::IUIApplication> UIManager::getApplication() const
+        SmartPtr<IUIApplication> UIManager::getApplication() const
         {
             return nullptr;
         }
 
-        void UIManager::setApplication( SmartPtr<ui::IUIApplication> application )
+        void UIManager::setApplication( SmartPtr<IUIApplication> application )
         {
         }
 
-        SmartPtr<ui::IUIElement> UIManager::addElement( hash64 type )
+        SmartPtr<IUIElement> UIManager::addElement( hash64 type )
         {
+            auto factoryManager = getFactoryManager();
+
             RecursiveMutex::ScopedLock lock( m_mutex );
-            SmartPtr<ui::IUIElement> element;
-
-            if( type == ui::IUILayout::typeInfo() )
-            {
-                element = fb::make_ptr<UILayout>();
-            }
-            if( type == ui::IUIText::typeInfo() )
-            {
-                element = fb::make_ptr<UIText>();
-            }
-            if( type == ui::IUIImage::typeInfo() )
-            {
-                element = fb::make_ptr<UIImage>();
-            }
-            if( type == ui::IUIButton::typeInfo() )
-            {
-                element = fb::make_ptr<UIButton>();
-            }
-
+            auto element = factoryManager->make_object<IUIElement>( type );
             m_elements.push_back( element );
             return element;
         }
 
-        void UIManager::removeElement( SmartPtr<ui::IUIElement> element )
+        void UIManager::removeElement( SmartPtr<IUIElement> element )
         {
             RecursiveMutex::ScopedLock lock( m_mutex );
 
-            auto applicationManager = core::IApplicationManager::instance();
-            auto graphicsSystem = applicationManager->getGraphicsSystem();
-            graphicsSystem->unloadObject( element );
+            if( !m_elements.empty() )
+            {
+                auto applicationManager = core::ApplicationManager::instance();
+                auto graphicsSystem = applicationManager->getGraphicsSystem();
+                graphicsSystem->unloadObject( element );
 
-            m_elements.erase( std::remove( m_elements.begin(), m_elements.end(), element ) );
+                auto it = std::remove( m_elements.begin(), m_elements.end(), element );
+                if( it != m_elements.end() )
+                {
+                    m_elements.erase( it, m_elements.end() );
+                }
+            }
         }
 
         void UIManager::clear()
         {
         }
 
-        SmartPtr<ui::IUICursor> UIManager::getCursor() const
+        SmartPtr<IUICursor> UIManager::getCursor() const
         {
             return nullptr;
         }
 
-        SmartPtr<ui::IUIElement> UIManager::findElement( const String &id ) const
+        SmartPtr<IUIElement> UIManager::findElement( const String &id ) const
         {
             return nullptr;
         }
@@ -434,12 +458,12 @@ namespace fb
             m_dragging = dragging;
         }
 
-        SmartPtr<ui::IUIWindow> UIManager::getMainWindow() const
+        SmartPtr<IUIWindow> UIManager::getMainWindow() const
         {
             return m_mainWindow;
         }
 
-        void UIManager::setMainWindow( SmartPtr<ui::IUIWindow> uiWindow )
+        void UIManager::setMainWindow( SmartPtr<IUIWindow> uiWindow )
         {
             m_mainWindow = uiWindow;
         }
@@ -451,7 +475,7 @@ namespace fb
 
         void UIManager::createScene01()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             auto sceneManager = graphicsSystem->getGraphicsScene();
 
@@ -872,27 +896,53 @@ namespace fb
             m_layoutWindow = layoutWindow;
         }
 
-        fb::Parameter UIManager::InputListener::handleEvent(
-            IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
-            SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
+        fb::SmartPtr<fb::IFactoryManager> UIManager::getFactoryManager() const
         {
-            if( auto owner = getOwner() )
+            return m_factoryManager;
+        }
+
+        void UIManager::setFactoryManager( SmartPtr<IFactoryManager> factoryManager )
+        {
+            m_factoryManager = factoryManager;
+        }
+
+        fb::Array<fb::SmartPtr<fb::ui::IUIElement>> UIManager::getElements() const
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            return m_elements;
+        }
+
+        void UIManager::setElements( Array<SmartPtr<IUIElement>> elements )
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+            m_elements = elements;
+        }
+
+        Parameter UIManager::InputListener::handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                                         const Array<Parameter> &arguments,
+                                                         SmartPtr<ISharedObject> sender,
+                                                         SmartPtr<ISharedObject> object,
+                                                         SmartPtr<IEvent> event )
+        {
+            if( Thread::getTaskFlag( Thread::Render_Flag ) )
             {
-                owner->handleEvent( event );
+                if( auto owner = getOwner() )
+                {
+                    owner->handleEvent( event );
+                }
             }
 
             return Parameter();
         }
 
-        fb::SmartPtr<fb::ui::UIManager> UIManager::InputListener::getOwner() const
+        SmartPtr<UIManager> UIManager::InputListener::getOwner() const
         {
             return m_owner;
         }
 
-        void UIManager::InputListener::setOwner( fb::SmartPtr<fb::ui::UIManager> owner )
+        void UIManager::InputListener::setOwner( SmartPtr<UIManager> owner )
         {
             m_owner = owner;
         }
-
     }  // namespace ui
 }  // namespace fb

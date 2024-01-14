@@ -7,15 +7,11 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, OverlayState, BaseState );
 
- OverlayState::OverlayState()
-    {
-    }
+    OverlayState::OverlayState() = default;
 
-    OverlayState::~OverlayState()
-    {
-    }
+    OverlayState::~OverlayState() = default;
 
-    bool OverlayState::isVisible() const
+    auto OverlayState::isVisible() const -> bool
     {
         return m_visible;
     }

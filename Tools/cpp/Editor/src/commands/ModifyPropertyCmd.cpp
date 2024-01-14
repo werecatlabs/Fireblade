@@ -1,30 +1,23 @@
 #include <GameEditorPCH.h>
 #include <commands/ModifyPropertyCmd.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    ModifyPropertyCmd::ModifyPropertyCmd() = default;
+
+    ModifyPropertyCmd::~ModifyPropertyCmd() = default;
+
+    void ModifyPropertyCmd::undo()
     {
+    }
 
-        ModifyPropertyCmd::ModifyPropertyCmd()
-        {
-        }
+    void ModifyPropertyCmd::redo()
+    {
+    }
 
-        ModifyPropertyCmd::~ModifyPropertyCmd()
-        {
-        }
+    void ModifyPropertyCmd::execute()
+    {
+    }
 
-        void ModifyPropertyCmd::undo()
-        {
-        }
-
-        void ModifyPropertyCmd::redo()
-        {
-        }
-
-        void ModifyPropertyCmd::execute()
-        {
-        }
-
-    }  // namespace editor
-}  // namespace fb
+}  // namespace fb::editor

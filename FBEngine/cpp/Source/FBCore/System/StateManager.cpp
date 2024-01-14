@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/StateManager.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
 #include <FBCore/Interface/System/IState.h>
 #include <FBCore/Interface/System/IStateMessage.h>
@@ -14,25 +14,30 @@ namespace fb
 {
     StateManager::StateManager()
     {
+        if( auto handle = getHandle() )
+        {
+            handle->setName( "StateManager" );
+        }
+
         setGarbageCollected( false );
 
         m_stateQueues.resize( static_cast<u32>( Thread::Task::Count ) );
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();
         FB_ASSERT( factoryManager );
 
-        for( u32 i = 0; i < m_stateQueues.size(); ++i )
+        for( auto &m_stateQueue : m_stateQueues )
         {
             auto queue = factoryManager->make_ptr<StateQueueStandard>();
             queue->setGarbageCollected( false );
-            m_stateQueues[i] = queue;
+            m_stateQueue = queue;
         }
 
         auto pNewStateObjects = fb::make_shared<ConcurrentArray<SmartPtr<IStateContext>>>();
-        setStateObjectsPtr( pNewStateObjects );
+        setStateContextsPtr( pNewStateObjects );
     }
 
     StateManager::~StateManager()
@@ -58,74 +63,76 @@ namespace fb
         m_states2d.clear();
     }
 
-    SmartPtr<IStateContext> StateManager::addStateObject()
+    auto StateManager::addStateObject() -> SmartPtr<IStateContext>
     {
-        auto stateObject = fb::make_ptr<StateContextStandard>();
+        auto stateContext = fb::make_ptr<StateContextStandard>();
 
-        auto pStateObjects = getStateObjectsPtr();
-        pStateObjects->push_back( stateObject );
+        auto pStateObjects = getStateContextsPtr();
+        pStateObjects->push_back( stateContext );
 
-        return stateObject;
+        return stateContext;
     }
 
     void StateManager::addStateObject( SmartPtr<IStateContext> context )
     {
-        auto stateObject = fb::make_ptr<StateContextStandard>();
+        auto stateContext = fb::make_ptr<StateContextStandard>();
 
-        auto pStateObjects = getStateObjectsPtr();
-        pStateObjects->push_back( stateObject );
+        auto pStateObjects = getStateContextsPtr();
+        pStateObjects->push_back( stateContext );
     }
 
-    bool StateManager::removeStateObject( SmartPtr<IStateContext> stateObject )
+    auto StateManager::removeStateObject( SmartPtr<IStateContext> stateContext ) -> bool
     {
-        auto pStateObjects = getStateObjectsPtr();
-        auto &stateObjects = *pStateObjects;
-
-        auto newStateObjects =
-            Array<SmartPtr<IStateContext>>( stateObjects.begin(), stateObjects.end() );
-
-        auto it = std::find( newStateObjects.begin(), newStateObjects.end(), stateObject );
-        if( it != newStateObjects.end() )
+        if( auto pStateObjects = getStateContextsPtr() )
         {
-            newStateObjects.erase( it );
+            auto &stateObjects = *pStateObjects;
 
-            auto pNewStateObjects = fb::make_shared<ConcurrentArray<SmartPtr<IStateContext>>>();
-            *pNewStateObjects = ConcurrentArray<SmartPtr<IStateContext>>( newStateObjects.begin(),
-                                                                          newStateObjects.end() );
-            setStateObjectsPtr( pNewStateObjects );
+            auto newStateObjects =
+                Array<SmartPtr<IStateContext>>( stateObjects.begin(), stateObjects.end() );
 
-            return true;
+            auto it = std::find( newStateObjects.begin(), newStateObjects.end(), stateContext );
+            if( it != newStateObjects.end() )
+            {
+                newStateObjects.erase( it );
+
+                auto pNewStateObjects = fb::make_shared<ConcurrentArray<SmartPtr<IStateContext>>>();
+                *pNewStateObjects = ConcurrentArray<SmartPtr<IStateContext>>( newStateObjects.begin(),
+                                                                              newStateObjects.end() );
+                setStateContextsPtr( pNewStateObjects );
+
+                return true;
+            }
         }
 
         return false;
     }
 
-    bool StateManager::removeStateObject( u32 id )
+    auto StateManager::removeStateObject( u32 id ) -> bool
     {
         return false;
     }
 
-    SmartPtr<IStateContext> StateManager::findStateObject( u32 id ) const
+    auto StateManager::findStateObject( u32 id ) const -> SmartPtr<IStateContext>
     {
         // RecursiveMutex::ScopedLock lock(Mutex);
         // for(u32 i=0; i<m_stateObjects.size(); ++i)
         //{
-        //	const SmartPtr<IStateObject>& stateObject = m_stateObjects[i];
-        //	if(stateObject->getId() == id)
-        //		return stateObject;
+        //	const SmartPtr<IStateObject>& stateContext = m_stateObjects[i];
+        //	if(stateContext->getId() == id)
+        //		return stateContext;
         // }
 
         return nullptr;
     }
 
-    Array<SmartPtr<IStateContext>> StateManager::getStateObjects() const
+    auto StateManager::getStateContexts() const -> Array<SmartPtr<IStateContext>>
     {
-        return Array<SmartPtr<IStateContext>>();
+        return {};
     }
 
     void StateManager::update()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto task = Thread::getCurrentTask();
@@ -133,7 +140,7 @@ namespace fb
         auto stateQueue = m_stateQueues[static_cast<u32>( task )];
         if( stateQueue )
         {
-            auto pStateObjects = getStateObjectsPtr();
+            auto pStateObjects = getStateContextsPtr();
             auto stateObjects = *pStateObjects;
 
             if( !stateQueue->isEmpty() )
@@ -142,9 +149,9 @@ namespace fb
                 auto &messages = *pMessages;
                 for( auto &message : messages )
                 {
-                    for( auto &stateObject : stateObjects )
+                    for( auto &stateContext : stateObjects )
                     {
-                        auto pListeners = stateObject->getStateListeners();
+                        auto pListeners = stateContext->getStateListeners();
                         auto listeners = *pListeners;
                         for( auto &listener : listeners )
                         {
@@ -154,9 +161,9 @@ namespace fb
                 }
             }
 
-            for( auto &stateObject : stateObjects )
+            for( auto &stateContext : stateObjects )
             {
-                stateObject->update();
+                stateContext->update();
             }
         }
     }
@@ -167,7 +174,7 @@ namespace fb
         stateQueue->queueMessage( message );
     }
 
-    SmartPtr<IStateQueue> StateManager::getQueue( Thread::Task taskId )
+    auto StateManager::getQueue( Thread::Task taskId ) -> SmartPtr<IStateQueue>
     {
         return m_stateQueues[static_cast<u32>( taskId )];
     }
@@ -201,14 +208,14 @@ namespace fb
         // states.m_states.erase(state.get());
     }
 
-    bool StateManager::removeState( SmartPtr<IState> state )
+    auto StateManager::removeState( SmartPtr<IState> state ) -> bool
     {
         return false;
     }
 
-    Array<SmartPtr<IState>> StateManager::getStates( const u32 typeInfo )
+    auto StateManager::getStates( const u32 typeInfo ) -> Array<SmartPtr<IState>>
     {
-        return Array<SmartPtr<IState>>();
+        return {};
     }
 
     void StateManager::addState2D( u32 index, SmartPtr<IState> state )
@@ -231,7 +238,7 @@ namespace fb
             {
                 while( index >= states2d.size() )
                 {
-                    states2d.push_back( Array<SmartPtr<IState>>() );
+                    states2d.emplace_back();
                 }
             }
 
@@ -286,7 +293,7 @@ namespace fb
     {
     }
 
-    Array<Array<SmartPtr<IState>>> StateManager::getStates2D( const u32 typeInfo )
+    auto StateManager::getStates2D( const u32 typeInfo ) -> Array<Array<SmartPtr<IState>>>
     {
         auto typeManager = TypeManager::instance();
         FB_ASSERT( typeManager );
@@ -297,15 +304,15 @@ namespace fb
             return m_states2d[typeIndex];
         }
 
-        return Array<Array<SmartPtr<IState>>>();
+        return {};
     }
 
-    SharedPtr<ConcurrentArray<SmartPtr<IStateContext>>> StateManager::getStateObjectsPtr() const
+    auto StateManager::getStateContextsPtr() const -> SharedPtr<ConcurrentArray<SmartPtr<IStateContext>>>
     {
         return m_stateObjects;
     }
 
-    void StateManager::setStateObjectsPtr(
+    void StateManager::setStateContextsPtr(
         SharedPtr<ConcurrentArray<SmartPtr<IStateContext>>> stateObjects )
     {
         m_stateObjects = stateObjects;

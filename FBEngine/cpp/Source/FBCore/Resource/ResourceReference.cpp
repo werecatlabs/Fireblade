@@ -7,20 +7,16 @@ namespace fb
 
     FB_CLASS_REGISTER_DERIVED( fb, ResourceReference, IResourceReference );
 
-    ResourceReference::ResourceReference()
-    {
-    }
+    ResourceReference::ResourceReference() = default;
 
-    ResourceReference::~ResourceReference()
-    {
-    }
+    ResourceReference::~ResourceReference() = default;
 
     void ResourceReference::setOwnerUUID( const String &ownerUUID )
     {
         m_ownerUUID = ownerUUID;
     }
 
-    fb::String ResourceReference::getResourceUUID() const
+    auto ResourceReference::getResourceUUID() const -> fb::String
     {
         return m_resourceUUID;
     }
@@ -30,7 +26,7 @@ namespace fb
         m_resourceUUID = resourceUUID;
     }
 
-    fb::String ResourceReference::getOwnerUUID() const
+    auto ResourceReference::getOwnerUUID() const -> fb::String
     {
         return m_ownerUUID;
     }

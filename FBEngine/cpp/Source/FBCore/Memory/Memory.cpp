@@ -1,11 +1,11 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Memory/Memory.h>
+#include <cstdio>
+#include <cstdlib>
 #include <iostream>
 #include <memory>
-#include <stdio.h>
-#include <stdlib.h>
 
-#include <string.h>
+#include <cstring>
 
 #if FB_USE_ONETBB | FB_USE_TBB
 #    include <tbb/scalable_allocator.h>
@@ -18,8 +18,8 @@
 namespace fb
 {
 
-    void *memcpy_kaetemi_sse2( [[maybe_unused]] void *dst, [[maybe_unused]] const void *src,
-                               [[maybe_unused]] int nBytes )
+    auto memcpy_kaetemi_sse2( [[maybe_unused]] void *dst, [[maybe_unused]] const void *src,
+                              [[maybe_unused]] int nBytes ) -> void *
     {
 #if FB_ARCH_TYPE == FB_ARCHITECTURE_32
         __asm {
@@ -403,12 +403,12 @@ namespace fb
         memset( dest0, val, count0 );
     }
 
-    s32 Memory::Memcmp( const void *ptr1, const void *ptr2, s32 num )
+    auto Memory::Memcmp( const void *ptr1, const void *ptr2, s32 num ) -> s32
     {
         return memcmp( ptr1, ptr2, num );
     }
 
-    bool Memory::CheckHeap()
+    auto Memory::CheckHeap() -> bool
     {
 #ifdef WIN32
         /* Check heap status */
@@ -429,7 +429,7 @@ namespace fb
         return true;
     }
 
-    void *Memory::ScalableAlignedMalloc( size_t size, size_t alignment )
+    auto Memory::ScalableAlignedMalloc( size_t size, size_t alignment ) -> void *
     {
 #if FB_ENABLE_HEAP_DEBUG
         FB_ASSERT( CheckHeap() );
@@ -492,7 +492,7 @@ namespace fb
 #endif
     }
 
-    void *Memory::ScalableMalloc( size_t size )
+    auto Memory::ScalableMalloc( size_t size ) -> void *
     {
 #if FB_ENABLE_HEAP_DEBUG
         FB_ASSERT( CheckHeap() );

@@ -4,15 +4,11 @@
 
 namespace fb
 {
-    ScriptClass::ScriptClass()
-    {
-    }
+    ScriptClass::ScriptClass() = default;
 
-    ScriptClass::~ScriptClass()
-    {
-    }
+    ScriptClass::~ScriptClass() = default;
 
-    String ScriptClass::getClassName() const
+    auto ScriptClass::getClassName() const -> String
     {
         return m_className;
     }
@@ -22,7 +18,7 @@ namespace fb
         m_className = className;
     }
 
-    Array<String> ScriptClass::getNamespaceNames() const
+    auto ScriptClass::getNamespaceNames() const -> Array<String>
     {
         return m_namespaceNames;
     }
@@ -32,7 +28,7 @@ namespace fb
         m_namespaceNames = namespaceNames;
     }
 
-    Array<SmartPtr<IScriptFunction>> ScriptClass::getFunctions() const
+    auto ScriptClass::getFunctions() const -> Array<SmartPtr<IScriptFunction>>
     {
         return m_functions;
     }
@@ -42,7 +38,7 @@ namespace fb
         m_functions = functions;
     }
 
-    Array<String> ScriptClass::getParentClasses() const
+    auto ScriptClass::getParentClasses() const -> Array<String>
     {
         return m_parentClasses;
     }
@@ -52,7 +48,7 @@ namespace fb
         m_parentClasses = parentClasses;
     }
 
-    Array<String> ScriptClass::getHeaderIncludes() const
+    auto ScriptClass::getHeaderIncludes() const -> Array<String>
     {
         return m_headerIncludes;
     }
@@ -62,7 +58,7 @@ namespace fb
         m_headerIncludes = headers;
     }
 
-    Array<String> ScriptClass::getSourceIncludes() const
+    auto ScriptClass::getSourceIncludes() const -> Array<String>
     {
         return m_sourceIncludes;
     }

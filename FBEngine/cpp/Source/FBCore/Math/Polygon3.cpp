@@ -44,7 +44,7 @@ namespace fb
     }
 
     template <class T>
-    bool Polygon3<T>::removePoint( u32 i )
+    auto Polygon3<T>::removePoint( u32 i ) -> bool
     {
         FB_ASSERT( i < m_points.size() );
 
@@ -58,19 +58,19 @@ namespace fb
     }
 
     template <class T>
-    Vector3<T> Polygon3<T>::getPoint( u32 i ) const
+    auto Polygon3<T>::getPoint( u32 i ) const -> Vector3<T>
     {
         return m_points[i];
     }
 
     template <class T>
-    u32 Polygon3<T>::getNumPoints() const
+    auto Polygon3<T>::getNumPoints() const -> u32
     {
         return static_cast<u32>( m_points.size() );
     }
 
     template <class T>
-    bool Polygon3<T>::getTriangles( const Plane3<T> &plane, Array<Triangle3<T>> &triangles )
+    auto Polygon3<T>::getTriangles( const Plane3<T> &plane, Array<Triangle3<T>> &triangles ) -> bool
     {
         Vector2<T> points2d;
 
@@ -99,7 +99,9 @@ namespace fb
         /* allocate and initialise list of Vertices in polygon */
         auto n = contour.size();
         if( n < 3 )
+        {
             return false;
+        }
 
         int *V = new int[n]; /* we want a counter-clockwise polygon in V */
         if( 0.0f < area( contour ) )
@@ -132,14 +134,20 @@ namespace fb
             /* three consecutive vertices in current polygon, <u,v,w> */
             int u = v;
             if( nv <= u )
+            {
                 u = 0; /* previous */
+            }
             v = u + 1;
             if( nv <= v )
+            {
                 v = 0; /* new v    */
+            }
             int w = v + 1;
 
             if( nv <= w )
+            {
                 w = 0; /* next     */
+            }
 
             if( snip( contour, u, v, w, nv, V ) )
             {
@@ -153,7 +161,9 @@ namespace fb
                 m++; /* remove v from remaining polygon */
 
                 for( s = v, t = v + 1; t < nv; s++, t++ )
+                {
                     V[s] = V[t];
+                }
 
                 --nv; /* resest error detection counter */
 
@@ -166,7 +176,7 @@ namespace fb
     }
 
     template <class T>
-    bool Polygon3<T>::insideTriangle( T Ax, T Ay, T Bx, T By, T Cx, T Cy, T Px, T Py )
+    auto Polygon3<T>::insideTriangle( T Ax, T Ay, T Bx, T By, T Cx, T Cy, T Px, T Py ) -> bool
     {
         T ax, ay, bx, by, cx, cy, apx, apy, bpx, bpy, cpx, cpy;
         T cCROSSap, bCROSScp, aCROSSbp;
@@ -191,7 +201,8 @@ namespace fb
     };
 
     template <class T>
-    bool Polygon3<T>::snip( const Array<Vector2<T>> &contour, s32 u, s32 v, s32 w, s32 n, s32 *V )
+    auto Polygon3<T>::snip( const Array<Vector2<T>> &contour, s32 u, s32 v, s32 w, s32 n, s32 *V )
+        -> bool
     {
         auto A = contour[V[u]];
         auto B = contour[V[v]];
@@ -223,7 +234,7 @@ namespace fb
     }
 
     template <class T>
-    T Polygon3<T>::area( const Array<Vector2<T>> &contour )
+    auto Polygon3<T>::area( const Array<Vector2<T>> &contour ) -> T
     {
         auto n = contour.size();
         auto A = T( 0.0 );

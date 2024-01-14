@@ -7,114 +7,109 @@
 #include <FBCore/Interface/Physics/IPhysicsScene3.h>
 #include <FBCore/Interface/Physics/IPhysicsShape3.h>
 
-namespace fb
+namespace fb::physics
 {
-    namespace physics
+
+    void RigidDynamic::setKinematicTarget( const Transform3<real_Num> &destination )
     {
+    }
 
-        void RigidDynamic::setKinematicTarget( const Transform3<real_Num> &destination )
-        {
-        }
+    auto RigidDynamic::getKinematicTarget( Transform3<real_Num> &target ) -> bool
+    {
+        return false;
+    }
 
-        bool RigidDynamic::getKinematicTarget( Transform3<real_Num> &target )
-        {
-            return false;
-        }
+    auto RigidDynamic::isKinematic() const -> bool
+    {
+        return false;
+    }
 
-        bool RigidDynamic::isKinematic() const
-        {
-            return false;
-        }
+    void RigidDynamic::setKinematic( bool kinematic )
+    {
+    }
 
-        void RigidDynamic::setKinematic( bool kinematic )
-        {
-        }
+    void RigidDynamic::setLinearDamping( real_Num damping )
+    {
+    }
 
-        void RigidDynamic::setLinearDamping( real_Num damping )
-        {
-        }
+    auto RigidDynamic::getLinearDamping() const -> real_Num
+    {
+        return 0;
+    }
 
-        real_Num RigidDynamic::getLinearDamping() const
-        {
-            return 0;
-        }
+    void RigidDynamic::setAngularDamping( real_Num damping )
+    {
+    }
 
-        void RigidDynamic::setAngularDamping( real_Num damping )
-        {
-        }
+    auto RigidDynamic::getAngularDamping() const -> real_Num
+    {
+        return 0;
+    }
 
-        real_Num RigidDynamic::getAngularDamping() const
-        {
-            return 0;
-        }
+    void RigidDynamic::setMaxAngularVelocity( real_Num maxAngVel )
+    {
+    }
 
-        void RigidDynamic::setMaxAngularVelocity( real_Num maxAngVel )
-        {
-        }
+    auto RigidDynamic::getMaxAngularVelocity() const -> real_Num
+    {
+        return 0;
+    }
 
-        real_Num RigidDynamic::getMaxAngularVelocity() const
-        {
-            return 0;
-        }
+    auto RigidDynamic::isSleeping() const -> bool
+    {
+        return false;
+    }
 
-        bool RigidDynamic::isSleeping() const
-        {
-            return false;
-        }
+    void RigidDynamic::setSleepThreshold( real_Num threshold )
+    {
+    }
 
-        void RigidDynamic::setSleepThreshold( real_Num threshold )
-        {
-        }
+    auto RigidDynamic::getSleepThreshold() const -> real_Num
+    {
+        return 0;
+    }
 
-        real_Num RigidDynamic::getSleepThreshold() const
-        {
-            return 0;
-        }
+    void RigidDynamic::setStabilizationThreshold( real_Num threshold )
+    {
+    }
 
-        void RigidDynamic::setStabilizationThreshold( real_Num threshold )
-        {
-        }
+    auto RigidDynamic::getStabilizationThreshold() const -> real_Num
+    {
+        return 0;
+    }
 
-        real_Num RigidDynamic::getStabilizationThreshold() const
-        {
-            return 0;
-        }
+    void RigidDynamic::setWakeCounter( real_Num wakeCounterValue )
+    {
+    }
 
-        void RigidDynamic::setWakeCounter( real_Num wakeCounterValue )
-        {
-        }
+    auto RigidDynamic::getWakeCounter() const -> real_Num
+    {
+        return 0;
+    }
 
-        real_Num RigidDynamic::getWakeCounter() const
-        {
-            return 0;
-        }
+    void RigidDynamic::wakeUp()
+    {
+    }
 
-        void RigidDynamic::wakeUp()
-        {
-        }
+    void RigidDynamic::putToSleep()
+    {
+    }
 
-        void RigidDynamic::putToSleep()
-        {
-        }
+    void RigidDynamic::setSolverIterationCounts( u32 minPositionIters, u32 minVelocityIters /*= 1 */ )
+    {
+    }
 
-        void RigidDynamic::setSolverIterationCounts( u32 minPositionIters,
-                                                      u32 minVelocityIters /*= 1 */ )
-        {
-        }
+    void RigidDynamic::getSolverIterationCounts( u32 &minPositionIters, u32 &minVelocityIters ) const
+    {
+    }
 
-        void RigidDynamic::getSolverIterationCounts( u32 &minPositionIters,
-                                                      u32 &minVelocityIters ) const
-        {
-        }
+    auto RigidDynamic::getContactReportThreshold() const -> real_Num
+    {
+        return 0;
+    }
 
-        real_Num RigidDynamic::getContactReportThreshold() const
-        {
-            return 0;
-        }
+    void RigidDynamic::setContactReportThreshold( real_Num threshold )
+    {
+    }
 
-        void RigidDynamic::setContactReportThreshold( real_Num threshold )
-        {
-        }
-
-    }  // end namespace physics
-}  // end namespace fb
+}  // namespace fb::physics

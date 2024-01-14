@@ -45,7 +45,7 @@ namespace fb
             SmartPtr<IResource> loadFromFile( const String &filePath ) override;
 
             /** @copydoc IResourceManager::load */
-            SmartPtr<IResource> load( const String &name ) override;
+            SmartPtr<IResource> loadResource( const String &name ) override;
 
             /** @copydoc IResourceManager::getByName */
             SmartPtr<IResource> getByName( const String &name ) override;

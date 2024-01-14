@@ -3,14 +3,11 @@
 #include <FBCore/Core/StringUtil.h>
 #include <FBCore/System/RttiClassDefinition.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
-    {
-        FB_CLASS_REGISTER_DERIVED( fb, IUITerrainEditor, IUIElement );
+    FB_CLASS_REGISTER_DERIVED( fb, IUITerrainEditor, IUIElement );
 
-        const hash_type IUITerrainEditor::selectTerrainTextureHash =
-            StringUtil::getHash( "selectTerrainTexture" );
+    const hash_type IUITerrainEditor::selectTerrainTextureHash =
+        StringUtil::getHash( "selectTerrainTexture" );
 
-    }  // end namespace ui
-}  // end namespace fb
+}  // namespace fb::ui

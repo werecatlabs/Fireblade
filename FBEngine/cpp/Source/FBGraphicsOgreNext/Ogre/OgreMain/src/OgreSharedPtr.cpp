@@ -32,6 +32,10 @@ THE SOFTWARE.
 
 namespace Ogre
 {
-    SharedPtrInfo::~SharedPtrInfo() {}
-    SharedPtrInfoNone::~SharedPtrInfoNone() {}
-}
+    SharedPtrInfo::~SharedPtrInfo()
+    {
+    }
+    SharedPtrInfoNone::~SharedPtrInfoNone()
+    {
+    }
+}  // namespace Ogre

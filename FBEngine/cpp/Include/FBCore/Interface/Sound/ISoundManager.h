@@ -113,6 +113,8 @@ namespace fb
          * @brief Sets whether the sound manager is muted.
          */
         virtual void setMute( bool mute ) = 0;
+
+        FB_CLASS_REGISTER_DECL;
     };
 }  // end namespace fb
 

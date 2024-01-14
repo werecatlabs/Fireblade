@@ -9,7 +9,7 @@
 
 namespace fb
 {
-    //---------------------------------------------
+
     /// A structure to store mesh transform data.
     struct MeshTransformData
     {
@@ -26,6 +26,6 @@ namespace fb
         Array<Vector2F> UVOffsets;
         Array<Vector2F> UVScaleData;
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif  // MeshTransformData_h__

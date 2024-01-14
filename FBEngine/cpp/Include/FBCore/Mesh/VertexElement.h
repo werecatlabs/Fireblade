@@ -6,17 +6,18 @@
 
 namespace fb
 {
-    
+
+    /** Implementation of a vertex element. */
     class VertexElement : public IVertexElement
     {
     public:
-        VertexElement();
+        VertexElement() = default;
 
         VertexElement( u16 source, u32 size, u32 offset,
-                        IVertexDeclaration::VertexElementSemantic semantic,
-                        VertexElementType type, u8 index = 0 );
+                       IVertexDeclaration::VertexElementSemantic semantic, VertexElementType type,
+                       u8 index = 0 );
 
-        ~VertexElement() override;
+        ~VertexElement() override = default;
 
         void getElementData( void *vertexData, void **elementData ) const override;
         void getElementData( void *vertexData, f32 **elementData ) const override;
@@ -40,13 +41,13 @@ namespace fb
         bool compare( SmartPtr<IVertexElement> other ) const override;
 
     private:
-        u32 m_size;
-        u32 m_offset;
-        u32 m_semantic;
-        VertexElementType m_type;
-        u16 m_source;
-        u8 m_index; // Index of the item, only applicable for some elements like texture coords
+        u32 m_size = 0;
+        u32 m_offset = 0;
+        u32 m_semantic = static_cast<u32>( IVertexDeclaration::VertexElementSemantic::VES_POSITION );
+        VertexElementType m_type = VertexElementType::VET_FLOAT3;
+        u16 m_source = 0;
+        u8 m_index = 0;  // Index of the item, only applicable for some elements like texture coords
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif  // VertexElement_h__

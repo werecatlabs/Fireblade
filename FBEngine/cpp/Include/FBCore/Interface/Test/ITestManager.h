@@ -2,7 +2,7 @@
 #define ITestManager_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Memory/IObject.h>
+#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Array.h>
 
 namespace fb

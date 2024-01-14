@@ -9,10 +9,14 @@ namespace fb
     namespace scene
     {
 
+        /** Collision plane component. */
         class CollisionPlane : public Collision
         {
         public:
+            /** Constructor. */
             CollisionPlane();
+
+            /** Destructor. */
             ~CollisionPlane() override;
 
             /** @copydoc IObject::load */

@@ -7,7 +7,7 @@ namespace fb
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageDirty, StateMessage );
 
     //--------------------------------------------
-    bool StateMessageDirty::isDirty() const
+    auto StateMessageDirty::isDirty() const -> bool
     {
         return m_isDirty;
     }

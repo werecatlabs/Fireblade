@@ -18,16 +18,16 @@ namespace fb
             /** Destructor. */
             ~Text() override;
 
-            /** @copydoc IObject::load */
+            /** @copydoc UIComponent::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::unload */
+            /** @copydoc UIComponent::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
             /** @copydoc IComponent::updateDirty */
-            void updateDirty( u32 flags, u32 oldFlags ) override;
+            void updateFlags( u32 flags, u32 oldFlags ) override;
 
-            /** @copydoc IObject::getChildObjects */
+            /** @copydoc UIComponent::getChildObjects */
             Array<SmartPtr<ISharedObject>> getChildObjects() const override;
 
             /** @copydoc UIComponent::getProperties */

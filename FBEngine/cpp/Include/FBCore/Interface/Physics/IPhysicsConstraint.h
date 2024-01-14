@@ -13,10 +13,6 @@ namespace fb
         {
         public:
             ~IPhysicsConstraint() override = default;
-
-            virtual bool isDirty() const = 0;
-            virtual void setDirty( bool dirty ) = 0;
-            virtual void updateDirty() = 0;
         };
 
     }  // end namespace physics

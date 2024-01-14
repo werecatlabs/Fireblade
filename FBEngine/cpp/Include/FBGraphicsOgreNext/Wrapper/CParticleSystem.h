@@ -2,10 +2,10 @@
 #define _CParticleSystem_H
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
-#include "FBCore/Interface/Particle/IParticleSystem.h"
-#include "FBCore/Interface/Graphics/IGraphicsScene.h"
-#include "FBGraphicsOgreNext/Wrapper/CGraphicsObjectOgreNext.h"
-#include "FBGraphicsOgreNext/Wrapper/CParticleNode.h"
+#include <FBCore/Interface/Particle/IParticleSystem.h>
+#include <FBCore/Interface/Graphics/IGraphicsScene.h>
+#include <FBGraphicsOgreNext/Wrapper/CGraphicsObjectOgreNext.h>
+#include <FBGraphicsOgreNext/Wrapper/CParticleNode.h>
 #include <FBCore/Core/HashMap.h>
 
 #if FB_OGRE_USE_PARTICLE_UNIVERSE
@@ -556,17 +556,17 @@ namespace fb
 
         void _updateRenderQueue( SmartPtr<IRenderQueue> queue );
 
-        SmartPtr<IStateContext> &getStateObject()
+        SmartPtr<IStateContext> &getStateContext()
         {
-            return m_stateObject;
+            return m_stateContext;
         }
-        const SmartPtr<IStateContext> &getStateObject() const
+        const SmartPtr<IStateContext> &getStateContext() const
         {
-            return m_stateObject;
+            return m_stateContext;
         }
-        void setStateObject( SmartPtr<IStateContext> stateObject )
+        void setStateContext( SmartPtr<IStateContext> stateContext )
         {
-            m_stateObject = stateObject;
+            m_stateContext = stateContext;
         }
 
         virtual SmartPtr<render::IGraphicsScene> getSceneManager() const
@@ -631,7 +631,7 @@ namespace fb
             PUParticleSystem *m_puSystem;
         };
 
-        SmartPtr<IStateContext> m_stateObject;
+        SmartPtr<IStateContext> m_stateContext;
 
         SmartPtr<IScriptInvoker> m_scriptInvoker;
         SmartPtr<IScriptReceiver> m_scriptReceiver;

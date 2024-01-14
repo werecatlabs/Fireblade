@@ -5,25 +5,25 @@
 namespace fb
 {
 
-    core::IApplicationManager* EngineHelper::getSingleton()
+    core::ApplicationManager *EngineHelper::getSingleton()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         return applicationManager.get();
     }
 
-    SmartPtr<ITimer> EngineHelper::getTimer( core::IApplicationManager *engine )
+    SmartPtr<ITimer> EngineHelper::getTimer( core::ApplicationManager *engine )
     {
         return engine->getTimer();
     }
 
-    ITimer* EngineHelper::getTimerSingleton()
+    ITimer *EngineHelper::getTimerSingleton()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto timer = applicationManager->getTimer();
         return timer.get();
     }
 
-    //SmartPtr<IStateManager> EngineHelper::getStateManager( core::IApplicationManager *engine )
+    //SmartPtr<IStateManager> EngineHelper::getStateManager( core::ApplicationManager *engine )
     //{
     //    return engine->getStateManager();
     //}
@@ -33,17 +33,17 @@ namespace fb
     //	return engine->getFactory();
     //}
 
-    //GraphicsSystemPtr EngineHelper::getGraphicsSystem( core::IApplicationManager *engine )
+    //GraphicsSystemPtr EngineHelper::getGraphicsSystem( core::ApplicationManager *engine )
     //{
     //    return engine->getGraphicsSystem();
     //}
 
-    //MapManagerPtr EngineHelper::getMapManager( core::IApplicationManager *engine )
+    //MapManagerPtr EngineHelper::getMapManager( core::ApplicationManager *engine )
     //{
     //    return engine->getMapManager();
     //}
 
-    //EntityManagerPtr EngineHelper::getEntityManager( core::IApplicationManager *engine )
+    //EntityManagerPtr EngineHelper::getEntityManager( core::ApplicationManager *engine )
     //{
     //    return engine->getEntityManager();
     //}
@@ -53,37 +53,37 @@ namespace fb
     ////	return engine->getFileSystem();
     ////}
 
-    //fb::InputManagerPtr EngineHelper::getInputManager( core::IApplicationManager *engine )
+    //fb::InputManagerPtr EngineHelper::getInputManager( core::ApplicationManager *engine )
     //{
     //    return engine->getInputManager();
     //}
 
-    //fb::PhysicsManager2Ptr EngineHelper::getPhysicsManager2( core::IApplicationManager *engine )
+    //fb::PhysicsManager2Ptr EngineHelper::getPhysicsManager2( core::ApplicationManager *engine )
     //{
     //    return engine->getPhysicsManager2();
     //}
 
-    //fb::PhysicsManager3Ptr EngineHelper::getPhysicsManager3( core::IApplicationManager *engine )
+    //fb::PhysicsManager3Ptr EngineHelper::getPhysicsManager3( core::ApplicationManager *engine )
     //{
     //    return engine->getPhysicsManager3();
     //}
 
-    //fb::PoolPtr EngineHelper::getPool( core::IApplicationManager *engine )
+    //fb::PoolPtr EngineHelper::getPool( core::ApplicationManager *engine )
     //{
     //    return engine->getPool();
     //}
 
-    //fb::SmartPtr<ITimer> EngineHelper::getMainTimer( core::IApplicationManager *engine )
+    //fb::SmartPtr<ITimer> EngineHelper::getMainTimer( core::ApplicationManager *engine )
     //{
     //    return engine->getMainTimer();
     //}
 
-    //fb::MessageManagerPtr EngineHelper::getMessageManager( core::IApplicationManager *engine )
+    //fb::MessageManagerPtr EngineHelper::getMessageManager( core::ApplicationManager *engine )
     //{
     //    return engine->getMessageManager();
     //}
 
-    //boost::shared_ptr<IComponent> EngineHelper::getComponentHash( core::IApplicationManager *system, lua_Integer hash )
+    //boost::shared_ptr<IComponent> EngineHelper::getComponentHash( core::ApplicationManager *system, lua_Integer hash )
     //{
     //    hash32 id = *reinterpret_cast<hash32 *>( &hash );
     //    boost::shared_ptr<IComponentContainer> &components = system->getComponents();
@@ -103,20 +103,20 @@ namespace fb
     //    return nullptr;
     //}
 
-    //boost::shared_ptr<IComponentContainer> EngineHelper::_getComponents( core::IApplicationManager *system )
+    //boost::shared_ptr<IComponentContainer> EngineHelper::_getComponents( core::ApplicationManager *system )
     //{
     //    boost::shared_ptr<IComponentContainer> &components = system->getComponents();
     //    return components;
     //}
 
-    //boost::shared_ptr<IComponent> EngineHelper::getComponent( core::IApplicationManager *system, const char *type )
+    //boost::shared_ptr<IComponent> EngineHelper::getComponent( core::ApplicationManager *system, const char *type )
     //{
     //    auto hash = StringUtil::getHash( type );
     //    lua_Integer id = *reinterpret_cast<lua_Integer *>( &hash );
     //    return getComponentHash( system, id );
     //}
 
-    //ICameraManager *EngineHelper::_getCameraControllerMgr( core::IApplicationManager *engine )
+    //ICameraManager *EngineHelper::_getCameraControllerMgr( core::ApplicationManager *engine )
     //{
     //    return engine->getCameraManager().get();
     //}
@@ -126,82 +126,82 @@ namespace fb
     //    printf( msg );
     //}
 
-    //IStateManager *EngineHelper::_getStateManager( core::IApplicationManager *system )
+    //IStateManager *EngineHelper::_getStateManager( core::ApplicationManager *system )
     //{
     //    return system->getStateManager().get();
     //}
 
-    //IGraphicsSystem *EngineHelper::_getGraphicsSystem( core::IApplicationManager *system )
+    //IGraphicsSystem *EngineHelper::_getGraphicsSystem( core::ApplicationManager *system )
     //{
     //    return system->getGraphicsSystem().get();
     //}
 
-    //IInputManager *EngineHelper::_getInputManager( core::IApplicationManager *system )
+    //IInputManager *EngineHelper::_getInputManager( core::ApplicationManager *system )
     //{
     //    return system->getInputManager().get();
     //}
 
-    //IEntityManager *EngineHelper::_getEntityManager( core::IApplicationManager *system )
+    //IEntityManager *EngineHelper::_getEntityManager( core::ApplicationManager *system )
     //{
     //    return system->getEntityManager().get();
     //}
 
-    //IPhysicsManager2 *EngineHelper::_getPhysicsManager2( core::IApplicationManager *system )
+    //IPhysicsManager2 *EngineHelper::_getPhysicsManager2( core::ApplicationManager *system )
     //{
     //    return system->getPhysicsManager2().get();
     //}
 
-    //IPhysicsManager3 *EngineHelper::_getPhysicsManager3( core::IApplicationManager *system )
+    //IPhysicsManager3 *EngineHelper::_getPhysicsManager3( core::ApplicationManager *system )
     //{
     //    return system->getPhysicsManager3().get();
     //}
 
-    //ISoundManager *EngineHelper::_getSoundManager( core::IApplicationManager *system )
+    //ISoundManager *EngineHelper::_getSoundManager( core::ApplicationManager *system )
     //{
     //    return system->getSoundManager().get();
     //}
 
-    //IFlashControlManager *EngineHelper::_getFlashControlManager( core::IApplicationManager *system )
+    //IFlashControlManager *EngineHelper::_getFlashControlManager( core::ApplicationManager *system )
     //{
     //    return system->getFlashControlManager().get();
     //}
 
-    //IVideoManager *EngineHelper::_getVideoManager( core::IApplicationManager *system )
+    //IVideoManager *EngineHelper::_getVideoManager( core::ApplicationManager *system )
     //{
     //    return system->getVideoManager().get();
     //}
 
-    //ICombatManager2 *EngineHelper::_getCombatManager2( core::IApplicationManager *system )
+    //ICombatManager2 *EngineHelper::_getCombatManager2( core::ApplicationManager *system )
     //{
     //    return system->getCombatManager2().get();
     //}
 
-    //IFileSystem *EngineHelper::_getFileSystem( core::IApplicationManager *system )
+    //IFileSystem *EngineHelper::_getFileSystem( core::ApplicationManager *system )
     //{
     //    return 0;  // system->getFileSystem().get();
     //}
 
-    //IProjectileManager2 *EngineHelper::_getProjectileManager2( core::IApplicationManager *system )
+    //IProjectileManager2 *EngineHelper::_getProjectileManager2( core::ApplicationManager *system )
     //{
     //    return system->getProjectileManager2().get();
     //}
 
-    //IGameManager *EngineHelper::_getGameSceneManager( core::IApplicationManager *system )
+    //IGameManager *EngineHelper::_getGameSceneManager( core::ApplicationManager *system )
     //{
     //    return system->getGameManager().get();
     //}
 
-    //IGUIManager *EngineHelper::_getGUIManager( core::IApplicationManager *system )
+    //IGUIManager *EngineHelper::_getGUIManager( core::ApplicationManager *system )
     //{
     //    return system->getGUIManager().get();
     //}
 
-    //IAiManager *EngineHelper::_getAiManager( core::IApplicationManager *system )
+    //IAiManager *EngineHelper::_getAiManager( core::ApplicationManager *system )
     //{
     //    return system->getAiManager().get();
     //}
 
-    //ISpecialFxManager *EngineHelper::_getSpecialFxManager( core::IApplicationManager *system )
+    //ISpecialFxManager *EngineHelper::_getSpecialFxManager( core::ApplicationManager *system )
     //{
     //    return system->getSpecialFxManager().get();
     //}

@@ -2,11 +2,14 @@
 #define FBCore_Types_h__
 
 #include <FBCore/FBCoreConfig.h>
-#include <cstdint>
+
+#if FB_COMPILER == FB_COMPILER_MSVC
+#    include <cstdint>
+#endif
 
 namespace fb
 {
-    /// 8 bit unsigned variable.
+    /// 8 bit unsigned variable.s
     using u8 = unsigned char;
 
     /// 8 bit signed variable.
@@ -27,11 +30,19 @@ namespace fb
     /// 32 bit signed variable.
     using s32 = signed int;
 
+#if FB_COMPILER == FB_COMPILER_MSVC
     /// 64 bit signed variable.
     using s64 = int64_t;
 
     /// 64 bit unsigned variable.
     using u64 = uint64_t;
+#else
+    /// 64 bit signed variable.
+    using s64 = long long;
+
+    /// 64 bit unsigned variable.
+    using u64 = unsigned long long;
+#endif
 
     /// 32 bit floating point variable.
     using f32 = float;
@@ -511,5 +522,25 @@ namespace fb
     };
 
 }  // namespace fb
+
+#define FB_VERSION_MAJOR 0
+#define FB_VERSION_MINOR 2
+#define FB_VERSION_PATCH 0
+
+#if defined( __CYGWIN32__ )
+#    define FB_INTERFACE_API __stdcall
+#    define FB_INTERFACE_EXPORT __declspec( dllexport )
+#elif defined( WIN32 ) || defined( _WIN32 ) || defined( __WIN32__ ) || defined( _WIN64 ) || \
+    defined( WINAPI_FAMILY )
+//#    define FB_INTERFACE_API __stdcall
+#    define FB_INTERFACE_API __cdecl
+#    define FB_INTERFACE_EXPORT __declspec( dllexport )
+#elif defined( __MACH__ ) || defined( __ANDROID__ ) || defined( __linux__ )
+#    define FB_INTERFACE_API
+#    define FB_INTERFACE_EXPORT
+#else
+#    define FB_INTERFACE_API
+#    define FB_INTERFACE_EXPORT
+#endif
 
 #endif  // FBTypes_h__

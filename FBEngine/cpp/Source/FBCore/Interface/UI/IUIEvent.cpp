@@ -3,10 +3,7 @@
 #include <FBCore/Core/StringUtil.h>
 #include <FBCore/System/RttiClassDefinition.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
-    {
-        FB_CLASS_REGISTER_DERIVED( fb, IUIEvent, IEvent );
-    }  // end namespace ui
-}  // end namespace fb
+    FB_CLASS_REGISTER_DERIVED( fb, IUIEvent, IEvent );
+}  // namespace fb::ui

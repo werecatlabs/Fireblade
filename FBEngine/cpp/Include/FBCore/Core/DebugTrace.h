@@ -20,14 +20,14 @@ namespace fb
         {
         public:
             DebugCheckFunction();
-            DebugCheckFunction( DebugTrace *debugCheck );
+            explicit DebugCheckFunction( DebugTrace *debugCheck );
             ~DebugCheckFunction();
 
             RawPtr<DebugTrace> m_debugCheck;
         };
 
         DebugTrace();
-        DebugTrace( bool bCheckHeap = false, bool bCheckGrowth = false );
+        explicit DebugTrace( bool bCheckHeap = false, bool bCheckGrowth = false );
         ~DebugTrace() override;
 
         bool getEnableConsoleOutput() const;

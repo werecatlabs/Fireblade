@@ -1,16 +1,9 @@
 #include <FBImGui/FBImGuiPCH.h>
 #include <FBImGui/ImGuiLabelSliderPair.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
-    {
-        ImGuiLabelSliderPair::ImGuiLabelSliderPair()
-        {
-        }
+    ImGuiLabelSliderPair::ImGuiLabelSliderPair() = default;
 
-        ImGuiLabelSliderPair::~ImGuiLabelSliderPair()
-        {
-        }
-    } // end namespace ui
-}     // end namespace fb
+    ImGuiLabelSliderPair::~ImGuiLabelSliderPair() = default;
+}  // namespace fb::ui

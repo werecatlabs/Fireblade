@@ -246,9 +246,9 @@ namespace fb
 
         static int CalculateNearest2Pow( int input );
 
-        static SmartPtr<ui::IUIMenuItem> addMenuItem( SmartPtr<ui::IUIMenu> menu, s32 itemid,
-                                                      const String &text, const String &help,
-                                                      ui::IUIMenuItem::Type type = ui::IUIMenuItem::Type::Normal );
+        static SmartPtr<ui::IUIMenuItem> addMenuItem(
+            SmartPtr<ui::IUIMenu> menu, s32 itemid, const String &text, const String &help,
+            ui::IUIMenuItem::Type type = ui::IUIMenuItem::Type::Normal );
 
         static SmartPtr<ui::IUIMenuItem> addMenuSeparator( SmartPtr<ui::IUIMenu> menu );
 
@@ -475,9 +475,13 @@ namespace fb
         auto int_b = *( (size_t *)b );
 
         if( int_a == int_b )
+        {
             return 0;
+        }
         if( int_a < int_b )
+        {
             return -1;
+        }
 
         return 1;
     }

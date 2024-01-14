@@ -12,6 +12,7 @@ namespace fb
 {
 #ifdef FB_PLATFORM_WIN32
 
+    /** Implementation of the Timer using the QueryPerformance* functions */
     class TimerWin32 : public Timer
     {
     public:

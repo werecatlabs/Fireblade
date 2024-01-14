@@ -10,12 +10,19 @@ namespace fb
     class VehicleController : public IVehicleController
     {
     public:
+        /** Constructor. */
         VehicleController();
+
+        /** Destructor. */
         ~VehicleController();
 
+        /** @copydoc IVehicleController::load */
         void load( SmartPtr<ISharedObject> data ) override;
+
+        /** @copydoc IVehicleController::reset */
         void reset() override;
 
+        /** @copydoc IVehicleController::update */
         void update() override;
 
         void updateTransform();
@@ -23,7 +30,10 @@ namespace fb
         f32 getChannel( s32 idx ) const override;
         void setChannel( s32 idx, f32 channel ) override;
 
+        Vector3<real_Num> getScale() const;
+
         Vector3<real_Num> getPosition() const override;
+
         void setPosition( const Vector3<real_Num> &position ) override;
 
         Quaternion<real_Num> getOrientation() const;
@@ -54,7 +64,7 @@ namespace fb
                                  const Vector3<real_Num> &end, u32 colour ) override;
 
         bool getDisplayDebugData() const override;
-        void setDisplayDebugData( bool val ) override;
+        void setDisplayDebugData( bool displayDebugData ) override;
 
         void addForce( s32 bodyIdx, Vector3<real_Num> Force, Vector3<real_Num> Loc ) override;
         void addTorque( s32 bodyIdx, Vector3<real_Num> Torque ) override;
@@ -79,8 +89,7 @@ namespace fb
         /** @copydoc IVehicleController::getState */
         virtual IVehicleController::State getState() const override;
 
-                SmartPtr<IWheelController> getWheelController( u32 index ) const;
-
+        SmartPtr<IWheelController> getWheelController( u32 index ) const;
 
     protected:
         void addForce( const Vector3<real_Num> &force );

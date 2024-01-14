@@ -3,14 +3,14 @@
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
 #include <FBCore/Interface/Graphics/IMaterialTexture.h>
-#include <FBCore/Graphics/CMaterialTexture.h>
+#include <FBCore/Graphics/MaterialTexture.h>
 #include <FBCore/Interface/System/IEventListener.h>
 
 namespace fb
 {
     namespace render
     {
-        class CMaterialTextureOgreNext : public CMaterialTexture
+        class CMaterialTextureOgreNext : public MaterialTexture
         {
         public:
             CMaterialTextureOgreNext();

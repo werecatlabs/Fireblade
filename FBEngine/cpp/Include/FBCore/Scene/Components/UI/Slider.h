@@ -7,18 +7,28 @@ namespace fb
 {
     namespace scene
     {
-
         class Slider : public UIComponent
         {
         public:
             Slider();
             ~Slider() override;
 
-            /** @copydoc IObject::load */
+            /** @copydoc UIComponent::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::unload */
+            /** @copydoc UIComponent::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
+
+            SmartPtr<ui::IUISlider> getSlider() const;
+
+            void setSlider( SmartPtr<ui::IUISlider> slider );
+
+            FB_CLASS_REGISTER_DECL;
+
+        protected:
+            void createUI() override;
+
+            SmartPtr<ui::IUISlider> m_slider;
         };
     }  // namespace scene
 }  // end namespace fb

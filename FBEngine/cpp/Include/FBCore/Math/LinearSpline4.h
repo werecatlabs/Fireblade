@@ -6,7 +6,7 @@
 
 namespace fb
 {
-    
+
     template <class T>
     class LinearSpline4 : public ISharedObject
     {
@@ -21,7 +21,7 @@ namespace fb
 
         u32 getNumPoints() const
         {
-        	return m_points.size();
+            return m_points.size();
         }
 
     protected:

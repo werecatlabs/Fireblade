@@ -2,10 +2,11 @@
 #define ApplicationUtil_h__
 
 #include <FBCore/Core/StringUtil.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
 #include <FBCore/Interface/Resource/IResource.h>
 #include <FBCore/Interface/UI/IUIMenuItem.h>
+#include <FBCore/System/FactoryTemplate.h>
 
 namespace fb
 {
@@ -49,7 +50,7 @@ namespace fb
         static void createRigidStaticMesh( SmartPtr<scene::IActor> actor, bool recursive );
         static void createRigidDynamicMesh( SmartPtr<scene::IActor> actor, bool recursive );
 
-	    static SmartPtr<scene::IActor> createDefaultCubemap( bool addToScene = true );
+        static SmartPtr<scene::IActor> createDefaultCubemap( bool addToScene = true );
         static SmartPtr<scene::IActor> createDefaultSky( bool addToScene = true );
 
         static SmartPtr<scene::IActor> createCamera( bool addToScene = true );
@@ -57,7 +58,7 @@ namespace fb
         static SmartPtr<scene::IActor> createDefaultCube( bool addToScene = true );
         static SmartPtr<scene::IActor> createDefaultCubeMesh( bool addToScene = true );
 
-        static SmartPtr<scene::IActor> createDefaultGround(bool addToScene = true);
+        static SmartPtr<scene::IActor> createDefaultGround( bool addToScene = true );
 
         static SmartPtr<scene::IActor> createDefaultTerrain( bool addToScene = true );
 
@@ -66,11 +67,11 @@ namespace fb
         static SmartPtr<scene::IActor> createDirectionalLight( bool addToScene = true );
         static SmartPtr<scene::IActor> createPointLight( bool addToScene = true );
 
-        static SmartPtr<scene::IActor> createDefaultPlane(bool addToScene = true);
+        static SmartPtr<scene::IActor> createDefaultPlane( bool addToScene = true );
 
-        static SmartPtr<scene::IActor> createDefaultVehicle(bool addToScene = true);
-        static SmartPtr<scene::IActor> createDefaultCar(bool addToScene = true);
-        static SmartPtr<scene::IActor> createDefaultTruck(bool addToScene = true);
+        static SmartPtr<scene::IActor> createDefaultVehicle( bool addToScene = true );
+        static SmartPtr<scene::IActor> createDefaultCar( bool addToScene = true );
+        static SmartPtr<scene::IActor> createDefaultTruck( bool addToScene = true );
 
         static SmartPtr<scene::IActor> createDefaultParticleSystem( bool addToScene = true );
 
@@ -82,6 +83,8 @@ namespace fb
         static SmartPtr<scene::IActor> createProceduralTest();
 
         static SmartPtr<scene::IActor> loadVehicleFromDB( s32 id );
+
+        static Vector2F getRelativeMousePos( Vector2F relativeMousePosition );
 
         static void createRigidStaticMesh();
         static void createRigidDynamicMesh();
@@ -96,7 +99,98 @@ namespace fb
 
         /** Gets the resource type name. */
         static String getResourceTypeByName( IResource::ResourceType resourceType );
+
+        static bool isSupportedMesh( const String &filePath );
+        static bool isSupportedTexture( const String &filePath );
+        static bool isSupportedSound( const String &filePath );
+
+        template <class T>
+        static void addFactory();
+
+        template <class T>
+        static void addFactory( SmartPtr<IFactoryManager> factoryManager );
+
+        template <class T>
+        static void addFactoryByName( const String &name );
+
+        template <class T>
+        static void addFactoryByName( const String &name, u32 poolSize );
+
+        template <class T>
+        static void removeFactory();
     };
+
+    template <class T>
+    void ApplicationUtil::addFactory()
+    {
+        auto &applicationManager = core::IApplicationManager::instance();
+        auto &factoryManager = applicationManager->getFactoryManager();
+
+        addFactory<T>( factoryManager );
+    }
+
+    template <class T>
+    void ApplicationUtil::addFactory( SmartPtr<IFactoryManager> factoryManager )
+    {
+        auto &applicationManager = core::IApplicationManager::instance();
+        auto typeManager = TypeManager::instance();
+
+        auto typeInfo = T::typeInfo();
+        auto name = typeManager->getName( typeInfo );
+        auto hash = typeManager->getHash( typeInfo );
+
+        auto pFactory = applicationManager->make_ptr<FactoryTemplate<T>>();
+        pFactory->setObjectType( name );
+        pFactory->setObjectTypeId( hash );
+        pFactory->load( nullptr );
+
+        factoryManager->addFactory( pFactory );
+    }
+
+    template <class T>
+    void ApplicationUtil::addFactoryByName( const String &name )
+    {
+        auto &applicationManager = core::IApplicationManager::instance();
+        auto &factoryManager = applicationManager->getFactoryManager();
+
+        auto hash = StringUtil::getHash64( name );
+
+        auto pFactory = applicationManager->make_ptr<FactoryTemplate<T>>();
+        pFactory->setObjectType( name );
+        pFactory->setObjectTypeId( hash );
+        pFactory->load( nullptr );
+
+        factoryManager->addFactory( pFactory );
+    }
+
+    template <class T>
+    void ApplicationUtil::addFactoryByName( const String &name, u32 poolSize )
+    {
+        auto &applicationManager = core::IApplicationManager::instance();
+        auto &factoryManager = applicationManager->getFactoryManager();
+
+        auto hash = StringUtil::getHash64( name );
+
+        auto pFactory = applicationManager->make_ptr<FactoryTemplate<T>>();
+        pFactory->setObjectType( name );
+        pFactory->setObjectTypeId( hash );
+        pFactory->load( nullptr );
+
+        factoryManager->addFactory( pFactory );
+        factoryManager->setPoolSize( hash, poolSize );
+    }
+
+    template <class T>
+    void ApplicationUtil::removeFactory()
+    {
+        auto &applicationManager = core::IApplicationManager::instance();
+        auto &factoryManager = applicationManager->getFactoryManager();
+
+        auto typeInfo = T::typeInfo();
+        auto factory = factoryManager->getFactoryById( typeInfo );
+        factoryManager->removeFactory( factory );
+    }
+
 }  // end namespace fb
 
 #endif  // ApplicationUtil_h__

@@ -57,7 +57,7 @@ namespace fb
     }
 
     SmartPtr<IVideo> _addVideoAndTextureSize( IVideoManager *mgr, const char *id, const char *fileName,
-                                      const char *textureName, const Vector2I &size )
+                                              const char *textureName, const Vector2I &size )
     {
         //try
         //{
@@ -90,7 +90,7 @@ namespace fb
 
         return nullptr;
     }
-    
+
     IVideo *_addVideoWithId( IVideoManager *mgr, hash32 hash, const char *fileName )
     {
         //VideoPtr video = mgr->addVideo( hash, fileName );
@@ -98,28 +98,27 @@ namespace fb
 
         return nullptr;
     }
-    
+
     IVideo *_getVideoById( IVideoManager *mgr, lua_Integer id )
     {
         return mgr->getVideoById( id ).get();
     }
-    
+
     IVideo *_getVideoByName( IVideoManager *mgr, const char *name )
     {
         hash32 id = StringUtil::getHash( name );
         return _getVideoById( mgr, id );
     }
-    
+
     void _createTexture( IVideo *video, const char *textureName )
     {
-        //core::IApplicationManager *engine = core::IApplicationManager::instance();
+        //core::ApplicationManager *engine = core::ApplicationManager::instance();
         //VideoManagerPtr videoMgr = engine->getVideoManager();
         //VideoTexturePtr videoTexture = videoMgr->createVideoTexture( textureName );
         //videoTexture->initialise( textureName, video->getSize() );
         //video->setVideoTexture( videoTexture );
     }
 
-    
     void bindVideo( lua_State *L )
     {
         using namespace luabind;

@@ -5,15 +5,11 @@
 namespace fb
 {
 
-    ScriptFunction::ScriptFunction()
-    {
-    }
+    ScriptFunction::ScriptFunction() = default;
 
-    ScriptFunction::~ScriptFunction()
-    {
-    }
+    ScriptFunction::~ScriptFunction() = default;
 
-    String ScriptFunction::getClassName() const
+    auto ScriptFunction::getClassName() const -> String
     {
         return m_className;
     }
@@ -23,7 +19,7 @@ namespace fb
         m_className = className;
     }
 
-    String ScriptFunction::getFunctionName() const
+    auto ScriptFunction::getFunctionName() const -> String
     {
         return m_functionName;
     }
@@ -33,7 +29,7 @@ namespace fb
         m_functionName = functionName;
     }
 
-    String ScriptFunction::getReturnType() const
+    auto ScriptFunction::getReturnType() const -> String
     {
         return m_returnType;
     }
@@ -43,7 +39,7 @@ namespace fb
         m_returnType = returnType;
     }
 
-    Array<SmartPtr<IScriptVariable>> ScriptFunction::getArguments() const
+    auto ScriptFunction::getArguments() const -> Array<SmartPtr<IScriptVariable>>
     {
         return m_arguments;
     }
@@ -53,7 +49,7 @@ namespace fb
         m_arguments = arguments;
     }
 
-    bool ScriptFunction::isConstructor() const
+    auto ScriptFunction::isConstructor() const -> bool
     {
         return m_isConstructor;
     }
@@ -63,7 +59,7 @@ namespace fb
         m_isConstructor = constructor;
     }
 
-    bool ScriptFunction::isDestructor() const
+    auto ScriptFunction::isDestructor() const -> bool
     {
         return m_isDestructor;
     }
@@ -73,7 +69,7 @@ namespace fb
         m_isDestructor = destructor;
     }
 
-    String ScriptFunction::getFunctionBodyCPP() const
+    auto ScriptFunction::getFunctionBodyCPP() const -> String
     {
         if( m_returnType != "void" )
         {

@@ -1,101 +1,94 @@
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPCH.h>
 #include "FBGraphicsOgreNext/Wrapper/CAnimationTextureControl.h"
 
-namespace fb
+namespace fb::render
 {
-    namespace render
+
+    //--------------------------------------------
+    CAnimationTextureControl::CAnimationTextureControl() = default;
+
+    //--------------------------------------------
+    CAnimationTextureControl::~CAnimationTextureControl() = default;
+
+    //--------------------------------------------
+    void CAnimationTextureControl::initialise( Ogre::TextureUnitState *textureUnit )
     {
+        m_textureUnit = textureUnit;
+        m_textureUnit->setCurrentFrame( 0 );
+        m_animController = m_textureUnit->_getAnimController();
+        m_prevFrame = 0;
+    }
 
-        //--------------------------------------------
-        CAnimationTextureControl::CAnimationTextureControl()
+    //--------------------------------------------
+    void CAnimationTextureControl::update( const s32 &task, const time_interval &t,
+                                           const time_interval &dt )
+    {
+        if( ( m_prevFrame > m_textureUnit->getCurrentFrame() ) ||
+            ( m_textureUnit->getCurrentFrame() >= m_textureUnit->getNumFrames() - 1 ) )
         {
+            setAnimationEnabled( false );
         }
 
-        //--------------------------------------------
-        CAnimationTextureControl::~CAnimationTextureControl()
-        {
-        }
+        m_prevFrame = m_textureUnit->getCurrentFrame();
+    }
 
-        //--------------------------------------------
-        void CAnimationTextureControl::initialise( Ogre::TextureUnitState *textureUnit )
-        {
-            m_textureUnit = textureUnit;
-            m_textureUnit->setCurrentFrame( 0 );
-            m_animController = m_textureUnit->_getAnimController();
-            m_prevFrame = 0;
-        }
+    //--------------------------------------------
+    auto CAnimationTextureControl::setAnimationEnabled( bool enabled ) -> bool
+    {
+        m_textureUnit->setCurrentFrame( 0 );
+        return false;
+    }
 
-        //--------------------------------------------
-        void CAnimationTextureControl::update( const s32 &task, const time_interval &t,
-                                               const time_interval &dt )
-        {
-            if( ( m_prevFrame > m_textureUnit->getCurrentFrame() ) ||
-                ( m_textureUnit->getCurrentFrame() >= m_textureUnit->getNumFrames() - 1 ) )
-            {
-                setAnimationEnabled( false );
-            }
+    //--------------------------------------------
+    auto CAnimationTextureControl::setAnimationEnabled( bool enabled, f32 timePosition ) -> bool
+    {
+        return false;
+    }
 
-            m_prevFrame = m_textureUnit->getCurrentFrame();
-        }
+    //--------------------------------------------
+    auto CAnimationTextureControl::isAnimationEnabled() -> bool
+    {
+        return false;
+    }
 
-        //--------------------------------------------
-        bool CAnimationTextureControl::setAnimationEnabled( bool enabled )
-        {
-            m_textureUnit->setCurrentFrame( 0 );
-            return false;
-        }
+    //--------------------------------------------
+    auto CAnimationTextureControl::hasAnimationEnded() -> bool
+    {
+        return false;
+    }
 
-        //--------------------------------------------
-        bool CAnimationTextureControl::setAnimationEnabled( bool enabled, f32 timePosition )
-        {
-            return false;
-        }
+    //--------------------------------------------
+    void CAnimationTextureControl::setAnimationLoop( bool loop )
+    {
+    }
 
-        //--------------------------------------------
-        bool CAnimationTextureControl::isAnimationEnabled()
-        {
-            return false;
-        }
+    //--------------------------------------------
+    auto CAnimationTextureControl::isAnimationLooping() const -> bool
+    {
+        return false;
+    }
 
-        //--------------------------------------------
-        bool CAnimationTextureControl::hasAnimationEnded()
-        {
-            return false;
-        }
+    //--------------------------------------------
+    void CAnimationTextureControl::setAnimationReversed()
+    {
+    }
 
-        //--------------------------------------------
-        void CAnimationTextureControl::setAnimationLoop( bool loop )
-        {
-        }
+    //--------------------------------------------
+    auto CAnimationTextureControl::isAnimationReversed() -> bool
+    {
+        return false;
+    }
 
-        //--------------------------------------------
-        bool CAnimationTextureControl::isAnimationLooping() const
-        {
-            return false;
-        }
+    //--------------------------------------------
+    auto CAnimationTextureControl::setTimePosition( f32 timePosition ) -> bool
+    {
+        return false;
+    }
 
-        //--------------------------------------------
-        void CAnimationTextureControl::setAnimationReversed()
-        {
-        }
+    //--------------------------------------------
+    auto CAnimationTextureControl::getTimePosition() const -> f32
+    {
+        return 0.f;
+    }
 
-        //--------------------------------------------
-        bool CAnimationTextureControl::isAnimationReversed()
-        {
-            return false;
-        }
-
-        //--------------------------------------------
-        bool CAnimationTextureControl::setTimePosition( f32 timePosition )
-        {
-            return false;
-        }
-
-        //--------------------------------------------
-        f32 CAnimationTextureControl::getTimePosition() const
-        {
-            return 0.f;
-        }
-
-    }  // namespace render
-}  // end namespace fb
+}  // namespace fb::render

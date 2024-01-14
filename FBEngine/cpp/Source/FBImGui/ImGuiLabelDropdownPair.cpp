@@ -1,16 +1,9 @@
 #include <FBImGui/FBImGuiPCH.h>
 #include <FBImGui/ImGuiLabelDropdownPair.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
-    {
-        ImGuiLabelDropdownPair::ImGuiLabelDropdownPair()
-        {
-        }
+    ImGuiLabelDropdownPair::ImGuiLabelDropdownPair() = default;
 
-        ImGuiLabelDropdownPair::~ImGuiLabelDropdownPair()
-        {
-        }
-    } // end namespace ui
-}     // end namespace fb
+    ImGuiLabelDropdownPair::~ImGuiLabelDropdownPair() = default;
+}  // namespace fb::ui

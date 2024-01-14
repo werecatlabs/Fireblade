@@ -1,109 +1,105 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/UI/UIComponentUtil.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+
+    auto UIComponentUtil::getHorizontalAlignmentString(
+        LayoutTransform::HorizontalAlignment horizontalAlignment ) -> String
     {
-
-        String UIComponentUtil::getHorizontalAlignmentString(
-            LayoutTransform::HorizontalAlignment horizontalAlignment )
+        switch( horizontalAlignment )
         {
-            switch( horizontalAlignment )
-            {
-            case LayoutTransform::HorizontalAlignment::LEFT:
-                return String( "Left" );
-            case LayoutTransform::HorizontalAlignment::CENTER:
-                return String( "Center" );
-            case LayoutTransform::HorizontalAlignment::RIGHT:
-                return String( "Right" );
-            default:
-                break;
-            }
-
-            return String( "" );
+        case LayoutTransform::HorizontalAlignment::LEFT:
+            return String( "Left" );
+        case LayoutTransform::HorizontalAlignment::CENTER:
+            return String( "Center" );
+        case LayoutTransform::HorizontalAlignment::RIGHT:
+            return String( "Right" );
+        default:
+            break;
         }
 
-        LayoutTransform::HorizontalAlignment UIComponentUtil::getHorizontalAlignment( const String &str )
-        {
-            if( str == String( "Left" ) )
-            {
-                return LayoutTransform::HorizontalAlignment::LEFT;
-            }
-            if( str == String( "Center" ) )
-            {
-                return LayoutTransform::HorizontalAlignment::CENTER;
-            }
-            if( str == String( "Right" ) )
-            {
-                return LayoutTransform::HorizontalAlignment::RIGHT;
-            }
+        return String( "" );
+    }
 
+    auto UIComponentUtil::getHorizontalAlignment( const String &str )
+        -> LayoutTransform::HorizontalAlignment
+    {
+        if( str == String( "Left" ) )
+        {
             return LayoutTransform::HorizontalAlignment::LEFT;
         }
-
-        String UIComponentUtil::getHorizontalAlignmentTypesString()
+        if( str == String( "Center" ) )
         {
-            auto enumValues = String( "" );
-            for( size_t i = 0; i < static_cast<size_t>( LayoutTransform::HorizontalAlignment::COUNT );
-                 ++i )
-            {
-                auto eMaterialType = static_cast<LayoutTransform::HorizontalAlignment>( i );
-                auto eMaterialTypeStr = getHorizontalAlignmentString( eMaterialType );
-                enumValues += eMaterialTypeStr + ";";
-            }
-
-            return enumValues;
+            return LayoutTransform::HorizontalAlignment::CENTER;
+        }
+        if( str == String( "Right" ) )
+        {
+            return LayoutTransform::HorizontalAlignment::RIGHT;
         }
 
-        String UIComponentUtil::getVerticalAlignmentString(
-            LayoutTransform::VerticalAlignment verticalAlignment )
-        {
-            switch( verticalAlignment )
-            {
-            case LayoutTransform::VerticalAlignment::TOP:
-                return String( "Top" );
-            case LayoutTransform::VerticalAlignment::CENTER:
-                return String( "Center" );
-            case LayoutTransform::VerticalAlignment::BOTTOM:
-                return String( "Bottom" );
-            default:
-                break;
-            }
+        return LayoutTransform::HorizontalAlignment::LEFT;
+    }
 
-            return String( "" );
+    auto UIComponentUtil::getHorizontalAlignmentTypesString() -> String
+    {
+        auto enumValues = String( "" );
+        for( size_t i = 0; i < static_cast<size_t>( LayoutTransform::HorizontalAlignment::COUNT ); ++i )
+        {
+            auto eMaterialType = static_cast<LayoutTransform::HorizontalAlignment>( i );
+            auto eMaterialTypeStr = getHorizontalAlignmentString( eMaterialType );
+            enumValues += eMaterialTypeStr + ";";
         }
 
-        LayoutTransform::VerticalAlignment UIComponentUtil::getVerticalAlignment( const String &str )
-        {
-            if( str == String( "Top" ) )
-            {
-                return LayoutTransform::VerticalAlignment::TOP;
-            }
-            if( str == String( "Center" ) )
-            {
-                return LayoutTransform::VerticalAlignment::CENTER;
-            }
-            if( str == String( "Bottom" ) )
-            {
-                return LayoutTransform::VerticalAlignment::BOTTOM;
-            }
+        return enumValues;
+    }
 
+    auto UIComponentUtil::getVerticalAlignmentString(
+        LayoutTransform::VerticalAlignment verticalAlignment ) -> String
+    {
+        switch( verticalAlignment )
+        {
+        case LayoutTransform::VerticalAlignment::TOP:
+            return String( "Top" );
+        case LayoutTransform::VerticalAlignment::CENTER:
+            return String( "Center" );
+        case LayoutTransform::VerticalAlignment::BOTTOM:
+            return String( "Bottom" );
+        default:
+            break;
+        }
+
+        return String( "" );
+    }
+
+    auto UIComponentUtil::getVerticalAlignment( const String &str ) -> LayoutTransform::VerticalAlignment
+    {
+        if( str == String( "Top" ) )
+        {
             return LayoutTransform::VerticalAlignment::TOP;
         }
-
-        String UIComponentUtil::getVerticalAlignmentTypesString()
+        if( str == String( "Center" ) )
         {
-            auto enumValues = String( "" );
-            for( size_t i = 0; i < static_cast<size_t>( LayoutTransform::VerticalAlignment::COUNT );
-                 ++i )
-            {
-                auto eMaterialType = static_cast<LayoutTransform::VerticalAlignment>( i );
-                auto eMaterialTypeStr = getVerticalAlignmentString( eMaterialType );
-                enumValues += eMaterialTypeStr + ";";
-            }
-
-            return enumValues;
+            return LayoutTransform::VerticalAlignment::CENTER;
         }
-    }  // namespace scene
-}  // end namespace fb
+        if( str == String( "Bottom" ) )
+        {
+            return LayoutTransform::VerticalAlignment::BOTTOM;
+        }
+
+        return LayoutTransform::VerticalAlignment::TOP;
+    }
+
+    auto UIComponentUtil::getVerticalAlignmentTypesString() -> String
+    {
+        auto enumValues = String( "" );
+        for( size_t i = 0; i < static_cast<size_t>( LayoutTransform::VerticalAlignment::COUNT ); ++i )
+        {
+            auto eMaterialType = static_cast<LayoutTransform::VerticalAlignment>( i );
+            auto eMaterialTypeStr = getVerticalAlignmentString( eMaterialType );
+            enumValues += eMaterialTypeStr + ";";
+        }
+
+        return enumValues;
+    }
+}  // namespace fb::scene

@@ -3,7 +3,6 @@
 
 #include <FBCore/Interface/Animation/IAnimator.h>
 
-
 namespace fb
 {
 

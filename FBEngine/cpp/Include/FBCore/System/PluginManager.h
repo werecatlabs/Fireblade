@@ -12,7 +12,10 @@ namespace fb
         class PluginManager : public IPluginManager
         {
         public:
+            /** Constructor. */
             PluginManager() = default;
+
+            /** Destructor. */
             ~PluginManager() override = default;
 
             /** @copydoc ISharedObject::load */
@@ -27,13 +30,17 @@ namespace fb
             /** @copydoc IPluginManager::loadPlugin */
             SmartPtr<IPlugin> loadPlugin( const String &filename ) override;
 
+            /** @copydoc IPluginManager::loadPlugin */
             void loadPlugin( SmartPtr<IPlugin> plugin ) override;
 
             /** @copydoc IPluginManager::unloadPlugin */
             void unloadPlugin( SmartPtr<IPlugin> plugin ) override;
 
         protected:
+            /** Array of loaded plugins. */
             Array<SmartPtr<ISharedObject>> m_plugins;
+
+            /** Mutex for thread safety. */
             mutable RecursiveMutex m_mutex;
         };
 

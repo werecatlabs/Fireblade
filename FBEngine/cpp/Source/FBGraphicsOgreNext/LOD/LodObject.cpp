@@ -1,31 +1,26 @@
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPCH.h>
 #include "FBGraphicsOgreNext/LOD/LodObject.h"
 
-namespace fb
+namespace fb::render
 {
-    namespace render
+
+    u32 LodObject::m_idExt = 0;
+
+    LodObject::LodObject() : m_lodPage( nullptr ), m_entity( nullptr ), m_node( nullptr )
     {
+        m_id = m_idExt++;
+    }
 
-        u32 LodObject::m_idExt = 0;
+    LodObject::~LodObject() = default;
 
-        LodObject::LodObject() : m_lodPage( nullptr ), m_entity( nullptr ), m_node( nullptr )
-        {
-            m_id = m_idExt++;
-        }
+    auto LodObject::getMeshName() const -> std::string
+    {
+        return m_meshName;
+    }
 
-        LodObject::~LodObject()
-        {
-        }
+    void LodObject::setMeshName( const std::string &val )
+    {
+        m_meshName = val;
+    }
 
-        std::string LodObject::getMeshName() const
-        {
-            return m_meshName;
-        }
-
-        void LodObject::setMeshName( const std::string &val )
-        {
-            m_meshName = val;
-        }
-
-    }  // namespace render
-}  // namespace fb
+}  // namespace fb::render

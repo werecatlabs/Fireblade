@@ -41,7 +41,8 @@ namespace fb
             operator bool();
 
         protected:
-            RecursiveMutex &m_mutex; /**< The recursive mutex being locked. */
+            /**< The recursive mutex being locked. */
+            RecursiveMutex &m_mutex; 
         };
 
         /**

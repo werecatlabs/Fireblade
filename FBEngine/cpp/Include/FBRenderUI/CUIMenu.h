@@ -9,7 +9,7 @@ namespace fb
 {
     namespace ui
     {
-        
+
         class CUIMenu : public CUIElement<IUIMenu>
         {
         public:
@@ -32,12 +32,24 @@ namespace fb
             void setCurrentItemIndex( u32 index ) override;
             u32 getCurrentItemIndex() const override;
 
-            void incrementCursor() override; // move the cursor to the next menu item
+            void incrementCursor() override;  // move the cursor to the next menu item
             void decrementCursor() override;  // move the cursor to the previous menu item
 
             int getNumMenuItems() const override;
 
             void setPosition( const Vector2F &position ) override;
+
+            void addMenuItem( SmartPtr<IUIElement> item ) override;
+
+            void removeMenuItem( SmartPtr<IUIElement> item ) override;
+
+            Array<SmartPtr<IUIElement>> getMenuItems() const override;
+
+            void setMenuItems( Array<SmartPtr<IUIElement>> val ) override;
+
+            String getLabel() const override;
+
+            void setLabel( const String &label ) override;
 
         private:
             void onAddChild( CUIElement *child );
@@ -48,7 +60,7 @@ namespace fb
 
             void populateMenuItemList();
 
-            void WrapCursor(); //! ensure the cursor values is within bounds
+            void WrapCursor();  //! ensure the cursor values is within bounds
 
             //
             // Callbacks
@@ -60,15 +72,17 @@ namespace fb
 
             SmartPtr<render::IOverlayElementContainer> m_container;
 
-            Array<CUIElement *> m_aMenuItemList; //
+            Array<CUIElement *> m_aMenuItemList;  //
+
+            String m_label;
 
             s32 m_uiNumMenuItems;
             s32 m_uiNumListItems;
-            s32 m_iItemIdx;      // store the index of an item in a list
-            s32 m_cursorIdx;     // the index of the menu item which the cursor is on
-            s32 m_prevCursorIdx; // the menu item the Cursor was previously on
+            s32 m_iItemIdx;       // store the index of an item in a list
+            s32 m_cursorIdx;      // the index of the menu item which the cursor is on
+            s32 m_prevCursorIdx;  // the menu item the Cursor was previously on
         };
-    } // end namespace ui
-}     // end namespace fb
+    }  // end namespace ui
+}  // end namespace fb
 
 #endif

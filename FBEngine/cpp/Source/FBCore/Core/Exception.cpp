@@ -12,7 +12,7 @@
 namespace fb
 {
 
-    Exception::Exception() : m_line( 0 )
+    Exception::Exception()
     {
     }
 
@@ -43,9 +43,7 @@ namespace fb
 #endif
     }
 
-    Exception::~Exception()
-    {
-    }
+    Exception::~Exception() = default;
 
     RuntimeException::RuntimeException( const String &description, const char *file /*= __FILE__*/,
                                         long line /*= __LINE__*/, const char *func /*= 0 */ ) :

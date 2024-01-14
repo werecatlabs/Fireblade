@@ -3,13 +3,10 @@
 #include <FBRenderUI/CUIManager.h>
 #include <FBCore/Memory/PointerUtil.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    auto FBRenderUI::createUIManager() -> SmartPtr<IUIManager>
     {
-        SmartPtr<IUIManager> FBRenderUI::createUIManager()
-        {
-            return fb::make_ptr<CUIManager>();
-        }
-    } // end namespace ui
-}     // end namespace fb
+        return fb::make_ptr<CUIManager>();
+    }
+}  // namespace fb::ui

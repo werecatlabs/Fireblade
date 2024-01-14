@@ -61,7 +61,7 @@ namespace fb
         @param name The name of the resource.
         @returns The resource instance. Can be null if the resource does not exist.
         */
-        virtual SmartPtr<IResource> load( const String &name ) = 0;
+        virtual SmartPtr<IResource> loadResource( const String &name ) = 0;
 
         /** Gets an existing resource.
         @param name The name of the resource.

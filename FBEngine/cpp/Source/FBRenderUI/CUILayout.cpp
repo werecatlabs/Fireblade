@@ -3,340 +3,296 @@
 #include <FBRenderUI/CUIContainer.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    FB_CLASS_REGISTER_DERIVED( fb, CUILayout, CUIElement<IUILayout> );
+
+    u32 CUILayout::m_nameExt = 0;
+
+    CUILayout::CUILayout()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, CUILayout, CUIElement<IUILayout> );
+        createStateContext();
+        m_type = "Layout";
 
-        u32 CUILayout::m_nameExt = 0;
+        // auto applicationManager = core::ApplicationManager::instance();
+        // FactoryPtr factory = engine->getFactory();
+        // SmartPtr<IFiniteStateMachine> fsm = factory->create("FSMStandard");
+        ////m_fsm->addFSMListener(this);
+        // m_fsm = fsm;
+    }
 
-        CUILayout::CUILayout()
+    CUILayout::~CUILayout()
+    {
+        removeAllChildren();
+    }
+
+    void CUILayout::load( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            createStateContext();
-            m_type = "Layout";
+            setLoadingState( LoadingState::Loading );
 
-            // auto applicationManager = core::IApplicationManager::instance();
-            // FactoryPtr factory = engine->getFactory();
-            // SmartPtr<IFiniteStateMachine> fsm = factory->create("FSMStandard");
-            ////m_fsm->addFSMListener(this);
-            // m_fsm = fsm;
+            auto name = String( "Layout_" ) + StringUtil::toString( m_nameExt++ );
+            setName( name );
 
-            // setLayout(this);
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            FB_ASSERT( graphicsSystem );
+
+            auto overlayManager = graphicsSystem->getOverlayManager();
+            FB_ASSERT( overlayManager );
+
+            if( !overlayManager )
+            {
+                return;
+            }
+
+            auto existingOverLay = overlayManager->findOverlay( getName() );
+
+            if( existingOverLay )
+            {
+                FB_ASSERT_TRUE( existingOverLay );  // overlay already exists
+            }
+
+            m_overlay = overlayManager->addOverlay( name );
+
+            s32 zOrder = 500;
+
+            m_overlay->setZOrder( zOrder );
+
+            setLayout( this );
+            setLoadingState( LoadingState::Loaded );
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void CUILayout::unload( SmartPtr<ISharedObject> data )
+    {
+        try
+        {
+            setLoadingState( LoadingState::Unloading );
+
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            FB_ASSERT( graphicsSystem );
+
+            auto overlayManager = graphicsSystem->getOverlayManager();
+            FB_ASSERT( overlayManager );
+
+            if( m_overlay )
+            {
+                overlayManager->removeOverlay( m_overlay );
+
+                m_overlay->unload( nullptr );
+                m_overlay = nullptr;
+            }
+
+            CUIElement<IUILayout>::unload( data );
+
+            setLoadingState( LoadingState::Unloaded );
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    auto CUILayout::handleEvent( const SmartPtr<IInputEvent> &event ) -> bool
+    {
+        bool eventHandled = false;
+
+        // if(!isEnabled())
+        //	return eventHandled;
+
+        // switch(event->getEventType())
+        //{
+        // case IInputEvent::MOUSE_INPUT_EVENT:
+        // case IInputEvent::USER_INPUT_EVENT:
+        // case IInputEvent::KEY_INPUT_EVENT:
+        // case IInputEvent::JOYSTICK_INPUT_EVENT:
+        //	{
+        //		//for(u32 i=0; i<m_inputListeners.size(); ++i)
+        //		//{
+        //		//	IGUIItemInputListener* inputListener = m_inputListeners[i];
+        //		//	if(inputListener->onEvent(event))
+        //		//		return true;
+        //		//}
+        //		//}
+
+        //		Parameters params;
+        //		params.set_used(1);
+        //		params[0].setPtr((void*)event.get());
+
+        //		Parameters results(1);
+
+        //		static const hash32 ON_INPUT_EVENT_HASH = StringUtil::getHash("inputEvent");
+
+        //		SmartPtr<IScriptInvoker>& invoker = getInvoker();
+        //		if(invoker)
+        //			invoker->event(ON_INPUT_EVENT_HASH, params, results);
+
+        //		eventHandled = (results.size() > 0) && (results[0].getBool() == TRUE);
+        //	}
+        //	break;
+        // default:
+        //	{
+        //	}
+        //};
+
+        return eventHandled || CUIElement::handleEvent( event );
+    }
+
+    void CUILayout::update()
+    {
+        // getFSM()->update();
+        CUIElement::update();
+    }
+
+    void CUILayout::handleStateChanged( SmartPtr<IState> &state )
+    {
+        if( isLoaded() )
+        {
+            if( m_overlay )
+            {
+                auto overlayState = fb::dynamic_pointer_cast<UIElementState>( state );
+
+                auto visible = overlayState->isVisible();
+                m_overlay->setVisible( visible );
+            }
+
+            CUIElement<IUILayout>::handleStateChanged( state );
+        }
+    }
+
+    void CUILayout::OnEnterState( u8 state )
+    {
+        switch( state )
+        {
+        case FS_IDLE:
+            OnEnterIdleState();
+            break;
+        case FS_FADEIN:
+            OnEnterFadeInState();
+            break;
+        case FS_FADEOUT:
+            OnEnterFadeOutState();
+            break;
+        default:
+        {
+        }
+        }
+    }
+
+    void CUILayout::OnUpdateState( u8 state )
+    {
+        switch( state )
+        {
+        case FS_IDLE:
+            OnUpdateIdleState();
+            break;
+        case FS_FADEIN:
+            OnUpdateFadeInState();
+            break;
+        case FS_FADEOUT:
+            OnUpdateFadeOutState();
+            break;
+        default:
+        {
+        }
+        }
+    }
+
+    void CUILayout::OnLeaveState( u8 state )
+    {
+        switch( state )
+        {
+        case FS_IDLE:
+            OnLeaveIdleState();
+            break;
+        case FS_FADEIN:
+            OnLeaveFadeInState();
+            break;
+        case FS_FADEOUT:
+            OnLeaveFadeOutState();
+            break;
+        default:
+        {
+        }
+        }
+    }
+
+    auto CUILayout::GetStateFromName( const String &stateName ) const -> u8
+    {
+        if( stateName == ( "Idle" ) )
+        {
+            return FS_IDLE;
+        }
+        if( stateName == ( "FadeIn" ) )
+        {
+            return FS_FADEIN;
+        }
+        if( stateName == ( "FadeOut" ) )
+        {
+            return FS_FADEOUT;
         }
 
-        CUILayout::~CUILayout()
+        return 0;
+    }
+
+    auto CUILayout::GetStateNameFromId( u8 stateId ) const -> String
+    {
+        switch( stateId )
         {
-            removeAllChildren();
-        }
-
-        void CUILayout::load( SmartPtr<ISharedObject> data )
+        case FS_IDLE:
+            return String( "Idle" );
+        case FS_FADEIN:
+            return String( "FadeIn" );
+        case FS_FADEOUT:
+            return String( "FadeOut" );
+        default:
         {
-            try
-            {
-                setLoadingState( LoadingState::Loading );
-
-                auto name = String( "Layout_" ) + StringUtil::toString( m_nameExt++ );
-                setName( name );
-
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto graphicsSystem = applicationManager->getGraphicsSystem();
-                FB_ASSERT( graphicsSystem );
-
-                auto overlayManager = graphicsSystem->getOverlayManager();
-                FB_ASSERT( overlayManager );
-
-                if( !overlayManager )
-                {
-                    return;
-                }
-
-                auto existingOverLay = overlayManager->findOverlay( getName() );
-
-                if( existingOverLay )
-                {
-                    FB_ASSERT_TRUE( existingOverLay );  // overlay already exists
-                }
-
-                m_overlay = overlayManager->addOverlay( getName() );
-
-                s32 zOrder = 500;
-
-                m_overlay->setZOrder( zOrder );
-
-                setLoadingState( LoadingState::Loaded );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void CUILayout::unload( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-                setLoadingState( LoadingState::Unloading );
-
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto graphicsSystem = applicationManager->getGraphicsSystem();
-                FB_ASSERT( graphicsSystem );
-
-                auto overlayManager = graphicsSystem->getOverlayManager();
-                FB_ASSERT( overlayManager );
-
-                if( m_overlay )
-                {
-                    overlayManager->removeOverlay( m_overlay );
-
-                    m_overlay->unload( nullptr );
-                    m_overlay = nullptr;
-                }
-
-                CUIElement<IUILayout>::unload( data );
-
-                setLoadingState( LoadingState::Unloaded );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        bool CUILayout::handleEvent( const SmartPtr<IInputEvent> &event )
-        {
-            bool eventHandled = false;
-
-            // if(!isEnabled())
-            //	return eventHandled;
-
-            // switch(event->getEventType())
-            //{
-            // case IInputEvent::MOUSE_INPUT_EVENT:
-            // case IInputEvent::USER_INPUT_EVENT:
-            // case IInputEvent::KEY_INPUT_EVENT:
-            // case IInputEvent::JOYSTICK_INPUT_EVENT:
-            //	{
-            //		//for(u32 i=0; i<m_inputListeners.size(); ++i)
-            //		//{
-            //		//	IGUIItemInputListener* inputListener = m_inputListeners[i];
-            //		//	if(inputListener->onEvent(event))
-            //		//		return true;
-            //		//}
-            //		//}
-
-            //		Parameters params;
-            //		params.set_used(1);
-            //		params[0].setPtr((void*)event.get());
-
-            //		Parameters results(1);
-
-            //		static const hash32 ON_INPUT_EVENT_HASH = StringUtil::getHash("inputEvent");
-
-            //		SmartPtr<IScriptInvoker>& invoker = getInvoker();
-            //		if(invoker)
-            //			invoker->event(ON_INPUT_EVENT_HASH, params, results);
-
-            //		eventHandled = (results.size() > 0) && (results[0].getBool() == TRUE);
-            //	}
-            //	break;
-            // default:
-            //	{
-            //	}
-            //};
-
-            return eventHandled || CUIElement::handleEvent( event );
-        }
-
-        void CUILayout::update()
-        {
-            // getFSM()->update();
-            CUIElement::update();
-        }
-
-        void CUILayout::handleStateChanged( SmartPtr<IState> &state )
-        {
-            if( isLoaded() )
-            {
-                if( m_overlay )
-                {
-                    auto overlayState = fb::dynamic_pointer_cast<UIElementState>( state );
-
-                    auto visible = overlayState->isVisible();
-                    m_overlay->setVisible( visible );
-                }
-
-                CUIElement<IUILayout>::handleStateChanged( state );
-            }
-        }
-
-        void CUILayout::OnEnterState( u8 state )
-        {
-            switch( state )
-            {
-            case FS_IDLE:
-                OnEnterIdleState();
-                break;
-            case FS_FADEIN:
-                OnEnterFadeInState();
-                break;
-            case FS_FADEOUT:
-                OnEnterFadeOutState();
-                break;
-            default:
-            {
-            }
-            }
-        }
-
-        void CUILayout::OnUpdateState( u8 state )
-        {
-            switch( state )
-            {
-            case FS_IDLE:
-                OnUpdateIdleState();
-                break;
-            case FS_FADEIN:
-                OnUpdateFadeInState();
-                break;
-            case FS_FADEOUT:
-                OnUpdateFadeOutState();
-                break;
-            default:
-            {
-            }
-            }
-        }
-
-        void CUILayout::OnLeaveState( u8 state )
-        {
-            switch( state )
-            {
-            case FS_IDLE:
-                OnLeaveIdleState();
-                break;
-            case FS_FADEIN:
-                OnLeaveFadeInState();
-                break;
-            case FS_FADEOUT:
-                OnLeaveFadeOutState();
-                break;
-            default:
-            {
-            }
-            }
-        }
-
-        u8 CUILayout::GetStateFromName( const String &stateName ) const
-        {
-            if( stateName == ( "Idle" ) )
-            {
-                return FS_IDLE;
-            }
-            if( stateName == ( "FadeIn" ) )
-            {
-                return FS_FADEIN;
-            }
-            if( stateName == ( "FadeOut" ) )
-            {
-                return FS_FADEOUT;
-            }
-
-            return 0;
-        }
-
-        String CUILayout::GetStateNameFromId( u8 stateId ) const
-        {
-            switch( stateId )
-            {
-            case FS_IDLE:
-                return String( "Idle" );
-            case FS_FADEIN:
-                return String( "FadeIn" );
-            case FS_FADEOUT:
-                return String( "FadeOut" );
-            default:
-            {
-                return StringUtil::EmptyString;
-            }
-            }
-
             return StringUtil::EmptyString;
         }
-
-        void CUILayout::addChild( SmartPtr<IUIElement> child )
-        {
-            if( isThreadSafe() )
-            {
-                FB_ASSERT( child );
-
-                child->setLayout( this );
-
-                if( child )
-                {
-                    render::IOverlayElement *element = nullptr;
-                    child->_getObject( (void **)&element );
-                    //FB_ASSERT( element );
-
-                    if( element )
-                    {
-                        if( m_overlay )
-                        {
-                            m_overlay->addElement( element );
-                        }
-                    }
-                }
-
-                CUIElement<IUILayout>::addChild( child );
-            }
-            else
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                auto graphicsSystem = applicationManager->getGraphicsSystem();
-                auto factoryManager = applicationManager->getFactoryManager();
-
-                if( !child->isLoaded() )
-                {
-                    graphicsSystem->loadObject( child );
-                }
-
-                auto message = factoryManager->make_ptr<StateMessageObject>();
-                message->setType( STATE_MESSAGE_ADD_CHILD );
-                message->setObject( child );
-                addMessage( message );
-            }
         }
 
-        bool CUILayout::removeChild( SmartPtr<IUIElement> child )
+        return StringUtil::EmptyString;
+    }
+
+    void CUILayout::addChild( SmartPtr<IUIElement> child )
+    {
+        if( isThreadSafe() )
         {
-            if( isThreadSafe() )
+            FB_ASSERT( child );
+
+            child->setLayout( this );
+
+            if( child )
             {
-                child->setLayout( nullptr );
+                render::IOverlayElement *element = nullptr;
+                child->_getObject( reinterpret_cast<void **>( &element ) );
+                //FB_ASSERT( element );
 
-                FB_ASSERT( child );
-
-                if( child )
+                if( element )
                 {
-                    render::IOverlayElement *element = nullptr;
-                    child->_getObject( (void **)&element );
-                    // FB_ASSERT(element);
-
-                    if( element )
+                    if( m_overlay )
                     {
-                        if( m_overlay )
-                        {
-                            return m_overlay->removeElement( element );
-                        }
+                        m_overlay->addElement( element );
                     }
                 }
-
-                return CUIElement<IUILayout>::removeChild( child );
             }
-            auto applicationManager = core::IApplicationManager::instance();
+
+            CUIElement<IUILayout>::addChild( child );
+        }
+        else
+        {
+            auto applicationManager = core::ApplicationManager::instance();
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             auto factoryManager = applicationManager->getFactoryManager();
 
@@ -346,129 +302,169 @@ namespace fb
             }
 
             auto message = factoryManager->make_ptr<StateMessageObject>();
-            message->setType( STATE_MESSAGE_REMOVE_CHILD );
+            message->setType( STATE_MESSAGE_ADD_CHILD );
             message->setObject( child );
             addMessage( message );
-
-            return false;
         }
+    }
 
-        SmartPtr<IUIWindow> CUILayout::getUiWindow() const
+    auto CUILayout::removeChild( SmartPtr<IUIElement> child ) -> bool
+    {
+        if( isThreadSafe() )
         {
-            return m_uiWindow;
-        }
+            child->setLayout( nullptr );
 
-        void CUILayout::setUiWindow( SmartPtr<IUIWindow> uiWindow )
-        {
-            m_uiWindow = uiWindow;
-        }
+            FB_ASSERT( child );
 
-        void CUILayout::updateZOrder()
-        {
-            CUIElement<IUILayout>::updateZOrder();
-
-            if( m_overlay )
+            if( child )
             {
-                m_overlay->updateZOrder();
-            }
-        }
+                render::IOverlayElement *element = nullptr;
+                child->_getObject( reinterpret_cast<void **>( &element ) );
+                // FB_ASSERT(element);
 
-        SmartPtr<Properties> CUILayout::getProperties() const
-        {
-            auto properties = CUIElement<IUILayout>::getProperties();
-            properties->setProperty( "Type", "UILayout" );
-            properties->setProperty( "Name", getName() );
-            properties->setProperty( "Visible", isVisible() );
-            properties->setProperty( "Enabled", isEnabled() );
-            properties->setProperty( "Position", getPosition() );
-            properties->setProperty( "Size", getSize() );
-            return properties;
-        }
-
-        Array<SmartPtr<ISharedObject>> CUILayout::getChildObjects() const
-        {
-            auto objects = CUIElement<IUILayout>::getChildObjects();
-
-            if( m_uiWindow )
-            {
-                objects.push_back( m_uiWindow );
+                if( element )
+                {
+                    if( m_overlay )
+                    {
+                        return m_overlay->removeElement( element );
+                    }
+                }
             }
 
-            if( m_overlay )
-            {
-                objects.push_back( m_overlay );
-            }
-
-            if( m_fsm )
-            {
-                objects.push_back( m_fsm );
-            }
-
-            return objects;
+            return CUIElement<IUILayout>::removeChild( child );
         }
+        auto applicationManager = core::ApplicationManager::instance();
+        auto graphicsSystem = applicationManager->getGraphicsSystem();
+        auto factoryManager = applicationManager->getFactoryManager();
 
-        void CUILayout::OnEnterIdleState()
+        if( !child->isLoaded() )
         {
+            graphicsSystem->loadObject( child );
         }
 
-        void CUILayout::OnEnterFadeInState()
+        auto message = factoryManager->make_ptr<StateMessageObject>();
+        message->setType( STATE_MESSAGE_REMOVE_CHILD );
+        message->setObject( child );
+        addMessage( message );
+
+        return false;
+    }
+
+    auto CUILayout::getUiWindow() const -> SmartPtr<IUIWindow>
+    {
+        return m_uiWindow;
+    }
+
+    void CUILayout::setUiWindow( SmartPtr<IUIWindow> uiWindow )
+    {
+        m_uiWindow = uiWindow;
+    }
+
+    void CUILayout::updateZOrder()
+    {
+        CUIElement<IUILayout>::updateZOrder();
+
+        if( m_overlay )
         {
-            CUIElement::onEvent( String( "FadeIn" ) );
+            m_overlay->updateZOrder();
         }
+    }
 
-        void CUILayout::OnEnterFadeOutState()
+    auto CUILayout::getProperties() const -> SmartPtr<Properties>
+    {
+        auto properties = CUIElement<IUILayout>::getProperties();
+        properties->setProperty( "Type", "UILayout" );
+        properties->setProperty( "Name", getName() );
+        properties->setProperty( "Visible", isVisible() );
+        properties->setProperty( "Enabled", isEnabled() );
+        properties->setProperty( "Position", getPosition() );
+        properties->setProperty( "Size", getSize() );
+        return properties;
+    }
+
+    auto CUILayout::getChildObjects() const -> Array<SmartPtr<ISharedObject>>
+    {
+        auto objects = CUIElement<IUILayout>::getChildObjects();
+
+        if( m_uiWindow )
         {
-            CUIElement::onEvent( String( "FadeOut" ) );
+            objects.emplace_back( m_uiWindow );
         }
 
-        void CUILayout::OnUpdateIdleState()
+        if( m_overlay )
         {
+            objects.emplace_back( m_overlay );
         }
 
-        void CUILayout::OnUpdateFadeInState()
+        if( m_fsm )
         {
+            objects.emplace_back( m_fsm );
         }
 
-        void CUILayout::OnUpdateFadeOutState()
-        {
-        }
+        return objects;
+    }
 
-        void CUILayout::OnLeaveIdleState()
-        {
-        }
+    void CUILayout::OnEnterIdleState()
+    {
+    }
 
-        void CUILayout::OnLeaveFadeInState()
-        {
-        }
+    void CUILayout::OnEnterFadeInState()
+    {
+        CUIElement::onEvent( String( "FadeIn" ) );
+    }
 
-        void CUILayout::OnLeaveFadeOutState()
-        {
-        }
+    void CUILayout::OnEnterFadeOutState()
+    {
+        CUIElement::onEvent( String( "FadeOut" ) );
+    }
 
-        //
-        // Callbacks
-        //
+    void CUILayout::OnUpdateIdleState()
+    {
+    }
 
-        void CUILayout::OnActivateCallback()
-        {
-        }
+    void CUILayout::OnUpdateFadeInState()
+    {
+    }
 
-        void CUILayout::OnSelectCallback()
-        {
-        }
+    void CUILayout::OnUpdateFadeOutState()
+    {
+    }
 
-        void CUILayout::OnDeselectCallback()
-        {
-        }
+    void CUILayout::OnLeaveIdleState()
+    {
+    }
 
-        SmartPtr<IFSM> CUILayout::getFSM()
-        {
-            return m_fsm;
-        }
+    void CUILayout::OnLeaveFadeInState()
+    {
+    }
 
-        const SmartPtr<IFSM> &CUILayout::getFSM() const
-        {
-            return m_fsm;
-        }
-    }  // end namespace ui
-}  // end namespace fb
+    void CUILayout::OnLeaveFadeOutState()
+    {
+    }
+
+    //
+    // Callbacks
+    //
+
+    void CUILayout::OnActivateCallback()
+    {
+    }
+
+    void CUILayout::OnSelectCallback()
+    {
+    }
+
+    void CUILayout::OnDeselectCallback()
+    {
+    }
+
+    auto CUILayout::getFSM() -> SmartPtr<IFSM>
+    {
+        return m_fsm;
+    }
+
+    auto CUILayout::getFSM() const -> const SmartPtr<IFSM> &
+    {
+        return m_fsm;
+    }
+}  // namespace fb::ui

@@ -4,39 +4,45 @@
 #include <ui/UIManager.h>
 #include <FBCore/FBCore.h>
 
-
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    ToggleEditorCamera::ToggleEditorCamera() = default;
+
+    ToggleEditorCamera::~ToggleEditorCamera() = default;
+
+    void ToggleEditorCamera::undo()
     {
+    }
 
-        ToggleEditorCamera::ToggleEditorCamera()
-        {
-        }
+    void ToggleEditorCamera::redo()
+    {
+    }
 
-        ToggleEditorCamera::~ToggleEditorCamera()
-        {
-        }
+    void ToggleEditorCamera::execute()
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
 
-        void ToggleEditorCamera::undo()
-        {
-        }
+        auto jobQueue = applicationManager->getJobQueue();
+        auto taskManager = applicationManager->getTaskManager();
+        auto applicationTask = taskManager->getTask( Thread::Task::Application );
 
-        void ToggleEditorCamera::redo()
-        {
-        }
+        auto editorCamera = getToggleValue();
+        applicationManager->setEditorCamera( editorCamera );
 
-        void ToggleEditorCamera::execute()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
+        auto job = fb::make_ptr<CameraManagerReset>();
+        applicationTask->addJob( job );
+    }
 
-            applicationManager->setEditorCamera( !applicationManager->isEditorCamera() );
+    auto ToggleEditorCamera::getToggleValue() const -> bool
+    {
+        return m_toggleValue;
+    }
 
-            auto cameraManager = applicationManager->getCameraManager();
+    void ToggleEditorCamera::setToggleValue( bool toggleValue )
+    {
+        m_toggleValue = toggleValue;
+    }
 
-            cameraManager->reset();
-        }
-
-    }  // namespace editor
-}  // namespace fb
+}  // namespace fb::editor

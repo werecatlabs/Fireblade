@@ -3,14 +3,15 @@
 
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Array.h>
-#include <FBCore/Core/Handle.h>
 
 namespace fb
 {
-    //-------------------------------------------------
+
+    /** Interface for a node in a scene graph. */
     class INode : public ISharedObject
     {
     public:
+        /** Destructor. */
         ~INode() override = default;
 
         /** Returns a boolean to know if the node has a parent. */

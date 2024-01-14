@@ -1,7 +1,7 @@
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPCH.h>
 #include "FBGraphicsOgreNext/CompositorPassUI.h"
 #include "FBGraphicsOgreNext/CompositorPassUiDef.h"
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/FBCoreHeaders.h>
 
 #if FB_GRAPHICS_SYSTEM_OGRENEXT
@@ -54,7 +54,7 @@ namespace fb
         //Fire the listener in case it wants to change anything
         notifyPassPreExecuteListeners();
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto ui = applicationManager->getUI();
@@ -85,7 +85,7 @@ namespace fb
     {
         using namespace fb;
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto ui = applicationManager->getUI();
@@ -100,7 +100,7 @@ namespace fb
     }
 
     //-----------------------------------------------------------------------------------
-    bool CompositorPassUI::notifyRecreated( const Ogre::TextureGpu *channel )
+    auto CompositorPassUI::notifyRecreated( const Ogre::TextureGpu *channel ) -> bool
     {
         bool usedByUs = CompositorPass::notifyRecreated( channel );
 

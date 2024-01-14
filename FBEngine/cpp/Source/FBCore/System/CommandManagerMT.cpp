@@ -1,22 +1,27 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/CommandManagerMT.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/ICommand.h>
-#include <FBCore/Interface/System/ICommandManagerListener.h>
 #include <FBCore/Interface/System/IJobQueue.h>
-#include <FBCore/System/RunCommandJob.h>
+#include <FBCore/Interface/System/ITaskManager.h>
+#include <FBCore/Interface/System/ITask.h>
+#include <FBCore/Jobs/RunCommandJob.h>
 #include <algorithm>
 
 namespace fb
 {
-
     CommandManagerMT::CommandManagerMT() :
         m_currentCommand( 0 ),
         m_lastUndoCommand( -1 ),
         m_lastRedoCommand( -1 ),
         m_numStoredCommands( 100 )
     {
+        if( auto handle = getHandle() )
+        {
+            handle->setName( "CommandManagerMT" );
+        }
+
         m_commands.reserve( m_numStoredCommands );
         m_lastCommand = CommandType::COMMAND_MANAGER_NONE;
     }
@@ -24,12 +29,19 @@ namespace fb
     CommandManagerMT::~CommandManagerMT()
     {
         m_commands.clear();
-        m_listeners.clear();
     }
 
     void CommandManagerMT::addCommand( SmartPtr<ICommand> command )
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
+
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto taskManager = applicationManager->getTaskManager();
+        auto jobQueue = applicationManager->getJobQueue();
+
+        auto primaryTask = taskManager->getTask( Thread::Task::Primary );
 
         s32 index = m_currentCommand;
         s32 count = ( static_cast<s32>( m_commands.size() ) - 1 ) - m_currentCommand;
@@ -75,18 +87,22 @@ namespace fb
         m_currentCommand = static_cast<s32>( m_commands.size() - 1 );
 
         auto numCommands = static_cast<s32>( m_commands.size() );
-        for( auto &listener : m_listeners )
-        {
-            listener->OnAddCommand( numCommands );
-        }
+
+        auto args = Array<Parameter>();
+        args.emplace_back( numCommands );
+        applicationManager->triggerEvent( IEvent::Type::Application, IEvent::addCommand, args, this,
+                                          nullptr, nullptr );
 
         m_lastCommand = CommandType::COMMAND_MANAGER_ADD;
 
-        auto applicationManager = core::IApplicationManager::instance();
-        FB_ASSERT( applicationManager );
+        if( primaryTask )
+        {
+            auto job = fb::make_ptr<RunCommandJob>();
+            job->setCommand( command );
 
-        auto jobQueue = applicationManager->getJobQueue();
-        if( jobQueue )
+            primaryTask->addJob( job );
+        }
+        else if( jobQueue )
         {
             auto job = fb::make_ptr<RunCommandJob>();
             job->setCommand( command );
@@ -107,7 +123,7 @@ namespace fb
                           m_commands.end() );
     }
 
-    bool CommandManagerMT::hasCommand( SmartPtr<ICommand> command )
+    auto CommandManagerMT::hasCommand( SmartPtr<ICommand> command ) -> bool
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
 
@@ -120,7 +136,7 @@ namespace fb
         return false;
     }
 
-    bool CommandManagerMT::isCommandQueued( SmartPtr<ICommand> command )
+    auto CommandManagerMT::isCommandQueued( SmartPtr<ICommand> command ) -> bool
     {
         auto it = std::find( m_commands.begin(), m_commands.end(), command );
         if( it != m_commands.end() )
@@ -134,8 +150,11 @@ namespace fb
         return false;
     }
 
-    SmartPtr<ICommand> CommandManagerMT::getNextCommand()
+    auto CommandManagerMT::getNextCommand() -> SmartPtr<ICommand>
     {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
         SmartPtr<ICommand> pCommand;
         s32 command = -1;
 
@@ -154,14 +173,15 @@ namespace fb
 
         ++m_currentCommand;
 
-        for( auto listener : m_listeners )
-        {
-            auto nextCommandIdx = static_cast<s32>( m_commands.size() ) - m_currentCommand;
-            auto prevCommandIdx = static_cast<s32>( m_commands.size() ) -
-                                  ( static_cast<s32>( m_commands.size() ) - m_currentCommand );
+        auto nextCommandIdx = static_cast<s32>( m_commands.size() ) - m_currentCommand;
+        auto prevCommandIdx = static_cast<s32>( m_commands.size() ) -
+                              ( static_cast<s32>( m_commands.size() ) - m_currentCommand );
 
-            listener->OnGetNextCommand( nextCommandIdx, prevCommandIdx );
-        }
+        auto args = Array<Parameter>();
+        args.emplace_back( nextCommandIdx );
+        args.emplace_back( prevCommandIdx );
+        applicationManager->triggerEvent( IEvent::Type::Application, IEvent::getNextCommand, args, this,
+                                          nullptr, nullptr );
 
         if( m_currentCommand > static_cast<s32>( m_commands.size() ) - 1 )
         {
@@ -197,8 +217,11 @@ namespace fb
         return pCommand;
     }
 
-    SmartPtr<ICommand> CommandManagerMT::getPreviousCommand()
+    auto CommandManagerMT::getPreviousCommand() -> SmartPtr<ICommand>
     {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
         SmartPtr<ICommand> pCommand;
         s32 command = -1;
 
@@ -213,14 +236,15 @@ namespace fb
             }
         }
 
-        for( auto listener : m_listeners )
-        {
-            auto nextCommandIdx = static_cast<s32>( m_commands.size() ) - m_currentCommand;
-            auto prevCommandIdx = static_cast<s32>( m_commands.size() ) -
-                                  ( static_cast<s32>( m_commands.size() ) - m_currentCommand );
+        auto nextCommandIdx = static_cast<s32>( m_commands.size() ) - m_currentCommand;
+        auto prevCommandIdx = static_cast<s32>( m_commands.size() ) -
+                              ( static_cast<s32>( m_commands.size() ) - m_currentCommand );
 
-            listener->OnGetPreviousCommand( nextCommandIdx, prevCommandIdx );
-        }
+        auto args = Array<Parameter>();
+        args.emplace_back( nextCommandIdx );
+        args.emplace_back( prevCommandIdx );
+        applicationManager->triggerEvent( IEvent::Type::Application, IEvent::getPreviousCommand, args,
+                                          this, nullptr, nullptr );
 
         --m_currentCommand;
 
@@ -257,20 +281,4 @@ namespace fb
         m_commands.clear();
     }
 
-    void CommandManagerMT::addListener( SmartPtr<ICommandManagerListener> listener )
-    {
-        m_listeners.push_back( listener );
-    }
-
-    bool CommandManagerMT::removeListener( SmartPtr<ICommandManagerListener> listener )
-    {
-        auto it = std::find( m_listeners.begin(), m_listeners.end(), listener );
-        if( it != m_listeners.end() )
-        {
-            m_listeners.erase( it );
-            return true;
-        }
-
-        return false;
-    }
 }  // end namespace fb

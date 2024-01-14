@@ -1,6 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Memory/FactoryUtil.h>
 #include <FBCore/System/Job.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/System/JobQueue.h>
 #include <FBCore/System/ProcessManager.h>
 #include <FBCore/System/StateContext.h>
@@ -14,7 +15,7 @@ namespace fb
 
     void FactoryUtil::createFactories()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();

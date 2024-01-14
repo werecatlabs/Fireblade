@@ -9,38 +9,31 @@
 #include <FBCore/FBCore.h>
 #include <fstream>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    JobRestoreTree::JobRestoreTree() = default;
+
+    JobRestoreTree::~JobRestoreTree() = default;
+
+    void JobRestoreTree::execute()
     {
+        // auto applicationManager = core::ApplicationManager::instance();
+        // SmartPtr<IFileSystem>& fileSystem = applicationManager->getFileSystem();
 
-        JobRestoreTree::JobRestoreTree()
-        {
-        }
+        // EditorManager* appRoot = EditorManager::getSingletonPtr();
+        // SmartPtr<Project> project = appRoot->getProject();
+        // SmartPtr<UIManager> guiMgr = appRoot->getUI();
 
-        JobRestoreTree::~JobRestoreTree()
-        {
-        }
+        // ProjectWindow* projectWindow = guiMgr->getProjectWindow();
+        // if(!projectWindow)
+        //{
+        //	FB_EXCEPTION("Error: projectWindow null! ");
+        //	return;
+        // }
 
-        void JobRestoreTree::execute()
-        {
-            // auto applicationManager = core::IApplicationManager::instance();
-            // SmartPtr<IFileSystem>& fileSystem = applicationManager->getFileSystem();
+        // projectWindow->buildTree();
+        // projectWindow->restoreTreeState();
+    }
 
-            // EditorManager* appRoot = EditorManager::getSingletonPtr();
-            // SmartPtr<Project> project = appRoot->getProject();
-            // SmartPtr<UIManager> guiMgr = appRoot->getUI();
-
-            // ProjectWindow* projectWindow = guiMgr->getProjectWindow();
-            // if(!projectWindow)
-            //{
-            //	FB_EXCEPTION("Error: projectWindow null! ");
-            //	return;
-            // }
-
-            // projectWindow->buildTree();
-            // projectWindow->restoreTreeState();
-        }
-
-    }  // end namespace editor
-}  // end namespace fb
+}  // namespace fb::editor

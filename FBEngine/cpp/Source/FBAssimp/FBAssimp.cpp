@@ -6,7 +6,7 @@
 namespace fb
 {
 
-    SmartPtr<IMeshLoader> FBAssimp::createAssimpLoader()
+    auto FBAssimp::createAssimpLoader() -> SmartPtr<IMeshLoader>
     {
         return fb::make_ptr<MeshLoader>();
     }

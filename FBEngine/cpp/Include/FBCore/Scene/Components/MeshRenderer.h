@@ -7,7 +7,6 @@ namespace fb
 {
     namespace scene
     {
-
         /** @class MeshRenderer
          *  @brief A component responsible for rendering mesh objects in the scene, derived from the
          * Renderer class
@@ -21,40 +20,25 @@ namespace fb
             ///< Destructor.
             ~MeshRenderer() override;
 
-            /** @copydoc BaseComponent::load */
+            /** @copydoc Renderer::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc BaseComponent::unload */
+            /** @copydoc Renderer::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IComponent::updateDirty */
-            void updateDirty( u32 flags, u32 oldFlags ) override;
+            /** @copydoc Renderer::updateFlags */
+            void updateFlags( u32 flags, u32 oldFlags ) override;
 
-            /** @copydoc BaseComponent::getChildObjects */
+            /** @copydoc Renderer::getChildObjects */
             Array<SmartPtr<ISharedObject>> getChildObjects() const override;
 
-            /** @copydoc BaseComponent::getProperties */
+            /** @copydoc Renderer::getProperties */
             SmartPtr<Properties> getProperties() const override;
 
-            /** @copydoc BaseComponent::setProperties */
+            /** @copydoc Renderer::setProperties */
             void setProperties( SmartPtr<Properties> properties ) override;
 
-            ///< Gets the shared material.
-            SmartPtr<render::IMaterial> getSharedMaterial() const;
-
-            ///< Sets the shared material.
-            void setSharedMaterial( SmartPtr<render::IMaterial> sharedMaterial );
-
-            ///< Gets the name of the material.
-            String getMaterialName() const;
-
-            ///< Sets the name of the material.
-            void setMaterialName( const String &materialName );
-
-            void updateMaterials();
-
-            /** @copydoc IComponent::visibilityChanged */
-            void visibilityChanged() override;
+            void updateMaterials() override;
 
             /** @copydoc IComponent::updateTransform */
             void updateTransform() override;
@@ -76,13 +60,12 @@ namespace fb
         protected:
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType ) override;
 
-            void updateMesh();
+            void updateMesh() override;
 
             ///< The mesh object.
             SmartPtr<render::IGraphicsMesh> m_meshObject;
         };
-
-    }  // namespace scene
-}  // end namespace fb
+    } // namespace scene
+}     // end namespace fb
 
 #endif  // __MeshRenderer_h__

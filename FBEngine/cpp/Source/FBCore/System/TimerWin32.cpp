@@ -14,9 +14,7 @@ namespace fb
         initTimer();
     }
 
-    TimerWin32::~TimerWin32()
-    {
-    }
+    TimerWin32::~TimerWin32() = default;
 
     void TimerWin32::initTimer()
     {
@@ -39,7 +37,7 @@ namespace fb
         initVirtualTimer();
     }
 
-    u32 TimerWin32::getRealTime() const
+    auto TimerWin32::getRealTime() const -> u32
     {
         if( HighPerformanceTimerSupport )
         {
@@ -48,7 +46,9 @@ namespace fb
             // temporarily setting the affinity of this process to one core.
             DWORD_PTR affinityMask = 0;
             if( MultiCore )
+            {
                 affinityMask = SetThreadAffinityMask( GetCurrentThread(), 1 );
+            }
 #    endif
             LARGE_INTEGER nTime;
             bool32 queriedOK = QueryPerformanceCounter( &nTime );
@@ -56,16 +56,20 @@ namespace fb
 #    if !defined( _WIN32_WCE )
             // Restore the true affinity.
             if( MultiCore )
+            {
                 (void)SetThreadAffinityMask( GetCurrentThread(), affinityMask );
+            }
 #    endif
             if( queriedOK )
+            {
                 return static_cast<u32>( ( nTime.QuadPart ) * 1000 / HighPerformanceFreq.QuadPart );
+            }
         }
 
         return GetTickCount();
     }
 
-    f32 TimerWin32::calculateEventTime( u32 now )
+    auto TimerWin32::calculateEventTime( u32 now ) -> f32
     {
         // Calculate the average time passed between events of the given type
         // during the last mFrameSmoothingTime seconds.
@@ -74,7 +78,9 @@ namespace fb
         times.push_back( now );
 
         if( times.size() == 1 )
+        {
             return 0;
+        }
 
         // Times up to mFrameSmoothingTime seconds old should be kept
         unsigned long discardThreshold = SmoothingPeriod;
@@ -85,9 +91,13 @@ namespace fb
         while( it != end )
         {
             if( now - *it > discardThreshold )
+            {
                 ++it;
+            }
             else
+            {
                 break;
+            }
         }
 
         // Remove old times
@@ -142,10 +152,12 @@ namespace fb
 
         VirtualTimerSpeed = speed;
         if( VirtualTimerSpeed < 0.0f )
+        {
             VirtualTimerSpeed = 0.0f;
+        }
     }
 
-    f32 TimerWin32::getSpeed()
+    auto TimerWin32::getSpeed() -> f32
     {
         return VirtualTimerSpeed;
     }
@@ -156,7 +168,7 @@ namespace fb
         StartRealTime = static_cast<u32>( StaticTime );
     }
 
-    u32 TimerWin32::getTimeIntervalMilliseconds() const
+    auto TimerWin32::getTimeIntervalMilliseconds() const -> u32
     {
         return TimeDelta;
     }
@@ -166,7 +178,7 @@ namespace fb
         SmoothingPeriod = frames;
     }
 
-    u32 TimerWin32::getFrameSmoothingPeriod() const
+    auto TimerWin32::getFrameSmoothingPeriod() const -> u32
     {
         return SmoothingPeriod;
     }
@@ -175,17 +187,17 @@ namespace fb
     {
     }
 
-    time_interval TimerWin32::getTime() const
+    auto TimerWin32::getTime() const -> time_interval
     {
         return static_cast<f64>( StaticTime ) / 1000.0;
     }
 
-    time_interval TimerWin32::getTimeInterval() const
+    auto TimerWin32::getTimeInterval() const -> time_interval
     {
         return static_cast<f64>( TimeDelta ) / 1000.0;
     }
 
-    time_interval TimerWin32::now() const
+    auto TimerWin32::now() const -> time_interval
     {
         return static_cast<time_interval>( getRealTime() ) / 1000.0;
     }

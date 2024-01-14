@@ -11,6 +11,7 @@
 
 namespace fb
 {
+
     /** Default task implementation.  */
     class Task : public ITask
     {
@@ -18,7 +19,7 @@ namespace fb
         class Flags
         {
         public:
-            Flags( SmartPtr<Task> task );
+            explicit Flags( SmartPtr<Task> task );
 
             ~Flags();
 
@@ -31,13 +32,13 @@ namespace fb
         };
 
         /** Constructor */
-        Task() = default;
+        Task();
 
         /** Copy constructor */
         Task( const Task &other );
 
         /** Destructor */
-        ~Task() override = default;
+        ~Task() override;
 
         /** @copydoc ISharedObject::load */
         void load( SmartPtr<ISharedObject> data ) override;
@@ -55,7 +56,7 @@ namespace fb
         void reset() override;
 
         /** @copydoc ITask::queueJob */
-        void queueJob( SmartPtr<IJob> job ) override;
+        void addJob( SmartPtr<IJob> job ) override;
 
         /** @copydoc ITask::setPrimary */
         void setPrimary( bool usePrimary ) override;

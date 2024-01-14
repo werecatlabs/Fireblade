@@ -3,13 +3,9 @@
 
 namespace fb
 {
-    Sound::Sound()
-    {
-    }
+    Sound::Sound() = default;
 
-    Sound::~Sound()
-    {
-    }
+    Sound::~Sound() = default;
 
     void Sound::play()
     {
@@ -19,7 +15,7 @@ namespace fb
     {
     }
 
-    bool Sound::isPlaying() const
+    auto Sound::isPlaying() const -> bool
     {
         return false;
     }
@@ -28,7 +24,7 @@ namespace fb
     {
     }
 
-    f32 Sound::getVolume() const
+    auto Sound::getVolume() const -> f32
     {
         return 0.0f;
     }
@@ -37,14 +33,14 @@ namespace fb
     {
     }
 
-    bool Sound::getLoop() const
+    auto Sound::getLoop() const -> bool
     {
         return false;
     }
 
-    String Sound::getName() const
+    auto Sound::getName() const -> String
     {
-        return String();
+        return {};
     }
 
     void Sound::getSpectrum( Array<f32> &spectrum, u32 numValues ) const
@@ -59,7 +55,7 @@ namespace fb
     {
     }
 
-    Vector3F Sound::getPosition() const
+    auto Sound::getPosition() const -> Vector3F
     {
         return Vector3F::zero();
     }

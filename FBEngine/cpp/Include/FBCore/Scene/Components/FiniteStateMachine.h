@@ -7,7 +7,7 @@ namespace fb
 {
     namespace scene
     {
-        
+
         class FiniteStateMachine : public Component
         {
         public:

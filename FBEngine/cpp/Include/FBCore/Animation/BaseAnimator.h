@@ -5,7 +5,7 @@
 
 namespace fb
 {
-    
+
     class BaseAnimator : public IAnimator
     {
     public:

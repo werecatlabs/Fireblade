@@ -14,7 +14,7 @@
 
 namespace fb
 {
-    SmartPtr<IMesh> MeshUtil::clean( SmartPtr<IMesh> mesh, real_Num weldTolerance )
+    auto MeshUtil::clean( SmartPtr<IMesh> mesh, real_Num weldTolerance ) -> SmartPtr<IMesh>
     {
         FB_ASSERT( mesh );
         FB_ASSERT( mesh->isValid() );
@@ -36,7 +36,7 @@ namespace fb
         return cleanMesh;
     }
 
-    SmartPtr<ISubMesh> MeshUtil::clean( SmartPtr<ISubMesh> submesh, real_Num weldTolerance )
+    auto MeshUtil::clean( SmartPtr<ISubMesh> submesh, real_Num weldTolerance ) -> SmartPtr<ISubMesh>
     {
         FB_ASSERT( submesh );
         FB_ASSERT( submesh->isValid() );
@@ -49,7 +49,7 @@ namespace fb
         cleanSubMesh->setVertexBuffer( vertexBuffer->clone() );
         cleanSubMesh->setIndexBuffer( indexBuffer->clone() );
 
-        auto vertexCount = vertexBuffer->getNumVerticies();
+        auto vertexCount = vertexBuffer->getNumVertices();
         auto indexCount = indexBuffer->getNumIndices();
 
         auto fbVertexDeclaration = vertexBuffer->getVertexDeclaration();
@@ -117,7 +117,7 @@ namespace fb
         auto cleanIndexBuffer = cleanSubMesh->getIndexBuffer();
 
         auto numCleanVertices = cleanVertices.size();
-        cleanVertexBuffer->setNumVerticies( static_cast<u32>( numCleanVertices ) );
+        cleanVertexBuffer->setNumVertices( static_cast<u32>( numCleanVertices ) );
 
         auto cleanVertexDataPtr = static_cast<f32 *>( vertexBuffer->getVertexData() );
 
@@ -220,19 +220,19 @@ namespace fb
         return cleanSubMesh;
     }
 
-    Array<Vector3F> MeshUtil::getPoints( SmartPtr<IMesh> mesh )
+    auto MeshUtil::getPoints( SmartPtr<IMesh> mesh ) -> Array<Vector3F>
     {
-        return Array<Vector3F>();
+        return {};
     }
 
-    Array<Vector3F> MeshUtil::getPoints( SmartPtr<ISubMesh> submesh )
+    auto MeshUtil::getPoints( SmartPtr<ISubMesh> submesh ) -> Array<Vector3F>
     {
         auto points = Array<Vector3F>();
 
         auto fbVertexBuffer = submesh->getVertexBuffer();
         auto fbIndexBuffer = submesh->getIndexBuffer();
 
-        auto fbVertexCount = fbVertexBuffer->getNumVerticies();
+        auto fbVertexCount = fbVertexBuffer->getNumVertices();
         // auto fbIndexCount = fbIndexBuffer->getNumIndices();
 
         points.reserve( fbVertexCount );
@@ -262,12 +262,12 @@ namespace fb
         return points;
     }
 
-    Array<u32> MeshUtil::getIndices( SmartPtr<IMesh> mesh )
+    auto MeshUtil::getIndices( SmartPtr<IMesh> mesh ) -> Array<u32>
     {
-        return Array<u32>();
+        return {};
     }
 
-    Array<u32> MeshUtil::getIndices( SmartPtr<ISubMesh> submesh )
+    auto MeshUtil::getIndices( SmartPtr<ISubMesh> submesh ) -> Array<u32>
     {
         FB_ASSERT( submesh );
         FB_ASSERT( submesh->isValid() );
@@ -277,7 +277,7 @@ namespace fb
         auto fbVertexBuffer = submesh->getVertexBuffer();
         auto fbIndexBuffer = submesh->getIndexBuffer();
 
-        auto fbVertexCount = fbVertexBuffer->getNumVerticies();
+        auto fbVertexCount = fbVertexBuffer->getNumVertices();
         auto fbIndexCount = fbIndexBuffer->getNumIndices();
 
         indices.reserve( fbIndexCount );
@@ -326,7 +326,7 @@ namespace fb
     void MeshUtil::meshToHeightMap( const String &meshName, const String &textureName,
                                     const Vector2I &textureSize )
     {
-        // auto engine = core::IApplicationManager::instance();
+        // auto engine = core::ApplicationManager::instance();
         // SmartPtr<IPhysicsManager3> physicsMgr = engine->getPhysicsManager3();
 
         // PhysicsWorld3Ptr world = physicsMgr->createScene();
@@ -338,8 +338,8 @@ namespace fb
         // rigidBody->setMass(physics_Num(0.0));
     }
 
-    SmartPtr<IMesh> MeshUtil::buildMesh( const Array<Vector3F> &positions, const Array<Vector2F> &uvs,
-                                         const Array<Vector2F> &uvs2 )
+    auto MeshUtil::buildMesh( const Array<Vector3F> &positions, const Array<Vector2F> &uvs,
+                              const Array<Vector2F> &uvs2 ) -> SmartPtr<IMesh>
     {
         SmartPtr<IMesh> mesh( new Mesh );
         SmartPtr<ISubMesh> subMesh( new SubMesh );
@@ -365,7 +365,7 @@ namespace fb
         SmartPtr<IVertexBuffer> vertexBuffer( new VertexBuffer );
         vertexBuffer->setVertexDeclaration( vertexDeclaration );
 
-        vertexBuffer->setNumVerticies( static_cast<u32>( numVertices ) );
+        vertexBuffer->setNumVertices( static_cast<u32>( numVertices ) );
         auto vertexData = static_cast<f32 *>( vertexBuffer->createVertexData() );
         f32 *vertexDataPtr = vertexData;
 
@@ -405,8 +405,8 @@ namespace fb
         return mesh;
     }
 
-    SmartPtr<ISubMesh> MeshUtil::buildSubMesh( const Array<Vector3F> &positions,
-                                               const Array<Vector2F> &uvs, const Array<Vector2F> &uvs2 )
+    auto MeshUtil::buildSubMesh( const Array<Vector3F> &positions, const Array<Vector2F> &uvs,
+                                 const Array<Vector2F> &uvs2 ) -> SmartPtr<ISubMesh>
     {
         SmartPtr<ISubMesh> subMesh( new SubMesh );
 
@@ -430,7 +430,7 @@ namespace fb
         SmartPtr<IVertexBuffer> vertexBuffer( new VertexBuffer );
         vertexBuffer->setVertexDeclaration( vertexDeclaration );
 
-        vertexBuffer->setNumVerticies( static_cast<u32>( numVertices ) );
+        vertexBuffer->setNumVertices( static_cast<u32>( numVertices ) );
         auto vertexData = static_cast<f32 *>( vertexBuffer->createVertexData() );
         f32 *vertexDataPtr = vertexData;
 
@@ -470,27 +470,24 @@ namespace fb
         return subMesh;
     }
 
-    SmartPtr<IMesh> MeshUtil::mergeMeshes( const Array<MeshTransformData> &meshTransformData )
+    auto MeshUtil::mergeMeshes( const Array<MeshTransformData> &meshTransformData ) -> SmartPtr<IMesh>
     {
         SmartPtr<IMesh> newMesh( new Mesh );
 
-        for( u32 meshIdx = 0; meshIdx < meshTransformData.size(); ++meshIdx )
+        for( const auto &transformData : meshTransformData )
         {
-            const MeshTransformData &transformData = meshTransformData[meshIdx];
             const SmartPtr<IMesh> &curMesh = transformData.Mesh;
 
             const Array<SmartPtr<ISubMesh>> subMeshes = curMesh->getSubMeshes();
-            for( u32 subMeshIdx = 0; subMeshIdx < subMeshes.size(); ++subMeshIdx )
+            for( auto subMesh : subMeshes )
             {
-                SmartPtr<ISubMesh> subMesh = subMeshes[subMeshIdx];
-
                 SmartPtr<ISubMesh> newSubMesh = subMesh->clone();
                 newMesh->addSubMesh( newSubMesh );
 
                 SmartPtr<IIndexBuffer> indexBuffer = newSubMesh->getIndexBuffer();
                 SmartPtr<IVertexBuffer> vertexBuffer = newSubMesh->getVertexBuffer();
 
-                u32 vertexCount = vertexBuffer->getNumVerticies();
+                u32 vertexCount = vertexBuffer->getNumVertices();
                 // u32 indexCount = indexBuffer->getNumIndices();
 
                 const SmartPtr<IVertexElement> posElem =
@@ -549,10 +546,14 @@ namespace fb
                         texCoord1.X() = MathF::Mod( texCoord1.X(), 1.0f );
                         texCoord1.Y() = MathF::Mod( texCoord1.Y(), 1.0f );
                         if( texCoord1.X() < 0.0f )
+                        {
                             texCoord1.X() = 1.0f + texCoord1.X();
+                        }
 
                         if( texCoord1.Y() < 0.0f )
+                        {
                             texCoord1.Y() = 1.0f + texCoord1.Y();
+                        }
 
                         fbElementData[0] = texCoord1.X() * transformData.UVScaleData[1].X();
                         fbElementData[1] = texCoord1.Y() * transformData.UVScaleData[1].Y();
@@ -569,26 +570,22 @@ namespace fb
         return newMesh;
     }
 
-    SmartPtr<IMesh> MeshUtil::mergeMeshes( const Array<SmartPtr<IMesh>> &meshes )
+    auto MeshUtil::mergeMeshes( const Array<SmartPtr<IMesh>> &meshes ) -> SmartPtr<IMesh>
     {
         SmartPtr<IMesh> newMesh( new Mesh );
 
-        for( u32 meshIdx = 0; meshIdx < meshes.size(); ++meshIdx )
+        for( const auto &curMesh : meshes )
         {
-            const SmartPtr<IMesh> &curMesh = meshes[meshIdx];
-
             const Array<SmartPtr<ISubMesh>> subMeshes = curMesh->getSubMeshes();
-            for( u32 subMeshIdx = 0; subMeshIdx < subMeshes.size(); ++subMeshIdx )
+            for( auto subMesh : subMeshes )
             {
-                SmartPtr<ISubMesh> subMesh = subMeshes[subMeshIdx];
-
                 SmartPtr<ISubMesh> newSubMesh = subMesh->clone();
                 newMesh->addSubMesh( newSubMesh );
 
                 SmartPtr<IIndexBuffer> indexBuffer = newSubMesh->getIndexBuffer();
                 SmartPtr<IVertexBuffer> vertexBuffer = newSubMesh->getVertexBuffer();
 
-                u32 vertexCount = vertexBuffer->getNumVerticies();
+                u32 vertexCount = vertexBuffer->getNumVertices();
                 // u32 indexCount = indexBuffer->getNumIndices();
 
                 const SmartPtr<IVertexElement> posElem =
@@ -616,8 +613,8 @@ namespace fb
         return newMesh;
     }
 
-    SmartPtr<IMesh> MeshUtil::mergeMeshes( const Array<SmartPtr<IMesh>> &meshes,
-                                           const Array<Matrix4F> &transformations )
+    auto MeshUtil::mergeMeshes( const Array<SmartPtr<IMesh>> &meshes,
+                                const Array<Matrix4F> &transformations ) -> SmartPtr<IMesh>
     {
         SmartPtr<IMesh> newMesh( new Mesh );
 
@@ -633,17 +630,15 @@ namespace fb
             const Matrix4F &transformation = transformations[meshIdx];
 
             const Array<SmartPtr<ISubMesh>> subMeshes = curMesh->getSubMeshes();
-            for( u32 subMeshIdx = 0; subMeshIdx < subMeshes.size(); ++subMeshIdx )
+            for( auto subMesh : subMeshes )
             {
-                SmartPtr<ISubMesh> subMesh = subMeshes[subMeshIdx];
-
                 SmartPtr<ISubMesh> newSubMesh = subMesh->clone();
                 newMesh->addSubMesh( newSubMesh );
 
                 SmartPtr<IIndexBuffer> indexBuffer = newSubMesh->getIndexBuffer();
                 SmartPtr<IVertexBuffer> vertexBuffer = newSubMesh->getVertexBuffer();
 
-                u32 vertexCount = vertexBuffer->getNumVerticies();
+                u32 vertexCount = vertexBuffer->getNumVertices();
                 // u32 indexCount = indexBuffer->getNumIndices();
 
                 const SmartPtr<IVertexElement> posElem =
@@ -672,16 +667,15 @@ namespace fb
         return newMesh;
     }
 
-    SmartPtr<IMesh> MeshUtil::mergeSubMeshesByMaterial( SmartPtr<IMesh> mesh )
+    auto MeshUtil::mergeSubMeshesByMaterial( SmartPtr<IMesh> mesh ) -> SmartPtr<IMesh>
     {
         using MatMeshMap = std::map<String, Array<SmartPtr<ISubMesh>>>;
         MatMeshMap matMeshMap;
 
         // sort sub meshes by material name
         Array<SmartPtr<ISubMesh>> subMeshList = mesh->getSubMeshes();
-        for( u32 i = 0; i < subMeshList.size(); ++i )
+        for( auto subMesh : subMeshList )
         {
-            SmartPtr<ISubMesh> subMesh = subMeshList[i];
             String materialName = subMesh->getMaterialName();
 
             matMeshMap[materialName].push_back( subMesh );
@@ -696,13 +690,12 @@ namespace fb
             u32 numTotalVertices = 0;
 
             const Array<SmartPtr<ISubMesh>> &matSubMeshList = it->second;
-            for( u32 i = 0; i < matSubMeshList.size(); ++i )
+            for( auto subMesh : matSubMeshList )
             {
-                SmartPtr<ISubMesh> subMesh = matSubMeshList[i];
                 SmartPtr<IVertexBuffer> vertexBuffer = subMesh->getVertexBuffer();
                 SmartPtr<IIndexBuffer> indexBuffer = subMesh->getIndexBuffer();
 
-                numTotalVertices += vertexBuffer->getNumVerticies();
+                numTotalVertices += vertexBuffer->getNumVertices();
                 numTotalIndices += indexBuffer->getNumIndices();
             }
 
@@ -738,7 +731,7 @@ namespace fb
 
                 vertexBuffer->setVertexDeclaration( vertexDeclaration );
 
-                vertexBuffer->setNumVerticies( numTotalVertices );
+                vertexBuffer->setNumVertices( numTotalVertices );
                 auto newVertexData = static_cast<f32 *>( vertexBuffer->createVertexData() );
                 newVertexDataPtr = newVertexData;
             }
@@ -757,13 +750,11 @@ namespace fb
             }
 
             // populate new vertex buffer
-            for( u32 i = 0; i < matSubMeshList.size(); ++i )
+            for( auto subMesh : matSubMeshList )
             {
-                SmartPtr<ISubMesh> subMesh = matSubMeshList[i];
-
                 SmartPtr<IVertexBuffer> vertexBuffer = subMesh->getVertexBuffer();
                 auto vertexData = static_cast<f32 *>( vertexBuffer->getVertexData() );
-                u32 numVerts = vertexBuffer->getNumVerticies();
+                u32 numVerts = vertexBuffer->getNumVertices();
                 u32 vertSize = vertexBuffer->getVertexDeclaration()->getSize();
                 // u32 totalVertexDataSize = numVerts * vertSize;
 
@@ -792,18 +783,16 @@ namespace fb
         return newMesh;
     }
 
-    bool MeshUtil::isMeshValid( SmartPtr<IMesh> mesh )
+    auto MeshUtil::isMeshValid( SmartPtr<IMesh> mesh ) -> bool
     {
         const Array<SmartPtr<ISubMesh>> subMeshes = mesh->getSubMeshes();
-        for( u32 subMeshIdx = 0; subMeshIdx < subMeshes.size(); ++subMeshIdx )
+        for( auto subMesh : subMeshes )
         {
-            SmartPtr<ISubMesh> subMesh = subMeshes[subMeshIdx];
-
             Array<Vertex> vertices;
 
             SmartPtr<IVertexBuffer> vertexBuffer = subMesh->getVertexBuffer();
             // f32* vertexData = (f32*)vertexBuffer->getVertexData();
-            u32 numVerts = vertexBuffer->getNumVerticies();
+            u32 numVerts = vertexBuffer->getNumVertices();
             u32 vertSize = vertexBuffer->getVertexDeclaration()->getSize();
             u32 totalVertexDataSize = numVerts * vertSize;
 
@@ -856,9 +845,8 @@ namespace fb
             }
 
             // check if vertices are finite
-            for( u32 i = 0; i < vertices.size(); ++i )
+            for( auto &vertex : vertices )
             {
-                Vertex &vertex = vertices[i];
                 if( !vertex.isFinite() )
                 {
                     // FB_ASSERT_TRUE(true);
@@ -889,8 +877,8 @@ namespace fb
         return false;
     }
 
-    SmartPtr<IMesh> MeshUtil::getMesh( const Array<f32> &heightData, f32 worldScale, f32 heightScale,
-                                       u32 tileSize )
+    auto MeshUtil::getMesh( const Array<f32> &heightData, f32 worldScale, f32 heightScale, u32 tileSize )
+        -> SmartPtr<IMesh>
     {
         SmartPtr<IMesh> mesh( new Mesh );
         SmartPtr<ISubMesh> subMesh( new SubMesh );
@@ -912,7 +900,7 @@ namespace fb
 
         u32 numVerticies = tileSize * tileSize;
 
-        vertexBuffer->setNumVerticies( numVerticies );
+        vertexBuffer->setNumVertices( numVerticies );
         auto vertexData = static_cast<f32 *>( vertexBuffer->createVertexData() );
         f32 *vertexDataPtr = vertexData;
 
@@ -1004,7 +992,7 @@ namespace fb
         return mesh;
     }
 
-    u32 MeshUtil::getIndex( u32 tileSize, u32 x, u32 z )
+    auto MeshUtil::getIndex( u32 tileSize, u32 x, u32 z ) -> u32
     {
         return x + z * tileSize;
     }
@@ -1087,7 +1075,7 @@ namespace fb
          */
     }
 
-    u16 MeshUtil::getTypeCount( IVertexElement::VertexElementType etype )
+    auto MeshUtil::getTypeCount( IVertexElement::VertexElementType etype ) -> u16
     {
         switch( etype )
         {
@@ -1134,8 +1122,8 @@ namespace fb
         return 0;
     }
 
-    IVertexElement::VertexElementType MeshUtil::multiplyTypeCount(
-        IVertexElement::VertexElementType baseType, u16 count )
+    auto MeshUtil::multiplyTypeCount( IVertexElement::VertexElementType baseType, u16 count )
+        -> IVertexElement::VertexElementType
     {
         FB_ASSERT( count > 0 && count < 5 );  // Count out of range
 
@@ -1192,8 +1180,8 @@ namespace fb
         return static_cast<IVertexElement::VertexElementType>( 0 );
     }
 
-    IVertexElement::VertexElementType MeshUtil::getBaseType(
-        IVertexElement::VertexElementType multiType )
+    auto MeshUtil::getBaseType( IVertexElement::VertexElementType multiType )
+        -> IVertexElement::VertexElementType
     {
         switch( multiType )
         {
@@ -1248,7 +1236,7 @@ namespace fb
         return IVertexElement::VertexElementType::VET_FLOAT1;
     }
 
-    u32 MeshUtil::convertColourValue( const ColourF &src, IVertexElement::VertexElementType dst )
+    auto MeshUtil::convertColourValue( const ColourF &src, IVertexElement::VertexElementType dst ) -> u32
     {
         return 0;
     }
@@ -1265,7 +1253,7 @@ namespace fb
         *ptr = ( ( *ptr & 0x00FF0000 ) >> 16 ) | ( ( *ptr & 0x000000FF ) << 16 ) | ( *ptr & 0xFF00FF00 );
     }
 
-    IVertexElement::VertexElementType MeshUtil::getBestColourVertexElementType( void )
+    auto MeshUtil::getBestColourVertexElementType() -> IVertexElement::VertexElementType
     {
         return IVertexElement::VertexElementType::VET_UBYTE4_NORM;
     }

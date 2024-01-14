@@ -8,5 +8,6 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, IResource, core::IPrototype );
+    FB_CLASS_REGISTER_DERIVED( fb, IResource, IPrototype );
+    const String IResource::nameStr = String( "name" );
 }  // end namespace fb

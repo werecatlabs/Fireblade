@@ -2,15 +2,50 @@
 #include <FBCore/Resource/ResourceDatabase.h>
 #include <FBCore/Database/AssetDatabaseManager.h>
 #include <FBCore/Scene/Director.h>
-#include <FBCore/FBCore.h>
+#include "FBCore/Scene/Directors/MeshResourceDirector.h"
+#include "FBCore/Scene/Directors/TextureResourceDirector.h"
+#include <FBCore/Scene/SceneManager.h>
+#include <FBCore/Interface/Database/IDatabase.h>
+#include <FBCore/Interface/Database/IDatabaseManager.h>
+#include <FBCore/Interface/Database/IDatabaseQuery.h>
+#include <FBCore/Interface/Graphics/IGraphicsSystem.h>
+#include <FBCore/Interface/Graphics/IMaterial.h>
+#include <FBCore/Interface/Graphics/IFont.h>
+#include <FBCore/Interface/Graphics/IFontManager.h>
+#include <FBCore/Interface/Graphics/IMaterialManager.h>
+#include <FBCore/Interface/Graphics/IMeshConverter.h>
+#include <FBCore/Interface/Graphics/ITexture.h>
+#include <FBCore/Interface/Graphics/ITextureManager.h>
+#include <FBCore/Interface/IO/IFolderExplorer.h>
+#include <FBCore/Interface/Mesh/IMeshLoader.h>
+#include <FBCore/Interface/Mesh/IMeshResource.h>
+#include <FBCore/Interface/Resource/IResource.h>
+#include <FBCore/Interface/Resource/IResourceManager.h>
+#include <FBCore/Interface/Resource/IMeshManager.h>
+#include <FBCore/Interface/Scene/IPrefabManager.h>
+#include <FBCore/Interface/Scene/IPrefab.h>
+#include <FBCore/Interface/Scene/ITransform.h>
+#include <FBCore/Interface/Sound/ISound.h>
+#include <FBCore/Interface/Sound/ISoundManager.h>
+#include <FBCore/Interface/System/IJobQueue.h>
+#include <FBCore/Interface/System/ITaskManager.h>
+#include <FBCore/IO/FileSystem.h>
+#include <FBCore/System/ApplicationManager.h>
+#include <FBCore/Core/Path.h>
+#include "FBCore/ApplicationUtil.h"
+#include "FBCore/Core/DataUtil.h"
+#include "FBCore/Core/LogManager.h"
+#include "FBCore/Scene/Directors/MaterialResourceDirector.h"
+#include "FBCore/Scene/Directors/SoundResourceDirector.h"
 
 namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, ResourceDatabase, IResourceDatabase );
+    FB_CLASS_REGISTER_DERIVED( fb, ResourceDatabase::ImportFileJob, Job );
 
-    ResourceDatabase::ResourceDatabase()
-    {
-    }
+    atomic_s32 ResourceDatabase::m_numJobs = 0;
+
+    ResourceDatabase::ResourceDatabase() = default;
 
     ResourceDatabase::~ResourceDatabase()
     {
@@ -26,7 +61,7 @@ namespace fb
             auto databaseManager = fb::make_ptr<AssetDatabaseManager>();
             setDatabaseManager( databaseManager );
 
-            auto textureTypes = Array<String>( { ".png", ".jpg", ".jpeg", ".dds", ".tif" } );
+            auto textureTypes = Array<String>( { ".png", ".jpg", ".jpeg", ".dds", ".tif", ".tga" } );
             setTextureTypes( textureTypes );
 
             auto audioTypes = Array<String>( { ".wav", ".mp3", ".ogg" } );
@@ -65,7 +100,7 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -107,26 +142,26 @@ namespace fb
                     if( !assetDatabaseManager->hasResourceEntry( actor ) )
                     {
                         assetDatabaseManager->addResourceEntry( actor );
-                        objects.push_back( actor );
+                        objects.emplace_back( actor );
 
                         auto components = actor->getComponents();
                         for( auto component : components )
                         {
                             assetDatabaseManager->addResourceEntry( component );
-                            objects.push_back( component );
+                            objects.emplace_back( component );
                         }
 
                         auto children = actor->getAllChildren();
                         for( auto child : children )
                         {
                             assetDatabaseManager->addResourceEntry( child );
-                            objects.push_back( child );
+                            objects.emplace_back( child );
 
                             auto childComponents = child->getComponents();
                             for( auto childComponent : childComponents )
                             {
                                 assetDatabaseManager->addResourceEntry( childComponent );
-                                objects.push_back( childComponent );
+                                objects.emplace_back( childComponent );
                             }
                         }
                     }
@@ -223,7 +258,7 @@ namespace fb
 
     void ResourceDatabase::refresh()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
 
         auto databaseManager = getDatabaseManager();
         FB_ASSERT( databaseManager );
@@ -257,7 +292,53 @@ namespace fb
         }
     }
 
-    bool ResourceDatabase::hasResource( SmartPtr<IResource> resource )
+    void ResourceDatabase::optimise()
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto databaseManager = getDatabaseManager();
+        FB_ASSERT( databaseManager );
+
+        auto assetDatabaseManager = fb::static_pointer_cast<AssetDatabaseManager>( databaseManager );
+        FB_ASSERT( assetDatabaseManager );
+
+        assetDatabaseManager->optimise();
+    }
+
+    void ResourceDatabase::clean()
+    {
+        auto databaseManager = getDatabaseManager();
+        FB_ASSERT( databaseManager );
+
+        auto assetDatabaseManager = fb::static_pointer_cast<AssetDatabaseManager>( databaseManager );
+        FB_ASSERT( assetDatabaseManager );
+
+        assetDatabaseManager->executeQuery(
+            "DELETE FROM resources WHERE type = 'Material' AND path = '';" );
+        assetDatabaseManager->executeQuery(
+            "DELETE FROM resources WHERE type = 'Texture' AND path = '';" );
+    }
+
+    void ResourceDatabase::deleteCache()
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        auto fileSystem = applicationManager->getFileSystem();
+
+        auto cachePath = applicationManager->getCachePath();
+        auto folderListing = fileSystem->getFolderListing( cachePath );
+        auto &files = folderListing->getFiles();
+        for( auto &file : files )
+        {
+            auto ext = Path::getFileExtension( file );
+            if( ext == ".fbmeshbin" || ext == ".pxtrianglemesh" )
+            {
+                fileSystem->deleteFile( file );
+            }
+        }
+    }
+
+    auto ResourceDatabase::hasResource( SmartPtr<IResource> resource ) -> bool
     {
         auto databaseManager = getDatabaseManager();
         FB_ASSERT( databaseManager );
@@ -297,9 +378,9 @@ namespace fb
     {
     }
 
-    SmartPtr<IResource> ResourceDatabase::findResource( u32 type, const String &path )
+    auto ResourceDatabase::findResource( u32 type, const String &path ) -> SmartPtr<IResource>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto typeManager = TypeManager::instance();
@@ -318,10 +399,10 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<IResource> ResourceDatabase::cloneResource( u32 type, SmartPtr<IResource> resource,
-                                                         const String &path )
+    auto ResourceDatabase::cloneResource( u32 type, SmartPtr<IResource> resource, const String &path )
+        -> SmartPtr<IResource>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto taskManager = applicationManager->getTaskManager();
@@ -363,7 +444,7 @@ namespace fb
             {
                 FB_LOG( "Importing: " + folderListing->getFolderName() );
 
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto projectPath = applicationManager->getProjectPath();
@@ -399,99 +480,11 @@ namespace fb
         }
     }
 
-    void ResourceDatabase::importFile( const String &filePath )
+    void ResourceDatabase::importFolder( const String &path )
     {
         try
         {
-            // FB_LOG("Importing File: " + filePath);
-
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto graphicsSystem = applicationManager->getGraphicsSystem();
-
-            auto fileSystem = applicationManager->getFileSystem();
-            FB_ASSERT( fileSystem );
-
-            auto factoryManager = applicationManager->getFactoryManager();
-            FB_ASSERT( factoryManager );
-
-            auto sceneManager = applicationManager->getSceneManager();
-            // FB_ASSERT( sceneManager );
-
-            // auto assetDatabaseManager = getDatabaseManager();
-            // FB_ASSERT( assetDatabaseManager );
-
-            auto basePath = applicationManager->getProjectPath();
-            if( StringUtil::isNullOrEmpty( basePath ) )
-            {
-                basePath = Path::getWorkingDirectory();
-            }
-
-            auto data = String( "" );
-
-            auto extension = Path::getFileExtension( filePath );
-            if( extension == ".fbx" || extension == ".FBX" )
-            {
-                //data::mesh_importer_data meshImportData;
-                // meshImportData.path = filePath;
-                // data = DataUtil::toString(&meshImportData);
-            }
-            else
-            {
-                //data::importer_data importData;
-                //importData.path = filePath;
-                //data = DataUtil::toString( &importData );
-            }
-
-            // if( db )
-            //{
-            //    auto sql = String( "INSERT INTO `assets`(`id`,`name`,`data`) VALUES (NULL, '" ) +
-            //               filePath + String( "', '" + data + "');" );
-            //    auto query = db->query( sql );
-
-            //    db->unload( 0 );
-            //    db = nullptr;
-            //}
-
-            if( extension == ".fbx" || extension == ".FBX" )
-            {
-                auto meshLoader = applicationManager->getMeshLoader();
-                if( meshLoader )
-                {
-                    auto actor = meshLoader->loadActor( filePath );
-                    if( actor )
-                    {
-                        if( graphicsSystem )
-                        {
-                            auto converter = graphicsSystem->getMeshConverter();
-                            FB_ASSERT( converter );
-
-                            if( converter )
-                            {
-                                converter->writeMesh( actor );
-                            }
-                        }
-                    }
-
-                    if( sceneManager )
-                    {
-                        sceneManager->destroyActor( actor );
-                    }
-                }
-            }
-        }
-        catch( std::exception &e )
-        {
-            FB_LOG_EXCEPTION( e );
-        }
-    }
-
-    void ResourceDatabase::importAssets()
-    {
-        try
-        {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto fileSystem = applicationManager->getFileSystem();
@@ -503,7 +496,82 @@ namespace fb
                 projectPath = Path::getWorkingDirectory();
             }
 
-            auto folderListing = fileSystem->getFolderListing( projectPath );
+            auto folderListing = fileSystem->getFolderListing( path );
+            if( folderListing )
+            {
+                importFolder( folderListing );
+            }
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void ResourceDatabase::importFile( const String &filePath )
+    {
+        while( ResourceDatabase::m_numJobs >= 8192 )
+        {
+            Thread::sleep( 0.1 );
+        }
+
+        auto applicationManager = core::ApplicationManager::instance();
+        auto jobQueue = applicationManager->getJobQueue();
+        auto factoryManager = applicationManager->getFactoryManager();
+
+        auto job = factoryManager->make_ptr<ImportFileJob>();
+        job->setFilePath( filePath );
+        jobQueue->addJob( job );
+    }
+
+    void ResourceDatabase::importCache()
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto fileSystem = applicationManager->getFileSystem();
+        FB_ASSERT( fileSystem );
+
+        clean();
+
+        auto projectPath = applicationManager->getProjectPath();
+        if( StringUtil::isNullOrEmpty( projectPath ) )
+        {
+            projectPath = Path::getWorkingDirectory();
+        }
+
+        auto cachePath = applicationManager->getCachePath();
+
+        std::cout << "Importing: " << cachePath << std::endl;
+
+        importFolder( cachePath );
+
+        std::cout << "Finished Importing: " << cachePath << std::endl;
+    }
+
+    void ResourceDatabase::importAssets()
+    {
+        try
+        {
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto fileSystem = applicationManager->getFileSystem();
+            FB_ASSERT( fileSystem );
+
+            clean();
+
+            auto projectPath = applicationManager->getProjectPath();
+            if( StringUtil::isNullOrEmpty( projectPath ) )
+            {
+                projectPath = Path::getWorkingDirectory();
+            }
+
+            auto cachePath = applicationManager->getCachePath();
+            importFolder( cachePath );
+
+            auto projectAssetsPath = projectPath + "/Assets";
+            auto folderListing = fileSystem->getFolderListing( projectAssetsPath );
             if( folderListing )
             {
                 importFolder( folderListing );
@@ -519,31 +587,16 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto fileSystem = applicationManager->getFileSystem();
             FB_ASSERT( fileSystem );
 
+            clean();
+
             auto cachePath = applicationManager->getCachePath();
             fileSystem->deleteFilesFromPath( cachePath );
-
-            // auto databaseFilePath = cachePath + "/asset.db";
-            // if (fileSystem->isExistingFile(databaseFilePath))
-            //{
-            //	fileSystem->deleteFile(databaseFilePath);
-            // }
-            //
-            // auto db = getDatabase();
-            // FB_ASSERT(db);
-
-            // db->load(databaseFilePath, "");
-
-            // auto sql = String("create table 'assets' (id INTEGER PRIMARY KEY, name TEXT, data
-            // TEXT);"); db->query(sql);
-
-            // db->unload(0);
-            // db = nullptr;
 
             auto projectPath = applicationManager->getProjectPath();
             auto assetsPath = projectPath + "/Assets";
@@ -559,11 +612,21 @@ namespace fb
         }
     }
 
-    Array<SmartPtr<scene::IDirector>> ResourceDatabase::getResourceData() const
+    void ResourceDatabase::calculateDependencies()
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        auto resources = getResources();
+        for( auto resource : resources )
+        {
+            auto dependencies = resource->getDependencies();
+        }
+    }
+
+    auto ResourceDatabase::getResourceData() const -> Array<SmartPtr<scene::IDirector>>
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto factoryManager = applicationManager->getFactoryManager();
@@ -698,10 +761,10 @@ namespace fb
             FB_LOG_EXCEPTION( e );
         }
 
-        return Array<SmartPtr<scene::IDirector>>();
+        return {};
     }
 
-    Array<SmartPtr<IResource>> ResourceDatabase::getResources() const
+    auto ResourceDatabase::getResources() const -> Array<SmartPtr<IResource>>
     {
         Array<SmartPtr<IResource>> resources;
         resources.reserve( 1024 );
@@ -709,10 +772,10 @@ namespace fb
         auto objects = getSceneObjects();
         for( auto object : objects )
         {
-            resources.push_back( object );
+            resources.emplace_back( object );
         }
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto projectPath = applicationManager->getProjectPath();
@@ -781,7 +844,7 @@ namespace fb
 
     void ResourceDatabase::createActor( SmartPtr<scene::IActor> parent, SmartPtr<Properties> properties )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto sceneManager = applicationManager->getSceneManager();
@@ -802,9 +865,9 @@ namespace fb
         }
     }
 
-    SmartPtr<IResource> ResourceDatabase::loadResource( hash64 id )
+    auto ResourceDatabase::loadResource( hash64 id ) -> SmartPtr<IResource>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto sceneManager = applicationManager->getSceneManager();
         auto scene = sceneManager->getCurrentScene();
 
@@ -914,9 +977,9 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<IResource> ResourceDatabase::loadResource( const String &path )
+    auto ResourceDatabase::loadResource( const String &path ) -> SmartPtr<IResource>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto databaseManager = getDatabaseManager();
@@ -935,7 +998,7 @@ namespace fb
         }
 
         auto materialManager = graphicsSystem->getMaterialManager();
-
+        auto meshManager = applicationManager->getMeshManager();
         auto textureManager = graphicsSystem->getTextureManager();
 
         auto filePathLower = StringUtil::make_lower( path );
@@ -950,7 +1013,7 @@ namespace fb
         auto cachePath = applicationManager->getCachePath();
         assetDatabaseManager->loadFromFile( cachePath + "asset.db" );
 
-        auto sql = String( "select * from 'resources' where path='" + path + "'" );
+        auto sql = static_cast<String>( "select * from 'resources' where path='" + path + "'" );
         auto query = assetDatabaseManager->executeQuery( sql );
         if( query )
         {
@@ -960,7 +1023,8 @@ namespace fb
             }
         }
 
-        sql = String( "SELECT * FROM 'resources' WHERE path LIKE '%' || '" + path + "' || '%'" );
+        sql = static_cast<String>( "SELECT * FROM 'resources' WHERE path LIKE '%' || '" + path +
+                                   "' || '%'" );
         query = assetDatabaseManager->executeQuery( sql );
         if( query )
         {
@@ -976,6 +1040,12 @@ namespace fb
             auto materialResult = materialManager->createOrRetrieve( path );
             assetDatabaseManager->addResourceEntry( materialResult.first );
             return materialResult.first;
+        }
+        if( ApplicationUtil::isSupportedMesh( path ) )
+        {
+            auto meshResult = meshManager->loadFromFile( path );
+            assetDatabaseManager->addResourceEntry( meshResult );
+            return meshResult;
         }
         if( ext == ".jpg" || ext == ".jpeg" || ext == ".tiff" || ext == ".png" )
         {
@@ -1001,9 +1071,112 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<IResource> ResourceDatabase::loadResourceById( const String &uuid )
+    auto ResourceDatabase::loadDirector( const String &path ) -> SmartPtr<scene::IDirector>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto fileSystem = applicationManager->getFileSystem();
+        FB_ASSERT( fileSystem );
+
+        auto dataStr = fileSystem->readAllText( path );
+        auto data = fb::make_ptr<Properties>();
+        DataUtil::parse<Properties>( dataStr, data.get() );
+
+        auto director = fb::make_ptr<scene::Director>();
+        director->setFilePath( path );
+        director->setProperties( data );
+
+        return nullptr;
+    }
+
+    auto ResourceDatabase::loadDirectorFromResourcePath( const String &filePath )
+        -> SmartPtr<scene::IDirector>
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto fileSystem = applicationManager->getFileSystem();
+        FB_ASSERT( fileSystem );
+
+        auto projectPath = applicationManager->getProjectPath();
+        auto settingsCachePath = applicationManager->getSettingsPath();
+        auto filePathHash = StringUtil::getHash64( filePath );
+        auto fileDataPath = settingsCachePath + StringUtil::toString( filePathHash ) + ".meshdata";
+        fileDataPath = Path::getRelativePath( projectPath, fileDataPath );
+
+        auto dataStr = fileSystem->readAllText( fileDataPath );
+        auto data = fb::make_ptr<Properties>();
+        DataUtil::parse<Properties>( dataStr, data.get() );
+
+        auto director = fb::make_ptr<scene::Director>();
+        director->setFilePath( fileDataPath );
+        director->setProperties( data );
+
+        return director;
+    }
+
+    auto ResourceDatabase::loadDirectorFromResourcePath( const String &filePath, u32 type )
+        -> SmartPtr<scene::IDirector>
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto fileSystem = applicationManager->getFileSystem();
+        FB_ASSERT( fileSystem );
+
+        auto projectPath = applicationManager->getProjectPath();
+        auto settingsCachePath = applicationManager->getSettingsPath();
+        auto filePathHash = StringUtil::getHash64( filePath );
+        auto fileDataPath = settingsCachePath + StringUtil::toString( filePathHash ) + ".meshdata";
+        auto relativeFileDataPath = Path::getRelativePath( projectPath, fileDataPath );
+
+        auto data = fb::make_ptr<Properties>();
+
+        if( fileSystem->isExistingFile( relativeFileDataPath ) )
+        {
+            auto dataStr = fileSystem->readAllText( relativeFileDataPath );
+            DataUtil::parse<Properties>( dataStr, data.get() );
+        }
+
+        if( scene::MeshResourceDirector::typeInfo() == type )
+        {
+            auto director = fb::make_ptr<scene::MeshResourceDirector>();
+            director->setResourcePath( filePath );
+            director->setFilePath( fileDataPath );
+            director->setProperties( data );
+
+            return director;
+        }
+        else if( scene::SoundResourceDirector::typeInfo() == type )
+        {
+            auto director = fb::make_ptr<scene::SoundResourceDirector>();
+            director->setResourcePath( filePath );
+            director->setFilePath( fileDataPath );
+            director->setProperties( data );
+
+            return director;
+        }
+        else if( scene::TextureResourceDirector::typeInfo() == type )
+        {
+            auto director = fb::make_ptr<scene::TextureResourceDirector>();
+            director->setResourcePath( filePath );
+            director->setFilePath( fileDataPath );
+            director->setProperties( data );
+
+            return director;
+        }
+
+        auto director = fb::make_ptr<scene::Director>();
+        director->setFilePath( fileDataPath );
+        director->setProperties( data );
+
+        return director;
+    }
+
+    auto ResourceDatabase::loadResourceById( const String &uuid ) -> SmartPtr<IResource>
+    {
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto databaseManager = getDatabaseManager();
@@ -1023,7 +1196,7 @@ namespace fb
         auto cachePath = applicationManager->getCachePath();
         assetDatabaseManager->loadFromFile( cachePath + "asset.db" );
 
-        auto sql = String( "select * from 'resources' where uuid='" + uuid + "'" );
+        auto sql = static_cast<String>( "select * from 'resources' where uuid='" + uuid + "'" );
         auto query = assetDatabaseManager->executeQuery( sql );
         if( query )
         {
@@ -1036,10 +1209,10 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<IResource> ResourceDatabase::createOrRetrieveResource( SmartPtr<IDatabaseQuery> query,
-                                                                    bool bLoadResource )
+    auto ResourceDatabase::createOrRetrieveResource( SmartPtr<IDatabaseQuery> query, bool bLoadResource )
+        -> SmartPtr<IResource>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto databaseManager = getDatabaseManager();
@@ -1073,6 +1246,19 @@ namespace fb
 
             return materialResult.first;
         }
+        if( StringUtil::contains( type, "MeshResource" ) )
+        {
+            auto meshManager = applicationManager->getMeshManager();
+            auto meshResult = meshManager->createOrRetrieve( uuid, path, type );
+
+            auto resource = meshResult.first;
+            if( bLoadResource )
+            {
+                graphicsSystem->loadObject( resource );
+            }
+
+            return meshResult.first;
+        }
         if( type == "Texture" )
         {
             auto textureResult = textureManager->createOrRetrieve( uuid, path, type );
@@ -1089,7 +1275,7 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<IDatabaseManager> ResourceDatabase::getDatabaseManager() const
+    auto ResourceDatabase::getDatabaseManager() const -> SmartPtr<IDatabaseManager>
     {
         return m_databaseManager;
     }
@@ -1099,34 +1285,66 @@ namespace fb
         m_databaseManager = databaseManager;
     }
 
-    Pair<SmartPtr<IResource>, bool> ResourceDatabase::createOrRetrieveFromDirector(
-        hash_type type, const String &path, SmartPtr<scene::IDirector> director )
+    auto ResourceDatabase::createOrRetrieveFromDirector( hash_type type, const String &path,
+                                                         SmartPtr<scene::IDirector> director )
+        -> Pair<SmartPtr<IResource>, bool>
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
-            auto graphicsSystem = applicationManager->getGraphicsSystem();
-            FB_ASSERT( graphicsSystem );
-
-            auto materialManager = graphicsSystem->getMaterialManager();
-            FB_ASSERT( materialManager );
-
-            auto fontManager = graphicsSystem->getFontManager();
-            FB_ASSERT( fontManager );
+            auto assetDatabaseManager =
+                fb::static_pointer_cast<AssetDatabaseManager>( getDatabaseManager() );
 
             static const auto fontType = render::IFont::typeInfo();
             static const auto materialType = render::IMaterial::typeInfo();
 
-            auto typeManager = TypeManager::instance();
-            if( typeManager->isDerived( static_cast<u32>( type ), fontType ) )
+            Pair<SmartPtr<IResource>, bool> result;
+
+            if( auto graphicsSystem = applicationManager->getGraphicsSystem() )
             {
-                return fontManager->createOrRetrieve( path );
-            }
-            if( typeManager->isDerived( static_cast<u32>( type ), materialType ) )
-            {
-                return materialManager->createOrRetrieve( path );
+                auto materialManager = graphicsSystem->getMaterialManager();
+                auto meshManager = applicationManager->getMeshManager();
+                auto fontManager = graphicsSystem->getFontManager();
+
+                static const auto materialType = render::IMaterial::typeInfo();
+                static const auto meshResourceType = IMeshResource::typeInfo();
+
+                String uuid;
+
+                auto director = fb::dynamic_pointer_cast<scene::ResourceDirector>(
+                    assetDatabaseManager->getResourceEntryFromPath( path ) );
+                if( director )
+                {
+                    uuid = director->getResourceUUID();
+                }
+
+                auto typeManager = TypeManager::instance();
+                FB_ASSERT( typeManager );
+
+                if( typeManager->isDerived( static_cast<u32>( type ), materialType ) )
+                {
+                    if( materialManager )
+                    {
+                        result = materialManager->createOrRetrieve( uuid, path, "" );
+                    }
+                }
+
+                if( typeManager->isDerived( static_cast<u32>( type ), meshResourceType ) )
+                {
+                    if( meshManager )
+                    {
+                        result = meshManager->createOrRetrieve( uuid, path, "" );
+                    }
+                }
+
+                if( typeManager->isDerived( static_cast<u32>( type ), fontType ) )
+                {
+                    result = fontManager->createOrRetrieve( uuid, path, "" );
+                }
+
+                return result;
             }
         }
         catch( std::exception &e )
@@ -1134,17 +1352,17 @@ namespace fb
             FB_LOG_EXCEPTION( e );
         }
 
-        return Pair<SmartPtr<IResource>, bool>();
+        return {};
     }
 
-    Pair<SmartPtr<IResource>, bool> ResourceDatabase::createOrRetrieve( hash_type type,
-                                                                        const String &path )
+    auto ResourceDatabase::createOrRetrieve( hash_type type, const String &path )
+        -> Pair<SmartPtr<IResource>, bool>
     {
         try
         {
             if( StringUtil::isNullOrEmpty( path ) )
             {
-                return Pair<SmartPtr<IResource>, bool>();
+                return {};
             }
 
             FB_ASSERT( type != 0 );
@@ -1162,38 +1380,14 @@ namespace fb
                 }
             }
 
-            Pair<SmartPtr<IResource>, bool> result;
-
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
-            if( auto graphicsSystem = applicationManager->getGraphicsSystem() )
-            {
-                auto materialManager = graphicsSystem->getMaterialManager();
-                auto meshManager = applicationManager->getMeshManager();
+            auto assetDatabaseManager =
+                fb::static_pointer_cast<AssetDatabaseManager>( getDatabaseManager() );
+            auto director = assetDatabaseManager->getResourceEntryFromPath( path );
 
-                static const auto materialType = render::IMaterial::typeInfo();
-                static const auto meshResourceType = IMeshResource::typeInfo();
-
-                auto typeManager = TypeManager::instance();
-                FB_ASSERT( typeManager );
-
-                if( typeManager->isDerived( static_cast<u32>( type ), materialType ) )
-                {
-                    if( materialManager )
-                    {
-                        result = materialManager->createOrRetrieve( path );
-                    }
-                }
-
-                if( typeManager->isDerived( static_cast<u32>( type ), meshResourceType ) )
-                {
-                    if( meshManager )
-                    {
-                        result = meshManager->createOrRetrieve( path );
-                    }
-                }
-            }
+            auto result = createOrRetrieveFromDirector( type, path, director );
 
             // The resource does not exist in the database, so create a new one.
             m_resourceMap[type][path] = result.first;
@@ -1208,12 +1402,37 @@ namespace fb
         return Pair<SmartPtr<IResource>, bool>( nullptr, false );
     }
 
-    Pair<SmartPtr<IResource>, bool> ResourceDatabase::createOrRetrieve( const String &path )
+    auto ResourceDatabase::createOrRetrieve( const String &path ) -> Pair<SmartPtr<IResource>, bool>
     {
+        try
+        {
+            if( StringUtil::isNullOrEmpty( path ) )
+            {
+                return {};
+            }
+
+            FB_ASSERT( !StringUtil::isNullOrEmpty( path ) );
+
+            // Check if the resource already exists in the database.
+            for( auto &[hash, map] : m_resourceMap )
+            {
+                auto resIt = map.find( path );
+                if( resIt != map.end() )
+                {
+                    // The resource already exists in the database.
+                    return Pair<SmartPtr<IResource>, bool>( resIt->second.lock(), false );
+                }
+            }
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+
         return Pair<SmartPtr<IResource>, bool>( nullptr, false );
     }
 
-    SmartPtr<ISharedObject> ResourceDatabase::getObject( const String &uuid )
+    auto ResourceDatabase::getObject( const String &uuid ) -> SmartPtr<ISharedObject>
     {
         if( !StringUtil::isNullOrEmpty( uuid ) )
         {
@@ -1232,7 +1451,7 @@ namespace fb
                 }
             }
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto databaseManager = getDatabaseManager();
@@ -1241,7 +1460,7 @@ namespace fb
             auto cachePath = applicationManager->getCachePath();
             assetDatabaseManager->loadFromFile( cachePath + "asset.db" );
 
-            auto sql = String( "select * from 'resources' where uuid='" + uuid + "'" );
+            auto sql = static_cast<String>( "select * from 'resources' where uuid='" + uuid + "'" );
             auto query = assetDatabaseManager->executeQuery( sql );
             if( query )
             {
@@ -1277,10 +1496,10 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<Properties> ResourceDatabase::loadAssetNode( SmartPtr<IDatabaseManager> db,
-                                                          SmartPtr<Properties> parent, hash64 id )
+    auto ResourceDatabase::loadAssetNode( SmartPtr<IDatabaseManager> db, SmartPtr<Properties> parent,
+                                          hash64 id ) -> SmartPtr<Properties>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
 
         auto properties = fb::make_ptr<Properties>();
         parent->addChild( properties );
@@ -1295,8 +1514,8 @@ namespace fb
                 auto numFields = query->getNumFields();
                 for( size_t i = 0; i < numFields; ++i )
                 {
-                    auto name = query->getFieldName( (u32)i );
-                    auto value = query->getFieldValue( (u32)i );
+                    auto name = query->getFieldName( static_cast<u32>( i ) );
+                    auto value = query->getFieldValue( static_cast<u32>( i ) );
 
                     properties->setProperty( name, value );
                 }
@@ -1320,9 +1539,9 @@ namespace fb
         return properties;
     }
 
-    SmartPtr<Properties> ResourceDatabase::loadAssetProperties( hash64 id )
+    auto ResourceDatabase::loadAssetProperties( hash64 id ) -> SmartPtr<Properties>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto databaseManager = fb::make_ptr<AssetDatabaseManager>();
 
         auto mediaPath = applicationManager->getMediaPath();
@@ -1357,11 +1576,11 @@ namespace fb
     void ResourceDatabase::getSceneObjects( SmartPtr<scene::IActor> actor,
                                             Array<SmartPtr<ISharedObject>> &objects ) const
     {
-        objects.push_back( actor );
+        objects.emplace_back( actor );
 
         if( auto transform = actor->getTransform() )
         {
-            objects.push_back( transform );
+            objects.emplace_back( transform );
         }
 
         if( auto p = actor->getComponentsPtr() )
@@ -1383,9 +1602,9 @@ namespace fb
         }
     }
 
-    Array<SmartPtr<ISharedObject>> ResourceDatabase::getReferenceObjects() const
+    auto ResourceDatabase::getReferenceObjects() const -> Array<SmartPtr<ISharedObject>>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();
@@ -1456,7 +1675,7 @@ namespace fb
                     directorProperties->setProperty( fieldName, fieldValue );
                 }
 
-                objects.push_back( resourceDirector );
+                objects.emplace_back( resourceDirector );
 
                 query->nextRow();
             }
@@ -1465,9 +1684,9 @@ namespace fb
         return objects;
     }
 
-    Array<SmartPtr<ISharedObject>> ResourceDatabase::getSceneObjects() const
+    auto ResourceDatabase::getSceneObjects() const -> Array<SmartPtr<ISharedObject>>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         Array<SmartPtr<ISharedObject>> objects;
@@ -1491,7 +1710,7 @@ namespace fb
         return objects;
     }
 
-    SmartPtr<ISharedObject> ResourceDatabase::getObjectByFileId( const String &fileId ) const
+    auto ResourceDatabase::getObjectByFileId( const String &fileId ) const -> SmartPtr<ISharedObject>
     {
         for( auto &object : m_objects )
         {
@@ -1507,7 +1726,7 @@ namespace fb
         return nullptr;
     }
 
-    SharedPtr<Array<SmartPtr<IResource>>> ResourceDatabase::getInstancesPtr() const
+    auto ResourceDatabase::getInstancesPtr() const -> SharedPtr<Array<SmartPtr<IResource>>>
     {
         return m_instances;
     }
@@ -1517,7 +1736,7 @@ namespace fb
         m_instances = instances;
     }
 
-    Array<String> ResourceDatabase::getTextureTypes() const
+    auto ResourceDatabase::getTextureTypes() const -> Array<String>
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
         return m_textureTypes;
@@ -1529,7 +1748,7 @@ namespace fb
         m_textureTypes = textureTypes;
     }
 
-    Array<String> ResourceDatabase::getAudioTypes() const
+    auto ResourceDatabase::getAudioTypes() const -> Array<String>
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
         return m_audioTypes;
@@ -1539,6 +1758,164 @@ namespace fb
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
         m_audioTypes = audioTypes;
+    }
+
+    ResourceDatabase::ImportFileJob::ImportFileJob()
+    {
+        ResourceDatabase::m_numJobs++;
+    }
+
+    ResourceDatabase::ImportFileJob::~ImportFileJob()
+    {
+        ResourceDatabase::m_numJobs--;
+    }
+
+    void ResourceDatabase::ImportFileJob::execute()
+    {
+        try
+        {
+            auto filePath = getFilePath();
+
+            // FB_LOG("Importing File: " + filePath);
+
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto resourceDatabase = applicationManager->getResourceDatabase();
+
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+
+            auto fileSystem = applicationManager->getFileSystem();
+            FB_ASSERT( fileSystem );
+
+            auto factoryManager = applicationManager->getFactoryManager();
+            FB_ASSERT( factoryManager );
+
+            auto sceneManager = applicationManager->getSceneManager();
+            // FB_ASSERT( sceneManager );
+
+            // auto assetDatabaseManager = getDatabaseManager();
+            // FB_ASSERT( assetDatabaseManager );
+
+            auto databaseManager = resourceDatabase->getDatabaseManager();
+            FB_ASSERT( databaseManager );
+
+            auto assetDatabaseManager = fb::static_pointer_cast<AssetDatabaseManager>( databaseManager );
+            FB_ASSERT( assetDatabaseManager );
+
+            auto cachePath = applicationManager->getCachePath();
+
+            auto databasePath = cachePath + "/" + "asset.db";
+            databasePath = StringUtil::cleanupPath( databasePath );
+
+            assetDatabaseManager->loadFromFile( databasePath );
+
+            auto basePath = applicationManager->getProjectPath();
+            if( StringUtil::isNullOrEmpty( basePath ) )
+            {
+                basePath = Path::getWorkingDirectory();
+            }
+
+            auto data = String( "" );
+
+            auto fileExt = Path::getFileExtension( filePath );
+            fileExt = StringUtil::make_lower( fileExt );
+
+            if( fileExt == ".fbmeshbin" )
+            {
+                auto meshManager = applicationManager->getMeshManager();
+                auto mesh = meshManager->loadFromFile( filePath );
+                if( mesh )
+                {
+                    if( assetDatabaseManager->hasResourceEntry( mesh ) )
+                    {
+                        assetDatabaseManager->updateResourceEntry( mesh );
+                    }
+                    else
+                    {
+                        assetDatabaseManager->addResourceEntry( mesh );
+                    }
+                }
+            }
+            else if( ApplicationUtil::isSupportedMesh( filePath ) )
+            {
+                auto meshLoader = applicationManager->getMeshLoader();
+                if( meshLoader )
+                {
+                    auto actor = meshLoader->loadActor( filePath );
+                    if( actor )
+                    {
+                        if( graphicsSystem )
+                        {
+                            auto converter = graphicsSystem->getMeshConverter();
+                            FB_ASSERT( converter );
+
+                            if( converter )
+                            {
+                                converter->writeMesh( actor );
+                            }
+                        }
+                    }
+
+                    if( sceneManager )
+                    {
+                        sceneManager->destroyActor( actor );
+                    }
+                }
+            }
+            else if( fileExt == ".mat" )
+            {
+                if( graphicsSystem )
+                {
+                    auto materialManager = graphicsSystem->getMaterialManager();
+                    auto material = materialManager->loadFromFile( filePath );
+                    if( material )
+                    {
+                        if( assetDatabaseManager->hasResourceEntry( material ) )
+                        {
+                            assetDatabaseManager->updateResourceEntry( material );
+                        }
+                        else
+                        {
+                            assetDatabaseManager->addResourceEntry( material );
+                        }
+                    }
+                }
+            }
+            else if( ApplicationUtil::isSupportedTexture( filePath ) )
+            {
+                if( graphicsSystem )
+                {
+                    auto textureManager = graphicsSystem->getTextureManager();
+                    auto texture = textureManager->loadFromFile( filePath );
+                    if( texture )
+                    {
+                        if( assetDatabaseManager->hasResourceEntry( texture ) )
+                        {
+                            assetDatabaseManager->updateResourceEntry( texture );
+                        }
+                        else
+                        {
+                            assetDatabaseManager->addResourceEntry( texture );
+                        }
+                    }
+                }
+            }
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void ResourceDatabase::ImportFileJob::setFilePath( const String &filePath )
+    {
+        m_filePath = filePath;
+    }
+
+    String ResourceDatabase::ImportFileJob::getFilePath() const
+    {
+        return m_filePath;
     }
 
 }  // end namespace fb

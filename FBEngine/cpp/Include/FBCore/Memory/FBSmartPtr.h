@@ -5,6 +5,7 @@
 #include <FBCore/Core/Exception.h>
 #include <FBCore/Memory/RawPtr.h>
 #include <type_traits>
+#include <atomic>
 
 namespace fb
 {
@@ -60,7 +61,6 @@ namespace fb
          * @tparam B The type of object that the other smart pointer is managing.
          * @param other The other smart pointer object.
          */
-        //template <class B, typename std::enable_if_t<std::is_convertible<B *, T *>::value, int> = 0>
         template <typename B>
         FBSmartPtr( B *other );
 
@@ -70,7 +70,6 @@ namespace fb
          * @tparam B The type of object that the other smart pointer is managing.
          * @param other The other smart pointer object.
          */
-        //template <typename B, typename std::enable_if<std::is_convertible<B *, T *>::value>::type * = nullptr>
         template <typename B>
         FBSmartPtr( const FBSmartPtr<B> &other );
 
@@ -237,7 +236,7 @@ namespace fb
          * member variable is not automatically deleted or reset, and it is the user's responsibility to manage
          * the lifetime of the pointed object appropriately.
          */
-        T *m_pointer = nullptr;
+        std::atomic<T *> m_pointer = nullptr;
     };
 
     template <class T>

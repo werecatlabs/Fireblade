@@ -5,9 +5,7 @@ namespace fb
 {
 
     template <typename T>
-    Matrix4<T>::Matrix4()
-    {
-    }
+    Matrix4<T>::Matrix4() = default;
 
     template <typename T>
     Matrix4<T>::Matrix4( const Matrix4<T> &other )
@@ -38,9 +36,7 @@ namespace fb
     }
 
     template <typename T>
-    Matrix4<T>::~Matrix4()
-    {
-    }
+    Matrix4<T>::~Matrix4() = default;
 
     template <typename T>
     void Matrix4<T>::makeTransform( const Vector3<T> &position, const Vector3<T> &scale,
@@ -107,7 +103,7 @@ namespace fb
     }
 
     template <typename T>
-    Matrix4<T> Matrix4<T>::transpose() const
+    auto Matrix4<T>::transpose() const -> Matrix4<T>
     {
         return Matrix4<T>( m[0][0], m[1][0], m[2][0], m[3][0], m[0][1], m[1][1], m[2][1], m[3][1],
                            m[0][2], m[1][2], m[2][2], m[3][2], m[0][3], m[1][3], m[2][3], m[3][3] );
@@ -168,7 +164,7 @@ namespace fb
     }
 
     template <typename T>
-    Matrix4<T> Matrix4<T>::inverse() const
+    auto Matrix4<T>::inverse() const -> Matrix4<T>
     {
         T m00 = m[0][0], m01 = m[0][1], m02 = m[0][2], m03 = m[0][3];
         T m10 = m[1][0], m11 = m[1][1], m12 = m[1][2], m13 = m[1][3];
@@ -228,7 +224,7 @@ namespace fb
     }
 
     template <typename T>
-    Matrix4<T> Matrix4<T>::concatenate( const Matrix4 &m2 ) const
+    auto Matrix4<T>::concatenate( const Matrix4 &m2 ) const -> Matrix4<T>
     {
         Matrix4 r;
         r.m[0][0] =
@@ -271,7 +267,7 @@ namespace fb
     }
 
     template <typename T>
-    Matrix4<T> Matrix4<T>::concatenateAffine( const Matrix4<T> &m2 ) const
+    auto Matrix4<T>::concatenateAffine( const Matrix4<T> &m2 ) const -> Matrix4<T>
     {
         // assert(isAffine() && m2.isAffine());
 
@@ -347,7 +343,7 @@ namespace fb
     }
 
     template <typename T>
-    Vector3<T> Matrix4<T>::getTranslation() const
+    auto Matrix4<T>::getTranslation() const -> Vector3<T>
     {
         return Vector3<T>( m_[12], m_[13], m_[14] );
     }

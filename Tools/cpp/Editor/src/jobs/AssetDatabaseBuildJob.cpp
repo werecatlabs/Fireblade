@@ -2,29 +2,22 @@
 #include "jobs/AssetDatabaseBuildJob.h"
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    AssetDatabaseBuildJob::AssetDatabaseBuildJob() = default;
+
+    AssetDatabaseBuildJob::~AssetDatabaseBuildJob() = default;
+
+    void AssetDatabaseBuildJob::execute()
     {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
 
-        AssetDatabaseBuildJob::AssetDatabaseBuildJob()
-        {
-        }
+        auto resourceDatabase = applicationManager->getResourceDatabase();
+        FB_ASSERT( resourceDatabase );
 
-        AssetDatabaseBuildJob::~AssetDatabaseBuildJob()
-        {
-        }
+        resourceDatabase->build();
+    }
 
-        void AssetDatabaseBuildJob::execute()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto resourceDatabase = applicationManager->getResourceDatabase();
-            FB_ASSERT( resourceDatabase );
-
-            resourceDatabase->build();
-        }
-
-    }  // namespace editor
-}  // namespace fb
+}  // namespace fb::editor

@@ -1,29 +1,35 @@
-
 #include <FBImGui/FBImGuiPCH.h>
 #include <FBImGui/ImGuiCollapsingHeader.h>
+#include <FBImGui/ImGuiApplication.h>
+#include <FBCore/FBCore.h>
 #include <imgui.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    FB_CLASS_REGISTER_DERIVED( fb, ImGuiCollapsingHeader, CImGuiElement<IUICollapsingHeader> );
+
+    ImGuiCollapsingHeader::ImGuiCollapsingHeader() = default;
+
+    ImGuiCollapsingHeader::~ImGuiCollapsingHeader() = default;
+
+    void ImGuiCollapsingHeader::update()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, ImGuiCollapsingHeader, CImGuiElement<IUICollapsingHeader> );
+        auto applicationManager = core::ApplicationManager::instance();
+        auto ui = applicationManager->getUI();
+        auto uiApplication = fb::static_pointer_cast<ImGuiApplication>( ui->getApplication() );
 
-        ImGuiCollapsingHeader::ImGuiCollapsingHeader()
+        auto name = getName();
+        if( ImGui::CollapsingHeader( name.c_str() ) )
         {
-        }
-
-        ImGuiCollapsingHeader::~ImGuiCollapsingHeader()
-        {
-        }
-
-        void ImGuiCollapsingHeader::update()
-        {
-                       auto name = getName();
-            if (ImGui::CollapsingHeader(name.c_str()))
+            if( auto p = getChildren() )
             {
-                           }
+                auto &children = *p;
+                for( auto child : children )
+                {
+                    uiApplication->createElement( child );
+                }
+            }
         }
+    }
 
-    }  // namespace ui
-}  // namespace fb
+}  // namespace fb::ui

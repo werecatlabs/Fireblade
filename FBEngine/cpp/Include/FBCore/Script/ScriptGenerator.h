@@ -8,7 +8,7 @@
 
 namespace fb
 {
-    
+
     class ScriptGenerator : public ISharedObject
     {
     public:
@@ -24,8 +24,8 @@ namespace fb
         ScriptGenerator();
         ~ScriptGenerator();
 
-        void createScript(LanguageType type, const String& path);
-        void createScript(LanguageType type, const String& path, SmartPtr<ScriptClass> pClass);
+        void createScript( LanguageType type, const String &path );
+        void createScript( LanguageType type, const String &path, SmartPtr<ScriptClass> pClass );
 
         String getClassCPP( const String &parent );
 

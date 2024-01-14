@@ -4,11 +4,7 @@
 
 namespace fb
 {
-    Track::Track()
-    {
-    }
+    Track::Track() = default;
 
-    Track::~Track()
-    {
-    }
+    Track::~Track() = default;
 }  // namespace fb

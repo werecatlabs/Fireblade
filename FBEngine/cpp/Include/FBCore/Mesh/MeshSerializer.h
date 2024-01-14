@@ -153,6 +153,7 @@ namespace fb
 
         /// Sets the listener for this serializer
         void setListener( MeshSerializerListener *listener );
+
         /// Returns the current listener
         MeshSerializerListener *getListener();
 
@@ -164,17 +165,9 @@ namespace fb
             String versionString;
             MeshSerializerImpl *impl;
 
-            MeshVersionData( MeshVersion _ver, const String &_string, MeshSerializerImpl *_impl ) :
-                version( _ver ),
-                versionString( _string ),
-                impl( _impl )
-            {
-            }
+            MeshVersionData( MeshVersion _ver, const String &_string, MeshSerializerImpl *_impl );
 
-            ~MeshVersionData()
-            {
-                delete impl;
-            }
+            ~MeshVersionData();
         };
 
         using MeshVersionDataList = Array<MeshVersionData *>;
@@ -205,6 +198,6 @@ namespace fb
 
     /** @} */
     /** @} */
-} // namespace fb
+}  // namespace fb
 
 #endif

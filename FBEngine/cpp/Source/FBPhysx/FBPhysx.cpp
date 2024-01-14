@@ -4,32 +4,29 @@
 #include <FBPhysx/FBPhysxManager.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::physics
 {
-    namespace physics
+
+    auto createPhysxManager( const SmartPtr<Properties> &properties ) -> SmartPtr<IPhysicsManager>
     {
+        auto physxMgr = fb::make_ptr<PhysxManager>();
+        physxMgr->load( nullptr );
+        return physxMgr;
+    }
 
-        SmartPtr<IPhysicsManager> createPhysxManager( const SmartPtr<Properties> &properties )
-        {
-            auto physxMgr = fb::make_ptr<PhysxManager>();
-            physxMgr->load( nullptr );
-            return physxMgr;
-        }
+    void FBPhysx::load( SmartPtr<ISharedObject> data )
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
 
-        void FBPhysx::load( SmartPtr<ISharedObject> data )
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
+        auto factoryManager = applicationManager->getFactoryManager();
+        FB_ASSERT( factoryManager );
 
-            auto factoryManager = applicationManager->getFactoryManager();
-            FB_ASSERT( factoryManager );
+        FactoryUtil::addFactory<PhysxManager>();
+    }
 
-            FactoryUtil::addFactory<PhysxManager>();
-        }
+    void FBPhysx::unload( SmartPtr<ISharedObject> data )
+    {
+    }
 
-        void FBPhysx::unload( SmartPtr<ISharedObject> data )
-        {
-        }
-
-    }  // end namespace physics
-}  // end namespace fb
+}  // namespace fb::physics

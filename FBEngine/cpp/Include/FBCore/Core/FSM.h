@@ -3,7 +3,6 @@
 
 #include <FBCore/Interface/FSM/IFSM.h>
 
-
 namespace fb
 {
     /**

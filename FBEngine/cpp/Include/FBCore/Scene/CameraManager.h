@@ -10,13 +10,12 @@ namespace fb
 {
     namespace scene
     {
-
         /** Implementation of the camera manager. */
         class CameraManager : public ICameraManager
         {
         public:
-            CameraManager() = default;
-            CameraManager( u32 id );
+            CameraManager();
+            explicit CameraManager( u32 id );
             ~CameraManager() override;
 
             void load( SmartPtr<ISharedObject> data ) override;
@@ -28,10 +27,6 @@ namespace fb
             bool removeCamera( SmartPtr<IActor> camera ) override;
 
             SmartPtr<IActor> findCamera( const String &name ) const override;
-            void setCurrentCamera( const String &name );
-            void setCurrentCamera( SmartPtr<IActor> camera ) override;
-            String getCurrentCameraName() const override;
-            SmartPtr<IActor> getCurrentCamera() const override;
 
             Array<SmartPtr<IActor>> getCameras() const override;
 
@@ -53,21 +48,34 @@ namespace fb
             /** @copydoc ICameraManager::setEditorTexture */
             void setEditorTexture( SmartPtr<render::ITexture> editorTexture ) override;
 
+            SmartPtr<IActor> getEditorCamera() const;
+
+            void setEditorCamera( SmartPtr<IActor> editorCamera );
+
+            /** @copydoc CGraphicsObjectOgreNext<ICamera>::getProperties */
+            SmartPtr<Properties> getProperties() const;
+
+            /** @copydoc CGraphicsObjectOgreNext<ICamera>::setProperties */
+            void setProperties( SmartPtr<Properties> properties );
+
+            /** @copydoc CGraphicsObjectOgreNext<ICamera>::getChildObjects */
+            Array<SmartPtr<ISharedObject>> getChildObjects() const;
+
+            FB_CLASS_REGISTER_DECL;
+
         private:
             /** The editor texture */
-            WeakPtr<render::ITexture> m_editorTexture;
+            SmartPtr<render::ITexture> m_editorTexture;
+
+            SmartPtr<IActor> m_editorCamera;
 
             /** The scene cameras. */
             Array<SmartPtr<IActor>> m_cameras;
 
-            /** The current camera. */
-            AtomicSmartPtr<IActor> m_selectedCamera;
-
             /** The camera manager mutex. */
             mutable RecursiveMutex m_mutex;
         };
-
-    } // namespace scene
-}     // namespace fb
+    }  // namespace scene
+}  // namespace fb
 
 #endif

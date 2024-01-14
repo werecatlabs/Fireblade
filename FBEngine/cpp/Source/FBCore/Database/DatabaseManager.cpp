@@ -14,7 +14,7 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto factoryManager = applicationManager->getFactoryManager();
@@ -79,39 +79,45 @@ namespace fb
     {
         try
         {
-            FB_ASSERT( !StringUtil::isNullOrEmpty( filePath ) );
-            FB_LOG( "Database::load: " + filePath );
-
-            m_databasePath = filePath;
-
-            auto path = Path::getFilePath( m_databasePath );
-            if( !Path::isExistingFolder( path ) )
+            if( m_database )
             {
-                Path::createDirectories( path );
-            }
+                if( m_databasePath != filePath || !m_database->isLoaded() )
+                {
+                    FB_ASSERT( !StringUtil::isNullOrEmpty( filePath ) );
+                    FB_LOG( "Database::load: " + filePath );
 
-            m_database->loadFromFile( m_databasePath );
+                    m_databasePath = filePath;
 
-            if( Path::isExistingFile( filePath ) )
-            {
-                FB_LOG( "Database::load: database exists at " + filePath );
-            }
+                    auto path = Path::getFilePath( m_databasePath );
+                    if( !Path::isExistingFolder( path ) )
+                    {
+                        Path::createDirectories( path );
+                    }
+
+                    m_database->loadFromFile( m_databasePath );
+
+                    if( Path::isExistingFile( filePath ) )
+                    {
+                        FB_LOG( "Database::load: database exists at " + filePath );
+                    }
 
 #if SQLITE_HAS_CODEC
-            if( Path::getFileExtension( filePath ) == ".dll" )
-            {
-                char key[] = { "w3l1k3r34l4sw3ll" };
-                sqlite3_key( m_database->mpDB, key, strlen( key ) );
-            }
+                    if( Path::getFileExtension( filePath ) == ".dll" )
+                    {
+                        char key[] = { "w3l1k3r34l4sw3ll" };
+                        sqlite3_key( m_database->mpDB, key, strlen( key ) );
+                    }
 #endif
 
 #if FB_PROFILE_DB
-            m_timer = FB_NEW TimerBoost;
+                    m_timer = FB_NEW TimerBoost;
 
-            static int nameExt = 0;
-            String newfilePath = filePath + StringUtil::toString( nameExt++ ) + String( ".log" );
-            m_log.open( newfilePath );
+                    static int nameExt = 0;
+                    String newfilePath = filePath + StringUtil::toString( nameExt++ ) + String( ".log" );
+                    m_log.open( newfilePath );
 #endif
+                }
+            }
         }
         catch( Exception &e )
         {
@@ -123,36 +129,42 @@ namespace fb
     {
         try
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-
-            FB_ASSERT( !StringUtilW::isNullOrEmpty( filePath ) );
-            FB_LOG( L"Database::load: " + filePath );
-
-            if( PathW::isExistingFile( filePath ) )
+            if( m_database )
             {
-                FB_LOG( L"Database::load: database exists at " + filePath );
-            }
+                if( !m_database->isLoaded() )
+                {
+                    RecursiveMutex::ScopedLock lock( m_mutex );
 
-            m_databasePath = StringUtil::toStringC( filePath );
+                    FB_ASSERT( !StringUtilW::isNullOrEmpty( filePath ) );
+                    FB_LOG( L"Database::load: " + filePath );
 
-            m_database->loadFromFile( m_databasePath );
+                    if( PathW::isExistingFile( filePath ) )
+                    {
+                        FB_LOG( L"Database::load: database exists at " + filePath );
+                    }
+
+                    m_databasePath = StringUtil::toStringC( filePath );
+
+                    m_database->loadFromFile( m_databasePath );
 
 #if SQLITE_HAS_CODEC
-            if( PathW::getFileExtension( filePath ) == L".dll" )
-            {
-                char key[] = { "w3l1k3r34l4sw3ll" };
-                sqlite3_key( m_database->mpDB, key, strlen( key ) );
-            }
+                    if( PathW::getFileExtension( filePath ) == L".dll" )
+                    {
+                        char key[] = { "w3l1k3r34l4sw3ll" };
+                        sqlite3_key( m_database->mpDB, key, strlen( key ) );
+                    }
 #endif
 
 #if FB_PROFILE_DB
-            m_timer = FB_NEW TimerBoost;
+                    m_timer = FB_NEW TimerBoost;
 
-            static int nameExt = 0;
-            String newfilePath =
-                StringUtil::toStringC( filePath ) + StringUtil::toString( nameExt++ ) + String( ".log" );
-            m_log.open( newfilePath );
+                    static int nameExt = 0;
+                    String newfilePath = StringUtil::toStringC( filePath ) +
+                                         StringUtil::toString( nameExt++ ) + String( ".log" );
+                    m_log.open( newfilePath );
 #endif
+                }
+            }
         }
         catch( Exception &e )
         {
@@ -273,12 +285,10 @@ namespace fb
         }
     }
 
-    SmartPtr<IDatabaseQuery> DatabaseManager::executeQuery( const String &queryStr )
+    auto DatabaseManager::executeQuery( const String &queryStr ) -> SmartPtr<IDatabaseQuery>
     {
         try
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-            FB_LOG( "SQL: " + queryStr );
             return m_database->query( queryStr );
         }
         catch( Exception &e )
@@ -289,11 +299,11 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<IDatabaseQuery> DatabaseManager::executeQueryAsync( const String &queryStr )
+    auto DatabaseManager::executeQueryAsync( const String &queryStr ) -> SmartPtr<IDatabaseQuery>
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto jobQueue = applicationManager->getJobQueue();
@@ -310,7 +320,7 @@ namespace fb
         return nullptr;
     }
 
-    int DatabaseManager::executeDML( const String &dml )
+    auto DatabaseManager::executeDML( const String &dml ) -> int
     {
         try
         {
@@ -326,7 +336,7 @@ namespace fb
         return 0;
     }
 
-    int DatabaseManager::executeDML( const StringW &dml )
+    auto DatabaseManager::executeDML( const StringW &dml ) -> int
     {
         try
         {
@@ -342,11 +352,11 @@ namespace fb
         return 0;
     }
 
-    int DatabaseManager::executeAsyncDML( const String &tag, const String &val )
+    auto DatabaseManager::executeAsyncDML( const String &tag, const String &val ) -> int
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto jobQueue = applicationManager->getJobQueue();
 
             SmartPtr<DMLQueryJob> job( new DMLQueryJob( this, tag, val ) );
@@ -428,7 +438,7 @@ namespace fb
         setSetting( name, value );
     }
 
-    String DatabaseManager::getSetting( const String &name, String value /*= ""*/ )
+    auto DatabaseManager::getSetting( const String &name, String value /*= ""*/ ) -> String
     {
         auto sql = "select * from settings where param = '" + name + "'";
         auto queryResult = executeQuery( sql );
@@ -441,7 +451,7 @@ namespace fb
         return value;
     }
 
-    String DatabaseManager::getSettingRef( const String &name, String value /*= ""*/ )
+    auto DatabaseManager::getSettingRef( const String &name, String value /*= ""*/ ) -> String
     {
         auto sql = "select * from refdb.settings where param = '" + name + "'";
         auto queryResult = executeQuery( sql );
@@ -454,7 +464,7 @@ namespace fb
         return value;
     }
 
-    s32 DatabaseManager::getSettingAsInt( const String &name, s32 defaultValue /*= 0*/ )
+    auto DatabaseManager::getSettingAsInt( const String &name, s32 defaultValue /*= 0*/ ) -> s32
     {
         String val = getSetting( name );
         if( !StringUtil::isNullOrEmpty( val ) )
@@ -465,7 +475,7 @@ namespace fb
         return defaultValue;
     }
 
-    bool DatabaseManager::getSettingAsBool( const String &name, bool defaultValue /*= false*/ )
+    auto DatabaseManager::getSettingAsBool( const String &name, bool defaultValue /*= false*/ ) -> bool
     {
         String val = getSetting( name );
         if( !StringUtil::isNullOrEmpty( val ) )
@@ -476,7 +486,7 @@ namespace fb
         return defaultValue;
     }
 
-    f32 DatabaseManager::getSettingAsFloat( const String &name, f32 defaultValue /*= 0.0f*/ )
+    auto DatabaseManager::getSettingAsFloat( const String &name, f32 defaultValue /*= 0.0f*/ ) -> f32
     {
         String val = getSetting( name );
         if( !StringUtil::isNullOrEmpty( val ) )
@@ -487,7 +497,7 @@ namespace fb
         return defaultValue;
     }
 
-    bool DatabaseManager::hasStateValue( const String &name )
+    auto DatabaseManager::hasStateValue( const String &name ) -> bool
     {
         String sql = "select * from sim_states where param = '" + name + "';";
         auto query = executeQuery( sql );
@@ -528,7 +538,7 @@ namespace fb
         setStateValue( name, StringUtil::toString( val ) );
     }
 
-    String DatabaseManager::getStateValue( const String &name )
+    auto DatabaseManager::getStateValue( const String &name ) -> String
     {
         String sql = "select * from sim_states where param = '" + name + "';";
         auto query = executeQuery( sql );
@@ -540,7 +550,7 @@ namespace fb
         return "";
     }
 
-    bool DatabaseManager::getStateValueAsBool( const String &name )
+    auto DatabaseManager::getStateValueAsBool( const String &name ) -> bool
     {
         auto sql = "select * from sim_states where param = '" + name + "';";
         auto query = executeQuery( sql );
@@ -552,7 +562,7 @@ namespace fb
         return false;
     }
 
-    s32 DatabaseManager::getStateValueAsInt( const String &name )
+    auto DatabaseManager::getStateValueAsInt( const String &name ) -> s32
     {
         String sql = "select * from sim_states where param = '" + name + "';";
         auto query = executeQuery( sql );
@@ -564,7 +574,7 @@ namespace fb
         return 0;
     }
 
-    f32 DatabaseManager::getStateValueAsFloat( const String &name )
+    auto DatabaseManager::getStateValueAsFloat( const String &name ) -> f32
     {
         String sql = "select * from sim_states where param = '" + name + "';";
         auto query = executeQuery( sql );
@@ -589,23 +599,17 @@ namespace fb
         // executeQuery("PRAGMA locking_mode=EXCLUSIVE;");
         executeQuery( "PRAGMA temp_store=MEMORY;" );
         // executeQuery("PRAGMA threads = 4;");
-
-        // sqlite3_exec(m_database->mpDB, "VACUUM;", nullptr, nullptr, nullptr);
     }
 
     DatabaseManager::QueryJob::QueryJob( SmartPtr<DatabaseManager> database, const String &query ) :
         m_query( query ),
-        m_database( database )
+        m_database( std::move( database ) )
     {
     }
 
-    DatabaseManager::QueryJob::QueryJob()
-    {
-    }
+    DatabaseManager::QueryJob::QueryJob() = default;
 
-    DatabaseManager::QueryJob::~QueryJob()
-    {
-    }
+    DatabaseManager::QueryJob::~QueryJob() = default;
 
     void DatabaseManager::QueryJob::execute()
     {
@@ -623,17 +627,13 @@ namespace fb
                                                const String &query ) :
         m_tag( tag ),
         m_query( query ),
-        m_database( database )
+        m_database( std::move( database ) )
     {
     }
 
-    DatabaseManager::DMLQueryJob::DMLQueryJob()
-    {
-    }
+    DatabaseManager::DMLQueryJob::DMLQueryJob() = default;
 
-    DatabaseManager::DMLQueryJob::~DMLQueryJob()
-    {
-    }
+    DatabaseManager::DMLQueryJob::~DMLQueryJob() = default;
 
     void DatabaseManager::DMLQueryJob::execute()
     {
@@ -641,7 +641,7 @@ namespace fb
         //{
         //	m_database->executeDML(m_query);
 
-        //	auto applicationManager = core::IApplicationManager::instance();
+        //	auto applicationManager = core::ApplicationManager::instance();
         //	auto pluginInterface = applicationManager->getPluginInterface();
 
         //	auto pluginEvent = fb::make_ptr<core::PluginEvent>();
@@ -679,12 +679,12 @@ namespace fb
 #endif
     }
 
-    void *DatabaseManager::getPtr() const
+    auto DatabaseManager::getPtr() const -> void *
     {
         return nullptr;  // m_database->mpDB;
     }
 
-    String DatabaseManager::getResourceValue( int id )
+    auto DatabaseManager::getResourceValue( int id ) -> String
     {
         auto parent_id = -1;
 
@@ -706,7 +706,7 @@ namespace fb
         return "";
     }
 
-    String DatabaseManager::getResourceValue( const String &name )
+    auto DatabaseManager::getResourceValue( const String &name ) -> String
     {
 #if FB_BUILD_EDITOR_PLUGIN
         auto modelSql = "select * from resourcemap where name = '" + name + "'";
@@ -726,7 +726,7 @@ namespace fb
         return name;
     }
 
-    SmartPtr<IDatabase> DatabaseManager::getDatabase() const
+    auto DatabaseManager::getDatabase() const -> SmartPtr<IDatabase>
     {
         return m_database;
     }
@@ -741,7 +741,7 @@ namespace fb
         m_databasePath = databasePath;
     }
 
-    Array<String> DatabaseManager::getAttached() const
+    auto DatabaseManager::getAttached() const -> Array<String>
     {
         return m_attached;
     }
@@ -756,7 +756,7 @@ namespace fb
         m_attached.push_back( attached );
     }
 
-    String DatabaseManager::getDatabasePath() const
+    auto DatabaseManager::getDatabasePath() const -> String
     {
         return m_databasePath;
     }

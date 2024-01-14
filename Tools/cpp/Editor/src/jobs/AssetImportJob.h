@@ -8,17 +8,15 @@ namespace fb
 {
     namespace editor
     {
-
         class AssetImportJob : public Job
         {
         public:
             AssetImportJob();
-            ~AssetImportJob();
+            ~AssetImportJob() override;
 
             void execute() override;
         };
-
-    }  // namespace editor
-}  // namespace fb
+    } // namespace editor
+}     // namespace fb
 
 #endif  // AssetImportJob_h__

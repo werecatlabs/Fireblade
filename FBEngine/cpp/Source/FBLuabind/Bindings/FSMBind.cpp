@@ -57,21 +57,9 @@ namespace fb
                         .def( "getFlagsPtr", &IFSMManager::getFlagsPtr )
                         .def( "getListeners", &IFSMManager::getListeners )];
 
-        //module( L )[class_<IFSMListener, IObject, boost::shared_ptr<IObject>>( "IFSMListener" )
-        //                .def( "getOwner", &IFSMListener::getOwner )
-        //                .def( "setOwner", &IFSMListener::setOwner )
-        //                .def( "OnEnterState", &IFSMListener::OnEnterState )
-        //                .def( "OnUpdateState", &IFSMListener::OnUpdateState )
-        //                .def( "OnLeaveState", &IFSMListener::OnLeaveState )
-        //                .def( "CanChangeState", &IFSMListener::CanChangeState )];
-
-        //module( L )[class_<IFSMScriptListener, IFSMListener, boost::shared_ptr<IObject>>(
-        //                "IFSMScriptListener" )
-        //                .def( "getInvoker", _getInvoker )
-        //                .def( "setInvoker", &IFSMScriptListener::setInvoker )];
-
-        //module( L )[class_<CFSMScriptListener, IFSMScriptListener, boost::shared_ptr<IObject>>(
-        //    "CFSMScriptListener" )];
+        module( L )[class_<IFSMListener, IObject, boost::shared_ptr<IObject>>( "IFSMListener" )
+                        .def( "getFSM", &IFSMListener::getFSM )
+                        .def( "setFSM", &IFSMListener::setFSM )];
     }
 
 }  // end namespace fb

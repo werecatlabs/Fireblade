@@ -45,9 +45,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    Serializer::~Serializer()
-    {
-    }
+    Serializer::~Serializer() = default;
 
     //---------------------------------------------------------------------
     void Serializer::determineEndianness( SmartPtr<IStream> &stream )
@@ -63,7 +61,7 @@ namespace fb
         // read header id manually (no conversion)
         auto actually_read = stream->read( &dest, sizeof( u16 ) );
         // skip back
-        stream->seek( 0 - static_cast<long>( actually_read ) );
+        stream->seek( 0 );
         if( actually_read != sizeof( u16 ) )
         {
             // end of file?
@@ -110,7 +108,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void Serializer::writeFileHeader( void )
+    void Serializer::writeFileHeader()
     {
         u16 val = HEADER_STREAM_ID;
         writeShorts( &val, 1 );
@@ -219,7 +217,7 @@ namespace fb
         auto pCharToWrite = static_cast<char *>( malloc( sizeof( char ) * count ) );
         for( unsigned int i = 0; i < count; i++ )
         {
-            *( pCharToWrite + i ) = *(bool *)( pBool + i );
+            *( pCharToWrite + i ) = *const_cast<bool *>( pBool + i );
         }
 
         writeData( pCharToWrite, sizeof( char ), count );
@@ -272,7 +270,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    unsigned short Serializer::readChunk( SmartPtr<IStream> &stream )
+    auto Serializer::readChunk( SmartPtr<IStream> &stream ) -> unsigned short
     {
         unsigned short id;
         readShorts( stream, &id, 1 );
@@ -289,7 +287,9 @@ namespace fb
         auto pTemp = static_cast<char *>( malloc( 1 * count ) );  // to hold 1-byte bools
         stream->read( pTemp, 1 * count );
         for( unsigned int i = 0; i < count; i++ )
+        {
             *( pDest + i ) = *( pTemp + i );
+        }
 
         free( pTemp );
 #else
@@ -338,7 +338,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    String Serializer::readString( SmartPtr<IStream> &stream, u32 numChars )
+    auto Serializer::readString( SmartPtr<IStream> &stream, u32 numChars ) -> String
     {
         FB_ASSERT( numChars <= 255 );
         char str[255];
@@ -348,7 +348,7 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    String Serializer::readString( SmartPtr<IStream> &stream )
+    auto Serializer::readString( SmartPtr<IStream> &stream ) -> String
     {
         return stream->getLine( false );
     }

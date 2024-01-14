@@ -27,7 +27,7 @@ namespace fb
             void unload( SmartPtr<ISharedObject> data ) override;
 
             /** @copydoc BaseComponent::updateDirty */
-            void updateDirty( u32 flags, u32 oldFlags ) override;
+            void updateFlags( u32 flags, u32 oldFlags ) override;
 
             /** @copydoc BaseComponent::getProperties */
             SmartPtr<Properties> getProperties() const override;
@@ -53,6 +53,10 @@ namespace fb
 
             void updateLayers();
 
+            SmartPtr<render::ITexture> getHeightMap() const;
+
+            void setHeightMap( SmartPtr<render::ITexture> heightMap );
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
@@ -65,7 +69,7 @@ namespace fb
 
                 Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
                                        const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
-                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
                 void loadingStateChanged( ISharedObject *sharedObject, LoadingState oldState,
                                           LoadingState newState );
@@ -98,13 +102,13 @@ namespace fb
             /** Handles events that affect the state of the TerrainSystem component. */
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType ) override;
 
+            SmartPtr<render::ITexture> m_heightMap;
+
             /** Pointer to a render::ITerrain object. */
             SmartPtr<render::ITerrain> m_terrain;
 
-            /** Pointer to a render::ISceneNode object. */
-            SmartPtr<render::ISceneNode> m_node;
-
             s32 m_numLayers = 0;
+
             std::vector<SmartPtr<render::ITexture>> m_layers;
         };
     }  // namespace scene

@@ -7,6 +7,7 @@
 
 namespace fb
 {
+
     /**
      * @brief Implementation for a state manager.
      *
@@ -63,10 +64,10 @@ namespace fb
 
         /**
          * @brief Removes a state object from the state manager.
-         * @param stateObject The state object to remove.
+         * @param stateContext The state object to remove.
          * @return True if the state object was removed, false otherwise.
          */
-        bool removeStateObject( SmartPtr<IStateContext> stateObject ) override;
+        bool removeStateObject( SmartPtr<IStateContext> stateContext ) override;
 
         /**
          * @brief Removes a state object from the state manager.
@@ -86,7 +87,7 @@ namespace fb
          * @brief Gets an array of all state objects in the state manager.
          * @return An array of all state objects in the state manager.
          */
-        Array<SmartPtr<IStateContext>> getStateObjects() const override;
+        Array<SmartPtr<IStateContext>> getStateContexts() const override;
 
         /**
          * @brief Gets the state queue for a given task.
@@ -131,8 +132,8 @@ namespace fb
         Array<Array<SmartPtr<IState>>> getStates2D( u32 typeInfo );
 
     protected:
-        SharedPtr<ConcurrentArray<SmartPtr<IStateContext>>> getStateObjectsPtr() const;
-        void setStateObjectsPtr( SharedPtr<ConcurrentArray<SmartPtr<IStateContext>>> stateObjects );
+        SharedPtr<ConcurrentArray<SmartPtr<IStateContext>>> getStateContextsPtr() const;
+        void setStateContextsPtr( SharedPtr<ConcurrentArray<SmartPtr<IStateContext>>> stateObjects );
 
         ConcurrentArray<SmartPtr<IStateQueue>> m_stateQueues;
         AtomicSharedPtr<ConcurrentArray<SmartPtr<IStateContext>>> m_stateObjects;

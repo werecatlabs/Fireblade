@@ -6,15 +6,11 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, RigidbodyState, BaseState );
 
-    RigidbodyState::RigidbodyState()
-    {
-    }
+    RigidbodyState::RigidbodyState() = default;
 
-    RigidbodyState::~RigidbodyState()
-    {
-    }
+    RigidbodyState::~RigidbodyState() = default;
 
-    Transform3<real_Num> RigidbodyState::getTransform() const
+    auto RigidbodyState::getTransform() const -> Transform3<real_Num>
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_transform;

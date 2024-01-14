@@ -7,13 +7,13 @@ namespace fb
     FB_CLASS_REGISTER_DERIVED( fb, DataStream, IStream );
 
     template <typename T>
-    DataStream &DataStream::operator>>( T &val )
+    auto DataStream::operator>>( T &val ) -> DataStream &
     {
         read( static_cast<void *>( &val ), sizeof( T ) );
         return *this;
     }
 
-    String DataStream::getLine( bool trimAfter )
+    auto DataStream::getLine( bool trimAfter ) -> String
     {
         char tmpBuf[FB_STREAM_TEMP_SIZE];
         std::string retString;
@@ -55,32 +55,30 @@ namespace fb
         return retString;
     }
 
-    bool DataStream::isOpen() const
+    auto DataStream::isOpen() const -> bool
     {
         return true;
     }
 
     DataStream::DataStream( const String &name, u16 accessMode /*= READ*/ ) :
         m_name( name ),
-        m_size( 0 ),
+
         m_access( accessMode )
     {
     }
 
-    DataStream::DataStream( u16 accessMode /*= READ*/ ) : m_size( 0 ), m_access( accessMode )
+    DataStream::DataStream( u16 accessMode /*= READ*/ ) : m_access( accessMode )
     {
     }
 
-    DataStream::~DataStream()
-    {
-    }
+    DataStream::~DataStream() = default;
 
-    String DataStream::getFileName() const
+    auto DataStream::getFileName() const -> String
     {
         return m_name;
     }
 
-    String DataStream::getFileName( void )
+    auto DataStream::getFileName() -> String
     {
         return m_name;
     }
@@ -90,22 +88,22 @@ namespace fb
         m_name = fileName;
     }
 
-    u16 DataStream::getAccessMode() const
+    auto DataStream::getAccessMode() const -> u16
     {
         return m_access;
     }
 
-    bool DataStream::isReadable() const
+    auto DataStream::isReadable() const -> bool
     {
         return ( m_access & static_cast<s32>( AccessMode::Read ) ) != 0;
     }
 
-    bool DataStream::isWriteable() const
+    auto DataStream::isWriteable() const -> bool
     {
         return ( m_access & static_cast<s32>( AccessMode::Write ) ) != 0;
     }
 
-    size_t DataStream::write( const void *buf, size_t count )
+    auto DataStream::write( const void *buf, size_t count ) -> size_t
     {
         (void)buf;
         (void)count;
@@ -113,7 +111,7 @@ namespace fb
         return 0;
     }
 
-    size_t DataStream::readLine( char *buf, size_t maxCount, const String &delim )
+    auto DataStream::readLine( char *buf, size_t maxCount, const String &delim ) -> size_t
     {
         // Deal with both Unix & Windows LFs
         bool trimCR = false;
@@ -173,7 +171,7 @@ namespace fb
         return totalCount;
     }
 
-    size_t DataStream::skipLine( const std::string &delim )
+    auto DataStream::skipLine( const std::string &delim ) -> size_t
     {
         char tmpBuf[FB_STREAM_TEMP_SIZE];
         size_t total = 0;
@@ -205,12 +203,12 @@ namespace fb
         return total;
     }
 
-    size_t DataStream::size( void ) const
+    auto DataStream::size() const -> size_t
     {
         return m_size;
     }
 
-    String DataStream::getAsString( void )
+    auto DataStream::getAsString() -> String
     {
         try
         {
@@ -246,7 +244,7 @@ namespace fb
     {
     }
 
-    FileInfo DataStream::getFileInfo() const
+    auto DataStream::getFileInfo() const -> FileInfo
     {
         return m_fileInfo;
     }

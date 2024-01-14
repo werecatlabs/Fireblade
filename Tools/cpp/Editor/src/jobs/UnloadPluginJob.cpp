@@ -4,59 +4,52 @@
 #include "ui/UIManager.h"
 #include <FBCore/FBCore.h>
 
-DECLARE_FUNCTION_ARG1( unloadPlugin, void, fb::core::IApplicationManager * );
+DECLARE_FUNCTION_ARG1( unloadPlugin, void, fb::core::ApplicationManager * );
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+    FB_CLASS_REGISTER_DERIVED( fb, UnloadPluginJob, Job );
+
+    UnloadPluginJob::UnloadPluginJob() = default;
+
+    UnloadPluginJob::~UnloadPluginJob() = default;
+
+    void UnloadPluginJob::execute()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, UnloadPluginJob, Job );
-
-        UnloadPluginJob::UnloadPluginJob()
+        try
         {
-        }
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
 
-        UnloadPluginJob::~UnloadPluginJob()
-        {
-        }
+            auto plugin = getPlugin();
 
-        void UnloadPluginJob::execute()
-        {
-            try
+            auto pluginManager = applicationManager->getPluginManager();
+            if( pluginManager )
             {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
+                auto libraryHandle = plugin->getLibraryHandle();
+                init_unloadPlugin( libraryHandle );
 
-                auto plugin = getPlugin();
-
-                auto pluginManager = applicationManager->getPluginManager();
-                if( pluginManager )
+                if( hunloadPlugin )
                 {
-                    auto libraryHandle = plugin->getLibraryHandle();
-                    init_unloadPlugin( libraryHandle );
-
-                    if( hunloadPlugin )
-                    {
-                        hunloadPlugin( applicationManager.get() );
-                    }
-
-                    pluginManager->unloadPlugin( plugin );
+                    hunloadPlugin( applicationManager.get() );
                 }
-            }
-            catch( Exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
+
+                pluginManager->unloadPlugin( plugin );
             }
         }
-
-        SmartPtr<IPlugin> UnloadPluginJob::getPlugin() const
+        catch( Exception &e )
         {
-            return m_plugin;
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        void UnloadPluginJob::setPlugin( SmartPtr<IPlugin> plugin )
-        {
-            m_plugin = plugin;
-        }
-    }  // namespace editor
-}  // namespace fb
+    auto UnloadPluginJob::getPlugin() const -> SmartPtr<IPlugin>
+    {
+        return m_plugin;
+    }
+
+    void UnloadPluginJob::setPlugin( SmartPtr<IPlugin> plugin )
+    {
+        m_plugin = plugin;
+    }
+}  // namespace fb::editor

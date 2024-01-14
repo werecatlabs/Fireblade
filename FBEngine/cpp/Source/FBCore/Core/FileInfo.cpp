@@ -3,7 +3,7 @@
 
 namespace fb
 {
-    bool FileInfo::operator==( const struct FileInfo &other ) const
+    auto FileInfo::operator==( const struct FileInfo &other ) const -> bool
     {
         if( isDirectory != other.isDirectory )
         {
@@ -13,7 +13,7 @@ namespace fb
         return filePath == other.filePath;
     }
 
-    bool FileInfo::operator<( const struct FileInfo &other ) const
+    auto FileInfo::operator<( const struct FileInfo &other ) const -> bool
     {
         if( isDirectory != other.isDirectory )
         {

@@ -69,7 +69,13 @@ namespace fb
         }
 
         template <class T>
-        SmartPtr<IUIDragSource> CImGuiElement<T>::getDragSource() const
+        SmartPtr<IUIDragSource> &CImGuiElement<T>::getDragSource()
+        {
+            return m_dragSource;
+        }
+
+        template <class T>
+        const SmartPtr<IUIDragSource> &CImGuiElement<T>::getDragSource() const
         {
             return m_dragSource;
         }
@@ -81,7 +87,13 @@ namespace fb
         }
 
         template <class T>
-        SmartPtr<IUIDropTarget> CImGuiElement<T>::getDropTarget() const
+        SmartPtr<IUIDropTarget> &CImGuiElement<T>::getDropTarget()
+        {
+            return m_dropTarget;
+        }
+
+        template <class T>
+        const SmartPtr<IUIDropTarget> &CImGuiElement<T>::getDropTarget() const
         {
             return m_dropTarget;
         }
@@ -104,15 +116,15 @@ namespace fb
         }
 
         template <class T>
-        SmartPtr<IStateContext> CImGuiElement<T>::getStateObject() const
+        SmartPtr<IStateContext> CImGuiElement<T>::getStateContext() const
         {
-            return m_stateObject;
+            return m_stateContext;
         }
 
         template <class T>
-        void CImGuiElement<T>::setStateObject( SmartPtr<IStateContext> stateObject )
+        void CImGuiElement<T>::setStateContext( SmartPtr<IStateContext> stateContext )
         {
-            m_stateObject = stateObject;
+            m_stateContext = stateContext;
         }
 
         template <class T>

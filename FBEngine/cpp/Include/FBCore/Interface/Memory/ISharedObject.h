@@ -49,7 +49,7 @@ namespace fb
              *
              * @see ISharedObject, SmartPtr, IObject
              */
-            ScopedLock( SmartPtr<ISharedObject> sharedObject );
+            explicit ScopedLock( SmartPtr<ISharedObject> sharedObject );
 
             /**
              * Destructs a `ScopeLock` object and unlocks the specified shared object.
@@ -232,6 +232,20 @@ namespace fb
         */
         virtual void fromData( SmartPtr<ISharedObject> data );
 
+        /**
+         * Gets the data as a properties object.
+         *
+         * @return The data as a properties object.
+         */
+        virtual SmartPtr<Properties> getProperties() const;
+
+        /**
+         * Sets the data as a properties object.
+         *
+         * @param properties The properties object.
+         */
+        virtual void setProperties( SmartPtr<Properties> properties );
+
         /** Used to get child objects that make up the object composition.
         @return An array with the child objects.
         */
@@ -352,11 +366,11 @@ namespace fb
         SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> m_sharedEventListeners;
     };
 
-#if FB_FINAL
+#ifndef _DEBUG
     inline s32 ISharedObject::addWeakReference()
     {
-#if FB_TRACK_REFERENCES
-#    if FB_TRACK_WEAK_REFERENCES
+#    if FB_TRACK_REFERENCES
+#        if FB_TRACK_WEAK_REFERENCES
         auto address = (void *)this;
         const c8 *file = __FILE__;
         const u32 line = __LINE__;
@@ -364,17 +378,17 @@ namespace fb
 
         auto &objectTracker = ObjectTracker::instance();
         objectTracker.addRef( this, address, file, line, func );
+#        endif
 #    endif
-#endif
 
         return ++m_weakReferences;
     }
 
     inline s32 ISharedObject::addReference()
     {
-#if FB_TRACK_REFERENCES
-#    if FB_TRACK_STRONG_REFERENCES
-        
+#    if FB_TRACK_REFERENCES
+#        if FB_TRACK_STRONG_REFERENCES
+
         auto references = gc.addReference( T::typeInfo(), m_objectId );
 
         // FB_ASSERT( isGarbageCollected() && references > 0 );
@@ -389,19 +403,19 @@ namespace fb
         objectTracker.addRef( this, address, file, line, func );
 
         return references;
-#    else
-        
+#        else
+
         return gc.addReference( T::typeInfo(), m_objectId );
-#    endif
-#else
+#        endif
+#    else
         return ++m_references;
-#endif
+#    endif
     }
 
     inline bool ISharedObject::removeReference()
     {
-#if FB_TRACK_REFERENCES
-#    if FB_TRACK_STRONG_REFERENCES
+#    if FB_TRACK_REFERENCES
+#        if FB_TRACK_STRONG_REFERENCES
         auto address = (void *)this;
         const c8 *file = __FILE__;
         const u32 line = __LINE__;
@@ -409,8 +423,8 @@ namespace fb
 
         auto &objectTracker = ObjectTracker::instance();
         objectTracker.removeRef( this, address, file, line, func );
+#        endif
 #    endif
-#endif
 
         if( --m_references == 0 )
         {

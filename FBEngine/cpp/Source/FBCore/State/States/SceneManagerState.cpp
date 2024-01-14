@@ -6,15 +6,11 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, SceneManagerState, BaseState );
 
-    SceneManagerState::SceneManagerState()
-    {
-    }
+    SceneManagerState::SceneManagerState() = default;
 
-    SceneManagerState::~SceneManagerState()
-    {
-    }
+    SceneManagerState::~SceneManagerState() = default;
 
-    String SceneManagerState::getSkyboxMaterialName() const
+    auto SceneManagerState::getSkyboxMaterialName() const -> String
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_skyboxMaterialName;
@@ -30,7 +26,7 @@ namespace fb
         }
     }
 
-    bool SceneManagerState::getEnableSkybox() const
+    auto SceneManagerState::getEnableSkybox() const -> bool
     {
         return m_enableSkybox;
     }
@@ -44,7 +40,7 @@ namespace fb
         }
     }
 
-    ColourF SceneManagerState::getAmbientLight() const
+    auto SceneManagerState::getAmbientLight() const -> ColourF
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_ambientLight;
@@ -60,7 +56,7 @@ namespace fb
         }
     }
 
-    bool SceneManagerState::getEnableShadows() const
+    auto SceneManagerState::getEnableShadows() const -> bool
     {
         return m_enableShadows;
     }

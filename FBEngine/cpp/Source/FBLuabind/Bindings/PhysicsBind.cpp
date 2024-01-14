@@ -105,9 +105,9 @@ namespace fb
     //    body->addVelocity( vel );
     //}
 
-    //StateObjectPtr _getStateObject( IPhysicsBody2 *body )
+    //StateObjectPtr _getStateContext( IPhysicsBody2 *body )
     //{
-    //    return nullptr;  // body->getStateObject().get();
+    //    return nullptr;  // body->getStateContext().get();
     //}
 
     //void _setBodyPosition( IPhysicsBody2 *body, const Vector2F &position )
@@ -248,7 +248,7 @@ namespace fb
         //                .def( "setUserData", _setUserData )
         //                .def( "getUserData", _getUserData )
 
-        //                .def( "getStateObject", _getStateObject )
+        //                .def( "getStateContext", _getStateContext )
 
         //                .def( "setGravity", &IPhysicsBody2::setGravity )
         //                .def( "getGravity", &IPhysicsBody2::getGravity )

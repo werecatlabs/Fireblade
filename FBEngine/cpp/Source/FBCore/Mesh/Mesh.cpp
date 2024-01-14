@@ -4,13 +4,10 @@
 
 namespace fb
 {
-    Mesh::Mesh()
-    {
-    }
 
-    Mesh::~Mesh()
-    {
-    }
+    Mesh::Mesh() = default;
+
+    Mesh::~Mesh() = default;
 
     void Mesh::unload( SmartPtr<ISharedObject> data )
     {
@@ -47,7 +44,7 @@ namespace fb
         m_subMeshes.clear();
     }
 
-    Array<SmartPtr<ISubMesh>> Mesh::getSubMeshes() const
+    auto Mesh::getSubMeshes() const -> Array<SmartPtr<ISubMesh>>
     {
         return m_subMeshes;
     }
@@ -60,7 +57,7 @@ namespace fb
         }
     }
 
-    String Mesh::getName() const
+    auto Mesh::getName() const -> String
     {
         if( auto handle = getHandle() )
         {
@@ -94,7 +91,7 @@ namespace fb
         }
     }
 
-    AABB3F Mesh::getAABB() const
+    auto Mesh::getAABB() const -> AABB3F
     {
         return m_aabb;
     }
@@ -104,7 +101,7 @@ namespace fb
         m_aabb = aabb;
     }
 
-    SmartPtr<IMesh> Mesh::clone() const
+    auto Mesh::clone() const -> SmartPtr<IMesh>
     {
         SmartPtr<IMesh> newMesh = fb::make_ptr<Mesh>();
         Array<SmartPtr<ISubMesh>> subMeshes = getSubMeshes();
@@ -129,7 +126,7 @@ namespace fb
         m_animationInterface = animationInterface;
     }
 
-    SmartPtr<IAnimationInterface> Mesh::getAnimationInterface() const
+    auto Mesh::getAnimationInterface() const -> SmartPtr<IAnimationInterface>
     {
         return m_animationInterface;
     }
@@ -139,37 +136,37 @@ namespace fb
         m_hasSharedVertexData = val;
     }
 
-    bool Mesh::hasSkeleton() const
+    auto Mesh::hasSkeleton() const -> bool
     {
         return false;
     }
 
-    String Mesh::getSkeletonName() const
+    auto Mesh::getSkeletonName() const -> String
     {
         return "";
     }
 
-    u32 Mesh::getNumLodLevels() const
+    auto Mesh::getNumLodLevels() const -> u32
     {
         return 0;
     }
 
-    bool Mesh::isEdgeListBuilt() const
+    auto Mesh::isEdgeListBuilt() const -> bool
     {
         return false;
     }
 
-    bool Mesh::hasVertexAnimation() const
+    auto Mesh::hasVertexAnimation() const -> bool
     {
         return false;
     }
 
-    bool Mesh::getHasSharedVertexData() const
+    auto Mesh::getHasSharedVertexData() const -> bool
     {
         return m_hasSharedVertexData;
     }
 
-    bool Mesh::compare( SmartPtr<IMesh> other ) const
+    auto Mesh::compare( SmartPtr<IMesh> other ) const -> bool
     {
         auto subMeshes = getSubMeshes();
         auto otherSubMeshes = other->getSubMeshes();

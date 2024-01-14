@@ -5,50 +5,43 @@
 
 #include "ImGuiApplication.h"
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    FB_CLASS_REGISTER_DERIVED( fb, ImGuiTabItem, CImGuiElement<IUITabItem> );
+
+    ImGuiTabItem::ImGuiTabItem() = default;
+
+    ImGuiTabItem::~ImGuiTabItem() = default;
+
+    void ImGuiTabItem::update()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, ImGuiTabItem, CImGuiElement<IUITabItem> );
+        auto applicationManager = core::ApplicationManager::instance();
+        auto ui = applicationManager->getUI();
+        auto uiApplication = fb::static_pointer_cast<ImGuiApplication>( ui->getApplication() );
 
-        ImGuiTabItem::ImGuiTabItem()
+        auto name = getLabel();
+        if( ImGui::BeginTabItem( name.c_str() ) )
         {
-        }
-
-        ImGuiTabItem::~ImGuiTabItem()
-        {
-        }
-
-        void ImGuiTabItem::update()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto ui = applicationManager->getUI();
-            auto uiApplication = fb::static_pointer_cast<ImGuiApplication>( ui->getApplication() );
-
-            auto name = getLabel();
-            if( ImGui::BeginTabItem( name.c_str() ) )
+            if( auto p = getChildren() )
             {
-                if( auto p = getChildren() )
+                auto &children = *p;
+                for( auto child : children )
                 {
-                    auto &children = *p;
-                    for( auto child : children )
-                    {
-                        uiApplication->createElement( child );
-                    }
+                    uiApplication->createElement( child );
                 }
-
-                ImGui::EndTabItem();
             }
-        }
 
-        String ImGuiTabItem::getLabel() const
-        {
-            return m_label;
+            ImGui::EndTabItem();
         }
+    }
 
-        void ImGuiTabItem::setLabel( const String &label )
-        {
-            m_label = label;
-        }
-    }  // end namespace ui
-}  // end namespace fb
+    auto ImGuiTabItem::getLabel() const -> String
+    {
+        return m_label;
+    }
+
+    void ImGuiTabItem::setLabel( const String &label )
+    {
+        m_label = label;
+    }
+}  // namespace fb::ui

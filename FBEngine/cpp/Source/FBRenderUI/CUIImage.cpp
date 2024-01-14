@@ -6,31 +6,29 @@
 #include <FBCore/FBCore.h>
 #include <tinyxml.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    FB_CLASS_REGISTER_DERIVED( fb, CUIImage, CUIElement<IUIImage> );
+
+    CUIImage::CUIImage()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, CUIImage, CUIElement<IUIImage> );
+        createStateContext();
+        m_type = "Image";
+    }
 
-        CUIImage::CUIImage()
-        {
-            createStateContext();
-            m_type = "Image";
-        }
+    CUIImage::~CUIImage()
+    {
+        unload( nullptr );
+    }
 
-        CUIImage::~CUIImage()
+    void CUIImage::load( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            unload( nullptr );
-        }
-
-        void CUIImage::load( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-                setLoadingState( LoadingState::Loading );
+            setLoadingState( LoadingState::Loading );
 
 #if FB_USE_MYGUI
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto renderUI = applicationManager->getRenderUI();
@@ -55,7 +53,7 @@ namespace fb
                 f32 height = 1.0f;
                 String alignment;
 
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -83,7 +81,7 @@ namespace fb
                 setContainerObject( container );
 #endif
 
-                if( auto stateContext = getStateObject() )
+                if( auto stateContext = getStateContext() )
                 {
                     stateContext->setDirty( true );
                 }
@@ -105,7 +103,7 @@ namespace fb
                 {
                     setLoadingState( LoadingState::Unloading );
 
-                    auto applicationManager = core::IApplicationManager::instance();
+                    auto applicationManager = core::ApplicationManager::instance();
                     FB_ASSERT( applicationManager );
 
                     auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -151,7 +149,7 @@ namespace fb
             //}
         }
 
-        String CUIImage::getMaterialName() const
+        auto CUIImage::getMaterialName() const -> String
         {
             //auto container = getContainerObject();
             //if( container )
@@ -164,7 +162,7 @@ namespace fb
 
         void CUIImage::setTexture( SmartPtr<render::ITexture> texture )
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
                 if( auto state = stateContext->getStateByType<UIElementState>() )
                 {
@@ -173,9 +171,9 @@ namespace fb
             }
         }
 
-        SmartPtr<render::ITexture> CUIImage::getTexture() const
+        auto CUIImage::getTexture() const -> SmartPtr<render::ITexture>
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
                 if( auto state = stateContext->getStateByType<UIElementState>() )
                 {
@@ -188,7 +186,7 @@ namespace fb
 
         void CUIImage::setMaterial( SmartPtr<render::IMaterial> material )
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
                 if( auto state = stateContext->getStateByType<UIElementState>() )
                 {
@@ -197,9 +195,9 @@ namespace fb
             }
         }
 
-        SmartPtr<render::IMaterial> CUIImage::getMaterial() const
+        auto CUIImage::getMaterial() const -> SmartPtr<render::IMaterial>
         {
-            if( auto stateContext = getStateObject() )
+            if( auto stateContext = getStateContext() )
             {
                 if( auto state = stateContext->getStateByType<UIElementState>() )
                 {
@@ -235,7 +233,7 @@ namespace fb
             *ppObject = m_container.get();
         }
 
-        SmartPtr<render::IOverlayElementContainer> CUIImage::getContainerObject() const
+        auto CUIImage::getContainerObject() const -> SmartPtr<render::IOverlayElementContainer>
         {
             return m_container;
         }
@@ -247,7 +245,7 @@ namespace fb
 
         void CUIImage::handleStateChanged( SmartPtr<IState> &state )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto elementState = fb::static_pointer_cast<UIElementState>( state );
@@ -260,7 +258,7 @@ namespace fb
             }
         }
 
-        SmartPtr<Properties> CUIImage::getProperties() const
+        auto CUIImage::getProperties() const -> SmartPtr<Properties>
         {
             auto properties = CUIElement<IUIImage>::getProperties();
             return properties;
@@ -278,16 +276,16 @@ namespace fb
             }
         }
 
-        Array<SmartPtr<ISharedObject>> CUIImage::getChildObjects() const
+        auto CUIImage::getChildObjects() const -> Array<SmartPtr<ISharedObject>>
         {
             auto objects = CUIElement<IUIImage>::getChildObjects();
 
-            objects.push_back( m_container );
+            objects.emplace_back( m_container );
 
             return objects;
         }
 
-        bool CUIImage::isValid() const
+        auto CUIImage::isValid() const -> bool
         {
             const auto &state = getLoadingState();
             switch( state )
@@ -320,5 +318,4 @@ namespace fb
 
             return false;
         }
-    }  // end namespace ui
-}  // end namespace fb
+}  // namespace fb::ui

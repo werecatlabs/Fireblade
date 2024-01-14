@@ -7,7 +7,7 @@
 
 namespace fb
 {
-    /** Provides some useful file functions. */
+    /** Provides useful file system functions. */
     template <class T>
     class BasePath
     {
@@ -33,7 +33,8 @@ namespace fb
         static Array<T> getFilesAsAbsolutePaths( const T &path, bool recursive = false );
 
         static Array<T> getFiles( const T &path, const T &extension );
-        static Array<T> getFilesAsAbsolutePaths( const T &path, const T &extension, bool recursive = false );
+        static Array<T> getFilesAsAbsolutePaths( const T &path, const T &extension,
+                                                 bool recursive = false );
 
         static T getLeaf( const T &path );
 

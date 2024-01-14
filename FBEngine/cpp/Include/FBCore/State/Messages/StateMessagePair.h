@@ -41,7 +41,6 @@ namespace fb
 
     FB_CLASS_REGISTER_DERIVED_TEMPLATE_PAIR( fb, StateMessagePair, T, U, StateMessage );
 
-
 }  // end namespace fb
 
 #endif  // StateMessagePair_h__

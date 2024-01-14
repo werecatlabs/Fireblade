@@ -3,90 +3,112 @@
 #include <FBCore/FBCore.h>
 #include <imgui.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    FB_CLASS_REGISTER_DERIVED( fb, ImGuiTextEntry, CImGuiElement<IUITextEntry> );
+
+    ImGuiTextEntry::ImGuiTextEntry() = default;
+
+    ImGuiTextEntry::~ImGuiTextEntry() = default;
+
+    void ImGuiTextEntry::update()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, ImGuiTextEntry, CImGuiElement<IUITextEntry> );
-
-        ImGuiTextEntry::ImGuiTextEntry()
+        auto name = getName();
+        auto value = getText();
+        if( StringUtil::isNullOrEmpty( value ) )
         {
+            value = "";
         }
 
-        ImGuiTextEntry::~ImGuiTextEntry()
+        constexpr int BUFFER_SIZE = 4096;
+        char buffer[BUFFER_SIZE];
+        StringUtil::toBuffer( value, buffer, BUFFER_SIZE );
+
+        if( ImGui::InputText( name.c_str(), buffer, BUFFER_SIZE, 0 ) )
         {
+            String val = buffer;
+            setText( val );
         }
 
-        void ImGuiTextEntry::update()
+        auto dropTarget = getDropTarget();
+        if( dropTarget )
         {
-            auto name = getName();
-            auto value = getText();
-            if(StringUtil::isNullOrEmpty( value ))
+            if( ImGui::BeginDragDropTarget() )
             {
-                value = "";
-            }
-
-            constexpr int BUFFER_SIZE = 4096;
-            char buffer[BUFFER_SIZE];
-            StringUtil::toBuffer( value, buffer, BUFFER_SIZE );
-
-            if(ImGui::InputText( name.c_str(), buffer, BUFFER_SIZE, 0 ))
-            {
-                String val = buffer;
-                setText( val );
-            }
-
-            if(ImGui::IsKeyReleased( ImGuiKey_Enter ))
-            {
-                auto listeners = getObjectListeners();
-                for(auto &listener : listeners)
+                auto payload = ImGui::AcceptDragDropPayload( "_TREENODE" );
+                if( payload )
                 {
+                    auto pData = static_cast<const char *>( payload->Data );
+                    auto dataSize = payload->DataSize;
+                    auto data = String( pData, dataSize );
+
+                    auto menuItemId = getElementId();
+
                     auto args = Array<Parameter>();
-                    args.resize( 2 );
+                    args.resize( 3 );
 
-                    args[0].str = getText();
+                    args[0].setStr( data );
+                    args[1].setStr( name );
+                    args[2].setStr( value );
 
-                    listener->handleEvent( IEvent::Type::Object, IEvent::handlePropertyChanged, args,
-                                           this, this, nullptr );
+                    dropTarget->handleEvent( IEvent::Type::UI, IEvent::handleDrop, args, this, this,
+                                             nullptr );
                 }
+
+                ImGui::EndDragDropTarget();
             }
         }
 
-        void ImGuiTextEntry::setText( const String &text )
+        if( ImGui::IsKeyReleased( ImGuiKey_Enter ) )
         {
-            m_text = text;
-        }
+            auto listeners = getObjectListeners();
+            for( auto &listener : listeners )
+            {
+                auto args = Array<Parameter>();
+                args.resize( 2 );
 
-        String ImGuiTextEntry::getText() const
-        {
-            return m_text;
-        }
+                args[0].str = getText();
 
-        void ImGuiTextEntry::setTextSize( f32 textSize )
-        {
+                listener->handleEvent( IEvent::Type::Object, IEvent::handlePropertyChanged, args, this,
+                                       this, nullptr );
+            }
         }
+    }
 
-        f32 ImGuiTextEntry::getTextSize() const
-        {
-            return 0.0f;
-        }
+    void ImGuiTextEntry::setText( const String &text )
+    {
+        m_text = text;
+    }
 
-        void ImGuiTextEntry::setVerticalAlignment( u8 alignment )
-        {
-        }
+    auto ImGuiTextEntry::getText() const -> String
+    {
+        return m_text;
+    }
 
-        u8 ImGuiTextEntry::getVerticalAlignment() const
-        {
-            return 0;
-        }
+    void ImGuiTextEntry::setTextSize( f32 textSize )
+    {
+    }
 
-        void ImGuiTextEntry::setHorizontalAlignment( u8 alignment )
-        {
-        }
+    auto ImGuiTextEntry::getTextSize() const -> f32
+    {
+        return 0.0f;
+    }
 
-        u8 ImGuiTextEntry::getHorizontalAlignment() const
-        {
-            return 0;
-        }
-    } // namespace ui
-}     // namespace fb
+    void ImGuiTextEntry::setVerticalAlignment( u8 alignment )
+    {
+    }
+
+    auto ImGuiTextEntry::getVerticalAlignment() const -> u8
+    {
+        return 0;
+    }
+
+    void ImGuiTextEntry::setHorizontalAlignment( u8 alignment )
+    {
+    }
+
+    auto ImGuiTextEntry::getHorizontalAlignment() const -> u8
+    {
+        return 0;
+    }
+}  // namespace fb::ui

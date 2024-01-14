@@ -8,19 +8,16 @@
 #include <FBCore/Interface/Vehicle/IWheelController.h>
 #include <FBCore/Interface/Vehicle/IVehicleCallback.h>
 #include <FBCore/Math/MathUtil.h>
-#include "FBCore/Core/LogManager.h"
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {
-
     VehicleController::VehicleController()
     {
-        m_channels.resize(12);
+        m_channels.resize( 12 );
     }
 
-    VehicleController::~VehicleController()
-    {
-    }
+    VehicleController::~VehicleController() = default;
 
     void VehicleController::load( SmartPtr<ISharedObject> data )
     {
@@ -28,7 +25,7 @@ namespace fb
         {
             setLoadingState( LoadingState::Loading );
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto factoryManager = applicationManager->getFactoryManager();
@@ -81,7 +78,7 @@ namespace fb
         {
         case State::EDIT:
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto timer = applicationManager->getTimer();
@@ -117,7 +114,7 @@ namespace fb
         break;
         case State::PLAY:
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto timer = applicationManager->getTimer();
@@ -173,7 +170,7 @@ namespace fb
         }
     }
 
-    f32 VehicleController::getChannel( s32 idx ) const
+    auto VehicleController::getChannel( s32 idx ) const -> f32
     {
         return m_channels[idx];
     }
@@ -187,6 +184,7 @@ namespace fb
     {
         auto p = getPosition();
         auto q = getOrientation();
+        auto s = getScale();
 
         FB_ASSERT( MathUtil<real_Num>::isFinite( p ) );
         FB_ASSERT( MathUtil<real_Num>::isFinite( q ) );
@@ -198,7 +196,7 @@ namespace fb
         {
             m_bodyTransform.setPosition( p );
             m_bodyTransform.setOrientation( q );
-            m_bodyTransform.setScale( Vector3<real_Num>::unit() );
+            m_bodyTransform.setScale( s );
 
             // if (m_worldTransform)
             {
@@ -216,7 +214,7 @@ namespace fb
         }
     }
 
-    Vector3<real_Num> VehicleController::getPosition() const
+    auto VehicleController::getPosition() const -> Vector3<real_Num>
     {
         if( m_callback )
         {
@@ -226,11 +224,21 @@ namespace fb
         return Vector3<real_Num>::zero();
     }
 
+    auto VehicleController::getScale() const -> Vector3<real_Num>
+    {
+        if( m_callback )
+        {
+            return m_callback->getScale();
+        }
+
+        return Vector3<real_Num>::zero();
+    }
+
     void VehicleController::setPosition( const Vector3<real_Num> &position )
     {
     }
 
-    Quaternion<real_Num> VehicleController::getOrientation() const
+    auto VehicleController::getOrientation() const -> Quaternion<real_Num>
     {
         if( m_callback )
         {
@@ -244,7 +252,7 @@ namespace fb
     {
     }
 
-    bool VehicleController::isUserControlled() const
+    auto VehicleController::isUserControlled() const -> bool
     {
         return false;
     }
@@ -253,7 +261,7 @@ namespace fb
     {
     }
 
-    real_Num VehicleController::getMass() const
+    auto VehicleController::getMass() const -> real_Num
     {
         if( auto body = getBody() )
         {
@@ -271,7 +279,7 @@ namespace fb
         }
     }
 
-    SmartPtr<IVehicleBody> VehicleController::getBody() const
+    auto VehicleController::getBody() const -> SmartPtr<IVehicleBody>
     {
         return m_rigidbody;
     }
@@ -281,7 +289,7 @@ namespace fb
         m_rigidbody = val;
     }
 
-    Transform3<real_Num> VehicleController::getWorldTransform() const
+    auto VehicleController::getWorldTransform() const -> Transform3<real_Num>
     {
         return m_worldTransform;
     }
@@ -291,7 +299,7 @@ namespace fb
         m_worldTransform = val;
     }
 
-    Transform3<real_Num> VehicleController::getLocalTransform() const
+    auto VehicleController::getLocalTransform() const -> Transform3<real_Num>
     {
         return m_localTransform;
     }
@@ -397,14 +405,14 @@ namespace fb
         }
     }
 
-    bool VehicleController::getDisplayDebugData() const
+    auto VehicleController::getDisplayDebugData() const -> bool
     {
         return m_displayDebugData;
     }
 
-    void VehicleController::setDisplayDebugData( bool val )
+    void VehicleController::setDisplayDebugData( bool displayDebugData )
     {
-        m_displayDebugData = val;
+        m_displayDebugData = displayDebugData;
     }
 
     void VehicleController::addForce( s32 bodyIdx, Vector3<real_Num> Force, Vector3<real_Num> Loc )
@@ -472,7 +480,7 @@ namespace fb
         addTorque( torque );
     }
 
-    Vector3<real_Num> VehicleController::getPointVelocity( const Vector3<real_Num> &p )
+    auto VehicleController::getPointVelocity( const Vector3<real_Num> &p ) -> Vector3<real_Num>
     {
         if( m_callback )
         {
@@ -482,7 +490,7 @@ namespace fb
         return Vector3<real_Num>::zero();
     }
 
-    Vector3<real_Num> VehicleController::getAngularVelocity()
+    auto VehicleController::getAngularVelocity() -> Vector3<real_Num>
     {
         if( m_callback )
         {
@@ -492,7 +500,7 @@ namespace fb
         return Vector3<real_Num>::zero();
     }
 
-    Vector3<real_Num> VehicleController::getLinearVelocity()
+    auto VehicleController::getLinearVelocity() -> Vector3<real_Num>
     {
         if( m_callback )
         {
@@ -502,7 +510,7 @@ namespace fb
         return Vector3<real_Num>::zero();
     }
 
-    Vector3<real_Num> VehicleController::getLocalAngularVelocity()
+    auto VehicleController::getLocalAngularVelocity() -> Vector3<real_Num>
     {
         if( m_callback )
         {
@@ -513,7 +521,7 @@ namespace fb
         return Vector3<real_Num>::zero();
     }
 
-    Vector3<real_Num> VehicleController::getLocalLinearVelocity()
+    auto VehicleController::getLocalLinearVelocity() -> Vector3<real_Num>
     {
         if( m_callback )
         {
@@ -523,12 +531,12 @@ namespace fb
         return Vector3<real_Num>::zero();
     }
 
-    SmartPtr<IVehicleCallback> &VehicleController::getVehicleCallback()
+    auto VehicleController::getVehicleCallback() -> SmartPtr<IVehicleCallback> &
     {
         return m_callback;
     }
 
-    const SmartPtr<IVehicleCallback> &VehicleController::getVehicleCallback() const
+    auto VehicleController::getVehicleCallback() const -> const SmartPtr<IVehicleCallback> &
     {
         return m_callback;
     }
@@ -538,17 +546,41 @@ namespace fb
         m_callback = callback;
     }
 
-    Vector3<real_Num> VehicleController::getCG() const
+    auto VehicleController::getCG() const -> Vector3<real_Num>
     {
         return m_cg;
     }
 
-    void VehicleController::setState( IVehicleController::State state )
+    void VehicleController::setState( State state )
     {
         m_vehicleState = state;
+
+        switch( state )
+        {
+        case State::EDIT:
+        {
+            for( auto &w : m_wheels )
+            {
+                w->setState( IVehicleComponent::State::EDIT );
+            }
+        }
+        break;
+        case State::PLAY:
+        {
+            for( auto &w : m_wheels )
+            {
+                w->setState( IVehicleComponent::State::PLAY );
+            }
+        }
+        break;
+        default:
+        {
+        }
+        break;
+        }
     }
 
-    IVehicleController::State VehicleController::getState() const
+    auto VehicleController::getState() const -> IVehicleController::State
     {
         return m_vehicleState;
     }
@@ -569,9 +601,8 @@ namespace fb
         m_torque = Vector3<real_Num>::zero();
     }
 
-    fb::SmartPtr<fb::IWheelController> VehicleController::getWheelController( u32 index ) const
+    auto VehicleController::getWheelController( u32 index ) const -> SmartPtr<IWheelController>
     {
         return m_wheels[index];
     }
-
 }  // namespace fb

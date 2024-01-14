@@ -8,94 +8,89 @@
 #include <FBGraphicsOgreNext/Core/SkyBoxRenderer.h>
 #include <OgreRectangle2D2.h>
 
-namespace fb
+namespace fb::render
 {
-    namespace render
+    FB_CLASS_REGISTER_DERIVED( fb, CSkyboxOgreNext, ISkybox );
+
+    CSkyboxOgreNext::CSkyboxOgreNext() = default;
+
+    CSkyboxOgreNext::~CSkyboxOgreNext()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, CSkyboxOgreNext, ISkybox );
+        unload( nullptr );
+    }
 
-        CSkyboxOgreNext::CSkyboxOgreNext()
+    void CSkyboxOgreNext::load( SmartPtr<ISharedObject> data )
+    {
+        setLoadingState( LoadingState::Loading );
+
+        auto visible = isVisible();
+        if( visible )
         {
+            m_skyBoxRenderer = fb::make_ptr<SkyBoxRenderer>();
+            m_skyBoxRenderer->load( data );
         }
 
-        CSkyboxOgreNext::~CSkyboxOgreNext()
-        {
-            unload( nullptr );
-        }
+        setLoadingState( LoadingState::Loaded );
+    }
 
-        void CSkyboxOgreNext::load( SmartPtr<ISharedObject> data )
+    void CSkyboxOgreNext::unload( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            setLoadingState( LoadingState::Loading );
+            setLoadingState( LoadingState::Unloading );
 
-            auto visible = isVisible();
-            if( visible )
+            if( m_skyBoxRenderer )
             {
-                m_skyBoxRenderer = fb::make_ptr<SkyBoxRenderer>();
-                m_skyBoxRenderer->load( data );
+                m_skyBoxRenderer->unload( data );
+                m_skyBoxRenderer = nullptr;
             }
 
-            setLoadingState( LoadingState::Loaded );
+            setLoadingState( LoadingState::Unloaded );
         }
-
-        void CSkyboxOgreNext::unload( SmartPtr<ISharedObject> data )
+        catch( std::exception &e )
         {
-            try
-            {
-                setLoadingState( LoadingState::Unloading );
-
-                if( m_skyBoxRenderer )
-                {
-                    m_skyBoxRenderer->unload( data );
-                    m_skyBoxRenderer = nullptr;
-                }
-
-                setLoadingState( LoadingState::Unloaded );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        void CSkyboxOgreNext::setMaterial( SmartPtr<IMaterial> material )
-        {
-            m_material = material;
-        }
+    void CSkyboxOgreNext::setMaterial( SmartPtr<IMaterial> material )
+    {
+        m_material = material;
+    }
 
-        SmartPtr<IMaterial> CSkyboxOgreNext::getMaterial() const
-        {
-            return m_material;
-        }
+    auto CSkyboxOgreNext::getMaterial() const -> SmartPtr<IMaterial>
+    {
+        return m_material;
+    }
 
-        SmartPtr<IGraphicsScene> CSkyboxOgreNext::getSceneManager() const
-        {
-            return m_sceneManager;
-        }
+    auto CSkyboxOgreNext::getSceneManager() const -> SmartPtr<IGraphicsScene>
+    {
+        return m_sceneManager;
+    }
 
-        void CSkyboxOgreNext::setSceneManager( SmartPtr<IGraphicsScene> sceneManager )
-        {
-            m_sceneManager = sceneManager;
-        }
+    void CSkyboxOgreNext::setSceneManager( SmartPtr<IGraphicsScene> sceneManager )
+    {
+        m_sceneManager = sceneManager;
+    }
 
-        bool CSkyboxOgreNext::isVisible() const
-        {
-            return m_isVisible;
-        }
+    auto CSkyboxOgreNext::isVisible() const -> bool
+    {
+        return m_isVisible;
+    }
 
-        void CSkyboxOgreNext::setVisible( bool visible )
-        {
-            m_isVisible = visible;
-        }
+    void CSkyboxOgreNext::setVisible( bool visible )
+    {
+        m_isVisible = visible;
+    }
 
-        f32 CSkyboxOgreNext::getDistance() const
-        {
-            return m_distance;
-        }
+    auto CSkyboxOgreNext::getDistance() const -> f32
+    {
+        return m_distance;
+    }
 
-        void CSkyboxOgreNext::setDistance( f32 distance )
-        {
-            m_distance = distance;
-        }
+    void CSkyboxOgreNext::setDistance( f32 distance )
+    {
+        m_distance = distance;
+    }
 
-    }  // end namespace render
-}  // end namespace fb
+}  // namespace fb::render

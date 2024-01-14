@@ -1,3 +1,8 @@
+/**\mainpage Fireblade game engine
+ *
+ * This is the fireblade game engine.
+ *
+ */
 #ifndef _FBCore_H_
 #define _FBCore_H_
 

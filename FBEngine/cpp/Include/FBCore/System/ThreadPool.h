@@ -3,10 +3,9 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IThreadPool.h>
+#include <FBCore/Interface/System/IWorkerThread.h>
 #include <FBCore/Core/FSMListener.h>
-
 #include <FBCore/Core/FixedArray.h>
-#include <FBCore/System/WorkerThread.h>
 
 namespace fb
 {
@@ -21,7 +20,10 @@ namespace fb
         /** Destructor */
         ~ThreadPool() override;
 
+        /** @copydoc IThreadPool::load */
         void load( SmartPtr<ISharedObject> data ) override;
+
+        /** @copydoc IThreadPool::unload */
         void unload( SmartPtr<ISharedObject> data ) override;
 
         /** @copydoc ThreadPool::addWorkerThread */
@@ -45,6 +47,7 @@ namespace fb
         /** @copydoc ThreadPool::stop */
         void stop();
 
+        /** @copydoc ThreadPool::isValid */
         bool isValid() const override;
 
         FB_CLASS_REGISTER_DECL;
@@ -86,7 +89,7 @@ namespace fb
         Array<u32> m_queueLengthMilliseconds;
         Array<u32> m_reserveFlags;
 
-        mutable RecursiveMutex m_mutex;  
+        mutable RecursiveMutex m_mutex;
     };
 }  // end namespace fb
 

@@ -2,38 +2,31 @@
 #include <FBImGui/ImGuiVector2.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    FB_CLASS_REGISTER_DERIVED( fb::ui, ImGuiVector2, IUIVector2 );
+
+    ImGuiVector2::ImGuiVector2() = default;
+
+    ImGuiVector2::~ImGuiVector2() = default;
+
+    auto ImGuiVector2::getValue() const -> Vector2<real_Num>
     {
-        FB_CLASS_REGISTER_DERIVED( fb, ImGuiVector2, IUIVector2 );
+        return m_value;
+    }
 
-        ImGuiVector2::ImGuiVector2()
-        {
-        }
+    void ImGuiVector2::setValue( const Vector2<real_Num> &value )
+    {
+        m_value = value;
+    }
 
-        ImGuiVector2::~ImGuiVector2()
-        {
-        }
+    auto ImGuiVector2::getLabel() const -> String
+    {
+        return m_label;
+    }
 
-        Vector2<real_Num> ImGuiVector2::getValue() const
-        {
-            return m_value;
-        }
-
-        void ImGuiVector2::setValue( const Vector2<real_Num> &value )
-        {
-            m_value = value;
-        }
-
-        String ImGuiVector2::getLabel() const
-        {
-            return m_label;
-        }
-
-        void ImGuiVector2::setLabel( const String &label )
-        {
-            m_label = label;
-        }
-    }  // end namespace ui
-}  // end namespace fb
+    void ImGuiVector2::setLabel( const String &label )
+    {
+        m_label = label;
+    }
+}  // namespace fb::ui

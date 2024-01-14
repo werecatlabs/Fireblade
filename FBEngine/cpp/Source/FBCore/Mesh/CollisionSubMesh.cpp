@@ -54,7 +54,7 @@ namespace fb
             SmartPtr<IIndexBuffer> indexBuffer = subMesh->getIndexBuffer();
 
             u32 meshIndexCnt = indexBuffer->getNumIndices();
-            u32 meshVertexCnt = vertexBuffer->getNumVerticies();
+            u32 meshVertexCnt = vertexBuffer->getNumVertices();
 
             float *vertices = new float[meshVertexCnt * 3];
             u32 *indices = new u32[meshIndexCnt];
@@ -98,7 +98,7 @@ namespace fb
                     vertexBuffer->getVertexDeclaration()->findElementBySemantic(
                         VertexDeclaration::VertexElementSemantic::VES_POSITION, 0 );
 
-                u32 numVerticies = vertexBuffer->getNumVerticies();
+                u32 numVerticies = vertexBuffer->getNumVertices();
                 u32 vertexSize = vertexBuffer->getVertexDeclaration()->getSize();
                 u8 *vertexDataPtr = (u8 *)vertexBuffer->getVertexData();
                 float *elementData = 0;
@@ -219,9 +219,7 @@ namespace fb
 #endif
     }
 
-    CollisionSubMesh::CollisionSubMesh()
-    {
-    }
+    CollisionSubMesh::CollisionSubMesh() = default;
 
     //--------------------------------------------
     CollisionSubMesh::~CollisionSubMesh()
@@ -278,7 +276,8 @@ namespace fb
     }
 
     //--------------------------------------------
-    bool CollisionSubMesh::rayCast( const Vector3F &origin, const Vector3F &dir, Array<float> &hits )
+    auto CollisionSubMesh::rayCast( const Vector3F &origin, const Vector3F &dir, Array<float> &hits )
+        -> bool
     {
         // IceMaths::Ray worldRay;
         // worldRay.mOrig.x = origin.x;
@@ -319,7 +318,7 @@ namespace fb
         return false;
     }
 
-    void *CollisionSubMesh::getUserData() const
+    auto CollisionSubMesh::getUserData() const -> void *
     {
         return m_userData;
     }

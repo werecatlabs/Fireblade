@@ -11,36 +11,32 @@
 
 namespace fb
 {
-    //-------------------------------------------------
-    u16 Byteswap::byteswap( u16 num )
+
+    auto Byteswap::byteswap( u16 num ) -> u16
     {
         return bswap_16( num );
     }
 
-    //-------------------------------------------------
-    s16 Byteswap::byteswap( s16 num )
+    auto Byteswap::byteswap( s16 num ) -> s16
     {
         return bswap_16( num );
     }
 
-    //-------------------------------------------------
-    u32 Byteswap::byteswap( u32 num )
+    auto Byteswap::byteswap( u32 num ) -> u32
     {
         return bswap_32( num );
     }
 
-    //-------------------------------------------------
-    s32 Byteswap::byteswap( s32 num )
+    auto Byteswap::byteswap( s32 num ) -> s32
     {
         return bswap_32( num );
     }
 
-    //-------------------------------------------------
-    f32 Byteswap::byteswap( f32 num )
+    auto Byteswap::byteswap( f32 num ) -> f32
     {
         float retVal;
-        auto floatToConvert = (char *)&num;
-        auto returnFloat = (char *)&retVal;
+        auto floatToConvert = reinterpret_cast<char *>( &num );
+        auto returnFloat = reinterpret_cast<char *>( &retVal );
 
         // swap the bytes into a temporary buffer
         returnFloat[0] = floatToConvert[3];
@@ -51,14 +47,12 @@ namespace fb
         return retVal;
     }
 
-    //-------------------------------------------------
-    u8 Byteswap::byteswap( u8 num )
+    auto Byteswap::byteswap( u8 num ) -> u8
     {
         return num;
     }
 
-    //-------------------------------------------------
-    c8 Byteswap::byteswap( c8 num )
+    auto Byteswap::byteswap( c8 num ) -> c8
     {
         return num;
     }

@@ -2,15 +2,9 @@
 #define __FB_Component_h__
 
 #include <FBCore/Interface/Scene/IComponent.h>
-#include <FBCore/Interface/Scene/IActor.h>
-#include <FBCore/Core/FSMListener.h>
-#include <FBCore/Interface/System/IStateListener.h>
-#include <FBCore/Interface/System/IStateContext.h>
-#include <FBCore/Atomics/Atomics.h>
-#include <FBCore/Core/DataUtil.h>
-#include <FBCore/Core/Properties.h>
-#include <FBCore/Memory/Data.h>
 #include <FBCore/Resource/Resource.h>
+#include <FBCore/Core/FSMListener.h>
+#include <FBCore/Atomics/Atomics.h>
 
 namespace fb
 {
@@ -22,6 +16,9 @@ namespace fb
         class Component : public Resource<IComponent>
         {
         public:
+            static const String enabledStr;
+            static const String dirtyStr;
+
             /** Listener class for finite state machine. */
             class ComponentFSMListener : public FSMListener
             {
@@ -32,17 +29,19 @@ namespace fb
                 /** Virtual destructor. */
                 ~ComponentFSMListener() override;
 
+                void unload( SmartPtr<ISharedObject> data ) override;
+
                 /** Handle finite state machine event. */
                 IFSM::ReturnType handleEvent( u32 state, IFSM::Event eventType ) override;
 
                 /** Get the owner of the listener. */
-                Component *getOwner() const;
+                SmartPtr<Component> getOwner() const;
 
                 /** Set the owner of the listener. */
-                void setOwner( Component *owner );
+                void setOwner( SmartPtr<Component> owner );
 
             protected:
-                Component *m_owner = nullptr;
+                SmartPtr<Component> m_owner;
             };
 
             /** Default constructor. */
@@ -54,23 +53,17 @@ namespace fb
             /** Virtual destructor. */
             ~Component() override;
 
-            /** @copydoc IObject::load */
+            /** @copydoc IComponent::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::unload */
+            /** @copydoc IComponent::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::reload */
+            /** @copydoc IComponent::reload */
             void reload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IComponent::preUpdateDirty */
-            void preUpdateDirty();
-
             /** @copydoc IComponent::updateDirty */
-            void updateDirty( u32 flags, u32 oldFlags ) override;
-
-            /** @copydoc IComponent::postUpdateDirty */
-            void postUpdateDirty();
+            void updateFlags( u32 flags, u32 oldFlags ) override;
 
             /** @copydoc IComponent::setDirty */
             void setDirty( Thread::Task taskId, Thread::UpdateState updateType, bool dirty );
@@ -85,66 +78,19 @@ namespace fb
             void makeDirty( Thread::Task task ) override;
 
             /** @copydoc IComponent::getActor */
-            SmartPtr<IActor> getActor() const override;
+            SmartPtr<IActor> &getActor() override;
+
+            /** @copydoc IComponent::getActor */
+            const SmartPtr<IActor> &getActor() const override;
 
             /** @copydoc IComponent::setActor */
             void setActor( SmartPtr<IActor> actor ) override;
-
-            /** @copydoc IComponent::getStateObject */
-            SmartPtr<IStateContext> getStateObject() const override;
-
-            /** @copydoc IComponent::setStateObject */
-            void setStateObject( SmartPtr<IStateContext> stateObject ) override;
-
-            /** @copydoc IComponent::actorReset */
-            void actorReset() override;
-
-            /** @copydoc IComponent::actorUnload */
-            void actorUnload() override;
-
-            /** @copydoc IComponent::levelWasLoaded */
-            void levelWasLoaded( s32 level ) override;
-
-            /** @copydoc IComponent::parentChanged */
-            void parentChanged( SmartPtr<IActor> newParent, SmartPtr<IActor> oldParent ) override;
-
-            /** @copydoc IComponent::hierarchyChanged */
-            void hierarchyChanged() override;
-
-            /** @copydoc IComponent::childAdded */
-            void childAdded( SmartPtr<IActor> child ) override;
-
-            /** @copydoc IComponent::childRemoved */
-            void childRemoved( SmartPtr<IActor> child ) override;
-
-            /** @copydoc IComponent::childAddedInHierarchy */
-            void childAddedInHierarchy( SmartPtr<IActor> child ) override;
-
-            /** @copydoc IComponent::childRemovedInHierarchy */
-            void childRemovedInHierarchy( SmartPtr<IActor> child ) override;
-
-            /** @copydoc IComponent::visibilityChanged */
-            virtual void visibilityChanged();
-
-            /** @copydoc IComponent::enable */
-            void enable();
-
-            /** @copydoc IComponent::disable */
-            void disable();
-
-            /** @copydoc IComponent::triggerEnter */
-            void triggerEnter( SmartPtr<IComponent> collision );
-
-            /** @copydoc IComponent::triggerLeave */
-            void triggerLeave( SmartPtr<IComponent> collision );
-
-            void componentLoaded( SmartPtr<IComponent> component );
 
             /** Sets the flags of this component. */
             void setComponentFlag( u32 flag, bool value );
 
             /** Gets the flags of this component. */
-            bool getComponentFlag( u32 flag );
+            bool getComponentFlag( u32 flag ) const;
 
             /** @copydoc IComponent::setEnabled */
             void setEnabled( bool enabled ) override;
@@ -185,7 +131,7 @@ namespace fb
             /**
              * @brief Updates the materials of the UI component.
              */
-            virtual void updateMaterials(){}
+            void updateMaterials() override;
 
             /** @copydoc IComponent::setState */
             void setState( State state ) override;
@@ -217,6 +163,9 @@ namespace fb
             /** @copydoc IComponent::getNumSubComponents */
             u32 getNumSubComponents() const override;
 
+            /** @copydoc IComponent::getSubComponentByIndex */
+            SmartPtr<ISubComponent> getSubComponentByIndex( u32 index ) const override;
+
             /** @copydoc IComponent::getSubComponents */
             Array<SmartPtr<ISubComponent>> getSubComponents() const override;
 
@@ -230,12 +179,6 @@ namespace fb
             void setSubComponentsPtr(
                 SharedPtr<ConcurrentArray<SmartPtr<ISubComponent>>> children ) override;
 
-            /** @copydoc IComponent::getDirector */
-            SmartPtr<IDirector> getDirector() const override;
-
-            /** @copydoc IComponent::setDirector */
-            void setDirector( SmartPtr<IDirector> director ) override;
-
             /** @copydoc IComponent::getComponentState */
             SmartPtr<IState> &getComponentState() override;
 
@@ -244,6 +187,14 @@ namespace fb
 
             /** @copydoc IComponent::setComponentState */
             void setComponentState( SmartPtr<IState> state ) override;
+
+            /** Compares the tag with the actor's tag. */
+            bool compareTag( const String &tag ) const override;
+
+            /** @copydoc IComponent::handleEvent */
+            Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                   const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                   SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
             FB_CLASS_REGISTER_DECL;
 
@@ -332,21 +283,6 @@ namespace fb
             SmartPtr<IFSMListener> m_componentFsmListener;
 
             /**
-             * The director object of the component.
-             */
-            SmartPtr<IDirector> m_director;
-
-            /**
-             * The state object of the component.
-             */
-            SmartPtr<IStateContext> m_stateObject;
-
-            /**
-             * The listener for the state of the component.
-             */
-            SmartPtr<IStateListener> m_stateListener;
-
-            /**
              * The parent of the component.
              */
             SmartPtr<IComponent> m_parent;
@@ -354,12 +290,7 @@ namespace fb
             /**
              * The actor to which the component is attached.
              */
-            WeakPtr<IActor> m_actor;
-
-            /**
-             * The owner of the component, used as data.
-             */
-            WeakPtr<ISharedObject> m_owner;
+            SmartPtr<IActor> m_actor;
 
             /**
              * The flags of the component.
@@ -381,7 +312,6 @@ namespace fb
              */
             static u32 m_idExt;
         };
-
     }  // namespace scene
 }  // namespace fb
 

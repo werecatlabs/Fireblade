@@ -5,14 +5,14 @@
 #include "CUIButton.h"
 #include "CUIToggleGroup.h"
 #include <FBRenderUI/CUIElement.h>
-#include <FBCore/Interface/UI/IUIToggleButton.h>
+#include <FBCore/Interface/UI/IUIToggle.h>
 
 namespace fb
 {
     namespace ui
     {
-        
-        class CUIToggleButton : public CUIElement<IUIToggleButton>
+
+        class CUIToggleButton : public CUIElement<IUIToggle>
         {
         public:
             CUIToggleButton();
@@ -25,12 +25,28 @@ namespace fb
             void setToggled( bool toggled ) override;
             bool isToggled() const override;
 
+            ToggleType getToggleType() const override;
+
+            void setToggleType( ToggleType toggleType ) override;
+
+            ToggleState getToggleState() const override;
+
+            void setToggleState( ToggleState toggleState ) override;
+
+            String getLabel() const override;
+
+            void setLabel( const String &label ) override;
+
+            void setTextSize( f32 textSize ) override;
+
+            f32 getTextSize() const override;
+
         private:
             SmartPtr<CUIToggleGroup> m_toggleGroup;
             String m_toggleMaterial;
             bool m_isToggled;
         };
-    } // end namespace ui
-}     // end namespace fb
+    }  // end namespace ui
+}  // end namespace fb
 
 #endif

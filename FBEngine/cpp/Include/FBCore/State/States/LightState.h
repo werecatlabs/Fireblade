@@ -63,7 +63,7 @@ namespace fb
 
         f32 m_constant = 1.0f;
         f32 m_linear = 1.0f;
-        f32 m_quadratic =1.0f;
+        f32 m_quadratic = 1.0f;
     };
 }  // end namespace fb
 

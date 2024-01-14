@@ -6,7 +6,7 @@
 #include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Thread/ThreadTypes.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
 #include <FBCore/Interface/Resource/IResource.h>
 #include <FBCore/Interface/Scene/IDirector.h>
@@ -41,6 +41,25 @@ namespace fb
                 Count
             };
 
+            static const hash_type actorFlagsChanged;
+            static const hash_type actorReset;
+            static const hash_type actorUnload;
+            static const hash_type sceneWasLoaded;
+            static const hash_type parentChanged;
+            static const hash_type hierarchyChanged;
+            static const hash_type childAdded;
+            static const hash_type childRemoved;
+            static const hash_type childAddedInHierarchy;
+            static const hash_type childRemovedInHierarchy;
+
+            static const hash_type visibilityChanged;
+            static const hash_type enabledChanged;
+            static const hash_type staticChanged;
+
+            static const hash_type triggerCollisionEnter;
+            static const hash_type triggerCollisionLeave;
+            static const hash_type componentLoaded;
+
             /** Virtual destructor. */
             ~IComponent() override = default;
 
@@ -49,7 +68,7 @@ namespace fb
              * @param flags An integer bitmask representing the dirty flags.
              * @param oldFlags An integer bitmask representing the old dirty flags.
              */
-            virtual void updateDirty( u32 flags, u32 oldFlags ) = 0;
+            virtual void updateFlags( u32 flags, u32 oldFlags ) = 0;
 
             /**
              * Marks the component as dirty on all tasks.
@@ -66,7 +85,13 @@ namespace fb
              * Gets the actor that this component is attached to.
              * @return The actor this component is attached to, or null if it is not attached to any actor.
              */
-            virtual SmartPtr<IActor> getActor() const = 0;
+            virtual SmartPtr<IActor> &getActor() = 0;
+
+            /**
+             * Gets the actor that this component is attached to.
+             * @return The actor this component is attached to, or null if it is not attached to any actor.
+             */
+            virtual const SmartPtr<IActor> &getActor() const = 0;
 
             /**
              * Sets the actor that this component is attached to.
@@ -74,18 +99,6 @@ namespace fb
              */
             virtual void setActor( SmartPtr<IActor> actor ) = 0;
 
-            /**
-             * Gets the component's state object.
-             * @return The state object associated with this component, or null if no state object has been set.
-             */
-            SmartPtr<IStateContext> getStateObject() const override = 0;
-
-            /**
-             * Sets the component's state object.
-             * @param stateObject The state object to associate with this component.
-             */
-            void setStateObject( SmartPtr<IStateContext> stateObject ) override = 0;
-            
             /**
              * Gets the data associated with the component as a properties object.
              * @return The data associated with the component as a properties object.
@@ -106,7 +119,7 @@ namespace fb
             /**
              * Updates the component using the transform passed.
              */
-            virtual void updateTransform(const Transform3<real_Num>& transform) = 0;
+            virtual void updateTransform( const Transform3<real_Num> &transform ) = 0;
 
             /**
              * Updates the component visibility.
@@ -139,64 +152,6 @@ namespace fb
             @return The component state.
             */
             virtual State getState() const = 0;
-
-            /** Called when the actor is reset. */
-            virtual void actorReset() = 0;
-
-            /** Called when the actor is unloaded. */
-            virtual void actorUnload() = 0;
-            
-            /** Called when the level was loaded.
-            @param level An id of the level loaded.
-            */
-            virtual void levelWasLoaded( s32 level ) = 0;
-
-            /** Called when the actor parent has changed.
-            @param newParent The actor this component's owner has been newly parented to.
-            @param oldParent The actor this component's owner was parented to.
-            */
-            virtual void parentChanged( SmartPtr<IActor> newParent, SmartPtr<IActor> oldParent ) = 0;
-
-            /** Triggered when the hierarchy changes. */
-            virtual void hierarchyChanged() = 0;
-
-            /** Triggered when a child is added.
-            @param child The child that was added.
-            */
-            virtual void childAdded( SmartPtr<IActor> child ) = 0;
-
-            /** Triggered when a child is removed.
-            @param child The child that was removed.
-            */
-            virtual void childRemoved( SmartPtr<IActor> child ) = 0;
-
-            /** Triggered when a child is added.
-            @param child The child that was added.
-            */
-            virtual void childAddedInHierarchy( SmartPtr<IActor> child ) = 0;
-
-            /** Triggered when a child is removed.
-            @param child The child that was removed.
-            */
-            virtual void childRemovedInHierarchy( SmartPtr<IActor> child ) = 0;
-
-            /** */
-            virtual void visibilityChanged() = 0;
-
-            /** */
-            virtual void enable() = 0;
-
-            /** */
-            virtual void disable() = 0;
-
-            /** */
-            virtual void triggerEnter( SmartPtr<IComponent> collision ) = 0;
-
-            /** */
-            virtual void triggerLeave( SmartPtr<IComponent> collision ) = 0;
-
-            /** */
-            virtual void componentLoaded( SmartPtr<IComponent> component ) = 0;
 
             /** Gets the component events.
             @return The component events.
@@ -236,7 +191,6 @@ namespace fb
              * Remove a child component from this component.
              *
              * @param index The index to the sub component.
-             * @param child A shared pointer to the child component.
              */
             virtual void removeSubComponentByIndex( u32 index ) = 0;
 
@@ -244,6 +198,9 @@ namespace fb
              * Gets the number of sub components.
              */
             virtual u32 getNumSubComponents() const = 0;
+
+            /** Gets a sub component by index. */
+            virtual SmartPtr<ISubComponent> getSubComponentByIndex( u32 index ) const = 0;
 
             /**
              * Get an array of the child components of this component.
@@ -274,15 +231,19 @@ namespace fb
             virtual void setSubComponentsPtr(
                 SharedPtr<ConcurrentArray<SmartPtr<ISubComponent>>> children ) = 0;
 
-            virtual SmartPtr<IDirector> getDirector() const = 0;
-
-            virtual void setDirector( SmartPtr<IDirector> director ) = 0;
-
             virtual SmartPtr<IState> &getComponentState() = 0;
 
             virtual const SmartPtr<IState> &getComponentState() const = 0;
 
             virtual void setComponentState( SmartPtr<IState> state ) = 0;
+
+            /** Compares the tag with the actor's tag. */
+            virtual bool compareTag( const String &tag ) const = 0;
+
+            virtual Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                           const Array<Parameter> &arguments,
+                                           SmartPtr<ISharedObject> sender,
+                                           SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) = 0;
 
             template <class T>
             SmartPtr<T> getComponentStateByType() const;
@@ -312,21 +273,13 @@ namespace fb
             template <class T>
             Array<SmartPtr<T>> getSubComponentsByType() const;
 
-            /**
-            @brief Creates a component of the given type using a director and properties.
-            @param director The director that should create the component.
-            @returns The newly created component.
-            */
-            template <class T>
-            static void create( SmartPtr<IDirector> director );
-
             FB_CLASS_REGISTER_DECL;
         };
 
         template <class T>
         SmartPtr<T> IComponent::addSubComponentByType()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto factoryManager = applicationManager->getFactoryManager();
@@ -372,23 +325,6 @@ namespace fb
 
             // Return the array of child components that are of the specified type.
             return childrenByType;
-        }
-
-        template <class T>
-        void IComponent::create( SmartPtr<IDirector> director )
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto factoryManager = applicationManager->getFactoryManager();
-            FB_ASSERT( factoryManager );
-
-            auto component = factoryManager->make_shared<T>();
-            FB_ASSERT( component );
-
-            auto properties = director->getProperties();
-            component->setProperties( properties );
-            return component;
         }
 
         template <class T>

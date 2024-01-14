@@ -153,8 +153,8 @@ namespace fb
             String getName() const override;
             void setName( const String &val ) override;
 
-            SmartPtr<IStateContext> getStateObject() const;
-            void setStateObject( SmartPtr<IStateContext> stateObject );
+            SmartPtr<IStateContext> getStateContext() const;
+            void setStateContext( SmartPtr<IStateContext> stateContext );
 
             SmartPtr<IGraphicsObject> addGraphicsObjectByTypeId( u32 id ) override;
 
@@ -253,7 +253,7 @@ namespace fb
 
             Array<SmartPtr<ITerrain>> m_terrains;
 
-            SmartPtr<IStateContext> m_stateObject;
+            SmartPtr<IStateContext> m_stateContext;
             SmartPtr<IStateListener> m_stateListener;
             SmartPtr<SceneManagerState> m_state;
 

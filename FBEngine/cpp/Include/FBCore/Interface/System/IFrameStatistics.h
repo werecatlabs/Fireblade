@@ -15,6 +15,7 @@ namespace fb
     class IFrameStatistics : public ISharedObject
     {
     public:
+        /** Virtual destructor. */
         ~IFrameStatistics() override = default;
 
         /** Tells this object whether to be visible or not, if it has a renderable component. */

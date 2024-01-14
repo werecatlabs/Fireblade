@@ -11,9 +11,12 @@ namespace fb
         class PhysicsShape : public IPhysicsShape3
         {
         public:
-            PhysicsShape(){}
-            ~PhysicsShape(){}
-            
+            PhysicsShape()
+            {
+            }
+            ~PhysicsShape()
+            {
+            }
         };
 
     }  // namespace physics

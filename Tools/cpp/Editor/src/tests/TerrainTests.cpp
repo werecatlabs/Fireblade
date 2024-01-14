@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE( terrain_test )
 
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto taskManager = applicationManager->getTaskManager();

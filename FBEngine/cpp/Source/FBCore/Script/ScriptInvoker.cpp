@@ -5,6 +5,8 @@
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/Core/StringUtil.h>
 
+#include <utility>
+
 namespace fb
 {
 
@@ -12,7 +14,8 @@ namespace fb
     {
     }
 
-    ScriptInvoker::ScriptInvoker( SmartPtr<ISharedObject> scriptObject ) : m_object( scriptObject )
+    ScriptInvoker::ScriptInvoker( SmartPtr<ISharedObject> scriptObject ) :
+        m_object( std::move( scriptObject ) )
     {
     }
 
@@ -23,7 +26,7 @@ namespace fb
 
     void ScriptInvoker::callObjectMember( const String &functionName )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto scriptManager = applicationManager->getScriptManager();
 
         if( auto object = getOwner() )
@@ -37,7 +40,7 @@ namespace fb
 
     void ScriptInvoker::callObjectMember( const String &functionName, const Parameters &params )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto scriptManager = applicationManager->getScriptManager();
 
         if( auto object = getOwner() )
@@ -52,7 +55,7 @@ namespace fb
     void ScriptInvoker::callObjectMember( const String &functionName, const Parameters &params,
                                           Parameters &results )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto scriptManager = applicationManager->getScriptManager();
         if( auto object = getOwner() )
         {
@@ -72,7 +75,7 @@ namespace fb
         {
             const auto &event = it->second;
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto scriptManager = applicationManager->getScriptManager();
             if( !scriptManager )
             {
@@ -101,7 +104,7 @@ namespace fb
         {
             const auto &event = it->second;
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto scriptManager = applicationManager->getScriptManager();
             if( !scriptManager )
             {
@@ -131,7 +134,7 @@ namespace fb
         {
             const auto &event = it->second;
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto scriptManager = applicationManager->getScriptManager();
             if( !scriptManager )
             {
@@ -152,7 +155,7 @@ namespace fb
         }
     }
 
-    bool ScriptInvoker::hasEvent( hash_type hash ) const
+    auto ScriptInvoker::hasEvent( hash_type hash ) const -> bool
     {
         THREAD_READ( m_threadDebug );
 
@@ -171,7 +174,7 @@ namespace fb
         m_events[hash] = event;
     }
 
-    SmartPtr<IEvent> ScriptInvoker::getEventFunction( hash_type hash ) const
+    auto ScriptInvoker::getEventFunction( hash_type hash ) const -> SmartPtr<IEvent>
     {
         THREAD_READ( m_threadDebug );
         auto it = m_events.find( hash );
@@ -190,7 +193,7 @@ namespace fb
         {
             const auto &event = it->second;
 
-            auto engine = core::IApplicationManager::instance();
+            auto engine = core::ApplicationManager::instance();
             auto scriptMgr = engine->getScriptManager();
             if( !scriptMgr )
             {
@@ -216,14 +219,14 @@ namespace fb
         set( hash, param );
     }
 
-    Parameter ScriptInvoker::get( hash_type hash )
+    auto ScriptInvoker::get( hash_type hash ) -> Parameter
     {
         auto it = m_events.find( hash );
         if( it != m_events.end() )
         {
             const auto &event = it->second;
 
-            auto engine = core::IApplicationManager::instance();
+            auto engine = core::ApplicationManager::instance();
             auto scriptMgr = engine->getScriptManager();
             if( !scriptMgr )
             {
@@ -245,14 +248,14 @@ namespace fb
         return Parameter::VOID_PARAM;
     }
 
-    Parameter ScriptInvoker::get( const String &id )
+    auto ScriptInvoker::get( const String &id ) -> Parameter
     {
         THREAD_READ( m_threadDebug );
         auto hash = StringUtil::getHash( id );
         return get( hash );
     }
 
-    u32 ScriptInvoker::getNumEvents() const
+    auto ScriptInvoker::getNumEvents() const -> u32
     {
         THREAD_READ( m_threadDebug );
         return static_cast<u32>( m_events.size() );
@@ -264,7 +267,7 @@ namespace fb
         m_object = owner;
     }
 
-    SmartPtr<ISharedObject> ScriptInvoker::getOwner() const
+    auto ScriptInvoker::getOwner() const -> SmartPtr<ISharedObject>
     {
         THREAD_READ( m_threadDebug );
         return m_object;

@@ -18,6 +18,7 @@ namespace fb
         */
         virtual SmartPtr<IPlugin> loadPlugin( const String &filename ) = 0;
 
+        /** Loads a library from the filename provided. */
         virtual void loadPlugin( SmartPtr<IPlugin> plugin ) = 0;
 
         /** Unloads the library.

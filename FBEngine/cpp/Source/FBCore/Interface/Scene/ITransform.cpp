@@ -2,10 +2,7 @@
 #include <FBCore/Interface/Scene/ITransform.h>
 #include <FBCore/System/RttiClassDefinition.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
-    {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, ITransform, ISharedObject );
-    }  // namespace scene
-}  // namespace fb
+    FB_CLASS_REGISTER_DERIVED( fb::scene, ITransform, ISharedObject );
+}  // namespace fb::scene

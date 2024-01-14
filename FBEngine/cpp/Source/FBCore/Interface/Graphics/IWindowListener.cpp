@@ -3,15 +3,12 @@
 #include <FBCore/System/RttiClassDefinition.h>
 #include <FBCore/Core/StringUtil.h>
 
-namespace fb
+namespace fb::render
 {
-    namespace render
-    {
-        FB_CLASS_REGISTER_DERIVED( fb, IWindowListener, ISharedObject );
+    FB_CLASS_REGISTER_DERIVED( fb, IWindowListener, ISharedObject );
 
-        const hash_type IWindowListener::windowClosingHash = StringUtil::getHash( "windowClosing" );
-        const hash_type IWindowListener::windowResizedHash = StringUtil::getHash( "windowResized" );
-        const hash_type IWindowListener::windowMovedHash = StringUtil::getHash( "windowMoved" );
+    const hash_type IWindowListener::windowClosingHash = StringUtil::getHash( "windowClosing" );
+    const hash_type IWindowListener::windowResizedHash = StringUtil::getHash( "windowResized" );
+    const hash_type IWindowListener::windowMovedHash = StringUtil::getHash( "windowMoved" );
 
-    }  // end namespace render
-}  // end namespace fb
+}  // namespace fb::render

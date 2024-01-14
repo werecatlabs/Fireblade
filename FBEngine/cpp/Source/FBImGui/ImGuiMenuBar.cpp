@@ -2,53 +2,46 @@
 #include <FBImGui/ImGuiMenuBar.h>
 #include <FBCore/Interface/UI/IUIMenu.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    ImGuiMenuBar::ImGuiMenuBar() = default;
+
+    ImGuiMenuBar::~ImGuiMenuBar() = default;
+
+    void ImGuiMenuBar::update()
     {
-        ImGuiMenubar::ImGuiMenubar()
+        for( auto menu : m_menus )
         {
+            menu->update();
         }
+    }
 
-        ImGuiMenubar::~ImGuiMenubar()
+    void ImGuiMenuBar::addMenu( SmartPtr<IUIMenu> menu )
+    {
+        addChild( menu );
+
+        m_menus.push_back( menu );
+    }
+
+    void ImGuiMenuBar::removeMenu( SmartPtr<IUIMenu> menu )
+    {
+        removeChild( menu );
+
+        auto it = std::find( m_menus.begin(), m_menus.end(), menu );
+        if( it != m_menus.end() )
         {
+            m_menus.erase( it );
         }
+    }
 
-        void ImGuiMenubar::update()
-        {
-            for(auto menu : m_menus)
-            {
-                menu->update();
-            }
-        }
+    auto ImGuiMenuBar::getMenus() const -> Array<SmartPtr<IUIMenu>>
+    {
+        return m_menus;
+    }
 
-        void ImGuiMenubar::addMenu( SmartPtr<IUIMenu> menu )
-        {
-            addChild( menu );
+    void ImGuiMenuBar::setMenus( Array<SmartPtr<IUIMenu>> menus )
+    {
+        m_menus = menus;
+    }
 
-            m_menus.push_back( menu );
-        }
-
-        void ImGuiMenubar::removeMenu( SmartPtr<IUIMenu> menu )
-        {
-            removeChild( menu );
-
-            auto it = std::find( m_menus.begin(), m_menus.end(), menu );
-            if(it != m_menus.end())
-            {
-                m_menus.erase( it );
-            }
-        }
-
-        Array<SmartPtr<IUIMenu>> ImGuiMenubar::getMenus() const
-        {
-            return m_menus;
-        }
-
-        void ImGuiMenubar::setMenus( Array<SmartPtr<IUIMenu>> menus )
-        {
-            m_menus = menus;
-        }
-
-    } // end namespace ui
-}     // end namespace fb
+}  // namespace fb::ui

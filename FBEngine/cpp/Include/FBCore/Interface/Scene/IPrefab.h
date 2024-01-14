@@ -10,7 +10,7 @@ namespace fb
     {
 
         /**
-         * Interface for a prefab.
+         * Interface for a prefab. Used to construct actors using pre-defined data.
          */
         class IPrefab : public IResource
         {

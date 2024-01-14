@@ -65,9 +65,9 @@ namespace fb
     MeshSerializer::~MeshSerializer()
     {
         // delete map
-        for( auto i = mVersionData.begin(); i != mVersionData.end(); ++i )
+        for( auto &i : mVersionData )
         {
-            delete *i;
+            delete i;
         }
         mVersionData.clear();
     }
@@ -76,11 +76,10 @@ namespace fb
     void MeshSerializer::exportMesh( const Mesh *pMesh, const String &filename, u32 endianMode )
     {
         auto f = new std::fstream;
-        f->open( filename.c_str(), std::ios::binary | std::ios::out );
-        SmartPtr<IStream> stream( new FileDataStream( f ) );
+        f->open( filename.c_str(), std::ios::binary | std::ios::out | std::ios::trunc );
 
+        auto stream = fb::make_ptr<FileDataStream>( filename, f, 0, true );
         exportMesh( pMesh, stream, endianMode );
-
         stream->close();
     }
 
@@ -89,11 +88,10 @@ namespace fb
                                      u32 endianMode )
     {
         auto f = new std::fstream;
-        f->open( filename.c_str(), std::ios::binary | std::ios::out );
-        SmartPtr<IStream> stream( new FileDataStream( f ) );
+        f->open( filename.c_str(), std::ios::binary | std::ios::out | std::ios::trunc );
 
+        auto stream = fb::make_ptr<FileDataStream>( filename, f, 0, true );
         exportMesh( pMesh, stream, version, endianMode );
-
         stream->close();
     }
 
@@ -116,14 +114,16 @@ namespace fb
 
         MeshSerializerImpl *impl = nullptr;
         if( version == MESH_VERSION_LATEST )
+        {
             impl = mVersionData[0]->impl;
+        }
         else
         {
-            for( auto i = mVersionData.begin(); i != mVersionData.end(); ++i )
+            for( auto &i : mVersionData )
             {
-                if( version == ( *i )->version )
+                if( version == i->version )
                 {
-                    impl = ( *i )->impl;
+                    impl = i->impl;
                     break;
                 }
             }
@@ -163,11 +163,11 @@ namespace fb
 
         // Find the implementation to use
         MeshSerializerImpl *impl = nullptr;
-        for( auto i = mVersionData.begin(); i != mVersionData.end(); ++i )
+        for( auto &i : mVersionData )
         {
-            if( ( *i )->versionString == ver )
+            if( i->versionString == ver )
             {
-                impl = ( *i )->impl;
+                impl = i->impl;
                 break;
             }
         }
@@ -190,7 +190,7 @@ namespace fb
         }
     }
 
-    SmartPtr<IMesh> MeshSerializer::loadMesh( SmartPtr<IStream> &stream )
+    auto MeshSerializer::loadMesh( SmartPtr<IStream> &stream ) -> SmartPtr<IMesh>
     {
         auto pDest = fb::make_ptr<Mesh>();
 
@@ -212,11 +212,11 @@ namespace fb
 
         // Find the implementation to use
         MeshSerializerImpl *impl = nullptr;
-        for( auto i = mVersionData.begin(); i != mVersionData.end(); ++i )
+        for( auto &i : mVersionData )
         {
-            if( ( *i )->versionString == ver )
+            if( i->versionString == ver )
             {
-                impl = ( *i )->impl;
+                impl = i->impl;
                 break;
             }
         }
@@ -243,13 +243,28 @@ namespace fb
 
     //---------------------------------------------------------------------
     void MeshSerializer::setListener( MeshSerializerListener *listener )
+
     {
         mListener = listener;
     }
 
     //----------------------------------------------
-    MeshSerializerListener *MeshSerializer::getListener()
+    auto MeshSerializer::getListener() -> MeshSerializerListener *
     {
         return mListener;
     }
+
+    MeshSerializer::MeshVersionData::~MeshVersionData()
+    {
+        delete impl;
+    }
+
+    MeshSerializer::MeshVersionData::MeshVersionData( MeshVersion _ver, const String &_string,
+                                                      MeshSerializerImpl *_impl ) :
+        version( _ver ),
+        versionString( _string ),
+        impl( _impl )
+    {
+    }
+
 }  // namespace fb

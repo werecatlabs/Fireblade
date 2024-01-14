@@ -7,31 +7,40 @@ namespace fb
 {
     namespace scene
     {
+
+        /** Collision box component. */
         class CollisionBox : public Collision
         {
         public:
+            /** Constructor. */
             CollisionBox();
+
+            /** Destructor. */
             ~CollisionBox() override;
 
-            /** @copydoc IObject::load */
+            /** @copydoc Collision::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::unload */
+            /** @copydoc Collision::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::reload */
+            /** @copydoc Collision::reload */
             void reload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IComponent::getProperties */
+            /** @copydoc Collision::getProperties */
             SmartPtr<Properties> getProperties() const override;
 
-            /** @copydoc IComponent::setProperties */
+            /** @copydoc Collision::setProperties */
             void setProperties( SmartPtr<Properties> properties ) override;
 
             /** @copydoc Collision::setExtents */
             void setExtents( const Vector3<real_Num> &extents ) override;
 
-            bool isValid() const;
+            /** @copydoc Collision::isValid */
+            bool isValid() const override;
+
+            /** @copydoc Component::updateTransform */
+            void updateTransform() override;
 
             FB_CLASS_REGISTER_DECL;
         };

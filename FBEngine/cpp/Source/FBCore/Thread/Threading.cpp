@@ -38,10 +38,10 @@ namespace fb
     const u32 Thread::Render_Flag = 1 << 11;
     const u32 Thread::Sound_Flag = 1 << 12;
 
-    FixedArray<u32, (u32)Thread::Task::Count> Thread::m_taskFlags;
+    FixedArray<u32, static_cast<u32>( Thread::Task::Count )> Thread::m_taskFlags;
     SpinRWMutex Thread::m_taskFlagsMutex;
 
-    Thread::Task Thread::getCurrentTask()
+    auto Thread::getCurrentTask() -> Thread::Task
     {
         FB_ASSERT( CURRENT_TASK_ID >= 0 );
         FB_ASSERT( CURRENT_TASK_ID < static_cast<int>( Thread::Task::Count ) );
@@ -55,44 +55,44 @@ namespace fb
         CURRENT_TASK_ID = static_cast<u32>( task );
     }
 
-    u32 Thread::getTaskFlags()
+    auto Thread::getTaskFlags() -> u32
     {
         SpinRWMutex::ScopedLock lock( m_taskFlagsMutex, false );
-        auto task = (u32)getCurrentTask();
+        auto task = static_cast<u32>( getCurrentTask() );
         return m_taskFlags[task];
     }
 
     void Thread::setTaskFlags( u32 taskFlags )
     {
         SpinRWMutex::ScopedLock lock( m_taskFlagsMutex, true );
-        auto task = (u32)getCurrentTask();
+        auto task = static_cast<u32>( getCurrentTask() );
         m_taskFlags[task] = taskFlags;
     }
 
-    u32 Thread::getTaskFlags( Task task )
+    auto Thread::getTaskFlags( Task task ) -> u32
     {
         SpinRWMutex::ScopedLock lock( m_taskFlagsMutex, false );
-        return m_taskFlags[(u32)task];
+        return m_taskFlags[static_cast<u32>( task )];
     }
 
     void Thread::setTaskFlags( Task task, u32 taskFlags )
     {
         SpinRWMutex::ScopedLock lock( m_taskFlagsMutex, true );
-        m_taskFlags[(u32)task] = taskFlags;
+        m_taskFlags[static_cast<u32>( task )] = taskFlags;
     }
 
-    bool Thread::getTaskFlag( u32 flag )
+    auto Thread::getTaskFlag( u32 flag ) -> bool
     {
         SpinRWMutex::ScopedLock lock( m_taskFlagsMutex, false );
-        auto task = (u32)getCurrentTask();
-        return (m_taskFlags[task] & flag) != 0;
+        auto task = static_cast<u32>( getCurrentTask() );
+        return ( m_taskFlags[task] & flag ) != 0;
     }
 
     void Thread::setTaskFlag( u32 flag, bool value )
     {
         SpinRWMutex::ScopedLock lock( m_taskFlagsMutex, true );
 
-        auto task = (u32)getCurrentTask();
+        auto task = static_cast<u32>( getCurrentTask() );
 
         if( value )
         {
@@ -184,7 +184,7 @@ namespace fb
 #endif
     }
 
-    long Thread::interlockedCompareExchange( volatile long *a, long b, long c )
+    auto Thread::interlockedCompareExchange( volatile long *a, long b, long c ) -> long
     {
 #if defined( FB_USE_INTERLOCKED_FUNCTIONS ) && defined( FB_USE_BOOST )
         return BOOST_INTERLOCKED_COMPARE_EXCHANGE( a, b, c );
@@ -193,7 +193,7 @@ namespace fb
 #endif
     }
 
-    long Thread::interlockedDecrement( volatile long *val )
+    auto Thread::interlockedDecrement( volatile long *val ) -> long
     {
 #if defined( FB_USE_INTERLOCKED_FUNCTIONS ) && defined( FB_USE_BOOST )
         return BOOST_INTERLOCKED_DECREMENT( val );
@@ -202,7 +202,7 @@ namespace fb
 #endif
     }
 
-    long Thread::interlockedIncrement( volatile long *val )
+    auto Thread::interlockedIncrement( volatile long *val ) -> long
     {
 #if defined( FB_USE_INTERLOCKED_FUNCTIONS ) && defined( FB_USE_BOOST )
         return BOOST_INTERLOCKED_INCREMENT( val );
@@ -222,7 +222,7 @@ namespace fb
 #endif
     }
 
-    Thread::ThreadId Thread::getCurrentThreadId()
+    auto Thread::getCurrentThreadId() -> Thread::ThreadId
     {
         return static_cast<ThreadId>( CURRENT_THREAD_ID );
     }
@@ -232,7 +232,7 @@ namespace fb
         CURRENT_THREAD_ID = static_cast<u32>( threadId );
     }
 
-    u32 Thread::hardware_concurrency()
+    auto Thread::hardware_concurrency() -> u32
     {
 #if FB_USE_BOOST
         return boost::thread::hardware_concurrency();
@@ -243,7 +243,7 @@ namespace fb
 #endif
     }
 
-    u32 Thread::physical_concurrency()
+    auto Thread::physical_concurrency() -> u32
     {
 #if FB_USE_BOOST
         return boost::thread::physical_concurrency();
@@ -254,7 +254,7 @@ namespace fb
 #endif
     }
 
-    String Thread::getTaskName( Task id )
+    auto Thread::getTaskName( Task id ) -> String
     {
         switch( id )
         {

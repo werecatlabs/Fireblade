@@ -5,15 +5,13 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, Timer, ITimer );
 
-    Timer::Timer() : m_minDeltaTime( 0.0 ), m_maxDeltaTime( 1e10 ), m_enableSmoothing( false )
+    Timer::Timer() : m_maxDeltaTime( 1e10 ), m_enableSmoothing( false )
     {
     }
 
-    Timer::~Timer()
-    {
-    }
+    Timer::~Timer() = default;
 
-    f64 Timer::getTimeSinceLevelLoad()
+    auto Timer::getTimeSinceLevelLoad() -> f64
     {
         return m_timeSinceLevelLoad;
     }
@@ -33,27 +31,27 @@ namespace fb
         m_maxDeltaTime = val;
     }
 
-    f64 Timer::getDerivedFixedTime() const
+    auto Timer::getDerivedFixedTime() const -> f64
     {
         return 0.0;
     }
 
-    f64 Timer::getFixedTime() const
+    auto Timer::getFixedTime() const -> f64
     {
         return 0.0;
     }
 
-    f64 Timer::getFixedTime( u32 task ) const
+    auto Timer::getFixedTime( u32 task ) const -> f64
     {
         return 0.0;
     }
 
-    f64 Timer::getFixedTimeNow() const
+    auto Timer::getFixedTimeNow() const -> f64
     {
         return 0.0;
     }
 
-    f64 Timer::getFixedTimeNow( u32 task ) const
+    auto Timer::getFixedTimeNow( u32 task ) const -> f64
     {
         return 0.0;
     }
@@ -62,12 +60,12 @@ namespace fb
     {
     }
 
-    f64 Timer::getFixedTimeInterval() const
+    auto Timer::getFixedTimeInterval() const -> f64
     {
         return 0.0;
     }
 
-    f64 Timer::getFixedTimeInterval( Thread::Task task ) const
+    auto Timer::getFixedTimeInterval( Thread::Task task ) const -> f64
     {
         return 0.0;
     }
@@ -84,7 +82,7 @@ namespace fb
     {
     }
 
-    bool Timer::getEnableSmoothing() const
+    auto Timer::getEnableSmoothing() const -> bool
     {
         return m_enableSmoothing;
     }
@@ -94,7 +92,7 @@ namespace fb
         m_enableSmoothing = val;
     }
 
-    f64 Timer::getMaxDeltaTime() const
+    auto Timer::getMaxDeltaTime() const -> f64
     {
         return m_maxDeltaTime;
     }
@@ -104,12 +102,12 @@ namespace fb
         m_minDeltaTime = val;
     }
 
-    f64 Timer::getStartOffset() const
+    auto Timer::getStartOffset() const -> f64
     {
         return 0.0;
     }
 
-    f64 Timer::getMinDeltaTime() const
+    auto Timer::getMinDeltaTime() const -> f64
     {
         return m_minDeltaTime;
     }
@@ -122,17 +120,17 @@ namespace fb
     {
     }
 
-    bool Timer::isSteady() const
+    auto Timer::isSteady() const -> bool
     {
         return false;
     }
 
-    u32 Timer::getTickCount()
+    auto Timer::getTickCount() -> u32
     {
         return 0;
     }
 
-    u32 Timer::getTickCount( Thread::Task task )
+    auto Timer::getTickCount( Thread::Task task ) -> u32
     {
         return 0;
     }
@@ -141,22 +139,22 @@ namespace fb
     {
     }
 
-    float Timer::getFrameSmoothingTime() const
+    auto Timer::getFrameSmoothingTime() const -> float
     {
         return 0.0f;
     }
 
-    f64 Timer::now() const
+    auto Timer::now() const -> f64
     {
         return 0.0;
     }
 
-    f64 Timer::getDeltaTime() const
+    auto Timer::getDeltaTime() const -> f64
     {
         return 0.0;
     }
 
-    f64 Timer::getTime() const
+    auto Timer::getTime() const -> f64
     {
         return 0.0;
     }
@@ -169,17 +167,17 @@ namespace fb
     {
     }
 
-    f64 Timer::getSmoothTime() const
+    auto Timer::getSmoothTime() const -> f64
     {
         return 0.0;
     }
 
-    f64 Timer::getSmoothDeltaTime() const
+    auto Timer::getSmoothDeltaTime() const -> f64
     {
         return 0.0;
     }
 
-    f64 Timer::getSmoothDeltaTime( Thread::Task task ) const
+    auto Timer::getSmoothDeltaTime( Thread::Task task ) const -> f64
     {
         return 0.0;
     }
@@ -188,22 +186,22 @@ namespace fb
     {
     }
 
-    f64 Timer::getTime( Thread::Task task ) const
+    auto Timer::getTime( Thread::Task task ) const -> f64
     {
         return 0.0;
     }
 
-    f64 Timer::getPreviousTime( Thread::Task task ) const
+    auto Timer::getPreviousTime( Thread::Task task ) const -> f64
     {
         return 0.0;
     }
 
-    f64 Timer::getDeltaTime( Thread::Task task ) const
+    auto Timer::getDeltaTime( Thread::Task task ) const -> f64
     {
         return 0.0;
     }
 
-    f64 Timer::getMaxDeltaTime( Thread::Task task ) const
+    auto Timer::getMaxDeltaTime( Thread::Task task ) const -> f64
     {
         return 0.0;
     }
@@ -212,7 +210,7 @@ namespace fb
     {
     }
 
-    f64 Timer::getMinDeltaTime( Thread::Task task ) const
+    auto Timer::getMinDeltaTime( Thread::Task task ) const -> f64
     {
         return 0.0;
     }
@@ -225,7 +223,7 @@ namespace fb
     {
     }
 
-    f64 Timer::getStartOffset( Thread::Task task ) const
+    auto Timer::getStartOffset( Thread::Task task ) const -> f64
     {
         return 0.0;
     }
@@ -234,7 +232,7 @@ namespace fb
     {
     }
 
-    f64 Timer::getFixedOffset( Thread::Task task ) const
+    auto Timer::getFixedOffset( Thread::Task task ) const -> f64
     {
         return 0.0;
     }
@@ -243,7 +241,7 @@ namespace fb
     {
     }
 
-    f64 Timer::getAccumulated( Thread::Task task ) const
+    auto Timer::getAccumulated( Thread::Task task ) const -> f64
     {
         return 0.0;
     }
@@ -256,22 +254,22 @@ namespace fb
     {
     }
 
-    u32 Timer::getTimeMilliseconds() const
+    auto Timer::getTimeMilliseconds() const -> u32
     {
         return static_cast<u32>( getTime() * 1000.0 );
     }
 
-    u32 Timer::getRealTime() const
+    auto Timer::getRealTime() const -> u32
     {
         return static_cast<u32>( getTime() * 1000.0 );
     }
 
-    u32 Timer::getTimeIntervalMilliseconds() const
+    auto Timer::getTimeIntervalMilliseconds() const -> u32
     {
         return static_cast<u32>( getDeltaTime() * 1000.0 );
     }
 
-    time_interval Timer::getTimeInterval() const
+    auto Timer::getTimeInterval() const -> time_interval
     {
         return getDeltaTime();  // todo remove
     }
@@ -280,7 +278,7 @@ namespace fb
     {
     }
 
-    u32 Timer::getFrameSmoothingPeriod() const
+    auto Timer::getFrameSmoothingPeriod() const -> u32
     {
         return 0;
     }

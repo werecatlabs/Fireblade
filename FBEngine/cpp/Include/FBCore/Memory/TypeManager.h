@@ -31,9 +31,13 @@ namespace fb
          * @param id The id of the type to retrieve the name for.
          * @return Returns the name of the type as a String.
          */
-        String getName( u32 id ) const;
+        const c8 *getName( u32 id ) const;
 
-        String getLabel( u32 id ) const;
+        /** Gets the label of the type with the given id.
+         * @param id The id of the type to retrieve the label for.
+         * @return Returns the label of the type as a String.
+         */
+        const c8 *getLabel( u32 id ) const;
 
         void setLabel( u32 id, const String &label );
 
@@ -175,6 +179,13 @@ namespace fb
         Array<u32> getDerivedTypes( u32 type ) const;
 
         /**
+         * @brief Get all the types derived from the given type.
+         * @param type The id of the type to get derived types for.
+         * @return Returns an array of derived names.
+         */
+        Array<String> getDerivedTypeNames( u32 type ) const;
+
+        /**
          * @brief Get the type group of the type with the given id.
          * @param id The id of the type to retrieve the type group for.
          * @return Returns the type group as a 32-bit unsigned integer.
@@ -213,10 +224,10 @@ namespace fb
         u32 calculateGroupIndex( u32 typeInfo ) const;
 
         /// Stores the names of the types, indexed by their ids.
-        Array<String> m_names;
+        Array<FixedString<128>> m_names;
 
         /// Stores the names of the types, indexed by their ids.
-        Array<String> m_labels;
+        Array<FixedString<128>> m_labels;
 
         /// Stores the hash values of the types, indexed by their ids.
         Array<atomic_u64> m_hashes;
@@ -240,13 +251,16 @@ namespace fb
         Array<atomic_u32> m_numInstances;
 
         /// Represents the current type count.
-        atomic_u32 m_typeCount = 0;
+        atomic_u32 m_typeCount = 1;
 
         /// Represents the current size of the TypeManager.
         atomic_u32 m_size = 0;
 
         /// A mutable SpinRWMutex used to protect the access to the m_name member variable.
         mutable SpinRWMutex m_nameMutex;
+
+        /// A mutable SpinRWMutex used to protect the access to the m_labels member variable.
+        mutable SpinRWMutex m_labelsMutex;
     };
 
     template <class T>

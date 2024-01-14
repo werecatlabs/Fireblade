@@ -27,6 +27,10 @@ namespace fb
 
         bool isVisible() const;
 
+        bool getElementVisible() const;
+
+        void setElementVisible( bool elementVisible );
+
         SmartPtr<render::IMaterial> getMaterial() const;
 
         void setMaterial( SmartPtr<render::IMaterial> material );
@@ -77,6 +81,8 @@ namespace fb
 
         bool m_visible = true;
         bool m_handleInputEvents = true;
+
+        bool m_elementVisible = true;
     };
 }  // end namespace fb
 

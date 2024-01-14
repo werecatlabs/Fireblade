@@ -6,6 +6,7 @@
 
 namespace fb
 {
+
     class INetworkListener : public ISharedObject
     {
     public:
@@ -15,6 +16,7 @@ namespace fb
         virtual void connect( u32 playerId ) = 0;
         virtual void disconnect( u32 playerId ) = 0;
     };
+
 }  // end namespace fb
 
 #endif

@@ -1,26 +1,23 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/ProjectManager.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/IO/IFileSystem.h>
 
 namespace fb
 {
-
     ProjectManager::ProjectManager()
     {
         m_projectName = "Plugin";
         m_enginePath = "Engine";
     }
 
-    ProjectManager::~ProjectManager()
-    {
-    }
+    ProjectManager::~ProjectManager() = default;
 
     void ProjectManager::generateProject()
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto fileSystem = applicationManager->getFileSystem();
 
         Array<String> defines;
@@ -34,18 +31,18 @@ namespace fb
         Array<String> macosLibs;
         Array<String> unixLibs;
 
-        defines.push_back( "_FB_STATIC_LIB_" );
-        defines.push_back( "BOOST_ALL_NO_LIB" );
-        defines.push_back( "__TBB_NO_IMPLICIT_LINKAGE=1" );
-        defines.push_back( "__TBBMALLOC_NO_IMPLICIT_LINKAGE=1" );
-        defines.push_back( "_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS" );
-        defines.push_back( "_UNICODE" );
-        defines.push_back( "FB_USE_BOOST" );
+        defines.emplace_back( "_FB_STATIC_LIB_" );
+        defines.emplace_back( "BOOST_ALL_NO_LIB" );
+        defines.emplace_back( "__TBB_NO_IMPLICIT_LINKAGE=1" );
+        defines.emplace_back( "__TBBMALLOC_NO_IMPLICIT_LINKAGE=1" );
+        defines.emplace_back( "_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS" );
+        defines.emplace_back( "_UNICODE" );
+        defines.emplace_back( "FB_USE_BOOST" );
 
 #if FB_USE_ONETBB
         defines.push_back( "FB_USE_ONETBB=1" );
 #elif FB_USE_TBB
-        defines.push_back( "FB_USE_TBB=1" );
+        defines.emplace_back( "FB_USE_TBB=1" );
 #endif
 
         auto enginePath = getEnginePath();
@@ -63,59 +60,80 @@ namespace fb
         //includes.push_back( enginePath + "/AdditionalLibraries/sqlite/include" );
         // includes.push_back(enginePath + "/AdditionalLibraries/aurora");
         includes.push_back( enginePath + "/FBEngine/cpp/Include" );
+        includes.emplace_back( "${FB_ROOT}/Plugin" );
         //includes.push_back( enginePath + "/FBEngine/cpp/Include/FBCPlusPlus" );
 
-        libs.push_back( "FBCore" );
-        libs.push_back( "bcrypt" );
-        libs.push_back( "libboost_thread" );
-        libs.push_back( "libboost_date_time" );
-        libs.push_back( "libboost_chrono" );
-        libs.push_back( "libboost_timer" );
-        libs.push_back( "libboost_filesystem" );
-        libs.push_back( "libboost_json" );
-        libs.push_back( "minizip" );
-        libs.push_back( "nativefiledialog" );
-        libs.push_back( "rttr" );
-        libs.push_back( "tinyxml" );
-        libs.push_back( "yaml-cpp" );
-        libs.push_back( "zlib" );
-        libs.push_back( "zzip" );
-        libs.push_back( "tbb_static" );
-        libs.push_back( "tbbmalloc_static" );
+        auto additoinalIncludes = getIncludeFolders();
+        includes.insert( includes.end(), additoinalIncludes.begin(), additoinalIncludes.end() );
 
-        macosLibs.push_back( "FBCore" );
-        macosLibs.push_back( "libboost_thread" );
-        macosLibs.push_back( "libboost_date_time" );
-        macosLibs.push_back( "libboost_chrono" );
-        macosLibs.push_back( "libboost_timer" );
-        macosLibs.push_back( "libboost_filesystem" );
-        macosLibs.push_back( "libboost_json" );
-        macosLibs.push_back( "minizip" );
-        macosLibs.push_back( "nativefiledialog" );
-        macosLibs.push_back( "rttr" );
-        macosLibs.push_back( "tinyxml" );
-        macosLibs.push_back( "yaml-cpp" );
-        macosLibs.push_back( "zlib" );
-        macosLibs.push_back( "zzip" );
-        macosLibs.push_back( "tbb_static" );
-        macosLibs.push_back( "tbbmalloc_static" );
+        auto additionalLibraries = getLibraries();
 
-        unixLibs.push_back( "FBCore" );
-        unixLibs.push_back( "libboost_thread" );
-        unixLibs.push_back( "libboost_date_time" );
-        unixLibs.push_back( "libboost_chrono" );
-        unixLibs.push_back( "libboost_timer" );
-        unixLibs.push_back( "libboost_filesystem" );
-        unixLibs.push_back( "libboost_json" );
-        unixLibs.push_back( "minizip" );
-        unixLibs.push_back( "nativefiledialog" );
-        unixLibs.push_back( "rttr" );
-        unixLibs.push_back( "tinyxml" );
-        unixLibs.push_back( "yaml-cpp" );
-        unixLibs.push_back( "zlib" );
-        unixLibs.push_back( "zzip" );
-        unixLibs.push_back( "tbb_static" );
-        unixLibs.push_back( "tbbmalloc_static" );
+        libs.emplace_back( "FBCore" );
+        libs.emplace_back( "bcrypt" );
+        libs.emplace_back( "libboost_thread" );
+        libs.emplace_back( "libboost_date_time" );
+        libs.emplace_back( "libboost_chrono" );
+        libs.emplace_back( "libboost_timer" );
+        libs.emplace_back( "libboost_filesystem" );
+        libs.emplace_back( "libboost_json" );
+        libs.emplace_back( "minizip" );
+        libs.emplace_back( "nativefiledialog" );
+        libs.emplace_back( "rttr" );
+        libs.emplace_back( "tinyxml" );
+        libs.emplace_back( "yaml-cpp" );
+        libs.emplace_back( "zlib" );
+        libs.emplace_back( "zzip" );
+        libs.emplace_back( "tbb_static" );
+        libs.emplace_back( "tbbmalloc_static" );
+
+        for( auto lib : additionalLibraries )
+        {
+            libs.push_back( lib );
+        }
+
+        macosLibs.emplace_back( "FBCore" );
+        macosLibs.emplace_back( "libboost_thread" );
+        macosLibs.emplace_back( "libboost_date_time" );
+        macosLibs.emplace_back( "libboost_chrono" );
+        macosLibs.emplace_back( "libboost_timer" );
+        macosLibs.emplace_back( "libboost_filesystem" );
+        macosLibs.emplace_back( "libboost_json" );
+        macosLibs.emplace_back( "minizip" );
+        macosLibs.emplace_back( "nativefiledialog" );
+        macosLibs.emplace_back( "rttr" );
+        macosLibs.emplace_back( "tinyxml" );
+        macosLibs.emplace_back( "yaml-cpp" );
+        macosLibs.emplace_back( "zlib" );
+        macosLibs.emplace_back( "zzip" );
+        macosLibs.emplace_back( "tbb_static" );
+        macosLibs.emplace_back( "tbbmalloc_static" );
+
+        for( auto lib : additionalLibraries )
+        {
+            macosLibs.push_back( lib );
+        }
+
+        unixLibs.emplace_back( "FBCore" );
+        unixLibs.emplace_back( "libboost_thread" );
+        unixLibs.emplace_back( "libboost_date_time" );
+        unixLibs.emplace_back( "libboost_chrono" );
+        unixLibs.emplace_back( "libboost_timer" );
+        unixLibs.emplace_back( "libboost_filesystem" );
+        unixLibs.emplace_back( "libboost_json" );
+        unixLibs.emplace_back( "minizip" );
+        unixLibs.emplace_back( "nativefiledialog" );
+        unixLibs.emplace_back( "rttr" );
+        unixLibs.emplace_back( "tinyxml" );
+        unixLibs.emplace_back( "yaml-cpp" );
+        unixLibs.emplace_back( "zlib" );
+        unixLibs.emplace_back( "zzip" );
+        unixLibs.emplace_back( "tbb_static" );
+        unixLibs.emplace_back( "tbbmalloc_static" );
+
+        for( auto lib : additionalLibraries )
+        {
+            unixLibs.push_back( lib );
+        }
 
         auto toolset = String( "${FB_TOOLSET}" );
         auto arch = String( "${FB_ARCH}" );
@@ -129,6 +147,16 @@ namespace fb
 
         libraryPaths.push_back( enginePath + "/libs/windows/" + toolset + "/" + arch + "/" + crtType +
                                 "/${CMAKE_BUILD_TYPE}" );
+
+        auto additionalLibraryPaths = getLibraryFolders();
+        //libraryPaths.insert( libraryPaths.end(), additionalLibraryPaths.begin(),
+        //                     additionalLibraryPaths.end() );
+        for( auto lib : additionalLibraryPaths )
+        {
+            libraryPaths.push_back( lib + "/windows/" + toolset + "/" + arch + "/" + crtType +
+                                    "/${CMAKE_BUILD_TYPE}" );
+        }
+
         macosLibraryPaths.push_back( enginePath + "/libs/macos/${CMAKE_BUILD_TYPE}" );
         unixLibraryPaths.push_back( enginePath + "/libs/unix/${CMAKE_BUILD_TYPE}" );
 
@@ -276,8 +304,7 @@ namespace fb
 
         for( auto includeDir : includes )
         {
-            cmakeStr +=
-                includeDirOpen + includeDir + includeDirClose + newLineStr;
+            cmakeStr += includeDirOpen + includeDir + includeDirClose + newLineStr;
         }
 
         cmakeStr += newLineStr;
@@ -312,6 +339,29 @@ namespace fb
 
         cmakeStr += newLineStr;
 
+        auto filterStr =
+            "set(FB_HEADER_REL_PATH \"${FB_ROOT}/Plugin\")\n"
+            "set(FB_SOURCE_REL_PATH \"${FB_ROOT}/Plugin\")\n"
+            "\n"
+            "foreach(_source IN ITEMS ${HEADER_FILES})\n"
+            "    get_filename_component(_source_file_path \"${_source}\" DIRECTORY)\n"
+            "    string(REPLACE \"${FB_HEADER_REL_PATH}\" \"\" _group_file_path "
+            "\"${_source_file_path}\")\n"
+            "    string(REPLACE \"\\\\\" \"/\" _group_file_path \"${_group_file_path}\")\n"
+            "    source_group(\"Header Files\\\\${_group_file_path}\" FILES \"${_source}\")\n"
+            "endforeach()\n"
+            "\n"
+            "foreach(_source IN ITEMS ${SOURCE_FILES})\n"
+            "    get_filename_component(_source_file_path \"${_source}\" DIRECTORY)\n"
+            "    string(REPLACE \"${FB_SOURCE_REL_PATH}\" \"\" _group_file_path "
+            "\"${_source_file_path}\")\n"
+            "    string(REPLACE \"/\" \"\\\\\" _group_file_path \"${_group_file_path}\")\n"
+            "    source_group(\"Source Files\\\\${_group_file_path}\" FILES \"${_source}\")\n"
+            "endforeach()";
+
+        cmakeStr += filterStr;
+        cmakeStr += newLineStr + newLineStr;
+
         auto libraryType = String( "" );
 
         if( isSharedLibrary() )
@@ -319,8 +369,8 @@ namespace fb
             libraryType = String( "SHARED" );
         }
 
-        auto libraryDeclare = String( "add_library(" + projectName + " " + libraryType +
-                                      " ${HEADER_FILES} ${SOURCE_FILES})\n" );
+        auto libraryDeclare = static_cast<String>( "add_library(" + projectName + " " + libraryType +
+                                                   " ${HEADER_FILES} ${SOURCE_FILES})\n" );
         cmakeStr += libraryDeclare + newLineStr;
 
         auto libraries = String( "if (WIN32)\n" );
@@ -350,11 +400,12 @@ namespace fb
         cmakeStr += newLineStr;
 
         auto projectPath = applicationManager->getProjectPath();
+        auto cmakeListsPath = projectPath + "/CMakeLists.txt";
 
-        fileSystem->writeAllText( projectPath + "/CMakeLists.txt", cmakeStr );
+        fileSystem->writeAllText( cmakeListsPath, cmakeStr );
     }
 
-    bool ProjectManager::isSharedLibrary() const
+    auto ProjectManager::isSharedLibrary() const -> bool
     {
         return m_isSharedLibrary;
     }
@@ -364,7 +415,7 @@ namespace fb
         m_isSharedLibrary = sharedLibrary;
     }
 
-    String ProjectManager::getProjectName() const
+    auto ProjectManager::getProjectName() const -> String
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
         return m_projectName;
@@ -376,7 +427,7 @@ namespace fb
         m_projectName = projectName;
     }
 
-    String ProjectManager::getEnginePath() const
+    auto ProjectManager::getEnginePath() const -> String
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
         return m_enginePath;
@@ -388,7 +439,90 @@ namespace fb
         m_enginePath = enginePath;
     }
 
-    String ProjectManager::getPlatformOptions() const
+    void ProjectManager::addIncludeFolder( const String &includeFolder )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_includeFolders.push_back( includeFolder );
+    }
+
+    void ProjectManager::removeIncludeFolder( const String &includeFolder )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_includeFolders.erase(
+            std::remove( m_includeFolders.begin(), m_includeFolders.end(), includeFolder ),
+            m_includeFolders.end() );
+    }
+
+    void ProjectManager::addLibraryFolder( const String &libraryFolder )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_libraryFolders.push_back( libraryFolder );
+    }
+
+    void ProjectManager::removeLibraryFolder( const String &libraryFolder )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_libraryFolders.erase(
+            std::remove( m_libraryFolders.begin(), m_libraryFolders.end(), libraryFolder ),
+            m_libraryFolders.end() );
+    }
+
+    auto ProjectManager::getIncludeFolders() const -> Array<String>
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        return m_includeFolders;
+    }
+
+    void ProjectManager::setIncludeFolders( const Array<String> &includeFolders )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_includeFolders = includeFolders;
+    }
+
+    auto ProjectManager::getLibraryFolders() const -> Array<String>
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        return m_libraryFolders;
+    }
+
+    void ProjectManager::setLibraryFolders( const Array<String> &libraryFolders )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_libraryFolders = libraryFolders;
+    }
+
+    void ProjectManager::addLibrary( const String &library )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_libraries.push_back( library );
+    }
+
+    void ProjectManager::removeLibrary( const String &library )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_libraries.erase( std::remove( m_libraries.begin(), m_libraries.end(), library ),
+                           m_libraries.end() );
+    }
+
+    auto ProjectManager::getLibraries() const -> Array<String>
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        return m_libraries;
+    }
+
+    void ProjectManager::setLibraries( const Array<String> &libraries )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_libraries = libraries;
+    }
+
+    void ProjectManager::clearLibraries()
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_libraries.clear();
+    }
+
+    auto ProjectManager::getPlatformOptions() const -> String
     {
         return "include(CheckTypeSize)\n"
                "CHECK_TYPE_SIZE(\"void*\" FB_PTR_SIZE BUILTIN_TYPES_ONLY)\n"
@@ -401,7 +535,7 @@ namespace fb
                "endif ()";
     }
 
-    String ProjectManager::getToolsetOptions() const
+    auto ProjectManager::getToolsetOptions() const -> String
     {
         return "if(WIN32)\n"
                "\tif (MSVC_TOOLSET_VERSION EQUAL \"141\")\n"
@@ -417,5 +551,4 @@ namespace fb
                "    set(FB_TOOLSET \"\")\n"
                "endif()";
     }
-
 }  // end namespace fb

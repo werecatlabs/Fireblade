@@ -32,6 +32,7 @@ namespace fb
                 Count  ///< Number of render APIs
             };
 
+            /** Destructor. */
             ~IGraphicsSystem() override = default;
 
             /**
@@ -59,7 +60,14 @@ namespace fb
              *
              * @return A pointer to the debug interface.
              */
-            virtual SmartPtr<IDebug> getDebug() const = 0;
+            virtual SmartPtr<IDebug> &getDebug() = 0;
+
+            /**
+             * Gets the debug interface.
+             *
+             * @return A pointer to the debug interface.
+             */
+            virtual const SmartPtr<IDebug> &getDebug() const = 0;
 
             /**
              * Sets the debug interface.

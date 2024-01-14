@@ -5,18 +5,15 @@
 #include <FBCore/System/RttiClassDefinition.h>
 #include <FBCore/Core/StringUtil.h>
 
-namespace fb
+namespace fb::render
 {
-    namespace render
-    {
-        FB_CLASS_REGISTER_DERIVED( fb::render, IMaterial, IResource );
+    FB_CLASS_REGISTER_DERIVED( fb::render, IMaterial, IResource );
 
-        const hash_type IMaterial::SET_TEXTURE_HASH = StringUtil::getHash( "setTexture" );
-        const hash_type IMaterial::FRAGMENT_FLOAT_HASH = StringUtil::getHash( "fragmentFloat" );
-        const hash_type IMaterial::FRAGMENT_VECTOR2F_HASH = StringUtil::getHash( "fragmentVector2f" );
-        const hash_type IMaterial::FRAGMENT_VECTOR3F_HASH = StringUtil::getHash( "fragmentVector3f" );
-        const hash_type IMaterial::FRAGMENT_VECTOR4F_HASH = StringUtil::getHash( "fragmentVector4f" );
-        const hash_type IMaterial::FRAGMENT_COLOUR_HASH = StringUtil::getHash( "fragmentColour" );
-        const hash_type IMaterial::LIGHTING_ENABLED_HASH = StringUtil::getHash( "lightingEnabled" );
-    }  // end namespace render
-}  // end namespace fb
+    const hash_type IMaterial::SET_TEXTURE_HASH = StringUtil::getHash( "setTexture" );
+    const hash_type IMaterial::FRAGMENT_FLOAT_HASH = StringUtil::getHash( "fragmentFloat" );
+    const hash_type IMaterial::FRAGMENT_VECTOR2F_HASH = StringUtil::getHash( "fragmentVector2f" );
+    const hash_type IMaterial::FRAGMENT_VECTOR3F_HASH = StringUtil::getHash( "fragmentVector3f" );
+    const hash_type IMaterial::FRAGMENT_VECTOR4F_HASH = StringUtil::getHash( "fragmentVector4f" );
+    const hash_type IMaterial::FRAGMENT_COLOUR_HASH = StringUtil::getHash( "fragmentColour" );
+    const hash_type IMaterial::LIGHTING_ENABLED_HASH = StringUtil::getHash( "lightingEnabled" );
+}  // namespace fb::render

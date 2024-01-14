@@ -273,6 +273,12 @@ else()
     add_compile_definitions (FB_BUILD_PHYSICS3=0)
 endif()
 
+if (FB_BUILD_AUDIO)
+    add_compile_definitions (FB_BUILD_AUDIO=1)
+else()
+    add_compile_definitions (FB_BUILD_AUDIO=0)
+endif()
+
 add_compile_definitions(
 $<$<CONFIG:Debug>:_DEBUG>
 $<$<CONFIG:Release>:NDEBUG>
@@ -280,14 +286,11 @@ $<$<CONFIG:MinSizeRel>:NDEBUG>
 $<$<CONFIG:RelWithDebInfo>:NDEBUG>
 )
 
-
 if (FB_USE_FBXSDK)
     add_compile_definitions (FB_USE_FBXSDK=1)
 else ()
     add_compile_definitions (FB_USE_FBXSDK=0)
 endif()
-
-
 
 if (FB_USE_ASSET_IMPORT)
     add_compile_definitions (FB_USE_ASSET_IMPORT=1)
@@ -357,8 +360,6 @@ else ()
     add_compile_definitions (FB_ENABLE_THREADING=0)
 endif ()
 
-
-
 if (FB_ENABLE_LUA)
 	add_compile_definitions (FB_USE_LUA=1)
 else ()
@@ -379,14 +380,11 @@ else()
     add_compile_definitions(FB_USE_ZZIP=0)
 endif()
 
-
-
 if (FB_ENABLE_BOOST)
     add_compile_definitions(FB_USE_BOOST=1)
 else()
     add_compile_definitions(FB_USE_BOOST=0)
 endif()
-
 
 if (FB_USE_PRECOMPILED_HEADERS)
     add_compile_definitions(FB_USE_PRECOMPILED_HEADERS=1)
@@ -399,8 +397,6 @@ if (FB_USE_PTHREADS)
 else()
     add_compile_definitions(FB_USE_PTHREADS=0)
 endif()
-
-
 
 if (FB_AUTO_LINK)
     add_compile_definitions (FB_USE_AUTO_LINK=1)
@@ -426,7 +422,6 @@ else()
 	add_compile_definitions (FB_PROFILING=0)
 endif()
 
-
 if (FB_DOUBLE_PRECISION)
 	add_compile_definitions (FB_DOUBLE_PRECISION=1)
 else()
@@ -445,7 +440,6 @@ else()
     add_compile_definitions (FB_ENABLE_HEAP_DEBUG=0)
 endif()
 
-
 if (FB_BUILD_EDITOR_PLUGIN)
     add_compile_definitions (FB_BUILD_EDITOR_PLUGIN=1)
 else()
@@ -463,8 +457,6 @@ if (FB_ENABLE_ACTIVETRANSFORMS)
 else()
     add_compile_definitions (FB_ENABLE_ACTIVETRANSFORMS=0)
 endif()
-
-
 
 if (FB_PHYSICS_THREADED)
     add_compile_definitions (FLIGHT_USE_OWN_THREAD=1)

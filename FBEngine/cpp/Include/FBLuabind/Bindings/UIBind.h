@@ -6,7 +6,7 @@
 namespace fb
 {
 
-    void bindGUIManager( lua_State *L );
+    void bindUI( lua_State *L );
 
 }  // end namespace fb
 

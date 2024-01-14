@@ -9,11 +9,15 @@
 namespace fb
 {
 
+    /** Base class for a job class. */
     class Job : public IJob
     {
     public:
-        Job() = default;
-        ~Job() override = default;
+        /** Constructor. */
+        Job();
+
+        /** Destructor. */
+        ~Job() override;
 
         /** @copydoc IJob::getState */
         State getState() const override;
@@ -72,13 +76,25 @@ namespace fb
         FB_CLASS_REGISTER_DECL;
 
     protected:
+        // The job affinity.
         atomic_u32 m_affinity = 0;
+
+        // The job state.
         Atomic<State> m_state = State::Ready;
+
+        // The job progress.
         atomic_u32 m_progress = 0;
+
+        // The job priority.
         atomic_u32 m_priority = 0;
+
+        // To know if the job is primary.
         atomic_bool m_isPrimary = false;
+
+        // To know if the job is coroutine.
         atomic_bool m_isCoroutine = false;
 
+        // Object for coroutine data.
         SmartPtr<IObjectYield> m_yieldObject;
     };
 }  // end namespace fb

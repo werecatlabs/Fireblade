@@ -14,8 +14,8 @@ namespace fb
         public:
             ProjectTreeData() = default;
 
-            ProjectTreeData( const String &ownerType, const String &objectType,
-                             SmartPtr<ISharedObject> ownerData, SmartPtr<ISharedObject> objectData );
+            ProjectTreeData( String ownerType, String objectType, SmartPtr<ISharedObject> ownerData,
+                             SmartPtr<ISharedObject> objectData );
 
             void unload( SmartPtr<ISharedObject> data ) override;
 

@@ -7,18 +7,23 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, TextureState, BaseState );
 
-    SmartPtr<IState> TextureState::clone()
+    TextureState::TextureState() = default;
+    TextureState::~TextureState() = default;
+
+    auto TextureState::clone() -> SmartPtr<IState>
     {
         return nullptr;
     }
 
-    Vector2I TextureState::getSize() const
+    auto TextureState::getSize() const -> Vector2I
     {
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
         return m_size;
     }
 
     void TextureState::setSize( const Vector2I &size )
     {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
         if( m_size != size )
         {
             m_size = size;

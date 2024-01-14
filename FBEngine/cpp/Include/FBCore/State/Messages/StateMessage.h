@@ -27,15 +27,15 @@ namespace fb
         SmartPtr<ISharedObject> getSender() const override;
         void setSender( SmartPtr<ISharedObject> object ) override;
 
-        SmartPtr<IStateContext> getStateObject() const override;
-        void setStateObject( SmartPtr<IStateContext> object ) override;
+        SmartPtr<IStateContext> getStateContext() const override;
+        void setStateContext( SmartPtr<IStateContext> object ) override;
 
         FB_CLASS_REGISTER_DECL;
 
     protected:
         hash_type m_type = 0;
         AtomicWeakPtr<ISharedObject> m_sender;
-        AtomicWeakPtr<IStateContext> m_stateObject;
+        AtomicWeakPtr<IStateContext> m_stateContext;
     };
 }  // end namespace fb
 

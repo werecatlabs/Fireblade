@@ -3,100 +3,93 @@
 #include <FBCore/FBCore.h>
 #include <PxMaterial.h>
 
-namespace fb
+namespace fb::physics
 {
-    namespace physics
+    PhysxMaterial::PhysxMaterial() = default;
+
+    PhysxMaterial::~PhysxMaterial() = default;
+
+    void PhysxMaterial::setFriction( f32 friction, int direction )
     {
-        PhysxMaterial::PhysxMaterial()
-        {
-        }
+    }
 
-        PhysxMaterial::~PhysxMaterial()
-        {
-        }
+    void PhysxMaterial::setRestitution( f32 restitution )
+    {
+    }
 
-        void PhysxMaterial::setFriction( f32 friction, int direction )
-        {
-        }
+    auto PhysxMaterial::getContactPosition() const -> Vector3<real_Num>
+    {
+        return Vector3<real_Num>::zero();
+    }
 
-        void PhysxMaterial::setRestitution( f32 restitution )
-        {
-        }
+    auto PhysxMaterial::getContactNormal() const -> Vector3<real_Num>
+    {
+        return Vector3<real_Num>::zero();
+    }
 
-        Vector3<real_Num> PhysxMaterial::getContactPosition() const
-        {
-            return Vector3<real_Num>::zero();
-        }
+    auto PhysxMaterial::getPhysicsBodyA() const -> SmartPtr<IRigidBody3>
+    {
+        return nullptr;
+    }
 
-        Vector3<real_Num> PhysxMaterial::getContactNormal() const
-        {
-            return Vector3<real_Num>::zero();
-        }
+    auto PhysxMaterial::getPhysicsBodyB() const -> SmartPtr<IRigidBody3>
+    {
+        return nullptr;
+    }
 
-        SmartPtr<IRigidBody3> PhysxMaterial::getPhysicsBodyA() const
-        {
-            return nullptr;
-        }
+    auto PhysxMaterial::getMaterial() const -> RawPtr<physx::PxMaterial>
+    {
+        return m_material;
+    }
 
-        SmartPtr<IRigidBody3> PhysxMaterial::getPhysicsBodyB() const
-        {
-            return nullptr;
-        }
+    void PhysxMaterial::setMaterial( RawPtr<physx::PxMaterial> material )
+    {
+        m_material = material;
+    }
 
-        RawPtr<physx::PxMaterial> PhysxMaterial::getMaterial() const
+    auto PhysxMaterial::getProperties() const -> SmartPtr<Properties>
+    {
+        try
         {
-            return m_material;
-        }
+            auto properties = fb::make_ptr<Properties>();
 
-        void PhysxMaterial::setMaterial( RawPtr<physx::PxMaterial> material )
-        {
-            m_material = material;
-        }
-
-        SmartPtr<Properties> PhysxMaterial::getProperties() const
-        {
-            try
+            if( m_material )
             {
-                auto properties = fb::make_ptr<Properties>();
+                auto dynamicFriction = m_material->getDynamicFriction();
+                properties->setProperty( "dynamicFriction", dynamicFriction );
 
-                if(m_material)
-                {
-                    auto dynamicFriction = m_material->getDynamicFriction();
-                    properties->setProperty( "dynamicFriction", dynamicFriction );
-
-                    auto staticFriction = m_material->getStaticFriction();
-                    properties->setProperty( "staticFriction", staticFriction );
-                }
-
-                return properties;
-            }
-            catch(std::exception &e)
-            {
-                FB_LOG_EXCEPTION( e );
+                auto staticFriction = m_material->getStaticFriction();
+                properties->setProperty( "staticFriction", staticFriction );
             }
 
-            return nullptr;
+            return properties;
         }
-
-        void PhysxMaterial::setProperties( SmartPtr<Properties> properties )
+        catch( std::exception &e )
         {
-            try
-            {
-                if(m_material)
-                {
-                    auto dynamicFriction = m_material->getDynamicFriction();
-                    properties->getPropertyValue( "dynamicFriction", dynamicFriction );
-                    m_material->setDynamicFriction( dynamicFriction );
+            FB_LOG_EXCEPTION( e );
+        }
 
-                    auto staticFriction = m_material->getStaticFriction();
-                    properties->getPropertyValue( "staticFriction", staticFriction );
-                    m_material->setStaticFriction( staticFriction );
-                }
-            }
-            catch(std::exception &e)
+        return nullptr;
+    }
+
+    void PhysxMaterial::setProperties( SmartPtr<Properties> properties )
+    {
+        try
+        {
+            if( m_material )
             {
-                FB_LOG_EXCEPTION( e );
+                auto dynamicFriction = m_material->getDynamicFriction();
+                properties->getPropertyValue( "dynamicFriction", dynamicFriction );
+                m_material->setDynamicFriction( dynamicFriction );
+
+                auto staticFriction = m_material->getStaticFriction();
+                properties->getPropertyValue( "staticFriction", staticFriction );
+                m_material->setStaticFriction( staticFriction );
             }
         }
-    } // end namespace physics
-}     // end namespace fb
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+}  // namespace fb::physics

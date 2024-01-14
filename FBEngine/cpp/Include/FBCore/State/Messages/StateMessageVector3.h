@@ -11,7 +11,7 @@ namespace fb
     {
     public:
         StateMessageVector3();
-        StateMessageVector3( const Vector3F &position );
+        explicit StateMessageVector3( const Vector3F &position );
         ~StateMessageVector3() override;
 
         Vector3F getValue() const;

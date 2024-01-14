@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/FrameGrabberStandard.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IWindow.h>
 #include <FBCore/Interface/Video/IVideoManager.h>
@@ -13,18 +13,16 @@ namespace fb
 
     FrameGrabberStandard::FrameGrabberStandard()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto videoManager = applicationManager->getVideoManager();
         m_videoStream = videoManager->createVideoStream();
     }
 
-    FrameGrabberStandard::~FrameGrabberStandard()
-    {
-    }
+    FrameGrabberStandard::~FrameGrabberStandard() = default;
 
     void FrameGrabberStandard::update()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto graphicsSystem = applicationManager->getGraphicsSystem();
         auto window = graphicsSystem->getRenderWindow();
 
@@ -52,7 +50,7 @@ namespace fb
         m_videoStream->addFrame( message );
     }
 
-    SmartPtr<IStateMessage> FrameGrabberStandard::popFrame() const
+    auto FrameGrabberStandard::popFrame() const -> SmartPtr<IStateMessage>
     {
         return nullptr;
     }

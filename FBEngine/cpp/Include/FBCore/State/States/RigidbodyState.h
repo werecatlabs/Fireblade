@@ -14,7 +14,7 @@ namespace fb
         ~RigidbodyState() override;
 
         Transform3<real_Num> getTransform() const;
-        void setTransform( const Transform3<real_Num>& transform );
+        void setTransform( const Transform3<real_Num> &transform );
         void updateTransform( const Transform3<real_Num> &transform );
 
     protected:
@@ -26,10 +26,10 @@ namespace fb
         Vector3<real_Num> linearVelocity;
         Vector3<real_Num> angularVelocity;
 
-        real_Num mass = static_cast<real_Num>(1.0);
+        real_Num mass = static_cast<real_Num>( 1.0 );
 
         FB_CLASS_REGISTER_DECL;
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif  // RigidbodyState_h__

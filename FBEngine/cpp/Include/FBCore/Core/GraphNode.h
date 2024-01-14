@@ -1,7 +1,6 @@
 #ifndef GraphNode_h__
 #define GraphNode_h__
 
-
 #include <FBCore/Core/StringTypes.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Core/List.h>

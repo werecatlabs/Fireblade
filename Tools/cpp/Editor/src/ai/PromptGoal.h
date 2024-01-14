@@ -13,7 +13,7 @@ namespace fb
         public:
             PromptGoal();
 
-            PromptGoal( const String &label, const Array<String> &tags );
+            PromptGoal( String label, const Array<String> &tags );
 
             void start() override;
 

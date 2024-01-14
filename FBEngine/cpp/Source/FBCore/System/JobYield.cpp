@@ -2,22 +2,21 @@
 #include <FBCore/System/JobYield.h>
 #include <FBCore/System/Job.h>
 
-namespace fb
+#include <utility>
+
+namespace fb::core
 {
-    namespace core
+    JobYield::JobYield( SmartPtr<IJob> job ) : m_job( std::move( job ) )
     {
-        JobYield::JobYield( SmartPtr<IJob> job ) : m_job( job )
-        {
-        }
+    }
 
-        JobYield::JobYield( SmartPtr<IObjectYield> &jobYield )
+    JobYield::JobYield( SmartPtr<IObjectYield> &jobYield )
 
-        {
-        }
+    {
+    }
 
-        void JobYield::stop()
-        {
-            m_job->setState( Job::State::Finish );
-        }
-    }  // namespace core
-}  // namespace fb
+    void JobYield::stop()
+    {
+        m_job->setState( Job::State::Finish );
+    }
+}  // namespace fb::core

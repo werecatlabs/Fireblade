@@ -7,13 +7,9 @@
 
 namespace fb
 {
-    VehicleAi::VehicleAi()
-    {
-    }
+    VehicleAi::VehicleAi() = default;
 
-    VehicleAi::~VehicleAi()
-    {
-    }
+    VehicleAi::~VehicleAi() = default;
 
     void VehicleAi::update( f64 t, f64 dt )
     {
@@ -35,7 +31,7 @@ namespace fb
     {
     }
 
-    SmartPtr<IVehicleController> VehicleAi::getVehicleController() const
+    auto VehicleAi::getVehicleController() const -> SmartPtr<IVehicleController>
     {
         return m_vehicleController;
     }
@@ -45,7 +41,7 @@ namespace fb
         m_vehicleController = val;
     }
 
-    SmartPtr<IVehicleAiManager> VehicleAi::getVehicleManager() const
+    auto VehicleAi::getVehicleManager() const -> SmartPtr<IVehicleAiManager>
     {
         //auto p = fb::dynamic_pointer_cast<IVehicleAiManager>(m_vehicleManager);
         //return p;

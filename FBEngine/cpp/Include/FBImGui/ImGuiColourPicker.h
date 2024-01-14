@@ -19,6 +19,14 @@ namespace fb
             void update() override;
 
             FB_CLASS_REGISTER_DECL;
+
+            void setGradient( const ColourF &startColour, const ColourF &endColour ) override;
+
+            Pair<ColourF, ColourF> getGradient() const override;
+
+            void setColourFormat( ColourFormat format ) override;
+
+            ColourFormat getColourFormat() const override;
         };
 
     }  // end namespace ui

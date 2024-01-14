@@ -18,7 +18,7 @@ namespace Colibri
     class Widget;
     class Window;
     class Label;
-}
+}  // namespace Colibri
 
 namespace Forests
 {
@@ -38,6 +38,8 @@ namespace Ogre
     class BillboardSet;
     class Camera;
     class CompositorManager2;
+    class CompositorWorkspace;
+    class CompositorPassSceneDef;
     class Entity;
     class FrameListener;
     class Frustum;

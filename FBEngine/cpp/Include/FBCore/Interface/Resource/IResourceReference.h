@@ -22,6 +22,6 @@ namespace fb
         FB_CLASS_REGISTER_DECL;
     };
 
-} // namespace fb
+}  // namespace fb
 
 #endif  // IResourceReference_h__

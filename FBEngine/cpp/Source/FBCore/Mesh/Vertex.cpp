@@ -4,11 +4,9 @@
 namespace fb
 {
 
-    Vertex::Vertex()
-    {
-    }
+    Vertex::Vertex() = default;
 
-    bool Vertex::isFinite() const
+    auto Vertex::isFinite() const -> bool
     {
         return MathF::isFinite( Position.squaredLength() ) &&
                MathF::isFinite( Normal.squaredLength() ) &&

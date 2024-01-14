@@ -39,13 +39,13 @@ namespace fb
         setLoadingState( LoadingState::Unloaded );
     }
 
-    bool ZipFile::eof( void ) const
+    auto ZipFile::eof() const -> bool
     {
         auto pos = tell();
         return pos >= m_size;
     }
 
-    size_t ZipFile::read( void *buffer, size_t sizeToRead )
+    auto ZipFile::read( void *buffer, size_t sizeToRead ) -> size_t
     {
         // RecursiveMutex::ScopedLock lock(reader->Mutex);
         zzip_ssize_t r = zzip_file_read( m_zipFile, buffer, sizeToRead );
@@ -63,12 +63,13 @@ namespace fb
         return r;
     }
 
-    size_t ZipFile::write( [[maybe_unused]] const void *buffer, [[maybe_unused]] size_t sizeToWrite )
+    auto ZipFile::write( [[maybe_unused]] const void *buffer, [[maybe_unused]] size_t sizeToWrite )
+        -> size_t
     {
         return 0;
     }
 
-    bool ZipFile::seek( size_t pos )
+    auto ZipFile::seek( size_t pos ) -> bool
     {
         zzip_seek( m_zipFile, static_cast<zzip_off_t>( pos ), SEEK_SET );
         return true;
@@ -86,18 +87,18 @@ namespace fb
         }
     }
 
-    size_t ZipFile::size() const
+    auto ZipFile::size() const -> size_t
     {
         return m_size;
     }
 
-    size_t ZipFile::tell() const
+    auto ZipFile::tell() const -> size_t
     {
         auto p = zzip_tell( m_zipFile );
         return static_cast<size_t>( p );
     }
 
-    bool ZipFile::isOpen() const
+    auto ZipFile::isOpen() const -> bool
     {
         return m_zipFile != nullptr;
     }
@@ -115,7 +116,7 @@ namespace fb
     {
     }
 
-    ZZIP_FILE *ZipFile::getZipFile() const
+    auto ZipFile::getZipFile() const -> ZZIP_FILE *
     {
         return m_zipFile;
     }
@@ -125,7 +126,7 @@ namespace fb
         m_zipFile = zipFile;
     }
 
-    ZipArchive *ZipFile::getArchive() const
+    auto ZipFile::getArchive() const -> ZipArchive *
     {
         return m_archive;
     }
@@ -140,17 +141,17 @@ namespace fb
         m_size = iSize;
     }
 
-    bool ZipFile::isReadable() const
+    auto ZipFile::isReadable() const -> bool
     {
         return true;
     }
 
-    bool ZipFile::isWriteable() const
+    auto ZipFile::isWriteable() const -> bool
     {
         return false;
     }
 
-    bool ZipFile::isValid() const
+    auto ZipFile::isValid() const -> bool
     {
         return isOpen() && ( size() > 0 ) && ( size() < static_cast<size_t>( 2e+9 ) );
     }

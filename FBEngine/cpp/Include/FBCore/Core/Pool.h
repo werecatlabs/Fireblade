@@ -1,7 +1,6 @@
 #ifndef FB_POOL_H
 #define FB_POOL_H
 
-
 #include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Core/ConcurrentQueue.h>
 #include <FBCore/Core/PoolData.h>
@@ -20,10 +19,13 @@ namespace fb
         Pool();
 
         /** Constructor with grow size. */
-        Pool( size_t nextSize );
+        explicit Pool( size_t nextSize );
 
         /** Destructor. */
         ~Pool() override;
+
+        /** Allocates pool data. */
+        void allocateData();
 
         /** Allocates data. */
         RawPtr<T> malloc();
@@ -39,6 +41,9 @@ namespace fb
 
         /** Sets the next size. */
         void setNextSize( size_t nextSize );
+
+        /** Gets the size. */
+        u32 getSize() const;
 
         FB_CLASS_REGISTER_TEMPLATE_PAIR_DECL( Pool, T, A );
 
@@ -77,12 +82,11 @@ namespace fb
     }
 
     template <class T, class A>
-    RawPtr<T> Pool<T, A>::malloc()
+    void Pool<T, A>::allocateData()
     {
-        if( m_freeElements.empty() )
+        auto nextSize = getNextSize();
+        if( nextSize > 0 )
         {
-            auto nextSize = getNextSize();
-
             auto element = fb::make_ptr<PoolData<T, A>>();
             element->setNumElements( nextSize );
             element->load( nullptr );
@@ -95,6 +99,15 @@ namespace fb
                 T *ptr = &( ( *element )[i] );
                 m_freeElements.push( ptr );
             }
+        }
+    }
+
+    template <class T, class A>
+    RawPtr<T> Pool<T, A>::malloc()
+    {
+        if( m_freeElements.empty() )
+        {
+            allocateData();
         }
 
         if( !m_freeElements.empty() )
@@ -145,6 +158,12 @@ namespace fb
     void Pool<T, A>::setNextSize( size_t nextSize )
     {
         m_nextSize = nextSize;
+    }
+
+    template <class T, class A>
+    u32 Pool<T, A>::getSize() const
+    {
+        return static_cast<u32>( m_elements.size() );
     }
 
 }  // namespace fb

@@ -3,7 +3,7 @@
 
 #include <FBPhysx/FBPhysxPrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/Physics/IPhysicsManager.h>
 #include <FBCore/Interface/System/IStateManager.h>
 #include <FBCore/Interface/System/IStateContext.h>
@@ -28,7 +28,7 @@ namespace fb
 
             bool isThreadSafe() const
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 auto physicsManager = applicationManager->getPhysicsManager();
                 auto physicsTask = physicsManager->getPhysicsTask();
 
@@ -41,13 +41,13 @@ namespace fb
 
             void addMessage( SmartPtr<IStateMessage> message )
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 auto physicsManager = applicationManager->getPhysicsManager();
 
-                if( auto stateObject = PhysxSharedObject<T>::getStateObject() )
+                if( auto stateContext = PhysxSharedObject<T>::getStateContext() )
                 {
                     const auto stateTask = physicsManager->getStateTask();
-                    stateObject->addMessage( stateTask, message );
+                    stateContext->addMessage( stateTask, message );
                 }
             }
 
@@ -55,13 +55,13 @@ namespace fb
              * @brief Gets the state object associated with this scene node.
              * @return The state object.
              */
-            SmartPtr<IStateContext> getStateObject() const;
+            SmartPtr<IStateContext> getStateContext() const;
 
             /**
              * @brief Sets the state object associated with this scene node.
-             * @param stateObject The state object.
+             * @param stateContext The state object.
              */
-            void setStateObject( SmartPtr<IStateContext> stateObject );
+            void setStateContext( SmartPtr<IStateContext> stateContext );
 
             /**
              * @brief Gets the state listener associated with this scene node.
@@ -80,31 +80,25 @@ namespace fb
         protected:
             void destroyStateContext()
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
 
                 if( auto stateManager = applicationManager->getStateManager() )
                 {
-                    if( auto stateObject = getStateObject() )
+                    if( auto stateContext = getStateContext() )
                     {
-                        if( auto state = stateObject->getState() )
-                        {
-                            state->unload( nullptr );
-                            stateObject->setState( nullptr );
-                        }
-
                         if( auto stateListener = PhysxSharedObject<T>::getStateListener() )
                         {
-                            stateObject->removeStateListener( stateListener );
+                            stateContext->removeStateListener( stateListener );
                         }
 
-                        stateObject->unload( nullptr );
+                        stateContext->unload( nullptr );
 
                         if( stateManager )
                         {
-                            stateManager->removeStateObject( stateObject );
+                            stateManager->removeStateObject( stateContext );
                         }
 
-                        setStateObject( nullptr );
+                        setStateContext( nullptr );
                     }
 
                     if( auto stateListener = PhysxSharedObject<T>::getStateListener() )
@@ -116,22 +110,22 @@ namespace fb
             }
 
             /**< The state object associated with this scene node. */
-            AtomicSmartPtr<IStateContext> m_stateObject;
+            AtomicSmartPtr<IStateContext> m_stateContext;
 
             /**< The state listener associated with this scene node. */
             AtomicSmartPtr<IStateListener> m_stateListener;
         };
 
         template <typename T>
-        SmartPtr<IStateContext> PhysxSharedObject<T>::getStateObject() const
+        SmartPtr<IStateContext> PhysxSharedObject<T>::getStateContext() const
         {
-            return m_stateObject;
+            return m_stateContext;
         }
 
         template <typename T>
-        void PhysxSharedObject<T>::setStateObject( SmartPtr<IStateContext> stateObject )
+        void PhysxSharedObject<T>::setStateContext( SmartPtr<IStateContext> stateContext )
         {
-            m_stateObject = stateObject;
+            m_stateContext = stateContext;
         }
 
         template <typename T>

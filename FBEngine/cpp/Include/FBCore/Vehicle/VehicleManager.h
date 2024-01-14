@@ -11,23 +11,38 @@ namespace fb
     class VehicleManager : public IVehicleManager
     {
     public:
+        /** Constructor. */
         VehicleManager();
-        ~VehicleManager();
 
+        /** Destructor. */
+        ~VehicleManager() override;
+
+        /** @copydoc IVehicleManager::preUpdate */
         void preUpdate() override;
+
+        /** @copydoc IVehicleManager::update */
         void update() override;
+
+        /** @copydoc IVehicleManager::postUpdate */
         void postUpdate() override;
 
+        /** @copydoc IVehicleManager::createVehicle */
         SmartPtr<IVehicleController> createVehicle( hash64 type ) override;
 
+        /** @copydoc IVehicleManager::destroyVehicle */
         void destroyVehicle( SmartPtr<IVehicleController> vehicle ) override;
 
+        /** @copydoc IVehicleManager::addVehicle */
         void addVehicle( SmartPtr<IVehicleController> vehicle ) override;
 
+        /** @copydoc IVehicleManager::removeVehicle */
         void removeVehicle( SmartPtr<IVehicleController> vehicle ) override;
 
     protected:
+        // The mutex to protect the vehicles array.
         mutable RecursiveMutex m_mutex;
+
+        // The vehicles array.
         Array<SmartPtr<IVehicleController>> m_vehicles;
     };
 

@@ -7,16 +7,12 @@ namespace fb
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageFragmentParam, StateMessage );
 
     //--------------------------------------------
-    StateMessageFragmentParam::StateMessageFragmentParam()
-    {
-    }
+    StateMessageFragmentParam::StateMessageFragmentParam() = default;
 
     //--------------------------------------------
-    StateMessageFragmentParam::~StateMessageFragmentParam()
-    {
-    }
+    StateMessageFragmentParam::~StateMessageFragmentParam() = default;
 
-    String StateMessageFragmentParam::getName() const
+    auto StateMessageFragmentParam::getName() const -> String
     {
         return m_name;
     }
@@ -27,7 +23,7 @@ namespace fb
     }
 
     //--------------------------------------------
-    f32 StateMessageFragmentParam::getFloat() const
+    auto StateMessageFragmentParam::getFloat() const -> f32
     {
         return m_data.fData[0];
     }
@@ -39,9 +35,9 @@ namespace fb
     }
 
     //--------------------------------------------
-    Vector2F StateMessageFragmentParam::getVector2f() const
+    auto StateMessageFragmentParam::getVector2f() const -> Vector2F
     {
-        return Vector2F( m_data.fData[0], m_data.fData[1] );
+        return { m_data.fData[0], m_data.fData[1] };
     }
 
     //--------------------------------------------
@@ -52,9 +48,9 @@ namespace fb
     }
 
     //--------------------------------------------
-    Vector3F StateMessageFragmentParam::getVector3f() const
+    auto StateMessageFragmentParam::getVector3f() const -> Vector3F
     {
-        return Vector3F( m_data.fData[0], m_data.fData[1], m_data.fData[2] );
+        return { m_data.fData[0], m_data.fData[1], m_data.fData[2] };
     }
 
     //--------------------------------------------
@@ -66,9 +62,9 @@ namespace fb
     }
 
     //--------------------------------------------
-    Vector4F StateMessageFragmentParam::getVector4f() const
+    auto StateMessageFragmentParam::getVector4f() const -> Vector4F
     {
-        return Vector4F( m_data.fData[0], m_data.fData[1], m_data.fData[2], m_data.fData[3] );
+        return { m_data.fData[0], m_data.fData[1], m_data.fData[2], m_data.fData[3] };
     }
 
     //--------------------------------------------
@@ -81,9 +77,9 @@ namespace fb
     }
 
     //--------------------------------------------
-    ColourF StateMessageFragmentParam::getColourf() const
+    auto StateMessageFragmentParam::getColourf() const -> ColourF
     {
-        return ColourF( m_data.fData[0], m_data.fData[1], m_data.fData[2], m_data.fData[3] );
+        return { m_data.fData[0], m_data.fData[1], m_data.fData[2], m_data.fData[3] };
     }
 
     //--------------------------------------------

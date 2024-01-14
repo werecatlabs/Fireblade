@@ -1,7 +1,6 @@
 #ifndef Profile_h__
 #define Profile_h__
 
-
 #include <FBCore/Thread/Threading.h>
 #include <FBCore/Interface/System/IProfile.h>
 #include <FBCore/Core/Array.h>

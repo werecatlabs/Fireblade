@@ -8,38 +8,34 @@
 
 namespace fb
 {
-    SoundManager::SoundManager()
-    {
-    }
+    SoundManager::SoundManager() = default;
 
-    SoundManager::~SoundManager()
-    {
-    }
+    SoundManager::~SoundManager() = default;
 
-    SmartPtr<ISound> SoundManager::addSound( const String &name, bool loop /*= true */ )
+    auto SoundManager::addSound( const String &name, bool loop /*= true */ ) -> SmartPtr<ISound>
     {
         return nullptr;
     }
 
-    SmartPtr<ISound2> SoundManager::addSound2( const String &name, bool loop /*= true */ )
+    auto SoundManager::addSound2( const String &name, bool loop /*= true */ ) -> SmartPtr<ISound2>
     {
         return nullptr;
     }
 
-    SmartPtr<ISound3> SoundManager::addSound3( const String &name,
-                                                const Vector3F &position /*= Vector3F::zero()*/,
-                                                bool loop /*= true */ )
+    auto SoundManager::addSound3( const String &name, const Vector3F &position /*= Vector3F::zero()*/,
+                                  bool loop /*= true */ ) -> SmartPtr<ISound3>
     {
         return nullptr;
     }
 
-    SmartPtr<ISoundListener3> SoundManager::addListener3(
-        const String &name, const Vector3F &position /*= Vector3F::zero() */ )
+    auto SoundManager::addListener3( const String &name,
+                                     const Vector3F &position /*= Vector3F::zero() */ )
+        -> SmartPtr<ISoundListener3>
     {
         return nullptr;
     }
 
-    SmartPtr<ISoundListener3> SoundManager::findListener3( const String &name )
+    auto SoundManager::findListener3( const String &name ) -> SmartPtr<ISoundListener3>
     {
         return nullptr;
     }
@@ -48,7 +44,7 @@ namespace fb
     {
     }
 
-    f32 SoundManager::getVolume() const
+    auto SoundManager::getVolume() const -> f32
     {
         return 0.0f;
     }
@@ -61,7 +57,7 @@ namespace fb
     {
     }
 
-    u32 SoundManager::getBufferSize() const
+    auto SoundManager::getBufferSize() const -> u32
     {
         return 0;
     }
@@ -70,12 +66,12 @@ namespace fb
     {
     }
 
-    bool SoundManager::isRealtime() const
+    auto SoundManager::isRealtime() const -> bool
     {
         return false;
     }
 
-    bool SoundManager::isMute() const
+    auto SoundManager::isMute() const -> bool
     {
         return false;
     }
@@ -84,48 +80,47 @@ namespace fb
     {
     }
 
-    SmartPtr<IResource> SoundManager::create( const String &name )
+    auto SoundManager::create( const String &name ) -> SmartPtr<IResource>
     {
         return nullptr;
     }
 
-    SmartPtr<IResource> SoundManager::create( const String &uuid, const String &name )
+    auto SoundManager::create( const String &uuid, const String &name ) -> SmartPtr<IResource>
     {
         return nullptr;
     }
 
-    Pair<SmartPtr<IResource>, bool> SoundManager::createOrRetrieve( const String &uuid,
-                                                                     const String &path,
-                                                                     const String &type )
+    auto SoundManager::createOrRetrieve( const String &uuid, const String &path, const String &type )
+        -> Pair<SmartPtr<IResource>, bool>
     {
-        return Pair<SmartPtr<IResource>, bool>();
+        return {};
     }
 
-    Pair<SmartPtr<IResource>, bool> SoundManager::createOrRetrieve( const String &path )
+    auto SoundManager::createOrRetrieve( const String &path ) -> Pair<SmartPtr<IResource>, bool>
     {
-        return Pair<SmartPtr<IResource>, bool>();
+        return {};
     }
 
     void SoundManager::saveToFile( const String &filePath, SmartPtr<IResource> resource )
     {
     }
 
-    SmartPtr<IResource> SoundManager::loadFromFile( const String &filePath )
+    auto SoundManager::loadFromFile( const String &filePath ) -> SmartPtr<IResource>
     {
         return nullptr;
     }
 
-    SmartPtr<IResource> SoundManager::load( const String &name )
+    auto SoundManager::loadResource( const String &name ) -> SmartPtr<IResource>
     {
         return nullptr;
     }
 
-    SmartPtr<IResource> SoundManager::getByName( const String &name )
+    auto SoundManager::getByName( const String &name ) -> SmartPtr<IResource>
     {
         return nullptr;
     }
 
-    SmartPtr<IResource> SoundManager::getById( const String &uuid )
+    auto SoundManager::getById( const String &uuid ) -> SmartPtr<IResource>
     {
         return nullptr;
     }

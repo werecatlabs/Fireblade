@@ -7,15 +7,11 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, LightState, BaseState );
 
-    LightState::LightState()
-    {
-    }
+    LightState::LightState() = default;
 
-    LightState::~LightState()
-    {
-    }
+    LightState::~LightState() = default;
 
-    ColourF LightState::getDiffuseColour() const
+    auto LightState::getDiffuseColour() const -> ColourF
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_diffuseColour;
@@ -28,7 +24,7 @@ namespace fb
         setDirty( true );
     }
 
-    ColourF LightState::getSpecularColour() const
+    auto LightState::getSpecularColour() const -> ColourF
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_specularColour;
@@ -41,7 +37,7 @@ namespace fb
         setDirty( true );
     }
 
-    Vector3F LightState::getDirection() const
+    auto LightState::getDirection() const -> Vector3F
     {
         return m_direction;
     }
@@ -51,7 +47,7 @@ namespace fb
         m_direction = direction;
     }
 
-    Vector4F LightState::getAttenuation() const
+    auto LightState::getAttenuation() const -> Vector4F
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_attenuation;
@@ -64,7 +60,7 @@ namespace fb
         setDirty( true );
     }
 
-    hash32 LightState::getLightType() const
+    auto LightState::getLightType() const -> hash32
     {
         return m_lightType;
     }
@@ -74,7 +70,7 @@ namespace fb
         m_lightType = lightType;
     }
 
-    f32 LightState::getRange() const
+    auto LightState::getRange() const -> f32
     {
         return m_range;
     }
@@ -84,7 +80,7 @@ namespace fb
         m_range = range;
     }
 
-    f32 LightState::getConstant() const
+    auto LightState::getConstant() const -> f32
     {
         return m_constant;
     }
@@ -94,7 +90,7 @@ namespace fb
         m_constant = constant;
     }
 
-    f32 LightState::getLinear() const
+    auto LightState::getLinear() const -> f32
     {
         return m_linear;
     }
@@ -104,7 +100,7 @@ namespace fb
         m_linear = linear;
     }
 
-    f32 LightState::getQuadratic() const
+    auto LightState::getQuadratic() const -> f32
     {
         return m_quadratic;
     }
@@ -114,7 +110,7 @@ namespace fb
         m_quadratic = quadratic;
     }
 
-    SmartPtr<IState> LightState::clone() const
+    auto LightState::clone() const -> SmartPtr<IState>
     {
         auto state = fb::make_ptr<LightState>();
         state->m_diffuseColour = m_diffuseColour;
@@ -129,4 +125,4 @@ namespace fb
         return state;
     }
 
-} // end namespace fb
+}  // end namespace fb

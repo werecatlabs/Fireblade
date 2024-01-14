@@ -105,12 +105,35 @@ namespace fb
              * @param tolerance The linear tolerance for constraint
              */
             virtual void setProjectionLinearTolerance( real_Num tolerance ) = 0;
+
+            /**
+             * @brief Get the linear tolerance for constraint projection.
+             *
+             * @return real_Num The linear tolerance for constraint projection.
+             */
             virtual real_Num getProjectionLinearTolerance() const = 0;
 
+            /**
+             * @brief Set the angular tolerance for constraint projection.
+             *
+             * @param tolerance The angular tolerance for constraint projection.
+             */
             virtual void setProjectionAngularTolerance( real_Num tolerance ) = 0;
+
+            /** @brief Get the angular tolerance for constraint projection.
+             */
             virtual real_Num getProjectionAngularTolerance() const = 0;
 
+            /**
+             * @brief Set the user data for the constraint.
+             *
+             * @param userData The user data to set.
+             */
             void *getUserData() const override = 0;
+
+            /**
+             * @brief Get the user data for the constraint.
+             */
             void setUserData( void *userData ) override = 0;
         };
     }  // end namespace physics

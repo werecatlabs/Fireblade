@@ -4,26 +4,19 @@
 #include <FBCore/Interface/Physics/IPhysicsMaterial3.h>
 #include <FBCore/Interface/Physics/IPhysicsShape3.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+    FB_CLASS_REGISTER_DERIVED( fb::scene, CollisionSphere, Collision );
+
+    CollisionSphere::CollisionSphere() = default;
+
+    CollisionSphere::~CollisionSphere() = default;
+
+    void CollisionSphere::load( SmartPtr<ISharedObject> data )
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, CollisionSphere, Collision );
+    }
 
-        CollisionSphere::CollisionSphere()
-        {
-        }
-
-        CollisionSphere::~CollisionSphere()
-        {
-        }
-
-        void CollisionSphere::load( SmartPtr<ISharedObject> data )
-        {
-        }
-
-        void CollisionSphere::unload( SmartPtr<ISharedObject> data )
-        {
-        }
-    }  // namespace scene
-}  // end namespace fb
+    void CollisionSphere::unload( SmartPtr<ISharedObject> data )
+    {
+    }
+}  // namespace fb::scene

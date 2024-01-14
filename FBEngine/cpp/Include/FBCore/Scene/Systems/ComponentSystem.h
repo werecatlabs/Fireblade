@@ -1,14 +1,14 @@
 #ifndef ComponentSystem_h__
 #define ComponentSystem_h__
 
-#include <FBCore/Interface/Scene/ISystem.h>
+#include <FBCore/Interface/Scene/IComponentSystem.h>
 
 namespace fb
 {
     namespace scene
     {
 
-        class ComponentSystem : public ISystem
+        class ComponentSystem : public IComponentSystem
         {
         public:
             ComponentSystem();

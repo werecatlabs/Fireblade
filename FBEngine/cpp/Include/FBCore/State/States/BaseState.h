@@ -31,8 +31,9 @@ namespace fb
 
         void setRegistered( bool registered );
 
-        SmartPtr<IStateContext> getStateContext() const override;
-        void setStateContext( SmartPtr<IStateContext> stateObject ) override;
+        SmartPtr<IStateContext> &getStateContext() override;
+        const SmartPtr<IStateContext> &getStateContext() const override;
+        void setStateContext( SmartPtr<IStateContext> stateContext ) override;
 
         Thread::Task getTaskId() const override;
         void setTaskId( Thread::Task task ) override;
@@ -60,8 +61,8 @@ namespace fb
         void makeClone( SmartPtr<BaseState> state ) const;
 
         mutable SpinRWMutex m_mutex;
-        AtomicWeakPtr<ISharedObject> m_owner;
-        AtomicWeakPtr<IStateContext> m_stateObject;
+        SmartPtr<ISharedObject> m_owner;
+        SmartPtr<IStateContext> m_stateContext;
         Atomic<Thread::Task> m_taskId = Thread::Task::Primary;
         atomic_f64 m_time = 0.0;
         atomic_s32 m_dirty = 0;

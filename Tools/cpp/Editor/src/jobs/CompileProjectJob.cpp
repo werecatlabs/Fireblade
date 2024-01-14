@@ -5,27 +5,20 @@
 #include <ui/UIManager.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    CompileProjectJob::CompileProjectJob() = default;
+
+    CompileProjectJob::~CompileProjectJob() = default;
+
+    void CompileProjectJob::execute()
     {
+        auto applicationManager = core::ApplicationManager::instance();
+        auto editorManager = EditorManager::getSingletonPtr();
+        auto project = editorManager->getProject();
 
-        CompileProjectJob::CompileProjectJob()
-        {
-        }
+        project->compile();
+    }
 
-        CompileProjectJob::~CompileProjectJob()
-        {
-        }
-
-        void CompileProjectJob::execute()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            auto editorManager = EditorManager::getSingletonPtr();
-            auto project = editorManager->getProject();
-
-            project->compile();
-        }
-
-    }  // namespace editor
-}  // namespace fb
+}  // namespace fb::editor

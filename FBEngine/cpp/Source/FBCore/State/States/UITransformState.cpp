@@ -6,15 +6,11 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, UITransformState, BaseState );
 
-    UITransformState::UITransformState()
-    {
-    }
+    UITransformState::UITransformState() = default;
 
-    UITransformState::~UITransformState()
-    {
-    }
+    UITransformState::~UITransformState() = default;
 
-    ISharedObject *UITransformState::getUIComponent() const
+    auto UITransformState::getUIComponent() const -> ISharedObject *
     {
         return m_uiComponent;
     }
@@ -25,7 +21,7 @@ namespace fb
         setDirty( true );
     }
 
-    ISharedObject *UITransformState::getOwner() const
+    auto UITransformState::getOwner() const -> ISharedObject *
     {
         return m_owner;
     }
@@ -36,7 +32,7 @@ namespace fb
         setDirty( true );
     }
 
-    Vector2F UITransformState::getPosition() const
+    auto UITransformState::getPosition() const -> Vector2F
     {
         return m_position;
     }
@@ -47,7 +43,7 @@ namespace fb
         setDirty( true );
     }
 
-    Vector2F UITransformState::getSize() const
+    auto UITransformState::getSize() const -> Vector2F
     {
         return m_size;
     }
@@ -58,7 +54,7 @@ namespace fb
         setDirty( true );
     }
 
-    Vector2F UITransformState::getAbsolutePosition() const
+    auto UITransformState::getAbsolutePosition() const -> Vector2F
     {
         return m_absolutePosition;
     }
@@ -69,7 +65,7 @@ namespace fb
         setDirty( true );
     }
 
-    Vector2F UITransformState::getAbsoluteSize() const
+    auto UITransformState::getAbsoluteSize() const -> Vector2F
     {
         return m_absoluteSize;
     }
@@ -80,7 +76,7 @@ namespace fb
         setDirty( true );
     }
 
-    Vector2F UITransformState::getAnchor() const
+    auto UITransformState::getAnchor() const -> Vector2F
     {
         return m_anchor;
     }
@@ -91,7 +87,7 @@ namespace fb
         setDirty( true );
     }
 
-    Vector2F UITransformState::getAnchorMin() const
+    auto UITransformState::getAnchorMin() const -> Vector2F
     {
         return m_anchorMin;
     }
@@ -102,7 +98,7 @@ namespace fb
         setDirty( true );
     }
 
-    Vector2F UITransformState::getAnchorMax() const
+    auto UITransformState::getAnchorMax() const -> Vector2F
     {
         return m_anchorMax;
     }
@@ -113,7 +109,7 @@ namespace fb
         setDirty( true );
     }
 
-    u8 UITransformState::getVerticalAlignment() const
+    auto UITransformState::getVerticalAlignment() const -> u8
     {
         return m_verticalAlignment;
     }
@@ -124,7 +120,7 @@ namespace fb
         setDirty( true );
     }
 
-    u8 UITransformState::getHorizontalAlignment() const
+    auto UITransformState::getHorizontalAlignment() const -> u8
     {
         return m_horizontalAlignment;
     }

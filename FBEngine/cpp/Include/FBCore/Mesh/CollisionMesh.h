@@ -7,7 +7,7 @@
 
 namespace fb
 {
-    
+
     class CollisionMesh : public ISharedObject
     {
     public:
@@ -15,7 +15,7 @@ namespace fb
         {
         public:
             HitData();
-            HitData( f32 distance );
+            explicit HitData( f32 distance );
 
             f32 getHitDistance() const;
             void setHitDistance( f32 hitDistance );
@@ -40,6 +40,6 @@ namespace fb
     private:
         Array<SmartPtr<CollisionSubMesh>> m_subMeshes;
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif  // CollisionMesh_h__

@@ -8,10 +8,14 @@ namespace fb
     namespace core
     {
 
+        /** Implementation of IPlugin interface. */
         class Plugin : public IPlugin
         {
         public:
+            /** Constructor. */
             Plugin() = default;
+
+            /** Destructor. */
             ~Plugin() override;
 
             /** @copydoc ISharedObject::load */
@@ -39,7 +43,10 @@ namespace fb
             void setFilePath( const StringW &fileName ) override;
 
         protected:
+            /** The filename. */
             StringW m_filename;
+
+            /** The library handle. */
             LibraryHandle m_hMod = nullptr;
         };
 

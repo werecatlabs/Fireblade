@@ -4,104 +4,101 @@
 #include <FBImGui/ImGuiManager.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+
+    FB_CLASS_REGISTER_DERIVED( fb::ui, ImGuiRenderWindow, ImGuiWindowT<IUIRenderWindow> );
+
+    ImGuiRenderWindow::ImGuiRenderWindow() = default;
+
+    ImGuiRenderWindow::~ImGuiRenderWindow()
     {
+        unload( nullptr );
+    }
 
-        ImGuiRenderWindow::ImGuiRenderWindow()
+    auto ImGuiRenderWindow::getHWND() const -> void *
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto uiManager = fb::static_pointer_cast<ImGuiManager>( applicationManager->getUI() );
+        FB_ASSERT( uiManager );
+
+        if( uiManager )
         {
-        }
-
-        ImGuiRenderWindow::~ImGuiRenderWindow()
-        {
-            unload( nullptr );
-        }
-
-        void *ImGuiRenderWindow::getHWND() const
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto uiManager = fb::static_pointer_cast<ImGuiManager>( applicationManager->getUI() );
-            FB_ASSERT( uiManager );
-
-            if( uiManager )
+            auto application = uiManager->getApplication();
+            if( application )
             {
-                auto application = uiManager->getApplication();
-                if( application )
-                {
-                    auto pApplication = fb::static_pointer_cast<ImGuiApplication>( application );
-                    return pApplication->getHWND();
-                }
+                auto pApplication = fb::static_pointer_cast<ImGuiApplication>( application );
+                return pApplication->getHWND();
             }
-
-            return nullptr;
         }
 
-        SmartPtr<render::IWindow> ImGuiRenderWindow::getWindow() const
-        {
-            return m_window.lock();
-        }
+        return nullptr;
+    }
 
-        void ImGuiRenderWindow::setWindow( SmartPtr<render::IWindow> window )
-        {
-            m_window = window;
-        }
+    auto ImGuiRenderWindow::getWindow() const -> SmartPtr<render::IWindow>
+    {
+        return m_window.lock();
+    }
 
-        SmartPtr<render::ITexture> ImGuiRenderWindow::getRenderTexture() const
-        {
-            return m_renderTexture.lock();
-        }
+    void ImGuiRenderWindow::setWindow( SmartPtr<render::IWindow> window )
+    {
+        m_window = window;
+    }
 
-        void ImGuiRenderWindow::setRenderTexture( SmartPtr<render::ITexture> renderTexture )
-        {
-            m_renderTexture = renderTexture;
-        }
+    auto ImGuiRenderWindow::getRenderTexture() const -> SmartPtr<render::ITexture>
+    {
+        return m_renderTexture.lock();
+    }
 
-        void ImGuiRenderWindow::load( SmartPtr<ISharedObject> data )
-        {
-            setLoadingState( LoadingState::Loading );
+    void ImGuiRenderWindow::setRenderTexture( SmartPtr<render::ITexture> renderTexture )
+    {
+        m_renderTexture = renderTexture;
+    }
 
-            // auto applicationManager = core::IApplicationManager::instance();
-            // FB_ASSERT(applicationManager);
+    void ImGuiRenderWindow::load( SmartPtr<ISharedObject> data )
+    {
+        setLoadingState( LoadingState::Loading );
 
-            // auto graphicsSystem = applicationManager->getGraphicsSystem();
-            // FB_ASSERT(graphicsSystem);
+        // auto applicationManager = core::ApplicationManager::instance();
+        // FB_ASSERT(applicationManager);
 
-            // if (graphicsSystem)
-            //{
-            //	auto width = 400;
-            //	auto height = 400;
-            //	auto windowName = String("RenderWindow");
+        // auto graphicsSystem = applicationManager->getGraphicsSystem();
+        // FB_ASSERT(graphicsSystem);
 
-            //	auto properties = fb::make_ptr<Properties>();
+        // if (graphicsSystem)
+        //{
+        //	auto width = 400;
+        //	auto height = 400;
+        //	auto windowName = String("RenderWindow");
 
-            //	static u32 nameExt = 0;
-            //	String name = String("Window") + StringUtil::toString(nameExt++);
+        //	auto properties = fb::make_ptr<Properties>();
 
-            //	auto pHandle = getHWND();
-            //	auto uiHandle = (size_t)(pHandle);
-            //	auto handle = std::to_string(uiHandle);
+        //	static u32 nameExt = 0;
+        //	String name = String("Window") + StringUtil::toString(nameExt++);
 
-            //	properties->setProperty("WindowHandle", handle);
+        //	auto pHandle = getHWND();
+        //	auto uiHandle = (size_t)(pHandle);
+        //	auto handle = std::to_string(uiHandle);
 
-            //	m_window = graphicsSystem->createRenderWindow(windowName, width, height, false,
-            // properties);
-            //}
+        //	properties->setProperty("WindowHandle", handle);
 
-            setLoadingState( LoadingState::Loaded );
-        }
+        //	m_window = graphicsSystem->createRenderWindow(windowName, width, height, false,
+        // properties);
+        //}
 
-        void ImGuiRenderWindow::unload( SmartPtr<ISharedObject> data )
-        {
-            setLoadingState( LoadingState::Unloading );
+        setLoadingState( LoadingState::Loaded );
+    }
 
-            m_window = nullptr;
-            m_renderTexture = nullptr;
-            CImGuiElement<IUIRenderWindow>::unload( nullptr );
+    void ImGuiRenderWindow::unload( SmartPtr<ISharedObject> data )
+    {
+        setLoadingState( LoadingState::Unloading );
 
-            setLoadingState( LoadingState::Unloaded );
-        }
-    }  // end namespace ui
-}  // end namespace fb
+        m_window = nullptr;
+        m_renderTexture = nullptr;
+        CImGuiElement<IUIRenderWindow>::unload( nullptr );
+
+        setLoadingState( LoadingState::Unloaded );
+    }
+}  // namespace fb::ui

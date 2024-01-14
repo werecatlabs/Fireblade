@@ -1,5 +1,5 @@
-#ifndef CanvasTransform_h__
-#define CanvasTransform_h__
+#ifndef __LayoutTransform_h__
+#define __LayoutTransform_h__
 
 #include <FBCore/Scene/Components/Component.h>
 
@@ -7,7 +7,6 @@ namespace fb
 {
     namespace scene
     {
-
         /** Component for ui component transforms. */
         class LayoutTransform : public Component
         {
@@ -40,13 +39,13 @@ namespace fb
             /** Destructor. */
             ~LayoutTransform() override;
 
-            /** @copydoc IObject::load */
+            /** @copydoc Component::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::unload */
+            /** @copydoc Component::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::preUpdate */
+            /** @copydoc Component::updateTransform */
             void updateTransform() override;
 
             Vector2F getPosition() const;
@@ -66,10 +65,10 @@ namespace fb
 
             void setAnchorMax( const Vector2F &anchorMax );
 
-            /** @copydoc BaseComponent::getProperties */
+            /** @copydoc Component::getProperties */
             SmartPtr<Properties> getProperties() const override;
 
-            /** @copydoc BaseComponent::setProperties */
+            /** @copydoc Component::setProperties */
             void setProperties( SmartPtr<Properties> properties ) override;
 
             void setHorizontalAlignment( HorizontalAlignment gha );
@@ -95,7 +94,8 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType );
+            /** @copydoc Component::handleComponentEvent */
+            IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType ) override;
 
             /**
              * @brief Sets up the canvas for the UIComponent.
@@ -105,6 +105,7 @@ namespace fb
              */
             virtual void setupCanvas();
 
+            /** The ui component transform. */
             SmartPtr<UIComponent> m_uiComponent;
 
             /**
@@ -115,4 +116,4 @@ namespace fb
     }  // namespace scene
 }  // end namespace fb
 
-#endif  // CanvasTransform_h__
+#endif  // __LayoutTransform_h__

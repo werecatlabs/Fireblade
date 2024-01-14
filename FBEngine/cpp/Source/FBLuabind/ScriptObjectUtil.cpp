@@ -58,10 +58,9 @@ namespace fb
                 return true;
             }
 
-            if( scriptObj->isDerived<ui::IUILabelCheckboxPair>() )
+            if( scriptObj->isDerived<ui::IUILabelTogglePair>() )
             {
-                luabind::detail::convert_to_lua( L,
-                                                 static_cast<ui::IUILabelCheckboxPair *>( scriptObj ) );
+                luabind::detail::convert_to_lua( L, static_cast<ui::IUILabelTogglePair *>( scriptObj ) );
                 return true;
             }
             if( scriptObj->isDerived<ui::IUILabelTextInputPair>() )

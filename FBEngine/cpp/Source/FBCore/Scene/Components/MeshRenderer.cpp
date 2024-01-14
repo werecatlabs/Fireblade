@@ -16,256 +16,34 @@
 #include <FBCore/Core/BitUtil.h>
 #include <FBCore/Core/LogManager.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+    FB_CLASS_REGISTER_DERIVED( fb::scene, MeshRenderer, IComponent );
+
+    MeshRenderer::MeshRenderer() = default;
+
+    MeshRenderer::~MeshRenderer()
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, MeshRenderer, IComponent );
+        unload( nullptr );
+    }
 
-        MeshRenderer::MeshRenderer()
+    void MeshRenderer::updateFlags( u32 flags, u32 oldFlags )
+    {
+        if( auto actor = getActor() )
         {
-        }
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
 
-        MeshRenderer::~MeshRenderer()
-        {
-            unload( nullptr );
-        }
-
-        void MeshRenderer::updateDirty( u32 flags, u32 oldFlags )
-        {
-            if( auto actor = getActor() )
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            if( graphicsSystem )
             {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
+                auto smgr = graphicsSystem->getGraphicsScene();
+                FB_ASSERT( smgr );
 
-                auto graphicsSystem = applicationManager->getGraphicsSystem();
-                if( graphicsSystem )
-                {
-                    auto smgr = graphicsSystem->getGraphicsScene();
-                    FB_ASSERT( smgr );
+                auto rootNode = smgr->getRootSceneNode();
 
-                    auto rootNode = smgr->getRootSceneNode();
-
-                    if( BitUtil::getFlagValue( flags, IActor::ActorFlagInScene ) !=
-                        BitUtil::getFlagValue( oldFlags, IActor::ActorFlagInScene ) )
-                    {
-                        if( !m_meshObject )
-                        {
-                            updateMesh();
-                            updateMaterials();
-                            updateTransform();
-                        }
-
-                        auto visible = isEnabled() && actor->isEnabledInScene();
-                        if( visible )
-                        {
-                            if( m_graphicshNode )
-                            {
-                                auto parent = m_graphicshNode->getParent();
-                                if( !parent )
-                                {
-                                    rootNode->addChild( m_graphicshNode );
-                                }
-
-                                m_graphicshNode->setVisible( true );
-                            }
-                        }
-                        else
-                        {
-                            if( m_graphicshNode )
-                            {
-                                auto parent = m_graphicshNode->getParent();
-                                if( parent )
-                                {
-                                    parent->removeChild( m_graphicshNode );
-                                }
-
-                                m_graphicshNode->setVisible( false );
-                            }
-                        }
-                    }
-                    else if( BitUtil::getFlagValue( flags, IActor::ActorFlagEnabled ) !=
-                             BitUtil::getFlagValue( oldFlags, IActor::ActorFlagEnabled ) )
-                    {
-                        auto visible = isEnabled() && actor->isEnabledInScene();
-                        if( visible )
-                        {
-                            if( m_graphicshNode )
-                            {
-                                auto parent = m_graphicshNode->getParent();
-                                if( !parent )
-                                {
-                                    rootNode->addChild( m_graphicshNode );
-                                }
-
-                                m_graphicshNode->setVisible( true );
-                            }
-                        }
-                        else
-                        {
-                            if( m_graphicshNode )
-                            {
-                                auto parent = m_graphicshNode->getParent();
-                                if( parent )
-                                {
-                                    parent->removeChild( m_graphicshNode );
-                                }
-
-                                m_graphicshNode->setVisible( false );
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        void MeshRenderer::load( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-                setLoadingState( LoadingState::Loading );
-
-                auto applicationManager = core::IApplicationManager::instance();
-                auto sceneManager = applicationManager->getSceneManager();
-
-                Component::load( data );
-
-                sceneManager->registerComponentUpdate( Thread::Task::Render,
-                                                       Thread::UpdateState::Transform, this );
-
-                setLoadingState( LoadingState::Loaded );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void MeshRenderer::unload( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-                const auto &loadingState = getLoadingState();
-                if( loadingState != LoadingState::Unloaded )
-                {
-                    setLoadingState( LoadingState::Unloading );
-
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto sceneManager = applicationManager->getSceneManager();
-
-                    auto graphicsSystem = applicationManager->getGraphicsSystem();
-                    if( graphicsSystem )
-                    {
-                        auto smgr = graphicsSystem->getGraphicsScene();
-                        FB_ASSERT( smgr );
-
-                        if( auto meshNode = getMeshNode() )
-                        {
-                            if( auto meshObject = getMeshObject() )
-                            {
-                                meshNode->detachObject( meshObject );
-                                smgr->removeGraphicsObject( meshObject );
-                                setMeshObject( nullptr );
-                            }
-
-                            meshNode->detachAllObjects();
-                            smgr->removeSceneNode( meshNode );
-                            setMeshNode( nullptr );
-                        }
-                        else
-                        {
-                            setMeshObject( nullptr );
-                            setMeshNode( nullptr );
-                        }
-                    }
-
-                    if( sceneManager )
-                    {
-                        sceneManager->unregisterAllComponent( this );
-                    }
-
-                    Component::unload( data );
-
-                    setLoadingState( LoadingState::Unloaded );
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        Array<SmartPtr<ISharedObject>> MeshRenderer::getChildObjects() const
-        {
-            auto objects = Array<SmartPtr<ISharedObject>>();
-            objects.reserve( 4 );
-
-            objects.push_back( m_meshObject );
-            objects.push_back( m_graphicshNode );
-            objects.push_back( m_sharedMaterial );
-            return objects;
-        }
-
-        SmartPtr<Properties> MeshRenderer::getProperties() const
-        {
-            if( auto properties = Renderer::getProperties() )
-            {
-                properties->setProperty( "castShadows", static_cast<s32>( m_castShadows ) );
-
-                return properties;
-            }
-
-            return nullptr;
-        }
-
-        void MeshRenderer::setProperties( SmartPtr<Properties> properties )
-        {
-            s32 castShadows = 0;
-            properties->getPropertyValue( "castShadows", castShadows );
-            m_castShadows = static_cast<CastShadows>( castShadows );
-        }
-
-        SmartPtr<render::IMaterial> MeshRenderer::getSharedMaterial() const
-        {
-            return m_sharedMaterial;
-        }
-
-        void MeshRenderer::setSharedMaterial( SmartPtr<render::IMaterial> sharedMaterial )
-        {
-            m_sharedMaterial = sharedMaterial;
-        }
-
-        String MeshRenderer::getMaterialName() const
-        {
-            return m_materialName;
-        }
-
-        void MeshRenderer::setMaterialName( const String &materialName )
-        {
-            m_materialName = materialName;
-        }
-
-        IFSM::ReturnType MeshRenderer::handleComponentEvent( u32 state, IFSM::Event eventType )
-        {
-            Component::handleComponentEvent( state, eventType );
-
-            switch( eventType )
-            {
-            case IFSM::Event::Change:
-                break;
-            case IFSM::Event::Enter:
-            {
-                auto eState = static_cast<State>( state );
-                switch( eState )
-                {
-                case State::Destroyed:
-                {
-                }
-                break;
-                case State::Edit:
-                case State::Play:
+                if( BitUtil::getFlagValue( flags, IActor::ActorFlagInScene ) !=
+                    BitUtil::getFlagValue( oldFlags, IActor::ActorFlagInScene ) )
                 {
                     if( !m_meshObject )
                     {
@@ -274,73 +52,104 @@ namespace fb
                         updateTransform();
                     }
 
-                    if( auto actor = getActor() )
+                    auto visible = isEnabled() && actor->isEnabledInScene();
+                    if( visible )
                     {
-                        if( actor->getName().find( "poly" ) != String::npos )
+                        if( m_graphicsNode )
                         {
-                            int stop = 0;
-                            stop = 0;
+                            auto parent = m_graphicsNode->getParent();
+                            if( !parent )
+                            {
+                                rootNode->addChild( m_graphicsNode );
+                            }
+
+                            m_graphicsNode->setVisible( true );
                         }
-
-                        auto visible = isEnabled() && actor->isEnabledInScene();
-
-                        if( auto meshNode = getMeshNode() )
+                    }
+                    else
+                    {
+                        if( m_graphicsNode )
                         {
-                            meshNode->setVisible( visible );
+                            auto parent = m_graphicsNode->getParent();
+                            if( parent )
+                            {
+                                parent->removeChild( m_graphicsNode );
+                            }
+
+                            m_graphicsNode->setVisible( false );
                         }
                     }
                 }
-                break;
-                default:
+                else if( BitUtil::getFlagValue( flags, IActor::ActorFlagEnabled ) !=
+                         BitUtil::getFlagValue( oldFlags, IActor::ActorFlagEnabled ) )
                 {
-                }
-                }
-            }
-            break;
-            case IFSM::Event::Leave:
-            {
-                auto eState = static_cast<State>( state );
-                switch( eState )
-                {
-                case State::Play:
-                {
-                    // if (!m_meshObject)
-                    //{
-                    //	updateMesh();
-                    //	updateMaterials();
-                    //	updateTransform();
-                    // }
-                }
-                break;
-                default:
-                {
-                }
-                }
-            }
-            break;
-            case IFSM::Event::Pending:
-                break;
-            case IFSM::Event::Complete:
-                break;
-            case IFSM::Event::NewState:
-                break;
-            case IFSM::Event::WaitForChange:
-                break;
-            default:
-            {
-            }
-            break;
-            }
+                    auto visible = isEnabled() && actor->isEnabledInScene();
+                    if( visible )
+                    {
+                        if( m_graphicsNode )
+                        {
+                            auto parent = m_graphicsNode->getParent();
+                            if( !parent )
+                            {
+                                rootNode->addChild( m_graphicsNode );
+                            }
 
-            return IFSM::ReturnType::Ok;
+                            m_graphicsNode->setVisible( true );
+                        }
+                    }
+                    else
+                    {
+                        if( m_graphicsNode )
+                        {
+                            auto parent = m_graphicsNode->getParent();
+                            if( parent )
+                            {
+                                parent->removeChild( m_graphicsNode );
+                            }
+
+                            m_graphicsNode->setVisible( false );
+                        }
+                    }
+                }
+            }
         }
+    }
 
-        void MeshRenderer::updateMesh()
+    void MeshRenderer::load( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            try
+            setLoadingState( LoadingState::Loading );
+
+            auto applicationManager = core::ApplicationManager::instance();
+            auto sceneManager = applicationManager->getSceneManager();
+
+            Component::load( data );
+
+            sceneManager->registerComponentUpdate( Thread::Task::Render, Thread::UpdateState::Transform,
+                                                   this );
+
+            setLoadingState( LoadingState::Loaded );
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void MeshRenderer::unload( SmartPtr<ISharedObject> data )
+    {
+        try
+        {
+            const auto &loadingState = getLoadingState();
+            if( loadingState != LoadingState::Unloaded )
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                setLoadingState( LoadingState::Unloading );
+
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
+
+                auto sceneManager = applicationManager->getSceneManager();
 
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
                 if( graphicsSystem )
@@ -348,137 +157,280 @@ namespace fb
                     auto smgr = graphicsSystem->getGraphicsScene();
                     FB_ASSERT( smgr );
 
-                    if( auto actor = getActor() )
+                    if( auto meshNode = getMeshNode() )
                     {
-                        auto meshComponent = actor->getComponent<Mesh>();
-                        if( meshComponent )
+                        if( auto meshObject = getMeshObject() )
                         {
-                            auto meshPath = meshComponent->getMeshPath();
-                            if( !StringUtil::isNullOrEmpty( meshPath ) )
+                            meshNode->detachObject( meshObject );
+                            smgr->removeGraphicsObject( meshObject );
+                            setMeshObject( nullptr );
+                        }
+
+                        meshNode->detachAllObjects();
+                        smgr->removeSceneNode( meshNode );
+                        setMeshNode( nullptr );
+                    }
+                    else
+                    {
+                        setMeshObject( nullptr );
+                        setMeshNode( nullptr );
+                    }
+                }
+
+                if( sceneManager )
+                {
+                    sceneManager->unregisterAllComponent( this );
+                }
+
+                Component::unload( data );
+
+                setLoadingState( LoadingState::Unloaded );
+            }
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    auto MeshRenderer::getChildObjects() const -> Array<SmartPtr<ISharedObject>>
+    {
+        auto objects = Array<SmartPtr<ISharedObject>>();
+        objects.reserve( 4 );
+
+        objects.emplace_back( m_meshObject );
+        objects.emplace_back( m_graphicsNode );
+        objects.emplace_back( m_sharedMaterial );
+        return objects;
+    }
+
+    auto MeshRenderer::getProperties() const -> SmartPtr<Properties>
+    {
+        if( auto properties = Renderer::getProperties() )
+        {
+            properties->setProperty( "castShadows", static_cast<s32>( m_castShadows ) );
+
+            return properties;
+        }
+
+        return nullptr;
+    }
+
+    void MeshRenderer::setProperties( SmartPtr<Properties> properties )
+    {
+        Renderer::setProperties( properties );
+
+        updateVisibility();
+    }
+
+    auto MeshRenderer::handleComponentEvent( u32 state, IFSM::Event eventType ) -> IFSM::ReturnType
+    {
+        Component::handleComponentEvent( state, eventType );
+
+        switch( eventType )
+        {
+        case IFSM::Event::Change:
+            break;
+        case IFSM::Event::Enter:
+        {
+            auto eState = static_cast<State>( state );
+            switch( eState )
+            {
+            case State::Destroyed:
+            {
+            }
+            break;
+            case State::Edit:
+            case State::Play:
+            {
+                if( !m_meshObject )
+                {
+                    updateMesh();
+                    updateMaterials();
+                    updateTransform();
+                }
+
+                updateVisibility();
+            }
+            break;
+            default:
+            {
+            }
+            }
+        }
+        break;
+        case IFSM::Event::Leave:
+        {
+            auto eState = static_cast<State>( state );
+            switch( eState )
+            {
+            case State::Play:
+            {
+                // if (!m_meshObject)
+                //{
+                //	updateMesh();
+                //	updateMaterials();
+                //	updateTransform();
+                // }
+            }
+            break;
+            default:
+            {
+            }
+            }
+        }
+        break;
+        case IFSM::Event::Pending:
+            break;
+        case IFSM::Event::Complete:
+            break;
+        case IFSM::Event::NewState:
+            break;
+        case IFSM::Event::WaitForChange:
+            break;
+        default:
+        {
+        }
+        break;
+        }
+
+        return IFSM::ReturnType::Ok;
+    }
+
+    void MeshRenderer::updateMesh()
+    {
+        try
+        {
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            if( graphicsSystem )
+            {
+                auto smgr = graphicsSystem->getGraphicsScene();
+                FB_ASSERT( smgr );
+
+                if( auto actor = getActor() )
+                {
+                    auto meshComponent = actor->getComponent<Mesh>();
+                    if( meshComponent )
+                    {
+                        auto meshPath = meshComponent->getMeshPath();
+                        if( !StringUtil::isNullOrEmpty( meshPath ) )
+                        {
+                            auto meshObject = smgr->addMesh( meshPath );
+                            if( !meshObject )
                             {
-                                auto meshObject = smgr->addMesh( meshPath );
-                                if( !meshObject )
+                                FB_LOG( "Mesh not loaded: " + meshPath );
+                            }
+
+                            setMeshObject( meshObject );
+
+                            //// todo refactor
+                            // auto materialComponent =
+                            // actor->getComponent<scene::MaterialComponent>(); if
+                            // (materialComponent)
+                            //{
+                            //	auto material = materialComponent->getMaterial();
+                            //	if (material)
+                            //	{
+                            //		if (m_meshObject)
+                            //		{
+                            //			m_meshObject->setMaterial(material);
+                            //		}
+                            //	}
+                            // }
+
+                            if( meshObject )
+                            {
+                                auto actorName = actor->getName();
+                                auto nodeName = actorName + String( "_MeshComponent" ) +
+                                                StringUtil::toString( m_idExt++ );
+
+                                auto rootNode = smgr->getRootSceneNode();
+                                auto meshNode = rootNode->addChildSceneNode( nodeName );
+
+                                if( meshNode )
                                 {
-                                    FB_LOG( "Mesh not loaded: " + meshPath );
+                                    meshNode->attachObject( meshObject );
                                 }
 
-                                setMeshObject( meshObject );
+                                meshObject->setVisibilityFlags( render::IGraphicsObject::SceneFlag );
 
-                                //// todo refactor
-                                // auto materialComponent =
-                                // actor->getComponent<scene::MaterialComponent>(); if
-                                // (materialComponent)
-                                //{
-                                //	auto material = materialComponent->getMaterial();
-                                //	if (material)
-                                //	{
-                                //		if (m_meshObject)
-                                //		{
-                                //			m_meshObject->setMaterial(material);
-                                //		}
-                                //	}
-                                // }
-
-                                if( meshObject )
-                                {
-                                    auto actorName = actor->getName();
-                                    auto nodeName = actorName + String( "_MeshComponent" ) +
-                                                    StringUtil::toString( m_idExt++ );
-
-                                    auto rootNode = smgr->getRootSceneNode();
-                                    auto meshNode = rootNode->addChildSceneNode( nodeName );
-
-                                    if( meshNode )
-                                    {
-                                        meshNode->attachObject( meshObject );
-                                    }
-
-                                    meshObject->setVisibilityFlags( render::IGraphicsObject::SceneFlag );
-
-                                    setMeshNode( meshNode );
-                                }
+                                setMeshNode( meshNode );
                             }
                         }
                     }
                 }
             }
-            catch( Exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
         }
-
-        void MeshRenderer::updateMaterials()
+        catch( Exception &e )
         {
-            if( auto actor = getActor() )
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void MeshRenderer::updateMaterials()
+    {
+        if( auto actor = getActor() )
+        {
+            auto materials = actor->getComponentsByType<Material>();
+            for( auto material : materials )
             {
-                auto materials = actor->getComponentsByType<Material>();
-                for( auto material : materials )
+                auto materialResource = material->getMaterial();
+                if( materialResource )
                 {
-                    auto materialResource = material->getMaterial();
-                    if( materialResource )
+                    if( m_meshObject )
                     {
-                        if( m_meshObject )
-                        {
-                            auto index = material->getIndex();
-                            m_meshObject->setMaterial( materialResource, index );
-                        }
+                        auto index = material->getIndex();
+                        m_meshObject->setMaterial( materialResource, index );
                     }
                 }
             }
         }
+    }
 
-        void MeshRenderer::visibilityChanged()
+    void MeshRenderer::updateTransform()
+    {
+        if( auto actor = getActor() )
         {
-            if( auto actor = getActor() )
+            if( auto actorTransform = actor->getTransform() )
             {
-                auto visisble = actor->isVisible();
-                m_graphicshNode->setVisible( visisble );
-            }
-        }
+                auto actorPosition = actorTransform->getPosition();
+                auto actorOrientation = actorTransform->getOrientation();
+                auto actorScale = actorTransform->getScale();
 
-        void MeshRenderer::updateTransform()
-        {
-            if( auto actor = getActor() )
-            {
-                if( auto actorTransform = actor->getTransform() )
+                FB_ASSERT( actorPosition.isValid() );
+                FB_ASSERT( actorOrientation.isSane() );
+                FB_ASSERT( actorScale.isValid() );
+
+                if( m_graphicsNode )
                 {
-                    auto actorPosition = actorTransform->getPosition();
-                    auto actorOrientation = actorTransform->getOrientation();
-                    auto actorScale = actorTransform->getScale();
-
-                    FB_ASSERT( actorPosition.isValid() );
-                    FB_ASSERT( actorOrientation.isSane() );
-                    FB_ASSERT( actorScale.isValid() );
-
-                    if( m_graphicshNode )
-                    {
-                        m_graphicshNode->setPosition( actorPosition );
-                        m_graphicshNode->setOrientation( actorOrientation );
-                        m_graphicshNode->setScale( actorScale );
-                    }
+                    m_graphicsNode->setPosition( actorPosition );
+                    m_graphicsNode->setOrientation( actorOrientation );
+                    m_graphicsNode->setScale( actorScale );
                 }
             }
         }
+    }
 
-        SmartPtr<render::IGraphicsMesh> MeshRenderer::getMeshObject() const
-        {
-            return m_meshObject;
-        }
+    auto MeshRenderer::getMeshObject() const -> SmartPtr<render::IGraphicsMesh>
+    {
+        return m_meshObject;
+    }
 
-        void MeshRenderer::setMeshObject( SmartPtr<render::IGraphicsMesh> meshObject )
-        {
-            m_meshObject = meshObject;
-        }
+    void MeshRenderer::setMeshObject( SmartPtr<render::IGraphicsMesh> meshObject )
+    {
+        m_meshObject = meshObject;
+    }
 
-        SmartPtr<render::ISceneNode> MeshRenderer::getMeshNode() const
-        {
-            return m_graphicshNode;
-        }
+    auto MeshRenderer::getMeshNode() const -> SmartPtr<render::ISceneNode>
+    {
+        return m_graphicsNode;
+    }
 
-        void MeshRenderer::setMeshNode( SmartPtr<render::ISceneNode> meshNode )
-        {
-            m_graphicshNode = meshNode;
-        }
-    }  // namespace scene
-}  // end namespace fb
+    void MeshRenderer::setMeshNode( SmartPtr<render::ISceneNode> meshNode )
+    {
+        m_graphicsNode = meshNode;
+    }
+}  // namespace fb::scene

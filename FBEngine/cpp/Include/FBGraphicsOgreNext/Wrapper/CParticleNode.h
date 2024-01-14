@@ -15,7 +15,6 @@ namespace fb
         public:
             CParticleNode()
             {
-                m_handle = SmartPtr<Handle>( new Handle() );
             }
 
             ~CParticleNode()
@@ -33,18 +32,6 @@ namespace fb
 
             virtual void update( const s32 &task, const time_interval &t, const time_interval &dt )
             {
-            }
-
-            /** The handle. */
-            virtual SmartPtr<Handle> &getHandle()
-            {
-                return m_handle;
-            }
-
-            /** The handle. */
-            virtual const SmartPtr<Handle> &getHandle() const
-            {
-                return m_handle;
             }
 
             virtual void addChild( SmartPtr<IParticleNode> child )
@@ -102,7 +89,7 @@ namespace fb
 
             virtual SmartPtr<IParticleNode> getParent() const
             {
-                return nullptr;  // m_parent;
+                return m_parent;
             }
 
             virtual void setParent( SmartPtr<IParticleNode> parent )
@@ -127,8 +114,7 @@ namespace fb
 
             virtual SmartPtr<IParticleSystem> getParticleSystem() const
             {
-                // return m_particleSystem;
-                return nullptr;
+                return m_particleSystem;
             }
 
             virtual void setParticleSystem( SmartPtr<IParticleSystem> val )
@@ -137,7 +123,6 @@ namespace fb
             }
 
         protected:
-            SmartPtr<Handle> m_handle;
             Array<SmartPtr<IParticleNode>> m_children;
             Vector3F m_position;
             Vector3F m_absolutePosition;

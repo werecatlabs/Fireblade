@@ -7,7 +7,7 @@ namespace fb
 {
 
     Learning::Learning( const unsigned long ulNewNumberOfStateVariables,
-                            const unsigned long ulNewNumberOfActionVariables, MLP *_pMLP )
+                        const unsigned long ulNewNumberOfActionVariables, MLP *_pMLP )
     {
         ulNumberOfStateVariables = ulNewNumberOfStateVariables;
         ulNumberOfActionVariables = ulNewNumberOfActionVariables;
@@ -31,7 +31,7 @@ namespace fb
         DeallocateMemory();
     }
 
-    void Learning::AllocateMemory( void )
+    void Learning::AllocateMemory()
     {
         //Storage for the current and previous state action pairs (a,s). Previous state action pairs need to be
         //recorded so that the backups can be made
@@ -39,7 +39,7 @@ namespace fb
         pPreviousStateActionPair = new double[ulNumberOfActionVariables + ulNumberOfStateVariables];
     }
 
-    void Learning::DeallocateMemory( void )
+    void Learning::DeallocateMemory()
     {
         delete[] pStateActionPair;
         delete[] pPreviousStateActionPair;
@@ -67,11 +67,11 @@ namespace fb
         //Reduce the learning rate of the AI by the amount specified. Note that this exponential reduction of
         //learning rate means that RL is no longer guaranteed to solve the problem we want. See the book for more
         //details
-        pMLP->setLearningRate(pMLP->getLearningRate() * dLearningRateDecayFactor);
+        pMLP->setLearningRate( pMLP->getLearningRate() * dLearningRateDecayFactor );
     }
 
     void Learning::MoveToTerminalState( const double *const pNewState,
-                                          const double dRewardForFindingState )
+                                        const double dRewardForFindingState )
     {
         //If we're not in a starting state perform a backup
         if( !boStartingState )
@@ -127,9 +127,9 @@ namespace fb
         dRewardForLatestAction = dReward;
     }
 
-    unsigned long Learning::ulGetAction( const double *const pGameState,
-                                           const unsigned long ulNumberOfActionsInThisState,
-                                           double **ppdActions )
+    auto Learning::ulGetAction( const double *const pGameState,
+                                const unsigned long ulNumberOfActionsInThisState, double **ppdActions )
+        -> unsigned long
     {
         unsigned long i, j;
         double dEstimatedReward;

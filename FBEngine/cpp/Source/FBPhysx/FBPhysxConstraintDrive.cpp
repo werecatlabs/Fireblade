@@ -2,53 +2,50 @@
 #include <FBPhysx/FBPhysxConstraintDrive.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::physics
 {
-    namespace physics
+    auto PhysxConstraintDrive::getForceLimit() const -> real_Num
     {
-        real_Num PhysxConstraintDrive::getForceLimit() const
-        {
-            return 0;
-        }
+        return 0;
+    }
 
-        void PhysxConstraintDrive::setForceLimit( real_Num forceLimit )
-        {
-        }
+    void PhysxConstraintDrive::setForceLimit( real_Num forceLimit )
+    {
+    }
 
-        D6JointDriveFlag::Enum PhysxConstraintDrive::getDriveFlags() const
-        {
-            return static_cast<D6JointDriveFlag::Enum>(0);
-        }
+    auto PhysxConstraintDrive::getDriveFlags() const -> D6JointDriveFlag::Enum
+    {
+        return static_cast<D6JointDriveFlag::Enum>( 0 );
+    }
 
-        void PhysxConstraintDrive::setDriveFlags( D6JointDriveFlag::Enum driveFlags )
-        {
-        }
+    void PhysxConstraintDrive::setDriveFlags( D6JointDriveFlag::Enum driveFlags )
+    {
+    }
 
-        void PhysxConstraintDrive::setIsAcceleration( bool acceleration ) const
-        {
-        }
+    void PhysxConstraintDrive::setIsAcceleration( bool acceleration ) const
+    {
+    }
 
-        bool PhysxConstraintDrive::isAcceleration() const
-        {
-            return false;
-        }
+    auto PhysxConstraintDrive::isAcceleration() const -> bool
+    {
+        return false;
+    }
 
-        real_Num PhysxConstraintDrive::getStiffness() const
-        {
-            return 0;
-        }
+    auto PhysxConstraintDrive::getStiffness() const -> real_Num
+    {
+        return 0;
+    }
 
-        void PhysxConstraintDrive::setStiffness( real_Num stiffness )
-        {
-        }
+    void PhysxConstraintDrive::setStiffness( real_Num stiffness )
+    {
+    }
 
-        real_Num PhysxConstraintDrive::getDamping() const
-        {
-            return 0;
-        }
+    auto PhysxConstraintDrive::getDamping() const -> real_Num
+    {
+        return 0;
+    }
 
-        void PhysxConstraintDrive::setDamping( real_Num damping )
-        {
-        }
-    } // namespace physics
-}     // namespace fb
+    void PhysxConstraintDrive::setDamping( real_Num damping )
+    {
+    }
+}  // namespace fb::physics

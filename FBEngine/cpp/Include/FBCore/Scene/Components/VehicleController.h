@@ -8,7 +8,8 @@ namespace fb
     namespace scene
     {
 
-        /** Used to control a vehicle. */
+        /** Used to control a vehicle.
+         */
         class VehicleController : public Component
         {
         public:

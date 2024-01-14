@@ -9,7 +9,7 @@ namespace fb
 {
 
     template <typename T>
-    T Quaternion<T>::getYaw( bool reprojectAxis /*= true*/ ) const
+    auto Quaternion<T>::getYaw( bool reprojectAxis /*= true*/ ) const -> T
     {
         if( reprojectAxis )
         {

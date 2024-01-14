@@ -194,9 +194,13 @@ namespace fb
     inline void IObject::setObjectFlag( u8 flag, bool value )
     {
         if( value )
+        {
             m_objectFlags = m_objectFlags | flag;
+        }
         else
+        {
             m_objectFlags = m_objectFlags & ~flag;
+        }
     }
 
     inline bool IObject::getObjectFlag( u8 flag ) const
@@ -216,8 +220,8 @@ namespace fb
 
 #if FB_CPP_STANDARD >= FB_CPP_2020
     template <class B>
-        requires requires { B::typeInfo(); }
-    bool IObject::isDerived() const
+        requires requires { B::typeInfo(); } bool
+    IObject::isDerived() const
     {
         auto typeInfo = getTypeInfo();
         if( typeInfo != 0 )

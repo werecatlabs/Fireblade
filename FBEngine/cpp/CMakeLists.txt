@@ -6,7 +6,7 @@ include(cpp_compiler_options)
 #add_subdirectory(Project/FBAi)
 #add_subdirectory(Project/FBAnimation)
 #add_subdirectory(Project/FBApplication)
-#add_subdirectory(Project/FBAudio)
+add_subdirectory(Project/FBAudio)
 add_subdirectory(Project/FBAssimp)
 
 if (FB_BUILD_BULLETPHYSICS)

@@ -18,13 +18,19 @@ namespace fb
         /** Virtual destructor. */
         ~IScriptManager() override = default;
 
-        /** Loads a script file. */
+        /** Loads a script file.
+        @param filename The name of the file to load.
+        */
         virtual void loadScript( const String &filename ) = 0;
 
-        /** Loads script files. */
+        /** Loads script files.
+        @param scripts The list of files to load.
+        */
         virtual void loadScripts( const Array<String> &scripts ) = 0;
 
-        /** Loads a script. */
+        /** Loads a script from a string.
+        @param str The string to load.
+        */
         virtual void loadScriptFromString( const String &str ) = 0;
 
         /** Executes a script function. */
@@ -76,6 +82,7 @@ namespace fb
         /** Reloads the scripts that in the manager. */
         virtual void reloadScripts() = 0;
 
+        /** Gets a flag indicating whether the scripts are reloaded. */
         virtual bool reloadPending() const = 0;
 
         /** Gets a string containing debug information. */
@@ -141,8 +148,10 @@ namespace fb
          */
         virtual void registerClass( void *ptr ) = 0;
 
+        /** Gets the list of class names. */
         virtual Array<String> getClassNames() const = 0;
 
+        /** Sets the list of class names. */
         virtual void setClassNames( const Array<String> &classNames ) = 0;
 
         FB_CLASS_REGISTER_DECL;

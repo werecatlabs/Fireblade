@@ -22,55 +22,52 @@
 
 using namespace fb;
 
-namespace boost
+namespace boost::json
 {
-    namespace json
+
+    template <>
+    auto value_to<rttr::variant>( const boost::json::value &val ) -> rttr::variant
     {
-
-        template <>
-        rttr::variant value_to<rttr::variant>( const boost::json::value &val )
+        if( val.is_string() )
         {
-            if( val.is_string() )
-            {
-                auto str = val.as_string();
-                std::string s( str.data(), str.size() );
-                return rttr::variant( s );
-            }
-            else if( val.is_double() )
-            {
-                double v = val.as_double();
-                return rttr::variant( v );
-            }
-            else if( val.is_int64() )
-            {
-                s64 v = val.as_int64();
-                return rttr::variant( v );
-            }
-            else if( val.is_bool() )
-            {
-                bool v = val.as_bool();
-                return rttr::variant( v );
-            }
-            else if( val.is_object() )
-            {
-                const boost::json::object &obj = val.as_object();
-                //rttr::variant var = rttr::variant::create( obj );
-                return rttr::variant();
-            }
-            else if( val.is_array() )
-            {
-                const boost::json::array &arr = val.as_array();
-                //rttr::variant var = rttr::variant::create( arr );
-                return rttr::variant();
-            }
-            else
-            {
-                return rttr::variant();
-            }
+            auto str = val.as_string();
+            std::string s( str.data(), str.size() );
+            return rttr::variant( s );
         }
+        else if( val.is_double() )
+        {
+            double v = val.as_double();
+            return rttr::variant( v );
+        }
+        else if( val.is_int64() )
+        {
+            s64 v = val.as_int64();
+            return rttr::variant( v );
+        }
+        else if( val.is_bool() )
+        {
+            bool v = val.as_bool();
+            return rttr::variant( v );
+        }
+        else if( val.is_object() )
+        {
+            const boost::json::object &obj = val.as_object();
+            //rttr::variant var = rttr::variant::create( obj );
+            return {};
+        }
+        else if( val.is_array() )
+        {
+            const boost::json::array &arr = val.as_array();
+            //rttr::variant var = rttr::variant::create( arr );
+            return {};
+        }
+        else
+        {
+            return {};
+        }
+    }
 
-    }  // namespace json
-}  // namespace boost
+}  // namespace boost::json
 
 void parseYAML( const String &filePath, Vector2F *ptr )
 {
@@ -348,7 +345,7 @@ FB_DECLARE_DATA_CLASS( Transform3D )
 FB_DECLARE_DATA_CLASS( Property )
 //FB_DECLARE_DATA_CLASS( Properties )
 
-SmartPtr<Properties> fromObject( const boost::json::object &obj )
+auto fromObject( const boost::json::object &obj ) -> SmartPtr<Properties>
 {
     auto properties = fb::make_ptr<Properties>();
 
@@ -425,7 +422,7 @@ SmartPtr<Properties> fromObject( const boost::json::object &obj )
         else if( value.is_int64() )
         {
             auto val = value.as_int64();
-            properties->setProperty( key, (s32)val );
+            properties->setProperty( key, static_cast<s32>( val ) );
         }
         else if( value.is_double() )
         {
@@ -470,7 +467,7 @@ SmartPtr<Properties> fromObject( const boost::json::object &obj )
     return properties;
 }
 
-SmartPtr<Properties> propertiesFromObject( const boost::json::object &obj )
+auto propertiesFromObject( const boost::json::object &obj ) -> SmartPtr<Properties>
 {
     auto properties = fb::make_ptr<Properties>();
 
@@ -552,7 +549,7 @@ SmartPtr<Properties> propertiesFromObject( const boost::json::object &obj )
         else if( value.is_int64() )
         {
             auto val = value.as_int64();
-            properties->setProperty( key, (s32)val );
+            properties->setProperty( key, static_cast<s32>( val ) );
         }
         else if( value.is_double() )
         {
@@ -602,7 +599,7 @@ SmartPtr<Properties> propertiesFromObject( const boost::json::object &obj )
     return properties;
 }
 
-SmartPtr<Properties> DataUtil::parseJson( const String &jsonDataStr )
+auto DataUtil::parseJson( const String &jsonDataStr ) -> SmartPtr<Properties>
 {
     auto jsonData = boost::json::parse( jsonDataStr );
 
@@ -615,7 +612,7 @@ SmartPtr<Properties> DataUtil::parseJson( const String &jsonDataStr )
     return nullptr;
 }
 
-SmartPtr<Properties> DataUtil::parsePropertiesFromJson( const String &jsonDataStr )
+auto DataUtil::parsePropertiesFromJson( const String &jsonDataStr ) -> SmartPtr<Properties>
 {
     auto jsonData = boost::json::parse( jsonDataStr );
 
@@ -680,11 +677,11 @@ namespace fb
     //	return properties;
     //}
 
-    boost::json::object propertiesToJson( Properties *ptr )
+    auto propertiesToJson( Properties *ptr ) -> boost::json::object
     {
         if( !ptr )
         {
-            return boost::json::object();
+            return {};
         }
 
         rttr::instance obj = *ptr;
@@ -730,7 +727,7 @@ namespace fb
             // Check for metadata "NO_SERIALIZE"
             if( prop.get_metadata( "NO_SERIALIZE" ) )
             {
-                return boost::json::object();  // You might want to handle this differently.
+                return {};  // You might want to handle this differently.
             }
 
             rttr::variant prop_value = prop.get_value( obj_instance );
@@ -804,7 +801,7 @@ namespace fb
         return j;
     }
 
-    boost::json::object objectToJson( const rttr::instance &obj )
+    auto objectToJson( const rttr::instance &obj ) -> boost::json::object
     {
         auto objType = obj.get_type();
         auto rawType = objType.get_raw_type();
@@ -838,7 +835,7 @@ namespace fb
             // Check for metadata "NO_SERIALIZE"
             if( prop.get_metadata( "NO_SERIALIZE" ) )
             {
-                return boost::json::object();  // You might want to handle this differently.
+                return {};  // You might want to handle this differently.
             }
 
             rttr::variant prop_value = prop.get_value( obj_instance );
@@ -976,7 +973,7 @@ namespace fb
         }
     }
 
-    String DataUtil::formatJson( const String &jsonString )
+    auto DataUtil::formatJson( const String &jsonString ) -> String
     {
         auto jsonValue = boost::json::parse( jsonString );
 
@@ -1131,7 +1128,9 @@ namespace fb
 
         std::string indent_;
         if( !indent )
+        {
             indent = &indent_;
+        }
         switch( jv.kind() )
         {
         case json::kind::object:
@@ -1147,7 +1146,9 @@ namespace fb
                     os << *indent << json::serialize( it->key() ) << " : ";
                     pretty_print( os, it->value(), indent );
                     if( ++it == obj.end() )
+                    {
                         break;
+                    }
                     os << ",\n";
                 }
             }
@@ -1170,7 +1171,9 @@ namespace fb
                     os << *indent;
                     pretty_print( os, *it, indent );
                     if( ++it == arr.end() )
+                    {
                         break;
+                    }
                     os << ",\n";
                 }
             }
@@ -1200,9 +1203,13 @@ namespace fb
 
         case json::kind::bool_:
             if( jv.get_bool() )
+            {
                 os << "true";
+            }
             else
+            {
                 os << "false";
+            }
             break;
 
         case json::kind::null:
@@ -1211,10 +1218,12 @@ namespace fb
         }
 
         if( indent->empty() )
+        {
             os << "\n";
+        }
     }
 
-    String DataUtil::objectToJsonStr( const rttr::instance &instance, bool formatted )
+    auto DataUtil::objectToJsonStr( const rttr::instance &instance, bool formatted ) -> String
     {
         if( !formatted )
         {
@@ -1234,7 +1243,7 @@ namespace fb
     }
 
     template <>
-    String DataUtil::toString( Properties *ptr, bool formatted, Format fmt )
+    auto DataUtil::toString( Properties *ptr, bool formatted, Format fmt ) -> String
     {
         if( !formatted )
         {
@@ -1272,7 +1281,7 @@ namespace fb
     }
 
     template <>
-    String DataUtil::toString( ISharedObject *ptr, bool formatted, Format fmt )
+    auto DataUtil::toString( ISharedObject *ptr, bool formatted, Format fmt ) -> String
     {
         if( ptr->isDerived<Properties>() )
         {

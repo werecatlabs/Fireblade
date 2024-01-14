@@ -42,8 +42,7 @@ namespace fb
         virtual void setRunning( bool running ) = 0;
 
         /** Gets the update rate of the worker threads.
-        @returns
-            The rate of the update.
+        @returns The rate of the update.
         */
         virtual f32 getRate() const = 0;
 

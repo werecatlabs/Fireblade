@@ -31,7 +31,7 @@ namespace fb
     }
 
     template <class T>
-    bool Polygon2<T>::operator==( const Polygon2<T> &other ) const
+    auto Polygon2<T>::operator==( const Polygon2<T> &other ) const -> bool
     {
         auto numPoints0 = static_cast<size_t>( other.getNumPoints() );
         auto numPoints1 = m_points.size();
@@ -67,7 +67,7 @@ namespace fb
     }
 
     template <class T>
-    bool Polygon2<T>::operator!=( const Polygon2<T> &other ) const
+    auto Polygon2<T>::operator!=( const Polygon2<T> &other ) const -> bool
     {
         return !( *this == other );
     }
@@ -97,7 +97,7 @@ namespace fb
     }
 
     template <class T>
-    bool Polygon2<T>::removePoint( u32 i )
+    auto Polygon2<T>::removePoint( u32 i ) -> bool
     {
         FB_ASSERT( i < m_points.size() );  // invalid index
 
@@ -123,14 +123,14 @@ namespace fb
     }
 
     template <class T>
-    Vector2<T> Polygon2<T>::getPoint( u32 i ) const
+    auto Polygon2<T>::getPoint( u32 i ) const -> Vector2<T>
     {
         FB_ASSERT( i < m_points.size() );  // invalid index
         return m_points[i];
     }
 
     template <class T>
-    Vector2<T> Polygon2<T>::getCenter() const
+    auto Polygon2<T>::getCenter() const -> Vector2<T>
     {
         Vector2<T> center;
 
@@ -147,7 +147,7 @@ namespace fb
     }
 
     template <class T>
-    Polygon2<T> Polygon2<T>::getScalePolygon( T scale ) const
+    auto Polygon2<T>::getScalePolygon( T scale ) const -> Polygon2<T>
     {
         Polygon2<T> polygon;
 
@@ -186,7 +186,7 @@ namespace fb
     }
 
     template <class T>
-    Polygon2<T> Polygon2<T>::getOffsetPolygon( T offset ) const
+    auto Polygon2<T>::getOffsetPolygon( T offset ) const -> Polygon2<T>
     {
         Polygon2<T> polygon;
 
@@ -291,13 +291,13 @@ namespace fb
     }
 
     template <class T>
-    u32 Polygon2<T>::getNumPoints() const
+    auto Polygon2<T>::getNumPoints() const -> u32
     {
         return static_cast<u32>( m_points.size() );
     }
 
     template <class T>
-    T Polygon2<T>::getArea() const
+    auto Polygon2<T>::getArea() const -> T
     {
         auto center = getCenter();
 
@@ -459,8 +459,9 @@ namespace fb
     }
 
     template <class T>
-    u32 Polygon2<T>::findOppositeEdge( const Vector2<T> &edgePoint0, const Vector2<T> &edgePoint1,
-                                       const Vector2<T> &pointOnEdge, Vector2<T> &collidingPoint )
+    auto Polygon2<T>::findOppositeEdge( const Vector2<T> &edgePoint0, const Vector2<T> &edgePoint1,
+                                        const Vector2<T> &pointOnEdge, Vector2<T> &collidingPoint )
+        -> u32
     {
         Vector2<T> perp = ( edgePoint1 - edgePoint0 ).perp();
         perp.normalise();
@@ -861,7 +862,7 @@ namespace fb
     /// \returns signed polygon area
     /////////////////////////////////////////////////////////////////////////
     template <class T>
-    T Polygon2<T>::polygonEdgeLength2D( s32 i )
+    auto Polygon2<T>::polygonEdgeLength2D( s32 i ) -> T
     {
         FB_ASSERT( MathI::isFinite( i ) );
 
@@ -883,7 +884,7 @@ namespace fb
     }
 
     template <class T>
-    bool Polygon2<T>::isPointInside( const Vector2<T> &point ) const
+    auto Polygon2<T>::isPointInside( const Vector2<T> &point ) const -> bool
     {
         FB_ASSERT( point.isValid() );
 
@@ -970,7 +971,7 @@ namespace fb
     }
 
     template <class T>
-    bool Polygon2<T>::isInside( const Polygon2<T> &polygon ) const
+    auto Polygon2<T>::isInside( const Polygon2<T> &polygon ) const -> bool
     {
 #if 0
 		bool inside = false;
@@ -1029,7 +1030,7 @@ namespace fb
     }
 
     template <class T>
-    T Polygon2<T>::intervalDistance( T minA, T maxA, T minB, T maxB ) const
+    auto Polygon2<T>::intervalDistance( T minA, T maxA, T minB, T maxB ) const -> T
     {
         if( minA < minB )
         {
@@ -1040,7 +1041,7 @@ namespace fb
     }
 
     template <class T>
-    bool Polygon2<T>::intersects( const Polygon2 &polygon ) const
+    auto Polygon2<T>::intersects( const Polygon2 &polygon ) const -> bool
     {
         auto center = polygon.getCenter();
         auto numPoints0 = static_cast<size_t>( polygon.getNumPoints() );
@@ -1086,7 +1087,7 @@ namespace fb
     }
 
     template <class T>
-    Array<Vector2<T>> Polygon2<T>::getPoints() const
+    auto Polygon2<T>::getPoints() const -> Array<Vector2<T>>
     {
         return m_points;
     }

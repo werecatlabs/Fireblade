@@ -5,7 +5,7 @@
 namespace fb
 {
     template <class T>
-    Array<Array<T>> FalloffGenerator<T>::generate()
+    auto FalloffGenerator<T>::generate() -> Array<Array<T>>
     {
         Array<Array<T>> map;
         map.resize( m_size );
@@ -31,7 +31,7 @@ namespace fb
     }
 
     template <class T>
-    T FalloffGenerator<T>::evaluate( T value )
+    auto FalloffGenerator<T>::evaluate( T value ) -> T
     {
         return Math<T>::Pow( value, m_falloffDirection ) /
                ( Math<T>::Pow( value, m_falloffDirection ) +
@@ -39,19 +39,19 @@ namespace fb
     }
 
     template <class T>
-    T FalloffGenerator<T>::getFalloffDirection() const
+    auto FalloffGenerator<T>::getFalloffDirection() const -> T
     {
         return m_falloffDirection;
     }
 
     template <class T>
-    T FalloffGenerator<T>::getFalloffRange() const
+    auto FalloffGenerator<T>::getFalloffRange() const -> T
     {
         return m_falloffRange;
     }
 
     template <class T>
-    s32 FalloffGenerator<T>::getSize() const
+    auto FalloffGenerator<T>::getSize() const -> s32
     {
         return m_size;
     }

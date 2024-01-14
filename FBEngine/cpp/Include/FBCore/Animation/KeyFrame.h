@@ -1,34 +1,24 @@
 #ifndef FB_KeyFrame_h__
 #define FB_KeyFrame_h__
 
-
+#include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb
 {
 
-   
     class KeyFrame : public ISharedObject
     {
     public:
-        KeyFrame()
-        {
-        }
+        KeyFrame() = default;
 
-        virtual ~KeyFrame()
-        {
-        }
+        virtual ~KeyFrame() = default;
 
-        f32 getTime() const
-        {
-            return m_time;
-        }
-        void setTime( f32 val )
-        {
-            m_time = val;
-        }
+        f32 getTime() const;
+
+        void setTime( f32 time );
 
     protected:
-        f32 m_time;
+        f32 m_time = 0.0f;
     };
 
 }  // end namespace fb

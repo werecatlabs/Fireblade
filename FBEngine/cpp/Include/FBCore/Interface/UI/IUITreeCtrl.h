@@ -80,6 +80,10 @@ namespace fb
             /** Sets whether multiple nodes can be selected. */
             virtual void setMultiSelect( bool multiSelect ) = 0;
 
+            virtual s32 getSelectedSiblingIndex() const = 0;
+
+            virtual void setSelectedSiblingIndex( s32 siblingIndex ) = 0;
+
             FB_CLASS_REGISTER_DECL;
         };
 

@@ -58,9 +58,9 @@ namespace fb
             void addListener( IAnimationControllerListener *listener );
             void removeListener( IAnimationControllerListener *listener );
 
-            SmartPtr<IStateContext> &getStateObject();
-            const SmartPtr<IStateContext> &getStateObject() const;
-            void setStateObject( SmartPtr<IStateContext> subject );
+            SmartPtr<IStateContext> &getStateContext();
+            const SmartPtr<IStateContext> &getStateContext() const;
+            void setStateContext( SmartPtr<IStateContext> subject );
 
         private:
             class ScriptReceiver : public IScriptReceiver
@@ -119,7 +119,7 @@ namespace fb
             void addAnimation( Ogre::v1::AnimationState *pAnimState );
             SmartPtr<IAnimation> findAnimation( const String &animationName ) const;
 
-            SmartPtr<IStateContext> m_stateObject;
+            SmartPtr<IStateContext> m_stateContext;
             SmartPtr<IStateListener> m_stateListener;
             Ogre::v1::Entity *m_entity;
 

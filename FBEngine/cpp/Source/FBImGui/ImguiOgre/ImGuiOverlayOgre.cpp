@@ -206,7 +206,7 @@ namespace fb
             io.KeyAlt = false;
             io.KeySuper = false;
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             auto window = graphicsSystem->getDefaultWindow();
             auto windowSize = window->getSize();
@@ -482,7 +482,7 @@ namespace fb
                 {
                     auto cam = vp->getCamera();
 
-                    auto applicationManager = core::IApplicationManager::instance();
+                    auto applicationManager = core::ApplicationManager::instance();
                     FB_ASSERT( applicationManager );
 
                     auto graphicsSystem = applicationManager->getGraphicsSystem();

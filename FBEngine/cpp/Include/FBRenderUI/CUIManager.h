@@ -25,8 +25,6 @@ namespace fb
             /** @copydoc IObject::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            void initialise();
-
             size_t messagePump( SmartPtr<ISharedObject> data ) override;
 
             bool OnEvent( const SmartPtr<IInputEvent> &event );
@@ -79,19 +77,6 @@ namespace fb
 
             void setDragging( bool dragging ) override;
 
-            virtual s32 setProperty( hash32 hash, const String &value );
-            virtual s32 getProperty( hash32 hash, String &value ) const;
-            virtual s32 setProperty( hash32 hash, const Parameter &param );
-            virtual s32 setProperty( hash32 hash, const Parameters &params );
-            virtual s32 setProperty( hash32 hash, void *param );
-            virtual s32 getProperty( hash32 hash, Parameter &param ) const;
-            virtual s32 getProperty( hash32 hash, Parameters &params ) const;
-            virtual s32 getProperty( hash32 hash, void *param ) const;
-            virtual void setObject( hash32 hash, SmartPtr<ISharedObject> object );
-            virtual void getObject( hash32 hash, SmartPtr<ISharedObject> &object ) const;
-            virtual s32 callFunction( u32 hash, const Parameters &params, Parameters &results );
-            virtual s32 callFunction( u32 hash, SmartPtr<ISharedObject> object, Parameters &results );
-
             SmartPtr<IUIWindow> getMainWindow() const override;
 
             void setMainWindow( SmartPtr<IUIWindow> uiWindow ) override;
@@ -99,6 +84,14 @@ namespace fb
             void lock() override;
 
             void unlock() override;
+
+            void _getObject( void **ppObject ) override;
+
+            SmartPtr<IFactoryManager> getFactoryManager() const;
+
+            void setFactoryManager( SmartPtr<IFactoryManager> factoryManager );
+
+            FB_CLASS_REGISTER_DECL;
 
         private:
             class InputListener : public IEventListener
@@ -113,8 +106,6 @@ namespace fb
                 CUIManager *m_mgr;
             };
 
-            void createGUIItem( SmartPtr<IUIElement> &parent, const TiXmlNode *pNode );
-
             Array<SmartPtr<IUIElement>> getElements() const;
 
             void setElements( const Array<SmartPtr<IUIElement>> &elements );
@@ -128,6 +119,8 @@ namespace fb
 
             mutable RecursiveMutex m_mutex;
 
+            nk_context *ctx;
+
             AtomicSharedPtr<Array<SmartPtr<IUIElement>>> m_elements;
 
             SmartPtr<IUIWindow> m_uiWindow;
@@ -137,6 +130,8 @@ namespace fb
             SmartPtr<IUIElement> m_itemInFocus;
 
             SmartPtr<IEventListener> m_inputListener;
+
+            SmartPtr<IFactoryManager> m_factoryManager;
 
             using SoundMap = std::map<String, SmartPtr<ISound2>>;
             SoundMap m_sounds; // sounds

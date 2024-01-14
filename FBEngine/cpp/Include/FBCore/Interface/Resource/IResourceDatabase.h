@@ -18,17 +18,31 @@ namespace fb
         /** Destructor. */
         ~IResourceDatabase() override = default;
 
+        virtual void importCache() = 0;
+
         /** Import assets. */
         virtual void importAssets() = 0;
 
         /** Reimport assets. */
         virtual void reimportAssets() = 0;
 
+        /** Calculates the dependencies of the resource database. */
+        virtual void calculateDependencies() = 0;
+
         /** Builds the resource database. */
         virtual void build() = 0;
 
         /** Refreshes the resource database. */
         virtual void refresh() = 0;
+
+        /** Optimizes the database. */
+        virtual void optimise() = 0;
+
+        /** Cleans the database. */
+        virtual void clean() = 0;
+
+        /** Deletes the cache files. */
+        virtual void deleteCache() = 0;
 
         /**
          * @brief Checks if the resource database contains the specified resource.
@@ -80,11 +94,27 @@ namespace fb
         virtual Array<SmartPtr<IResource>> getResources() const = 0;
 
         /**
+         * @brief Imports the path into the database.
+         * @param folderListing The folder object to import.
+         */
+        virtual void importFolder( SmartPtr<IFolderExplorer> folderListing ) = 0;
+
+        /**
+         * @brief Imports the path into the database.
+         * @param path The path of the folder to import.
+         */
+        virtual void importFolder( const String &path ) = 0;
+
+        /**
          * @brief Imports the file at the given path into the database.
          * @param filePath The path of the file to import.
          */
         virtual void importFile( const String &filePath ) = 0;
 
+        /**
+         * @brief Imports the file at the given path into the database.
+         * @param id The id of the file to import.
+         */
         virtual SmartPtr<IResource> loadResource( hash64 id ) = 0;
 
         /**
@@ -93,6 +123,29 @@ namespace fb
          * @return A pointer to the loaded resource if successful, nullptr otherwise.
          */
         virtual SmartPtr<IResource> loadResource( const String &path ) = 0;
+
+        /**
+         * @brief Loads a director with the given path.
+         * @param path The path of the resource to load.
+         * @return A pointer to the loaded director if successful, nullptr otherwise.
+         */
+        virtual SmartPtr<scene::IDirector> loadDirector( const String &filePath ) = 0;
+
+        /**
+         * @brief Loads a director with the given path.
+         * @param path The path of the resource to load.
+         * @return A pointer to the loaded director if successful, nullptr otherwise.
+         */
+        virtual SmartPtr<scene::IDirector> loadDirectorFromResourcePath( const String &filePath ) = 0;
+
+        /**
+         * @brief Loads a director with the given path.
+         * @param path The path of the resource to load.
+         * @param type The type of the resource to load.
+         * @return A pointer to the loaded director if successful, nullptr otherwise.
+         */
+        virtual SmartPtr<scene::IDirector> loadDirectorFromResourcePath( const String &filePath,
+                                                                         u32 type ) = 0;
 
         /**
          * @brief Loads a resource with the given UUID.

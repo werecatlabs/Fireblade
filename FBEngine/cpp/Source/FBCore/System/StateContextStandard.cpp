@@ -3,7 +3,7 @@
 #include <FBCore/System/StateQueueStandard.h>
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/Core/Properties.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
 #include <FBCore/Interface/System/IAsyncOperation.h>
 #include <FBCore/Interface/System/IEvent.h>
@@ -15,7 +15,7 @@
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Interface/System/ITimer.h>
 #include <FBCore/State/States/GraphicsSystemState.h>
-#include <FBCore/System/EventJob.h>
+#include <FBCore/Jobs/EventJob.h>
 
 namespace fb
 {
@@ -25,18 +25,15 @@ namespace fb
 
     StateContextStandard::StateContextStandard() :
         IStateContext(),
-        m_isAdded( false ),
-        m_enableMessageQueues( true ),
+
         m_isDirty( false ),
         m_removeCount( 0 )
     {
         m_id = m_nextGeneratedNameExt++;
     }
 
-    StateContextStandard::StateContextStandard( u32 id ) :
-        IStateContext(),
-        m_id( id ),
-        m_isAdded( false )
+    StateContextStandard::StateContextStandard( u32 id ) : IStateContext(), m_id( id )
+
     {
     }
 
@@ -45,7 +42,6 @@ namespace fb
         unload( nullptr );
 
         FB_ASSERT( getOwner() == nullptr );
-        FB_ASSERT( getState() == nullptr );
     }
 
     void StateContextStandard::load( SmartPtr<ISharedObject> data )
@@ -54,7 +50,7 @@ namespace fb
         {
             setLoadingState( LoadingState::Loading );
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto factoryManager = applicationManager->getFactoryManager();
@@ -110,14 +106,14 @@ namespace fb
                     }
                 }
 
-                if( auto state = getState() )
+                auto states = getStates();
+                for( auto state : states )
                 {
                     state->setStateContext( nullptr );
                     state->unload( nullptr );
-                    setState( nullptr );
                 }
 
-                m_states.clear();
+                m_states = nullptr;
 
                 if( auto pStateQueues = getStateQueuesPtr() )
                 {
@@ -146,17 +142,12 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto stateManager = applicationManager->getStateManager();
-            FB_ASSERT( stateManager );
-
             auto task = Thread::getCurrentTask();
 
-            if( auto state = getState() )
+            auto states = getStates();
+            for( auto state : states )
             {
-                if( bool dirty = state->isDirty() )
+                if( state->isDirty() )
                 {
                     auto stateTask = state->getTaskId();
                     if( task == stateTask )
@@ -171,21 +162,43 @@ namespace fb
                                     listener->handleStateChanged( state );
                                 }
                             }
+
+                            if( state->isDirty() )
+                            {
+                                int stop = 0;
+                                stop = 0;
+                            }
                         }
                     }
 
                     if( state->isDirty() )
                     {
+                        auto &applicationManager = core::ApplicationManager::instance();
+                        auto &stateManager = applicationManager->getStateManager();
                         stateManager->addDirty( this, task );
+
+                        if( auto pListeners = getStateListeners() )
+                        {
+                            auto &listeners = *pListeners;
+                            for( auto listener : listeners )
+                            {
+                                if( listener )
+                                {
+                                    int stop = 0;
+                                    stop = 0;
+                                }
+                            }
+                        }
                     }
                 }
             }
 
             if( auto owner = getOwner() )
             {
-                const auto &loadingState = owner->getLoadingState();
-                if( loadingState != LoadingState::Loaded )
+                if( !owner->isLoaded() )
                 {
+                    auto &applicationManager = core::ApplicationManager::instance();
+                    auto &stateManager = applicationManager->getStateManager();
                     stateManager->addDirty( this, task );
                     return;
                 }
@@ -244,7 +257,7 @@ namespace fb
     {
         if( message )
         {
-            message->setStateObject( this );
+            message->setStateContext( this );
 
             if( auto enableMessageQueues = getEnableMessageQueues() )
             {
@@ -263,7 +276,7 @@ namespace fb
 
             m_removeCount = 0;
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto stateManager = applicationManager->getStateManager();
             stateManager->addDirty( this, taskId );
         }
@@ -285,7 +298,7 @@ namespace fb
         }
     }
 
-    bool StateContextStandard::removeStateListener( SmartPtr<IStateListener> stateListner )
+    auto StateContextStandard::removeStateListener( SmartPtr<IStateListener> stateListner ) -> bool
     {
         if( auto pListeners = getStateListeners() )
         {
@@ -307,7 +320,8 @@ namespace fb
         return false;
     }
 
-    SharedPtr<ConcurrentArray<SmartPtr<IStateListener>>> StateContextStandard::getStateListeners() const
+    auto StateContextStandard::getStateListeners() const
+        -> SharedPtr<ConcurrentArray<SmartPtr<IStateListener>>>
     {
         return m_listeners;
     }
@@ -328,7 +342,7 @@ namespace fb
         }
     }
 
-    bool StateContextStandard::removeEventListener( SmartPtr<IEventListener> eventListener )
+    auto StateContextStandard::removeEventListener( SmartPtr<IEventListener> eventListener ) -> bool
     {
         if( auto pEventListeners = getEventListeners() )
         {
@@ -344,7 +358,7 @@ namespace fb
         return false;
     }
 
-    SharedPtr<Array<SmartPtr<IEventListener>>> StateContextStandard::getEventListeners() const
+    auto StateContextStandard::getEventListeners() const -> SharedPtr<Array<SmartPtr<IEventListener>>>
     {
         return m_eventListeners;
     }
@@ -354,7 +368,7 @@ namespace fb
         m_id = id;
     }
 
-    u32 StateContextStandard::getId() const
+    auto StateContextStandard::getId() const -> u32
     {
         return m_id;
     }
@@ -364,17 +378,17 @@ namespace fb
         m_owner = owner;
     }
 
-    SmartPtr<ISharedObject> StateContextStandard::getOwner() const
+    auto StateContextStandard::getOwner() -> SmartPtr<ISharedObject> &
     {
-        if( auto p = m_owner.load() )
-        {
-            return p.lock();
-        }
-
-        return nullptr;
+        return m_owner;
     }
 
-    SmartPtr<IStateQueue> StateContextStandard::getStateQueue( u32 taskId ) const
+    auto StateContextStandard::getOwner() const -> const SmartPtr<ISharedObject> &
+    {
+        return m_owner;
+    }
+
+    auto StateContextStandard::getStateQueue( u32 taskId ) -> SmartPtr<IStateQueue> &
     {
         if( auto p = getStateQueuesPtr() )
         {
@@ -388,7 +402,26 @@ namespace fb
             }
         }
 
-        return nullptr;
+        static SmartPtr<IStateQueue> nullQueue;
+        return nullQueue;
+    }
+
+    auto StateContextStandard::getStateQueue( u32 taskId ) const -> const SmartPtr<IStateQueue> &
+    {
+        if( auto p = getStateQueuesPtr() )
+        {
+            auto &stateQueues = *p;
+            if( !stateQueues.empty() )
+            {
+                if( taskId < stateQueues.size() )
+                {
+                    return stateQueues[taskId];
+                }
+            }
+        }
+
+        static SmartPtr<IStateQueue> nullQueue;
+        return nullQueue;
     }
 
     void StateContextStandard::sendMessage( SmartPtr<IStateMessage> message )
@@ -434,7 +467,7 @@ namespace fb
     {
         if( !m_isAdded )
         {
-            auto engine = core::IApplicationManager::instance();
+            auto engine = core::ApplicationManager::instance();
             auto stateMgr = engine->getStateManager();
             //stateMgr->addStateObject( this );
             m_isAdded = true;
@@ -445,19 +478,19 @@ namespace fb
     {
         if( m_isAdded )
         {
-            auto engine = core::IApplicationManager::instance();
+            auto engine = core::ApplicationManager::instance();
             auto stateMgr = engine->getStateManager();
             //stateMgr->removeStateObject( this );
             m_isAdded = false;
         }
     }
 
-    bool StateContextStandard::isAdded() const
+    auto StateContextStandard::isAdded() const -> bool
     {
         return m_isAdded;
     }
 
-    u32 StateContextStandard::getQueryTask() const
+    auto StateContextStandard::getQueryTask() const -> u32
     {
         return m_taskId;
     }
@@ -467,39 +500,85 @@ namespace fb
         m_taskId = taskId;
     }
 
-    SmartPtr<IState> StateContextStandard::getLatestOutputState() const
+    void StateContextStandard::addState( SmartPtr<IState> state )
     {
-        auto state = getState();
-        return state->clone();
-    }
-
-    SmartPtr<IState> StateContextStandard::getOutputState( time_interval time ) const
-    {
-        auto state = getState();
-        return state->clone();
-    }
-
-    void StateContextStandard::addOutputState( SmartPtr<IState> state )
-    {
-        m_states.push_back( state );
-    }
-
-    SmartPtr<IState> StateContextStandard::getState() const
-    {
-        return m_state;
-    }
-
-    void StateContextStandard::setState( SmartPtr<IState> state )
-    {
-        m_state = state;
-
         if( state )
         {
             state->setStateContext( this );
         }
+
+        auto p = getStatesPtr();
+        if( !p )
+        {
+            p = fb::make_shared<ConcurrentArray<SmartPtr<IState>>>();
+            setStatesPtr( p );
+        }
+
+        if( p )
+        {
+            auto &states = *p;
+            states.push_back( state );
+        }
     }
 
-    bool StateContextStandard::isDirty() const
+    void StateContextStandard::removeState( SmartPtr<IState> state )
+    {
+        auto states = getStates();
+        states.erase( std::remove( states.begin(), states.end(), state ), states.end() );
+
+        auto newStates =
+            fb::make_shared<ConcurrentArray<SmartPtr<IState>>>( states.begin(), states.end() );
+        setStatesPtr( newStates );
+    }
+
+    auto StateContextStandard::getStateByTypeId( u32 typeId ) -> SmartPtr<IState> &
+    {
+        if( auto p = getStatesPtr() )
+        {
+            auto &states = *p;
+            for( auto &state : states )
+            {
+                if( state->derived( typeId ) )
+                {
+                    return state;
+                }
+            }
+        }
+
+        static SmartPtr<IState> nullState;
+        return nullState;
+    }
+
+    auto StateContextStandard::getStateByTypeId( u32 typeId ) const -> const SmartPtr<IState> &
+    {
+        if( auto p = getStatesPtr() )
+        {
+            auto &states = *p;
+            for( auto &state : states )
+            {
+                if( state->derived( typeId ) )
+                {
+                    return state;
+                }
+            }
+        }
+
+        static SmartPtr<IState> nullState;
+        return nullState;
+    }
+
+    auto StateContextStandard::getStates() const -> Array<SmartPtr<IState>>
+    {
+        if( auto p = getStatesPtr() )
+        {
+            auto states = Array<SmartPtr<IState>>( p->begin(), p->end() );
+            return states;
+        }
+
+        return {};
+    }
+
+    auto StateContextStandard::isDirty() const -> bool
     {
         return m_isDirty;
     }
@@ -510,14 +589,15 @@ namespace fb
 
         if( cascade )
         {
-            if( auto state = getState() )
+            auto states = getStates();
+            for( auto state : states )
             {
                 state->setDirty( dirty );
             }
         }
     }
 
-    bool StateContextStandard::isStateDirty() const
+    auto StateContextStandard::isStateDirty() const -> bool
     {
         return m_stateChangeCount != m_stateUpdateCount;
     }
@@ -525,12 +605,16 @@ namespace fb
     void StateContextStandard::setStateDirty( bool dirty )
     {
         if( dirty )
+        {
             ++m_stateChangeCount;
+        }
         else
+        {
             m_stateUpdateCount = static_cast<u32>( m_stateChangeCount );
+        }
     }
 
-    bool StateContextStandard::isBitSet( u32 flags, s32 bitIdx ) const
+    auto StateContextStandard::isBitSet( u32 flags, s32 bitIdx ) const -> bool
     {
         u32 flag = ( 1 << bitIdx );
         if( ( flags & flag ) != 0 )
@@ -541,7 +625,7 @@ namespace fb
         return false;
     }
 
-    u32 StateContextStandard::getDirtyFlags() const
+    auto StateContextStandard::getDirtyFlags() const -> u32
     {
         return m_isDirty;
     }
@@ -579,14 +663,9 @@ namespace fb
         m_eventListeners = eventListeners;
     }
 
-    bool StateContextStandard::getEnableMessageQueues() const
+    auto StateContextStandard::getEnableMessageQueues() const -> bool
     {
         return m_enableMessageQueues;
-    }
-
-    SharedPtr<ConcurrentArray<SmartPtr<IStateQueue>>> StateContextStandard::getStateQueuesPtr() const
-    {
-        return m_stateQueues;
     }
 
     void StateContextStandard::setStateQueuesPtr( SharedPtr<ConcurrentArray<SmartPtr<IStateQueue>>> ptr )
@@ -594,7 +673,12 @@ namespace fb
         m_stateQueues = ptr;
     }
 
-    bool StateContextStandard::getUpdateState() const
+    void StateContextStandard::setStatesPtr( SharedPtr<ConcurrentArray<SmartPtr<IState>>> states )
+    {
+        m_states = states;
+    }
+
+    auto StateContextStandard::getUpdateState() const -> bool
     {
         return m_bUpdateState;
     }
@@ -604,9 +688,9 @@ namespace fb
         m_bUpdateState = val;
     }
 
-    SmartPtr<Properties> StateContextStandard::getProperties() const
+    auto StateContextStandard::getProperties() const -> SmartPtr<Properties>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();
@@ -622,26 +706,26 @@ namespace fb
     {
     }
 
-    Parameter StateContextStandard::triggerEvent( IEvent::Type eventType, hash_type eventValue,
-                                                  const Array<Parameter> &arguments,
-                                                  SmartPtr<ISharedObject> sender,
-                                                  SmartPtr<ISharedObject> object,
-                                                  SmartPtr<IEvent> event )
+    auto StateContextStandard::triggerEvent( IEvent::Type eventType, hash_type eventValue,
+                                             const Array<Parameter> &arguments,
+                                             SmartPtr<ISharedObject> sender,
+                                             SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
+        -> Parameter
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto &applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
-        auto jobQueue = applicationManager->getJobQueue();
+        auto &jobQueue = applicationManager->getJobQueue();
         if( jobQueue )
         {
             auto eventJob = fb::make_ptr<EventJob>();
-            eventJob->owner = this;
-            eventJob->eventType = eventType;
-            eventJob->eventValue = eventValue;
-            eventJob->arguments = arguments;
+            eventJob->setOwner( this );
+            eventJob->setEventType( eventType );
+            eventJob->setEventValue( eventValue );
+            eventJob->setArguments( arguments );
             eventJob->setSender( sender );
             eventJob->setObject( object );
-            eventJob->event = event;
+            eventJob->setEvent( event );
 
             jobQueue->addJobAllTasks( eventJob );
 
@@ -659,15 +743,22 @@ namespace fb
             }
         }
 
-        return Parameter();
+        return {};
     }
 
-    bool StateContextStandard::isValid() const
+    auto StateContextStandard::isValid() const -> bool
     {
         auto owner = getOwner();
-        if( owner && getState() )
+        if( owner )
         {
-            return true;
+            auto states = getStates();
+            for( auto state : states )
+            {
+                if( state )
+                {
+                    return true;
+                }
+            }
         }
 
         return false;

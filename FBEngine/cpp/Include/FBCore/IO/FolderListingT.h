@@ -1,7 +1,6 @@
 #ifndef DirectoryListing_h__
 #define DirectoryListing_h__
 
-
 #include <FBCore/Interface/IO/IFolderExplorer.h>
 #include <FBCore/Interface/IO/IFolderExplorerW.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>

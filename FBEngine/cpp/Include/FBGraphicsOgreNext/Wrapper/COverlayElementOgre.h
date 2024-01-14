@@ -2,7 +2,7 @@
 #define _COverlayElementOgreNext_H
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
-#include <FBCore/Graphics/COverlayElement.h>
+#include <FBCore/Graphics/OverlayElement.h>
 #include <FBCore/Interface/Graphics/IOverlayElement.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 
@@ -12,7 +12,7 @@ namespace fb
     {
 
         template <class T>
-        class COverlayElementOgre : public COverlayElement<T>
+        class COverlayElementOgre : public OverlayElement<T>
         {
         public:
             COverlayElementOgre();
@@ -28,9 +28,9 @@ namespace fb
             {
                 if( T::isLoaded() )
                 {
-                    if( auto parent = COverlayElement<T>::getParent() )
+                    if( auto parent = OverlayElement<T>::getParent() )
                     {
-                        auto children = COverlayElement<T>::getChildren();
+                        auto children = OverlayElement<T>::getChildren();
                         for( auto child : children )
                         {
                             if( !child->isValid() )
@@ -69,7 +69,7 @@ namespace fb
             FB_CLASS_REGISTER_TEMPLATE_DECL( COverlayElementOgre, T );
 
         protected:
-            class StateListenerOgre : public COverlayElement<T>::ElementStateListener
+            class StateListenerOgre : public OverlayElement<T>::ElementStateListener
             {
             public:
                 StateListenerOgre() = default;
@@ -88,7 +88,7 @@ namespace fb
         };
 
         template <class T>
-        COverlayElementOgre<T>::COverlayElementOgre() : COverlayElement<T>()
+        COverlayElementOgre<T>::COverlayElementOgre() : OverlayElement<T>()
         {
         }
 

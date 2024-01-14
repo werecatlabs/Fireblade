@@ -1,21 +1,18 @@
-#include <FBCore/FBCorePCH.h>
-#include <FBCore/Core/StringUtil.h>
-#include <FBCore/Core/Exception.h>
 #include <FBCore/Core/ColourUtil.h>
-#include <functional>
-#include <cctype>
-#include <locale>
+#include <FBCore/Core/Exception.h>
+#include <FBCore/Core/StringUtil.h>
+#include <FBCore/FBCorePCH.h>
 #include <algorithm>
+#include <cctype>
 #include <cmath>
-#include <utf8.h>
-#include <time.h>
-#include <locale>
 #include <codecvt>
-#include <string>
-#include <sstream>
-#include <vector>
+#include <ctime>
 #include <functional>
+#include <locale>
 #include <sstream>
+#include <string>
+#include <utf8.h>
+#include <vector>
 
 #include "FBCore/Core/Path.h"
 
@@ -38,7 +35,10 @@
 #    include <boost/date_time/posix_time/time_formatters.hpp>
 #endif
 
-#define MAX_BUFFER_SIZE 256
+enum
+{
+    MAX_BUFFER_SIZE = 256
+};
 
 namespace fb
 {
@@ -56,31 +56,31 @@ namespace fb
     const StringW StringUtility<StringW>::EmptyString = L"";
 
     template <>
-    String StringUtility<String>::default_dilim()
+    auto StringUtility<String>::default_dilim() -> String
     {
         return "\t\n ";
     }
 
     template <>
-    StringW StringUtility<StringW>::default_dilim()
+    auto StringUtility<StringW>::default_dilim() -> StringW
     {
         return L"\t\n ";
     }
 
     template <>
-    String StringUtility<String>::blank()
+    auto StringUtility<String>::blank() -> String
     {
         return "";
     }
 
     template <>
-    StringW StringUtility<StringW>::blank()
+    auto StringUtility<StringW>::blank() -> StringW
     {
         return L"";
     }
 
     template <class T>
-    bool StringUtility<T>::isEqual( const T &a, const T &b )
+    auto StringUtility<T>::isEqual( const T &a, const T &b ) -> bool
     {
         return std::equal( a.begin(), a.end(), b.begin(), b.end(),
                            []( typename T::value_type a, typename T::value_type b ) {
@@ -89,25 +89,25 @@ namespace fb
     }
 
     template <>
-    bool StringUtility<std::string>::isNullOrEmpty( const std::string &str )
+    auto StringUtility<std::string>::isNullOrEmpty( const std::string &str ) -> bool
     {
         return str.empty() || str == "";
     }
 
     template <>
-    bool StringUtility<StringW>::isNullOrEmpty( const StringW &str )
+    auto StringUtility<StringW>::isNullOrEmpty( const StringW &str ) -> bool
     {
         return str.empty() || str == L"";
     }
 
     template <class T>
-    bool StringUtility<T>::contains( const T &str, const T &value )
+    auto StringUtility<T>::contains( const T &str, const T &value ) -> bool
     {
         return str.find( value ) != T::npos;
     }
 
     template <>
-    String StringUtility<String>::toString( bool value )
+    auto StringUtility<String>::toString( bool value ) -> String
     {
         if( value )
         {
@@ -118,7 +118,7 @@ namespace fb
     }
 
     template <>
-    StringW StringUtility<StringW>::toString( bool value )
+    auto StringUtility<StringW>::toString( bool value ) -> StringW
     {
         if( value )
         {
@@ -129,7 +129,7 @@ namespace fb
     }
 
     template <>
-    bool StringUtility<String>::parseBool( const String &value, bool defaultValue )
+    auto StringUtility<String>::parseBool( const String &value, bool defaultValue ) -> bool
     {
         if( isNullOrEmpty( value ) )
         {
@@ -144,7 +144,7 @@ namespace fb
     }
 
     template <>
-    bool StringUtility<StringW>::parseBool( const StringW &value, bool defaultValue )
+    auto StringUtility<StringW>::parseBool( const StringW &value, bool defaultValue ) -> bool
     {
         if( isNullOrEmpty( value ) )
         {
@@ -159,7 +159,7 @@ namespace fb
     }
 
     template <class T>
-    String StringUtility<T>::toString( s32 value )
+    auto StringUtility<T>::toString( s32 value ) -> String
     {
         std::stringstream stream;
         stream << value;
@@ -167,7 +167,7 @@ namespace fb
     }
 
     template <class T>
-    String StringUtility<T>::toString( s64 value )
+    auto StringUtility<T>::toString( s64 value ) -> String
     {
         std::stringstream stream;
         stream << value;
@@ -175,21 +175,23 @@ namespace fb
     }
 
     template <class T>
-    s32 StringUtility<T>::parseInt( const String &value, s32 defaultValue )
+    auto StringUtility<T>::parseInt( const String &value, s32 defaultValue ) -> s32
     {
         if( value.length() > 0 )
         {
             s32 intVal = defaultValue;
             int retVal = sscanf( value.c_str(), "%i", &intVal );
             if( retVal != -1 )
+            {
                 return intVal;
+            }
         }
 
         return defaultValue;
     }
 
     template <class T>
-    String StringUtility<T>::toString( u32 value )
+    auto StringUtility<T>::toString( u32 value ) -> String
     {
         std::stringstream stream;
         stream << value;
@@ -198,7 +200,7 @@ namespace fb
 
 #if defined FB_PLATFORM_WIN32
     template <class T>
-    String StringUtility<T>::toString( u64 value )
+    auto StringUtility<T>::toString( u64 value ) -> String
     {
         std::stringstream stream;
         stream << value;
@@ -206,7 +208,7 @@ namespace fb
     }
 
     template <class T>
-    String StringUtility<T>::toString( unsigned long int value )
+    auto StringUtility<T>::toString( unsigned long int value ) -> String
     {
         std::stringstream stream;
         stream << value;
@@ -239,21 +241,23 @@ namespace fb
 #endif
 
     template <class T>
-    u32 StringUtility<T>::parseUInt( const String &value, u32 defaultValue )
+    auto StringUtility<T>::parseUInt( const String &value, u32 defaultValue ) -> u32
     {
         if( value.length() > 0 )
         {
             s32 intVal = 0;
             int retVal = sscanf( value.c_str(), "%i", &intVal );
             if( retVal )
+            {
                 return static_cast<u32>( intVal );
+            }
         }
 
         return defaultValue;
     }
 
     template <class T>
-    String StringUtility<T>::toString( f32 value )
+    auto StringUtility<T>::toString( f32 value ) -> String
     {
         std::stringstream stream;
         stream << value;
@@ -261,7 +265,7 @@ namespace fb
     }
 
     template <class T>
-    f32 StringUtility<T>::parseFloat( const T &value, f32 defaultValue )
+    auto StringUtility<T>::parseFloat( const T &value, f32 defaultValue ) -> f32
     {
         if( !isNullOrEmpty( value ) )
         {
@@ -284,7 +288,7 @@ namespace fb
     }
 
     template <class T>
-    String StringUtility<T>::toString( f64 value )
+    auto StringUtility<T>::toString( f64 value ) -> String
     {
         std::stringstream stream;
         stream << value;
@@ -292,7 +296,7 @@ namespace fb
     }
 
     template <class T>
-    f64 StringUtility<T>::parseDouble( const T &value, f64 defaultValue )
+    auto StringUtility<T>::parseDouble( const T &value, f64 defaultValue ) -> f64
     {
         if( !isNullOrEmpty( value ) )
         {
@@ -315,7 +319,7 @@ namespace fb
     }
 
     template <class T>
-    String StringUtility<T>::toString( const ColourI &colour )
+    auto StringUtility<T>::toString( const ColourI &colour ) -> String
     {
         std::stringstream stream;
         stream << colour.getRed() << ", " << colour.getGreen() << ", " << colour.getBlue() << ", "
@@ -325,7 +329,7 @@ namespace fb
     }
 
     template <class T>
-    String StringUtility<T>::toString( const ColourF &colour )
+    auto StringUtility<T>::toString( const ColourF &colour ) -> String
     {
         std::stringstream stream;
         stream << colour.r << ", " << colour.g << ", " << colour.b << ", " << colour.a << std::endl;
@@ -333,21 +337,21 @@ namespace fb
     }
 
     template <class T>
-    ColourI StringUtility<T>::parseColour( const String &value )
+    auto StringUtility<T>::parseColour( const String &value ) -> ColourI
     {
         s32 r, g, b, a;
         sscanf( value.c_str(), "%i, %i, %i, %i", &r, &g, &b, &a );
 
-        return ColourI( a, r, g, b );
+        return { (u32)a, (u32)r, (u32)g, (u32)b };
     }
 
     template <class T>
-    ColourF StringUtility<T>::parseColourf( const String &value )
+    auto StringUtility<T>::parseColourf( const String &value ) -> ColourF
     {
         f32 r, g, b, a;
         sscanf( value.c_str(), "%f, %f, %f, %f", &r, &g, &b, &a );
 
-        return ColourF( r, g, b, a );
+        return { r, g, b, a };
     }
 
     template <>
@@ -402,7 +406,7 @@ namespace fb
     }
 
     template <class T>
-    String StringUtility<T>::toString( const Array<String> &stringArray )
+    auto StringUtility<T>::toString( const Array<String> &stringArray ) -> String
     {
         std::stringstream stream;
         for( const auto &e : stringArray )
@@ -415,7 +419,7 @@ namespace fb
     }
 
     template <class T>
-    String StringUtility<T>::toString( const Array<f32> &floatArray )
+    auto StringUtility<T>::toString( const Array<f32> &floatArray ) -> String
     {
         std::stringstream stream;
 
@@ -429,8 +433,8 @@ namespace fb
     }
 
     template <class T>
-    String StringUtility<T>::toString( const Array<String> &stringArray1,
-                                       const Array<String> &stringArray2 )
+    auto StringUtility<T>::toString( const Array<String> &stringArray1,
+                                     const Array<String> &stringArray2 ) -> String
     {
         std::stringstream stream;
 
@@ -452,7 +456,7 @@ namespace fb
     }
 
     template <class T>
-    String StringUtility<T>::toString( const StringW &str )
+    auto StringUtility<T>::toString( const StringW &str ) -> String
     {
         auto cBuffer = new char[str.length() + 1];
         wcstombs( cBuffer, str.c_str(), str.length() );
@@ -502,70 +506,70 @@ namespace fb
     }
 
     template <class T>
-    hash_type StringUtility<T>::getHash( const String &str )
+    auto StringUtility<T>::getHash( const String &str ) -> hash_type
     {
         // DJB Hash Function
         hash_type hash = 5381;
 
-        for( u32 i = 0; i < str.length(); i++ )
+        for( char i : str )
         {
-            hash = ( ( hash << 5 ) + hash ) + str[i]; /* hash * 33 + c */
+            hash = ( ( hash << 5 ) + hash ) + i; /* hash * 33 + c */
         }
 
         return hash;
     }
 
     template <class T>
-    hash_type StringUtility<T>::getHashMakeLower( const String &str )
+    auto StringUtility<T>::getHashMakeLower( const String &str ) -> hash_type
     {
         auto lowerStr = make_lower( str );
         return getHash( lowerStr );
     }
 
     template <class T>
-    hash32 StringUtility<T>::getHash32( const String &str )
+    auto StringUtility<T>::getHash32( const String &str ) -> hash32
     {
         // DJB Hash Function
         hash32 hash = 5381;
 
-        for( u32 i = 0; i < str.length(); i++ )
+        for( char i : str )
         {
-            hash = ( ( hash << 5 ) + hash ) + str[i]; /* hash * 33 + c */
+            hash = ( ( hash << 5 ) + hash ) + i; /* hash * 33 + c */
         }
 
         return hash;
     }
 
     template <class T>
-    hash32 StringUtility<T>::getHashMakeLower32( const String &str )
+    auto StringUtility<T>::getHashMakeLower32( const String &str ) -> hash32
     {
         auto lowerStr = make_lower( str );
         return getHash32( lowerStr );
     }
 
     template <class T>
-    hash64 StringUtility<T>::getHash64( const String &str )
+    auto StringUtility<T>::getHash64( const String &str ) -> hash64
     {
         // DJB Hash Function
         hash64 hash = 5381;
 
-        for( u32 i = 0; i < str.length(); i++ )
+        for( char i : str )
         {
-            hash = ( ( hash << 5 ) + hash ) + str[i]; /* hash * 33 + c */
+            hash = ( ( hash << 5 ) + hash ) + i; /* hash * 33 + c */
         }
 
         return hash;
     }
 
     template <class T>
-    hash64 StringUtility<T>::getHashMakeLower64( const String &str )
+    auto StringUtility<T>::getHashMakeLower64( const String &str ) -> hash64
     {
         auto lowerStr = make_lower( str );
         return getHash64( lowerStr );
     }
 
     template <class T>
-    StringW StringUtility<T>::getWString( const String &str )
+    auto StringUtility<T>::getWString( const String &str ) -> StringW
     {
         if( str.length() > 0 )
         {
@@ -586,7 +590,7 @@ namespace fb
     }
 
     template <class T>
-    std::string StringUtility<T>::ltrim( const String &str )
+    auto StringUtility<T>::ltrim( const String &str ) -> std::string
     {
         std::string s = str;
         s.erase( s.begin(), std::find_if( s.begin(), s.end(),
@@ -596,7 +600,7 @@ namespace fb
     }
 
     template <class T>
-    std::string StringUtility<T>::rtrim( const String &str )
+    auto StringUtility<T>::rtrim( const String &str ) -> std::string
     {
         std::string s = str;
         s.erase(
@@ -608,13 +612,13 @@ namespace fb
     }
 
     template <class T>
-    std::string StringUtility<T>::trim( const String &s )
+    auto StringUtility<T>::trim( const String &s ) -> std::string
     {
         return ltrim( rtrim( s ) );
     }
 
     template <class T>
-    String StringUtility<T>::make_lower( const String &str )
+    auto StringUtility<T>::make_lower( const String &str ) -> String
     {
         String temp = str;
         std::transform( temp.begin(), temp.end(), temp.begin(), tolower );
@@ -622,7 +626,7 @@ namespace fb
     }
 
     template <class T>
-    String StringUtility<T>::make_upper( const String &str )
+    auto StringUtility<T>::make_upper( const String &str ) -> String
     {
         String temp = str;
         std::transform( temp.begin(), temp.end(), temp.begin(), toupper );
@@ -630,14 +634,15 @@ namespace fb
     }
 
     template <class T>
-    String StringUtility<T>::replace( const String &str, const char toReplace, const char replaceWith )
+    auto StringUtility<T>::replace( const String &str, const char toReplace, const char replaceWith )
+        -> String
     {
         String temp = str;
-        for( u32 i = 0; i < temp.size(); ++i )
+        for( char &i : temp )
         {
-            if( temp[i] == toReplace )
+            if( i == toReplace )
             {
-                temp[i] = replaceWith;
+                i = replaceWith;
             }
         }
 
@@ -645,7 +650,7 @@ namespace fb
     }
 
     template <class T>
-    StringW StringUtility<T>::toUTF8to16( const std::string &str )
+    auto StringUtility<T>::toUTF8to16( const std::string &str ) -> StringW
     {
         StringW utf16line;
         utf8::utf8to16( str.begin(), str.end(), std::back_inserter( utf16line ) );
@@ -653,7 +658,7 @@ namespace fb
     }
 
     template <class T>
-    std::string StringUtility<T>::toUTF16to8( const StringW &str )
+    auto StringUtility<T>::toUTF16to8( const StringW &str ) -> std::string
     {
         std::string utf8line;
         utf8::utf16to8( str.begin(), str.end(), std::back_inserter( utf8line ) );
@@ -661,8 +666,8 @@ namespace fb
     }
 
     template <class T>
-    const T StringUtility<T>::replaceAll( const T &source, const T &replaceWhat,
-                                          const T &replaceWithWhat )
+    auto StringUtility<T>::replaceAll( const T &source, const T &replaceWhat, const T &replaceWithWhat )
+        -> const T
     {
         T result = source;
         typename T::size_type pos = 0;
@@ -670,7 +675,9 @@ namespace fb
         {
             pos = result.find( replaceWhat, pos );
             if( pos == T::npos )
+            {
                 break;
+            }
             result.replace( pos, replaceWhat.size(), replaceWithWhat );
             pos += replaceWithWhat.size();
         }
@@ -678,7 +685,7 @@ namespace fb
     }
 
     template <>
-    std::string StringUtility<std::string>::getCurrentTime( bool bDisplayStr )
+    auto StringUtility<std::string>::getCurrentTime( bool bDisplayStr ) -> std::string
     {
 #if defined FB_PLATFORM_WIN32
         char tmpbuf[128];
@@ -690,9 +697,13 @@ namespace fb
         localtime_s( &today, &ltime );
 
         if( !bDisplayStr )
+        {
             strftime( tmpbuf, 128, "%H_%M_%S", &today );
+        }
         else
+        {
             strftime( tmpbuf, 128, "%H:%M:%S", &today );
+        }
 
         return std::string( tmpbuf );
 #else
@@ -701,7 +712,7 @@ namespace fb
     }
 
     template <>
-    StringW StringUtility<StringW>::getCurrentTime( bool bDisplayStr )
+    auto StringUtility<StringW>::getCurrentTime( bool bDisplayStr ) -> StringW
     {
 #if defined FB_PLATFORM_WIN32
         char tmpbuf[128];
@@ -713,9 +724,13 @@ namespace fb
         localtime_s( &today, &ltime );
 
         if( !bDisplayStr )
+        {
             strftime( tmpbuf, 128, "%H_%M_%S", &today );
+        }
         else
+        {
             strftime( tmpbuf, 128, "%H:%M:%S", &today );
+        }
 
         return StringUtility<std::string>::toUTF8to16( tmpbuf );
 #else
@@ -724,7 +739,8 @@ namespace fb
     }
 
     template <>
-    std::string StringUtility<std::string>::getCurrentDateTime( bool bDisplayStr, bool sqlLiteFormat )
+    auto StringUtility<std::string>::getCurrentDateTime( bool bDisplayStr, bool sqlLiteFormat )
+        -> std::string
     {
 #if defined FB_PLATFORM_WIN32
         char tmpbuf[128];
@@ -742,9 +758,13 @@ namespace fb
         else
         {
             if( !bDisplayStr )
+            {
                 strftime( tmpbuf, 128, "%Y_%m_%d_%H_%M_%S", &today );
+            }
             else
+            {
                 strftime( tmpbuf, 128, "%Y/%m/%d %H:%M:%S", &today );
+            }
         }
 
         return std::string( tmpbuf );
@@ -754,7 +774,7 @@ namespace fb
     }
 
     template <>
-    StringW StringUtility<StringW>::getCurrentDateTime( bool bDisplayStr, bool sqlLiteFormat )
+    auto StringUtility<StringW>::getCurrentDateTime( bool bDisplayStr, bool sqlLiteFormat ) -> StringW
     {
 #if defined FB_PLATFORM_WIN32
         char tmpbuf[128];
@@ -772,9 +792,13 @@ namespace fb
         else
         {
             if( !bDisplayStr )
+            {
                 strftime( tmpbuf, 128, "%Y_%m_%d_%H_%M_%S", &today );
+            }
             else
+            {
                 strftime( tmpbuf, 128, "%Y/%m/%d %H:%M:%S", &today );
+            }
         }
 
         return StringUtility<std::string>::toUTF8to16( tmpbuf );
@@ -784,7 +808,7 @@ namespace fb
     }
 
     template <>
-    std::string StringUtility<std::string>::getCurrentTime()
+    auto StringUtility<std::string>::getCurrentTime() -> std::string
     {
         using boost::gregorian::day_clock;
         using boost::posix_time::ptime;
@@ -796,7 +820,7 @@ namespace fb
     }
 
     template <>
-    StringW StringUtility<StringW>::getCurrentTime()
+    auto StringUtility<StringW>::getCurrentTime() -> StringW
     {
         using boost::gregorian::day_clock;
         using boost::posix_time::ptime;
@@ -808,7 +832,7 @@ namespace fb
     }
 
     template <>
-    std::string StringUtility<std::string>::getCurrentDateTime()
+    auto StringUtility<std::string>::getCurrentDateTime() -> std::string
     {
         namespace bg = boost::gregorian;
 
@@ -821,7 +845,7 @@ namespace fb
     }
 
     template <>
-    StringW StringUtility<StringW>::getCurrentDateTime()
+    auto StringUtility<StringW>::getCurrentDateTime() -> StringW
     {
         namespace bg = boost::gregorian;
 
@@ -834,7 +858,7 @@ namespace fb
     }
 
     template <>
-    std::string StringUtility<std::string>::getCurrentDateTime( bool bDisplayStr )
+    auto StringUtility<std::string>::getCurrentDateTime( bool bDisplayStr ) -> std::string
     {
 #if defined FB_PLATFORM_WIN32
         char tmpbuf[128];
@@ -846,9 +870,13 @@ namespace fb
         localtime_s( &today, &ltime );
 
         if( !bDisplayStr )
+        {
             strftime( tmpbuf, 128, "%H_%M_%S", &today );
+        }
         else
+        {
             strftime( tmpbuf, 128, "%H:%M:%S", &today );
+        }
 
         return std::string( tmpbuf );
 #else
@@ -857,7 +885,7 @@ namespace fb
     }
 
     template <>
-    StringW StringUtility<StringW>::getCurrentDateTime( bool bDisplayStr )
+    auto StringUtility<StringW>::getCurrentDateTime( bool bDisplayStr ) -> StringW
     {
 #if defined FB_PLATFORM_WIN32
         char tmpbuf[128];
@@ -869,9 +897,13 @@ namespace fb
         localtime_s( &today, &ltime );
 
         if( !bDisplayStr )
+        {
             strftime( tmpbuf, 128, "%H_%M_%S", &today );
+        }
         else
+        {
             strftime( tmpbuf, 128, "%H:%M:%S", &today );
+        }
 
         return StringUtility<std::string>::toStringW( tmpbuf );
 #else
@@ -881,7 +913,7 @@ namespace fb
 
     template <class T>
     template <class B>
-    T StringUtility<T>::toString( const Vector2<B> &val )
+    auto StringUtility<T>::toString( const Vector2<B> &val ) -> T
     {
         std::basic_stringstream<typename T::value_type, std::char_traits<typename T::value_type>,
                                 std::allocator<typename T::value_type>>
@@ -892,7 +924,7 @@ namespace fb
 
     template <class T>
     template <class B>
-    T StringUtility<T>::toString( const Vector3<B> &val )
+    auto StringUtility<T>::toString( const Vector3<B> &val ) -> T
     {
         std::basic_stringstream<typename T::value_type, std::char_traits<typename T::value_type>,
                                 std::allocator<typename T::value_type>>
@@ -903,7 +935,7 @@ namespace fb
 
     template <class T>
     template <class B>
-    T StringUtility<T>::toString( const Vector4<B> &val )
+    auto StringUtility<T>::toString( const Vector4<B> &val ) -> T
     {
         std::basic_stringstream<typename T::value_type, std::char_traits<typename T::value_type>,
                                 std::allocator<typename T::value_type>>
@@ -914,7 +946,7 @@ namespace fb
 
     template <class T>
     template <class B>
-    T StringUtility<T>::toString( const Quaternion<B> &val )
+    auto StringUtility<T>::toString( const Quaternion<B> &val ) -> T
     {
         std::basic_stringstream<typename T::value_type, std::char_traits<typename T::value_type>,
                                 std::allocator<typename T::value_type>>
@@ -925,7 +957,7 @@ namespace fb
 
     template <class T>
     template <class B>
-    Vector2<B> StringUtility<T>::parseVector2( const T &val, const Vector2<B> &defaultValue )
+    auto StringUtility<T>::parseVector2( const T &val, const Vector2<B> &defaultValue ) -> Vector2<B>
     {
         // Split on space
         auto vec = StringUtility::split( val );
@@ -940,7 +972,7 @@ namespace fb
 
     template <class T>
     template <class B>
-    Vector3<B> StringUtility<T>::parseVector3( const T &val, const Vector3<B> &defaultValue )
+    auto StringUtility<T>::parseVector3( const T &val, const Vector3<B> &defaultValue ) -> Vector3<B>
     {
         // Split on space
         auto vec = StringUtility::split( val );
@@ -956,8 +988,8 @@ namespace fb
 
     template <class T>
     template <class B>
-    Vector3<B> StringUtility<T>::parseVector3( const T &val, const T &split,
-                                               const Vector3<B> &defaultValue )
+    auto StringUtility<T>::parseVector3( const T &val, const T &split, const Vector3<B> &defaultValue )
+        -> Vector3<B>
     {
         // Split on space
         auto vec = StringUtility::split( val, split );
@@ -973,7 +1005,7 @@ namespace fb
 
     template <class T>
     template <class B>
-    Vector4<B> StringUtility<T>::parseVector4( const T &val, const Vector4<B> &defaultValue )
+    auto StringUtility<T>::parseVector4( const T &val, const Vector4<B> &defaultValue ) -> Vector4<B>
     {
         // Split on space
         auto vec = StringUtility::split( val );
@@ -989,8 +1021,8 @@ namespace fb
 
     template <class T>
     template <class B>
-    Vector4<B> StringUtility<T>::parseVector4( const T &val, const T &split,
-                                               const Vector4<B> &defaultValue )
+    auto StringUtility<T>::parseVector4( const T &val, const T &split, const Vector4<B> &defaultValue )
+        -> Vector4<B>
     {
         // Split on space
         auto vec = StringUtility::split( val, split );
@@ -1006,7 +1038,8 @@ namespace fb
 
     template <class T>
     template <class B>
-    Quaternion<B> StringUtility<T>::parseQuaternion( const T &val, const Quaternion<B> &defaultValue )
+    auto StringUtility<T>::parseQuaternion( const T &val, const Quaternion<B> &defaultValue )
+        -> Quaternion<B>
     {
         // Split on space
         auto vec = StringUtility::split( val );
@@ -1021,8 +1054,8 @@ namespace fb
     }
 
     template <class T>
-    Array<T> StringUtility<T>::split( const T &str, const T &delims, unsigned int maxSplits,
-                                      bool preserveDelims )
+    auto StringUtility<T>::split( const T &str, const T &delims, unsigned int maxSplits,
+                                  bool preserveDelims ) -> Array<T>
     {
         Array<T> ret;
         // Pre-allocate some space for performance
@@ -1080,7 +1113,8 @@ namespace fb
     }
 
     template <class T>
-    std::string StringUtility<T>::encodeBase64( const unsigned char *bytes_to_encode, size_t in_len )
+    auto StringUtility<T>::encodeBase64( const unsigned char *bytes_to_encode, size_t in_len )
+        -> std::string
     {
 #if !FB_USE_BOOST
         std::string ret;
@@ -1138,7 +1172,7 @@ namespace fb
     }
 
     template <class T>
-    std::string StringUtility<T>::decodeBase64( const std::string &s )
+    auto StringUtility<T>::decodeBase64( const std::string &s ) -> std::string
     {
 #if !FB_USE_BOOST
         int in_len = s.size();
@@ -1199,10 +1233,14 @@ namespace fb
         {
             --size;
             if( size && s[size - 1] == '=' )
+            {
                 --size;
+            }
         }
         if( size == 0 )
-            return std::string();
+        {
+            return {};
+        }
 
         std::copy( base64_dec( s.data() ), base64_dec( s.data() + size ),
                    std::ostream_iterator<char>( os ) );
@@ -1212,7 +1250,7 @@ namespace fb
     }
 
     template <>
-    std::string StringUtility<std::string>::getUUID()
+    auto StringUtility<std::string>::getUUID() -> std::string
     {
 #if FB_USE_BOOST
         boost::uuids::uuid uuid = boost::uuids::random_generator()();
@@ -1223,7 +1261,7 @@ namespace fb
     }
 
     template <>
-    StringW StringUtility<StringW>::getUUID()
+    auto StringUtility<StringW>::getUUID() -> StringW
     {
 #if FB_USE_BOOST
         boost::uuids::uuid uuid = boost::uuids::random_generator()();
@@ -1234,27 +1272,27 @@ namespace fb
     }
 
     template <class T>
-    StringW StringUtility<T>::toStringW( std::string str )
+    auto StringUtility<T>::toStringW( std::string str ) -> StringW
     {
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
         return converter.from_bytes( str.c_str() );
     }
 
     template <class T>
-    std::string StringUtility<T>::toStringC( StringW str )
+    auto StringUtility<T>::toStringC( StringW str ) -> std::string
     {
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
         return converter.to_bytes( str.c_str() );
     }
 
     template <class T>
-    Array<T> StringUtility<T>::parseStringVector( const T &val )
+    auto StringUtility<T>::parseStringVector( const T &val ) -> Array<T>
     {
         return StringUtility::split( val );
     }
 
     template <class T>
-    bool StringUtility<T>::isNumber( const T &val )
+    auto StringUtility<T>::isNumber( const T &val ) -> bool
     {
         std::basic_stringstream<typename T::value_type, std::char_traits<typename T::value_type>,
                                 std::allocator<typename T::value_type>>
@@ -1313,7 +1351,7 @@ namespace fb
     }
 
     template <class T>
-    bool StringUtility<T>::match( const String &str, const String &pattern, bool caseSensitive )
+    auto StringUtility<T>::match( const String &str, const String &pattern, bool caseSensitive ) -> bool
     {
         String tmpStr = str;
         String tmpPattern = pattern;
@@ -1342,7 +1380,9 @@ namespace fb
                 {
                     // scan until we find next pattern character
                     while( strIt != tmpStr.end() && *strIt != *patIt )
+                    {
                         ++strIt;
+                    }
                 }
             }
             else
@@ -1379,7 +1419,7 @@ namespace fb
     }
 
     template <>
-    String StringUtility<String>::cleanupPath( const String &path )
+    auto StringUtility<String>::cleanupPath( const String &path ) -> String
     {
         if( path == "./" )
         {
@@ -1387,6 +1427,8 @@ namespace fb
         }
 
         std::vector<std::string> components;
+        components.reserve( 10 );
+
         std::string component;
 
 #ifdef FB_USE_BOOST
@@ -1408,7 +1450,7 @@ namespace fb
                     }
                     else if( !isAbsolute )
                     {
-                        components.push_back( ".." );
+                        components.emplace_back( ".." );
                     }
                 }
                 else if( component != "." && !component.empty() )
@@ -1431,7 +1473,7 @@ namespace fb
             }
             else if( !isAbsolute )
             {
-                components.push_back( ".." );
+                components.emplace_back( ".." );
             }
         }
         else if( component != "." && !component.empty() )
@@ -1461,7 +1503,7 @@ namespace fb
     }
 
     template <>
-    StringW StringUtility<StringW>::cleanupPath( const StringW &path )
+    auto StringUtility<StringW>::cleanupPath( const StringW &path ) -> StringW
     {
         if( path == L"./" )
         {
@@ -1490,7 +1532,7 @@ namespace fb
                     }
                     else if( !isAbsolute )
                     {
-                        components.push_back( L".." );
+                        components.emplace_back( L".." );
                     }
                 }
                 else if( component != L"." && !component.empty() )
@@ -1513,7 +1555,7 @@ namespace fb
             }
             else if( !isAbsolute )
             {
-                components.push_back( L".." );
+                components.emplace_back( L".." );
             }
         }
         else if( component != L"." && !component.empty() )
@@ -1563,8 +1605,9 @@ namespace fb
     }
 
     template <class T>
-    std::vector<std::string> fb::StringUtility<T>::extractNamedEntities(
-        const std::vector<std::string> &tokens, const std::vector<std::string> &entities )
+    auto fb::StringUtility<T>::extractNamedEntities( const std::vector<std::string> &tokens,
+                                                     const std::vector<std::string> &entities )
+        -> std::vector<std::string>
     {
         std::vector<std::string> namedEntities;
         for( const auto &token : tokens )
@@ -1583,7 +1626,7 @@ namespace fb
     }
 
     template <class T>
-    std::vector<std::string> fb::StringUtility<T>::tokenize( const std::string &input )
+    auto fb::StringUtility<T>::tokenize( const std::string &input ) -> std::vector<std::string>
     {
         std::vector<std::string> tokens;
         std::istringstream iss( input );
@@ -1596,7 +1639,8 @@ namespace fb
     }
 
     template <class T>
-    int fb::StringUtility<T>::countMatchingCharacters( const std::string &a, const std::string &b )
+    auto fb::StringUtility<T>::countMatchingCharacters( const std::string &a, const std::string &b )
+        -> int
     {
         int count = 0;
         for( char cB : b )
@@ -1608,7 +1652,7 @@ namespace fb
     }
 
     template <class T>
-    int fb::StringUtility<T>::countMatchingCharacters( const std::string &str, char target )
+    auto fb::StringUtility<T>::countMatchingCharacters( const std::string &str, char target ) -> int
     {
         int count = 0;
         for( char c : str )
@@ -1622,7 +1666,8 @@ namespace fb
     }
 
     template <class T>
-    size_t fb::StringUtility<T>::numCommonSubsequence( const std::string &str1, const std::string &str2 )
+    auto fb::StringUtility<T>::numCommonSubsequence( const std::string &str1, const std::string &str2 )
+        -> size_t
     {
         auto len1 = str1.length();
         auto len2 = str2.length();
@@ -1671,8 +1716,8 @@ namespace fb
     }
 
     template <class T>
-    std::string fb::StringUtility<T>::longestCommonSubsequence( const std::string &str1,
-                                                                const std::string &str2 )
+    auto fb::StringUtility<T>::longestCommonSubsequence( const std::string &str1,
+                                                         const std::string &str2 ) -> std::string
     {
         auto len1 = str1.length();
         auto len2 = str2.length();

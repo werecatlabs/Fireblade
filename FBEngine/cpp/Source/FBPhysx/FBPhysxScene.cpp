@@ -6,108 +6,105 @@
 #include <FBCore/FBCore.h>
 #include <PxPhysicsAPI.h>
 #include <FBPhysx/FBPhysxThread.h>
-
 #include "FBPhysx/FBPhysxManager.h"
 
-namespace fb
+#define FB_USE_PHYSX_ACTIVE_TRANSFORMS 1
+
+namespace fb::physics
 {
-    namespace physics
+    using namespace physx;
+
+    PhysxScene::PhysxScene() = default;
+
+    PhysxScene::~PhysxScene()
     {
-        using namespace physx;
+        unload( nullptr );
+    }
 
-        PhysxScene::PhysxScene()
+    void PhysxScene::load( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-        }
+            using namespace physx;
 
-        PhysxScene::~PhysxScene()
-        {
-            unload( nullptr );
-        }
+            setLoadingState( LoadingState::Loading );
 
-        void PhysxScene::load( SmartPtr<ISharedObject> data )
-        {
-            try
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto physicsManager =
+                fb::static_pointer_cast<PhysxManager>( applicationManager->getPhysicsManager() );
+            auto physics = physicsManager->getPhysics();
+
+            auto gravity = Vector3<real_Num>( 0.0f, -9.81f, 0.0f );
+            // properties->getPropertyAsVector3D("gravity",
+            // Vector3<real_Num>(0.0f, -9.8f, 0.0f));
+
+            PxSceneDesc sceneDesc( physics->getTolerancesScale() );
+            sceneDesc.gravity = PxVec3( gravity.X(), gravity.Y(), gravity.Z() );
+            sceneDesc.broadPhaseType = PxBroadPhaseType::eMBP;
+            sceneDesc.frictionOffsetThreshold = 0.05f;
+            sceneDesc.maxNbContactDataBlocks = 1024;
+            sceneDesc.ccdMaxPasses = 0;
+            sceneDesc.solverBatchSize = 2;
+            sceneDesc.dynamicStructure = PxPruningStructure::Enum::eNONE;
+            sceneDesc.staticStructure = PxPruningStructure::Enum::eDYNAMIC_AABB_TREE;
+            sceneDesc.dynamicTreeRebuildRateHint = 1000;
+
+            PxSceneLimits limits;
+            limits.maxNbActors = 256;
+            limits.maxNbBodies = 256;
+            limits.maxNbStaticShapes = 256;
+            limits.maxNbDynamicShapes = 256;
+            limits.maxNbAggregates = 256;
+            limits.maxNbConstraints = 256;
+            limits.maxNbRegions = 256;
+            limits.maxNbObjectsPerRegion = 256;
+
+            sceneDesc.limits = limits;
+
+            int numThreads = Thread::physical_concurrency();
+            if( numThreads <= 4 )
             {
-                using namespace physx;
-
-                setLoadingState( LoadingState::Loading );
-
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto physicsManager =
-                    fb::static_pointer_cast<PhysxManager>( applicationManager->getPhysicsManager() );
-                auto physics = physicsManager->getPhysics();
-
-                auto gravity = Vector3<real_Num>( 0.0f, -9.81f, 0.0f );
-                // properties->getPropertyAsVector3D("gravity",
-                // Vector3<real_Num>(0.0f, -9.8f, 0.0f));
-
-                PxSceneDesc sceneDesc( physics->getTolerancesScale() );
-                sceneDesc.gravity = PxVec3( gravity.X(), gravity.Y(), gravity.Z() );
-                sceneDesc.broadPhaseType = PxBroadPhaseType::eMBP;
-                sceneDesc.frictionOffsetThreshold = 0.05f;
-                sceneDesc.maxNbContactDataBlocks = 1024;
-                sceneDesc.ccdMaxPasses = 0;
-                sceneDesc.solverBatchSize = 2;
-                sceneDesc.dynamicStructure = PxPruningStructure::Enum::eNONE;
-                sceneDesc.staticStructure = PxPruningStructure::Enum::eDYNAMIC_AABB_TREE;
-                sceneDesc.dynamicTreeRebuildRateHint = 1000;
-
-                PxSceneLimits limits;
-                limits.maxNbActors = 256;
-                limits.maxNbBodies = 256;
-                limits.maxNbStaticShapes = 256;
-                limits.maxNbDynamicShapes = 256;
-                limits.maxNbAggregates = 256;
-                limits.maxNbConstraints = 256;
-                limits.maxNbRegions = 256;
-                limits.maxNbObjectsPerRegion = 256;
-
-                sceneDesc.limits = limits;
-
-                int numThreads = Thread::physical_concurrency();
-                if( numThreads <= 4 )
-                {
-                    numThreads = 0;
-                }
-
-                if( numThreads > 4 )
-                {
-                    numThreads = 4;
-                }
-
                 numThreads = 0;
+            }
 
-                m_cpuDispatcher = PxDefaultCpuDispatcherCreate( numThreads );
-                if( !m_cpuDispatcher )
-                {
-                    FB_LOG_ERROR( "PxDefaultCpuDispatcherCreate failed!" );
-                }
+            if( numThreads > 4 )
+            {
+                numThreads = 4;
+            }
 
-                sceneDesc.cpuDispatcher = m_cpuDispatcher;
+            numThreads = 0;
 
-                if( !sceneDesc.filterShader )
-                {
-                    //sceneDesc.filterShader = PxDefaultSimulationFilterShader;
-                    sceneDesc.filterShader = PhysxScene::simulationFilterShader;
-                }
+            m_cpuDispatcher = PxDefaultCpuDispatcherCreate( numThreads );
+            if( !m_cpuDispatcher )
+            {
+                FB_LOG_ERROR( "PxDefaultCpuDispatcherCreate failed!" );
+            }
 
-                sceneDesc.frictionType = PxFrictionType::ePATCH;
+            sceneDesc.cpuDispatcher = m_cpuDispatcher;
 
-                m_collisionCallback = new CollisionCallback;
-                sceneDesc.filterCallback = m_collisionCallback;
+            if( !sceneDesc.filterShader )
+            {
+                //sceneDesc.filterShader = PxDefaultSimulationFilterShader;
+                sceneDesc.filterShader = simulationFilterShader;
+            }
 
-                m_simulationEventCallback = new SimulationEventCallback;
-                sceneDesc.simulationEventCallback = m_simulationEventCallback;
+            sceneDesc.frictionType = PxFrictionType::ePATCH;
 
-                m_contactModificationCallback = new ContactModificationCallback;
-                sceneDesc.contactModifyCallback = m_contactModificationCallback;
+            m_collisionCallback = new CollisionCallback;
+            sceneDesc.filterCallback = m_collisionCallback;
 
-                sceneDesc.flags = PxSceneFlag::eENABLE_PCM;
-                sceneDesc.frictionOffsetThreshold = 0.05f;
+            m_simulationEventCallback = new SimulationEventCallback;
+            sceneDesc.simulationEventCallback = m_simulationEventCallback;
 
-                sceneDesc.flags |= PxSceneFlag::eENABLE_ACTIVETRANSFORMS;
+            m_contactModificationCallback = new ContactModificationCallback;
+            sceneDesc.contactModifyCallback = m_contactModificationCallback;
+
+            sceneDesc.flags = PxSceneFlag::eENABLE_PCM;
+            sceneDesc.frictionOffsetThreshold = 0.05f;
+
+            sceneDesc.flags |= PxSceneFlag::eENABLE_ACTIVETRANSFORMS;
 
 #ifdef PX_WINDOWS
                 // if(!sceneDesc.gpuDispatcher && mCudaContextManager)
@@ -149,12 +146,11 @@ namespace fb
 
                     if( auto scene = getScene() )
                     {
-                        auto numActors =
-                            scene->getNbActors( physx::PxActorTypeSelectionFlag::eRIGID_DYNAMIC );
+                        auto numActors = scene->getNbActors( PxActorTypeSelectionFlag::eRIGID_DYNAMIC );
                         FB_ASSERT( numActors == 0 );
 
                         auto numStaticActors =
-                            scene->getNbActors( physx::PxActorTypeSelectionFlag::eRIGID_STATIC );
+                            scene->getNbActors( PxActorTypeSelectionFlag::eRIGID_STATIC );
                         FB_ASSERT( numStaticActors == 0 );
                     }
 
@@ -162,12 +158,11 @@ namespace fb
 
                     if( auto scene = getScene() )
                     {
-                        auto numActors =
-                            scene->getNbActors( physx::PxActorTypeSelectionFlag::eRIGID_DYNAMIC );
+                        auto numActors = scene->getNbActors( PxActorTypeSelectionFlag::eRIGID_DYNAMIC );
                         FB_ASSERT( numActors == 0 );
 
                         auto numStaticActors =
-                            scene->getNbActors( physx::PxActorTypeSelectionFlag::eRIGID_STATIC );
+                            scene->getNbActors( PxActorTypeSelectionFlag::eRIGID_STATIC );
                         FB_ASSERT( numStaticActors == 0 );
 
                         scene->release();
@@ -191,7 +186,7 @@ namespace fb
         {
             if( auto scene = getScene() )
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto timer = applicationManager->getTimer();
@@ -202,6 +197,8 @@ namespace fb
 
                 auto physicsManager = applicationManager->getPhysicsManager();
                 FB_ASSERT( physicsManager );
+
+                ScopedLock lock( physicsManager );
 
                 FB_PXSCENE_WRITE_LOCK( scene );
 
@@ -217,9 +214,12 @@ namespace fb
 
                 if( applicationManager->isPlaying() )
                 {
-                    scene->simulate( static_cast<f32>( dt ) );
+                    auto fDT = static_cast<f32>( dt );
+
+                    scene->simulate( fDT );
                     scene->fetchResults( true );
 
+#if !FB_USE_PHYSX_ACTIVE_TRANSFORMS
                     if( auto p = getRigidBodiesPtr() )
                     {
                         auto &rigidBodies = *p;
@@ -235,6 +235,7 @@ namespace fb
                             }
                         }
                     }
+#endif
                 }
                 else
                 {
@@ -244,25 +245,31 @@ namespace fb
 #endif
                 }
 
-                //auto numTransforms = static_cast<u32>( 0 );
-                //auto transforms = scene->getActiveTransforms( numTransforms );
-                //for( size_t i = 0; i < numTransforms; ++i )
-                //{
-                //    const auto &activeTransform = transforms[i];
-                //    auto rigidBody = static_cast<PhysxRigidDynamic *>( activeTransform.userData );
-                //    if( rigidBody )
-                //    {
-                //        auto &pxTransform = activeTransform.actor2World;
-                //        FB_ASSERT( pxTransform.isSane() );
-                //        FB_ASSERT( pxTransform.isValid() );
+#if FB_USE_PHYSX_ACTIVE_TRANSFORMS
+                if( applicationManager->isPlaying() )
+                {
+                    auto numTransforms = static_cast<u32>( 0 );
+                    auto transforms = scene->getActiveTransforms( numTransforms );
 
-                //        auto transform = PhysxUtil::toFB( pxTransform );
-                //        FB_ASSERT( transform.isSane() );
-                //        FB_ASSERT( transform.isValid() );
+                    for( size_t i = 0; i < numTransforms; ++i )
+                    {
+                        const auto &activeTransform = transforms[i];
+                        auto rigidBody = static_cast<PhysxRigidDynamic *>( activeTransform.userData );
+                        if( rigidBody )
+                        {
+                            auto &pxTransform = activeTransform.actor2World;
+                            FB_ASSERT( pxTransform.isSane() );
+                            FB_ASSERT( pxTransform.isValid() );
 
-                //        rigidBody->setActiveTransform( transform );
-                //    }
-                //}
+                            auto transform = PhysxUtil::toFB( pxTransform );
+                            FB_ASSERT( transform.isSane() );
+                            FB_ASSERT( transform.isValid() );
+
+                            rigidBody->setActiveTransform( transform );
+                        }
+                    }
+                }
+#endif
             }
         }
 
@@ -270,7 +277,7 @@ namespace fb
         {
             if( auto scene = getScene() )
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto timer = applicationManager->getTimer();
@@ -308,10 +315,10 @@ namespace fb
                 //	count++;
                 //}
 
-                // auto stateObject = getStateObject();
-                // if (stateObject)
+                // auto stateContext = getStateContext();
+                // if (stateContext)
                 //{
-                //	stateObject->addOutputState(sceneState);
+                //	stateContext->addOutputState(sceneState);
                 // }
             }
         }
@@ -345,30 +352,30 @@ namespace fb
             m_size = size;
         }
 
-        Vector3F PhysxScene::getSize() const
+        auto PhysxScene::getSize() const -> Vector3F
         {
             return m_size;
         }
 
-        bool PhysxScene::rayTest( const Vector3F &start, const Vector3F &direction, Vector3F &hitPos,
-                                  Vector3F &hitNormal, u32 collisionType, u32 collisionMask )
+        auto PhysxScene::rayTest( const Vector3F &start, const Vector3F &direction, Vector3F &hitPos,
+                                  Vector3F &hitNormal, u32 collisionType, u32 collisionMask ) -> bool
         {
             return false;
         }
 
-        bool PhysxScene::intersects( const Vector3F &start, const Vector3F &end, Vector3F &hitPos,
+        auto PhysxScene::intersects( const Vector3F &start, const Vector3F &end, Vector3F &hitPos,
                                      Vector3F &hitNormal, SmartPtr<ISharedObject> &object,
-                                     u32 collisionType, u32 collisionMask )
+                                     u32 collisionType, u32 collisionMask ) -> bool
         {
             return false;
         }
 
-        physx::PxScene *PhysxScene::getScene() const
+        auto PhysxScene::getScene() const -> PxScene *
         {
             return m_scene.load();
         }
 
-        void PhysxScene::setScene( physx::PxScene *scene )
+        void PhysxScene::setScene( PxScene *scene )
         {
             m_scene = scene;
         }
@@ -377,12 +384,12 @@ namespace fb
         {
             if( auto scene = getScene() )
             {
-                auto pxGravity = physx::PxVec3( vec.X(), vec.Y(), vec.Z() );
+                auto pxGravity = PxVec3( vec.X(), vec.Y(), vec.Z() );
                 scene->setGravity( pxGravity );
             }
         }
 
-        Vector3<real_Num> PhysxScene::getGravity() const
+        auto PhysxScene::getGravity() const -> Vector3<real_Num>
         {
             return Vector3<real_Num>::zero();
         }
@@ -397,7 +404,7 @@ namespace fb
             }
         }
 
-        bool PhysxScene::fetchResults( bool block, u32 *errorState )
+        auto PhysxScene::fetchResults( bool block, u32 *errorState ) -> bool
         {
             if( auto scene = getScene() )
             {
@@ -411,8 +418,13 @@ namespace fb
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
                 auto physicsManager = applicationManager->getPhysicsManager();
+                FB_ASSERT( physicsManager );
+
+                ScopedLock lock( physicsManager );
 
                 if( auto scene = getScene() )
                 {
@@ -452,6 +464,15 @@ namespace fb
                                 pRigidStatic->load( nullptr );
                             }
 
+                            auto shapes = pRigidStatic->getShapes();
+                            for( auto shape : shapes )
+                            {
+                                if( !shape->isLoaded() )
+                                {
+                                    shape->load( nullptr );
+                                }
+                            }
+
                             if( auto actor = pRigidStatic->getRigidStatic() )
                             {
                                 //FB_ASSERT( actor->getNbShapes() > 0 );
@@ -459,7 +480,10 @@ namespace fb
                                 auto currentScene = actor->getScene();
                                 if( currentScene == nullptr )
                                 {
-                                    scene->addActor( *actor );
+                                    if( actor->getNbShapes() > 0 )
+                                    {
+                                        scene->addActor( *actor );
+                                    }
                                 }
                             }
                         }
@@ -478,8 +502,14 @@ namespace fb
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
                 auto physicsManager = applicationManager->getPhysicsManager();
+                FB_ASSERT( physicsManager );
+
+                ScopedLock lock( physicsManager );
+
                 FB_PXSCENE_WRITE_LOCK( getScene() );
 
                 if( body )
@@ -521,8 +551,8 @@ namespace fb
             }
         }
 
-        bool PhysxScene::castRay( const Vector3<real_Num> &origin, const Vector3<real_Num> &dir,
-                                  Array<SmartPtr<IRaycastHit>> &hits )
+        auto PhysxScene::castRay( const Vector3<real_Num> &origin, const Vector3<real_Num> &dir,
+                                  Array<SmartPtr<IRaycastHit>> &hits ) -> bool
         {
             using namespace physx;
 
@@ -550,7 +580,7 @@ namespace fb
                     auto hit = fb::make_ptr<RaycastHit>();
                     hit->setDistance( distance );
                     hit->setPoint( hitPos );
-                    hits.push_back( hit );
+                    hits.emplace_back( hit );
 
                     return true;
                 }
@@ -559,14 +589,14 @@ namespace fb
             return false;
         }
 
-        bool PhysxScene::castRay( const Ray3<real_Num> &ray, SmartPtr<IRaycastHit> hit )
+        auto PhysxScene::castRay( const Ray3<real_Num> &ray, SmartPtr<IRaycastHit> hit ) -> bool
         {
             using namespace physx;
 
             FB_ASSERT( MathUtil<real_Num>::isFinite( ray.getOrigin() ) );
             FB_ASSERT( MathUtil<real_Num>::isFinite( ray.getDirection() ) );
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto physicsManager = applicationManager->getPhysicsManager();
             FB_PXSCENE_WRITE_LOCK( getScene() );
 
@@ -594,14 +624,14 @@ namespace fb
                                               pxQueryFilterData );
                 if( status )
                 {
-                    auto d = (real_Num)raycastCallback.m_hit.distance;
+                    auto d = raycastCallback.m_hit.distance;
                     if( d < maxDistance )
                     {
                         const auto &n = raycastCallback.m_hit.normal;
 
                         hit->setDistance( d );
                         hit->setPoint( origin + ( dir * d ) );
-                        hit->setNormal( Vector3<real_Num>( n.x, n.y, n.z ));
+                        hit->setNormal( Vector3<real_Num>( n.x, n.y, n.z ) );
 
                         FB_ASSERT( MathF::isFinite( d ) );
                         FB_ASSERT( MathUtil<real_Num>::isFinite( hit->getPoint() ) );
@@ -615,17 +645,17 @@ namespace fb
             return false;
         }
 
-        SmartPtr<IStateContext> PhysxScene::getStateObject() const
+        auto PhysxScene::getStateContext() const -> SmartPtr<IStateContext>
         {
-            return m_stateObject;
+            return m_stateContext;
         }
 
-        void PhysxScene::setStateObject( SmartPtr<IStateContext> stateObject )
+        void PhysxScene::setStateContext( SmartPtr<IStateContext> stateContext )
         {
-            m_stateObject = stateObject;
+            m_stateContext = stateContext;
         }
 
-        SharedPtr<Array<SmartPtr<IRigidBody3>>> PhysxScene::getRigidBodiesPtr() const
+        auto PhysxScene::getRigidBodiesPtr() const -> SharedPtr<Array<SmartPtr<IRigidBody3>>>
         {
             return m_rigidBodies;
         }
@@ -666,9 +696,9 @@ namespace fb
             }
         }
 
-        bool PhysxScene::castRayDynamic( const Ray3<real_Num> &ray, SmartPtr<IRaycastHit> hit )
+        auto PhysxScene::castRayDynamic( const Ray3<real_Num> &ray, SmartPtr<IRaycastHit> hit ) -> bool
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto physicsManager = applicationManager->getPhysicsManager();
             FB_PXSCENE_READ_LOCK( getScene() );
 
@@ -715,31 +745,29 @@ namespace fb
             return false;
         }
 
-        class QueryFilterCallback : public physx::PxQueryFilterCallback
+        class QueryFilterCallback : public PxQueryFilterCallback
         {
         public:
-            QueryFilterCallback()
-            {
-            }
-            ~QueryFilterCallback()
-            {
-            }
+            QueryFilterCallback() = default;
 
-            virtual PxQueryHitType::Enum preFilter( const PxFilterData &filterData, const PxShape *shape,
-                                                    const PxRigidActor *actor, PxHitFlags &queryFlags )
+            ~QueryFilterCallback() override = default;
+
+            auto preFilter( const PxFilterData &filterData, const PxShape *shape,
+                            const PxRigidActor *actor, PxHitFlags &queryFlags )
+                -> PxQueryHitType::Enum override
             {
                 return PxQueryHitType::eBLOCK;
             }
 
-            virtual PxQueryHitType::Enum postFilter( const PxFilterData &filterData,
-                                                     const PxQueryHit &hit )
+            auto postFilter( const PxFilterData &filterData, const PxQueryHit &hit )
+                -> PxQueryHitType::Enum override
             {
                 return PxQueryHitType::eBLOCK;
             }
         };
 
-        physx::PxAgain PhysxScene::RaycastCallback::processTouches( const physx::PxRaycastHit *buffer,
-                                                                    u32 nbHits )
+        auto PhysxScene::RaycastCallback::processTouches( const PxRaycastHit *buffer, u32 nbHits )
+            -> PxAgain
         {
             using namespace physx;
 
@@ -782,16 +810,18 @@ namespace fb
         {
         }
 
-        physx::PxFilterFlags PhysxScene::simulationFilterShader(
-            PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
-            PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
-            PxPairFlags &pairFlags, const void *constantBlock, PxU32 constantBlockSize )
+        auto PhysxScene::simulationFilterShader( PxFilterObjectAttributes attributes0,
+                                                 PxFilterData filterData0,
+                                                 PxFilterObjectAttributes attributes1,
+                                                 PxFilterData filterData1, PxPairFlags &pairFlags,
+                                                 const void *constantBlock, PxU32 constantBlockSize )
+            -> PxFilterFlags
         {
             // let triggers through
             if( PxFilterObjectIsTrigger( attributes0 ) || PxFilterObjectIsTrigger( attributes1 ) )
             {
                 pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
-                return PxFilterFlags();
+                return {};
             }
 
             // if ((filterData0.word0 & filterData1.word1) == 0 &&
@@ -804,25 +834,21 @@ namespace fb
             return PxFilterFlag::eDEFAULT | PxFilterFlag::eNOTIFY;
         }
 
-        PhysxScene::CollisionCallback::CollisionCallback()
-        {
-        }
+        PhysxScene::CollisionCallback::CollisionCallback() = default;
 
-        PhysxScene::CollisionCallback::~CollisionCallback()
-        {
-        }
+        PhysxScene::CollisionCallback::~CollisionCallback() = default;
 
-        physx::PxFilterFlags PhysxScene::CollisionCallback::pairFound(
-            PxU32 pairID, PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
+        auto PhysxScene::CollisionCallback::pairFound(
+            PxU32 pairID, PxFilterObjectAttributes attributes0, PxFilterData filterData0,
             const PxActor *a0, const PxShape *s0, PxFilterObjectAttributes attributes1,
-            physx::PxFilterData filterData1, const PxActor *a1, const PxShape *s1,
-            PxPairFlags &pairFlags )
+            PxFilterData filterData1, const PxActor *a1, const PxShape *s1, PxPairFlags &pairFlags )
+            -> PxFilterFlags
         {
             return PxFilterFlag::eDEFAULT | PxFilterFlag::eNOTIFY;
         }
 
-        bool PhysxScene::CollisionCallback::statusChange( PxU32 &pairID, PxPairFlags &pairFlags,
-                                                          PxFilterFlags &filterFlags )
+        auto PhysxScene::CollisionCallback::statusChange( PxU32 &pairID, PxPairFlags &pairFlags,
+                                                          PxFilterFlags &filterFlags ) -> bool
         {
             pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND |
                         PxPairFlag::eNOTIFY_TOUCH_LOST;
@@ -832,10 +858,9 @@ namespace fb
         }
 
         void PhysxScene::CollisionCallback::pairLost( PxU32 pairID, PxFilterObjectAttributes attributes0,
-                                                      physx::PxFilterData filterData0,
+                                                      PxFilterData filterData0,
                                                       PxFilterObjectAttributes attributes1,
-                                                      physx::PxFilterData filterData1,
-                                                      bool objectDeleted )
+                                                      PxFilterData filterData1, bool objectDeleted )
         {
         }
 
@@ -873,18 +898,12 @@ namespace fb
             stop = 0;
         }
 
-        PhysxScene::SimulationEventCallback::~SimulationEventCallback()
-        {
-        }
+        PhysxScene::SimulationEventCallback::~SimulationEventCallback() = default;
 
-        PhysxScene::SimulationEventCallback::SimulationEventCallback()
-        {
-        }
+        PhysxScene::SimulationEventCallback::SimulationEventCallback() = default;
 
         void PhysxScene::ContactModificationCallback::onContactModify( PxContactModifyPair *const pairs,
                                                                        PxU32 count )
         {
         }
-
-    }  // end namespace physics
-}  // end namespace fb
+}  // namespace fb::physics

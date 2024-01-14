@@ -8,6 +8,8 @@
 
 namespace fb
 {
+
+    /** ScriptClass implementation. */
     class ScriptClass : public IScriptClass
     {
     public:
@@ -21,10 +23,10 @@ namespace fb
         void setNamespaceNames( const Array<String> &namespaceNames );
 
         Array<SmartPtr<IScriptFunction>> getFunctions() const;
-        void setFunctions( const Array<SmartPtr<IScriptFunction>>& functions );
+        void setFunctions( const Array<SmartPtr<IScriptFunction>> &functions );
 
         Array<String> getParentClasses() const;
-        void setParentClasses( const Array<String>& parentClasses );
+        void setParentClasses( const Array<String> &parentClasses );
 
         Array<String> getHeaderIncludes() const;
         void setHeaderIncludes( const Array<String> &headers );

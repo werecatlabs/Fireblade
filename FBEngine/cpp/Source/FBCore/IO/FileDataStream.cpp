@@ -14,7 +14,7 @@ namespace fb
         DataStream(),
         mInStream( s ),
         mFStreamRO( s ),
-        mFStream( nullptr ),
+
         mFreeOnClose( freeOnClose )
     {
         // calculate the size
@@ -31,7 +31,7 @@ namespace fb
         DataStream( name ),
         mInStream( s ),
         mFStreamRO( s ),
-        mFStream( nullptr ),
+
         mFreeOnClose( freeOnClose )
     {
         // calculate the size
@@ -49,7 +49,7 @@ namespace fb
         DataStream( name ),
         mInStream( s ),
         mFStreamRO( s ),
-        mFStream( nullptr ),
+
         mFreeOnClose( freeOnClose )
     {
         // Size is passed in
@@ -63,7 +63,7 @@ namespace fb
     FileDataStream::FileDataStream( std::fstream *s, bool freeOnClose ) :
         DataStream( false ),
         mInStream( s ),
-        mFStreamRO( nullptr ),
+
         mFStream( s ),
         mFreeOnClose( freeOnClose )
     {
@@ -81,7 +81,7 @@ namespace fb
     FileDataStream::FileDataStream( const std::string &name, std::fstream *s, bool freeOnClose ) :
         DataStream( name, false ),
         mInStream( s ),
-        mFStreamRO( nullptr ),
+
         mFStream( s ),
         mFreeOnClose( freeOnClose )
     {
@@ -100,7 +100,7 @@ namespace fb
                                     bool freeOnClose ) :
         DataStream( name, false ),
         mInStream( s ),
-        mFStreamRO( nullptr ),
+
         mFStream( s ),
         mFreeOnClose( freeOnClose )
     {
@@ -133,13 +133,13 @@ namespace fb
         close();
     }
 
-    size_t FileDataStream::read( void *buf, size_t count )
+    auto FileDataStream::read( void *buf, size_t count ) -> size_t
     {
         mInStream->read( static_cast<char *>( buf ), static_cast<std::streamsize>( count ) );
         return static_cast<size_t>( mInStream->gcount() );
     }
 
-    size_t FileDataStream::write( const void *buf, size_t count )
+    auto FileDataStream::write( const void *buf, size_t count ) -> size_t
     {
         size_t written = 0;
         if( isWriteable() && mFStream )
@@ -150,7 +150,7 @@ namespace fb
         return written;
     }
 
-    size_t FileDataStream::readLine( char *buf, size_t maxCount, const std::string &delim )
+    auto FileDataStream::readLine( char *buf, size_t maxCount, const std::string &delim ) -> size_t
     {
         if( delim.empty() )
         {
@@ -170,7 +170,7 @@ namespace fb
         }
         // maxCount + 1 since count excludes terminator in getline
         mInStream->getline( buf, static_cast<std::streamsize>( maxCount + 1 ), delim.at( 0 ) );
-        size_t ret = static_cast<size_t>( mInStream->gcount() );
+        auto ret = static_cast<size_t>( mInStream->gcount() );
         // three options
         // 1) we had an eof before we read a whole line
         // 2) we ran out of buffer space
@@ -234,32 +234,34 @@ namespace fb
         mInStream->seekg( count, std::ios::cur );
     }
 
-    bool FileDataStream::seek( size_t pos )
+    auto FileDataStream::seek( size_t pos ) -> bool
     {
         mInStream->clear();  // Clear fail status in case eof was set
         mInStream->seekg( pos, std::ios::beg );
         return true;
     }
 
-    size_t FileDataStream::tell( void ) const
+    auto FileDataStream::tell() const -> size_t
     {
         mInStream->clear();  // Clear fail status in case eof was set
         return mInStream->tellg();
     }
 
-    bool FileDataStream::eof( void ) const
+    auto FileDataStream::eof() const -> bool
     {
         return mInStream->eof();
     }
 
-    void FileDataStream::close( void )
+    void FileDataStream::close()
     {
         if( mInStream )
         {
             // Unfortunately, there is no file-specific shared class hierarchy between fstream and
             // ifstream (!!)
             if( mFStreamRO )
+            {
                 mFStreamRO->close();
+            }
             if( mFStream )
             {
                 mFStream->flush();
@@ -279,7 +281,7 @@ namespace fb
         }
     }
 
-    bool FileDataStream::isOpen() const
+    auto FileDataStream::isOpen() const -> bool
     {
         if( mInStream )
         {
@@ -300,12 +302,12 @@ namespace fb
         return false;
     }
 
-    bool FileDataStream::isValid() const
+    auto FileDataStream::isValid() const -> bool
     {
         return isOpen() && ( size() > 0 ) && ( size() < static_cast<size_t>( 2e+9 ) );
     }
 
-    std::istream *FileDataStream::getInStream() const
+    auto FileDataStream::getInStream() const -> std::istream *
     {
         return mInStream;
     }
@@ -324,7 +326,7 @@ namespace fb
         determineAccess();
     }
 
-    std::ifstream *FileDataStream::getFStreamRO() const
+    auto FileDataStream::getFStreamRO() const -> std::ifstream *
     {
         return mFStreamRO;
     }
@@ -343,7 +345,7 @@ namespace fb
         determineAccess();
     }
 
-    std::fstream *FileDataStream::getFStream() const
+    auto FileDataStream::getFStream() const -> std::fstream *
     {
         return mFStream;
     }

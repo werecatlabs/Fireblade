@@ -1,5 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/FactoryManager.h>
+#include <FBCore/System/Factory.h>
 #include <FBCore/Core/Exception.h>
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/Core/StringUtil.h>
@@ -12,6 +13,11 @@ namespace fb
 
     FactoryManager::FactoryManager()
     {
+        if( auto handle = getHandle() )
+        {
+            handle->setName( "FactoryManager" );
+        }
+
         auto factories = fb::make_shared<ConcurrentArray<SmartPtr<IFactory>>>();
         factories->reserve( 1024 );
         setFactoriesArray( factories );
@@ -59,7 +65,7 @@ namespace fb
         setFactoriesArray( nullptr );
     }
 
-    s32 FactoryManager::getFactoryUnloadPriority( SmartPtr<IFactory> factory )
+    auto FactoryManager::getFactoryUnloadPriority( SmartPtr<IFactory> factory ) -> s32
     {
         if( factory->isObjectDerivedFrom<IStateContext>() )
         {
@@ -78,12 +84,20 @@ namespace fb
         try
         {
             auto objectType = factory->getObjectType();
-            //FB_ASSERT( hasFactory( objectType ) == false );
 
             if( !hasFactory( objectType ) )
             {
-                auto factories = getFactoriesArray();
-                factories->push_back( factory );
+                RecursiveMutex::ScopedLock lock( m_mutex );
+
+                if( auto p = getFactoriesArray() )
+                {
+                    auto &factories = *p;
+                    factories.push_back( factory );
+                }
+                else
+                {
+                    FB_LOG_ERROR( "FactoryManager::addFactory: p is nullptr" );
+                }
             }
         }
         catch( std::exception &e )
@@ -92,8 +106,10 @@ namespace fb
         }
     }
 
-    bool FactoryManager::removeFactory( SmartPtr<IFactory> factory )
+    auto FactoryManager::removeFactory( SmartPtr<IFactory> factory ) -> bool
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         auto pFactories = getFactoriesArray();
         auto &factories = *pFactories;
 
@@ -117,11 +133,14 @@ namespace fb
 
     void FactoryManager::removeAllFactories()
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         m_factories = nullptr;
     }
 
-    const SmartPtr<IFactory> FactoryManager::getFactory( hash64 id ) const
+    auto FactoryManager::getFactory( hash64 id ) const -> const SmartPtr<IFactory>
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         auto pFactories = getFactoriesArray();
         auto &factories = *pFactories;
 
@@ -136,10 +155,15 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<IFactory> FactoryManager::getFactoryByName( const String &name ) const
+    auto FactoryManager::getFactoryByName( const String &name ) const -> SmartPtr<IFactory>
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         auto pFactories = getFactoriesArray();
         auto &factories = *pFactories;
+
+        auto splitNames = StringUtil::split( name, "::" );
+        std::reverse( splitNames.begin(), splitNames.end() );
 
         for( auto &factory : factories )
         {
@@ -148,37 +172,11 @@ namespace fb
             {
                 return factory;
             }
-        }
 
-        auto factoryName = StringUtil::replaceAll( name, "class", "" );
-        for( auto &factory : factories )
-        {
-            auto objectType = factory->getObjectType();
-            if( objectType == factoryName )
-            {
-                return factory;
-            }
-        }
+            auto splitFactroyNames = StringUtil::split( objectType, "::" );
+            std::reverse( splitFactroyNames.begin(), splitFactroyNames.end() );
 
-        factoryName = StringUtil::replaceAll( factoryName, "fb::", "" );
-        factoryName = StringUtil::replaceAll( factoryName, "core::", "" );
-        factoryName = StringUtil::replaceAll( factoryName, "scene::", "" );
-        factoryName = StringUtil::trim(factoryName);
-
-        for( auto &factory : factories )
-        {
-            auto factoryObjectType = factory->getObjectType();
-            auto factoryObjectTypeCleaned = StringUtil::replaceAll( factoryObjectType, "class", "" );
-            if( factoryObjectTypeCleaned == factoryName )
-            {
-                return factory;
-            }
-
-            factoryObjectTypeCleaned = StringUtil::replaceAll( factoryObjectTypeCleaned, "fb::", "" );
-            factoryObjectTypeCleaned = StringUtil::replaceAll( factoryObjectTypeCleaned, "core::", "" );
-            factoryObjectTypeCleaned = StringUtil::replaceAll( factoryObjectTypeCleaned, "scene::", "" );
-            factoryObjectTypeCleaned = StringUtil::trim(factoryObjectTypeCleaned);
-            if( factoryObjectTypeCleaned == factoryName )
+            if( splitFactroyNames.front() == splitNames.front() )
             {
                 return factory;
             }
@@ -187,8 +185,10 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<IFactory> FactoryManager::getFactoryById( hash64 id ) const
+    auto FactoryManager::getFactoryById( hash64 id ) const -> SmartPtr<IFactory>
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         auto pFactories = getFactoriesArray();
         auto &factories = *pFactories;
 
@@ -206,8 +206,10 @@ namespace fb
         return nullptr;
     }
 
-    bool FactoryManager::hasFactory( const String &typeName ) const
+    auto FactoryManager::hasFactory( const String &typeName ) const -> bool
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         auto pFactories = getFactoriesArray();
         auto &factories = *pFactories;
 
@@ -223,8 +225,10 @@ namespace fb
         return false;
     }
 
-    bool FactoryManager::hasFactoryByName( const String &name ) const
+    auto FactoryManager::hasFactoryByName( const String &name ) const -> bool
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         auto pFactories = getFactoriesArray();
         auto &factories = *pFactories;
 
@@ -240,8 +244,10 @@ namespace fb
         return false;
     }
 
-    bool FactoryManager::hasFactoryById( hash64 typeId ) const
+    auto FactoryManager::hasFactoryById( hash64 typeId ) const -> bool
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         auto pFactories = getFactoriesArray();
         auto &factories = *pFactories;
 
@@ -257,33 +263,33 @@ namespace fb
         return false;
     }
 
-    Array<SmartPtr<IFactory>> FactoryManager::getFactories() const
+    auto FactoryManager::getFactories() const -> Array<SmartPtr<IFactory>>
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+
         auto pFactories = getFactoriesArray();
         auto &factories = *pFactories;
         return Array<SmartPtr<IFactory>>( factories.begin(), factories.end() );
     }
 
-    SmartPtr<ISharedObject> FactoryManager::createById( hash64 typeId ) const
+    auto FactoryManager::createById( hash64 typeId ) const -> SmartPtr<ISharedObject>
     {
         auto typeManager = TypeManager::instance();
         FB_ASSERT( typeManager );
 
-        auto typeHash = typeManager->getHash( (u32)typeId );
+        auto typeHash = typeManager->getHash( static_cast<u32>( typeId ) );
         FB_ASSERT( typeHash != 0 );
 
         auto factory = getFactoryById( typeHash );
         if( !factory )
         {
-            auto typeName = typeManager->getName( (u32)typeId );
-            FB_ASSERT( !typeName.empty() );
-
+            auto typeName = typeManager->getName( static_cast<u32>( typeId ) );
             factory = getFactoryByName( typeName );
         }
 
         if( !factory )
         {
-            auto derivedTypes = typeManager->getDerivedTypes( (u32)typeId );
+            auto derivedTypes = typeManager->getDerivedTypes( static_cast<u32>( typeId ) );
 
             for( auto derivedType : derivedTypes )
             {
@@ -295,12 +301,20 @@ namespace fb
                 {
                     break;
                 }
+
+                auto factoryName = typeManager->getName( derivedType );
+
+                factory = getFactoryByName( factoryName );
+                if( factory )
+                {
+                    break;
+                }
             }
         }
 
         if( factory )
         {
-            auto ptr = (ISharedObject *)factory->createObject();
+            auto ptr = static_cast<ISharedObject *>( factory->createObject() );
             auto p = SmartPtr<ISharedObject>( ptr );
             ptr->removeReference();
             return p;
@@ -309,50 +323,66 @@ namespace fb
         return nullptr;
     }
 
-    void *FactoryManager::_create( const String &type )
+    SmartPtr<ISharedObject> FactoryManager::createById( hash64 typeId, const String &hint ) const
     {
-        auto hash = StringUtil::getHash( type );
-        return _createById( hash );
-    }
+        auto typeManager = TypeManager::instance();
+        FB_ASSERT( typeManager );
 
-    void *FactoryManager::_createById( hash64 typeId )
-    {
-        if( auto objectFactory = getFactory( typeId ) )
+        auto typeHash = typeManager->getHash( static_cast<u32>( typeId ) );
+        FB_ASSERT( typeHash != 0 );
+
+        auto factory = getFactoryById( typeHash );
+        if( !factory )
         {
-            return objectFactory->createObject();
+            auto typeName = typeManager->getName( static_cast<u32>( typeId ) );
+            factory = getFactoryByName( typeName );
+        }
+
+        if( !factory )
+        {
+            auto derivedTypes = typeManager->getDerivedTypes( static_cast<u32>( typeId ) );
+
+            for( auto derivedType : derivedTypes )
+            {
+                auto factoryHash = typeManager->getHash( derivedType );
+                FB_ASSERT( factoryHash != 0 );
+
+                factory = getFactoryById( factoryHash );
+                if( factory )
+                {
+                    break;
+                }
+
+                auto factoryName = typeManager->getName( derivedType );
+
+                factory = getFactoryByName( factoryName );
+                if( factory )
+                {
+                    break;
+                }
+            }
+        }
+
+        if( factory )
+        {
+            auto ptr = static_cast<ISharedObject *>( factory->createObject() );
+            auto p = SmartPtr<ISharedObject>( ptr );
+            ptr->removeReference();
+            return p;
         }
 
         return nullptr;
     }
 
-    void *FactoryManager::_createFromPool( hash64 typeId )
+    auto FactoryManager::getFactoriesArray() const -> SharedPtr<ConcurrentArray<SmartPtr<IFactory>>>
     {
-        if( auto objectFactory = getFactory( typeId ) )
-        {
-            return objectFactory->createObjectFromPool();
-        }
-
-        return nullptr;
-    }
-
-    void *FactoryManager::_createArrayById( hash64 typeId, u32 numElements, u32 &objectSize )
-    {
-        if( auto objectFactory = getFactory( typeId ) )
-        {
-            objectSize = objectFactory->getObjectSize();
-            return objectFactory->createArray( numElements );
-        }
-
-        return nullptr;
-    }
-
-    SharedPtr<ConcurrentArray<SmartPtr<IFactory>>> FactoryManager::getFactoriesArray() const
-    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         return m_factories;
     }
 
     void FactoryManager::setFactoriesArray( SharedPtr<ConcurrentArray<SmartPtr<IFactory>>> ptr )
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
         m_factories = ptr;
     }
 
@@ -360,7 +390,8 @@ namespace fb
     {
         if( auto factory = getFactory( typeId ) )
         {
-            factory->setDataSize( (u32)size );
+            factory->setGrowSize( static_cast<u32>( size ) );
+            factory->allocatePoolData();
         }
     }
 }  // end namespace fb

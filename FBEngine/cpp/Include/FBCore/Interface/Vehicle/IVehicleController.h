@@ -25,6 +25,9 @@ namespace fb
             COUNT /**< The number of inputs. */
         };
 
+        /**
+         * @brief Enumeration for vehicle states.
+         */
         enum class State
         {
             AWAKE,
@@ -39,8 +42,10 @@ namespace fb
         /** Virtual destructor. */
         ~IVehicleController() override = default;
 
+        /** Updates the vehicle transformation. */
         virtual void updateTransform() = 0;
 
+        /** Resets the vehicle state. */
         virtual void reset() = 0;
 
         virtual f32 getChannel( s32 idx ) const = 0;
@@ -51,6 +56,8 @@ namespace fb
 
         virtual Quaternion<real_Num> getOrientation() const = 0;
         virtual void setOrientation( const Quaternion<real_Num> &orientation ) = 0;
+
+        virtual Vector3<real_Num> getScale() const = 0;
 
         virtual bool isUserControlled() const = 0;
         virtual void setUserControlled( bool val ) = 0;
@@ -98,12 +105,19 @@ namespace fb
         virtual const SmartPtr<IVehicleCallback> &getVehicleCallback() const = 0;
         virtual void setVehicleCallback( SmartPtr<IVehicleCallback> callback ) = 0;
 
+        /** Gets the center of gravity.
+        @return The center of gravity.
+        */
         virtual Vector3<real_Num> getCG() const = 0;
 
-        /** */
+        /** Sets the vehicle state.
+        @param state The vehicle state.
+        */
         virtual void setState( State state ) = 0;
 
-        /** */
+        /** Gets the vehicle state.
+        @return The vehicle state.
+        */
         virtual State getState() const = 0;
 
         /**

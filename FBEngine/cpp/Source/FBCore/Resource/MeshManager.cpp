@@ -12,35 +12,41 @@
 #include <FBCore/Mesh/Mesh.h>
 #include <FBCore/Mesh/MeshResource.h>
 #include <FBCore/Mesh/MeshSerializer.h>
+#include "FBCore/ApplicationUtil.h"
 
 namespace fb
 {
+    FB_CLASS_REGISTER_DERIVED( fb, MeshManager, IMeshManager );
 
-    MeshManager::MeshManager()
-    {
-    }
+    MeshManager::MeshManager() = default;
 
-    MeshManager::~MeshManager()
-    {
-    }
+    MeshManager::~MeshManager() = default;
 
     void MeshManager::unload( SmartPtr<ISharedObject> data )
     {
         try
         {
-            for( auto mesh : m_meshes )
+            if( auto p = getMeshesPtr() )
             {
-                mesh->unload( nullptr );
+                auto &meshes = *p;
+                for( auto mesh : meshes )
+                {
+                    mesh->unload( nullptr );
+                }
+
+                meshes.clear();
             }
 
-            m_meshes.clear();
-
-            for( auto meshResources : m_meshResources )
+            if( auto p = getMeshResourcesPtr() )
             {
-                meshResources->unload( nullptr );
-            }
+                auto &meshResources = *p;
+                for( auto meshResources : meshResources )
+                {
+                    meshResources->unload( nullptr );
+                }
 
-            m_meshResources.clear();
+                meshResources.clear();
+            }
         }
         catch( std::exception &e )
         {
@@ -50,17 +56,76 @@ namespace fb
 
     void MeshManager::addMesh( SmartPtr<IMesh> mesh )
     {
-        m_meshes.push_back( mesh );
+        auto p = getMeshesPtr();
+        if( !p )
+        {
+            p = fb::make_shared<ConcurrentArray<SmartPtr<IMesh>>>();
+            setMeshesPtr( p );
+        }
+
+        if( p )
+        {
+            auto &meshes = *p;
+            meshes.push_back( mesh );
+        }
+    }
+
+    void MeshManager::removeMesh( SmartPtr<IMesh> mesh )
+    {
+        auto p = getMeshesPtr();
+        if( p )
+        {
+            auto meshes = Array<SmartPtr<IMesh>>( p->begin(), p->end() );
+            meshes.erase( std::remove( meshes.begin(), meshes.end(), mesh ), meshes.end() );
+
+            auto newMeshes =
+                fb::make_shared<ConcurrentArray<SmartPtr<IMesh>>>( meshes.begin(), meshes.end() );
+            setMeshesPtr( newMeshes );
+        }
+    }
+
+    void MeshManager::addMeshResource( SmartPtr<IMeshResource> meshResource )
+    {
+        auto p = getMeshResourcesPtr();
+        if( !p )
+        {
+            p = fb::make_shared<ConcurrentArray<SmartPtr<IMeshResource>>>();
+            setMeshResourcesPtr( p );
+        }
+
+        if( p )
+        {
+            p->push_back( meshResource );
+        }
+    }
+
+    void MeshManager::removeMeshResource( SmartPtr<IMeshResource> meshResource )
+    {
+        auto p = getMeshResourcesPtr();
+        if( p )
+        {
+            auto meshResources = Array<SmartPtr<IMeshResource>>( p->begin(), p->end() );
+            meshResources.erase( std::remove( meshResources.begin(), meshResources.end(), meshResource ),
+                                 meshResources.end() );
+
+            auto newMeshResources = fb::make_shared<ConcurrentArray<SmartPtr<IMeshResource>>>(
+                meshResources.begin(), meshResources.end() );
+            setMeshResourcesPtr( newMeshResources );
+        }
     }
 
     SmartPtr<IMesh> MeshManager::findMesh( const String &name )
     {
-        for( auto &mesh : m_meshes )
+        if( auto p = getMeshesPtr() )
         {
-            auto meshName = mesh->getName();
-            if( meshName == name )
+            auto &meshes = *p;
+            for( auto &mesh : meshes )
             {
-                return mesh;
+                auto meshName = mesh->getName();
+                if( meshName == name )
+                {
+                    return mesh;
+                }
             }
         }
 
@@ -69,29 +134,59 @@ namespace fb
 
     SmartPtr<IMesh> MeshManager::loadMesh( const String &filePath )
     {
-        auto ext = Path::getFileExtension( filePath );
-        if( ext == ".fbx" || ext == ".FBX" )
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto fileId = StringUtil::getHash64( filePath );
+
+        if( auto p = getMeshResourcesPtr() )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto meshLoader = applicationManager->getMeshLoader();
-            FB_ASSERT( meshLoader );
-
-            if( meshLoader )
+            auto &meshResources = *p;
+            for( auto meshResource : meshResources )
             {
-                return meshLoader->loadMesh( filePath );
+                auto meshResourceFileId = meshResource->getFileSystemId();
+                if( meshResourceFileId == fileId )
+                {
+                    return meshResource;
+                }
             }
         }
-        else if( ext == ".fbmeshbin" || ext == ".FBMESHBIN" )
+
+        auto ext = Path::getFileExtension( filePath );
+
+        if( ext == ".fbmeshbin" || ext == ".FBMESHBIN" )
         {
-            auto applicationManager = core::IApplicationManager::instance();
             auto fileSystem = applicationManager->getFileSystem();
             auto stream = fileSystem->open( filePath );
             if( stream )
             {
                 MeshSerializer serializer;
-                return serializer.loadMesh( stream );
+                auto mesh = serializer.loadMesh( stream );
+
+                auto meshResource = fb::make_ptr<MeshResource>();
+                meshResource->setFilePath( filePath );
+                meshResource->setMesh( mesh );
+
+                addMeshResource( meshResource );
+                return mesh;
+            }
+        }
+
+        if( ApplicationUtil::isSupportedMesh( filePath ) )
+        {
+            auto meshLoader = applicationManager->getMeshLoader();
+            FB_ASSERT( meshLoader );
+
+            if( meshLoader )
+            {
+                auto mesh = meshLoader->loadMesh( filePath );
+
+                auto meshResource = fb::make_ptr<MeshResource>();
+                meshResource->setFilePath( filePath );
+                meshResource->setMesh( mesh );
+
+                addMeshResource( meshResource );
+                return mesh;
             }
         }
 
@@ -132,7 +227,7 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto fileSystem = applicationManager->getFileSystem();
@@ -140,6 +235,19 @@ namespace fb
 
             auto sFilePath = StringUtil::cleanupPath( path );
             auto fileId = StringUtil::getHash64( sFilePath );
+
+            if( auto p = getMeshResourcesPtr() )
+            {
+                auto &meshResources = *p;
+                for( auto meshResource : meshResources )
+                {
+                    auto meshResourceFileId = meshResource->getFileSystemId();
+                    if( meshResourceFileId == fileId )
+                    {
+                        return Pair<SmartPtr<IResource>, bool>( meshResource, false );
+                    }
+                }
+            }
 
             FileInfo fileInfo;
             if( fileSystem->findFileInfo( sFilePath, fileInfo ) )
@@ -148,14 +256,33 @@ namespace fb
 
                 if( auto handle = meshResource->getHandle() )
                 {
-                    handle->setUUID( uuid );
+                    if( !StringUtil::isNullOrEmpty( uuid ) )
+                    {
+                        handle->setUUID( uuid );
+                    }
+                    else
+                    {
+                        handle->setUUID( StringUtil::getUUID() );
+                    }
                 }
 
                 meshResource->setFileSystemId( fileId );
-                meshResource->setSettingsFileSystemId( fileInfo.fileId );
                 meshResource->setFilePath( sFilePath );
 
-                m_meshResources.push_back( meshResource );
+                auto projectPath = applicationManager->getProjectPath();
+                auto settingsCachePath = applicationManager->getSettingsPath();
+                auto filePathHash = StringUtil::getHash64( sFilePath );
+                auto fileDataPath =
+                    settingsCachePath + StringUtil::toString( filePathHash ) + ".meshdata";
+                fileDataPath = Path::getRelativePath( projectPath, fileDataPath );
+
+                FileInfo dataFileInfo;
+                if( fileSystem->findFileInfo( fileDataPath, dataFileInfo ) )
+                {
+                    meshResource->setSettingsFileSystemId( dataFileInfo.fileId );
+                }
+
+                addMeshResource( meshResource );
                 return Pair<SmartPtr<IResource>, bool>( meshResource, true );
             }
         }
@@ -164,14 +291,14 @@ namespace fb
             FB_LOG_EXCEPTION( e );
         }
 
-        return Pair<SmartPtr<IResource>, bool>();
+        return {};
     }
 
     Pair<SmartPtr<IResource>, bool> MeshManager::createOrRetrieve( const String &path )
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto fileSystem = applicationManager->getFileSystem();
@@ -179,6 +306,19 @@ namespace fb
 
             auto sFilePath = StringUtil::cleanupPath( path );
             auto fileId = StringUtil::getHash64( sFilePath );
+
+            if( auto p = getMeshResourcesPtr() )
+            {
+                auto &meshResources = *p;
+                for( auto meshResource : meshResources )
+                {
+                    auto meshResourceFileId = meshResource->getFileSystemId();
+                    if( meshResourceFileId == fileId )
+                    {
+                        return Pair<SmartPtr<IResource>, bool>( meshResource, false );
+                    }
+                }
+            }
 
             FileInfo fileInfo;
             if( !fileSystem->findFileInfo( sFilePath, fileInfo, false ) )
@@ -195,10 +335,21 @@ namespace fb
             }
 
             meshResource->setFileSystemId( fileId );
-            meshResource->setSettingsFileSystemId( fileInfo.fileId );
             meshResource->setFilePath( sFilePath );
 
-            m_meshResources.push_back( meshResource );
+            auto projectPath = applicationManager->getProjectPath();
+            auto settingsCachePath = applicationManager->getSettingsPath();
+            auto filePathHash = StringUtil::getHash64( sFilePath );
+            auto fileDataPath = settingsCachePath + StringUtil::toString( filePathHash ) + ".meshdata";
+            fileDataPath = Path::getRelativePath( projectPath, fileDataPath );
+
+            FileInfo dataFileInfo;
+            if( fileSystem->findFileInfo( fileDataPath, dataFileInfo ) )
+            {
+                meshResource->setSettingsFileSystemId( dataFileInfo.fileId );
+            }
+
+            addMeshResource( meshResource );
             return Pair<SmartPtr<IResource>, bool>( meshResource, true );
         }
         catch( std::exception &e )
@@ -206,7 +357,7 @@ namespace fb
             FB_LOG_EXCEPTION( e );
         }
 
-        return Pair<SmartPtr<IResource>, bool>();
+        return {};
     }
 
     void MeshManager::saveToFile( const String &filePath, SmartPtr<IResource> resource )
@@ -217,7 +368,7 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto fileSystem = applicationManager->getFileSystem();
@@ -226,24 +377,33 @@ namespace fb
             auto sFilePath = StringUtil::cleanupPath( filePath );
 
             auto fileId = StringUtil::getHash64( sFilePath );
-            for( auto meshResource : m_meshResources )
+
+            if( auto p = getMeshResourcesPtr() )
             {
-                auto meshResourceFileId = meshResource->getFileSystemId();
-                if( meshResourceFileId == fileId )
+                auto &meshResources = *p;
+                for( auto meshResource : meshResources )
                 {
-                    return meshResource;
+                    auto meshResourceFileId = meshResource->getFileSystemId();
+                    if( meshResourceFileId == fileId )
+                    {
+                        return meshResource;
+                    }
                 }
             }
 
             FileInfo existingFileInfo;
             if( fileSystem->findFileInfo( filePath, existingFileInfo ) )
             {
-                for( auto meshResource : m_meshResources )
+                if( auto p = getMeshResourcesPtr() )
                 {
-                    auto meshResourceFileId = meshResource->getFileSystemId();
-                    if( meshResourceFileId == existingFileInfo.fileId )
+                    auto &meshResources = *p;
+                    for( auto meshResource : meshResources )
                     {
-                        return meshResource;
+                        auto meshResourceFileId = meshResource->getFileSystemId();
+                        if( meshResourceFileId == existingFileInfo.fileId )
+                        {
+                            return meshResource;
+                        }
                     }
                 }
             }
@@ -251,7 +411,7 @@ namespace fb
             auto fileExt = Path::getFileExtension( sFilePath );
             fileExt = StringUtil::make_lower( fileExt );
 
-            if( fileExt == ".mesh" || fileExt == ".fbmeshbin" || fileExt == ".fbx" )
+            if( ApplicationUtil::isSupportedMesh( sFilePath ) )
             {
                 auto projectPath = applicationManager->getProjectPath();
                 if( StringUtil::isNullOrEmpty( projectPath ) )
@@ -259,7 +419,7 @@ namespace fb
                     projectPath = Path::getWorkingDirectory();
                 }
 
-                auto settingsCachePath = applicationManager->getSettingsCachePath();
+                auto settingsCachePath = applicationManager->getSettingsPath();
 
                 auto filePathHash = StringUtil::getHash64( sFilePath );
                 auto fileDataPath =
@@ -276,14 +436,15 @@ namespace fb
                     FileInfo fileInfo;
                     if( fileSystem->findFileInfo( fileDataPath, fileInfo ) )
                     {
-                        auto meshResource = fb::make_ptr<MeshResource>();
+                        auto result = createOrRetrieve( sFilePath );
+                        auto meshResource = fb::static_pointer_cast<IMeshResource>( result.first );
                         meshResource->setFileSystemId( fileId );
                         meshResource->setSettingsFileSystemId( fileInfo.fileId );
                         meshResource->setProperties( meshData );
                         meshResource->setFilePath( sFilePath );
                         meshResource->load( nullptr );
 
-                        m_meshResources.push_back( meshResource );
+                        addMeshResource( meshResource );
                         return meshResource;
                     }
                 }
@@ -294,27 +455,33 @@ namespace fb
                     fileSystem->writeAllText( fileDataPath, dataStr );
 
                     auto path = Path::getFilePath( fileDataPath );
-                    fileSystem->refreshPath( path, true );
+                    if( fileSystem->isExistingFile( fileDataPath ) )
+                    {
+                        fileSystem->refreshPath( path, true );
+                    }
 
                     FileInfo fileInfo;
                     if( fileSystem->findFileInfo( fileDataPath, fileInfo ) )
                     {
-                        auto meshResource = fb::make_ptr<MeshResource>();
+                        auto result = createOrRetrieve( sFilePath );
+                        auto meshResource = fb::static_pointer_cast<IMeshResource>( result.first );
                         meshResource->setFileSystemId( fileId );
                         meshResource->setSettingsFileSystemId( fileInfo.fileId );
                         meshResource->setFilePath( sFilePath );
                         meshResource->load( nullptr );
 
-                        m_meshResources.push_back( meshResource );
+                        addMeshResource( meshResource );
                         return meshResource;
                     }
-                    auto meshResource = fb::make_ptr<MeshResource>();
+
+                    auto result = createOrRetrieve( sFilePath );
+                    auto meshResource = fb::static_pointer_cast<IMeshResource>( result.first );
                     meshResource->setFileSystemId( fileId );
                     // meshResource->setSettingsFileSystemId( fileInfo.fileId );
                     meshResource->setFilePath( sFilePath );
                     meshResource->load( nullptr );
 
-                    m_meshResources.push_back( meshResource );
+                    addMeshResource( meshResource );
                     return meshResource;
                 }
             }
@@ -327,7 +494,7 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<IResource> MeshManager::load( const String &name )
+    SmartPtr<IResource> MeshManager::loadResource( const String &name )
     {
         return nullptr;
     }
@@ -345,5 +512,26 @@ namespace fb
     void MeshManager::_getObject( void **ppObject ) const
     {
         *ppObject = nullptr;
+    }
+
+    SharedPtr<ConcurrentArray<SmartPtr<IMesh>>> MeshManager::getMeshesPtr() const
+    {
+        return m_meshes;
+    }
+
+    void MeshManager::setMeshesPtr( SharedPtr<ConcurrentArray<SmartPtr<IMesh>>> meshes )
+    {
+        m_meshes = meshes;
+    }
+
+    SharedPtr<ConcurrentArray<SmartPtr<IMeshResource>>> MeshManager::getMeshResourcesPtr() const
+    {
+        return m_meshResources;
+    }
+
+    void MeshManager::setMeshResourcesPtr(
+        SharedPtr<ConcurrentArray<SmartPtr<IMeshResource>>> meshResources )
+    {
+        m_meshResources = meshResources;
     }
 }  // end namespace fb

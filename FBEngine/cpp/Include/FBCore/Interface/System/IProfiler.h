@@ -50,11 +50,10 @@ namespace fb
     {
     public:
         /** Virtual destructor. */
-        virtual ~IProfiler() = default;
+        ~IProfiler() override = default;
 
         /**
          * @brief Add a profile to the profiler.
-         * @param profile The profile to add.
          */
         virtual SmartPtr<IProfile> addProfile() = 0;
 

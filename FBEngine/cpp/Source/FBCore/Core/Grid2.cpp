@@ -4,9 +4,7 @@
 namespace fb
 {
 
-    Grid2::Grid2()
-    {
-    }
+    Grid2::Grid2() = default;
 
     Grid2::Grid2( const Vector2F &center, const Vector2F &areaSize, const Vector2F &areaBoundry )
     {
@@ -33,16 +31,14 @@ namespace fb
         m_maxIndex.Y() = m_numBoundingboxes.Y() - 1;*/
     }
 
-    Grid2::~Grid2()
-    {
-    }
+    Grid2::~Grid2() = default;
 
     void Grid2::setCenter( const Vector2F &center )
     {
         m_center = center;
     }
 
-    const Vector2F &Grid2::getCenter() const
+    auto Grid2::getCenter() const -> const Vector2F &
     {
         return m_center;
     }
@@ -52,7 +48,7 @@ namespace fb
         m_halfExtents = halfExtents;
     }
 
-    const Vector2F &Grid2::getExtents() const
+    auto Grid2::getExtents() const -> const Vector2F &
     {
         return m_halfExtents;
     }
@@ -62,14 +58,14 @@ namespace fb
         m_cellSize = cellSize;
     }
 
-    const Vector2F &Grid2::getCellSize() const
+    auto Grid2::getCellSize() const -> const Vector2F &
     {
         return m_cellSize;
     }
 
-    Vector2I Grid2::getNumCells() const
+    auto Grid2::getNumCells() const -> Vector2I
     {
         Vector2F numCells = ( m_halfExtents / m_cellSize ) * 2.0f;
-        return Vector2I( MathF::Round( numCells.X() ), MathF::Round( numCells.Y() ) );
+        return { MathF::Round( numCells.X() ), MathF::Round( numCells.Y() ) };
     }
 }  // end namespace fb

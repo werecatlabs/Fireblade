@@ -5,7 +5,7 @@
 
 namespace fb
 {
-        
+
     class CAnimationTrack : public IAnimationTrack
     {
     public:

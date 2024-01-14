@@ -1,15 +1,15 @@
 #include <FBCore/FBCorePCH.h>
+#include <FBCore/IO/FileList.h>
+#include <FBCore/IO/FileSystem.h>
+#include <FBCore/IO/MemoryFile.h>
 #include <FBCore/IO/ZipArchive.h>
 #include <FBCore/IO/ZipFile.h>
-#include <FBCore/IO/MemoryFile.h>
-#include <FBCore/IO/FileSystem.h>
-#include <FBCore/IO/FileList.h>
-#include <FBCore/FBCore.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <FBCore/Interface/System/IFactoryManager.h>
+#include <FBCore/Core/LogManager.h>
 #include <cstdio>
-#include <zzip/zzip.h>
+#include <cstdlib>
 #include <zzip/plugin.h>
+#include <zzip/zzip.h>
 
 namespace fb
 {
@@ -26,7 +26,7 @@ namespace fb
 
     void ZipArchive::load( SmartPtr<ISharedObject> data )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();
@@ -116,7 +116,7 @@ namespace fb
                     //StringUtil::splitFilename(fileInfo.filename, fileInfo.basename, fileInfo.path);
                     // Set compressed size to -1 for folders; anyway nobody will check
                     // the compressed size of a folder, and if he does, its useless anyway
-                    fileInfo.compressedSize = u32( -1 );
+                    fileInfo.compressedSize = static_cast<u32>( -1 );
                 }
 
                 fileInfoList.push_back( fileInfo );
@@ -145,12 +145,12 @@ namespace fb
         setLoadingState( LoadingState::Unloaded );
     }
 
-    u8 ZipArchive::getType() const
+    auto ZipArchive::getType() const -> u8
     {
         return static_cast<u8>( IFileSystem::ArchiveType::Zip );
     }
 
-    String ZipArchive::getPassword() const
+    auto ZipArchive::getPassword() const -> String
     {
         return m_password;
     }
@@ -160,10 +160,10 @@ namespace fb
         m_password = password;
     }
 
-    SmartPtr<IStream> ZipArchive::open( const String &filename, bool input, bool binary, bool truncate,
-                                        bool ignorePath )
+    auto ZipArchive::open( const String &filename, bool input, bool binary, bool truncate,
+                           bool ignorePath ) -> SmartPtr<IStream>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();
@@ -215,17 +215,17 @@ namespace fb
         return zipFile;
     }
 
-    bool ZipArchive::exists( const String &filename, bool ignorePath, bool ignoreCase ) const
+    auto ZipArchive::exists( const String &filename, bool ignorePath, bool ignoreCase ) const -> bool
     {
         return m_fileList->exists( filename, ignorePath, ignoreCase );
     }
 
-    bool ZipArchive::isReadOnly() const
+    auto ZipArchive::isReadOnly() const -> bool
     {
         return false;
     }
 
-    String ZipArchive::getPath() const
+    auto ZipArchive::getPath() const -> String
     {
         return String( m_path.c_str() );
     }
@@ -235,7 +235,7 @@ namespace fb
         m_path = path;
     }
 
-    bool ZipArchive::getIgnorePaths() const
+    auto ZipArchive::getIgnorePaths() const -> bool
     {
         return m_ignorePaths;
     }
@@ -245,7 +245,7 @@ namespace fb
         m_ignorePaths = ignorePaths;
     }
 
-    bool ZipArchive::getIgnoreCase() const
+    auto ZipArchive::getIgnoreCase() const -> bool
     {
         return m_ignoreCase;
     }
@@ -255,29 +255,30 @@ namespace fb
         m_ignoreCase = ignoreCase;
     }
 
-    bool ZipArchive::findFileInfo( const String &filePath, FileInfo &fileInfo,
-                                   bool ignorePath /*= false */ ) const
+    auto ZipArchive::findFileInfo( const String &filePath, FileInfo &fileInfo,
+                                   bool ignorePath /*= false */ ) const -> bool
     {
         return m_fileList->findFileInfo( filePath, fileInfo, ignorePath );
     }
 
-    bool ZipArchive::findFileInfo( hash64 id, FileInfo &fileInfo, bool ignorePath /*= false */ ) const
+    auto ZipArchive::findFileInfo( hash64 id, FileInfo &fileInfo, bool ignorePath /*= false */ ) const
+        -> bool
     {
         return m_fileList->findFileInfo( id, fileInfo, ignorePath );
     }
 
-    SmartPtr<IFileList> ZipArchive::getFileList() const
+    auto ZipArchive::getFileList() const -> SmartPtr<IFileList>
     {
         return m_fileList;
     }
 
-    Array<FileInfo> ZipArchive::getFiles() const
+    auto ZipArchive::getFiles() const -> Array<FileInfo>
     {
         return m_fileList->getFiles();
     }
 
     /// Utility method to format out zzip errors
-    String ZipArchive::getZzipErrorDescription( s32 zzipError )
+    auto ZipArchive::getZzipErrorDescription( s32 zzipError ) -> String
     {
         String errorMsg;
         switch( zzipError )

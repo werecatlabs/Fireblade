@@ -24,8 +24,10 @@ namespace fb
             /** @copydoc BaseComponent::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
+            void updateDebugDraw();
+
             /** @copydoc IComponent::updateDirty */
-            void updateDirty( u32 flags, u32 oldFlags ) override;
+            void updateFlags( u32 flags, u32 oldFlags ) override;
 
             /** @copydoc BaseComponent::getProperties */
             SmartPtr<Properties> getProperties() const override;
@@ -36,6 +38,7 @@ namespace fb
             /** @copydoc IComponent::updateTransform */
             void updateTransform() override;
 
+            void updateTransform( const Transform3<real_Num> &transform );
             /**
              * Gets the type of the light.
              */
@@ -86,8 +89,15 @@ namespace fb
 
             /**
              * Gets the scene node used by this component.
+             * @return The scene node.
              */
-            SmartPtr<render::ISceneNode> getSceneNode() const;
+            SmartPtr<render::ISceneNode> &getSceneNode();
+
+            /**
+             * Gets the scene node used by this component.
+             * @return The scene node.
+             */
+            const SmartPtr<render::ISceneNode> &getSceneNode() const;
 
             /**
              * Sets the scene node used by this component.
@@ -117,6 +127,16 @@ namespace fb
             /** The ID extension for the component. */
             static u32 m_nameExt;
         };
+
+        inline SmartPtr<render::ISceneNode> &Light::getSceneNode()
+        {
+            return m_sceneNode;
+        }
+
+        inline const SmartPtr<render::ISceneNode> &Light::getSceneNode() const
+        {
+            return m_sceneNode;
+        }
 
     }  // namespace scene
 }  // end namespace fb

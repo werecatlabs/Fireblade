@@ -39,10 +39,9 @@ namespace fb
     namespace ui
     {
 
-
         void ImGuiApplicationOSX::load()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -66,6 +65,13 @@ namespace fb
             // Setup Renderer backend
             auto mtlDevice = device->mDevice;
             ImGui_ImplMetal_Init(mtlDevice);
+
+
+            OgreMetalView      *ogreMetalView = nullptr;
+            m_window->getCustomAttribute("UIView", &ogreMetalView);
+            auto view = (NSView*)ogreMetalView;
+
+            ImGui_ImplOSX_Init(view);
 #endif
         }
 
@@ -94,7 +100,8 @@ namespace fb
 
             //id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBuffer];
 
-            MTLRenderPassDescriptor* renderPassDescriptor = (MTLRenderPassDescriptor* )CFBridgingRelease(currentPassDescriptor); //currentPassDescriptor->getCurrentRenderPassDescriptor();
+            //MTLRenderPassDescriptor* renderPassDescriptor = (MTLRenderPassDescriptor* )CFBridgingRelease(currentPassDescriptor); //currentPassDescriptor->getCurrentRenderPassDescriptor();
+            MTLRenderPassDescriptor* renderPassDescriptor = (MTLRenderPassDescriptor* )currentPassDescriptor->getPassDescriptor();
             if (renderPassDescriptor == nil)
             {
                 //[commandBuffer commit];
@@ -116,7 +123,7 @@ namespace fb
             auto metalRenderer = (Ogre::MetalRenderSystem*)root->getRenderSystem();
             auto currentPassDescriptor = (Ogre::MetalRenderPassDescriptor*)metalRenderer->getCurrentPassDescriptor();
 
-            MTLRenderPassDescriptor* renderPassDescriptor = (MTLRenderPassDescriptor* )CFBridgingRelease(currentPassDescriptor); //currentPassDescriptor->getCurrentRenderPassDescriptor();
+            MTLRenderPassDescriptor* renderPassDescriptor = (MTLRenderPassDescriptor* )currentPassDescriptor->getPassDescriptor();
             if (renderPassDescriptor == nil)
             {
                 //[commandBuffer commit];

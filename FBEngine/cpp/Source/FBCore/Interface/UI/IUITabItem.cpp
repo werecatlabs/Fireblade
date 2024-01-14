@@ -3,21 +3,18 @@
 #include <FBCore/Core/StringUtil.h>
 #include <FBCore/System/RttiClassDefinition.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    FB_CLASS_REGISTER_DERIVED( fb, IUITabItem, IUIElement );
+
+    auto IUITabItem::getLabel() const -> String
     {
-        FB_CLASS_REGISTER_DERIVED( fb, IUITabItem, IUIElement );
+        return m_label;
+    }
 
-        String IUITabItem::getLabel() const
-        {
-            return m_label;
-        }
+    void IUITabItem::setLabel( const String &label )
+    {
+        m_label = label;
+    }
 
-        void IUITabItem::setLabel( const String &label )
-        {
-            m_label = label;
-        }
-
-    }  // end namespace ui
-}  // end namespace fb
+}  // namespace fb::ui

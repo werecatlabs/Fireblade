@@ -1,38 +1,31 @@
 #include <FBImGui/FBImGuiPCH.h>
 #include <FBImGui/ImGuiDropdown.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    FB_CLASS_REGISTER_DERIVED( fb, ImGuiDropdown, CImGuiElement<IUIDropdown> );
+
+    ImGuiDropdown::ImGuiDropdown() = default;
+
+    ImGuiDropdown::~ImGuiDropdown() = default;
+
+    auto ImGuiDropdown::getOptions() const -> Array<String>
     {
-        FB_CLASS_REGISTER_DERIVED( fb, ImGuiDropdown, CImGuiElement<IUIDropdown> );
+        return m_options;
+    }
 
-        ImGuiDropdown::ImGuiDropdown()
-        {
-        }
+    void ImGuiDropdown::setOptions( const Array<String> &options )
+    {
+        m_options = options;
+    }
 
-        ImGuiDropdown::~ImGuiDropdown()
-        {
-        }
+    auto ImGuiDropdown::getSelectedOption() const -> u32
+    {
+        return m_selectedOption;
+    }
 
-        Array<String> ImGuiDropdown::getOptions() const
-        {
-            return m_options;
-        }
-
-        void ImGuiDropdown::setOptions( const Array<String> &options )
-        {
-            m_options = options;
-        }
-
-        u32 ImGuiDropdown::getSelectedOption() const
-        {
-            return m_selectedOption;
-        }
-
-        void ImGuiDropdown::setSelectedOption( u32 selectedOption )
-        {
-            m_selectedOption = selectedOption;
-        }
-    } // end namespace ui
-}     // end namespace fb
+    void ImGuiDropdown::setSelectedOption( u32 selectedOption )
+    {
+        m_selectedOption = selectedOption;
+    }
+}  // namespace fb::ui

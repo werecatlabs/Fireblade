@@ -19,6 +19,6 @@ namespace fb
         Vector2F TexCoord0;
         Vector2F TexCoord1;
     };
-} // namespace fb
+}  // namespace fb
 
 #endif

@@ -5,7 +5,7 @@
 
 namespace fb
 {
-        
+
     class CAnimationVertexTrack : public IAnimationVertexTrack
     {
     public:

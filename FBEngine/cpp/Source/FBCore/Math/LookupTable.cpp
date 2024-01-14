@@ -4,13 +4,9 @@
 
 namespace fb
 {
-    LookupTable::LookupTable()
-    {
-    }
+    LookupTable::LookupTable() = default;
 
-    LookupTable::~LookupTable()
-    {
-    }
+    LookupTable::~LookupTable() = default;
 
     void LookupTable::setPoints( const Array<std::pair<real_Num, real_Num>> &points )
     {
@@ -25,7 +21,7 @@ namespace fb
     {
     }
 
-    real_Num LookupTable::interpolate( real_Num t )
+    auto LookupTable::interpolate( real_Num t ) -> real_Num
     {
         size_t p0_ = 0;
         size_t p1_ = 0;
@@ -43,8 +39,10 @@ namespace fb
             }
         }
 
-        auto p0 = static_cast<size_t>( Math<s32>::clamp( (s32)p0_, 0, (s32)m_points.size() ) );
-        auto p1 = static_cast<size_t>( Math<s32>::clamp( (s32)p1_, 0, (s32)m_points.size() ) );
+        auto p0 = static_cast<size_t>(
+            Math<s32>::clamp( static_cast<s32>( p0_ ), 0, static_cast<s32>( m_points.size() ) ) );
+        auto p1 = static_cast<size_t>(
+            Math<s32>::clamp( static_cast<s32>( p1_ ), 0, static_cast<s32>( m_points.size() ) ) );
 
         auto &f0 = m_points[p0];
         auto &f1 = m_points[p1];

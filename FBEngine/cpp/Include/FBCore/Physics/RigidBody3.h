@@ -2,7 +2,7 @@
 #define FBCRigidBody3_h__
 
 #include <FBCore/Physics/PhysicsBody3.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/IStateManager.h>
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/Interface/System/IStateListener.h>
@@ -26,23 +26,23 @@ namespace fb
 
             void unload( SmartPtr<ISharedObject> data )
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto stateManager = applicationManager->getStateManager();
                 FB_ASSERT( stateManager );
 
-                if( auto stateObject = getStateObject() )
+                if( auto stateContext = getStateContext() )
                 {
                     if( auto stateListener = getStateListener() )
                     {
-                        stateObject->removeStateListener( stateListener );
+                        stateContext->removeStateListener( stateListener );
                     }
 
-                    stateManager->removeStateObject( stateObject );
+                    stateManager->removeStateObject( stateContext );
 
-                    stateObject->unload( nullptr );
-                    setStateObject( nullptr );
+                    stateContext->unload( nullptr );
+                    setStateContext( nullptr );
                 }
 
                 if( auto stateListener = getStateListener() )
@@ -146,9 +146,9 @@ namespace fb
                 return Vector3<real_Num>::zero();
             }
 
-            SmartPtr<IStateContext> getStateObject() const override;
+            SmartPtr<IStateContext> getStateContext() const override;
 
-            void setStateObject( SmartPtr<IStateContext> stateObject ) override;
+            void setStateContext( SmartPtr<IStateContext> stateContext ) override;
 
             SmartPtr<IStateListener> getStateListener() const;
 
@@ -157,22 +157,22 @@ namespace fb
             FB_CLASS_REGISTER_TEMPLATE_DECL( RigidBody3, T );
 
         protected:
-            SmartPtr<IStateContext> m_stateObject;
+            SmartPtr<IStateContext> m_stateContext;
             SmartPtr<IStateListener> m_stateListener;
         };
 
         FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, RigidBody3, T, T );
 
         template <class T>
-        SmartPtr<IStateContext> RigidBody3<T>::getStateObject() const
+        SmartPtr<IStateContext> RigidBody3<T>::getStateContext() const
         {
-            return m_stateObject;
+            return m_stateContext;
         }
 
         template <class T>
-        void RigidBody3<T>::setStateObject( SmartPtr<IStateContext> stateObject )
+        void RigidBody3<T>::setStateContext( SmartPtr<IStateContext> stateContext )
         {
-            m_stateObject = stateObject;
+            m_stateContext = stateContext;
         }
 
         template <class T>

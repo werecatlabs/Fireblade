@@ -3,48 +3,43 @@
 #include <FBCore/FBCore.h>
 #include <tinyxml.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+
+    CUIEvent::CUIEvent()
     {
+        setType( String( "Event" ) );
+    }
 
-        CUIEvent::CUIEvent()
-        {
-            setType( String( "Event" ) );
-        }
+    CUIEvent::~CUIEvent() = default;
 
-        CUIEvent::~CUIEvent()
-        {
-        }
+    void CUIEvent::initialise( SmartPtr<IUIElement> &parent, const TiXmlNode *pNode )
+    {
+    }
 
-        void CUIEvent::initialise( SmartPtr<IUIElement> &parent, const TiXmlNode *pNode )
-        {
-        }
+    void CUIEvent::setEventType( const String &eventType )
+    {
+        m_eventType = eventType;
+    }
 
-        void CUIEvent::setEventType( const String &eventType )
-        {
-            m_eventType = eventType;
-        }
+    auto CUIEvent::getEventType() const -> const String &
+    {
+        return m_eventType;
+    }
 
-        const String &CUIEvent::getEventType() const
-        {
-            return m_eventType;
-        }
+    //
+    // Callbacks
+    //
 
-        //
-        // Callbacks
-        //
+    void CUIEvent::OnActivateCallback()
+    {
+    }
 
-        void CUIEvent::OnActivateCallback()
-        {
-        }
+    void CUIEvent::OnSelectCallback()
+    {
+    }
 
-        void CUIEvent::OnSelectCallback()
-        {
-        }
-
-        void CUIEvent::OnDeselectCallback()
-        {
-        }
-    }  // namespace ui
-}  // end namespace fb
+    void CUIEvent::OnDeselectCallback()
+    {
+    }
+}  // namespace fb::ui

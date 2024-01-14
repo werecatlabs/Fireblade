@@ -119,7 +119,7 @@ namespace fb
         String m_databasePath;
         Array<String> m_attached;
 
-        RecursiveMutex m_mutex;  
+        RecursiveMutex m_mutex;
     };
 }  // end namespace fb
 

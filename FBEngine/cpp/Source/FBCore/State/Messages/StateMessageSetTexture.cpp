@@ -7,15 +7,11 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageSetTexture, StateMessage );
 
-    StateMessageSetTexture::StateMessageSetTexture()
-    {
-    }
+    StateMessageSetTexture::StateMessageSetTexture() = default;
 
-    StateMessageSetTexture::~StateMessageSetTexture()
-    {
-    }
+    StateMessageSetTexture::~StateMessageSetTexture() = default;
 
-    SmartPtr<render::ITexture> StateMessageSetTexture::getTexture() const
+    auto StateMessageSetTexture::getTexture() const -> SmartPtr<render::ITexture>
     {
         return m_texture;
     }
@@ -25,7 +21,7 @@ namespace fb
         m_texture = texture;
     }
 
-    String StateMessageSetTexture::getTextureName() const
+    auto StateMessageSetTexture::getTextureName() const -> String
     {
         return m_textureName;
     }
@@ -35,7 +31,7 @@ namespace fb
         m_textureName = textureName;
     }
 
-    u32 StateMessageSetTexture::getTextureIndex() const
+    auto StateMessageSetTexture::getTextureIndex() const -> u32
     {
         return m_textureIndex;
     }

@@ -8,12 +8,11 @@ namespace fb
 {
     namespace ui
     {
-
-        class UIImage : public UIElement<ui::IUIImage>
+        class UIImage : public UIElement<IUIImage>
         {
         public:
             UIImage();
-            ~UIImage();
+            ~UIImage() override;
 
             void load( SmartPtr<ISharedObject> data ) override;
 
@@ -31,7 +30,9 @@ namespace fb
 
             SmartPtr<render::IMaterial> getMaterial() const override;
 
-            void handleStateChanged( SmartPtr<IState> &state );
+            void handleStateChanged( SmartPtr<IState> &state ) override;
+
+            FB_CLASS_REGISTER_DECL;
 
         protected:
             class MaterialStateListener : public IStateListener
@@ -53,7 +54,7 @@ namespace fb
 
             void createDatablock();
 
-            void setupMaterial( SmartPtr<render::IMaterial> material );
+            void setupMaterial( SmartPtr<render::IMaterial> material ) override;
 
             void updateMaterial();
 
@@ -64,8 +65,7 @@ namespace fb
             SmartPtr<render::IMaterial> m_material;
             Colibri::CustomShape *m_renderable = nullptr;
         };
-
-    }  // namespace ui
-}  // namespace fb
+    } // namespace ui
+}     // namespace fb
 
 #endif  // UIImage_h__

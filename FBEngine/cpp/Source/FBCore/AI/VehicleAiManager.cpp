@@ -43,7 +43,7 @@ namespace fb
         delete[] ppdActions;
     }
 
-    Array<SmartPtr<IVehicleController>> VehicleAiManager::getVehicles() const
+    auto VehicleAiManager::getVehicles() const -> Array<SmartPtr<IVehicleController>>
     {
         return m_vehicles;
     }
@@ -53,7 +53,7 @@ namespace fb
         m_vehicles = val;
     }
 
-    SmartPtr<ITrack> VehicleAiManager::getTrack() const
+    auto VehicleAiManager::getTrack() const -> SmartPtr<ITrack>
     {
         return m_track;
     }
@@ -63,7 +63,7 @@ namespace fb
         m_track = val;
     }
 
-    std::shared_ptr<MLP> VehicleAiManager::getMLP() const
+    auto VehicleAiManager::getMLP() const -> std::shared_ptr<MLP>
     {
         return m_pMLP;
     }
@@ -73,7 +73,7 @@ namespace fb
         m_pMLP = val;
     }
 
-    unsigned long VehicleAiManager::getNumberOfActionVariables() const
+    auto VehicleAiManager::getNumberOfActionVariables() const -> unsigned long
     {
         return m_ulNumberOfActionVariables;
     }
@@ -83,7 +83,7 @@ namespace fb
         m_ulNumberOfActionVariables = val;
     }
 
-    unsigned long VehicleAiManager::getNumberOfStateVariables() const
+    auto VehicleAiManager::getNumberOfStateVariables() const -> unsigned long
     {
         return m_ulNumberOfStateVariables;
     }

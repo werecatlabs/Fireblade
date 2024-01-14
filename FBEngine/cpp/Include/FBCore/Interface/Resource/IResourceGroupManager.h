@@ -79,14 +79,21 @@ namespace fb
          *
          * @return The state object.
          */
-        virtual SmartPtr<IStateContext> getStateObject() const = 0;
+        virtual SmartPtr<IStateContext> &getStateContext() = 0;
+
+        /**
+         * Gets the state object associated with the resource group manager.
+         *
+         * @return The state object.
+         */
+        virtual const SmartPtr<IStateContext> &getStateContext() const = 0;
 
         /**
          * Sets the state object associated with the resource group manager.
          *
-         * @param stateObject The state object to set.
+         * @param stateContext The state object to set.
          */
-        virtual void setStateObject( SmartPtr<IStateContext> stateObject ) = 0;
+        virtual void setStateContext( SmartPtr<IStateContext> stateContext ) = 0;
 
         FB_CLASS_REGISTER_DECL;
     };

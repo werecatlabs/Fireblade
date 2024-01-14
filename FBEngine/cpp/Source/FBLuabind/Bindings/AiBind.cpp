@@ -10,18 +10,6 @@
 namespace fb
 {
 
-    //AiCompositeGoalPtr _createCompositeGoal(IFactory* factory, lua_Integer typeId)
-    //{
-    //	return factory->createById((hash32)typeId);
-    //}
-
-    /*
-    AiGoalBuilderPtr _createAiGoalBuilder()
-    {
-        return AiGoalBuilderPtr(new AiGoalBuilder, true);
-    }
-    */
-
     template <class B>
     void _setOwner( IAiGoal *goal, SmartPtr<B> owner )
     {

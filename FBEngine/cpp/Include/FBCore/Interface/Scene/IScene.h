@@ -25,15 +25,20 @@ namespace fb
              */
             enum class State
             {
-                None,
                 ///< The scene is in an undefined state.
-                Edit,
+                None,
+
                 ///< The scene is in edit mode.
-                Play,
+                Edit,
+
                 ///< The scene is in play mode.
-                Reset,
+                Play,
+
                 ///< The scene is resetting to its initial state.
-                Count  ///< The number of states in the enumeration.
+                Reset,
+
+                ///< The number of states in the enumeration.
+                Count
             };
 
             /**
@@ -42,11 +47,17 @@ namespace fb
              */
             enum class SceneLoadingState
             {
-                Loaded,
+                ///< None state.
+                None,
+
                 ///< The scene is loaded.
-                Unloaded,
+                Loaded,
+
                 ///< The scene is unloaded.
-                Count  ///< The number of states in the enumeration.
+                Unloaded,
+
+                ///< The number of states in the enumeration.
+                Count
             };
 
             /**

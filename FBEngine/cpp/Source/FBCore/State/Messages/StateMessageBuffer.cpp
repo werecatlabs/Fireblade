@@ -6,7 +6,7 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageBuffer, StateMessage );
 
-    StateMessageBuffer::StateMessageBuffer() : m_buffer( nullptr )
+    StateMessageBuffer::StateMessageBuffer()
     {
     }
 
@@ -15,7 +15,7 @@ namespace fb
         FB_SAFE_DELETE( m_buffer );
     }
 
-    u8 *StateMessageBuffer::getBuffer() const
+    auto StateMessageBuffer::getBuffer() const -> u8 *
     {
         return m_buffer;
     }

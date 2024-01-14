@@ -2,7 +2,6 @@
 #define StateMessageProperties_h__
 
 #include <FBCore/State/Messages/StateMessage.h>
-#include "FBCore/Core/Properties.h"
 
 namespace fb
 {
@@ -12,15 +11,14 @@ namespace fb
         StateMessageProperties();
         ~StateMessageProperties() override;
 
-        Properties &getProperties();
-        const Properties &getProperties() const;
-        void setProperties( const Properties &val );
+        SmartPtr<Properties> getProperties() const override;
+        void setProperties( SmartPtr<Properties> properties ) override;
 
         FB_CLASS_REGISTER_DECL;
 
     protected:
-        Properties m_properties;
+        SmartPtr<Properties> m_properties;
     };
-}  // end namespace fb
+} // end namespace fb
 
 #endif  // StateMessageProperties_h__

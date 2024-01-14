@@ -7,12 +7,12 @@
 namespace fb
 {
 
-	class DebugUtil
-	{
-	public:
-		static String getStackTrace();
-		static String getStackTraceForException(std::exception& e);
-	};
+    class DebugUtil
+    {
+    public:
+        static String getStackTrace();
+        static String getStackTraceForException( std::exception &e );
+    };
 
 }  // namespace fb
 

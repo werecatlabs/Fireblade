@@ -1,5 +1,5 @@
-#ifndef FBPrerequisites_h__
-#define FBPrerequisites_h__
+#ifndef FBCorePrerequisites_h__
+#define FBCorePrerequisites_h__
 
 #include <FBCore/FBCoreTypes.h>
 
@@ -62,13 +62,7 @@ namespace fb
     namespace core
     {
         class IApplication;
-        class IApplicationManager;
-        class IPluginEvent;
-        class IPluginInterface;
-
         class ApplicationManager;
-        class ApplicationManagerMT;
-        class PluginEvent;
 
     }  // end namespace core
 
@@ -176,6 +170,7 @@ namespace fb
         class ICamera;
         class ICubemap;
         class IDebug;
+        class IDebugCircle;
         class IDebugLine;
         class IDecalCursor;
         class IDeferredShadingSystem;
@@ -397,7 +392,7 @@ namespace fb
         class IUIImage;
         class IUIImageArray;
         class IUIInputManager;
-        class IUILabelCheckboxPair;
+        class IUILabelTogglePair;
         class IUILabelDropdownPair;
         class IUILabelSliderPair;
         class IUILabelTextInputPair;
@@ -411,13 +406,14 @@ namespace fb
         class IUIProfileWindow;
         class IUIRenderWindow;
         class IUIScrollingText;
+        class IUISlider;
         class IUISpinner;
         class IUITabBar;
         class IUITabItem;
         class IUIText;
         class IUITextEntry;
         class IUITerrainEditor;
-        class IUIToggleButton;
+        class IUIToggle;
         class IUIToggleGroup;
         class IUIToolbar;
         class IUITreeCtrl;
@@ -472,6 +468,7 @@ namespace fb
     class INetworkListener;
     class INetworkManager;
     class INetworkView;
+    class INetworkPlayer;
     class INetworkStream;
     class IPacket;
     class ISystemAddress;
@@ -539,11 +536,8 @@ namespace fb
     class IProfiler;
     class IProject;
     class IProcessManager;
-    class ITransformNode;
     class ISelectionManager;
     class IStateContext;
-    class ITransformRoot;
-    class ITransformManager;
     class IState;
     class IStateListener;
     class IStateContext;
@@ -553,7 +547,7 @@ namespace fb
     class IStateMessage;
     class IStateManager;
     class IScheduler;
-    class ISystemManager;
+    class ISystemSettings;
     class ISystemManagerListener;
     class ITask;
     class ITaskLock;
@@ -660,10 +654,11 @@ namespace fb
 {
     namespace scene
     {
-        class AudioClip;
         class AudioSource;
 
         class Camera;
+        class CameraFollow;
+        class CameraTarget;
         class CameraController;
         class FPSCameraController;
         class EditorCameraController;
@@ -690,6 +685,9 @@ namespace fb
         class Transform;
         class WheelController;
 
+        class Director;
+        class MeshResourceDirector;
+
         // terrain
         class TerrainBlendMap;
         class TerrainSystem;
@@ -710,7 +708,7 @@ namespace fb
         class Text;
         class UIComponent;
 
-        class ISystem;
+        class IComponentSystem;
 
     }  // namespace scene
 }  // namespace fb

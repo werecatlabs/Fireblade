@@ -4,7 +4,7 @@
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/Core/StringUtil.h>
 #include <FBCore/Interface/FSM/IFSMListener.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
 #include <FBCore/Interface/System/ITimer.h>
 #include <FBCore/System/RttiClassDefinition.h>
@@ -15,23 +15,21 @@ namespace fb
 
     u32 FSMManager::m_idExt = 0;
 
-    FSMManager::FSMManager()
-    {
-    }
+    FSMManager::FSMManager() = default;
 
     FSMManager::~FSMManager()
     {
         unload( nullptr );
     }
 
-    SmartPtr<IFSM> FSMManager::createFSM()
+    auto FSMManager::createFSM() -> SmartPtr<IFSM>
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
 
         FB_ASSERT( isValid() );
         FB_ASSERT( isLoaded() );
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();
@@ -87,7 +85,7 @@ namespace fb
         }
     }
 
-    u32 FSMManager::createNewId()
+    auto FSMManager::createNewId() -> u32
     {
         FB_ASSERT( isValid() );
         FB_ASSERT( isLoaded() );
@@ -208,7 +206,7 @@ namespace fb
 
                 if( currentState != newState )
                 {
-                    auto pListeners = getListeners( (u32)i );
+                    auto pListeners = getListeners( static_cast<u32>( i ) );
                     if( pListeners )
                     {
                         const auto &fsmListeners = *pListeners;
@@ -232,8 +230,8 @@ namespace fb
                                         continue;
                                     }
 
-                                    setPreviousState( (u32)i, (s32)currentState );
-                                    setCurrentState( (u32)i, (s32)newState );
+                                    setPreviousState( static_cast<u32>( i ), (s32)currentState );
+                                    setCurrentState( static_cast<u32>( i ), (s32)newState );
 
                                     const auto result =
                                         listener->handleEvent( newState, IFSM::Event::Complete );
@@ -247,18 +245,18 @@ namespace fb
                         }
                         else
                         {
-                            setCurrentState( (u32)i, (s32)newState );
+                            setCurrentState( static_cast<u32>( i ), (s32)newState );
                         }
                     }
                     else
                     {
-                        setCurrentState( (u32)i, (s32)newState );
+                        setCurrentState( static_cast<u32>( i ), (s32)newState );
                     }
 
-                    auto applicationManager = core::IApplicationManager::instance();
+                    auto applicationManager = core::ApplicationManager::instance();
                     auto timer = applicationManager->getTimer();
                     auto t = timer->getTime();
-                    setStateChangeTime( (u32)i, t );
+                    setStateChangeTime( static_cast<u32>( i ), t );
                 }
             }
         }
@@ -318,7 +316,7 @@ namespace fb
                     setCurrentState( i, newState );
                 }
 
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 auto timer = applicationManager->getTimer();
                 auto t = timer->getTime();
                 setStateChangeTime( i, t );
@@ -326,7 +324,8 @@ namespace fb
         }
     }
 
-    SharedPtr<Array<SharedPtr<Array<SmartPtr<IFSMListener>>>>> FSMManager::getListenersPtr() const
+    auto FSMManager::getListenersPtr() const
+        -> SharedPtr<Array<SharedPtr<Array<SmartPtr<IFSMListener>>>>>
     {
         return m_listeners;
     }
@@ -345,8 +344,8 @@ namespace fb
 
         auto size = getSize();
 
-        auto applicationManager = core::IApplicationManager::instance();
-        auto timer = applicationManager->getTimer();
+        auto &applicationManager = core::ApplicationManager::instance();
+        auto &timer = applicationManager->getTimer();
         if( timer )
         {
             auto dt = timer->getDeltaTime();
@@ -355,7 +354,7 @@ namespace fb
             {
                 if( m_fsms[i] != nullptr )
                 {
-                    addStateTime( (u32)i, dt );
+                    addStateTime( static_cast<u32>( i ), dt );
                 }
             }
         }
@@ -363,7 +362,7 @@ namespace fb
         changeState();
     }
 
-    f64 FSMManager::getStateChangeTime( u32 id ) const
+    auto FSMManager::getStateChangeTime( u32 id ) const -> f64
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
         return m_stateChangeTimes[id];
@@ -375,7 +374,7 @@ namespace fb
         m_stateChangeTimes[id] = stateChangeTime;
     }
 
-    u8 FSMManager::getPreviousState( u32 id ) const
+    auto FSMManager::getPreviousState( u32 id ) const -> u8
     {
         if( auto p = getPreviousStates() )
         {
@@ -401,7 +400,7 @@ namespace fb
         }
     }
 
-    u8 FSMManager::getCurrentState( u32 id ) const
+    auto FSMManager::getCurrentState( u32 id ) const -> u8
     {
         if( auto p = getCurrentStates() )
         {
@@ -427,7 +426,7 @@ namespace fb
         }
     }
 
-    u8 FSMManager::getNewState( u32 id ) const
+    auto FSMManager::getNewState( u32 id ) const -> u8
     {
         if( auto p = getNewStates() )
         {
@@ -462,12 +461,12 @@ namespace fb
     {
     }
 
-    bool FSMManager::isPending( u32 id ) const
+    auto FSMManager::isPending( u32 id ) const -> bool
     {
         return false;
     }
 
-    bool FSMManager::isStateChangeComplete( u32 id ) const
+    auto FSMManager::isStateChangeComplete( u32 id ) const -> bool
     {
         return false;
     }
@@ -531,7 +530,7 @@ namespace fb
         }
     }
 
-    bool FSMManager::getAutoChangeState( u32 id ) const
+    auto FSMManager::getAutoChangeState( u32 id ) const -> bool
     {
         return false;
     }
@@ -540,7 +539,7 @@ namespace fb
     {
     }
 
-    bool FSMManager::getAllowStateChange( u32 id ) const
+    auto FSMManager::getAllowStateChange( u32 id ) const -> bool
     {
         return false;
     }
@@ -549,7 +548,7 @@ namespace fb
     {
     }
 
-    bool FSMManager::isReady( u32 id ) const
+    auto FSMManager::isReady( u32 id ) const -> bool
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
         FB_ASSERT( id < m_ready.size() );
@@ -563,7 +562,7 @@ namespace fb
         m_ready[id] = ready;
     }
 
-    bool FSMManager::getAutoTriggerEnterStateComplete( u32 id ) const
+    auto FSMManager::getAutoTriggerEnterStateComplete( u32 id ) const -> bool
     {
         return false;
     }
@@ -572,12 +571,12 @@ namespace fb
     {
     }
 
-    s32 FSMManager::getStateTicks( u32 id, int task ) const
+    auto FSMManager::getStateTicks( u32 id, int task ) const -> s32
     {
         return 0;
     }
 
-    s32 FSMManager::getStateTicks( u32 id ) const
+    auto FSMManager::getStateTicks( u32 id ) const -> s32
     {
         return 0;
     }
@@ -586,7 +585,7 @@ namespace fb
     {
     }
 
-    u32 FSMManager::getListenerPriority( u32 id )
+    auto FSMManager::getListenerPriority( u32 id ) -> u32
     {
         return 0;
     }
@@ -595,13 +594,13 @@ namespace fb
     {
     }
 
-    u32 *FSMManager::getFlagsPtr( u32 id ) const
+    auto FSMManager::getFlagsPtr( u32 id ) const -> u32 *
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
-        return (u32 *)&m_flags[id];
+        return const_cast<u32 *>( &m_flags[id] );
     }
 
-    u32 FSMManager::getFlags( u32 id )
+    auto FSMManager::getFlags( u32 id ) -> u32
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
         return m_flags[id];
@@ -632,7 +631,7 @@ namespace fb
         }
     }
 
-    SharedPtr<Array<SmartPtr<IFSMListener>>> FSMManager::getListeners( u32 id ) const
+    auto FSMManager::getListeners( u32 id ) const -> SharedPtr<Array<SmartPtr<IFSMListener>>>
     {
         if( auto p = getListenersPtr() )
         {
@@ -646,7 +645,7 @@ namespace fb
         return nullptr;
     }
 
-    time_interval FSMManager::getStateTime( u32 id ) const
+    auto FSMManager::getStateTime( u32 id ) const -> time_interval
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
         FB_ASSERT( id < m_stateTimes.size() );
@@ -671,7 +670,7 @@ namespace fb
         }
     }
 
-    bool FSMManager::isValid() const
+    auto FSMManager::isValid() const -> bool
     {
         //RecursiveMutex::ScopedLock lock( m_mutex );
         //if( getLoadingState() == LoadingState::Loaded )
@@ -690,7 +689,7 @@ namespace fb
         return true;
     }
 
-    size_t FSMManager::getSize() const
+    auto FSMManager::getSize() const -> size_t
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
         return m_size;
@@ -702,7 +701,7 @@ namespace fb
         m_size = size;
     }
 
-    size_t FSMManager::getGrowSize() const
+    auto FSMManager::getGrowSize() const -> size_t
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
         return m_growSize;
@@ -714,7 +713,7 @@ namespace fb
         m_growSize = growSize;
     }
 
-    SharedPtr<Array<atomic_u8>> FSMManager::getPreviousStates() const
+    auto FSMManager::getPreviousStates() const -> SharedPtr<Array<atomic_u8>>
     {
         return m_previousStates;
     }
@@ -724,7 +723,7 @@ namespace fb
         m_previousStates = previousStates;
     }
 
-    SharedPtr<Array<atomic_u8>> FSMManager::getCurrentStates() const
+    auto FSMManager::getCurrentStates() const -> SharedPtr<Array<atomic_u8>>
     {
         return m_currentStates;
     }
@@ -734,7 +733,7 @@ namespace fb
         m_currentStates = currentStates;
     }
 
-    SharedPtr<Array<atomic_u8>> FSMManager::getNewStates() const
+    auto FSMManager::getNewStates() const -> SharedPtr<Array<atomic_u8>>
     {
         return m_newStates;
     }

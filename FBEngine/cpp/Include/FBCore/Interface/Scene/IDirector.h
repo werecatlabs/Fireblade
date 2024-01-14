@@ -8,9 +8,8 @@ namespace fb
 {
     namespace scene
     {
-
         /**
-         * Interface for a director class. This class implements the builder pattern. The IDirector
+         * Interface for a director class. Stores essential data to construct a resource. The
          * class contains properties to construct objects.
          *
          * @author Zane Desir
@@ -28,7 +27,7 @@ namespace fb
              *
              * @return The data as a properties object.
              */
-            virtual SmartPtr<Properties> getProperties() const = 0;
+            SmartPtr<Properties> getProperties() const override = 0;
 
             /**
              * Sets the data as a properties object. The properties object can be used to set up the
@@ -36,7 +35,7 @@ namespace fb
              *
              * @param properties The properties object.
              */
-            virtual void setProperties( SmartPtr<Properties> properties ) = 0;
+            void setProperties( SmartPtr<Properties> properties ) override = 0;
 
             /** Gets the parent. */
             virtual SmartPtr<IDirector> getParent() const = 0;
@@ -64,7 +63,6 @@ namespace fb
 
             FB_CLASS_REGISTER_DECL;
         };
-
     }  // namespace scene
 }  // namespace fb
 

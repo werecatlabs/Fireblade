@@ -12,30 +12,30 @@ namespace fb
         class PrefabManager : public IPrefabManager
         {
         public:
-            PrefabManager() = default;
-            ~PrefabManager() override = default;
+            PrefabManager();
+            ~PrefabManager() override;
 
-            /** @copydoc IObject::load */
+            /** @copydoc IPrefabManager::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::unload */
+            /** @copydoc IPrefabManager::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IResourceManager::createInstance */
-            SmartPtr<scene::IActor> createInstance( SmartPtr<scene::IActor> prefab ) override;
+            /** @copydoc IPrefabManager::createInstance */
+            SmartPtr<IActor> createInstance( SmartPtr<IActor> prefab ) override;
 
-            /** @copydoc IResourceManager::loadActor */
-            SmartPtr<scene::IActor> loadActor( SmartPtr<Properties> data,
-                                               SmartPtr<scene::IActor> parent ) override;
+            /** @copydoc IPrefabManager::loadActor */
+            SmartPtr<IActor> loadActor( SmartPtr<Properties> data,
+                                        SmartPtr<IActor> parent ) override;
 
-            /** @copydoc IResourceManager::loadActor */
+            /** @copydoc IPrefabManager::loadActor */
             //SmartPtr<scene::IActor> loadActor( data::actor_data &data, SmartPtr<scene::IActor> parent );
 
-            /** @copydoc IResourceManager::loadPrefab */
+            /** @copydoc IPrefabManager::loadPrefab */
             SmartPtr<IPrefab> loadPrefab( const String &filePath ) override;
 
-            /** @copydoc IResourceManager::savePrefab */
-            void savePrefab( const String &filePath, SmartPtr<scene::IActor> prefab ) override;
+            /** @copydoc IPrefabManager::savePrefab */
+            void savePrefab( const String &filePath, SmartPtr<IActor> prefab ) override;
 
             /** @copydoc IResourceManager::create */
             SmartPtr<IResource> create( const String &uuid ) override;
@@ -50,7 +50,7 @@ namespace fb
             SmartPtr<IResource> loadFromFile( const String &filePath ) override;
 
             /** @copydoc IResourceManager::load */
-            SmartPtr<IResource> load( const String &name ) override;
+            SmartPtr<IResource> loadResource( const String &name ) override;
 
             /** @copydoc IResourceManager::getByName */
             SmartPtr<IResource> getByName( const String &name ) override;
@@ -66,13 +66,14 @@ namespace fb
                                                               const String &type ) override;
 
             /** @copydoc IResourceManager::createOrRetrieve */
-            Pair<SmartPtr<IResource>, bool> createOrRetrieve( const String &path );
+            Pair<SmartPtr<IResource>, bool> createOrRetrieve( const String &path ) override;
+
+            FB_CLASS_REGISTER_DECL;
 
         private:
             Array<SmartPtr<IResource>> m_prefabs;
         };
-
-    }  // namespace scene
-}  // end namespace fb
+    } // namespace scene
+}     // end namespace fb
 
 #endif

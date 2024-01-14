@@ -10,13 +10,13 @@ namespace fb
     {
     public:
         /** Default constructor. */
-        ColourI() = default;
+        ColourI();
 
         /** Constructor to pass in colour values. */
         ColourI( u32 a, u32 r, u32 g, u32 b );
 
         /** Constructor to pass in colour value. */
-        ColourI( u32 clr );
+        explicit ColourI( u32 clr );
 
         /** Returns the alpha component of the color. The alpha component
         defines how transparent a color should be. */

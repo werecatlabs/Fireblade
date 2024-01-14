@@ -92,6 +92,12 @@ namespace fb
         virtual Vector3<real_Num> getPosition() const = 0;
 
         /**
+         * @brief Gets the scale of the body.
+         * @return The scale of the body.
+         */
+        virtual Vector3<real_Num> getScale() const = 0;
+
+        /**
          * @brief Gets the orientation of the body.
          * @return The orientation of the body.
          */

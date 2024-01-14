@@ -333,6 +333,9 @@ namespace fb
         */
         virtual String readAllText( const String &path ) = 0;
 
+        /** Writes all bytes to a file. */
+        virtual void writeAllBytes( const String &path, u8 *bytes, u32 size ) = 0;
+
         /** Writes all bytes to a file.
             @param path: The path to the file to write.
             @param bytes: The array of bytes to write to the file.

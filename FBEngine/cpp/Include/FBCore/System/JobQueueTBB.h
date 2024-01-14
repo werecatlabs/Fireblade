@@ -1,9 +1,7 @@
 #ifndef JobQueueTBB_h__
 #define JobQueueTBB_h__
 
-#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IJobQueue.h>
-
 
 #if FB_USE_TBB
 
@@ -12,7 +10,7 @@
 
 namespace fb
 {
-    
+
     class JobQueueTBB : public IJobQueue
     {
     public:
@@ -40,7 +38,7 @@ namespace fb
     protected:
         struct WorkerThread
         {
-            WorkerThread( JobQueueTBB *jobQueue );
+            explicit WorkerThread( JobQueueTBB *jobQueue );
 
             void operator()();
 

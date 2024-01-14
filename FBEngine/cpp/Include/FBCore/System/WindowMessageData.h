@@ -1,13 +1,11 @@
 #ifndef WindowMessageData_h__
 #define WindowMessageData_h__
 
-#include <FBCore/FBCorePrerequisites.h>
-
 #include <FBCore/Interface/Graphics/IWindowEvent.h>
 
 namespace fb
 {
-    
+
     class WindowMessageData : public render::IWindowEvent
     {
     public:

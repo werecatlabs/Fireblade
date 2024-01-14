@@ -8,26 +8,24 @@ namespace fb
 {
     namespace editor
     {
-
         class UnloadPluginJob : public Job
         {
         public:
             UnloadPluginJob();
-            ~UnloadPluginJob();
+            ~UnloadPluginJob() override;
 
-            void execute();
+            void execute() override;
 
-            fb::SmartPtr<fb::IPlugin> getPlugin() const;
+            SmartPtr<IPlugin> getPlugin() const;
 
-            void setPlugin( fb::SmartPtr<fb::IPlugin> plugin );
+            void setPlugin( SmartPtr<IPlugin> plugin );
 
             FB_CLASS_REGISTER_DECL;
 
         protected:
             SmartPtr<IPlugin> m_plugin;
         };
-
-    }  // namespace editor
-}  // namespace fb
+    } // namespace editor
+}     // namespace fb
 
 #endif  // UnloadPluginJob_h__

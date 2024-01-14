@@ -27,7 +27,7 @@ namespace fb
         AABB3();
         AABB3( const AABB3<T> &other );
         AABB3( const Vector3<T> &min, const Vector3<T> &max );
-        AABB3( const Vector3<T> &init );
+        explicit AABB3( const Vector3<T> &init );
         AABB3( T minx, T miny, T minz, T maxx, T maxy, T maxz );
 
         bool operator==( const AABB3<T> &other ) const;

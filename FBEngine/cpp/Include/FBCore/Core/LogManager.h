@@ -1,14 +1,12 @@
 #ifndef __FB_LogManager_h__
 #define __FB_LogManager_h__
 
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/ILogManager.h>
 
 #if FB_VERBOSE_LOG
 #    define FB_LOG_MESSAGE( x, y ) \
-        using namespace fb; \
-        using namespace fb::core; \
-        if( auto applicationManager = IApplicationManager::instance() ) \
+        if( auto applicationManager = fb::core::IApplicationManager::instance() ) \
         { \
             if( auto logManager = applicationManager->getLogManager() ) \
             { \
@@ -16,9 +14,7 @@
             } \
         }
 #    define FB_LOG( x ) \
-        using namespace fb; \
-        using namespace fb::core; \
-        if( auto applicationManager = IApplicationManager::instance() ) \
+        if( auto applicationManager = fb::core::IApplicationManager::instance() ) \
         { \
             if( auto logManager = applicationManager->getLogManager() ) \
             { \
@@ -32,17 +28,13 @@
 
 #if FB_ERROR_LOG
 #    define FB_LOG_ERROR( x ) \
-        using namespace fb; \
-        using namespace fb::core; \
-        if( auto applicationManager = IApplicationManager::instance() ) \
+        if( auto applicationManager = fb::core::IApplicationManager::instance() ) \
         { \
             auto logManager = applicationManager->getLogManager(); \
             logManager->logMessage( ( x ), fb::ILogManager::Type::ErrorMessage ); \
         }
 #    define FB_LOG_EXCEPTION( ex ) \
-        using namespace fb; \
-        using namespace fb::core; \
-        if( auto applicationManager = IApplicationManager::instance() ) \
+        if( auto applicationManager = fb::core::IApplicationManager::instance() ) \
         { \
             if( auto logManager = applicationManager->getLogManager() ) \
             { \

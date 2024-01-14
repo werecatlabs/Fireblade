@@ -9,11 +9,11 @@ namespace fb
     namespace ui
     {
 
-        class UIText : public UIElement<ui::IUIText>
+        class UIText : public UIElement<IUIText>
         {
         public:
             UIText();
-            ~UIText();
+            ~UIText() override;
 
             void load( SmartPtr<ISharedObject> data ) override;
 
@@ -35,7 +35,9 @@ namespace fb
 
             u8 getHorizontalAlignment() const override;
 
-            void handleStateChanged( SmartPtr<IState> &state );
+            void handleStateChanged( SmartPtr<IState> &state ) override;
+
+            FB_CLASS_REGISTER_DECL;
 
         protected:
             Colibri::Label *m_label = nullptr;
@@ -44,8 +46,7 @@ namespace fb
             u8 m_verticalAlignment = 3;
             u8 m_horizontalAlignment = 3;
         };
-
-    }  // namespace render
-}  // namespace fb
+    } // namespace render
+}     // namespace fb
 
 #endif  // UIText_h__

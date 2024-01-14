@@ -4,222 +4,221 @@
 #include <FBCore/Interface/Physics/IPhysicsManager.h>
 #include <FBCore/Interface/Physics/IPhysicsMaterial3.h>
 #include <FBCore/Interface/Physics/IPhysicsShape3.h>
+#include <FBCore/Interface/Scene/IActor.h>
 #include <FBCore/Core/Exception.h>
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/Math/MathUtil.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+
+    FB_CLASS_REGISTER_DERIVED( fb, Collision, Component );
+
+    auto Collision::getMaterial() const -> SmartPtr<physics::IPhysicsMaterial3>
     {
+        return m_material;
+    }
 
-        FB_CLASS_REGISTER_DERIVED( fb, Collision, Component );
+    void Collision::setMaterial( SmartPtr<physics::IPhysicsMaterial3> material )
+    {
+        m_material = material;
+    }
 
-        SmartPtr<physics::IPhysicsMaterial3> Collision::getMaterial() const
+    auto Collision::getShape() const -> SmartPtr<physics::IPhysicsShape3>
+    {
+        return m_shape;
+    }
+
+    void Collision::setShape( SmartPtr<physics::IPhysicsShape3> shape )
+    {
+        m_shape = shape;
+    }
+
+    void Collision::load( SmartPtr<ISharedObject> data )
+    {
+        Component::load( data );
+    }
+
+    void Collision::unload( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            return m_material;
-        }
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
 
-        void Collision::setMaterial( SmartPtr<physics::IPhysicsMaterial3> material )
-        {
-            m_material = material;
-        }
-
-        SmartPtr<physics::IPhysicsShape3> Collision::getShape() const
-        {
-            return m_shape;
-        }
-
-        void Collision::setShape( SmartPtr<physics::IPhysicsShape3> shape )
-        {
-            m_shape = shape;
-        }
-
-        void Collision::load( SmartPtr<ISharedObject> data )
-        {
-            Component::load( data );
-        }
-
-        void Collision::unload( SmartPtr<ISharedObject> data )
-        {
-            try
+            auto physicsManager = applicationManager->getPhysicsManager();
+            if( physicsManager )
             {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto physicsManager = applicationManager->getPhysicsManager();
-                if( physicsManager )
+                auto shape = getShape();
+                if( shape )
                 {
-                    auto shape = getShape();
-                    if( shape )
-                    {
-                        physicsManager->removeCollisionShape( shape );
-                        setShape( nullptr );
-                    }
-                }
-
-                Component::unload( data );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        Vector3<real_Num> Collision::getExtents() const
-        {
-            return m_extents;
-        }
-
-        void Collision::setExtents( const Vector3<real_Num> &extents )
-        {
-            m_extents = extents;
-        }
-
-        Vector3<real_Num> Collision::getPosition() const
-        {
-            return m_position;
-        }
-
-        void Collision::setPosition( const Vector3<real_Num> &position )
-        {
-            m_position = position;
-        }
-
-        f32 Collision::getRadius() const
-        {
-            return m_radius;
-        }
-
-        void Collision::setRadius( f32 radius )
-        {
-            m_radius = radius;
-        }
-
-        AABB3F Collision::getBoundingBox() const
-        {
-            return AABB3F();
-        }
-
-        SmartPtr<Rigidbody> Collision::getRigidBody() const
-        {
-            return m_rigidBody;
-        }
-
-        void Collision::setRigidBody( SmartPtr<Rigidbody> rigidBody )
-        {
-            m_rigidBody = rigidBody;
-        }
-
-        Array<SmartPtr<ISharedObject>> Collision::getChildObjects() const
-        {
-            Array<SmartPtr<ISharedObject>> objects;
-
-            objects.push_back( m_rigidBody );
-            objects.push_back( m_material );
-            objects.push_back( m_shape );
-
-            return objects;
-        }
-
-        SmartPtr<Properties> Collision::getProperties() const
-        {
-            try
-            {
-                auto properties = Component::getProperties();
-
-                properties->setProperty( "isTrigger", m_isTrigger );
-                properties->setProperty( "extents", m_extents );
-
-                return properties;
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-
-            return nullptr;
-        }
-
-        void Collision::setProperties( SmartPtr<Properties> properties )
-        {
-            try
-            {
-                properties->getPropertyValue( "isTrigger", m_isTrigger );
-
-                Vector3<real_Num> extents;
-                properties->getPropertyValue( "extents", extents );
-
-                if( !MathUtil<real_Num>::equals( extents, m_extents ) )
-                {
-                    setExtents( extents );
+                    physicsManager->removeCollisionShape( shape );
+                    setShape( nullptr );
                 }
             }
-            catch( std::exception &e )
+
+            Component::unload( data );
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    auto Collision::getExtents() const -> Vector3<real_Num>
+    {
+        return m_extents;
+    }
+
+    void Collision::setExtents( const Vector3<real_Num> &extents )
+    {
+        m_extents = extents;
+    }
+
+    auto Collision::getPosition() const -> Vector3<real_Num>
+    {
+        return m_position;
+    }
+
+    void Collision::setPosition( const Vector3<real_Num> &position )
+    {
+        m_position = position;
+    }
+
+    auto Collision::getRadius() const -> f32
+    {
+        return m_radius;
+    }
+
+    void Collision::setRadius( f32 radius )
+    {
+        m_radius = radius;
+    }
+
+    auto Collision::getBoundingBox() const -> AABB3F
+    {
+        return {};
+    }
+
+    auto Collision::getRigidBody() const -> SmartPtr<Rigidbody>
+    {
+        return m_rigidBody;
+    }
+
+    void Collision::setRigidBody( SmartPtr<Rigidbody> rigidBody )
+    {
+        m_rigidBody = rigidBody;
+    }
+
+    auto Collision::getChildObjects() const -> Array<SmartPtr<ISharedObject>>
+    {
+        Array<SmartPtr<ISharedObject>> objects;
+
+        objects.emplace_back( m_rigidBody );
+        objects.emplace_back( m_material );
+        objects.emplace_back( m_shape );
+
+        return objects;
+    }
+
+    auto Collision::getProperties() const -> SmartPtr<Properties>
+    {
+        try
+        {
+            auto properties = Component::getProperties();
+
+            properties->setProperty( "isTrigger", m_isTrigger );
+            properties->setProperty( "extents", m_extents );
+
+            return properties;
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+
+        return nullptr;
+    }
+
+    void Collision::setProperties( SmartPtr<Properties> properties )
+    {
+        try
+        {
+            properties->getPropertyValue( "isTrigger", m_isTrigger );
+
+            Vector3<real_Num> extents;
+            properties->getPropertyValue( "extents", extents );
+
+            if( !MathUtil<real_Num>::equals( extents, m_extents ) )
             {
-                FB_LOG_EXCEPTION( e );
+                setExtents( extents );
             }
         }
-
-        bool Collision::isTrigger() const
+        catch( std::exception &e )
         {
-            return m_isTrigger;
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        void Collision::setTrigger( bool trigger )
+    auto Collision::isTrigger() const -> bool
+    {
+        return m_isTrigger;
+    }
+
+    void Collision::setTrigger( bool trigger )
+    {
+        m_isTrigger = trigger;
+    }
+
+    auto Collision::isValid() const -> bool
+    {
+        switch( auto state = getState() )
         {
-            m_isTrigger = trigger;
+        case IComponent::State::None:
+        {
+            return true;
         }
-
-        bool Collision::isValid() const
+        break;
+        case IComponent::State::Edit:
+        case IComponent::State::Play:
         {
-            switch( auto state = getState() )
+            const auto &loadingState = getLoadingState();
+            if( loadingState == LoadingState::Loaded )
             {
-            case IComponent::State::None:
-            {
-                return true;
-            }
-            break;
-            case IComponent::State::Edit:
-            case IComponent::State::Play:
-            {
-                const auto &loadingState = getLoadingState();
-                if( loadingState == LoadingState::Loaded )
+                if( m_shape )
                 {
-                    if( m_shape )
+                    if( m_shape->isValid() )
                     {
-                        if( m_shape->isValid() )
-                        {
-                            return true;
-                        }
-                    }
-                }
-                else if( loadingState == LoadingState::Unloaded )
-                {
-                    if( m_shape )
-                    {
-                        return false;
+                        return true;
                     }
                 }
             }
-            break;
-            default:
+            else if( loadingState == LoadingState::Unloaded )
             {
+                if( m_shape )
+                {
+                    return false;
+                }
             }
-            }
-
-            return false;
+        }
+        break;
+        default:
+        {
+        }
         }
 
-        void Collision::updateTransform()
+        return false;
+    }
+
+    void Collision::updateTransform()
+    {
+        try
         {
-            try
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            if( auto actor = getActor() )
             {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto actor = getActor();
-
                 auto physicsManager = applicationManager->getPhysicsManager();
                 if( physicsManager )
                 {
@@ -233,27 +232,27 @@ namespace fb
                     }
                 }
             }
-            catch( std::exception &e )
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void Collision::createPhysicsShape()
+    {
+    }
+
+    void Collision::updateRigidBody()
+    {
+        if( auto actor = getActor() )
+        {
+            auto rigidBodies = actor->getComponentsByType<Rigidbody>();
+            for( auto rigidBody : rigidBodies )
             {
-                FB_LOG_EXCEPTION( e );
+                rigidBody->updateShapes();
             }
         }
+    }
 
-        void Collision::createPhysicsShape()
-        {
-        }
-
-        void Collision::updateRigidBody()
-        {
-            if( auto actor = getActor() )
-            {
-                auto rigidBodies = actor->getComponentsByType<Rigidbody>();
-                for( auto rigidBody : rigidBodies )
-                {
-                    rigidBody->updateShapes();
-                }
-            }
-        }
-
-    }  // namespace scene
-}  // end namespace fb
+}  // namespace fb::scene

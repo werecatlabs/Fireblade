@@ -61,6 +61,10 @@ namespace fb
 
             virtual void setColour( u32 colour ) = 0;
 
+            virtual bool isDirty() const = 0;
+
+            virtual void setDirty( bool dirty ) = 0;
+
             FB_CLASS_REGISTER_DECL;
         };
 

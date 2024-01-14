@@ -216,9 +216,9 @@ namespace fb
             SmartPtr<ui::IUITreeCtrl> m_tree;
             SmartPtr<IEventListener> m_uiListener;
 
-            SmartPtr<ui::IUILabelCheckboxPair> m_actorEnabled;
-            SmartPtr<ui::IUILabelCheckboxPair> m_actorVisible;
-            SmartPtr<ui::IUILabelCheckboxPair> m_actorStatic;
+            SmartPtr<ui::IUILabelTogglePair> m_actorEnabled;
+            SmartPtr<ui::IUILabelTogglePair> m_actorVisible;
+            SmartPtr<ui::IUILabelTogglePair> m_actorStatic;
 
             SmartPtr<ui::IUIButton> m_addComponentButton;
             SmartPtr<ui::IUIButton> m_removeComponentButton;

@@ -21,16 +21,14 @@ namespace fb
         m_id = m_idExt++;
     }
 
-    BaseAnimator::~BaseAnimator()
-    {
-    }
+    BaseAnimator::~BaseAnimator() = default;
 
     void BaseAnimator::setId( u32 id )
     {
         m_id = id;
     }
 
-    u32 BaseAnimator::getId() const
+    auto BaseAnimator::getId() const -> u32
     {
         return m_id;
     }
@@ -40,7 +38,7 @@ namespace fb
         m_loop = loop;
     }
 
-    bool BaseAnimator::isLoop() const
+    auto BaseAnimator::isLoop() const -> bool
     {
         return m_loop;
     }
@@ -50,7 +48,7 @@ namespace fb
         m_reverse = reverse;
     }
 
-    bool BaseAnimator::isReverse() const
+    auto BaseAnimator::isReverse() const -> bool
     {
         return m_reverse;
     }
@@ -65,12 +63,12 @@ namespace fb
         m_isPlaying = false;
     }
 
-    bool BaseAnimator::isPlaying() const
+    auto BaseAnimator::isPlaying() const -> bool
     {
         return m_isPlaying;
     }
 
-    bool BaseAnimator::isFinished() const
+    auto BaseAnimator::isFinished() const -> bool
     {
         return false;
     }
@@ -80,12 +78,12 @@ namespace fb
         m_animationLength = animationLength;
     }
 
-    fb::f32 BaseAnimator::getAnimationLength() const
+    auto BaseAnimator::getAnimationLength() const -> fb::f32
     {
         return m_animationLength;
     }
 
-    fb::f32 BaseAnimator::getAnimationTime() const
+    auto BaseAnimator::getAnimationTime() const -> fb::f32
     {
         return m_animationTime;
     }

@@ -9,7 +9,7 @@ namespace fb
 {
     namespace ui
     {
-        
+
         class CUITextEntry : public CUIElement<IUITextEntry>
         {
         public:
@@ -34,6 +34,14 @@ namespace fb
             void onToggleVisibility() override;
             void onToggleHighlight() override;
 
+            void setVerticalAlignment( u8 alignment ) override;
+
+            u8 getVerticalAlignment() const override;
+
+            void setHorizontalAlignment( u8 alignment ) override;
+
+            u8 getHorizontalAlignment() const override;
+
         private:
             String m_text;
             SmartPtr<render::IOverlayElementText> m_overlayTxt;
@@ -43,7 +51,7 @@ namespace fb
 
             u32 m_nextCursorFlash;
         };
-    } // end namespace ui
-}     // end namespace fb
+    }  // end namespace ui
+}  // end namespace fb
 
 #endif

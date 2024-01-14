@@ -9,7 +9,7 @@ namespace fb
 {
     namespace ui
     {
-        
+
         class ImGuiTreeCtrl : public CImGuiElement<IUITreeCtrl>
         {
         public:
@@ -54,6 +54,10 @@ namespace fb
             SmartPtr<IUIElement> getDropDestinationElement() const override;
             void setDropDestinationElement( SmartPtr<IUIElement> dropDestination ) override;
 
+            s32 getSelectedSiblingIndex() const;
+
+            void setSelectedSiblingIndex( s32 siblingIndex );
+
             static void createElement( SmartPtr<IUIElement> element );
 
             FB_CLASS_REGISTER_DECL;
@@ -86,6 +90,8 @@ namespace fb
             bool m_multiSelect = true;
 
             s32 numNodesDisplayed = 0;
+
+            s32 m_siblingIndex = -1;
 
             static u32 m_nodeIdExt;
         };

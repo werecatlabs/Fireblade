@@ -10,15 +10,13 @@ namespace fb
         setState( State::Ready );
     }
 
-    JobGroupBase::~JobGroupBase()
-    {
-    }
+    JobGroupBase::~JobGroupBase() = default;
 
     void JobGroupBase::update()
     {
     }
 
-    bool JobGroupBase::getInterupt() const
+    auto JobGroupBase::getInterupt() const -> bool
     {
         return false;
     }
@@ -27,7 +25,7 @@ namespace fb
     {
     }
 
-    IJob::State JobGroupBase::getState() const
+    auto JobGroupBase::getState() const -> IJob::State
     {
         return m_state;
     }
@@ -37,7 +35,7 @@ namespace fb
         m_state = state;
     }
 
-    u32 JobGroupBase::getProgress() const
+    auto JobGroupBase::getProgress() const -> u32
     {
         return m_progress;
     }
@@ -47,7 +45,7 @@ namespace fb
         m_progress = val;
     }
 
-    s32 JobGroupBase::getPriority() const
+    auto JobGroupBase::getPriority() const -> s32
     {
         return m_progress;
     }
@@ -57,7 +55,7 @@ namespace fb
         m_progress = val;
     }
 
-    bool JobGroupBase::isPrimary() const
+    auto JobGroupBase::isPrimary() const -> bool
     {
         return m_isPrimary ? true : false;
     }
@@ -67,12 +65,12 @@ namespace fb
         m_isPrimary = val;
     }
 
-    bool JobGroupBase::isFinished() const
+    auto JobGroupBase::isFinished() const -> bool
     {
         return m_isFinished;
     }
 
-    bool JobGroupBase::wait()
+    auto JobGroupBase::wait() -> bool
     {
         while( !isFinished() )
         {
@@ -82,12 +80,12 @@ namespace fb
         return false;
     }
 
-    bool JobGroupBase::wait( [[maybe_unused]] f64 maxWaitTime )
+    auto JobGroupBase::wait( [[maybe_unused]] f64 maxWaitTime ) -> bool
     {
         return false;
     }
 
-    s32 JobGroupBase::getAffinity() const
+    auto JobGroupBase::getAffinity() const -> s32
     {
         return 0;
     }
@@ -108,7 +106,7 @@ namespace fb
     {
     }
 
-    bool JobGroupBase::isCoroutine() const
+    auto JobGroupBase::isCoroutine() const -> bool
     {
         return false;
     }

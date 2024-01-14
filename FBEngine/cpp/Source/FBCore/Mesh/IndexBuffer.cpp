@@ -4,11 +4,8 @@
 
 namespace fb
 {
-    IndexBuffer::IndexBuffer() :
-        m_indexType( Type::IT_32BIT ),
-        m_numIndexes( 0 ),
-        m_indexSize( 0 ),
-        m_indexData( nullptr )
+    IndexBuffer::IndexBuffer()
+
     {
         m_indexSize = sizeof( u32 );
     }
@@ -45,39 +42,39 @@ namespace fb
         }
     }
 
-    IIndexBuffer::Type IndexBuffer::getIndexType() const
+    auto IndexBuffer::getIndexType() const -> IIndexBuffer::Type
     {
         return m_indexType;
     }
 
     void IndexBuffer::setNumIndices( u32 numIndices )
     {
-        m_numIndexes = numIndices;
+        m_numIndices = numIndices;
     }
 
-    u32 IndexBuffer::getNumIndices() const
+    auto IndexBuffer::getNumIndices() const -> u32
     {
-        return m_numIndexes;
+        return m_numIndices;
     }
 
-    u32 IndexBuffer::getIndexSize() const
+    auto IndexBuffer::getIndexSize() const -> u32
     {
         return m_indexSize;
     }
 
-    void *IndexBuffer::createIndexData()
+    auto IndexBuffer::createIndexData() -> void *
     {
         auto indexType = getIndexType();
         switch( indexType )
         {
         case Type::IT_16BIT:
         {
-            m_indexData = new u16[m_numIndexes];
+            m_indexData = new u16[m_numIndices];
         }
         break;
         case Type::IT_32BIT:
         {
-            m_indexData = new u32[m_numIndexes];
+            m_indexData = new u32[m_numIndices];
         }
         break;
         default:
@@ -88,20 +85,20 @@ namespace fb
         return m_indexData;
     }
 
-    void *IndexBuffer::getIndexData() const
+    auto IndexBuffer::getIndexData() const -> void *
     {
         return m_indexData;
     }
 
-    SmartPtr<IIndexBuffer> IndexBuffer::clone() const
+    auto IndexBuffer::clone() const -> SmartPtr<IIndexBuffer>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto factoryManager = applicationManager->getFactoryManager();
 
         auto indexBuffer = factoryManager->make_ptr<IndexBuffer>();
 
         indexBuffer->setIndexType( m_indexType );
-        indexBuffer->setNumIndices( m_numIndexes );
+        indexBuffer->setNumIndices( m_numIndices );
         indexBuffer->setIndexSize( m_indexSize );
         indexBuffer->createIndexData();
 
@@ -111,7 +108,7 @@ namespace fb
         {
             auto indices = static_cast<u16 *>( m_indexData );
             auto newIndices = static_cast<u16 *>( indexBuffer->getIndexData() );
-            for( u32 i = 0; i < m_numIndexes; ++i )
+            for( u32 i = 0; i < m_numIndices; ++i )
             {
                 newIndices[i] = indices[i];
             }
@@ -121,7 +118,7 @@ namespace fb
         {
             auto indices = static_cast<u32 *>( m_indexData );
             auto newIndices = static_cast<u32 *>( indexBuffer->getIndexData() );
-            for( u32 i = 0; i < m_numIndexes; ++i )
+            for( u32 i = 0; i < m_numIndices; ++i )
             {
                 newIndices[i] = indices[i];
             }
@@ -141,7 +138,7 @@ namespace fb
         m_indexSize = size;
     }
 
-    bool IndexBuffer::compare( SmartPtr<IIndexBuffer> other ) const
+    auto IndexBuffer::compare( SmartPtr<IIndexBuffer> other ) const -> bool
     {
         return false;
     }

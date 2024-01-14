@@ -6,17 +6,15 @@ namespace fb
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageType, StateMessage );
 
     //--------------------------------------------
-    StateMessageType::StateMessageType() : m_typeValue( 0 )
+    StateMessageType::StateMessageType()
     {
     }
 
     //--------------------------------------------
-    StateMessageType::~StateMessageType()
-    {
-    }
+    StateMessageType::~StateMessageType() = default;
 
     //--------------------------------------------
-    u32 StateMessageType::getTypeValue() const
+    auto StateMessageType::getTypeValue() const -> u32
     {
         return m_typeValue;
     }

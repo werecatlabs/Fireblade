@@ -49,7 +49,7 @@ namespace fb
             u32 getOperationType() const override;
 
             Ogre::ObjectMemoryManager *getMemoryManager() const;
-            void setMemoryManager( Ogre::ObjectMemoryManager *val );
+            void setMemoryManager( Ogre::ObjectMemoryManager *memoryManager );
 
         protected:
             Ogre::ObjectMemoryManager *m_memoryManager = nullptr;

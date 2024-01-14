@@ -21,10 +21,16 @@ namespace fb
             RawPtr<physx::PxFixedJoint> getJoint() const;
             void setJoint( RawPtr<physx::PxFixedJoint> joint );
 
+            virtual void handleStateChanged( const SmartPtr<IStateMessage> &message );
+
+            virtual void handleStateChanged( SmartPtr<IState> &state );
+
+            virtual void handleQuery( SmartPtr<IStateQuery> &query );
+
         private:
             RawPtr<physx::PxFixedJoint> m_joint;
         };
-    } // end namespace physics
-}     // end namespace fb
+    }  // end namespace physics
+}  // end namespace fb
 
 #endif  // FBPhysxConstraintFixed3_h__

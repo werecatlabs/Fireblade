@@ -5,7 +5,7 @@
 
 namespace fb
 {
-    
+
     class StateFrameData : public StateMessage
     {
     public:

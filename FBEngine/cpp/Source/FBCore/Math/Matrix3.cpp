@@ -11,7 +11,7 @@ namespace fb
     }
 
     template <class T>
-    bool Matrix3<T>::operator==( const Matrix3<T> &rkMatrix ) const
+    auto Matrix3<T>::operator==( const Matrix3<T> &rkMatrix ) const -> bool
     {
         for( u32 iRow = 0; iRow < 3; iRow++ )
         {
@@ -28,7 +28,7 @@ namespace fb
     }
 
     template <class T>
-    Matrix3<T> Matrix3<T>::operator+( const Matrix3<T> &rkMatrix ) const
+    auto Matrix3<T>::operator+( const Matrix3<T> &rkMatrix ) const -> Matrix3<T>
     {
         Matrix3<T> kSum;
         for( u32 iRow = 0; iRow < 3; iRow++ )
@@ -43,7 +43,7 @@ namespace fb
     }
 
     template <class T>
-    Matrix3<T> Matrix3<T>::operator-( const Matrix3<T> &rkMatrix ) const
+    auto Matrix3<T>::operator-( const Matrix3<T> &rkMatrix ) const -> Matrix3<T>
     {
         Matrix3<T> kDiff;
         for( u32 iRow = 0; iRow < 3; iRow++ )
@@ -58,7 +58,7 @@ namespace fb
     }
 
     template <class T>
-    Matrix3<T> Matrix3<T>::operator*( const Matrix3<T> &rkMatrix ) const
+    auto Matrix3<T>::operator*( const Matrix3<T> &rkMatrix ) const -> Matrix3<T>
     {
         Matrix3<T> kProd;
         for( u32 iRow = 0; iRow < 3; iRow++ )
@@ -75,7 +75,7 @@ namespace fb
     }
 
     template <class T>
-    Vector3<T> Matrix3<T>::operator*( const Vector3<T> &rkPoint ) const
+    auto Matrix3<T>::operator*( const Vector3<T> &rkPoint ) const -> Vector3<T>
     {
         Vector3<T> kProd;
         for( u32 iRow = 0; iRow < 3; iRow++ )
@@ -87,7 +87,7 @@ namespace fb
     }
 
     template <class T>
-    Vector3<T> operator*( const Vector3<T> &rkPoint, const Matrix3<T> &rkMatrix )
+    auto operator*( const Vector3<T> &rkPoint, const Matrix3<T> &rkMatrix ) -> Vector3<T>
     {
         Vector3<T> kProd;
         for( u32 iRow = 0; iRow < 3; iRow++ )
@@ -100,7 +100,7 @@ namespace fb
     }
 
     template <class T>
-    Matrix3<T> Matrix3<T>::operator-() const
+    auto Matrix3<T>::operator-() const -> Matrix3<T>
     {
         Matrix3<T> kNeg;
         for( u32 iRow = 0; iRow < 3; iRow++ )
@@ -115,19 +115,21 @@ namespace fb
     }
 
     template <class T>
-    Matrix3<T> Matrix3<T>::operator*( T fScalar ) const
+    auto Matrix3<T>::operator*( T fScalar ) const -> Matrix3<T>
     {
         Matrix3<T> kProd;
         for( u32 iRow = 0; iRow < 3; iRow++ )
         {
             for( u32 iCol = 0; iCol < 3; iCol++ )
+            {
                 kProd[iRow][iCol] = fScalar * m[iRow][iCol];
+            }
         }
         return kProd;
     }
 
     template <class T>
-    Matrix3<T> operator*( T fScalar, const Matrix3<T> &rkMatrix )
+    auto operator*( T fScalar, const Matrix3<T> &rkMatrix ) -> Matrix3<T>
     {
         Matrix3<T> kProd;
         for( u32 iRow = 0; iRow < 3; iRow++ )
@@ -139,16 +141,16 @@ namespace fb
     }
 
     template <class T>
-    bool Matrix3<T>::toEulerAnglesXYZ( T &rfYAngle, T &rfPAngle, T &rfRAngle ) const
+    auto Matrix3<T>::toEulerAnglesXYZ( T &rfYAngle, T &rfPAngle, T &rfRAngle ) const -> bool
     {
         // rot =  cy*cz          -cy*sz           sy
         //        cz*sx*sy+cx*sz  cx*cz-sx*sy*sz -cy*sx
         //       -cx*cz*sy+sx*sz  cz*sx+cx*sy*sz  cx*cy
 
         rfPAngle = Math<T>::ASin( m[0][2] );
-        if( rfPAngle < T( Math<T>::half_pi() ) )
+        if( rfPAngle < static_cast<T>( Math<T>::half_pi() ) )
         {
-            if( rfPAngle > T( -Math<T>::half_pi() ) )
+            if( rfPAngle > static_cast<T>( -Math<T>::half_pi() ) )
             {
                 rfYAngle = Math<T>::ATan2( -m[1][2], m[2][2] );
                 rfRAngle = Math<T>::ATan2( -m[0][1], m[0][0] );
@@ -168,16 +170,16 @@ namespace fb
     }
 
     template <class T>
-    bool Matrix3<T>::toEulerAnglesXZY( T &rfYAngle, T &rfPAngle, T &rfRAngle ) const
+    auto Matrix3<T>::toEulerAnglesXZY( T &rfYAngle, T &rfPAngle, T &rfRAngle ) const -> bool
     {
         // rot =  cy*cz          -sz              cz*sy
         //        sx*sy+cx*cy*sz  cx*cz          -cy*sx+cx*sy*sz
         //       -cx*sy+cy*sx*sz  cz*sx           cx*cy+sx*sy*sz
 
         rfPAngle = Math<T>::ASin( -m[0][1] );
-        if( rfPAngle < T( Math<T>::half_pi() ) )
+        if( rfPAngle < static_cast<T>( Math<T>::half_pi() ) )
         {
-            if( rfPAngle > T( -Math<T>::half_pi() ) )
+            if( rfPAngle > static_cast<T>( -Math<T>::half_pi() ) )
             {
                 rfYAngle = Math<T>::ATan2( m[2][1], m[1][1] );
                 rfRAngle = Math<T>::ATan2( m[0][2], m[0][0] );
@@ -197,7 +199,7 @@ namespace fb
     }
 
     template <class T>
-    bool Matrix3<T>::toEulerAnglesYXZ( T &rfYAngle, T &rfPAngle, T &rfRAngle ) const
+    auto Matrix3<T>::toEulerAnglesYXZ( T &rfYAngle, T &rfPAngle, T &rfRAngle ) const -> bool
     {
         // rot =  cy*cz+sx*sy*sz  cz*sx*sy-cy*sz  cx*sy
         //        cx*sz           cx*cz          -sx
@@ -206,7 +208,7 @@ namespace fb
         rfPAngle = Math<T>::ASin( -m[1][2] );
         if( rfPAngle < Math<T>::half_pi() )
         {
-            if( rfPAngle > T( -Math<T>::half_pi() ) )
+            if( rfPAngle > static_cast<T>( -Math<T>::half_pi() ) )
             {
                 rfYAngle = Math<T>::ATan2( m[0][2], m[2][2] );
                 rfRAngle = Math<T>::ATan2( m[1][0], m[1][1] );
@@ -228,16 +230,16 @@ namespace fb
     }
 
     template <class T>
-    bool Matrix3<T>::toEulerAnglesYZX( T &rfYAngle, T &rfPAngle, T &rfRAngle ) const
+    auto Matrix3<T>::toEulerAnglesYZX( T &rfYAngle, T &rfPAngle, T &rfRAngle ) const -> bool
     {
         // rot =  cy*cz           sx*sy-cx*cy*sz  cx*sy+cy*sx*sz
         //        sz              cx*cz          -cz*sx
         //       -cz*sy           cy*sx+cx*sy*sz  cx*cy-sx*sy*sz
 
         rfPAngle = Math<T>::ASin( m[1][0] );
-        if( rfPAngle < T( Math<T>::half_pi() ) )
+        if( rfPAngle < static_cast<T>( Math<T>::half_pi() ) )
         {
-            if( rfPAngle > T( -Math<T>::half_pi() ) )
+            if( rfPAngle > static_cast<T>( -Math<T>::half_pi() ) )
             {
                 rfYAngle = Math<T>::ATan2( -m[2][0], m[0][0] );
                 rfRAngle = Math<T>::ATan2( -m[1][2], m[1][1] );
@@ -257,16 +259,16 @@ namespace fb
     }
 
     template <class T>
-    bool Matrix3<T>::toEulerAnglesZXY( T &rfYAngle, T &rfPAngle, T &rfRAngle ) const
+    auto Matrix3<T>::toEulerAnglesZXY( T &rfYAngle, T &rfPAngle, T &rfRAngle ) const -> bool
     {
         // rot =  cy*cz-sx*sy*sz -cx*sz           cz*sy+cy*sx*sz
         //        cz*sx*sy+cy*sz  cx*cz          -cy*cz*sx+sy*sz
         //       -cx*sy           sx              cx*cy
 
         rfPAngle = Math<T>::ASin( m[2][1] );
-        if( rfPAngle < T( Math<T>::half_pi() ) )
+        if( rfPAngle < static_cast<T>( Math<T>::half_pi() ) )
         {
-            if( rfPAngle > T( -Math<T>::half_pi() ) )
+            if( rfPAngle > static_cast<T>( -Math<T>::half_pi() ) )
             {
                 rfYAngle = Math<T>::ATan2( -m[0][1], m[1][1] );
                 rfRAngle = Math<T>::ATan2( -m[2][0], m[2][2] );
@@ -286,16 +288,16 @@ namespace fb
     }
 
     template <class T>
-    bool Matrix3<T>::toEulerAnglesZYX( T &rfYAngle, T &rfPAngle, T &rfRAngle ) const
+    auto Matrix3<T>::toEulerAnglesZYX( T &rfYAngle, T &rfPAngle, T &rfRAngle ) const -> bool
     {
         // rot =  cy*cz           cz*sx*sy-cx*sz  cx*cz*sy+sx*sz
         //        cy*sz           cx*cz+sx*sy*sz -cz*sx+cx*sy*sz
         //       -sy              cy*sx           cx*cy
 
         rfPAngle = Math<T>::ASin( -m[2][0] );
-        if( rfPAngle < T( Math<T>::half_pi() ) )
+        if( rfPAngle < static_cast<T>( Math<T>::half_pi() ) )
         {
-            if( rfPAngle > T( -Math<T>::half_pi() ) )
+            if( rfPAngle > static_cast<T>( -Math<T>::half_pi() ) )
             {
                 rfYAngle = Math<T>::ATan2( m[1][0], m[0][0] );
                 rfRAngle = Math<T>::ATan2( m[2][1], m[2][2] );
@@ -435,13 +437,15 @@ namespace fb
     }
 
     template <class T>
-    Matrix3<T> Matrix3<T>::transpose() const
+    auto Matrix3<T>::transpose() const -> Matrix3<T>
     {
         Matrix3<T> kTranspose;
         for( u32 iRow = 0; iRow < 3; iRow++ )
         {
             for( u32 iCol = 0; iCol < 3; iCol++ )
+            {
                 kTranspose[iRow][iCol] = m[iCol][iRow];
+            }
         }
         return kTranspose;
     }

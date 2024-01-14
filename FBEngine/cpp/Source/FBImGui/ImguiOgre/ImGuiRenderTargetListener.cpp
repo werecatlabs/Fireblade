@@ -23,7 +23,7 @@ void ImGuiRenderTargetListener::preViewportUpdate( const Ogre::RenderTargetViewp
 
     if( ImGuiOverlayOgre::NewFrame() )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto ui = applicationManager->getUI();

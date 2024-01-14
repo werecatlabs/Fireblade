@@ -2,7 +2,7 @@
 #define __CLightOgreNext_H
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
-#include <FBCore/Graphics/CLight.h>
+#include <FBCore/Graphics/Light.h>
 #include <FBCore/Interface/System/IStateListener.h>
 
 namespace fb
@@ -10,7 +10,7 @@ namespace fb
     namespace render
     {
 
-        class CLightOgreNext : public CLight
+        class CLightOgreNext : public Light
         {
         public:
             CLightOgreNext();

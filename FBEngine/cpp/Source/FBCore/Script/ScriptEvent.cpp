@@ -4,19 +4,15 @@
 
 namespace fb
 {
-    ScriptEvent::ScriptEvent()
-    {
-    }
+    ScriptEvent::ScriptEvent() = default;
 
     ScriptEvent::ScriptEvent( const String &function ) : m_function( function )
     {
     }
 
-    ScriptEvent::~ScriptEvent()
-    {
-    }
+    ScriptEvent::~ScriptEvent() = default;
 
-    hash_type ScriptEvent::getEventType() const
+    auto ScriptEvent::getEventType() const -> hash_type
     {
         return m_hashType;
     }
@@ -26,12 +22,12 @@ namespace fb
         m_hashType = type;
     }
 
-    const String &ScriptEvent::getClassName() const
+    auto ScriptEvent::getClassName() const -> const String &
     {
         return m_className;
     }
 
-    String &ScriptEvent::getClassName()
+    auto ScriptEvent::getClassName() -> String &
     {
         return m_className;
     }
@@ -41,12 +37,12 @@ namespace fb
         m_className = className;
     }
 
-    const String &ScriptEvent::getFunction() const
+    auto ScriptEvent::getFunction() const -> const String &
     {
         return m_function;
     }
 
-    String &ScriptEvent::getFunction()
+    auto ScriptEvent::getFunction() -> String &
     {
         return m_function;
     }

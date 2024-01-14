@@ -52,8 +52,8 @@ namespace fb
             @param data The data used to create the shape.
             @return An instance of a collision shape.
             */
-            virtual SmartPtr<IPhysicsShape3> addCollisionShapeByType(
-                hash64 type, SmartPtr<ISharedObject> data ) = 0;
+            virtual SmartPtr<IPhysicsShape3> addCollisionShapeByType( hash64 type,
+                                                                      SmartPtr<ISharedObject> data ) = 0;
 
             /** Creates a collision shape from the template type provided.
             @param data The data used to create the shape.
@@ -74,8 +74,7 @@ namespace fb
             /** Creates a rigid body.
             @return A rigid body instance.
             */
-            virtual SmartPtr<IRigidStatic3> addRigidStatic(
-                const Transform3<real_Num> &transform ) = 0;
+            virtual SmartPtr<IRigidStatic3> addRigidStatic( const Transform3<real_Num> &transform ) = 0;
 
             /** Creates a rigid body.
             @return A rigid body instance.
@@ -89,7 +88,7 @@ namespace fb
 
             /** Creates a rigid body. */
             virtual SmartPtr<IRigidStatic3> addRigidStatic( SmartPtr<IPhysicsShape3> collisionShape,
-                                                               SmartPtr<Properties> properties ) = 0;
+                                                            SmartPtr<Properties> properties ) = 0;
 
             /** Creates a soft body. */
             virtual SmartPtr<IPhysicsSoftBody3> addSoftBody( const String &filePath ) = 0;
@@ -110,7 +109,7 @@ namespace fb
             @param start The start point of the line.
             @param end The end point of the line.
             @param hitPos The hit position of the intersection.
-            @param normal The surface normal of the intersection.
+            @param hitNormal The surface normal of the intersection.
             @param object The object that intersects.
             @param collisionType The collision type.
             @param collisionMask The collision mask.
@@ -121,15 +120,17 @@ namespace fb
                                      u32 collisionMask = 0 ) = 0;
 
             /** Creates a 6 degree of freedom joint. */
-            virtual SmartPtr<IConstraintD6> addJointD6( SmartPtr<IPhysicsBody3> actor0,
-                                                           const Transform3<real_Num> &localFrame0,
-                                                           SmartPtr<IPhysicsBody3> actor1,
-                                                           const Transform3<real_Num> &localFrame1 ) = 0;
-
-            /** Creates a fixed joint. */
-            virtual SmartPtr<IConstraintFixed3> addFixedJoint(
+            virtual SmartPtr<IConstraintD6> addConstraintD6(
                 SmartPtr<IPhysicsBody3> actor0, const Transform3<real_Num> &localFrame0,
                 SmartPtr<IPhysicsBody3> actor1, const Transform3<real_Num> &localFrame1 ) = 0;
+
+            /** Creates a fixed joint. */
+            virtual SmartPtr<IConstraintFixed3> addFixedConstraint(
+                SmartPtr<IPhysicsBody3> actor0, const Transform3<real_Num> &localFrame0,
+                SmartPtr<IPhysicsBody3> actor1, const Transform3<real_Num> &localFrame1 ) = 0;
+
+            /** Removes a constraint. */
+            virtual void removeConstraint( SmartPtr<IPhysicsConstraint3> constraint ) = 0;
 
             /** Creates a constraint drive. */
             virtual SmartPtr<IConstraintDrive> addConstraintDrive() = 0;
@@ -142,7 +143,7 @@ namespace fb
             virtual SmartPtr<IRaycastHit> addRaycastHitData() = 0;
 
             /** Remove raycast hit data. */
-            virtual void removeRaycastHitData(SmartPtr<IRaycastHit> raycastHitData) = 0;
+            virtual void removeRaycastHitData( SmartPtr<IRaycastHit> raycastHitData ) = 0;
 
             /** The task used to update. */
             virtual Thread::Task getStateTask() const = 0;
@@ -151,7 +152,7 @@ namespace fb
             virtual Thread::Task getPhysicsTask() const = 0;
 
             /** Loads a physics object.
-            @param graphicsObject The object to be loaded.
+            @param object The object to be loaded.
             @param forceQueue Forces the object to be queued for deferred loading.
             */
             virtual void loadObject( SmartPtr<ISharedObject> object, bool forceQueue = false ) = 0;
@@ -182,7 +183,7 @@ namespace fb
             return fb::static_pointer_cast<T>( shape );
         }
 
-    }  // end namespace physics
-}  // end namespace fb
+    }  // namespace physics
+}  // namespace fb
 
 #endif

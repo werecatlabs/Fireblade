@@ -24,7 +24,7 @@ namespace fb
         element->setEnabled( isEnabled, cascade );
     }
 
-    void bindGUIManager( lua_State *L )
+    void bindUI( lua_State *L )
     {
         using namespace luabind;
 
@@ -63,10 +63,10 @@ namespace fb
                         .def( "setContainer", &IUIElement::setContainer )
                         .def( "getOwner", &IUIElement::getOwner )
                         .def( "setOwner", &IUIElement::setOwner )
-                        .def( "getDragSource", &IUIElement::getDragSource )
-                        .def( "setDragSource", &IUIElement::setDragSource )
-                        .def( "getDropTarget", &IUIElement::getDropTarget )
-                        .def( "setDropTarget", &IUIElement::setDropTarget )
+                        //.def( "getDragSource", &IUIElement::getDragSource )
+                        //.def( "setDragSource", &IUIElement::setDragSource )
+                        //.def( "getDropTarget", &IUIElement::getDropTarget )
+                        //.def( "setDropTarget", &IUIElement::setDropTarget )
                         .def( "getOrder", &IUIElement::getOrder )
                         .def( "setOrder", &IUIElement::setOrder )
                         .def( "getSameLine", &IUIElement::getSameLine )
@@ -76,8 +76,8 @@ namespace fb
                         .def( "getHandleInputEvents", &IUIElement::getHandleInputEvents )
                         .def( "setHandleInputEvents", &IUIElement::setHandleInputEvents )
                         .def( "updateZOrder", &IUIElement::updateZOrder )
-                        .def( "getStateObject", &IUIElement::getStateObject )
-                        .def( "setStateObject", &IUIElement::setStateObject )
+                        .def( "getStateContext", &IUIElement::getStateContext )
+                        .def( "setStateContext", &IUIElement::setStateContext )
                         .def( "getStateListener", &IUIElement::getStateListener )
                         .def( "setStateListener", &IUIElement::setStateListener )
                         .scope[def( "typeInfo", IUIElement::typeInfo )]];
@@ -133,12 +133,12 @@ namespace fb
                         .def( "getTexture", &IUIImage::getTexture )
                         .scope[def( "typeInfo", IUIImage::typeInfo )]];
 
-        module(
-            L )[class_<IUILabelCheckboxPair, IUIElement, SmartPtr<IUIElement>>( "IUILabelCheckboxPair" )
-                    .def( "getLabel", &IUILabelCheckboxPair::getLabel )
-                    .def( "setLabel", &IUILabelCheckboxPair::setLabel )
-                    .def( "getValue", &IUILabelCheckboxPair::getValue )
-                    .def( "setValue", &IUILabelCheckboxPair::setValue )];
+        module( L )[class_<IUILabelTogglePair, IUIElement, SmartPtr<IUIElement>>( "IUILabelTogglePair" )
+                        .def( "getLabel", &IUILabelTogglePair::getLabel )
+                        .def( "setLabel", &IUILabelTogglePair::setLabel )
+                        .def( "getValue", &IUILabelTogglePair::getValue )
+                        .def( "setValue", &IUILabelTogglePair::setValue )
+                        .scope[def( "typeInfo", IUILabelTogglePair::typeInfo )]];
 
         module( L )[class_<IUILabelTextInputPair, IUIElement, SmartPtr<IUILabelTextInputPair>>(
                         "IUILabelTextInputPair" )

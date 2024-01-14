@@ -2,27 +2,20 @@
 #include <FBRenderUI/CUICheckBox.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+
+    CUICheckBox::CUICheckBox() = default;
+
+    CUICheckBox::~CUICheckBox() = default;
+
+    void CUICheckBox::setValue( bool value )
     {
+    }
 
-        CUICheckBox::CUICheckBox()
-        {
-        }
+    auto CUICheckBox::getValue() const -> bool
+    {
+        return false;
+    }
 
-        CUICheckBox::~CUICheckBox()
-        {
-        }
-
-        void CUICheckBox::setValue( bool value )
-        {
-        }
-
-        bool CUICheckBox::getValue() const
-        {
-            return false;
-        }
-
-    }  // namespace ui
-}  // namespace fb
+}  // namespace fb::ui

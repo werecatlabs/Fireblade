@@ -10,10 +10,15 @@
 namespace fb
 {
 
+    /** Thread-safe timer.
+     */
     class TimerMT : public Timer
     {
     public:
+        /** Constructor. */
         TimerMT();
+
+        /** Destructor. */
         ~TimerMT() override;
 
         void update() override;

@@ -8,7 +8,6 @@ namespace fb
 {
     namespace core
     {
-
         /**
          * @brief Interface for a prototype, a design pattern used to create new objects based on an existing
          * prototype instance.
@@ -43,18 +42,17 @@ namespace fb
              *
              * @return The data as a properties object.
              */
-            virtual SmartPtr<Properties> getProperties() const = 0;
+            SmartPtr<Properties> getProperties() const override = 0;
 
             /**
              * Sets the data as a properties object.
              *
              * @param properties The properties object.
              */
-            virtual void setProperties( SmartPtr<Properties> properties ) = 0;
+            void setProperties( SmartPtr<Properties> properties ) override = 0;
 
             FB_CLASS_REGISTER_DECL;
         };
-
     }  // namespace core
 }  // end namespace fb
 

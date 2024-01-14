@@ -7,10 +7,18 @@
 namespace fb
 {
 
+    /** Interface for a network stream. */
     class INetworkStream : public ISharedObject
     {
     public:
+        /** Destructor. */
         ~INetworkStream() override = default;
+
+        /** Read data from the stream. */
+        virtual size_t read( void *buffer, size_t size ) = 0;
+
+        /** Write data to the stream. */
+        virtual size_t write( const void *buffer, size_t size ) = 0;
     };
 
 }  // end namespace fb

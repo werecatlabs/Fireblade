@@ -18,12 +18,10 @@ namespace fb
     }
 
     //-------------------------------------------------
-    StateMessageJobStatus::~StateMessageJobStatus()
-    {
-    }
+    StateMessageJobStatus::~StateMessageJobStatus() = default;
 
     //-------------------------------------------------
-    SmartPtr<IJob> StateMessageJobStatus::getJob() const
+    auto StateMessageJobStatus::getJob() const -> SmartPtr<IJob>
     {
         return m_job;
     }
@@ -35,7 +33,7 @@ namespace fb
     }
 
     //-------------------------------------------------
-    u32 StateMessageJobStatus::getJobStatus() const
+    auto StateMessageJobStatus::getJobStatus() const -> u32
     {
         return m_jobStatus;
     }

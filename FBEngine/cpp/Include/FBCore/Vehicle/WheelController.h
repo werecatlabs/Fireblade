@@ -6,18 +6,17 @@
 
 namespace fb
 {
-
     /** Simple wheel controller implementation. */
     class WheelController : public VehicleComponent<IWheelController>
     {
     public:
+        /** Constructor. */
         WheelController();
 
-        ~WheelController();
+        /** Destructor. */
+        ~WheelController() override;
 
-        void update();
-
-        void updateWheel();
+        void update() override;
 
         void addTorque( real_Num torque ) override;
 
@@ -53,29 +52,45 @@ namespace fb
 
         void setSteeringAngle( real_Num steeringAngle ) override;
 
+        /** @copydoc IWheelController::isSteeringWheel */
         bool isSteeringWheel() const override;
 
+        /** @copydoc IWheelController::setSteeringWheel */
         void setSteeringWheel( bool steeringWheel ) override;
 
     protected:
+        void updateWheel();
+
+        // The ray cast hit of the wheel.
         SmartPtr<physics::IRaycastHit> hit;
 
-        real_Num radius = 0.35f;  // The radius of the wheel.
-        real_Num suspensionDistance = 0.52f;  // The suspension distance.
-        real_Num springForce = 5000.0f;  // The suspension spring force.
-        real_Num damping = 1000.0f;  // The suspension damping.
-        real_Num massFraction = 0.25f;
+        // The radius of the wheel.
+        real_Num radius = static_cast<real_Num>( 0.35 );
 
-        real_Num angularVelocity;
+        // The suspension distance.
+        real_Num suspensionDistance = static_cast<real_Num>( 0.52 );
 
+        // The suspension spring force.
+        real_Num springForce = static_cast<real_Num>( 5000.0 );
+
+        // The suspension damping.
+        real_Num damping = static_cast<real_Num>( 1000.0 );
+
+        // The mass fraction of the wheel.
+        real_Num massFraction = static_cast<real_Num>( 0.25 );
+
+        // The angular velocity of the wheel.
+        real_Num angularVelocity = static_cast<real_Num>( 0.0 );
+
+        // The steering angle of the wheel.
         real_Num m_steeringAngle = static_cast<real_Num>( 0.0 );
 
-        Vector3<real_Num> wheelVelocity;  // The linear velocity of the wheel.
+        // The linear velocity of the wheel.
+        Vector3<real_Num> wheelVelocity;
 
+        // To know if the wheel is a steering wheel.
         bool m_isSteeringWheel = false;
-
     };
-
 }  // namespace fb
 
 #endif  // WheelController_h__

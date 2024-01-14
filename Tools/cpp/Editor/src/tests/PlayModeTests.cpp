@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE( play_mode )
 
         app->enterPlayMode();
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto taskManager = applicationManager->getTaskManager();
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE( play_stop_mode )
 
         auto isPlayMode = false;
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto taskManager = applicationManager->getTaskManager();

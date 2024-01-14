@@ -2,6 +2,7 @@
 #define __EditorCameraController_H
 
 #include <FBCore/Scene/Components/Camera/CameraController.h>
+#include <FBCore/Math/Ray3.h>
 
 namespace fb
 {
@@ -9,7 +10,7 @@ namespace fb
     {
 
         /** Component that controls an editor camera in the scene.
-        */
+         */
         class EditorCameraController : public CameraController
         {
         public:
@@ -18,7 +19,7 @@ namespace fb
 
             void update() override;
 
-            bool OnEvent( const SmartPtr<IInputEvent> &event );
+            bool handleInputEvent( const SmartPtr<IInputEvent> &event );
 
             void setPosition( const Vector3F &position );
             Vector3F getPosition() const;
@@ -34,14 +35,6 @@ namespace fb
 
             Vector3F getUp() const;
             Vector3F getRight() const;
-
-            Ray3F getCameraToViewportRay( const Vector2F &screenPosition ) const;
-
-            bool isInFrustum( const AABB3F &box ) const;
-
-            void setPropertyValue( const String &name, const String &value );
-            void setProperties( const Properties &propertyGroup );
-            void getProperties( Properties &propertyGroup ) const;
 
             void addCamera( SmartPtr<render::ICamera> camera );
             bool removeCamera( SmartPtr<render::ICamera> camera );
@@ -67,13 +60,13 @@ namespace fb
             class FPSCameraInputListener : public IEventListener
             {
             public:
-                FPSCameraInputListener( EditorCameraController *fpsCameraCtrl );
+                explicit FPSCameraInputListener( EditorCameraController *fpsCameraCtrl );
 
-                bool inputEvent( SmartPtr<IInputEvent> event ) ;
-                bool updateEvent( const SmartPtr<IInputEvent> &event ) ;
+                bool inputEvent( SmartPtr<IInputEvent> event );
+                bool updateEvent( const SmartPtr<IInputEvent> &event );
 
-                s32 getPriority() const ;
-                void setPriority( s32 priority ) ;
+                s32 getPriority() const;
+                void setPriority( s32 priority );
 
             protected:
                 EditorCameraController *m_fpsCameraCtrl;

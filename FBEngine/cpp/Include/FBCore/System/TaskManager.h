@@ -3,12 +3,14 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/ITaskManager.h>
+#include <FBCore/Interface/FSM/IFSMManager.h>
 #include <FBCore/Atomics/Atomics.h>
 #include <FBCore/Core/FixedArray.h>
 #include <FBCore/System/Task.h>
 
 namespace fb
 {
+
     /** Default task manager implementation.  */
     class TaskManager : public ITaskManager
     {
@@ -18,7 +20,7 @@ namespace fb
         {
         public:
             Lock();
-            Lock( SmartPtr<ITaskManager> taskManager );
+            explicit Lock( SmartPtr<ITaskManager> taskManager );
             ~Lock() override;
 
             SmartPtr<ITaskManager> m_taskManager;
@@ -109,8 +111,8 @@ namespace fb
 
         bool isValid() const override;
 
-        SmartPtr<IFSMManager> getFSMManager() const;
-
+        SmartPtr<IFSMManager> &getFSMManager();
+        const SmartPtr<IFSMManager> &getFSMManager() const;
         void setFSMManager( SmartPtr<IFSMManager> fsmManager );
 
         FB_CLASS_REGISTER_DECL;
@@ -118,7 +120,7 @@ namespace fb
     private:
         mutable SpinRWMutex m_mutex;
 
-        AtomicSmartPtr<IFSMManager> m_fsmManager;
+        SmartPtr<IFSMManager> m_fsmManager;
 
         Atomic<State> m_state = State::None;
 
@@ -146,6 +148,16 @@ namespace fb
         return ( flags & flag ) != 0;
     }
 
-} // end namespace fb
+    inline SmartPtr<IFSMManager> &TaskManager::getFSMManager()
+    {
+        return m_fsmManager;
+    }
+
+    inline const SmartPtr<IFSMManager> &TaskManager::getFSMManager() const
+    {
+        return m_fsmManager;
+    }
+
+}  // end namespace fb
 
 #endif  // TaskManager_h__

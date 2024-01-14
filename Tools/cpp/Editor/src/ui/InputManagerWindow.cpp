@@ -3,96 +3,91 @@
 #include "editor/EditorManager.h"
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+    FB_CLASS_REGISTER_DERIVED( fb, InputManagerWindow, EditorWindow );
+
+    InputManagerWindow::InputManagerWindow() = default;
+
+    InputManagerWindow::~InputManagerWindow()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, InputManagerWindow, EditorWindow );
+        unload( nullptr );
+    }
 
-        InputManagerWindow::InputManagerWindow()
+    void InputManagerWindow::load( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-        }
+            setLoadingState( LoadingState::Loading );
 
-        InputManagerWindow::~InputManagerWindow()
-        {
-            unload( nullptr );
-        }
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
 
-        void InputManagerWindow::load( SmartPtr<ISharedObject> data )
-        {
-            try
+            auto ui = applicationManager->getUI();
+            FB_ASSERT( ui );
+
+            auto parent = getParent();
+
+            auto parentWindow = ui->addElementByType<ui::IUIWindow>();
+            FB_ASSERT( parentWindow );
+
+            setParentWindow( parentWindow );
+            parentWindow->setLabel( "TerrainWindowChild" );
+
+            if( parent )
             {
-                setLoadingState( LoadingState::Loading );
+                parent->addChild( parentWindow );
+            }
 
-                auto applicationManager = core::IApplicationManager::instance();
+            auto inputManager = ui->addElementByType<ui::IUIInputManager>();
+            parentWindow->addChild( inputManager );
+            m_inputManager = inputManager;
+
+            setLoadingState( LoadingState::Loaded );
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void InputManagerWindow::unload( SmartPtr<ISharedObject> data )
+    {
+        try
+        {
+            if( getLoadingState() == LoadingState::Loaded )
+            {
+                setLoadingState( LoadingState::Unloading );
+
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
-                auto ui = applicationManager->getUI();
-                FB_ASSERT( ui );
-
-                auto parent = getParent();
-
-                auto parentWindow = ui->addElementByType<ui::IUIWindow>();
-                FB_ASSERT( parentWindow );
-
-                setParentWindow( parentWindow );
-                parentWindow->setLabel( "TerrainWindowChild" );
-
-                if( parent )
+                if( auto ui = applicationManager->getUI() )
                 {
-                    parent->addChild( parentWindow );
-                }
-
-                auto inputManager = ui->addElementByType<ui::IUIInputManager>();
-                parentWindow->addChild( inputManager );
-                m_inputManager = inputManager;
-
-                setLoadingState( LoadingState::Loaded );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void InputManagerWindow::unload( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-                if( getLoadingState() == LoadingState::Loaded )
-                {
-                    setLoadingState( LoadingState::Unloading );
-
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    if( auto ui = applicationManager->getUI() )
+                    if( m_inputManager )
                     {
-                        if( m_inputManager )
-                        {
-                            ui->removeElement( m_inputManager );
-                            m_inputManager = nullptr;
-                        }
+                        ui->removeElement( m_inputManager );
+                        m_inputManager = nullptr;
                     }
-
-                    setLoadingState( LoadingState::Unloaded );
                 }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
+
+                setLoadingState( LoadingState::Unloaded );
             }
         }
-
-        SmartPtr<ui::IUIInputManager> InputManagerWindow::getInputManager() const
+        catch( std::exception &e )
         {
-            return m_inputManager;
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        void InputManagerWindow::setInputManager( SmartPtr<ui::IUIInputManager> inputManager )
-        {
-            m_inputManager = inputManager;
-        }
+    auto InputManagerWindow::getInputManager() const -> SmartPtr<ui::IUIInputManager>
+    {
+        return m_inputManager;
+    }
 
-    }  // namespace editor
-}  // namespace fb
+    void InputManagerWindow::setInputManager( SmartPtr<ui::IUIInputManager> inputManager )
+    {
+        m_inputManager = inputManager;
+    }
+
+}  // namespace fb::editor

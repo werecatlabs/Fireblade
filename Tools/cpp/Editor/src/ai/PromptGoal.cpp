@@ -2,46 +2,43 @@
 #include <ai/PromptGoal.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+#include <utility>
+
+namespace fb::editor
 {
-    namespace editor
+
+    PromptGoal::PromptGoal( String label, const Array<String> &tags ) :
+        m_label( std::move( label ) ),
+        m_tags( tags )
     {
+    }
 
-        PromptGoal::PromptGoal( const String &label, const Array<String> &tags ) :
-            m_label( label ),
-            m_tags( tags )
-        {
-        }
+    PromptGoal::PromptGoal() = default;
 
-        PromptGoal::PromptGoal()
-        {
-        }
+    void PromptGoal::start()
+    {
+    }
 
-        void PromptGoal::start()
-        {
-        }
+    void PromptGoal::finish()
+    {
+    }
 
-        void PromptGoal::finish()
-        {
-        }
+    void PromptGoal::setState( u32 state )
+    {
+    }
 
-        void PromptGoal::setState( u32 state )
-        {
-        }
+    auto PromptGoal::getState() const -> u32
+    {
+        return 0;
+    }
 
-        u32 PromptGoal::getState() const
-        {
-            return 0;
-        }
+    auto PromptGoal::getType() const -> u32
+    {
+        return 0;
+    }
 
-        u32 PromptGoal::getType() const
-        {
-            return 0;
-        }
+    void PromptGoal::setType( u32 type )
+    {
+    }
 
-        void PromptGoal::setType( u32 type )
-        {
-        }
-
-    }  // namespace editor
-}  // namespace fb
+}  // namespace fb::editor

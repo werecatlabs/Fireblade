@@ -10,9 +10,9 @@
 
 namespace fb
 {
-    SmartPtr<IVertexBuffer> MeshGenerator::createVertexBuffer( const Array<Vector3F> &positions,
-                                                               const Array<Vector3F> &normals,
-                                                               const Array<Vector2F> &uvs )
+    auto MeshGenerator::createVertexBuffer( const Array<Vector3F> &positions,
+                                            const Array<Vector3F> &normals, const Array<Vector2F> &uvs )
+        -> SmartPtr<IVertexBuffer>
     {
         auto numVertices = positions.size();
 
@@ -36,7 +36,7 @@ namespace fb
 
         auto vertexBuffer = fb::make_ptr<VertexBuffer>();
         vertexBuffer->setVertexDeclaration( vertexDeclaration );
-        vertexBuffer->setNumVerticies( (u32)numVertices );
+        vertexBuffer->setNumVertices( static_cast<u32>( numVertices ) );
 
         auto vertexData = static_cast<f32 *>( vertexBuffer->createVertexData() );
         f32 *vertexDataPtr = vertexData;
@@ -61,7 +61,7 @@ namespace fb
         return vertexBuffer;
     }
 
-    SmartPtr<IVertexBuffer> MeshGenerator::createVertexBuffer( const Array<Vertex> &vertices )
+    auto MeshGenerator::createVertexBuffer( const Array<Vertex> &vertices ) -> SmartPtr<IVertexBuffer>
     {
         auto vertexDeclaration = fb::make_ptr<VertexDeclaration>();
         u32 offset = 0;
@@ -83,7 +83,7 @@ namespace fb
 
         auto vertexBuffer = fb::make_ptr<VertexBuffer>();
         vertexBuffer->setVertexDeclaration( vertexDeclaration );
-        vertexBuffer->setNumVerticies( 4 );
+        vertexBuffer->setNumVertices( 4 );
 
         auto vertexData = static_cast<f32 *>( vertexBuffer->createVertexData() );
         f32 *vertexDataPtr = vertexData;
@@ -108,7 +108,7 @@ namespace fb
         return vertexBuffer;
     }
 
-    SmartPtr<IIndexBuffer> MeshGenerator::createIndexBuffer( const Array<u32> &indices )
+    auto MeshGenerator::createIndexBuffer( const Array<u32> &indices ) -> SmartPtr<IIndexBuffer>
     {
         auto indexBuffer = fb::make_ptr<IndexBuffer>();
         indexBuffer->setIndexType( IndexBuffer::Type::IT_16BIT );
@@ -124,8 +124,8 @@ namespace fb
         return indexBuffer;
     }
 
-    SmartPtr<ISubMesh> MeshGenerator::createSubMesh( SmartPtr<IVertexBuffer> vertexBuffer,
-                                                     SmartPtr<IIndexBuffer> indexBuffer )
+    auto MeshGenerator::createSubMesh( SmartPtr<IVertexBuffer> vertexBuffer,
+                                       SmartPtr<IIndexBuffer> indexBuffer ) -> SmartPtr<ISubMesh>
     {
         auto subMesh = fb::make_ptr<SubMesh>();
         subMesh->setVertexBuffer( vertexBuffer );
@@ -134,9 +134,9 @@ namespace fb
         return subMesh;
     }
 
-    SmartPtr<IMesh> MeshGenerator::createMesh( const Array<Vector3F> &vertices,
-                                               const Array<Vector3F> &normals,
-                                               const Array<Vector2F> &uvs, const Array<u32> &indices )
+    auto MeshGenerator::createMesh( const Array<Vector3F> &vertices, const Array<Vector3F> &normals,
+                                    const Array<Vector2F> &uvs, const Array<u32> &indices )
+        -> SmartPtr<IMesh>
     {
         auto vertexBuffer = MeshGenerator::createVertexBuffer( vertices, normals, uvs );
         auto indexBuffer = MeshGenerator::createIndexBuffer( indices );
@@ -148,25 +148,23 @@ namespace fb
         return mesh;
     }
 
-    SmartPtr<IMesh> MeshGenerator::createMesh( const Array<Vector3F> &vertices,
-                                               const Array<Vector3F> &normals,
-                                               const Array<Vector4F> &tangents,
-                                               const Array<Vector3F> &uvs, const Array<u32> &indices )
+    auto MeshGenerator::createMesh( const Array<Vector3F> &vertices, const Array<Vector3F> &normals,
+                                    const Array<Vector4F> &tangents, const Array<Vector3F> &uvs,
+                                    const Array<u32> &indices ) -> SmartPtr<IMesh>
     {
         return nullptr;
     }
 
-    SmartPtr<IMesh> MeshGenerator::createMesh( const Array<Vector3F> &vertices,
-                                               const Array<Vector3F> &normals,
-                                               const Array<Vector4F> &tangents,
-                                               const Array<Vector3F> &uvs0, const Array<Vector3F> &uvs1,
-                                               const Array<u32> &indices )
+    auto MeshGenerator::createMesh( const Array<Vector3F> &vertices, const Array<Vector3F> &normals,
+                                    const Array<Vector4F> &tangents, const Array<Vector3F> &uvs0,
+                                    const Array<Vector3F> &uvs1, const Array<u32> &indices )
+        -> SmartPtr<IMesh>
     {
         return nullptr;
     }
 
-    SmartPtr<IMesh> MeshGenerator::createPlane( const Vector3F &halfExtent, const Vector3F &normal,
-                                                const Vector3F &right )
+    auto MeshGenerator::createPlane( const Vector3F &halfExtent, const Vector3F &normal,
+                                     const Vector3F &right ) -> SmartPtr<IMesh>
     {
         Vertex v[4];
 
@@ -221,15 +219,13 @@ namespace fb
 
         auto vertexBuffer = fb::make_ptr<VertexBuffer>();
         vertexBuffer->setVertexDeclaration( vertexDeclaration );
-        vertexBuffer->setNumVerticies( 4 );
+        vertexBuffer->setNumVertices( 4 );
 
         auto vertexData = static_cast<f32 *>( vertexBuffer->createVertexData() );
         f32 *vertexDataPtr = vertexData;
 
-        for( u32 vertIdx = 0; vertIdx < 4; ++vertIdx )
+        for( auto &vert : v )
         {
-            auto &vert = v[vertIdx];
-
             auto &position = vert.position;
             *vertexDataPtr++ = position.X();
             *vertexDataPtr++ = position.Y();
@@ -265,14 +261,14 @@ namespace fb
         return planeMesh;
     }
 
-    SmartPtr<IMesh> MeshGenerator::createBox( f32 sizeX, f32 sizeY, f32 sizeZ, u32 numSegX, u32 numSegY,
-                                              u32 numSegZ )
+    auto MeshGenerator::createBox( f32 sizeX, f32 sizeY, f32 sizeZ, u32 numSegX, u32 numSegY,
+                                   u32 numSegZ ) -> SmartPtr<IMesh>
     {
         return nullptr;
     }
 
-    SmartPtr<IMesh> MeshGenerator::createCylinder( f32 radius, f32 height, u32 numSegBase,
-                                                   u32 numSegHeight, bool capped )
+    auto MeshGenerator::createCylinder( f32 radius, f32 height, u32 numSegBase, u32 numSegHeight,
+                                        bool capped ) -> SmartPtr<IMesh>
     {
         Array<Vector3F> vertices;
         Array<Vector3F> normals;
@@ -321,9 +317,9 @@ namespace fb
         return MeshGenerator::createMesh( vertices, normals, uvs, indices );
     }
 
-    SmartPtr<IMesh> MeshGenerator::createCylinderFromSpline( SmartPtr<LinearSpline3F> spline, f32 radius,
-                                                             f32 height, u32 numSegBase,
-                                                             u32 numSegHeight, bool capped )
+    auto MeshGenerator::createCylinderFromSpline( SmartPtr<LinearSpline3F> spline, f32 radius,
+                                                  f32 height, u32 numSegBase, u32 numSegHeight,
+                                                  bool capped ) -> SmartPtr<IMesh>
     {
         Array<Vector3F> vertices;
         Array<Vector3F> normals;
@@ -372,9 +368,9 @@ namespace fb
         return MeshGenerator::createMesh( vertices, normals, uvs, indices );
     }
 
-    SmartPtr<IMesh> MeshGenerator::createRoadFromSpline( SmartPtr<LinearSpline3F> spline, f32 radius,
-                                                         f32 height, u32 numSegBase, u32 numSegHeight,
-                                                         bool capped )
+    auto MeshGenerator::createRoadFromSpline( SmartPtr<LinearSpline3F> spline, f32 radius, f32 height,
+                                              u32 numSegBase, u32 numSegHeight, bool capped )
+        -> SmartPtr<IMesh>
     {
         Array<Vector3F> vertices;
         Array<Vector3F> normals;
@@ -395,8 +391,8 @@ namespace fb
             auto d0 = i / segments;
             auto d1 = ( i + 1 ) / segments;
 
-            auto pointA = spline->interpolate( (f32)d0 );
-            auto pointB = spline->interpolate( (f32)d1 );
+            auto pointA = spline->interpolate( static_cast<f32>( d0 ) );
+            auto pointB = spline->interpolate( static_cast<f32>( d1 ) );
 
             auto vec = ( pointB - pointA ).normaliseCopy();
             auto tangentA = vec.crossProduct( Vector3F::up() );
@@ -407,13 +403,13 @@ namespace fb
             auto p2 = pointB + tangentB * widthB;
             auto p3 = pointB - tangentB * widthB;
 
-            vertices.push_back( Vector3F( p0.X(), p0.Y(), p0.Z() ) );
-            vertices.push_back( Vector3F( p1.X(), p1.Y(), p1.Z() ) );
-            vertices.push_back( Vector3F( p2.X(), p2.Y(), p2.Z() ) );
+            vertices.emplace_back( p0.X(), p0.Y(), p0.Z() );
+            vertices.emplace_back( p1.X(), p1.Y(), p1.Z() );
+            vertices.emplace_back( p2.X(), p2.Y(), p2.Z() );
 
-            vertices.push_back( Vector3F( p2.X(), p2.Y(), p2.Z() ) );
-            vertices.push_back( Vector3F( p3.X(), p3.Y(), p3.Z() ) );
-            vertices.push_back( Vector3F( p0.X(), p0.Y(), p0.Z() ) );
+            vertices.emplace_back( p2.X(), p2.Y(), p2.Z() );
+            vertices.emplace_back( p3.X(), p3.Y(), p3.Z() );
+            vertices.emplace_back( p0.X(), p0.Y(), p0.Z() );
 
             normals.push_back( Vector3F::up() );
             normals.push_back( Vector3F::up() );
@@ -429,13 +425,13 @@ namespace fb
             const auto nextSegXRatio = 1.0f;
             const auto nextSegYRatio = 1.0f;
 
-            uvs.push_back( Vector2F( segXRatio, segYRatio ) );
-            uvs.push_back( Vector2F( nextSegXRatio, segYRatio ) );
-            uvs.push_back( Vector2F( nextSegXRatio, nextSegYRatio ) );
+            uvs.emplace_back( segXRatio, segYRatio );
+            uvs.emplace_back( nextSegXRatio, segYRatio );
+            uvs.emplace_back( nextSegXRatio, nextSegYRatio );
 
-            uvs.push_back( Vector2F( nextSegXRatio, nextSegYRatio ) );
-            uvs.push_back( Vector2F( segXRatio, nextSegYRatio ) );
-            uvs.push_back( Vector2F( segXRatio, segYRatio ) );
+            uvs.emplace_back( nextSegXRatio, nextSegYRatio );
+            uvs.emplace_back( segXRatio, nextSegYRatio );
+            uvs.emplace_back( segXRatio, segYRatio );
 
             indices.push_back( index++ );
             indices.push_back( index++ );
@@ -449,7 +445,7 @@ namespace fb
         return MeshGenerator::createMesh( vertices, normals, uvs, indices );
     }
 
-    SmartPtr<IMesh> MeshGenerator::createMeshFromSplines( const Array<LinearSpline3F> &splines )
+    auto MeshGenerator::createMeshFromSplines( const Array<LinearSpline3F> &splines ) -> SmartPtr<IMesh>
     {
         return createCylinder();
         return nullptr;

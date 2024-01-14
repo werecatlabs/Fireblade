@@ -28,13 +28,15 @@ namespace fb
                 ActorFsmListener() = default;
                 ~ActorFsmListener() override = default;
 
+                void unload( SmartPtr<ISharedObject> data ) override;
+
                 IFSM::ReturnType handleEvent( u32 state, IFSM::Event eventType ) override;
 
-                Actor *getOwner() const;
-                void setOwner( Actor *owner );
+                SmartPtr<Actor> getOwner() const;
+                void setOwner( SmartPtr<Actor> owner );
 
             private:
-                Actor *m_owner = nullptr;
+                AtomicSmartPtr<Actor> m_owner;
             };
 
             class ActorGameFsmListener : public FSMListener
@@ -43,13 +45,15 @@ namespace fb
                 ActorGameFsmListener() = default;
                 ~ActorGameFsmListener() override = default;
 
+                void unload( SmartPtr<ISharedObject> data ) override;
+
                 IFSM::ReturnType handleEvent( u32 state, IFSM::Event eventType ) override;
 
-                Actor *getOwner() const;
-                void setOwner( Actor *owner );
+                SmartPtr<Actor> getOwner() const;
+                void setOwner( SmartPtr<Actor> owner );
 
             private:
-                Actor *m_owner = nullptr;
+                AtomicSmartPtr<Actor> m_owner;
             };
 
             Actor();
@@ -61,13 +65,17 @@ namespace fb
             /** @copydoc IActor::setName */
             void setName( const String &name ) override;
 
+            /** @copydoc IActor::getLocalTransform */
             Transform3<real_Num> getLocalTransform() const override;
 
+            /** @copydoc IActor::getWorldTransform */
             Transform3<real_Num> getWorldTransform() const override;
 
-            virtual Transform3<real_Num> getLocalTransform( time_interval t ) const;
+            /** @copydoc IActor::getLocalTransform */
+            Transform3<real_Num> getLocalTransform( time_interval t ) const override;
 
-            virtual Transform3<real_Num> getWorldTransform( time_interval t ) const;
+            /** @copydoc IActor::getWorldTransform */
+            Transform3<real_Num> getWorldTransform( time_interval t ) const override;
 
             /** @copydoc IActor::getLocalPosition */
             Vector3<real_Num> getLocalPosition() const override;
@@ -186,7 +194,7 @@ namespace fb
             void triggerLeave( SmartPtr<IComponent> collision ) override;
 
             /** @copydoc IActor::componentLoaded */
-            void componentLoaded( SmartPtr<IComponent> component ) override;
+            void componentLoaded( SmartPtr<IComponent> loadedComponent ) override;
 
             SmartPtr<IActor> getChildByIndex( u32 index ) const override;
 
@@ -213,6 +221,9 @@ namespace fb
             SmartPtr<IActor> findChild( const String &name ) override;
 
             /** @copydoc IActor::getChildren */
+            Array<SmartPtr<IActor>> getChildren() const override;
+
+            /** @copydoc IActor::getChildrenPtr */
             SharedPtr<ConcurrentArray<SmartPtr<IActor>>> getChildrenPtr() const override;
 
             /** @copydoc IActor::getAllChildren */
@@ -220,6 +231,10 @@ namespace fb
 
             /** @copydoc IActor::getAllChildren */
             Array<SmartPtr<IActor>> getAllChildren( SmartPtr<IActor> parent ) const;
+
+            void setSiblingIndex( s32 index ) override;
+
+            void setChildSiblingIndex( SmartPtr<IActor> child, s32 index ) override;
 
             /** @copydoc IActor::toData */
             SmartPtr<ISharedObject> toData() const override;
@@ -237,7 +252,7 @@ namespace fb
             bool isMine() const override;
 
             /** @copydoc IActor::setMine */
-            void setMine( bool val ) override;
+            void setMine( bool mine ) override;
 
             /** @copydoc IActor::isStatic */
             bool isStatic() const override;
@@ -278,17 +293,8 @@ namespace fb
             /** @copydoc IActor::setParent */
             void setParent( SmartPtr<IActor> parent ) override;
 
-            /** @copydoc IActor::preUpdateDirtyComponents */
-            void preUpdateDirtyComponents();
-
-            /** @copydoc IActor::updateDirtyComponents */
-            void updateDirtyComponents();
-
-            /** @copydoc IActor::postUpdateDirtyComponents */
-            void postUpdateDirtyComponents();
-
             /** @copydoc IActor::compareTag */
-            bool compareTag( const String &tag ) const;
+            bool compareTag( const String &tag ) const override;
 
             /** @copydoc IActor::getSceneRoot */
             SmartPtr<IActor> getSceneRoot() const override;
@@ -297,7 +303,10 @@ namespace fb
             u32 getSceneLevel() const override;
 
             /** @copydoc IActor::getTransform */
-            SmartPtr<ITransform> getTransform() const override;
+            SmartPtr<ITransform> &getTransform() override;
+
+            /** @copydoc IActor::getTransform */
+            const SmartPtr<ITransform> &getTransform() const override;
 
             /** @copydoc IActor::setTransform */
             void setTransform( SmartPtr<ITransform> transform ) override;
@@ -322,28 +331,21 @@ namespace fb
 
             void setFlag( u32 flag, bool value ) override;
 
-            u32 getNewFlags() const override;
-
-            void setNewFlags( u32 flags ) override;
-
-            bool getNewFlag( u32 flag ) const override;
-
-            void setNewFlag( u32 flag, bool value ) override;
-
             void updateVisibility() override;
+
+            Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                   const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                   SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
+
+            Parameter sendEvent( IEvent::Type eventType, hash_type eventValue,
+                                 const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                 SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
             static void registerClass();
 
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            void updateComponents();
-            void rebuildComponentCache();
-
-            void preUpdateDirtyComponent( SmartPtr<IComponent> &component );
-            void updateDirtyComponent( SmartPtr<IComponent> &component );
-            void postUpdateDirtyComponent( SmartPtr<IComponent> &component );
-
             IFSM::ReturnType handleActorEvent( u32 state, IFSM::Event eventType );
 
             IFSM::ReturnType handleActorGameEvent( u32 state, IFSM::Event eventType );
@@ -352,7 +354,7 @@ namespace fb
 
             AtomicWeakPtr<IActor> m_parent;
 
-            AtomicSmartPtr<ITransform> m_transform;
+            SmartPtr<ITransform> m_transform;
 
             AtomicSharedPtr<ConcurrentArray<SmartPtr<IComponent>>> m_components;
 
@@ -360,12 +362,15 @@ namespace fb
 
             AtomicWeakPtr<IFactoryManager> m_factoryManager;
 
+            u32 *m_flags = nullptr;
             atomic_bool m_autoUpdateComponents = true;
             atomic_bool m_perpetual = false;
 
+            Array<String> m_tags;
+
             static u32 m_idExt;
         };
-    } // namespace scene
-}     // namespace fb
+    }  // namespace scene
+}  // namespace fb
 
 #endif  // CActor_h__

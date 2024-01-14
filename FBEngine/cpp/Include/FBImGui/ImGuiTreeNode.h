@@ -9,7 +9,7 @@ namespace fb
 {
     namespace ui
     {
-        //---------------------------------------------
+        
         class ImGuiTreeNode : public CImGuiElement<IUITreeNode>
         {
         public:
@@ -64,7 +64,7 @@ namespace fb
             /** @copydoc IUITreeNode::setSelected */
             void setSelected( bool selected ) override;
 
-            static void createTreeNode( SmartPtr<IUITreeCtrl> tree, SmartPtr<IUIElement> element,
+            static void createTreeNode( SmartPtr<IUITreeCtrl>& tree, SmartPtr<IUITreeNode>& treeNode,
                                         s32 &numNodesDisplayed );
 
             FB_CLASS_REGISTER_DECL;

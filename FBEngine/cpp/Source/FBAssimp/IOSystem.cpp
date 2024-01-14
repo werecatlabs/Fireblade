@@ -3,22 +3,22 @@
 #include <FBAssimp/IOStream.h>
 #include <FBCore/FBCore.h>
 
+#include <utility>
+
 namespace fb
 {
 
-    IOSystem::IOSystem( const SmartPtr<IStream> &_source, const String &group ) :
+    IOSystem::IOSystem( const SmartPtr<IStream> &_source, String group ) :
         source( _source ),
-        _group( group )
+        _group( std::move( group ) )
     {
     }
 
-    IOSystem::IOSystem()
-    {
-    }
+    IOSystem::IOSystem() = default;
 
-    bool IOSystem::Exists( const char *pFile ) const
+    auto IOSystem::Exists( const char *pFile ) const -> bool
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
         FB_ASSERT( applicationManager->isValid() );
 
@@ -29,14 +29,14 @@ namespace fb
         return fileSystem->isExistingFile( pFile );
     }
 
-    char IOSystem::getOsSeparator() const
+    auto IOSystem::getOsSeparator() const -> char
     {
         return '/';
     }
 
-    Assimp::IOStream *IOSystem::Open( const char *pFile, const char *pMode )
+    auto IOSystem::Open( const char *pFile, const char *pMode ) -> Assimp::IOStream *
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
         FB_ASSERT( applicationManager->isValid() );
 

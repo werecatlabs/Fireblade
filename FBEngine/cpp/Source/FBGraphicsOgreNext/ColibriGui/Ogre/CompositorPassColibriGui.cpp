@@ -51,7 +51,7 @@ namespace Ogre
     //-----------------------------------------------------------------------------------
     void CompositorPassColibriGui::execute( const Camera *lodCamera )
     {
-        auto applicationManager = fb::core::IApplicationManager::instance();
+        auto applicationManager = fb::core::ApplicationManager::instance();
         auto ui = applicationManager->getRenderUI();
 
         Colibri::ColibriManager *colibriManager;
@@ -123,10 +123,10 @@ namespace Ogre
                 canvasSize.x = canvasSize.y * newAr;
             }
 
-            auto applicationManager = fb::core::IApplicationManager::instance();
+            auto applicationManager = fb::core::ApplicationManager::instance();
             auto ui = applicationManager->getRenderUI();
 
-            Colibri::ColibriManager *colibriManager;
+            Colibri::ColibriManager *colibriManager = nullptr;
             ui->_getObject( (void **)&colibriManager );
 
             if( colibriManager )

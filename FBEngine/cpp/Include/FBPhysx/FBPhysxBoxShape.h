@@ -17,18 +17,31 @@ namespace fb
         class PhysxBoxShape : public PhysxShape<IBoxShape3>
         {
         public:
+            /** Constructor */
             PhysxBoxShape();
+
+            /** Destructor */
             ~PhysxBoxShape() override;
 
+            /** @copydoc PhysxShape<IBoxShape3>::load */
             void load( SmartPtr<ISharedObject> data ) override;
+
+            /** @copydoc PhysxShape<IBoxShape3>::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
+            /** @copydoc PhysxShape<IBoxShape3>::getExtents */
             Vector3<real_Num> getExtents() const override;
+
+            /** @copydoc PhysxShape<IBoxShape3>::setExtents */
             void setExtents( const Vector3<real_Num> &extents ) override;
 
+            /** @copydoc PhysxShape<IBoxShape3>::setAABB */
             void setAABB( const AABB3<real_Num> &box ) override;
+
+            /** @copydoc PhysxShape<IBoxShape3>::getAABB */
             AABB3<real_Num> getAABB() const override;
 
+            /** @copydoc PhysxShape<IBoxShape3>::isValid */
             bool isValid() const;
 
         protected:
@@ -42,11 +55,11 @@ namespace fb
                 void handleStateChanged( SmartPtr<IState> &state ) override;
                 void handleQuery( SmartPtr<IStateQuery> &query ) override;
 
-                PhysxBoxShape *getOwner() const;
-                void setOwner( PhysxBoxShape *owner );
+                SmartPtr<PhysxBoxShape> getOwner() const;
+                void setOwner( SmartPtr<PhysxBoxShape> owner );
 
             protected:
-                PhysxBoxShape *m_owner = nullptr;
+                AtomicSmartPtr<PhysxBoxShape> m_owner;
             };
 
             void createShape();

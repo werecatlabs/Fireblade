@@ -5,7 +5,7 @@
 #include <FBCore/Core/StringTypes.h>
 
 #ifdef FB_PLATFORM_WIN32
-#include <minwindef.h>
+#    include <minwindef.h>
 #endif
 
 namespace fb

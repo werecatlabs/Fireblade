@@ -6,6 +6,8 @@
 //
 // forward declarations
 //
+struct nk_context;
+struct nk_colorf;
 
 namespace Ogre
 {

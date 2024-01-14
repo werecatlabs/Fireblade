@@ -3,210 +3,203 @@
 #include "FBOgreDataStream.h"
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::render
 {
-    namespace render
+
+    FileSystemArchive::FileSystemArchive( const String &name ) : Ogre::Archive( name, "filesystem" )
     {
+    }
 
-        FileSystemArchive::FileSystemArchive( const String &name ) : Ogre::Archive( name, "filesystem" )
+    FileSystemArchive::~FileSystemArchive() = default;
+
+    auto FileSystemArchive::isCaseSensitive() const -> bool
+    {
+        return false;
+    }
+
+    void FileSystemArchive::load()
+    {
+    }
+
+    void FileSystemArchive::unload()
+    {
+    }
+
+    auto FileSystemArchive::open( const String &name, bool readOnly /*= true */ ) const
+        -> Ogre::DataStreamPtr
+    {
+        auto isBinary = true;
+        auto fileExt = Path::getFileExtension( name );
+        if( fileExt == ".compositor" || fileExt == ".material" || fileExt == ".program" ||
+            fileExt == ".fontdef" || fileExt == ".gsls" || fileExt == ".hlsl" )
         {
+            isBinary = false;
         }
 
-        FileSystemArchive::~FileSystemArchive()
+        if( fileExt == ".ttf" )
         {
+            isBinary = true;
         }
 
-        bool FileSystemArchive::isCaseSensitive( void ) const
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto fileSystem = applicationManager->getFileSystem();
+        FB_ASSERT( fileSystem );
+
+        FB_ASSERT( !StringUtil::isNullOrEmpty( name ) );
+
+        auto stream = fileSystem->open( name, true, isBinary, false, false );
+        if( !stream )
         {
-            return false;
+            stream = fileSystem->open( name, true, isBinary, false, true );
         }
 
-        void FileSystemArchive::load()
+        if( stream )
         {
+            return Ogre::DataStreamPtr( new FBOgreDataStream( stream ) );
         }
 
-        void FileSystemArchive::unload()
+        return {};
+    }
+
+    auto FileSystemArchive::open( const String &name, bool readOnly /*= true */ ) -> Ogre::DataStreamPtr
+    {
+        auto isBinary = true;
+        auto fileExt = Path::getFileExtension( name );
+        if( fileExt == ".compositor" || fileExt == ".material" || fileExt == ".program" ||
+            fileExt == ".fontdef" || fileExt == ".gsls" || fileExt == ".hlsl" )
         {
+            isBinary = false;
         }
 
-        Ogre::DataStreamPtr FileSystemArchive::open( const String &name,
-                                                     bool readOnly /*= true */ ) const
+        if( fileExt == ".ttf" )
         {
-            auto isBinary = true;
-            auto fileExt = Path::getFileExtension( name );
-            if( fileExt == ".compositor" || fileExt == ".material" || fileExt == ".program" ||
-                fileExt == ".fontdef" || fileExt == ".gsls" || fileExt == ".hlsl" )
-            {
-                isBinary = false;
-            }
-
-            if( fileExt == ".ttf" )
-            {
-                isBinary = true;
-            }
-
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto fileSystem = applicationManager->getFileSystem();
-            FB_ASSERT( fileSystem );
-
-            FB_ASSERT( !StringUtil::isNullOrEmpty( name ) );
-
-            auto stream = fileSystem->open( name, true, isBinary, false, false );
-            if( !stream )
-            {
-                stream = fileSystem->open( name, true, isBinary, false, true );
-            }
-
-            if( stream )
-            {
-                return Ogre::DataStreamPtr( new FBOgreDataStream( stream ) );
-            }
-
-            return Ogre::DataStreamPtr();
+            isBinary = true;
         }
 
-        Ogre::DataStreamPtr FileSystemArchive::open( const String &name, bool readOnly /*= true */ )
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto fileSystem = applicationManager->getFileSystem();
+        FB_ASSERT( fileSystem );
+
+        FB_ASSERT( !StringUtil::isNullOrEmpty( name ) );
+
+        auto stream = fileSystem->open( name, true, isBinary, false, false );
+        if( !stream )
         {
-            auto isBinary = true;
-            auto fileExt = Path::getFileExtension( name );
-            if( fileExt == ".compositor" || fileExt == ".material" || fileExt == ".program" ||
-                fileExt == ".fontdef" || fileExt == ".gsls" || fileExt == ".hlsl" )
-            {
-                isBinary = false;
-            }
-
-            if( fileExt == ".ttf" )
-            {
-                isBinary = true;
-            }
-
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto fileSystem = applicationManager->getFileSystem();
-            FB_ASSERT( fileSystem );
-
-            FB_ASSERT( !StringUtil::isNullOrEmpty( name ) );
-
-            auto stream = fileSystem->open( name, true, isBinary, false, false );
-            if( !stream )
-            {
-                stream = fileSystem->open( name, true, isBinary, false, true );
-            }
-
-            if( stream )
-            {
-                return Ogre::DataStreamPtr( new FBOgreDataStream( stream ) );
-            }
-
-            return Ogre::DataStreamPtr();
+            stream = fileSystem->open( name, true, isBinary, false, true );
         }
 
-        Ogre::StringVectorPtr FileSystemArchive::list( bool recursive /*= true*/,
-                                                       bool dirs /*= false */ ) const
+        if( stream )
         {
-            return Ogre::StringVectorPtr();
+            return Ogre::DataStreamPtr( new FBOgreDataStream( stream ) );
         }
 
-        Ogre::StringVectorPtr FileSystemArchive::list( bool recursive /*= true*/,
-                                                       bool dirs /*= false */ )
+        return {};
+    }
+
+    auto FileSystemArchive::list( bool recursive /*= true*/, bool dirs /*= false */ ) const
+        -> Ogre::StringVectorPtr
+    {
+        return {};
+    }
+
+    auto FileSystemArchive::list( bool recursive /*= true*/, bool dirs /*= false */ )
+        -> Ogre::StringVectorPtr
+    {
+        return {};
+    }
+
+    auto FileSystemArchive::listFileInfo( bool recursive /*= true*/, bool dirs /*= false */ ) const
+        -> Ogre::FileInfoListPtr
+    {
+        return {};
+    }
+
+    auto FileSystemArchive::listFileInfo( bool recursive /*= true*/, bool dirs /*= false */ )
+        -> Ogre::FileInfoListPtr
+    {
+        return {};
+    }
+
+    auto FileSystemArchive::find( const String &pattern, bool recursive /*= true*/,
+                                  bool dirs /*= false */ ) const -> Ogre::StringVectorPtr
+    {
+        return {};
+    }
+
+    auto FileSystemArchive::find( const String &pattern, bool recursive /*= true*/,
+                                  bool dirs /*= false */ ) -> Ogre::StringVectorPtr
+    {
+        return {};
+    }
+
+    auto FileSystemArchive::exists( const String &name ) const -> bool
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto fileSystem = applicationManager->getFileSystem();
+        FB_ASSERT( fileSystem );
+
+        FB_ASSERT( !StringUtil::isNullOrEmpty( name ) );
+        auto existing = fileSystem->isExistingFile( name, false, false );
+        if( !existing )
         {
-            return Ogre::StringVectorPtr();
-        }
-
-        Ogre::FileInfoListPtr FileSystemArchive::listFileInfo( bool recursive /*= true*/,
-                                                               bool dirs /*= false */ ) const
-        {
-            return Ogre::FileInfoListPtr();
-        }
-
-        Ogre::FileInfoListPtr FileSystemArchive::listFileInfo( bool recursive /*= true*/,
-                                                               bool dirs /*= false */ )
-        {
-            return Ogre::FileInfoListPtr();
-        }
-
-        Ogre::StringVectorPtr FileSystemArchive::find( const String &pattern, bool recursive /*= true*/,
-                                                       bool dirs /*= false */ ) const
-        {
-            return Ogre::StringVectorPtr();
-        }
-
-        Ogre::StringVectorPtr FileSystemArchive::find( const String &pattern, bool recursive /*= true*/,
-                                                       bool dirs /*= false */ )
-        {
-            return Ogre::StringVectorPtr();
-        }
-
-        bool FileSystemArchive::exists( const String &name ) const
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto fileSystem = applicationManager->getFileSystem();
-            FB_ASSERT( fileSystem );
-
-            FB_ASSERT( !StringUtil::isNullOrEmpty( name ) );
-            auto existing = fileSystem->isExistingFile( name, false, false );
+            existing = fileSystem->isExistingFile( name, true, false );
             if( !existing )
             {
-                existing = fileSystem->isExistingFile( name, true, false );
-                if( !existing )
-                {
-                    existing = fileSystem->isExistingFile( name, true, true );
-                }
+                existing = fileSystem->isExistingFile( name, true, true );
             }
-
-            return existing;
         }
 
-        bool FileSystemArchive::exists( const String &name )
+        return existing;
+    }
+
+    auto FileSystemArchive::exists( const String &name ) -> bool
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto fileSystem = applicationManager->getFileSystem();
+        FB_ASSERT( fileSystem );
+
+        FB_ASSERT( !StringUtil::isNullOrEmpty( name ) );
+        auto existing = fileSystem->isExistingFile( name, false, false );
+        if( !existing )
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto fileSystem = applicationManager->getFileSystem();
-            FB_ASSERT( fileSystem );
-
-            FB_ASSERT( !StringUtil::isNullOrEmpty( name ) );
-            auto existing = fileSystem->isExistingFile( name, false, false );
+            existing = fileSystem->isExistingFile( name, true, false );
             if( !existing )
             {
-                existing = fileSystem->isExistingFile( name, true, false );
-                if( !existing )
-                {
-                    existing = fileSystem->isExistingFile( name, true, true );
-                }
+                existing = fileSystem->isExistingFile( name, true, true );
             }
-
-            return existing;
         }
 
-        time_t FileSystemArchive::getModifiedTime( const String &filename ) const
-        {
-            return 0;
-        }
+        return existing;
+    }
 
-        time_t FileSystemArchive::getModifiedTime( const String &filename )
-        {
-            return 0;
-        }
+    auto FileSystemArchive::getModifiedTime( const String &filename ) const -> time_t
+    {
+        return 0;
+    }
 
-        Ogre::FileInfoListPtr FileSystemArchive::findFileInfo( const String &pattern,
-                                                               bool recursive /*= true*/,
-                                                               bool dirs /*= false */ ) const
-        {
-            return Ogre::FileInfoListPtr();
-        }
+    auto FileSystemArchive::getModifiedTime( const String &filename ) -> time_t
+    {
+        return 0;
+    }
 
-        Ogre::FileInfoListPtr FileSystemArchive::findFileInfo( const String &pattern,
-                                                               bool recursive /*= true*/,
-                                                               bool dirs /*= false */ )
-        {
-            return Ogre::FileInfoListPtr();
-        }
+    auto FileSystemArchive::findFileInfo( const String &pattern, bool recursive /*= true*/,
+                                          bool dirs /*= false */ ) const -> Ogre::FileInfoListPtr
+    {
+        return {};
+    }
 
-    }  // namespace render
-}  // namespace fb
+    auto FileSystemArchive::findFileInfo( const String &pattern, bool recursive /*= true*/,
+                                          bool dirs /*= false */ ) -> Ogre::FileInfoListPtr
+    {
+        return {};
+    }
+
+}  // namespace fb::render

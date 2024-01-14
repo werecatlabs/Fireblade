@@ -7,13 +7,13 @@
 
 namespace fb
 {
-    
+
     /** A class used to store info for a scripted event. */
     class ScriptEvent : public IScriptEvent
     {
     public:
         ScriptEvent();
-        ScriptEvent( const String &function );
+        explicit ScriptEvent( const String &function );
         ~ScriptEvent() override;
 
         /** Gets the type of event. */

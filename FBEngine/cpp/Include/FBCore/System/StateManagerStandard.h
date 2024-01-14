@@ -3,7 +3,6 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IStateManager.h>
-
 #include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Core/ConcurrentQueue.h>
 #include <FBCore/Core/HashTable.h>
@@ -11,6 +10,7 @@
 
 namespace fb
 {
+
     /** Implementation for a state manager. */
     class StateManagerStandard : public IStateManager
     {
@@ -37,13 +37,13 @@ namespace fb
         void addStateObject( SmartPtr<IStateContext> context ) override;
 
         /** @copydoc IStateManager::removeStateObject */
-        bool removeStateObject( SmartPtr<IStateContext> stateObject ) override;
+        bool removeStateObject( SmartPtr<IStateContext> stateContext ) override;
 
         /** @copydoc IStateManager::findStateObject */
         SmartPtr<IStateContext> findStateObject( u32 id ) const override;
 
-        /** @copydoc IStateManager::getStateObjects */
-        Array<SmartPtr<IStateContext>> getStateObjects() const override;
+        /** @copydoc IStateManager::getStateContexts */
+        Array<SmartPtr<IStateContext>> getStateContexts() const override;
 
         /** @copydoc IStateManager::getQueue */
         SmartPtr<IStateQueue> getQueue( Thread::Task taskId ) override;
@@ -71,8 +71,8 @@ namespace fb
         SharedPtr<ConcurrentArray<AtomicSmartPtr<IStateQueue>>> getStateQueuesPtr() const;
         void setStateQueuesPtr( SharedPtr<ConcurrentArray<AtomicSmartPtr<IStateQueue>>> stateQueues );
 
-        SharedPtr<ConcurrentArray<SmartPtr<IStateContext>>> getStateObjectsPtr() const;
-        void setStateObjectsPtr( SharedPtr<ConcurrentArray<SmartPtr<IStateContext>>> stateObjects );
+        SharedPtr<ConcurrentArray<SmartPtr<IStateContext>>> getStateContextsPtr() const;
+        void setStateContextsPtr( SharedPtr<ConcurrentArray<SmartPtr<IStateContext>>> stateObjects );
 
         void addState2D( u32 index, SmartPtr<IState> state );
 
@@ -101,6 +101,6 @@ namespace fb
         Array<Array<SmartPtr<IState>>> m_states;
         Array<Array<Array<SmartPtr<IState>>>> m_states2d;
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif  // StateManagerStandard_h__

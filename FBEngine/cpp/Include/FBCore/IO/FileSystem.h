@@ -117,6 +117,7 @@ namespace fb
         Array<u8> readAllBytes( const String &path ) override;
         String readAllText( const String &path ) override;
 
+        void writeAllBytes( const String &path, u8 *bytes, u32 size ) override;
         void writeAllBytes( const String &path, Array<u8> bytes ) override;
         void writeAllText( const String &path, const String &contents ) override;
 

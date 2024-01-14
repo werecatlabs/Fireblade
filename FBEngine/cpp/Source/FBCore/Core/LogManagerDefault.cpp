@@ -17,18 +17,6 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            if( applicationManager )
-            {
-                if( auto pluginInterface = applicationManager->getPluginInterface() )
-                {
-                    auto factoryManager = applicationManager->getFactoryManager();
-                    auto pluginEvent = factoryManager->make_ptr<core::PluginEvent>();
-                    pluginEvent->setArg1( message );
-                    pluginInterface->sendEvent( "logInfo", pluginEvent );
-                }
-            }
-
             std::cout << message << std::endl;
 
 #if FB_ENABLE_TRACE
@@ -71,18 +59,6 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
-            if( applicationManager )
-            {
-                if( auto pluginInterface = applicationManager->getPluginInterface() )
-                {
-                    auto factoryManager = applicationManager->getFactoryManager();
-                    auto pluginEvent = factoryManager->make_ptr<core::PluginEvent>();
-                    pluginEvent->setArg1( StringUtil::toUTF16to8( message ) );
-                    pluginInterface->sendEvent( "logInfo", pluginEvent );
-                }
-            }
-
             StringW currentTimeStr = StringUtilW::getCurrentTime() + StringW( L": " );
             StringW logEntryStr = currentTimeStr + message;
 
@@ -113,7 +89,7 @@ namespace fb
         m_queue = queue;
     }
 
-    bool LogManagerDefault::getEnableQueue() const
+    auto LogManagerDefault::getEnableQueue() const -> bool
     {
         return m_queue;
     }

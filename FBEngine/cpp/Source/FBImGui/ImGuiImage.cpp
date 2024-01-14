@@ -5,79 +5,34 @@
 
 #include "ImGuiApplication.h"
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    FB_CLASS_REGISTER_DERIVED( fb, ImGuiImage, CImGuiElement<IUIImage> );
+
+    ImGuiImage::ImGuiImage() = default;
+
+    ImGuiImage::~ImGuiImage() = default;
+
+    void ImGuiImage::update()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, ImGuiImage, CImGuiElement<IUIImage> );
+        auto size = getSize();
 
-        ImGuiImage::ImGuiImage()
+        if( auto texture = getTexture() )
         {
-        }
-
-        ImGuiImage::~ImGuiImage()
-        {
-        }
-
-        void ImGuiImage::update()
-        {
-            auto size = getSize();
-
-            if( auto texture = getTexture() )
+            if( !texture->isLoaded() )
             {
-                if( !texture->isLoaded() )
-                {
-                    texture->load( nullptr );
-                }
-
-                void *iTexture = 0;
-                texture->getTextureFinal( (void **)&iTexture );
-                m_textureHandle = reinterpret_cast<size_t>( iTexture );
-
-                //m_textureHandle = texture->getTextureHandle();
-
-                if( iTexture != 0 )
-                {
-                    ImGui::Image( (ImTextureID)iTexture, ImVec2( size.x, size.y ) );
-
-                    auto dropTarget = getDropTarget();
-                    if( dropTarget )
-                    {
-                        if( ImGui::BeginDragDropTarget() )
-                        {
-                            auto payload = ImGui::AcceptDragDropPayload( "_TREENODE" );
-                            if( payload )
-                            {
-                                auto pData = static_cast<const char *>( payload->Data );
-                                auto dataSize = payload->DataSize;
-                                auto data = String( pData, dataSize );
-
-                                auto menuItemId = getElementId();
-
-                                auto args = Array<Parameter>();
-                                args.resize( 1 );
-
-                                args[0].setStr( data );
-
-                                dropTarget->handleEvent( IEvent::Type::UI, IEvent::handleDrop, args,
-                                                         this, this, nullptr );
-                            }
-
-                            ImGui::EndDragDropTarget();
-                        }
-                    }
-                }
+                texture->load( nullptr );
             }
-            else
+
+            void *iTexture = nullptr;
+            texture->getTextureFinal( &iTexture );
+            m_textureHandle = reinterpret_cast<size_t>( iTexture );
+
+            //m_textureHandle = texture->getTextureHandle();
+
+            if( iTexture != nullptr )
             {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto ui = applicationManager->getUI();
-                SmartPtr<ImGuiApplication> application = ui->getApplication();
-                auto emptyTexture = application->getEmptyTexture();
-
-                ImGui::Image( (ImTextureID)emptyTexture, ImVec2( size.x, size.y ) );
+                ImGui::Image( static_cast<ImTextureID>( iTexture ), ImVec2( size.x, size.y ) );
 
                 auto dropTarget = getDropTarget();
                 if( dropTarget )
@@ -107,44 +62,82 @@ namespace fb
                 }
             }
         }
-
-        String ImGuiImage::getLabel() const
+        else
         {
-            return m_label;
-        }
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
 
-        void ImGuiImage::setLabel( const String &label )
-        {
-            m_label = label;
-        }
+            auto ui = applicationManager->getUI();
+            SmartPtr<ImGuiApplication> application = ui->getApplication();
+            auto emptyTexture = application->getEmptyTexture();
 
-        void ImGuiImage::setMaterialName( const String &materialName )
-        {
-        }
+            ImGui::Image( static_cast<ImTextureID>( emptyTexture ), ImVec2( size.x, size.y ) );
 
-        String ImGuiImage::getMaterialName() const
-        {
-            return "";
-        }
+            auto dropTarget = getDropTarget();
+            if( dropTarget )
+            {
+                if( ImGui::BeginDragDropTarget() )
+                {
+                    auto payload = ImGui::AcceptDragDropPayload( "_TREENODE" );
+                    if( payload )
+                    {
+                        auto pData = static_cast<const char *>( payload->Data );
+                        auto dataSize = payload->DataSize;
+                        auto data = String( pData, dataSize );
 
-        void ImGuiImage::setMaterial( SmartPtr<render::IMaterial> material )
-        {
-            m_material = material;
-        }
+                        auto menuItemId = getElementId();
 
-        SmartPtr<render::IMaterial> ImGuiImage::getMaterial() const
-        {
-            return m_material;
-        }
+                        auto args = Array<Parameter>();
+                        args.resize( 1 );
 
-        void ImGuiImage::setTexture( SmartPtr<render::ITexture> texture )
-        {
-            m_texture = texture;
-        }
+                        args[0].setStr( data );
 
-        SmartPtr<render::ITexture> ImGuiImage::getTexture() const
-        {
-            return m_texture;
+                        dropTarget->handleEvent( IEvent::Type::UI, IEvent::handleDrop, args, this, this,
+                                                 nullptr );
+                    }
+
+                    ImGui::EndDragDropTarget();
+                }
+            }
         }
-    }  // end namespace ui
-}  // end namespace fb
+    }
+
+    auto ImGuiImage::getLabel() const -> String
+    {
+        return m_label;
+    }
+
+    void ImGuiImage::setLabel( const String &label )
+    {
+        m_label = label;
+    }
+
+    void ImGuiImage::setMaterialName( const String &materialName )
+    {
+    }
+
+    auto ImGuiImage::getMaterialName() const -> String
+    {
+        return "";
+    }
+
+    void ImGuiImage::setMaterial( SmartPtr<render::IMaterial> material )
+    {
+        m_material = material;
+    }
+
+    auto ImGuiImage::getMaterial() const -> SmartPtr<render::IMaterial>
+    {
+        return m_material;
+    }
+
+    void ImGuiImage::setTexture( SmartPtr<render::ITexture> texture )
+    {
+        m_texture = texture;
+    }
+
+    auto ImGuiImage::getTexture() const -> SmartPtr<render::ITexture>
+    {
+        return m_texture;
+    }
+}  // namespace fb::ui

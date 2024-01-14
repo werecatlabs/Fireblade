@@ -61,24 +61,6 @@ namespace fb
             virtual SmartPtr<IActor> findCamera( const String &name ) const = 0;
 
             /**
-             * @brief Gets the current camera's name.
-             * @return The name of the current camera.
-             */
-            virtual String getCurrentCameraName() const = 0;
-
-            /**
-             * @brief Sets the current camera.
-             * @param camera The camera to set as the current camera.
-             */
-            virtual void setCurrentCamera( SmartPtr<IActor> camera ) = 0;
-
-            /**
-             * @brief Gets the current camera.
-             * @return The current camera.
-             */
-            virtual SmartPtr<IActor> getCurrentCamera() const = 0;
-
-            /**
              * @brief Gets a list of the cameras in the camera manager.
              * @return An array of cameras.
              */
@@ -116,9 +98,13 @@ namespace fb
              */
             virtual void setEditorTexture( SmartPtr<render::ITexture> editorTexture ) = 0;
 
+            virtual SmartPtr<IActor> getEditorCamera() const = 0;
+
+            virtual void setEditorCamera( SmartPtr<IActor> editorCamera ) = 0;
+
             FB_CLASS_REGISTER_DECL;
         };
-    } // namespace scene
-}     // namespace fb
+    }  // namespace scene
+}  // namespace fb
 
 #endif

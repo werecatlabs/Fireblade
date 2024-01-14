@@ -6,28 +6,22 @@
 #include <FBCore/FBCore.h>
 #include <fstream>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    JobCreatePackage::JobCreatePackage() = default;
+
+    JobCreatePackage::~JobCreatePackage() = default;
+
+    void JobCreatePackage::execute()
     {
-
-        JobCreatePackage::JobCreatePackage()
-        {
-        }
-
-        JobCreatePackage::~JobCreatePackage()
-        {
-        }
-
-        void JobCreatePackage::execute()
-        {
-            using namespace fb;
-            FB_DEBUG_TRACE;
+        using namespace fb;
+        FB_DEBUG_TRACE;
 
 #if defined FB_PLATFORM_WIN32
             FB_LOG( "Starting packaging" );
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto fileSystem = applicationManager->getFileSystem();
@@ -161,7 +155,7 @@ namespace fb
 #endif
         }
 
-        StringW JobCreatePackage::getDst() const
+        auto JobCreatePackage::getDst() const -> StringW
         {
             return m_dst;
         }
@@ -171,7 +165,7 @@ namespace fb
             m_dst = dst;
         }
 
-        bool JobCreatePackage::getPackageTextures() const
+        auto JobCreatePackage::getPackageTextures() const -> bool
         {
             return m_packageTextures;
         }
@@ -181,5 +175,4 @@ namespace fb
             m_packageTextures = packageTextures;
         }
 
-    }  // namespace editor
-}  // namespace fb
+}  // namespace fb::editor

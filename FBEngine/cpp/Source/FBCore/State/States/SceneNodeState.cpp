@@ -26,18 +26,18 @@ namespace fb
         //*this = state;
     }
 
-    Vector3<real_Num> SceneNodeState::getPosition() const
+    auto SceneNodeState::getPosition() const -> Vector3<real_Num>
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_localTransform.getPosition();
     }
 
-    bool SceneNodeState::operator!=( SceneNodeState *other ) const
+    auto SceneNodeState::operator!=( SceneNodeState *other ) const -> bool
     {
         return Memory::Memcmp( this, other, sizeof( SceneNodeState ) ) != 0;
     }
 
-    bool SceneNodeState::operator==( SceneNodeState *other ) const
+    auto SceneNodeState::operator==( SceneNodeState *other ) const -> bool
     {
         return Memory::Memcmp( this, other, sizeof( SceneNodeState ) ) == 0;
     }
@@ -48,7 +48,7 @@ namespace fb
         m_lookAt = lookAt;
     }
 
-    Vector3<real_Num> SceneNodeState::getAbsolutePosition() const
+    auto SceneNodeState::getAbsolutePosition() const -> Vector3<real_Num>
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_absolutePosition;
@@ -60,7 +60,7 @@ namespace fb
         m_absolutePosition = val;
     }
 
-    Vector3<real_Num> SceneNodeState::getAbsoluteScale() const
+    auto SceneNodeState::getAbsoluteScale() const -> Vector3<real_Num>
     {
         SpinRWMutex::ScopedLock lock( m_mutex );
         return m_absoluteScale;
@@ -72,7 +72,7 @@ namespace fb
         m_absoluteScale = scale;
     }
 
-    Quaternion<real_Num> SceneNodeState::getAbsoluteOrientation() const
+    auto SceneNodeState::getAbsoluteOrientation() const -> Quaternion<real_Num>
     {
         SpinRWMutex::ScopedLock lock( m_mutex );
         return m_absoluteOrientation;
@@ -84,7 +84,7 @@ namespace fb
         m_absoluteOrientation = orientation;
     }
 
-    AABB3<real_Num> SceneNodeState::getLocalAABB() const
+    auto SceneNodeState::getLocalAABB() const -> AABB3<real_Num>
     {
         SpinRWMutex::ScopedLock lock( m_mutex );
         return m_localAABB;
@@ -96,7 +96,7 @@ namespace fb
         m_localAABB = localAABB;
     }
 
-    AABB3<real_Num> SceneNodeState::getWorldAABB() const
+    auto SceneNodeState::getWorldAABB() const -> AABB3<real_Num>
     {
         SpinRWMutex::ScopedLock lock( m_mutex );
         return m_worldAABB;
@@ -118,7 +118,7 @@ namespace fb
         }
     }
 
-    Vector3<real_Num> SceneNodeState::getScale() const
+    auto SceneNodeState::getScale() const -> Vector3<real_Num>
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_localTransform.getScale();
@@ -135,7 +135,7 @@ namespace fb
         }
     }
 
-    Quaternion<real_Num> SceneNodeState::getOrientation() const
+    auto SceneNodeState::getOrientation() const -> Quaternion<real_Num>
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_localTransform.getOrientation();
@@ -151,13 +151,13 @@ namespace fb
         }
     }
 
-    Vector3<real_Num> SceneNodeState::getLookAt() const
+    auto SceneNodeState::getLookAt() const -> Vector3<real_Num>
     {
         SpinRWMutex::ScopedLock lock( m_mutex );
         return m_lookAt;
     }
 
-    bool SceneNodeState::isRegistered() const
+    auto SceneNodeState::isRegistered() const -> bool
     {
         return m_isRegistered;
     }
@@ -167,7 +167,7 @@ namespace fb
         m_isRegistered = val;
     }
 
-    SmartPtr<Properties> SceneNodeState::getProperties() const
+    auto SceneNodeState::getProperties() const -> SmartPtr<Properties>
     {
         auto properties = BaseState::getProperties();
 
@@ -198,7 +198,7 @@ namespace fb
         // properties->getPropertyValue("sceneNodeOrientation", sceneNodeOrientation);
     }
 
-    SmartPtr<IState> SceneNodeState::clone() const
+    auto SceneNodeState::clone() const -> SmartPtr<IState>
     {
         auto state = fb::make_ptr<SceneNodeState>();
 
@@ -208,7 +208,7 @@ namespace fb
         return state;
     }
 
-    bool SceneNodeState::isVisible() const
+    auto SceneNodeState::isVisible() const -> bool
     {
         return m_isVisible;
     }

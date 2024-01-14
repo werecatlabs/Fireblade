@@ -12,6 +12,7 @@
 namespace fb
 {
 
+    /** This is the interface for the NetManager. */
     class INetworkManager : public ISharedObject
     {
     public:

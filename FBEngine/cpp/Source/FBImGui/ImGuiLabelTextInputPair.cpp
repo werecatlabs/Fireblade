@@ -1,36 +1,29 @@
 #include <FBImGui/FBImGuiPCH.h>
 #include <FBImGui/ImGuiLabelTextInputPair.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    ImGuiLabelTextInputPair::ImGuiLabelTextInputPair() = default;
+
+    ImGuiLabelTextInputPair::~ImGuiLabelTextInputPair() = default;
+
+    auto ImGuiLabelTextInputPair::getLabel() const -> String
     {
-        ImGuiLabelTextInputPair::ImGuiLabelTextInputPair()
-        {
-        }
+        return m_label;
+    }
 
-        ImGuiLabelTextInputPair::~ImGuiLabelTextInputPair()
-        {
-        }
+    void ImGuiLabelTextInputPair::setLabel( const String &label )
+    {
+        m_label = label;
+    }
 
-        String ImGuiLabelTextInputPair::getLabel() const
-        {
-            return m_label;
-        }
+    auto ImGuiLabelTextInputPair::getValue() const -> String
+    {
+        return m_value;
+    }
 
-        void ImGuiLabelTextInputPair::setLabel( const String &label )
-        {
-            m_label = label;
-        }
-
-        String ImGuiLabelTextInputPair::getValue() const
-        {
-            return m_value;
-        }
-
-        void ImGuiLabelTextInputPair::setValue( const String &value )
-        {
-            m_value = value;
-        }
-    } // end namespace ui
-}     // end namespace fb
+    void ImGuiLabelTextInputPair::setValue( const String &value )
+    {
+        m_value = value;
+    }
+}  // namespace fb::ui

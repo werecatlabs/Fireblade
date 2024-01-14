@@ -9,27 +9,7 @@ namespace fb
         *this = other;
     }
 
-    VehicleStateData &VehicleStateData::operator=( const VehicleStateData &other )
-    {
-        position = other.position;
-        orientation = other.orientation;
-        scale = other.scale;
-        linearVelocity = other.linearVelocity;
-        angularVelocity = other.angularVelocity;
-
-        forcePosition = other.forcePosition;
-        force = other.force;
-        torque = other.torque;
-
-        derivedLinearVelocity = other.derivedLinearVelocity;
-        derivedAngularVelocity = other.derivedAngularVelocity;
-        isVisible = other.isVisible;
-        modelType = other.modelType;
-        modelState = other.modelState;
-        modelSubState = other.modelSubState;
-        isReady = other.isReady;
-        return *this;
-    }
+    auto VehicleStateData::operator=( const VehicleStateData &other ) -> VehicleStateData & = default;
 
     /*
     SaracenModelData ModelStateData::toSaracenModelData() const

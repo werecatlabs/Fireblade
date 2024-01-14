@@ -42,35 +42,34 @@ PxF32 gSteerVsForwardSpeedData[2 * 8] = { 0.0f,       0.75f,      5.0f,       0.
                                           PX_MAX_F32, PX_MAX_F32, PX_MAX_F32, PX_MAX_F32 };
 PxFixedSizeLookupTable<8> gSteerVsForwardSpeedTable( gSteerVsForwardSpeedData, 4 );
 
-namespace fb
+namespace fb::physics
 {
-    namespace physics
+
+    PhysxVehicle3::PhysxVehicle3()
     {
+        m_vehicleInput = SmartPtr<IPhysicsVehicleInput3>( new PhysxVehicleInput );
+    }
 
-        PhysxVehicle3::PhysxVehicle3()
-        {
-            m_vehicleInput = SmartPtr<IPhysicsVehicleInput3>( new PhysxVehicleInput );
-        }
+    PhysxVehicle3::~PhysxVehicle3()
+    {
+        unload( nullptr );
+    }
 
-        PhysxVehicle3::~PhysxVehicle3()
-        {
-            unload( nullptr );
-        }
+    void PhysxVehicle3::initialise( SmartPtr<scene::IDirector> objectTemplate )
+    {
+    }
 
-        void PhysxVehicle3::initialise( SmartPtr<scene::IDirector> objectTemplate )
-        {
-        }
+    void PhysxVehicle3::update( const s32 &task, const time_interval &t, const time_interval &dt )
+    {
+        PxVehicleDriveDynData &driveDynData = m_vehicle->mDriveDynData;
 
-        void PhysxVehicle3::update( const s32 &task, const time_interval &t, const time_interval &dt )
-        {
-            PxVehicleDriveDynData &driveDynData = m_vehicle->mDriveDynData;
+        driveDynData.forceGearChange( PxVehicleGearsData::eFIRST );
 
-            driveDynData.forceGearChange( PxVehicleGearsData::eFIRST );
-
-            SmartPtr<PhysxVehicleInput> input;  // = m_vehicleInput;
-            PxVehicleDrive4WRawInputData pxVehicleInput = *input->getInputs();
-            PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(
-                gKeySmoothingData, gSteerVsForwardSpeedTable, pxVehicleInput, (physx::PxReal)dt, false, *m_vehicle );
+        SmartPtr<PhysxVehicleInput> input;  // = m_vehicleInput;
+        PxVehicleDrive4WRawInputData pxVehicleInput = *input->getInputs();
+        PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(
+            gKeySmoothingData, gSteerVsForwardSpeedTable, pxVehicleInput,
+            static_cast<physx::PxReal>( dt ), false, *m_vehicle );
 
 #define PX_MAX_NUM_WHEELS 4
             const PxRigidDynamic *actor = m_vehicle->getRigidDynamicActor();
@@ -95,17 +94,17 @@ namespace fb
             m_orientation = QuaternionF( transform.q.w, transform.q.x, transform.q.y, transform.q.z );
         }
 
-        IPhysicsVehicleWheel3 *PhysxVehicle3::addWheel()
+        auto PhysxVehicle3::addWheel() -> IPhysicsVehicleWheel3 *
         {
             return nullptr;
         }
 
-        IPhysicsVehicleWheel3 *PhysxVehicle3::getWheel( u32 wheelIndex ) const
+        auto PhysxVehicle3::getWheel( u32 wheelIndex ) const -> IPhysicsVehicleWheel3 *
         {
             return nullptr;
         }
 
-        u32 PhysxVehicle3::getNumWheels() const
+        auto PhysxVehicle3::getNumWheels() const -> u32
         {
             return 0;
         }
@@ -142,7 +141,7 @@ namespace fb
             m_vehicle->getRigidDynamicActor()->setGlobalPose( transform );
         }
 
-        Vector3F PhysxVehicle3::getPosition() const
+        auto PhysxVehicle3::getPosition() const -> Vector3F
         {
             return m_position;
         }
@@ -151,7 +150,7 @@ namespace fb
         {
         }
 
-        QuaternionF PhysxVehicle3::getOrientation() const
+        auto PhysxVehicle3::getOrientation() const -> QuaternionF
         {
             return m_orientation;
         }
@@ -160,7 +159,7 @@ namespace fb
         {
         }
 
-        Vector3F PhysxVehicle3::getVelocity() const
+        auto PhysxVehicle3::getVelocity() const -> Vector3F
         {
             return Vector3F::zero();
         }
@@ -169,31 +168,31 @@ namespace fb
         {
         }
 
-        u32 PhysxVehicle3::getMaterialId() const
+        auto PhysxVehicle3::getMaterialId() const -> u32
         {
             return 0;
         }
 
-        AABB3F PhysxVehicle3::getLocalAABB() const
+        auto PhysxVehicle3::getLocalAABB() const -> AABB3F
         {
-            return AABB3F();
+            return {};
         }
 
-        AABB3F PhysxVehicle3::getWorldAABB() const
+        auto PhysxVehicle3::getWorldAABB() const -> AABB3F
         {
-            return AABB3F();
+            return {};
         }
 
         void PhysxVehicle3::setEnabled( bool enabled )
         {
         }
 
-        bool PhysxVehicle3::isEnabled() const
+        auto PhysxVehicle3::isEnabled() const -> bool
         {
             return false;
         }
 
-        PxVehicleDrive4W *PhysxVehicle3::getVehicle() const
+        auto PhysxVehicle3::getVehicle() const -> PxVehicleDrive4W *
         {
             return m_vehicle;
         }
@@ -203,22 +202,21 @@ namespace fb
             m_vehicle = val;
         }
 
-        SmartPtr<IPhysicsVehicleInput3> &PhysxVehicle3::getVehicleInput()
+        auto PhysxVehicle3::getVehicleInput() -> SmartPtr<IPhysicsVehicleInput3> &
         {
             return m_vehicleInput;
         }
 
-        const SmartPtr<IPhysicsVehicleInput3> &PhysxVehicle3::getVehicleInput() const
+        auto PhysxVehicle3::getVehicleInput() const -> const SmartPtr<IPhysicsVehicleInput3> &
         {
             return m_vehicleInput;
         }
 
-        Array<Transform3F> PhysxVehicle3::getWheelTransformations() const
+        auto PhysxVehicle3::getWheelTransformations() const -> Array<Transform3F>
         {
             return m_wheelTransforms;
         }
 
-    }  // namespace physics
-}  // namespace fb
+}  // namespace fb::physics
 
 // end namespace fb

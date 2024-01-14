@@ -10,7 +10,7 @@ namespace fb
 {
 
     template <class T>
-    AABB3<T> Transform3<T>::transformAABB( const AABB3<T> &aabb )
+    auto Transform3<T>::transformAABB( const AABB3<T> &aabb ) -> AABB3<T>
     {
         FB_ASSERT( isSane() );
 
@@ -71,7 +71,7 @@ namespace fb
     }
 
     template <class T>
-    SmartPtr<Properties> Transform3<T>::getProperties() const
+    auto Transform3<T>::getProperties() const -> SmartPtr<Properties>
     {
         auto properties = fb::make_ptr<Properties>();
 

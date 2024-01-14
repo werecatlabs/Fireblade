@@ -34,12 +34,6 @@ namespace fb
         /** Combine nodes into one mesh. */
         virtual void setUseSingleMesh( bool useSingleMesh ) = 0;
 
-        /** Controls logging. */
-        virtual bool getQuietMode() const = 0;
-
-        /** Controls logging. */
-        virtual void setQuietMode( bool quietMode ) = 0;
-
         FB_CLASS_REGISTER_DECL;
     };
 }  // end namespace fb

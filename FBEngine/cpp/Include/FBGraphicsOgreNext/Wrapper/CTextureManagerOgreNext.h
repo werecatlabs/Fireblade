@@ -36,7 +36,7 @@ namespace fb
             SmartPtr<IResource> create( const String &uuid, const String &name ) override;
 
             /** @copydoc IResourceManager::load */
-            SmartPtr<IResource> load( const String &name ) override;
+            SmartPtr<IResource> loadResource( const String &name ) override;
 
             /** @copydoc IResourceManager::getByName */
             SmartPtr<IResource> getByName( const String &name ) override;
@@ -85,8 +85,8 @@ namespace fb
             /** @copydoc ITextureManager::_getObject */
             void _getObject( void **ppObject ) const override;
 
-            SmartPtr<IStateContext> getStateObject() const;
-            void setStateObject( SmartPtr<IStateContext> stateObject );
+            SmartPtr<IStateContext> getStateContext() const;
+            void setStateContext( SmartPtr<IStateContext> stateContext );
 
         protected:
             class TextureListener : public IEventListener

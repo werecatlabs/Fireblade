@@ -2,14 +2,14 @@
 #define __CViewportOgreNext_H
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
-#include <FBCore/Graphics/CViewport.h>
+#include <FBCore/Graphics/Viewport.h>
 
 namespace fb
 {
     namespace render
     {
 
-        class CViewportOgreNext : public CViewport
+        class CViewportOgreNext : public Viewport
         {
         public:
             CViewportOgreNext();

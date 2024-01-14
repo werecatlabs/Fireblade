@@ -28,8 +28,9 @@ namespace fb
             /** @copydoc BaseComponent::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            /** @brief Invoked when a component is loaded */
-            void componentLoaded( SmartPtr<IComponent> component );
+            Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                   const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                   SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
 
             /** @brief Updates all Rigidbody components */
             static void updateComponents();
@@ -158,9 +159,23 @@ namespace fb
 
             void updateShapes();
 
+            void addConstraint( SmartPtr<Constraint> constraint );
+
+            void removeConstraint( SmartPtr<Constraint> constraint );
+
+            bool hasConstraint( SmartPtr<Constraint> constraint ) const;
+
+            bool hasConstraints() const;
+
+            Array<SmartPtr<Constraint>> getConstraints() const;
+
+            void setConstraints( const Array<SmartPtr<Constraint>> &constraints );
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
+            void updateConstraints();
+
             void createRigidbodyObject();
 
             void removeFromScene();
@@ -171,7 +186,7 @@ namespace fb
             void attachShape();
 
             /** @copydoc IComponent::updateDirty */
-            void updateDirty( u32 flags, u32 oldFlags ) override;
+            void updateFlags( u32 flags, u32 oldFlags ) override;
 
             /** @brief Handles events related to the component's state machine */
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType ) override;
@@ -214,8 +229,9 @@ namespace fb
 
             /** @brief The bounds of the Rigidbody */
             AABB3<real_Num> m_bounds;
-        };
 
+            Array<SmartPtr<Constraint>> m_constraints;
+        };
     }  // namespace scene
 }  // end namespace fb
 

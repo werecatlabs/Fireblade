@@ -11,7 +11,7 @@ namespace fb
     {
 
         /**
-         * Interface for managing prefabs, which are pre-built Actor objects.
+         * Interface for managing prefabs.
          * Extends the IResourceManager interface.
          */
         class IPrefabManager : public IResourceManager

@@ -12,7 +12,7 @@ using std::ofstream;
 
 namespace fb
 {
-    String ScriptGenerator::getClassCPP( const String &parent )
+    auto ScriptGenerator::getClassCPP( const String &parent ) -> String
     {
         for( auto &map : m_classMap )
         {
@@ -27,69 +27,59 @@ namespace fb
 
     ScriptGenerator::ScriptGenerator()
     {
-        m_classMap.push_back(
-            std::make_pair<String, String>( "MonoBehaviour", "scene::BaseComponent" ) );
-        m_classMap.push_back(
-            std::make_pair<String, String>( "ScriptableObject", "CSharedObject<ISharedObject>" ) );
+        m_classMap.push_back( std::make_pair( "MonoBehaviour", "scene::BaseComponent" ) );
+        m_classMap.push_back( std::make_pair( "ScriptableObject", "CSharedObject<ISharedObject>" ) );
 
-        m_classMap.push_back( std::make_pair<String, String>( "string", "String" ) );
+        m_classMap.push_back( std::make_pair( "string", "String" ) );
 
-        m_classMap.push_back( std::make_pair<String, String>( "Object", "SmartPtr<ISharedObject>" ) );
-        m_classMap.push_back(
-            std::make_pair<String, String>( "GameObject", "SmartPtr<scene::IActor>" ) );
-        m_classMap.push_back(
-            std::make_pair<String, String>( "UnityEngine.Object", "SmartPtr<ISharedObject>" ) );
+        m_classMap.push_back( std::make_pair( "Object", "SmartPtr<ISharedObject>" ) );
+        m_classMap.push_back( std::make_pair( "GameObject", "SmartPtr<scene::IActor>" ) );
+        m_classMap.push_back( std::make_pair( "UnityEngine.Object", "SmartPtr<ISharedObject>" ) );
 
-        m_classMap.push_back( std::make_pair<String, String>( "int", "s32" ) );
-        m_classMap.push_back( std::make_pair<String, String>( "float", "f32" ) );
-        m_classMap.push_back( std::make_pair<String, String>( "double", "f64" ) );
+        m_classMap.push_back( std::make_pair( "int", "s32" ) );
+        m_classMap.push_back( std::make_pair( "float", "f32" ) );
+        m_classMap.push_back( std::make_pair( "double", "f64" ) );
 
-        m_classMap.push_back( std::make_pair<String, String>( "List<int>", "Array<s32>" ) );
-        m_classMap.push_back( std::make_pair<String, String>( "List<float>", "Array<f32>" ) );
-        m_classMap.push_back( std::make_pair<String, String>( "List<string>", "Array<String>" ) );
-        m_classMap.push_back( std::make_pair<String, String>( "List<Object>", "Array<Object>" ) );
-        m_classMap.push_back( std::make_pair<String, String>( "List<Vector2>", "Array<Vector2F>" ) );
-        m_classMap.push_back( std::make_pair<String, String>( "List<Vector3>", "Array<Vector3F>" ) );
-        m_classMap.push_back(
-            std::make_pair<String, String>( "List<Quaternion>", "Array<QuaternionF>" ) );
-        m_classMap.push_back(
-            std::make_pair<String, String>( "List<GameObject>", "Array<SmartPtr<scene::IActor>>" ) );
+        m_classMap.push_back( std::make_pair( "List<int>", "Array<s32>" ) );
+        m_classMap.push_back( std::make_pair( "List<float>", "Array<f32>" ) );
+        m_classMap.push_back( std::make_pair( "List<string>", "Array<String>" ) );
+        m_classMap.push_back( std::make_pair( "List<Object>", "Array<Object>" ) );
+        m_classMap.push_back( std::make_pair( "List<Vector2>", "Array<Vector2F>" ) );
+        m_classMap.push_back( std::make_pair( "List<Vector3>", "Array<Vector3F>" ) );
+        m_classMap.push_back( std::make_pair( "List<Quaternion>", "Array<QuaternionF>" ) );
+        m_classMap.push_back( std::make_pair( "List<GameObject>", "Array<SmartPtr<scene::IActor>>" ) );
 
-        m_classMap.push_back( std::make_pair<String, String>( "string[]", "Array<String>" ) );
-        m_classMap.push_back( std::make_pair<String, String>( "int[]", "Array<s32>" ) );
-        m_classMap.push_back( std::make_pair<String, String>( "float[]", "Array<f32>" ) );
-        m_classMap.push_back(
-            std::make_pair<String, String>( "Object[]", "Array<SmartPtr<ISharedObject>>" ) );
-        m_classMap.push_back( std::make_pair<String, String>( "Vector2[]", "Array<Vector2F>" ) );
-        m_classMap.push_back( std::make_pair<String, String>( "Vector3[]", "Array<Vector3F>" ) );
-        m_classMap.push_back( std::make_pair<String, String>( "Quaternion[]", "Array<QuaternionF>" ) );
-        m_classMap.push_back(
-            std::make_pair<String, String>( "GameObject[]", "Array<SmartPtr<scene::IActor>>" ) );
+        m_classMap.push_back( std::make_pair( "string[]", "Array<String>" ) );
+        m_classMap.push_back( std::make_pair( "int[]", "Array<s32>" ) );
+        m_classMap.push_back( std::make_pair( "float[]", "Array<f32>" ) );
+        m_classMap.push_back( std::make_pair( "Object[]", "Array<SmartPtr<ISharedObject>>" ) );
+        m_classMap.push_back( std::make_pair( "Vector2[]", "Array<Vector2F>" ) );
+        m_classMap.push_back( std::make_pair( "Vector3[]", "Array<Vector3F>" ) );
+        m_classMap.push_back( std::make_pair( "Quaternion[]", "Array<QuaternionF>" ) );
+        m_classMap.push_back( std::make_pair( "GameObject[]", "Array<SmartPtr<scene::IActor>>" ) );
 
-        m_classMap.push_back( std::make_pair<String, String>( "System.Type", "TypeInfo" ) );
-        m_classMap.push_back( std::make_pair<String, String>( "Vector2", "Vector2F" ) );
-        m_classMap.push_back( std::make_pair<String, String>( "Vector3", "Vector3F" ) );
-        m_classMap.push_back( std::make_pair<String, String>( "Quaternion", "QuaternionF" ) );
-        m_classMap.push_back( std::make_pair<String, String>( "Matrix4x4", "Matrix4F" ) );
-        m_classMap.push_back( std::make_pair<String, String>( "Transform", "SmartPtr<ITransform>" ) );
+        m_classMap.push_back( std::make_pair( "System.Type", "TypeInfo" ) );
+        m_classMap.push_back( std::make_pair( "Vector2", "Vector2F" ) );
+        m_classMap.push_back( std::make_pair( "Vector3", "Vector3F" ) );
+        m_classMap.push_back( std::make_pair( "Quaternion", "QuaternionF" ) );
+        m_classMap.push_back( std::make_pair( "Matrix4x4", "Matrix4F" ) );
+        m_classMap.push_back( std::make_pair( "Transform", "SmartPtr<ITransform>" ) );
 
         m_precompiledHeader = "FBHoudini/FBHoudiniPCH.h";
 
-        m_headerIncludes.push_back( "FBHoudini/FBHoudiniPrerequisites.h" );
-        m_headerIncludes.push_back( "FBApplication/Components/BaseComponent.h" );
+        m_headerIncludes.emplace_back( "FBHoudini/FBHoudiniPrerequisites.h" );
+        m_headerIncludes.emplace_back( "FBApplication/Components/BaseComponent.h" );
 
-        m_sourceIncludes.push_back( "FBCore/FBCoreHeaders.h" );
-        m_sourceIncludes.push_back( "FBInterface/FBInterfaceHeaders.h" );
-        m_sourceIncludes.push_back( "FBApplication/FBApplicationHeaders.h" );
+        m_sourceIncludes.emplace_back( "FBCore/FBCoreHeaders.h" );
+        m_sourceIncludes.emplace_back( "FBInterface/FBInterfaceHeaders.h" );
+        m_sourceIncludes.emplace_back( "FBApplication/FBApplicationHeaders.h" );
     }
 
-    ScriptGenerator::~ScriptGenerator()
-    {
-    }
+    ScriptGenerator::~ScriptGenerator() = default;
 
     void ScriptGenerator::createScript( ScriptGenerator::LanguageType type, const String &path )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto fileSystem = applicationManager->getFileSystem();
@@ -101,35 +91,50 @@ namespace fb
         {
             auto sourceStr = String();
 
-            auto className = String("NewScript");
+            auto className = String( "NewScript" );
 
-            sourceStr =
-                "class '" + className + "'\n"
-                "\n";
+            sourceStr = "class '" + className +
+                        "'\n"
+                        "\n";
 
-            sourceStr += "function " + className + ":__init(window)\n"
-                "end\n"
-                "\n"
-                "function " + className + ":__finalize()\n"
-                "end\n"
-                "\n"
-                "function " + className + ":load()\n"
-                "end\n"
-                "\n"
-                "function " + className + ":unload()\n"
-                "end\n"
-                "\n"
-                "function " + className + ":initialise()\n"
-                "end\n"
-                "\n"
-                "function " + className + ":update()\n"
-                "end\n"
-                "\n"
-                "function " + className + ":show()\n"
-                "end\n"
-                "\n"
-                "function " + className + ":hide()\n"
-                "end";
+            sourceStr += "function " + className +
+                         ":__init(window)\n"
+                         "end\n"
+                         "\n"
+                         "function " +
+                         className +
+                         ":__finalize()\n"
+                         "end\n"
+                         "\n"
+                         "function " +
+                         className +
+                         ":load()\n"
+                         "end\n"
+                         "\n"
+                         "function " +
+                         className +
+                         ":unload()\n"
+                         "end\n"
+                         "\n"
+                         "function " +
+                         className +
+                         ":initialise()\n"
+                         "end\n"
+                         "\n"
+                         "function " +
+                         className +
+                         ":update()\n"
+                         "end\n"
+                         "\n"
+                         "function " +
+                         className +
+                         ":show()\n"
+                         "end\n"
+                         "\n"
+                         "function " +
+                         className +
+                         ":hide()\n"
+                         "end";
 
             auto sourcePath = Path::getFilePath( path );
             fileSystem->createDirectories( sourcePath );
@@ -150,7 +155,7 @@ namespace fb
 
     void ScriptGenerator::convertCSharp( const String &csharpPath, const String &cppPath )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto fileSystem = applicationManager->getFileSystem();
 
         m_sourcePath = csharpPath;
@@ -162,7 +167,7 @@ namespace fb
         }
     }
 
-    String ScriptGenerator::cleanString( const String &str )
+    auto ScriptGenerator::cleanString( const String &str ) -> String
     {
         auto line = str;
         line.erase( std::remove_if( line.begin(), line.end(),
@@ -182,7 +187,7 @@ namespace fb
         }
     }
 
-    String ScriptGenerator::removeComments( const String &inputStr )
+    auto ScriptGenerator::removeComments( const String &inputStr ) -> String
     {
         std::stringstream write;
         Array<String> lines;
@@ -253,7 +258,7 @@ namespace fb
         return write.str();
     }
 
-    bool ScriptGenerator::isCSharpAttrib( const String &line )
+    auto ScriptGenerator::isCSharpAttrib( const String &line ) -> bool
     {
         if( line.find( "[" ) != String::npos && line.find( "]" ) != String::npos )
         {
@@ -267,7 +272,7 @@ namespace fb
         return false;
     }
 
-    bool ScriptGenerator::isCSharpVariable( const String &line )
+    auto ScriptGenerator::isCSharpVariable( const String &line ) -> bool
     {
         if( line.find( ";" ) != String::npos )
         {
@@ -318,7 +323,7 @@ namespace fb
         return false;
     }
 
-    bool ScriptGenerator::isCSharpFunction( const String &line )
+    auto ScriptGenerator::isCSharpFunction( const String &line ) -> bool
     {
         if( isCSharpAttrib( line ) )
         {
@@ -360,16 +365,16 @@ namespace fb
         return line.find( '(' ) != String::npos && line.find( ')' ) != String::npos;
     }
 
-    String ScriptGenerator::getFunctionName( const String &line )
+    auto ScriptGenerator::getFunctionName( const String &line ) -> String
     {
         auto openBracketPos = line.find( '(' );
         return line;
     }
 
-    Array<SmartPtr<ScriptFunction>> ScriptGenerator::getScriptFunctions( const String &filePath,
-                                                                         const String &className )
+    auto ScriptGenerator::getScriptFunctions( const String &filePath, const String &className )
+        -> Array<SmartPtr<ScriptFunction>>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto factoryManager = applicationManager->getFactoryManager();
         auto fileSystem = applicationManager->getFileSystem();
 
@@ -429,7 +434,7 @@ namespace fb
                             auto pFucntionArg = factoryManager->make_ptr<ScriptVariable>();
                             pFucntionArg->setType( argType );
                             pFucntionArg->setName( argName );
-                            args.push_back( pFucntionArg );
+                            args.emplace_back( pFucntionArg );
                         }
                     }
 
@@ -451,7 +456,7 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto factoryManager = applicationManager->getFactoryManager();
@@ -609,12 +614,12 @@ namespace fb
         auto pConstructor = fb::make_ptr<ScriptFunction>();
         pConstructor->setFunctionName( cppClassName );
         pConstructor->setConstructor( true );
-        functions.push_back( pConstructor );
+        functions.emplace_back( pConstructor );
 
         auto pDestructor = fb::make_ptr<ScriptFunction>();
         pDestructor->setFunctionName( "~" + cppClassName );
         pDestructor->setDestructor( true );
-        functions.push_back( pDestructor );
+        functions.emplace_back( pDestructor );
 
         auto memberFunctions = getScriptFunctions( filePath, className );
         functions.insert( functions.end(), memberFunctions.begin(), memberFunctions.end() );
@@ -624,14 +629,13 @@ namespace fb
         createCPlusPlusClass( m_destinationPath, pClass );
     }
 
-    String ScriptGenerator::createClass( const String &className )
+    auto ScriptGenerator::createClass( const String &className ) -> String
     {
         std::stringstream scriptStream;
 
-        scriptStream << String("--") << className.c_str() << ".lua"
+        scriptStream << String( "--" ) << className.c_str() << ".lua"
                      << "\n";
-        scriptStream << String("class ")
-                     << "'" << className.c_str() << "'\n";
+        scriptStream << String( "class " ) << "'" << className.c_str() << "'\n";
 
         Array<SmartPtr<ScriptFunction>> scriptFunctions;
         createClassFunctions( scriptFunctions, className );
@@ -728,12 +732,12 @@ namespace fb
         auto pConstructor = fb::make_ptr<ScriptFunction>();
         pConstructor->setFunctionName( cppClassName );
         pConstructor->setConstructor( true );
-        functions.push_back( pConstructor );
+        functions.emplace_back( pConstructor );
 
         auto pDestructor = fb::make_ptr<ScriptFunction>();
         pDestructor->setFunctionName( "~" + cppClassName );
         pDestructor->setDestructor( true );
-        functions.push_back( pDestructor );
+        functions.emplace_back( pDestructor );
 
         auto memberFunctions = getScriptFunctions( filePath, className );
         functions.insert( functions.end(), memberFunctions.begin(), memberFunctions.end() );
@@ -743,8 +747,8 @@ namespace fb
         createCPlusPlusClass( m_destinationPath, pClass );
     }
 
-    String ScriptGenerator::createFunction( const String &className, const String &functionName,
-                                            const Array<String> &parameters )
+    auto ScriptGenerator::createFunction( const String &className, const String &functionName,
+                                          const Array<String> &parameters ) -> String
     {
         SmartPtr<ScriptFunction> function( new ScriptFunction );
         function->setClassName( className );
@@ -762,7 +766,7 @@ namespace fb
 
     void ScriptGenerator::createCPlusPlusScript( const String &path, const String &className )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto fileSystem = applicationManager->getFileSystem();
@@ -770,8 +774,8 @@ namespace fb
 
         const auto newLineStr = String( "\n" );
 
-        auto headerStr = String( "#ifndef " + className + "_h__\n" );
-        headerStr += String( "#define " + className + "_h__\n" );
+        auto headerStr = static_cast<String>( "#ifndef " + className + "_h__\n" );
+        headerStr += static_cast<String>( "#define " + className + "_h__\n" );
         headerStr += newLineStr;
         headerStr += "#include <IUpdateable.h>" + newLineStr;
         headerStr += "#include <InterfaceIds.h>" + newLineStr;
@@ -788,7 +792,7 @@ namespace fb
         headerStr += "};" + newLineStr;
 
         headerStr += newLineStr;
-        headerStr += String( "#endif // " + className + "_h__\n" );
+        headerStr += static_cast<String>( "#endif // " + className + "_h__\n" );
 
         auto headerFilePath = path + "/" + className + ".h";
 
@@ -833,10 +837,8 @@ namespace fb
     void ScriptGenerator::writeScriptFunctions( Array<SmartPtr<ScriptFunction>> &scriptFunctions,
                                                 std::ostream &stream )
     {
-        for( u32 funcIdx = 0; funcIdx < scriptFunctions.size(); ++funcIdx )
+        for( auto &scriptFunc : scriptFunctions )
         {
-            auto &scriptFunc = scriptFunctions[funcIdx];
-
             stream << "-"
                    << "\n";
 
@@ -851,7 +853,9 @@ namespace fb
                 stream << pParamName;
 
                 if( argIdx != parameters.size() - 1 )
+                {
                     stream << ", ";
+                }
             }
 
             stream << ")"
@@ -871,7 +875,7 @@ namespace fb
     {
         // constructor
         Array<String> params( 1 );
-        params.push_back( "object" );
+        params.emplace_back( "object" );
 
         SmartPtr<ScriptFunction> scriptFunction( new ScriptFunction );
         scriptFunctions.push_back( scriptFunction );
@@ -880,7 +884,7 @@ namespace fb
         // scriptFunction->setParameters(params);
     }
 
-    String ScriptGenerator::getReplaceFileName() const
+    auto ScriptGenerator::getReplaceFileName() const -> String
     {
         return m_replaceFileName;
     }
@@ -890,7 +894,7 @@ namespace fb
         m_replaceFileName = val;
     }
 
-    String ScriptGenerator::getReplacementFileName() const
+    auto ScriptGenerator::getReplacementFileName() const -> String
     {
         return m_replacementFileName;
     }
@@ -902,13 +906,13 @@ namespace fb
 
     void ScriptGenerator::createCPlusPlusClass( const String &path, const String &className )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto fileSystem = applicationManager->getFileSystem();
 
         const auto newLineStr = String( "\n" );
 
-        auto headerStr = String( "#ifndef " + className + "_h__\n" );
-        headerStr += String( "#define " + className + "_h__\n" );
+        auto headerStr = static_cast<String>( "#ifndef " + className + "_h__\n" );
+        headerStr += static_cast<String>( "#define " + className + "_h__\n" );
         headerStr += newLineStr;
         headerStr += "#include <IUpdateable.h>" + newLineStr;
         headerStr += "#include <InterfaceIds.h>" + newLineStr;
@@ -925,7 +929,7 @@ namespace fb
         headerStr += "};" + newLineStr;
 
         headerStr += newLineStr;
-        headerStr += String( "#endif // " + className + "_h__\n" );
+        headerStr += static_cast<String>( "#endif // " + className + "_h__\n" );
 
         auto headerFilePath = path + "/" + className + ".h";
 
@@ -974,15 +978,15 @@ namespace fb
         auto functions = pClass->getFunctions();
         auto parentClasses = pClass->getParentClasses();
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto fileSystem = applicationManager->getFileSystem();
 
         const auto newLineStr = String( "\n" );
 
         auto singleTabStr = String( "\t" );
         auto headerTabStr = String( "" );
-        auto headerStr = String( "#ifndef " + className + "_h__\n" );
-        headerStr += String( "#define " + className + "_h__\n" );
+        auto headerStr = static_cast<String>( "#ifndef " + className + "_h__\n" );
+        headerStr += static_cast<String>( "#define " + className + "_h__\n" );
         headerStr += newLineStr;
         for( auto header : m_headerIncludes )
         {
@@ -1102,7 +1106,7 @@ namespace fb
         }
 
         headerStr += newLineStr;
-        headerStr += String( "#endif // " + className + "_h__\n" );
+        headerStr += static_cast<String>( "#endif // " + className + "_h__\n" );
 
         auto headerFilePath = path + "/" + className + ".h";
 
@@ -1209,7 +1213,7 @@ namespace fb
         fileSystem->writeAllText( sourceFilePath, sourceStr );
     }
 
-    Array<String> ScriptGenerator::getHeaderIncludes() const
+    auto ScriptGenerator::getHeaderIncludes() const -> Array<String>
     {
         return m_headerIncludes;
     }
@@ -1219,7 +1223,7 @@ namespace fb
         m_headerIncludes = val;
     }
 
-    Array<String> ScriptGenerator::getSourceIncludes() const
+    auto ScriptGenerator::getSourceIncludes() const -> Array<String>
     {
         return m_sourceIncludes;
     }
@@ -1229,7 +1233,7 @@ namespace fb
         m_sourceIncludes = val;
     }
 
-    String ScriptGenerator::getProjectPath() const
+    auto ScriptGenerator::getProjectPath() const -> String
     {
         return m_projectPath;
     }
@@ -1239,7 +1243,7 @@ namespace fb
         m_projectPath = val;
     }
 
-    Array<String> ScriptGenerator::getNamespaceNames() const
+    auto ScriptGenerator::getNamespaceNames() const -> Array<String>
     {
         return m_namespaceNames;
     }
@@ -1251,6 +1255,6 @@ namespace fb
 
     void ScriptGenerator::addMapEntry( const String &className, const String &newClassName )
     {
-        m_classMap.push_back( std::pair<String, String>( className, newClassName ) );
+        m_classMap.emplace_back( className, newClassName );
     }
 }  // end namespace fb

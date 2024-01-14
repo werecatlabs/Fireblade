@@ -2,7 +2,7 @@
 #define _CCompositor_H_
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
-#include <FBCore/Graphics/CSharedGraphicsObject.h>
+#include <FBCore/Graphics/SharedGraphicsObject.h>
 #include <FBCore/Interface/System/IStateListener.h>
 
 namespace fb
@@ -14,7 +14,7 @@ namespace fb
          *  @brief A class that manages the composition of graphical elements in a scene.
          *  @inherits CSharedGraphicsObject<ISharedObject>
          */
-        class Compositor : public CSharedGraphicsObject<ISharedObject>
+        class Compositor : public SharedGraphicsObject<ISharedObject>
         {
         public:
             Compositor();
@@ -102,6 +102,15 @@ namespace fb
              */
             Ogre::CompositorWorkspace *setupTestCompositor();
 
+            /** @copydoc CGraphicsObjectOgreNext<ICamera>::getProperties */
+            SmartPtr<Properties> getProperties() const;
+
+            /** @copydoc CGraphicsObjectOgreNext<ICamera>::setProperties */
+            void setProperties( SmartPtr<Properties> properties );
+
+            /** @copydoc CGraphicsObjectOgreNext<ICamera>::getChildObjects */
+            Array<SmartPtr<ISharedObject>> getChildObjects() const;
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
@@ -140,6 +149,8 @@ namespace fb
              *  @brief A pointer to the TerraWorkspaceListener associated with this Compositor.
              */
             Ogre::TerraWorkspaceListener *mTerraWorkspaceListener = nullptr;
+
+            Ogre::CompositorPassSceneDef *m_scenePassDef = nullptr;
 
             /** @var SmartPtr<IGraphicsSceneManager> m_sceneManager
              *  @brief A smart pointer to the IGraphicsSceneManager managed by this Compositor.

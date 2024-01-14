@@ -9,6 +9,8 @@ namespace fb
 {
     namespace ui
     {
+        FB_CLASS_REGISTER_DERIVED( fb, UILayout, UIElement<IUILayout> );
+
         UILayout::UILayout()
         {
             createStateContext();
@@ -23,7 +25,7 @@ namespace fb
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 auto ui = fb::static_pointer_cast<UIManager>( applicationManager->getUI() );
 
                 //auto colibriManager = ui->getColibriManager();

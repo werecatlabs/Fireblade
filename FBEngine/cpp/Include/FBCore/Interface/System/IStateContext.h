@@ -35,7 +35,14 @@ namespace fb
          *
          * @return SmartPtr<ISharedObject> A smart pointer to the ISharedObject representing the owner.
          */
-        virtual SmartPtr<ISharedObject> getOwner() const = 0;
+        virtual SmartPtr<ISharedObject> &getOwner() = 0;
+
+        /**
+         * @brief Get the owner of the state context.
+         *
+         * @return SmartPtr<ISharedObject> A smart pointer to the ISharedObject representing the owner.
+         */
+        virtual const SmartPtr<ISharedObject> &getOwner() const = 0;
 
         /**
          * @brief Check if the state object needs updating.
@@ -104,20 +111,38 @@ namespace fb
          */
         virtual SharedPtr<Array<SmartPtr<IEventListener>>> getEventListeners() const = 0;
 
-        /** Gets the latest object. */
-        virtual SmartPtr<IState> getLatestOutputState() const = 0;
+        /** Add an object state.
+        @param state The object state to add.
+        */
+        virtual void addState( SmartPtr<IState> state ) = 0;
 
-        /** Gets the objects state at a time interval. */
-        virtual SmartPtr<IState> getOutputState( time_interval time ) const = 0;
+        /** Remove an object state.
+        @param state The object state to remove.
+        */
+        virtual void removeState( SmartPtr<IState> state ) = 0;
 
-        /** Adds an object state. */
-        virtual void addOutputState( SmartPtr<IState> state ) = 0;
+        /** Get an object state by type.
+        @param typeId The type id of the state.
+        @return The object state.
+        */
+        virtual SmartPtr<IState> &getStateByTypeId( u32 typeId ) = 0;
 
-        /** Gets the objects state. */
-        virtual SmartPtr<IState> getState() const = 0;
+        /** Get an object state by type.
+        @param typeId The type id of the state.
+        @return The object state.
+        */
+        virtual const SmartPtr<IState> &getStateByTypeId( u32 typeId ) const = 0;
 
-        /** Sets the objects state. */
-        virtual void setState( SmartPtr<IState> state ) = 0;
+        /** Get an array of the object's states.
+        @return An array of the object's states.
+        */
+        virtual Array<SmartPtr<IState>> getStates() const = 0;
+
+        /** Get a pointer to the object's states. */
+        virtual SharedPtr<ConcurrentArray<SmartPtr<IState>>> getStatesPtr() const = 0;
+
+        /** Set a pointer to the object's states. */
+        virtual void setStatesPtr( SharedPtr<ConcurrentArray<SmartPtr<IState>>> states ) = 0;
 
         /** Used to send messages via the listeners. */
         virtual void sendMessage( SmartPtr<IStateMessage> message ) = 0;
@@ -132,17 +157,12 @@ namespace fb
         */
         virtual void setProperties( SmartPtr<Properties> properties ) = 0;
 
-        /** Gets the latest object. */
-        template <class T>
-        SmartPtr<T> getLatestOutputStateByType() const;
-
-        /** Gets the latest object. */
-        template <class T>
-        SmartPtr<T> getLatestOutputStateByType( time_interval time ) const;
-
         /** Gets the state by type. */
         template <class T>
-        SmartPtr<T> getStateByType() const;
+        SmartPtr<T> &getStateByType();
+
+        template <class T>
+        const SmartPtr<T> &getStateByType() const;
 
         /** Handles a event.
         @param eventType The event type.
@@ -159,26 +179,19 @@ namespace fb
     };
 
     template <class T>
-    SmartPtr<T> IStateContext::getLatestOutputStateByType() const
+    SmartPtr<T> &IStateContext::getStateByType()
     {
-        auto state = getLatestOutputState();
-        FB_ASSERT( fb::dynamic_pointer_cast<T>( state ) );
-        return fb::static_pointer_cast<T>( state );
+        auto typeId = T::typeInfo();
+        auto &state = getStateByTypeId( typeId );
+        return fb::reinterpret_pointer_cast<T>( state );
     }
 
     template <class T>
-    SmartPtr<T> IStateContext::getLatestOutputStateByType( time_interval time ) const
+    const SmartPtr<T> &IStateContext::getStateByType() const
     {
-        auto state = getOutputState( time );
-        FB_ASSERT( fb::dynamic_pointer_cast<T>( state ) );
-        return fb::static_pointer_cast<T>( state );
-    }
-
-    template <class T>
-    SmartPtr<T> IStateContext::getStateByType() const
-    {
-        auto state = getState();
-        return fb::static_pointer_cast<T>( state );
+        auto typeId = T::typeInfo();
+        const auto &state = getStateByTypeId( typeId );
+        return fb::reinterpret_pointer_cast<T>( state );
     }
 
 }  // end namespace fb

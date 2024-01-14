@@ -1,13 +1,13 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/ApplicationUtil.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/FBCoreHeaders.h>
 
 namespace fb
 {
 
-    SmartPtr<scene::IActor> ApplicationUtil::loadMesh( const String &filePath )
+    auto ApplicationUtil::loadMesh( const String &filePath ) -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto prefabManager = applicationManager->getPrefabManager();
@@ -25,11 +25,11 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<ui::IUIMenuItem> ApplicationUtil::addMenuItem( SmartPtr<ui::IUIMenu> menu, s32 itemid,
-                                                            const String &text, const String &help,
-                                                            ui::IUIMenuItem::Type type )
+    auto ApplicationUtil::addMenuItem( SmartPtr<ui::IUIMenu> menu, s32 itemid, const String &text,
+                                       const String &help, ui::IUIMenuItem::Type type )
+        -> SmartPtr<ui::IUIMenuItem>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto ui = applicationManager->getUI();
@@ -48,9 +48,9 @@ namespace fb
         return menuItem;
     }
 
-    SmartPtr<ui::IUIMenuItem> ApplicationUtil::addMenuSeparator( SmartPtr<ui::IUIMenu> menu )
+    auto ApplicationUtil::addMenuSeparator( SmartPtr<ui::IUIMenu> menu ) -> SmartPtr<ui::IUIMenuItem>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto ui = applicationManager->getUI();
@@ -67,12 +67,12 @@ namespace fb
         return menuItem;
     }
 
-    SmartPtr<ui::IUIElement> ApplicationUtil::setText( SmartPtr<ui::IUITreeNode> node,
-                                                       const String &text )
+    auto ApplicationUtil::setText( SmartPtr<ui::IUITreeNode> node, const String &text )
+        -> SmartPtr<ui::IUIElement>
     {
         if( node )
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             if( auto ui = applicationManager->getUI() )
@@ -90,10 +90,10 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<ui::IUIElement> ApplicationUtil::setImage( SmartPtr<ui::IUITreeNode> node,
-                                                        const String &imagePath )
+    auto ApplicationUtil::setImage( SmartPtr<ui::IUITreeNode> node, const String &imagePath )
+        -> SmartPtr<ui::IUIElement>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto ui = applicationManager->getUI();
@@ -108,7 +108,7 @@ namespace fb
         return imageElement;
     }
 
-    SmartPtr<ui::IUIElement> ApplicationUtil::getFirstChild( SmartPtr<ui::IUIElement> element )
+    auto ApplicationUtil::getFirstChild( SmartPtr<ui::IUIElement> element ) -> SmartPtr<ui::IUIElement>
     {
         if( element )
         {
@@ -124,7 +124,7 @@ namespace fb
         return nullptr;
     }
 
-    String ApplicationUtil::getText( SmartPtr<ui::IUITreeNode> node )
+    auto ApplicationUtil::getText( SmartPtr<ui::IUITreeNode> node ) -> String
     {
         if( auto p = node->getChildren() )
         {
@@ -142,10 +142,10 @@ namespace fb
         return String( "" );
     }
 
-    String ApplicationUtil::getComponentFactoryType( const String &factoryType )
+    auto ApplicationUtil::getComponentFactoryType( const String &factoryType ) -> String
     {
         Array<String> ignoreList;
-        ignoreList.push_back( "UnityEngine.Transform" );
+        ignoreList.emplace_back( "UnityEngine.Transform" );
 
         if( std::find( ignoreList.begin(), ignoreList.end(), factoryType ) != ignoreList.end() )
         {
@@ -185,7 +185,7 @@ namespace fb
 
     void ApplicationUtil::convertCSharp( const String &srcPath, const String &dstPath )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto fileSystem = applicationManager->getFileSystem();
@@ -211,14 +211,14 @@ namespace fb
             scriptGenerator.setReplacementFileName( "" );
 
             auto namespaceNames = Array<String>();
-            namespaceNames.push_back( "fb" );
+            namespaceNames.emplace_back( "fb" );
             scriptGenerator.setNamespaceNames( namespaceNames );
 
             scriptGenerator.convertCSharp( csharpPath, cppPath );
         }
     }
 
-    u32 ApplicationUtil::getEventPriority( SmartPtr<scene::IComponent> component )
+    auto ApplicationUtil::getEventPriority( SmartPtr<scene::IComponent> component ) -> u32
     {
         if( component->isDerived<scene::Mesh>() )
         {
@@ -268,9 +268,9 @@ namespace fb
     }
     */
 
-    SmartPtr<IData> ApplicationUtil::importJsonScene( const String &filePath )
+    auto ApplicationUtil::importJsonScene( const String &filePath ) -> SmartPtr<IData>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto fileSystem = applicationManager->getFileSystem();
@@ -300,9 +300,9 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<IData> ApplicationUtil::importScene( const String &filePath )
+    auto ApplicationUtil::importScene( const String &filePath ) -> SmartPtr<IData>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto fileSystem = applicationManager->getFileSystem();
@@ -320,9 +320,9 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createOverlayPanelTest()
+    auto ApplicationUtil::createOverlayPanelTest() -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();
@@ -375,9 +375,9 @@ namespace fb
         return actor;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createOverlayTextTest()
+    auto ApplicationUtil::createOverlayTextTest() -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();
@@ -445,9 +445,9 @@ namespace fb
         return actor;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createOverlayButtonTest()
+    auto ApplicationUtil::createOverlayButtonTest() -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();
@@ -615,7 +615,7 @@ namespace fb
 
     void ApplicationUtil::createFactories()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();
@@ -718,13 +718,13 @@ namespace fb
         auto factories = factoryManager->getFactories();
         for( auto factory : factories )
         {
-            factory->allocate_data();
+            factory->allocatePoolData();
         }
     }
 
     void ApplicationUtil::createDefaultMaterials()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -742,7 +742,7 @@ namespace fb
 
     void ApplicationUtil::createDefaultFont()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto fileSystem = applicationManager->getFileSystem();
@@ -773,7 +773,7 @@ namespace fb
         }
     }
 
-    IResource::ResourceType ApplicationUtil::getResourceType( const String &resourceTypeName )
+    auto ApplicationUtil::getResourceType( const String &resourceTypeName ) -> IResource::ResourceType
     {
         if( resourceTypeName == "None" )
         {
@@ -803,7 +803,7 @@ namespace fb
         return IResource::ResourceType::None;
     }
 
-    String ApplicationUtil::getResourceTypeByName( IResource::ResourceType resourceType )
+    auto ApplicationUtil::getResourceTypeByName( IResource::ResourceType resourceType ) -> String
     {
         switch( resourceType )
         {
@@ -824,9 +824,82 @@ namespace fb
         return "";
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createDefaultSky( bool addToScene )
+    auto ApplicationUtil::isSupportedMesh( const String &filePath ) -> bool
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto fileTypes = Array<String>();
+        fileTypes.reserve( 5 );
+
+        fileTypes.emplace_back( ".fbx" );
+        fileTypes.emplace_back( ".obj" );
+        fileTypes.emplace_back( ".dae" );
+        fileTypes.emplace_back( ".3ds" );
+        fileTypes.emplace_back( ".fbmeshbin" );
+
+        auto ext = Path::getFileExtension( filePath );
+        ext = StringUtil::make_lower( ext );
+
+        for( auto type : fileTypes )
+        {
+            if( ext == type )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    auto ApplicationUtil::isSupportedTexture( const String &filePath ) -> bool
+    {
+        auto fileTypes = Array<String>();
+        fileTypes.reserve( 5 );
+
+        fileTypes.emplace_back( ".png" );
+        fileTypes.emplace_back( ".jpg" );
+        fileTypes.emplace_back( ".jpeg" );
+        fileTypes.emplace_back( ".tga" );
+        fileTypes.emplace_back( ".bmp" );
+
+        auto ext = Path::getFileExtension( filePath );
+        ext = StringUtil::make_lower( ext );
+
+        for( auto type : fileTypes )
+        {
+            if( ext == type )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    auto ApplicationUtil::isSupportedSound( const String &filePath ) -> bool
+    {
+        auto fileTypes = Array<String>();
+        fileTypes.reserve( 5 );
+
+        fileTypes.emplace_back( ".wav" );
+        fileTypes.emplace_back( ".ogg" );
+        fileTypes.emplace_back( ".mp3" );
+
+        auto ext = Path::getFileExtension( filePath );
+        ext = StringUtil::make_lower( ext );
+
+        for( auto type : fileTypes )
+        {
+            if( ext == type )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    auto ApplicationUtil::createDefaultSky( bool addToScene ) -> SmartPtr<scene::IActor>
+    {
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto sceneManager = applicationManager->getSceneManager();
@@ -854,9 +927,9 @@ namespace fb
         return actor;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createCamera( bool addToScene )
+    auto ApplicationUtil::createCamera( bool addToScene ) -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto sceneManager = applicationManager->getSceneManager();
@@ -890,7 +963,7 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto selectionManager = applicationManager->getSelectionManager();
@@ -916,7 +989,7 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto selectionManager = applicationManager->getSelectionManager();
@@ -938,11 +1011,11 @@ namespace fb
         }
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createDefaultCubemap( bool addToScene )
+    auto ApplicationUtil::createDefaultCubemap( bool addToScene ) -> SmartPtr<scene::IActor>
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
@@ -998,11 +1071,11 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createDefaultCube( bool addToScene )
+    auto ApplicationUtil::createDefaultCube( bool addToScene ) -> SmartPtr<scene::IActor>
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
@@ -1058,11 +1131,11 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createDefaultCubeMesh( bool addToScene )
+    auto ApplicationUtil::createDefaultCubeMesh( bool addToScene ) -> SmartPtr<scene::IActor>
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
@@ -1118,9 +1191,9 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createDefaultGround( bool addToScene )
+    auto ApplicationUtil::createDefaultGround( bool addToScene ) -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto sceneManager = applicationManager->getSceneManager();
@@ -1139,7 +1212,7 @@ namespace fb
         FB_ASSERT( collisionBox );
         if( collisionBox )
         {
-            collisionBox->setExtents( Vector3F::unit() * 500.0f );
+            collisionBox->setExtents( Vector3F::unit() * 1.0f );
         }
 
         auto rigidbody = actor->addComponent<scene::Rigidbody>();
@@ -1152,14 +1225,14 @@ namespace fb
         auto meshRenderer = actor->addComponent<scene::MeshRenderer>();
         FB_ASSERT( meshRenderer );
 
-        auto material = actor->addComponent<scene::Material>();
-        FB_ASSERT( material );
+        //auto material = actor->addComponent<scene::Material>();
+        //FB_ASSERT( material );
 
-        if( material )
-        {
-            material->setMaterialPath( "Standard.mat" );
-            material->updateMaterial();
-        }
+        //if( material )
+        //{
+        //    material->setMaterialPath( "default" );
+        //    material->updateMaterial();
+        //}
 
         auto groundPosition = Vector3<real_Num>::unitY() * static_cast<real_Num>( -250.0 );
         // groundPosition += Vector3F::unitZ() * -250.0f;
@@ -1182,9 +1255,9 @@ namespace fb
         return actor;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createDefaultTerrain( bool addToScene )
+    auto ApplicationUtil::createDefaultTerrain( bool addToScene ) -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto sceneManager = applicationManager->getSceneManager();
@@ -1223,9 +1296,9 @@ namespace fb
         return actor;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createDefaultConstraint()
+    auto ApplicationUtil::createDefaultConstraint() -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto sceneManager = applicationManager->getSceneManager();
@@ -1254,9 +1327,9 @@ namespace fb
         return actor;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createDirectionalLight( bool addToScene )
+    auto ApplicationUtil::createDirectionalLight( bool addToScene ) -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto sceneManager = applicationManager->getSceneManager();
@@ -1294,9 +1367,9 @@ namespace fb
         return actor;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createPointLight( bool addToScene )
+    auto ApplicationUtil::createPointLight( bool addToScene ) -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto sceneManager = applicationManager->getSceneManager();
@@ -1334,9 +1407,9 @@ namespace fb
         return actor;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createDefaultPlane( bool addToScene )
+    auto ApplicationUtil::createDefaultPlane( bool addToScene ) -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto sceneManager = applicationManager->getSceneManager();
@@ -1392,9 +1465,9 @@ namespace fb
         return actor;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createDefaultVehicle( bool addToScene )
+    auto ApplicationUtil::createDefaultVehicle( bool addToScene ) -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto prefabManager = applicationManager->getPrefabManager();
@@ -1464,13 +1537,13 @@ namespace fb
         wheelPositions.resize( 4 );
 
         auto wheelOffset = -1.0f;
-        wheelPositions[(u32)scene::CarController::Wheels::FRONT_LEFT] =
+        wheelPositions[static_cast<u32>( scene::CarController::Wheels::FRONT_LEFT )] =
             Vector3F( -width / 2.0f, wheelOffset, wheelBase / 2.0f );
-        wheelPositions[(u32)scene::CarController::Wheels::FRONT_RIGHT] =
+        wheelPositions[static_cast<u32>( scene::CarController::Wheels::FRONT_RIGHT )] =
             Vector3F( width / 2.0f, wheelOffset, wheelBase / 2.0f );
-        wheelPositions[(u32)scene::CarController::Wheels::REAR_LEFT] =
+        wheelPositions[static_cast<u32>( scene::CarController::Wheels::REAR_LEFT )] =
             Vector3F( -width / 2.0f, wheelOffset, -wheelBase / 2.0f );
-        wheelPositions[(u32)scene::CarController::Wheels::REAR_RIGHT] =
+        wheelPositions[static_cast<u32>( scene::CarController::Wheels::REAR_RIGHT )] =
             Vector3F( width / 2.0f, wheelOffset, -wheelBase / 2.0f );
 
         auto wheelMeshSize = Vector3F( 0.1f, 0.3f, 0.3f );
@@ -1559,9 +1632,9 @@ namespace fb
         return actor;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createDefaultCar( bool addToScene )
+    auto ApplicationUtil::createDefaultCar( bool addToScene ) -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto prefabManager = applicationManager->getPrefabManager();
@@ -1678,9 +1751,9 @@ namespace fb
         return actor;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createDefaultTruck( bool addToScene )
+    auto ApplicationUtil::createDefaultTruck( bool addToScene ) -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto prefabManager = applicationManager->getPrefabManager();
@@ -1795,9 +1868,9 @@ namespace fb
         return actor;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createDefaultParticleSystem( bool addToScene )
+    auto ApplicationUtil::createDefaultParticleSystem( bool addToScene ) -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto sceneManager = applicationManager->getSceneManager();
@@ -1815,14 +1888,14 @@ namespace fb
         return actor;
     }
 
-    SmartPtr<IData> ApplicationUtil::loadVehicleDataFromDatabase( s32 id )
+    auto ApplicationUtil::loadVehicleDataFromDatabase( s32 id ) -> SmartPtr<IData>
     {
         return nullptr;
     }
 
-    SmartPtr<render::IMaterial> ApplicationUtil::createDefaultMaterialUI()
+    auto ApplicationUtil::createDefaultMaterialUI() -> SmartPtr<render::IMaterial>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -1890,9 +1963,9 @@ namespace fb
         return defaultMat;
     }
 
-    SmartPtr<render::IMaterial> ApplicationUtil::createDefaultMaterial()
+    auto ApplicationUtil::createDefaultMaterial() -> SmartPtr<render::IMaterial>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -1942,9 +2015,9 @@ namespace fb
         return material;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::createProceduralTest()
+    auto ApplicationUtil::createProceduralTest() -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto sceneManager = applicationManager->getSceneManager();
@@ -1977,9 +2050,9 @@ namespace fb
         return actor;
     }
 
-    SmartPtr<scene::IActor> ApplicationUtil::loadVehicleFromDB( s32 id )
+    auto ApplicationUtil::loadVehicleFromDB( s32 id ) -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto sceneManager = applicationManager->getSceneManager();
@@ -2025,6 +2098,35 @@ namespace fb
         //job->execute();
 
         return actor;
+    }
+
+    auto ApplicationUtil::getRelativeMousePos( Vector2F relativeMousePosition ) -> Vector2F
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        auto ui = applicationManager->getUI();
+        if( ui )
+        {
+            if( auto uiWindow = ui->getMainWindow() )
+            {
+                if( auto mainWindow = applicationManager->getWindow() )
+                {
+                    auto mainWindowSize = mainWindow->getSize();
+                    auto mainWindowSizeF = Vector2F( static_cast<f32>( mainWindowSize.x ),
+                                                     static_cast<f32>( mainWindowSize.y ) );
+
+                    auto pos = uiWindow->getPosition() / mainWindowSizeF;
+                    auto size = uiWindow->getSize() / mainWindowSizeF;
+
+                    auto aabb = AABB2F( pos, size, true );
+                    if( aabb.isInside( relativeMousePosition ) )
+                    {
+                        return ( relativeMousePosition - pos ) / size;
+                    }
+                }
+            }
+        }
+
+        return Vector2F::zero();
     }
 
 }  // end namespace fb

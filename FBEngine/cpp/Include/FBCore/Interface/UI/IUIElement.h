@@ -1,13 +1,11 @@
 #ifndef __IUIElement_h__
 #define __IUIElement_h__
 
-#include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Interface/Memory/ISharedObject.h>
+#include <FBCore/Interface/IPrototype.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/ColourF.h>
 #include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Math/Vector2.h>
-#include <FBCore/Interface/IPrototype.h>
 
 namespace fb
 {
@@ -24,6 +22,7 @@ namespace fb
         public:
             /// @brief Hash type used for state message add child.
             static const hash_type STATE_MESSAGE_ADD_CHILD;
+
             /// @brief Hash type used for state message remove child.
             static const hash_type STATE_MESSAGE_REMOVE_CHILD;
 
@@ -106,6 +105,12 @@ namespace fb
             /** Sets whether this ui item is enabled. */
             virtual bool isEnabled() const = 0;
 
+            /** Sets whether this ui item is hovered. */
+            virtual void setHovered( bool hovered ) = 0;
+
+            /** Sets whether this ui item is hovered. */
+            virtual bool isHovered() const = 0;
+
             /** Gets the parent element. */
             virtual SmartPtr<IUIElement> getParent() const = 0;
 
@@ -136,6 +141,14 @@ namespace fb
             /** Find a child by id. */
             virtual SmartPtr<IUIElement> findChildById( const String &id ) const = 0;
 
+            virtual s32 getSiblingIndex() const = 0;
+
+            template <class T>
+            s32 getSiblingIndexByType() const;
+
+            template <class T>
+            s32 getSiblingCountByType() const;
+
             /** Gets the ui layout this belongs to. */
             virtual SmartPtr<IUIElement> getLayout() const = 0;
 
@@ -155,13 +168,19 @@ namespace fb
             virtual void setOwner( SmartPtr<ISharedObject> owner ) = 0;
 
             /** Gets the drag source. */
-            virtual SmartPtr<IUIDragSource> getDragSource() const = 0;
+            virtual SmartPtr<IUIDragSource> &getDragSource() = 0;
+
+            /** Gets the drag source. */
+            virtual const SmartPtr<IUIDragSource> &getDragSource() const = 0;
 
             /** Sets the drag source. */
             virtual void setDragSource( SmartPtr<IUIDragSource> dragSource ) = 0;
 
             /** Gets the drop target. */
-            virtual SmartPtr<IUIDropTarget> getDropTarget() const = 0;
+            virtual SmartPtr<IUIDropTarget> &getDropTarget() = 0;
+
+            /** Gets the drop target. */
+            virtual const SmartPtr<IUIDropTarget> &getDropTarget() const = 0;
 
             /** Sets the drop target. */
             virtual void setDropTarget( SmartPtr<IUIDropTarget> dropTarget ) = 0;
@@ -223,13 +242,13 @@ namespace fb
              * @brief Gets the state object associated with the UI element.
              * @return Returns a smart pointer to the IStateContext instance.
              */
-            virtual SmartPtr<IStateContext> getStateObject() const = 0;
+            virtual SmartPtr<IStateContext> getStateContext() const = 0;
 
             /**
              * @brief Sets the state object associated with the UI element.
-             * @param stateObject A smart pointer to the new IStateContext instance.
+             * @param stateContext A smart pointer to the new IStateContext instance.
              */
-            virtual void setStateObject( SmartPtr<IStateContext> stateObject ) = 0;
+            virtual void setStateContext( SmartPtr<IStateContext> stateContext ) = 0;
 
             /**
              * @brief Gets the state listener associated with the UI element.
@@ -291,6 +310,71 @@ namespace fb
             }
 
             return childrenByType;
+        }
+
+        template <class T>
+        s32 IUIElement::getSiblingIndexByType() const
+        {
+            auto pThis = getSharedFromThis<IUIElement>();
+            auto siblingParent = getParent();
+            if( siblingParent )
+            {
+                auto p = siblingParent->getChildren();
+                if( p )
+                {
+                    auto siblingCount = 0;
+                    auto children = Array<SmartPtr<IUIElement>>( p->begin(), p->end() );
+                    for( u32 i = 0; i < children.size(); ++i )
+                    {
+                        auto child = children.at( i );
+                        if( child )
+                        {
+                            if( child->isDerived<T>() )
+                            {
+                                if( child == pThis )
+                                {
+                                    return siblingCount;
+                                }
+
+                                ++siblingCount;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return -1;
+        }
+
+        template <class T>
+        s32 IUIElement::getSiblingCountByType() const
+        {
+            auto pThis = getSharedFromThis<IUIElement>();
+            auto siblingParent = getParent();
+            if( siblingParent )
+            {
+                auto p = siblingParent->getChildren();
+                if( p )
+                {
+                    auto siblingCount = 0;
+                    auto children = Array<SmartPtr<IUIElement>>( p->begin(), p->end() );
+                    for( u32 i = 0; i < children.size(); ++i )
+                    {
+                        auto child = children.at( i );
+                        if( child )
+                        {
+                            if( child->isDerived<T>() )
+                            {
+                                ++siblingCount;
+                            }
+                        }
+                    }
+
+                    return siblingCount;
+                }
+            }
+
+            return -1;
         }
 
     }  // end namespace ui

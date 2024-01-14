@@ -3,27 +3,28 @@
 #include <FBCore/Core/Handle.h>
 #include <FBCore/Core/StringUtil.h>
 #include <FBCore/Core/LogManager.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/IO/IFileSystem.h>
 #include <FBCore/Interface/IO/IStream.h>
+#include "FBCore/Memory/PointerUtil.h"
 #include <tinyxml.h>
 
 namespace fb
 {
 
-    SharedPtr<TiXmlDocument> XmlUtil::loadFile( const String &filePath )
+    auto XmlUtil::loadFile( const String &filePath ) -> SharedPtr<TiXmlDocument>
     {
         auto doc = fb::make_shared<TiXmlDocument>();
         doc->LoadFile( filePath.c_str() );
         return doc;
     }
 
-    SharedPtr<TiXmlDocument> XmlUtil::loadFile( const StringW &filePath )
+    auto XmlUtil::loadFile( const StringW &filePath ) -> SharedPtr<TiXmlDocument>
     {
         auto doc = fb::make_shared<TiXmlDocument>();
 
 #if defined FB_PLATFORM_WIN32
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto fileSystem = applicationManager->getFileSystem();
         auto stream = fileSystem->openW( filePath );
         if( stream->isOpen() )
@@ -36,7 +37,7 @@ namespace fb
         return doc;
     }
 
-    String XmlUtil::getFromFile( const String &filePath )
+    auto XmlUtil::getFromFile( const String &filePath ) -> String
     {
         auto doc = loadFile( filePath );
 
@@ -50,7 +51,7 @@ namespace fb
         return xmltext;
     }
 
-    String XmlUtil::getFromFile( const StringW &filePath )
+    auto XmlUtil::getFromFile( const StringW &filePath ) -> String
     {
         auto doc = loadFile( filePath );
 
@@ -64,7 +65,7 @@ namespace fb
         return xmltext;
     }
 
-    SharedPtr<TiXmlDocument> XmlUtil::parseDocument( const String &xmlString )
+    auto XmlUtil::parseDocument( const String &xmlString ) -> SharedPtr<TiXmlDocument>
     {
         auto doc = fb::make_shared<TiXmlDocument>();
         doc->Parse( xmlString.c_str() );
@@ -77,24 +78,24 @@ namespace fb
         return doc;
     }
 
-    String XmlUtil::getText( TiXmlElement *parent, const String &childName )
+    auto XmlUtil::getText( TiXmlElement *parent, const String &childName ) -> String
     {
         TiXmlElement *element = parent->FirstChildElement( childName.c_str() );
         return getText( element );
     }
 
-    String XmlUtil::getText( TiXmlElement *element )
+    auto XmlUtil::getText( TiXmlElement *element ) -> String
     {
         return ( element && element->GetText() ) ? element->GetText() : "";
     }
 
-    StringW XmlUtil::getTextW( TiXmlElement *parent, const StringW &childName )
+    auto XmlUtil::getTextW( TiXmlElement *parent, const StringW &childName ) -> StringW
     {
         TiXmlElement *element = parent->FirstChildElement( StringUtil::toStringC( childName ).c_str() );
         return getTextW( element );
     }
 
-    StringW XmlUtil::getTextW( TiXmlElement *element )
+    auto XmlUtil::getTextW( TiXmlElement *element ) -> StringW
     {
         return ( element && element->GetText() ) ? StringUtil::toStringW( element->GetText() ) : L"";
     }
@@ -104,10 +105,8 @@ namespace fb
         const auto properties = propertyGroup.getPropertiesAsArray();
 
         // loop though the objects keys
-        for( u32 propertyIdx = 0; propertyIdx < properties.size(); ++propertyIdx )
+        for( const auto &property : properties )
         {
-            const Property &property = properties[propertyIdx];
-
             auto keyNode = new TiXmlElement( property.getName().c_str() );
             curNode->LinkEndChild( keyNode );
 
@@ -144,7 +143,9 @@ namespace fb
     void XmlUtil::loadProperties( Properties &propertyGroup, const TiXmlNode *propertyGroupNode )
     {
         if( !propertyGroupNode )
+        {
             return;
+        }
 
         String propertyType;
         String defaultPropertyType( "string" );
@@ -166,24 +167,34 @@ namespace fb
 
             const TiXmlNode *propertyValueNode = propertyNode->FirstChild();
             if( propertyValueNode )
+            {
                 property.setValue( getString( propertyValueNode->Value() ) );
+            }
 
             const TiXmlElement *propertyElem = propertyNode->ToElement();
             if( propertyElem )
             {
                 propertyType = getString( propertyElem->Attribute( "Type" ) );
                 if( propertyType.length() == 0 )
+                {
                     property.setType( defaultPropertyType );
+                }
                 else
+                {
                     property.setType( propertyType );
+                }
 
                 propertyLabel = getString( propertyElem->Attribute( "label" ) );
                 if( propertyLabel.length() != 0 )
+                {
                     property.setLabel( propertyLabel );
+                }
 
                 propertyIsReadOnly = getString( propertyElem->Attribute( "readOnly" ) );
                 if( propertyIsReadOnly.length() != 0 )
+                {
                     property.setReadOnly( StringUtil::parseBool( propertyIsReadOnly, false ) );
+                }
             }
 
             propertyGroup.addProperty( property );
@@ -191,7 +202,7 @@ namespace fb
         }
     }
 
-    String XmlUtil::getString( const char *pStr )
+    auto XmlUtil::getString( const char *pStr ) -> String
     {
         return pStr ? pStr : "";
     }

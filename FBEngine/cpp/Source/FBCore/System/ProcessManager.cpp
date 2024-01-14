@@ -13,13 +13,9 @@
 
 namespace fb
 {
-    ProcessManager::ProcessManager()
-    {
-    }
+    ProcessManager::ProcessManager() = default;
 
-    ProcessManager::~ProcessManager()
-    {
-    }
+    ProcessManager::~ProcessManager() = default;
 
     void ProcessManager::createProcess( const String &applicationName )
     {
@@ -114,9 +110,9 @@ namespace fb
 #ifdef FB_PLATFORM_WIN32
         StringW argStr;
 
-        for( size_t i = 0; i < args.size(); ++i )
+        for( const auto &arg : args )
         {
-            argStr += args[i] + L" ";
+            argStr += arg + L" ";
         }
 
         SHELLEXECUTEINFOW shExInfo = { 0 };
@@ -146,9 +142,9 @@ namespace fb
 #ifdef FB_PLATFORM_WIN32
         StringW argStr;
 
-        for( size_t i = 0; i < args.size(); ++i )
+        for( const auto &arg : args )
         {
-            argStr += args[i] + L" ";
+            argStr += arg + L" ";
         }
 
         SHELLEXECUTEINFOW shExInfo = { 0 };
@@ -172,12 +168,12 @@ namespace fb
 #endif
     }
 
-    bool ProcessManager::isProcessRunning( const String &processName )
+    auto ProcessManager::isProcessRunning( const String &processName ) -> bool
     {
         return isProcessRunning( StringUtil::toStringW( processName ) );
     }
 
-    bool ProcessManager::isProcessRunning( const StringW &processName )
+    auto ProcessManager::isProcessRunning( const StringW &processName ) -> bool
     {
 #ifdef FB_PLATFORM_WIN32
         bool exists = false;
@@ -204,12 +200,12 @@ namespace fb
 #endif
     }
 
-    bool ProcessManager::terminateProcess( const String &processName )
+    auto ProcessManager::terminateProcess( const String &processName ) -> bool
     {
         return terminateProcess( StringUtil::toStringW( processName ) );
     }
 
-    bool ProcessManager::terminateProcess( const StringW &processName )
+    auto ProcessManager::terminateProcess( const StringW &processName ) -> bool
     {
 #ifdef FB_PLATFORM_WIN32
         bool exists = false;
@@ -237,14 +233,16 @@ namespace fb
 #endif
     }
 
-    bool ProcessManager::internalTerminateProcess( unsigned long dwProcessId, u32 uExitCode )
+    auto ProcessManager::internalTerminateProcess( unsigned long dwProcessId, u32 uExitCode ) -> bool
     {
 #ifdef FB_PLATFORM_WIN32
         DWORD dwDesiredAccess = PROCESS_TERMINATE;
         BOOL bInheritHandle = FALSE;
         HANDLE hProcess = OpenProcess( dwDesiredAccess, bInheritHandle, dwProcessId );
         if( hProcess == nullptr )
+        {
             return false;
+        }
 
         BOOL result = TerminateProcess( hProcess, uExitCode );
 

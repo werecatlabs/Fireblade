@@ -77,6 +77,6 @@ namespace fb
 
         atomic_bool m_visible = true;
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif  // FB_OverlayElementState_H

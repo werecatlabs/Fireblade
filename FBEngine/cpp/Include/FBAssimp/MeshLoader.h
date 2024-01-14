@@ -24,7 +24,7 @@ namespace fb
         MeshLoader();
         ~MeshLoader() override;
 
-        Array<render::IMaterial> createMaterials( const String &meshPath );
+        Array<render::IMaterial> createMaterials( const String &meshPath ) override;
 
         /** @copydoc IMeshLoader::loadActor */
         SmartPtr<scene::IActor> loadActor( SmartPtr<IMeshResource> resource ) override;
@@ -41,23 +41,21 @@ namespace fb
         bool getUseSingleMesh() const override;
         void setUseSingleMesh( bool useSingleMesh ) override;
 
-        bool getQuietMode() const override;
-        void setQuietMode( bool quietMode ) override;
+        bool getQuietMode() const;
+        void setQuietMode( bool quietMode );
 
         SmartPtr<IMeshResource> getMeshResource() const;
         void setMeshResource( SmartPtr<IMeshResource> meshResource );
 
         String getMeshPath() const;
 
-        SmartPtr<fb::scene::IActor> getRootActor() const;
+        SmartPtr<scene::IActor> getRootActor() const;
 
-        void setRootActor( fb::SmartPtr<fb::scene::IActor> rootActor );
+        void setRootActor( SmartPtr<scene::IActor> rootActor );
 
         FB_CLASS_REGISTER_DECL;
 
     protected:
-        void createActor( SmartPtr<ITransformNode> parentNode, SmartPtr<scene::IActor> parentActor );
-
 #if FB_USE_ASSET_IMPORT
         void createMaterials( Array<render::IMaterial> &materials, const aiScene *mScene,
                               const aiNode *pNode, const String &mDir );
@@ -90,6 +88,8 @@ namespace fb
 #endif
 
         SmartPtr<scene::IActor> m_rootActor;
+
+        SmartPtr<scene::MeshResourceDirector> m_director;
 
         Array<SmartPtr<IMesh>> m_meshes;
         bool m_useSingleMesh;

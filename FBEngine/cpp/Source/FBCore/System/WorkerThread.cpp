@@ -1,14 +1,14 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/WorkerThread.h>
 #include <FBCore/Core/LogManager.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/IJobQueue.h>
-#include <FBCore/Interface/System/ISystemManager.h>
+#include <FBCore/Interface/System/ISystemSettings.h>
 #include <FBCore/Interface/System/ITaskManager.h>
-#include <FBCore/Interface/System/ITask.h>
-#include <FBCore/Interface/System/IThreadPool.h>
 #include <FBCore/System/TimerChrono.h>
 #include <thread>
+
+#include "FBCore/Memory/PointerUtil.h"
 
 namespace fb
 {
@@ -19,7 +19,6 @@ namespace fb
     WorkerThread::WorkerThread()
     {
         m_thread = nullptr;
-        //setGarbageCollected( false );
     }
 
     WorkerThread::~WorkerThread()
@@ -76,9 +75,9 @@ namespace fb
     {
         try
         {
-            FB_ASSERT(isAlive());
+            FB_ASSERT( isAlive() );
 
-            auto pApplicationManager = core::IApplicationManager::instance();
+            auto pApplicationManager = core::ApplicationManager::instance();
             auto applicationManager = pApplicationManager.get();
             FB_ASSERT( applicationManager );
 
@@ -102,7 +101,8 @@ namespace fb
 
                     Thread::setCurrentThreadId( m_workerThreadId );
 
-                    while( applicationManager->isRunning() && !applicationManager->getQuit() && getState() != State::Stop )
+                    while( applicationManager->isRunning() && !applicationManager->getQuit() &&
+                           getState() != State::Stop )
                     {
                         setUpdating( true );
 
@@ -112,7 +112,6 @@ namespace fb
                             auto start = timer->now();
 
                             timer->update();
-                            auto dt = timer->getDeltaTime();
 
                             jobQueue->update();
                             taskManager->update();
@@ -172,7 +171,7 @@ namespace fb
         }
     }
 
-    bool WorkerThread::isUpdating() const
+    auto WorkerThread::isUpdating() const -> bool
     {
         return m_isUpdating;
     }
@@ -182,7 +181,7 @@ namespace fb
         m_isUpdating = updating;
     }
 
-    Thread::ThreadId WorkerThread::getThreadId() const
+    auto WorkerThread::getThreadId() const -> Thread::ThreadId
     {
         return m_workerThreadId;
     }
@@ -195,16 +194,9 @@ namespace fb
     void WorkerThread::setTargetFPS( time_interval framesPerSecond )
     {
         m_targetFPS = framesPerSecond;
-
-        auto applicationManager = core::IApplicationManager::instance();
-        FB_ASSERT( applicationManager );
-
-        auto pThreadPool = applicationManager->getThreadPool();
-        auto threadPool = pThreadPool.get();
-        FB_ASSERT( threadPool );
     }
 
-    std::thread *WorkerThread::getThread() const
+    auto WorkerThread::getThread() const -> std::thread *
     {
         return m_thread;
     }
@@ -214,14 +206,14 @@ namespace fb
         m_thread = thread;
     }
 
-    time_interval WorkerThread::getTargetFPS() const
+    auto WorkerThread::getTargetFPS() const -> time_interval
     {
         FB_ASSERT( !Math<time_interval>::equals( m_targetFPS, 0.0 ) );
         FB_ASSERT( Math<time_interval>::isFinite( m_targetFPS ) );
         return m_targetFPS;
     }
 
-    IWorkerThread::State WorkerThread::getState() const
+    auto WorkerThread::getState() const -> IWorkerThread::State
     {
         return m_state;
     }

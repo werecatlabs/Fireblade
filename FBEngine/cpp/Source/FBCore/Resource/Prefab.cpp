@@ -1,123 +1,123 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Resource/Prefab.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Interface/Scene/ISceneManager.h>
+#include <FBCore/Interface/Scene/IScene.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+    FB_CLASS_REGISTER_DERIVED( fb, Prefab, Resource<IPrefab> );
+
+    Prefab::Prefab() = default;
+
+    Prefab::~Prefab()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, Prefab, Resource<IPrefab> );
+        unload( nullptr );
+    }
 
-        Prefab::~Prefab()
+    auto Prefab::createActor() -> SmartPtr<IActor>
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto sceneManager = applicationManager->getSceneManager();
+        FB_ASSERT( sceneManager );
+
+        auto actor = sceneManager->createActor();
+        FB_ASSERT( actor );
+
+        if( actor )
         {
-            unload( nullptr );
-        }
-
-        SmartPtr<IActor> Prefab::createActor()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto sceneManager = applicationManager->getSceneManager();
-            FB_ASSERT( sceneManager );
-
-            auto actor = sceneManager->createActor();
-            FB_ASSERT( actor );
-
-            if( actor )
+            if( m_actor )
             {
-                if( m_actor )
+                auto data = getData();
+                if( !data )
                 {
-                    auto data = getData();
-                    if( !data )
-                    {
-                        data = m_actor->toData();
-                    }
-
-                    actor->fromData( data );
-
-                    FB_ASSERT( actor->getChildrenPtr()->size() == m_actor->getChildrenPtr()->size() );
+                    data = m_actor->toData();
                 }
 
-                return actor;
+                actor->fromData( data );
+
+                FB_ASSERT( actor->getChildrenPtr()->size() == m_actor->getChildrenPtr()->size() );
             }
 
-            return nullptr;
+            return actor;
         }
 
-        SmartPtr<IActor> Prefab::getActor() const
+        return nullptr;
+    }
+
+    auto Prefab::getActor() const -> SmartPtr<IActor>
+    {
+        return m_actor.lock();
+    }
+
+    void Prefab::setActor( SmartPtr<IActor> actor )
+    {
+        m_actor = actor;
+    }
+
+    void Prefab::save()
+    {
+    }
+
+    void Prefab::load( SmartPtr<ISharedObject> data )
+    {
+        setLoadingState( LoadingState::Loaded );
+    }
+
+    void Prefab::unload( SmartPtr<ISharedObject> data )
+    {
+        setLoadingState( LoadingState::Unloading );
+
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto sceneManager = applicationManager->getSceneManager();
+        FB_ASSERT( sceneManager );
+
+        if( auto actor = getActor() )
         {
-            return m_actor.lock();
+            sceneManager->destroyActor( actor );
         }
 
-        void Prefab::setActor( SmartPtr<IActor> actor )
-        {
-            m_actor = actor;
-        }
+        setActor( nullptr );
+        setData( nullptr );
 
-        void Prefab::save()
-        {
-        }
+        setLoadingState( LoadingState::Unloaded );
+    }
 
-        void Prefab::load( SmartPtr<ISharedObject> data )
-        {
-            setLoadingState( LoadingState::Loaded );
-        }
+    auto Prefab::getFileSystemId() const -> hash64
+    {
+        return m_fileId;
+    }
 
-        void Prefab::unload( SmartPtr<ISharedObject> data )
-        {
-            setLoadingState( LoadingState::Unloading );
+    void Prefab::setFileSystemId( hash64 id )
+    {
+        m_fileId = id;
+    }
 
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
+    auto Prefab::getProperties() const -> SmartPtr<Properties>
+    {
+        auto properties = Resource<IPrefab>::getProperties();
+        return properties;
+    }
 
-            auto sceneManager = applicationManager->getSceneManager();
-            FB_ASSERT( sceneManager );
+    void Prefab::setProperties( SmartPtr<Properties> properties )
+    {
+    }
 
-            if( auto actor = getActor() )
-            {
-                sceneManager->destroyActor( actor );
-            }
+    void Prefab::_getObject( void **ppObject ) const
+    {
+        *ppObject = nullptr;
+    }
 
-            setActor( nullptr );
-            setData( nullptr );
+    auto Prefab::getData() const -> SmartPtr<ISharedObject>
+    {
+        return m_data;
+    }
 
-            setLoadingState( LoadingState::Unloaded );
-        }
-
-        hash64 Prefab::getFileSystemId() const
-        {
-            return m_fileId;
-        }
-
-        void Prefab::setFileSystemId( hash64 id )
-        {
-            m_fileId = id;
-        }
-
-        SmartPtr<Properties> Prefab::getProperties() const
-        {
-            auto properties = Resource<IPrefab>::getProperties();
-            return properties;
-        }
-
-        void Prefab::setProperties( SmartPtr<Properties> properties )
-        {
-        }
-
-        void Prefab::_getObject( void **ppObject ) const
-        {
-            *ppObject = nullptr;
-        }
-
-        SmartPtr<ISharedObject> Prefab::getData() const
-        {
-            return m_data;
-        }
-
-        void Prefab::setData( SmartPtr<ISharedObject> data )
-        {
-            m_data = data;
-        }
-    }  // namespace scene
-}  // end namespace fb
+    void Prefab::setData( SmartPtr<ISharedObject> data )
+    {
+        m_data = data;
+    }
+}  // namespace fb::scene

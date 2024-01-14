@@ -4,8 +4,6 @@
 namespace fb
 {
 
-    CAnimationPoseKeyFrame::CAnimationPoseKeyFrame()
-    {
-    }
+    CAnimationPoseKeyFrame::CAnimationPoseKeyFrame() = default;
 
 }  // end namespace fb

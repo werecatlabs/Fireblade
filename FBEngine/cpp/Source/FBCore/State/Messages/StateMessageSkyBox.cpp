@@ -7,7 +7,7 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageSkyBox, StateMessage );
 
-    SmartPtr<render::IMaterial> StateMessageSkyBox::getMaterial() const
+    auto StateMessageSkyBox::getMaterial() const -> SmartPtr<render::IMaterial>
     {
         return m_material;
     }
@@ -17,7 +17,7 @@ namespace fb
         m_material = material;
     }
 
-    String StateMessageSkyBox::getMaterialName() const
+    auto StateMessageSkyBox::getMaterialName() const -> String
     {
         return m_materialName;
     }
@@ -27,7 +27,7 @@ namespace fb
         m_materialName = materialName;
     }
 
-    f32 StateMessageSkyBox::getDistance() const
+    auto StateMessageSkyBox::getDistance() const -> f32
     {
         return m_distance;
     }
@@ -37,7 +37,7 @@ namespace fb
         m_distance = val;
     }
 
-    bool StateMessageSkyBox::getEnable() const
+    auto StateMessageSkyBox::getEnable() const -> bool
     {
         return m_enable;
     }
@@ -47,7 +47,7 @@ namespace fb
         m_enable = val;
     }
 
-    bool StateMessageSkyBox::getDrawFirst() const
+    auto StateMessageSkyBox::getDrawFirst() const -> bool
     {
         return m_drawFirst;
     }

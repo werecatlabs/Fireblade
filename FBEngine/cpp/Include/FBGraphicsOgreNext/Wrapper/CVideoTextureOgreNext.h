@@ -3,8 +3,7 @@
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
 #include <FBCore/Interface/Video/IVideoTexture.h>
-#include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Graphics/CResourceGraphics.h>
+#include <FBCore/Graphics/ResourceGraphics.h>
 //#include <OgreTexture.h>
 
 namespace fb
@@ -12,7 +11,7 @@ namespace fb
     namespace render
     {
         
-        class CVideoTextureOgreNext : public CResourceGraphics<IVideoTexture>
+        class CVideoTextureOgreNext : public ResourceGraphics<IVideoTexture>
         {
         public:
             CVideoTextureOgreNext();

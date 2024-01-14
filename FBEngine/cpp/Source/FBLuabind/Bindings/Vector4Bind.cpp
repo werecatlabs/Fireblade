@@ -32,8 +32,7 @@ namespace fb
                         .def( self + other<Vector4I>() )
                         .def( self - other<Vector4I>() )
                         .def( self * other<Vector4I>() )
-                        .def( self * f32() )
-                        .def( tostring( self ) )];
+                        .def( self * f32() )];
 
         module( L )[class_<Vector4F>( "Vector4F" )
                         .def( constructor<>() )
@@ -56,8 +55,7 @@ namespace fb
                         .def( self + other<Vector4F>() )
                         .def( self - other<Vector4F>() )
                         .def( self * other<Vector4F>() )
-                        .def( self * f32() )
-                        .def( tostring( self ) )];
+                        .def( self * f32() )];
 
         module( L )[class_<Vector4D>( "Vector4D" )
                         .def( constructor<>() )
@@ -78,8 +76,7 @@ namespace fb
                         .def( self + other<Vector4D>() )
                         .def( self - other<Vector4D>() )
                         .def( self * other<Vector4D>() )
-                        .def( self * f64() )
-                        .def( tostring( self ) )];
+                        .def( self * f64() )];
 
         LUA_CONST_START( Vector4I )
         LUA_CONST( Vector4I, ZERO );

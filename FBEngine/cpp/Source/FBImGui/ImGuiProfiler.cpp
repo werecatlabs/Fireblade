@@ -2,16 +2,9 @@
 #include <FBImGui/ImGuiProfiler.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
-    {
-        ImGuiProfiler::ImGuiProfiler()
-        {
-        }
+    ImGuiProfiler::ImGuiProfiler() = default;
 
-        ImGuiProfiler::~ImGuiProfiler()
-        {
-        }
-    } // end namespace ui
-}     // end namespace fb
+    ImGuiProfiler::~ImGuiProfiler() = default;
+}  // namespace fb::ui

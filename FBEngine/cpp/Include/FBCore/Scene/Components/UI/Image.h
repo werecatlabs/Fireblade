@@ -18,26 +18,19 @@ namespace fb
         class Image : public UIComponent
         {
         public:
+            static const String TextureStr;
+
             /** Constructor. */
             Image();
 
             /** Destructor. */
             ~Image() override;
 
-            /** @copydoc IObject::load */
+            /** @copydoc UIComponent::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::unload */
+            /** @copydoc UIComponent::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
-
-            /** @copydoc IComponent::updateDirty */
-            void updateDirty( u32 flags, u32 oldFlags ) override;
-
-            /** @copydoc IComponent::parentChanged */
-            void parentChanged( SmartPtr<IActor> newParent, SmartPtr<IActor> oldParent ) override;
-
-            /** @copydoc IComponent::hierarchyChanged */
-            void hierarchyChanged() override;
 
             /** @copydoc UIComponent::updateMaterials */
             void updateMaterials() override;
@@ -51,9 +44,6 @@ namespace fb
             /** @copydoc IObject::isValid */
             bool isValid() const override;
 
-            /** @copydoc IObject::getChildObjects */
-            Array<SmartPtr<ISharedObject>> getChildObjects() const override;
-
             SmartPtr<ui::IUIImage> getImage() const;
             void setImage( SmartPtr<ui::IUIImage> image );
 
@@ -66,11 +56,8 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            /** @copydoc UIComponent::handleComponentEvent */
-            IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType ) override;
-
             /** Creates the image. */
-            void createImage();
+            void createUI() override;
 
             /** Sets up the material. */
             void setupMaterial();

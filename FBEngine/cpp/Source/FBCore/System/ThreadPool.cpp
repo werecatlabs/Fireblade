@@ -3,7 +3,8 @@
 #include <FBCore/Core/BitUtil.h>
 #include <FBCore/Core/Exception.h>
 #include <FBCore/Core/LogManager.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
+#include <FBCore/System/WorkerThread.h>
 #include <FBCore/Interface/FSM/IFSM.h>
 #include <FBCore/Interface/FSM/IFSMManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
@@ -23,7 +24,10 @@ namespace fb
 
     ThreadPool::ThreadPool()
     {
-        //setGarbageCollected( false );
+        if( auto handle = getHandle() )
+        {
+            handle->setName( "ThreadPool" );
+        }
     }
 
     ThreadPool::~ThreadPool()
@@ -37,7 +41,7 @@ namespace fb
         {
             setLoadingState( LoadingState::Loading );
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto factoryManager = applicationManager->getFactoryManager();
@@ -55,13 +59,13 @@ namespace fb
             m_fsmListener = fsmListener;
             m_fsm = fsm;
 
-            for( size_t i = 0; i < m_workerThreads.size(); ++i )
+            for( auto &m_workerThread : m_workerThreads )
             {
                 auto workerThread = factoryManager->make_object<IWorkerThread>();
                 FB_ASSERT( workerThread );
 
                 workerThread->load( data );
-                m_workerThreads[i] = workerThread;
+                m_workerThread = workerThread;
             }
 
             setLoadingState( LoadingState::Loaded );
@@ -80,7 +84,7 @@ namespace fb
             {
                 setLoadingState( LoadingState::Unloading );
 
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto fsmManager = applicationManager->getFsmManager();
@@ -114,24 +118,27 @@ namespace fb
         }
     }
 
-    SmartPtr<IWorkerThread> ThreadPool::addWorkerThread()
+    auto ThreadPool::addWorkerThread() -> SmartPtr<IWorkerThread>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();
-        FB_ASSERT( factoryManager );
+        if( factoryManager )
+        {
+            auto workerThread = factoryManager->make_object<IWorkerThread>();
+            FB_ASSERT( workerThread );
 
-        auto workerThread = factoryManager->make_object<IWorkerThread>();
-        FB_ASSERT( workerThread );
+            m_workerThreads.push_back( workerThread );
+            ++m_numThreads;
 
-        m_workerThreads.push_back( workerThread );
-        ++m_numThreads;
+            return workerThread;
+        }
 
-        return workerThread;
+        return nullptr;
     }
 
-    SmartPtr<IWorkerThread> ThreadPool::getThread( u32 index )
+    auto ThreadPool::getThread( u32 index ) -> SmartPtr<IWorkerThread>
     {
         if( isLoaded() )
         {
@@ -141,7 +148,7 @@ namespace fb
         return nullptr;
     }
 
-    u32 ThreadPool::getNumThreads() const
+    auto ThreadPool::getNumThreads() const -> u32
     {
         return m_numThreads;
     }
@@ -159,7 +166,7 @@ namespace fb
         m_reserveFlags.resize( numThreads );
     }
 
-    IThreadPool::State ThreadPool::getState() const
+    auto ThreadPool::getState() const -> IThreadPool::State
     {
         if( auto fsm = getFSM() )
         {
@@ -189,7 +196,7 @@ namespace fb
         }
     }
 
-    bool ThreadPool::isValid() const
+    auto ThreadPool::isValid() const -> bool
     {
         const auto &loadingState = getLoadingState();
 
@@ -210,7 +217,7 @@ namespace fb
         return true;
     }
 
-    SmartPtr<IFSM> ThreadPool::getFSM() const
+    auto ThreadPool::getFSM() const -> SmartPtr<IFSM>
     {
         return m_fsm;
     }
@@ -220,7 +227,7 @@ namespace fb
         m_fsm = fsm;
     }
 
-    SmartPtr<IFSMListener> ThreadPool::getFSMListener() const
+    auto ThreadPool::getFSMListener() const -> SmartPtr<IFSMListener>
     {
         return m_fsmListener;
     }
@@ -230,7 +237,7 @@ namespace fb
         m_fsmListener = listener;
     }
 
-    IFSM::ReturnType ThreadPool::handleEvent( u32 state, IFSM::Event eventType )
+    auto ThreadPool::handleEvent( u32 state, IFSM::Event eventType ) -> IFSM::ReturnType
     {
         switch( eventType )
         {
@@ -303,7 +310,8 @@ namespace fb
         return IFSM::ReturnType::Ok;
     }
 
-    IFSM::ReturnType ThreadPool::ThreadPoolFSMListener::handleEvent( u32 state, IFSM::Event eventType )
+    auto ThreadPool::ThreadPoolFSMListener::handleEvent( u32 state, IFSM::Event eventType )
+        -> IFSM::ReturnType
     {
         if( auto owner = getOwner() )
         {
@@ -316,7 +324,7 @@ namespace fb
         return IFSM::ReturnType::NotLoaded;
     }
 
-    ThreadPool *ThreadPool::ThreadPoolFSMListener::getOwner() const
+    auto ThreadPool::ThreadPoolFSMListener::getOwner() const -> ThreadPool *
     {
         return m_owner;
     }

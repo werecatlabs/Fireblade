@@ -9,396 +9,408 @@
 #include <list>
 #include <fstream>
 
-namespace fb
+namespace fb::physics
 {
-    namespace physics
+    PhysxCooker::PhysxCooker()
     {
-        PhysxCooker::PhysxCooker( void )
+        mOgreResourceGroup = "General";
+    }
+
+    PhysxCooker::~PhysxCooker() = default;
+
+    void PhysxCooker::setOgreResourceGroup( String group )
+    {
+        mOgreResourceGroup = group;
+    }
+
+    auto PhysxCooker::hasPxMesh( String PxsFile ) -> bool
+    {
+        // auto engine = core::ApplicationManager::instance();
+        // SmartPtr<IFileSystem> fileSystem = engine->getFileSystem();
+        // return fileSystem->isExistingFile(PxsFile);
+
+        return false;
+    }
+
+    auto PhysxCooker::loadPxTriangleMeshFromFile( String pxsFile ) -> PxTriangleMesh *
+    {
+        if( !hasPxMesh( pxsFile ) )
         {
-            mOgreResourceGroup = "General";
+            // throw exception
+            return nullptr;
         }
 
-        PhysxCooker::~PhysxCooker( void )
-        {
-        }
+        // auto engine = core::ApplicationManager::instance();
+        // SmartPtr<IFileSystem> fileSystem = engine->getFileSystem();
+        // SmartPtr<IStream> ds = fileSystem->open(pxsFile);
+        //
+        // SmartPtr<IPhysicsManager3> pPhysicsManager = engine->getPhysicsManager3();
+        // SmartPtr<PhysxManager> physicsManager =
+        // fb::static_pointer_cast<PhysxManager>(pPhysicsManager);
+        return nullptr;  // physxMgr->getPhysics()->createTriangleMesh(OgrePxStream(ds));
+    }
 
-        void PhysxCooker::setOgreResourceGroup( String group )
-        {
-            mOgreResourceGroup = group;
-        }
+    void PhysxCooker::getMeshInfo( SmartPtr<IMesh> mesh, Params params, MeshInfo &outInfo )
+    {
+        // First, we compute the total number of vertices and indices and init the buffers.
+        unsigned int numVertices = 0;
+        unsigned int numIndices = 0;
 
-        bool PhysxCooker::hasPxMesh( String PxsFile )
-        {
-            // auto engine = core::IApplicationManager::instance();
-            // SmartPtr<IFileSystem> fileSystem = engine->getFileSystem();
-            // return fileSystem->isExistingFile(PxsFile);
+        String name = mesh->getName();
 
-            return false;
-        }
+        // VertexData* vertexData = mesh->getSharedVertexData();
+        // if (vertexData)
+        //	numVertices += vertexData->vertexCount;
 
-        PxTriangleMesh *PhysxCooker::loadPxTriangleMeshFromFile( String pxsFile )
+        bool indices32 = true;
+
+        Array<SmartPtr<ISubMesh>> subMeshes = mesh->getSubMeshes();
+
+        for( auto subMesh : subMeshes )
         {
-            if(!hasPxMesh( pxsFile ))
+            SmartPtr<IVertexBuffer> vertexBuffer = subMesh->getVertexBuffer();
+
+            if( vertexBuffer )
             {
-                // throw exception
-                return nullptr;
+                numVertices += vertexBuffer->getNumVertices();
             }
 
-            // auto engine = core::IApplicationManager::instance();
-            // SmartPtr<IFileSystem> fileSystem = engine->getFileSystem();
-            // SmartPtr<IStream> ds = fileSystem->open(pxsFile);
-            //
-            // SmartPtr<IPhysicsManager3> pPhysicsManager = engine->getPhysicsManager3();
-            // SmartPtr<PhysxManager> physicsManager =
-            // fb::static_pointer_cast<PhysxManager>(pPhysicsManager);
-            return nullptr; // physxMgr->getPhysics()->createTriangleMesh(OgrePxStream(ds));
-        }
+            SmartPtr<IIndexBuffer> indexBuffer = subMesh->getIndexBuffer();
 
-        void PhysxCooker::getMeshInfo( SmartPtr<IMesh> mesh, Params params, MeshInfo &outInfo )
-        {
-            // First, we compute the total number of vertices and indices and init the buffers.
-            unsigned int numVertices = 0;
-            unsigned int numIndices = 0;
-
-            String name = mesh->getName();
-
-            // VertexData* vertexData = mesh->getSharedVertexData();
-            // if (vertexData)
-            //	numVertices += vertexData->vertexCount;
-
-            bool indices32 = true;
-
-            Array<SmartPtr<ISubMesh>> subMeshes = mesh->getSubMeshes();
-
-            for(u32 i = 0; i < subMeshes.size(); ++i)
+            if( params.mAddBackfaces )
             {
-                SmartPtr<ISubMesh> subMesh = subMeshes[i];
-                SmartPtr<IVertexBuffer> vertexBuffer = subMesh->getVertexBuffer();
-
-                if(vertexBuffer)
-                    numVertices += vertexBuffer->getNumVerticies();
-
-                SmartPtr<IIndexBuffer> indexBuffer = subMesh->getIndexBuffer();
-
-                if(params.mAddBackfaces)
-                    numIndices += indexBuffer->getNumIndices() * 2;
-                else
-                    numIndices += indexBuffer->getNumIndices();
-
-                // We assume that every submesh uses the same index format
-                indices32 = ( indexBuffer->getIndexType() == IndexBuffer::Type::IT_32BIT );
+                numIndices += indexBuffer->getNumIndices() * 2;
+            }
+            else
+            {
+                numIndices += indexBuffer->getNumIndices();
             }
 
-            outInfo.vertices.resize( numVertices );
-            outInfo.indices.resize( numIndices );
-            outInfo.materials.resize( numIndices / 3 );
+            // We assume that every submesh uses the same index format
+            indices32 = ( indexBuffer->getIndexType() == IndexBuffer::Type::IT_32BIT );
+        }
 
-            unsigned int addedVertices = 0;
-            unsigned int addedIndices = 0;
-            unsigned int addedMaterialIndices = 0;
+        outInfo.vertices.resize( numVertices );
+        outInfo.indices.resize( numIndices );
+        outInfo.materials.resize( numIndices / 3 );
 
-            /*
-            Read shared vertices
-            */
-            // unsigned int shared_index_offset = 0;
-            // Ogre::VertexData *shared_vertex_data = mesh->sharedVertexData;
-            // if (shared_vertex_data)
-            //{
-            //	const Ogre::VertexElement* posElem =
-            //		shared_vertex_data->vertexDeclaration->findElementBySemantic(Ogre::VES_POSITION);
-            //	Ogre::HardwareVertexBufferSharedPtr vbuf =
-            //		shared_vertex_data->vertexBufferBinding->getBuffer(posElem->getSource());
+        unsigned int addedVertices = 0;
+        unsigned int addedIndices = 0;
+        unsigned int addedMaterialIndices = 0;
 
-            //	shared_index_offset = shared_vertex_data->vertexCount;
+        /*
+        Read shared vertices
+        */
+        // unsigned int shared_index_offset = 0;
+        // Ogre::VertexData *shared_vertex_data = mesh->sharedVertexData;
+        // if (shared_vertex_data)
+        //{
+        //	const Ogre::VertexElement* posElem =
+        //		shared_vertex_data->vertexDeclaration->findElementBySemantic(Ogre::VES_POSITION);
+        //	Ogre::HardwareVertexBufferSharedPtr vbuf =
+        //		shared_vertex_data->vertexBufferBinding->getBuffer(posElem->getSource());
 
-            //	unsigned char* pVertices = static_cast<unsigned
-            // char*>(vbuf->lock(Ogre::HardwareBuffer::HBL_READ_ONLY)); 	Ogre::Real* pReal; 	for (size_t
-            // i = addedVertices; i < shared_vertex_data->vertexCount; i++)
-            //	{
-            //		posElem->baseVertexPointerToElement(pVertices, &pReal);
-            //		Vector3F vec;
-            //		vec.x = (*pReal++) * params.mScale.x;
-            //		vec.y = (*pReal++) * params.mScale.y;
-            //		vec.z = (*pReal++) * params.mScale.z;
-            //		outInfo.vertices[i] = vec;
-            //		pVertices += vbuf->getVertexSize();
-            //	}
-            //	vbuf->unlock();
-            //	addedVertices += shared_vertex_data->vertexCount;
+        //	shared_index_offset = shared_vertex_data->vertexCount;
 
-            //}
+        //	unsigned char* pVertices = static_cast<unsigned
+        // char*>(vbuf->lock(Ogre::HardwareBuffer::HBL_READ_ONLY)); 	Ogre::Real* pReal; 	for (size_t
+        // i = addedVertices; i < shared_vertex_data->vertexCount; i++)
+        //	{
+        //		posElem->baseVertexPointerToElement(pVertices, &pReal);
+        //		Vector3F vec;
+        //		vec.x = (*pReal++) * params.mScale.x;
+        //		vec.y = (*pReal++) * params.mScale.y;
+        //		vec.z = (*pReal++) * params.mScale.z;
+        //		outInfo.vertices[i] = vec;
+        //		pVertices += vbuf->getVertexSize();
+        //	}
+        //	vbuf->unlock();
+        //	addedVertices += shared_vertex_data->vertexCount;
 
-            unsigned int index_offset = 0;
+        //}
 
-            /*
-            Read submeshes
-            */
-            for(u32 subMeshIdx = 0; subMeshIdx < subMeshes.size(); ++subMeshIdx)
+        unsigned int index_offset = 0;
+
+        /*
+        Read submeshes
+        */
+        for( auto subMesh : subMeshes )
+        {
+            SmartPtr<IVertexBuffer> vertexBuffer = subMesh->getVertexBuffer();
+
+            // Read vertex data
+            if( vertexBuffer )
             {
-                SmartPtr<ISubMesh> subMesh = subMeshes[subMeshIdx];
+                const SmartPtr<IVertexElement> posElem =
+                    vertexBuffer->getVertexDeclaration()->findElementBySemantic(
+                        VertexDeclaration::VertexElementSemantic::VES_POSITION );
 
-                SmartPtr<IVertexBuffer> vertexBuffer = subMesh->getVertexBuffer();
-
-                // Read vertex data
-                if(vertexBuffer)
+                auto pVertices = static_cast<unsigned char *>( vertexBuffer->getVertexData() );
+                f32 *pReal;
+                for( size_t i = addedVertices; i < addedVertices + vertexBuffer->getNumVertices(); i++ )
                 {
-                    const SmartPtr<IVertexElement> posElem =
-                        vertexBuffer->getVertexDeclaration()->findElementBySemantic(
-                            VertexDeclaration::VertexElementSemantic::VES_POSITION );
+                    posElem->getElementData( pVertices, &pReal );
 
-                    auto pVertices =
-                        static_cast<unsigned char *>(vertexBuffer->getVertexData());
-                    f32 *pReal;
-                    for(size_t i = addedVertices; i < addedVertices + vertexBuffer->getNumVerticies();
-                        i++)
-                    {
-                        posElem->getElementData( pVertices, &pReal );
+                    Vector3F vec;
+                    vec[0] = ( *pReal++ ) * params.mScale[0];
+                    vec[1] = ( *pReal++ ) * params.mScale[1];
+                    vec[2] = ( *pReal++ ) * params.mScale[2];
+                    outInfo.vertices[i] = vec;
 
-                        Vector3F vec;
-                        vec[0] = ( *pReal++ ) * params.mScale[0];
-                        vec[1] = ( *pReal++ ) * params.mScale[1];
-                        vec[2] = ( *pReal++ ) * params.mScale[2];
-                        outInfo.vertices[i] = vec;
-
-                        pVertices += vertexBuffer->getVertexDeclaration()->getSize();
-                    }
-
-                    addedVertices += vertexBuffer->getNumVerticies();
+                    pVertices += vertexBuffer->getVertexDeclaration()->getSize();
                 }
 
-                // Read index data
-                SmartPtr<IIndexBuffer> index_data = subMesh->getIndexBuffer();
-                if(index_data)
+                addedVertices += vertexBuffer->getNumVertices();
+            }
+
+            // Read index data
+            SmartPtr<IIndexBuffer> index_data = subMesh->getIndexBuffer();
+            if( index_data )
+            {
+                PxU32 *pIndices = nullptr;
+                if( indices32 )
                 {
-                    PxU32 *pIndices = nullptr;
-                    if(indices32)
+                    pIndices = static_cast<PxU32 *>( index_data->getIndexData() );
+                }
+                else
+                {
+                    auto pShortIndices = static_cast<PxU16 *>( index_data->getIndexData() );
+                    pIndices = new PxU32[index_data->getNumIndices()];
+
+                    for( size_t k = 0; k < index_data->getNumIndices(); k++ )
                     {
-                        pIndices = static_cast<PxU32 *>(index_data->getIndexData());
+                        pIndices[k] = static_cast<PxU32>( pShortIndices[k] );
                     }
-                    else
+                }
+
+                int shared_index_offset = 0;
+
+                unsigned int bufferIndex = 0;
+                if( params.mAddBackfaces )
+                {
+                    size_t numTris = index_data->getNumIndices() / 3;
+                    size_t i = addedIndices;
+
+                    for( unsigned int x = 0; x < numTris; x++ )
                     {
-                        auto pShortIndices = static_cast<PxU16 *>(index_data->getIndexData());
-                        pIndices = new PxU32[index_data->getNumIndices()];
-
-                        for(size_t k = 0; k < index_data->getNumIndices(); k++)
+                        if( subMesh->getUseSharedVertices() )
                         {
-                            pIndices[k] = static_cast<PxU32>(pShortIndices[k]);
-                        }
-                    }
-
-                    int shared_index_offset = 0;
-
-                    unsigned int bufferIndex = 0;
-                    if(params.mAddBackfaces)
-                    {
-                        size_t numTris = index_data->getNumIndices() / 3;
-                        size_t i = addedIndices;
-
-                        for(unsigned int x = 0; x < numTris; x++)
-                        {
-                            if(subMesh->getUseSharedVertices())
+                            if( pIndices[bufferIndex] > static_cast<u32>( shared_index_offset ) )
                             {
-                                if(pIndices[bufferIndex] > static_cast<u32>(shared_index_offset))
-                                {
-                                    outInfo.indices[i] = pIndices[bufferIndex] + index_offset;
-                                }
-                                else
-                                {
-                                    outInfo.indices[i] = pIndices[bufferIndex];
-                                }
-
-                                bufferIndex++;
-
-                                if(pIndices[bufferIndex] > static_cast<u32>(shared_index_offset))
-                                {
-                                    outInfo.indices[i + 1] = pIndices[bufferIndex] + index_offset;
-                                }
-                                else
-                                {
-                                    outInfo.indices[i + 1] = pIndices[bufferIndex];
-                                }
-
-                                bufferIndex++;
-
-                                if(pIndices[bufferIndex] > static_cast<u32>(shared_index_offset))
-                                {
-                                    outInfo.indices[i + 2] = pIndices[bufferIndex] + index_offset;
-                                }
-                                else
-                                {
-                                    outInfo.indices[i + 2] = pIndices[bufferIndex];
-                                }
-
-                                bufferIndex++;
+                                outInfo.indices[i] = pIndices[bufferIndex] + index_offset;
                             }
                             else
                             {
-                                outInfo.indices[i] = pIndices[bufferIndex] + index_offset;
-                                bufferIndex++;
+                                outInfo.indices[i] = pIndices[bufferIndex];
+                            }
+
+                            bufferIndex++;
+
+                            if( pIndices[bufferIndex] > static_cast<u32>( shared_index_offset ) )
+                            {
                                 outInfo.indices[i + 1] = pIndices[bufferIndex] + index_offset;
-                                bufferIndex++;
-                                outInfo.indices[i + 2] = pIndices[bufferIndex] + index_offset;
-                                bufferIndex++;
-                            }
-
-                            outInfo.indices[i + 3] = outInfo.indices[i + 2];
-                            outInfo.indices[i + 4] = outInfo.indices[i + 1];
-                            outInfo.indices[i + 5] = outInfo.indices[i];
-                            i += 6;
-                        }
-
-                        addedIndices += index_data->getNumIndices() * 2;
-                    }
-                    else
-                    {
-                        for(size_t i = addedIndices; i < addedIndices + index_data->getNumIndices();
-                            i++)
-                        {
-                            if(subMesh->getUseSharedVertices())
-                            {
-                                if(pIndices[bufferIndex] > static_cast<u32>(shared_index_offset))
-                                {
-                                    outInfo.indices[i] = pIndices[bufferIndex] + index_offset;
-                                }
-                                else
-                                {
-                                    outInfo.indices[i] = pIndices[bufferIndex];
-                                }
                             }
                             else
                             {
-                                outInfo.indices[i] = pIndices[bufferIndex] + index_offset;
+                                outInfo.indices[i + 1] = pIndices[bufferIndex];
+                            }
+
+                            bufferIndex++;
+
+                            if( pIndices[bufferIndex] > static_cast<u32>( shared_index_offset ) )
+                            {
+                                outInfo.indices[i + 2] = pIndices[bufferIndex] + index_offset;
+                            }
+                            else
+                            {
+                                outInfo.indices[i + 2] = pIndices[bufferIndex];
                             }
 
                             bufferIndex++;
                         }
-                        addedIndices += index_data->getNumIndices();
+                        else
+                        {
+                            outInfo.indices[i] = pIndices[bufferIndex] + index_offset;
+                            bufferIndex++;
+                            outInfo.indices[i + 1] = pIndices[bufferIndex] + index_offset;
+                            bufferIndex++;
+                            outInfo.indices[i + 2] = pIndices[bufferIndex] + index_offset;
+                            bufferIndex++;
+                        }
+
+                        outInfo.indices[i + 3] = outInfo.indices[i + 2];
+                        outInfo.indices[i + 4] = outInfo.indices[i + 1];
+                        outInfo.indices[i + 5] = outInfo.indices[i];
+                        i += 6;
                     }
 
-                    if(!indices32)
-                        delete[] pIndices;
-
-                    // All triangles of a submesh have the same material
-                    unsigned int numTris = index_data->getNumIndices() / 3;
-
-                    if(params.mAddBackfaces)
-                        numTris *= 2;
-
-                    for(size_t i = addedMaterialIndices; i < addedMaterialIndices + numTris; ++i)
-                        outInfo.materials[i] = subMesh->getMaterialName();
-
-                    addedMaterialIndices += numTris;
-                }
-
-                if(vertexBuffer)
-                    index_offset += vertexBuffer->getNumVerticies();
-            }
-        }
-
-        struct OctreeNode
-        {
-            OctreeNode()
-            {
-                vPos.X() = 0.0f;
-                vPos.Y() = 0.0f;
-                vPos.Z() = 0.0f;
-                aSubNodes[0] = nullptr;
-                aSubNodes[1] = nullptr;
-                aSubNodes[2] = nullptr;
-                aSubNodes[3] = nullptr;
-                aSubNodes[4] = nullptr;
-                aSubNodes[5] = nullptr;
-                aSubNodes[6] = nullptr;
-                aSubNodes[7] = nullptr;
-            }
-
-            Vector3F vPos;
-            OctreeNode *aSubNodes[8];
-            std::list<int> liIndices;
-        };
-
-        struct STri
-        {
-            STri()
-            {
-                i1 = -1;
-                i2 = -1;
-                i3 = -1;
-            }
-
-            STri( int iIndex1, int iIndex2, int iIndex3, String material, bool bSort = true )
-            {
-                if(!bSort)
-                {
-                    i1 = iIndex1;
-                    i2 = iIndex2;
-                    i3 = iIndex3;
-                    return;
-                }
-                // rotate indices
-                if(iIndex2 < iIndex1)
-                {
-                    if(iIndex3 < iIndex2)
-                    {
-                        // index 3 is the smallest
-                        i1 = iIndex3;
-                        i2 = iIndex1;
-                        i3 = iIndex2;
-                    }
-                    else
-                    {
-                        i1 = iIndex2;
-                        i2 = iIndex3;
-                        i3 = iIndex1;
-                    }
+                    addedIndices += index_data->getNumIndices() * 2;
                 }
                 else
                 {
-                    i1 = iIndex1;
-                    i2 = iIndex2;
-                    i3 = iIndex3;
+                    for( size_t i = addedIndices; i < addedIndices + index_data->getNumIndices(); i++ )
+                    {
+                        if( subMesh->getUseSharedVertices() )
+                        {
+                            if( pIndices[bufferIndex] > static_cast<u32>( shared_index_offset ) )
+                            {
+                                outInfo.indices[i] = pIndices[bufferIndex] + index_offset;
+                            }
+                            else
+                            {
+                                outInfo.indices[i] = pIndices[bufferIndex];
+                            }
+                        }
+                        else
+                        {
+                            outInfo.indices[i] = pIndices[bufferIndex] + index_offset;
+                        }
+
+                        bufferIndex++;
+                    }
+                    addedIndices += index_data->getNumIndices();
                 }
-                mat = material;
-            }
 
-            bool operator!=( STri &op )
-            {
-                if(op.i1 != i1 || op.i2 != i2 || op.i3 != i3)
-                    return true;
-                return false;
-            }
-
-            bool operator<( STri &op )
-            {
-                if(op.i1 != i1)
-                    return i1 < op.i1;
-                if(op.i2 != i2)
-                    return i2 < op.i2;
-                return i3 < op.i3;
-            }
-
-            int i1, i2, i3;
-            String mat;
-        };
-
-        // returns current vertex count
-        int ExtractOctree( OctreeNode *pNode, int iVertexCount, int *aiIndexTable,
-                           Vector3F *aNewVertices )
-        {
-            for(std::list<int>::const_iterator it = pNode->liIndices.begin();
-                it != pNode->liIndices.end(); ++it)
-                aiIndexTable[*it] = iVertexCount;
-            aNewVertices[iVertexCount++] = pNode->vPos;
-            for(int iSubNode = 0; iSubNode < 8; iSubNode++)
-                if(pNode->aSubNodes[iSubNode])
+                if( !indices32 )
                 {
-                    iVertexCount = ExtractOctree( pNode->aSubNodes[iSubNode], iVertexCount, aiIndexTable,
-                                                  aNewVertices );
-                    delete pNode->aSubNodes[iSubNode];
-                    pNode->aSubNodes[iSubNode] = nullptr;
+                    delete[] pIndices;
                 }
-            return iVertexCount;
+
+                // All triangles of a submesh have the same material
+                unsigned int numTris = index_data->getNumIndices() / 3;
+
+                if( params.mAddBackfaces )
+                {
+                    numTris *= 2;
+                }
+
+                for( size_t i = addedMaterialIndices; i < addedMaterialIndices + numTris; ++i )
+                {
+                    outInfo.materials[i] = subMesh->getMaterialName();
+                }
+
+                addedMaterialIndices += numTris;
+            }
+
+            if( vertexBuffer )
+            {
+                index_offset += vertexBuffer->getNumVertices();
+            }
         }
+    }
+
+    struct OctreeNode
+    {
+        OctreeNode()
+        {
+            vPos.X() = 0.0f;
+            vPos.Y() = 0.0f;
+            vPos.Z() = 0.0f;
+            aSubNodes[0] = nullptr;
+            aSubNodes[1] = nullptr;
+            aSubNodes[2] = nullptr;
+            aSubNodes[3] = nullptr;
+            aSubNodes[4] = nullptr;
+            aSubNodes[5] = nullptr;
+            aSubNodes[6] = nullptr;
+            aSubNodes[7] = nullptr;
+        }
+
+        Vector3F vPos;
+        OctreeNode *aSubNodes[8];
+        std::list<int> liIndices;
+    };
+
+    struct STri
+    {
+        STri()
+        {
+            i1 = -1;
+            i2 = -1;
+            i3 = -1;
+        }
+
+        STri( int iIndex1, int iIndex2, int iIndex3, String material, bool bSort = true )
+        {
+            if( !bSort )
+            {
+                i1 = iIndex1;
+                i2 = iIndex2;
+                i3 = iIndex3;
+                return;
+            }
+            // rotate indices
+            if( iIndex2 < iIndex1 )
+            {
+                if( iIndex3 < iIndex2 )
+                {
+                    // index 3 is the smallest
+                    i1 = iIndex3;
+                    i2 = iIndex1;
+                    i3 = iIndex2;
+                }
+                else
+                {
+                    i1 = iIndex2;
+                    i2 = iIndex3;
+                    i3 = iIndex1;
+                }
+            }
+            else
+            {
+                i1 = iIndex1;
+                i2 = iIndex2;
+                i3 = iIndex3;
+            }
+            mat = material;
+        }
+
+        auto operator!=( STri &op ) -> bool
+        {
+            if( op.i1 != i1 || op.i2 != i2 || op.i3 != i3 )
+            {
+                return true;
+            }
+            return false;
+        }
+
+        auto operator<( STri &op ) -> bool
+        {
+            if( op.i1 != i1 )
+            {
+                return i1 < op.i1;
+            }
+            if( op.i2 != i2 )
+            {
+                return i2 < op.i2;
+            }
+            return i3 < op.i3;
+        }
+
+        int i1, i2, i3;
+        String mat;
+    };
+
+    // returns current vertex count
+    auto ExtractOctree( OctreeNode *pNode, int iVertexCount, int *aiIndexTable, Vector3F *aNewVertices )
+        -> int
+    {
+        for( int liIndice : pNode->liIndices )
+        {
+            aiIndexTable[liIndice] = iVertexCount;
+        }
+        aNewVertices[iVertexCount++] = pNode->vPos;
+        for( auto &aSubNode : pNode->aSubNodes )
+        {
+            if( aSubNode )
+            {
+                iVertexCount = ExtractOctree( aSubNode, iVertexCount, aiIndexTable, aNewVertices );
+                delete aSubNode;
+                aSubNode = nullptr;
+            }
+        }
+        return iVertexCount;
+    }
 
 #define IS_IN_BOX( v1, v2, d ) \
     ( ( v1.X() <= v2.X() + d ) && ( v1.X() >= v2.X() - d ) && ( v1.Y() <= v2.Y() + d ) && \
@@ -429,9 +441,11 @@ namespace fb
                     }
                     // vertex is not in merge distance to this node
                     int iSubNode = EIGHTH_SPACE_INDEX( pCurrNode->vPos, meshInfo.vertices[iVertex] );
-                    if(pCurrNode->aSubNodes[iSubNode])
-                    // proceed deeper into the tree
+                    if( pCurrNode->aSubNodes[iSubNode] )
+                    {
+                        // proceed deeper into the tree
                         pCurrNode = pCurrNode->aSubNodes[iSubNode];
+                    }
                     else
                     {
                         // there is no branch so make one
@@ -447,16 +461,18 @@ namespace fb
             auto aNewVertices = new Vector3F[meshInfo.vertices.size()];
             // extract indextable and vertex list
             int nNewVertices = ExtractOctree( &root, 0, aiIndexTable, aNewVertices );
-            for(unsigned int iIndex = 0; iIndex < meshInfo.indices.size(); ++iIndex)
+            for( int &indice : meshInfo.indices )
             {
-                assert( meshInfo.indices[iIndex] < static_cast<int>(meshInfo.indices.size()) );
-                assert( meshInfo.indices[iIndex] >= 0 );
-                meshInfo.indices[iIndex] = aiIndexTable[meshInfo.indices[iIndex]];
+                assert( meshInfo.indices[indice] < static_cast<int>(meshInfo.indices.size()) );
+                assert( meshInfo.indices[indice] >= 0 );
+                indice = aiIndexTable[indice];
             }
 
             meshInfo.vertices.resize( nNewVertices );
-            for(iVertex = 0; iVertex < nNewVertices; iVertex++)
+            for( iVertex = 0; iVertex < nNewVertices; iVertex++ )
+            {
                 meshInfo.vertices[iVertex] = aNewVertices[iVertex];
+            }
 
             delete[] aiIndexTable;
             delete[] aNewVertices;
@@ -471,9 +487,11 @@ namespace fb
                 // check if this tri is degenerate
                 int index1 = meshInfo.indices[iTri * 3 + 0], index2 = meshInfo.indices[iTri * 3 + 1],
                     index3 = meshInfo.indices[iTri * 3 + 2];
-                if(index1 == index2 || index3 == index2 || index1 == index3)
+                if( index1 == index2 || index3 == index2 || index1 == index3 )
+                {
                     // degenerate tri: two or more vertices are the same
                     continue;
+                }
                 vTris[nTrisCopied++] = STri( index1, index2, index3, meshInfo.materials[iTri] );
             }
             vTris.resize( nTrisCopied );
@@ -543,8 +561,10 @@ namespace fb
             }
             vAccNomals.normalise();
             vNewVertices[iLastIndex] = meshInfo.vertices[iLastIndex] + fAmount * vAccNomals;
-            for(unsigned int iVertex = 0; iVertex < meshInfo.vertices.size(); iVertex++)
+            for( unsigned int iVertex = 0; iVertex < meshInfo.vertices.size(); iVertex++ )
+            {
                 meshInfo.vertices[iVertex] = vNewVertices[iVertex];
+            }
         }
 
         void PhysxCooker::cookPxTriangleMesh( SmartPtr<IMesh> mesh, PxOutputStream &outputStream,
@@ -582,7 +602,7 @@ namespace fb
             std::unordered_map<PxMaterial *, PxMaterialTableIndex> materialIndicesMap;
             Array<PxMaterial *> orderedMaterials;
 
-            // auto engine = core::IApplicationManager::instance();
+            // auto engine = core::ApplicationManager::instance();
             // SmartPtr<IPhysicsManager3> pPhysicsManager = engine->getPhysicsManager3();
             // SmartPtr<PhysxManager> physicsManager =
             // fb::static_pointer_cast<PhysxManager>(pPhysicsManager);
@@ -615,7 +635,9 @@ namespace fb
                             orderedMaterials.push_back( mat->second );
                         }
                         else
+                        {
                             index = matIndex->second;
+                        }
                         materialIndices[i] = index;
                     }
                 }
@@ -626,8 +648,10 @@ namespace fb
             {
                 out_addedMaterials->materialCount = static_cast<u32>(materialIndicesMap.size());
                 out_addedMaterials->materials = new PxMaterial *[out_addedMaterials->materialCount];
-                for(unsigned int i = 0; i < orderedMaterials.size(); ++i)
+                for( unsigned int i = 0; i < orderedMaterials.size(); ++i )
+                {
                     out_addedMaterials->materials[i] = orderedMaterials[i];
+                }
             }
 
             // physx::PxCooking* cooking = physicsManager->getCooking();
@@ -664,11 +688,13 @@ namespace fb
             desc.triangles.count = static_cast<u32>(meshInfo.indices.size() / 3);
             desc.triangles.stride = 12;
             auto iIndices = new int[meshInfo.indices.size()];
-            for(unsigned int i = 0; i < meshInfo.indices.size(); ++i)
+            for( unsigned int i = 0; i < meshInfo.indices.size(); ++i )
+            {
                 iIndices[i] = meshInfo.indices[i];
+            }
             desc.triangles.data = iIndices;
 
-            // auto engine = core::IApplicationManager::instance();
+            // auto engine = core::ApplicationManager::instance();
             // SmartPtr<IPhysicsManager3> pPhysicsManager = engine->getPhysicsManager3();
             // SmartPtr<PhysxManager> physicsManager =
             // fb::static_pointer_cast<PhysxManager>(pPhysicsManager); physx::PxCooking* cooking =
@@ -690,8 +716,8 @@ namespace fb
             f.close();
         }
 
-        PxTriangleMesh *PhysxCooker::createPxTriangleMesh( SmartPtr<IMesh> mesh, Params params,
-                                                           AddedMaterials *out_addedMaterial )
+        auto PhysxCooker::createPxTriangleMesh( SmartPtr<IMesh> mesh, Params params,
+                                                AddedMaterials *out_addedMaterial ) -> PxTriangleMesh *
         {
             // MemoryOutputStream outputStream;
             // cookPxTriangleMesh(mesh, outputStream, params, out_addedMaterial);
@@ -701,7 +727,7 @@ namespace fb
 
             // MemoryInputData stream(outputStream.getData(), outputStream.getSize());
 
-            // auto engine = core::IApplicationManager::instance();
+            // auto engine = core::ApplicationManager::instance();
             // SmartPtr<IPhysicsManager3> pPhysicsManager = engine->getPhysicsManager3();
             // SmartPtr<PhysxManager> physicsManager =
             // fb::static_pointer_cast<PhysxManager>(pPhysicsManager); return
@@ -710,7 +736,7 @@ namespace fb
             return nullptr;
         }
 
-        PxConvexMesh *PhysxCooker::createPxConvexMesh( SmartPtr<IMesh> mesh, Params params )
+        auto PhysxCooker::createPxConvexMesh( SmartPtr<IMesh> mesh, Params params ) -> PxConvexMesh *
         {
             // MemoryOutputStream outputStream;
             // cookPxConvexMesh(mesh, outputStream, params);
@@ -718,7 +744,7 @@ namespace fb
 
             // MemoryInputData stream(outputStream.getData(), outputStream.getSize());
 
-            // auto engine = core::IApplicationManager::instance();
+            // auto engine = core::ApplicationManager::instance();
             // SmartPtr<IPhysicsManager3> pPhysicsManager = engine->getPhysicsManager3();
             // SmartPtr<PhysxManager> physicsManager =
             // fb::static_pointer_cast<PhysxManager>(pPhysicsManager); return
@@ -727,7 +753,7 @@ namespace fb
             return nullptr;
         }
 
-        PhysxCooker &PhysxCooker::getSingleton()
+        auto PhysxCooker::getSingleton() -> PhysxCooker &
         {
             static PhysxCooker instance;
             return instance;
@@ -740,8 +766,10 @@ namespace fb
 
         PhysxCooker::AddedMaterials::~AddedMaterials()
         {
-            if(materials)
+            if( materials )
+            {
                 delete[] materials;
+            }
         }
 
         PhysxCooker::Params::Params() :
@@ -750,27 +778,24 @@ namespace fb
         {
         }
 
-        PhysxCooker::Params::~Params()
-        {
-        }
+        PhysxCooker::Params::~Params() = default;
 
-        PhysxCooker::Params &PhysxCooker::Params::scale( const Vector3F &scale )
+        auto PhysxCooker::Params::scale( const Vector3F &scale ) -> PhysxCooker::Params &
         {
             mScale = scale;
             return *this;
         }
 
-        PhysxCooker::Params &PhysxCooker::Params::materials(
-            std::map<String, PxMaterial *> &bindings )
+        auto PhysxCooker::Params::materials( std::map<String, PxMaterial *> &bindings )
+            -> PhysxCooker::Params &
         {
             mMaterialBindings = bindings;
             return *this;
         }
 
-        PhysxCooker::Params &PhysxCooker::Params::backfaces( bool addBackfaces )
+        auto PhysxCooker::Params::backfaces( bool addBackfaces ) -> PhysxCooker::Params &
         {
             mAddBackfaces = addBackfaces;
             return *this;
         }
-    } // end namespace physics
-}     // end namespace fb
+}  // namespace fb::physics

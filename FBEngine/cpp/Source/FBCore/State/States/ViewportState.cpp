@@ -8,9 +8,7 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, ViewportState, BaseState );
 
-    ViewportState::ViewportState()
-    {
-    }
+    ViewportState::ViewportState() = default;
 
     ViewportState::~ViewportState()
     {
@@ -32,12 +30,12 @@ namespace fb
         }
     }
 
-    ColourF ViewportState::getBackgroundColour() const
+    auto ViewportState::getBackgroundColour() const -> ColourF
     {
         return m_backgroundColour;
     }
 
-    Vector2F ViewportState::getPosition() const
+    auto ViewportState::getPosition() const -> Vector2F
     {
         return m_position;
     }
@@ -48,7 +46,7 @@ namespace fb
         setDirty( true );
     }
 
-    Vector2F ViewportState::getSize() const
+    auto ViewportState::getSize() const -> Vector2F
     {
         return m_size;
     }
@@ -59,7 +57,7 @@ namespace fb
         setDirty( true );
     }
 
-    bool ViewportState::getOverlaysEnabled() const
+    auto ViewportState::getOverlaysEnabled() const -> bool
     {
         return m_overlaysEnabled;
     }
@@ -73,7 +71,7 @@ namespace fb
         }
     }
 
-    SmartPtr<render::ICamera> ViewportState::getCamera() const
+    auto ViewportState::getCamera() const -> SmartPtr<render::ICamera>
     {
         return m_camera;
     }
@@ -93,7 +91,7 @@ namespace fb
         setDirty( true );
     }
 
-    u32 ViewportState::getVisibilityMask() const
+    auto ViewportState::getVisibilityMask() const -> u32
     {
         return m_visibilityMask;
     }
@@ -104,12 +102,12 @@ namespace fb
         setDirty( true );
     }
 
-    bool ViewportState::getSkiesEnabled( void ) const
+    auto ViewportState::getSkiesEnabled() const -> bool
     {
         return m_skiesEnabled;
     }
 
-    s32 ViewportState::getZOrder() const
+    auto ViewportState::getZOrder() const -> s32
     {
         return m_zOrder;
     }
@@ -120,7 +118,7 @@ namespace fb
         setDirty( true );
     }
 
-    bool ViewportState::isActive() const
+    auto ViewportState::isActive() const -> bool
     {
         return m_active;
     }
@@ -134,7 +132,7 @@ namespace fb
         }
     }
 
-    u32 ViewportState::getPriority() const
+    auto ViewportState::getPriority() const -> u32
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_priority;
@@ -158,13 +156,13 @@ namespace fb
         setDirty( true );
     }
 
-    bool ViewportState::isAutoUpdated() const
+    auto ViewportState::isAutoUpdated() const -> bool
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_autoUpdated;
     }
 
-    SmartPtr<render::ITexture> ViewportState::getTexture() const
+    auto ViewportState::getTexture() const -> SmartPtr<render::ITexture>
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_texture;
@@ -177,7 +175,7 @@ namespace fb
         setDirty( true );
     }
 
-    SmartPtr<render::ITexture> ViewportState::getBackgroundTexture() const
+    auto ViewportState::getBackgroundTexture() const -> SmartPtr<render::ITexture>
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_backgroundTexture;
@@ -190,7 +188,7 @@ namespace fb
         setDirty( true );
     }
 
-    bool ViewportState::getShadowsEnabled() const
+    auto ViewportState::getShadowsEnabled() const -> bool
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_shadowsEnabled;
@@ -203,7 +201,7 @@ namespace fb
         setDirty( true );
     }
 
-    bool ViewportState::getEnableUI() const
+    auto ViewportState::getEnableUI() const -> bool
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_enableUI;
@@ -223,13 +221,13 @@ namespace fb
         setDirty( true );
     }
 
-    String ViewportState::getMaterialScheme() const
+    auto ViewportState::getMaterialScheme() const -> String
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_materialScheme;
     }
 
-    bool ViewportState::getClear() const
+    auto ViewportState::getClear() const -> bool
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_clear;
@@ -242,7 +240,7 @@ namespace fb
         setDirty( true );
     }
 
-    u32 ViewportState::getBuffers() const
+    auto ViewportState::getBuffers() const -> u32
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_buffers;
@@ -255,7 +253,7 @@ namespace fb
         setDirty( true );
     }
 
-    bool ViewportState::getEnableSceneRender() const
+    auto ViewportState::getEnableSceneRender() const -> bool
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_enableSceneRender;

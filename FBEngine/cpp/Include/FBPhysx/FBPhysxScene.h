@@ -16,10 +16,14 @@ namespace fb
     namespace physics
     {
 
+        /** Implementation of a physics scene. */
         class PhysxScene : public IPhysicsScene3
         {
         public:
+            /** Constructor */
             PhysxScene();
+
+            /** Destructor */
             ~PhysxScene() override;
 
             /** @copydoc ISharedObject::load */
@@ -67,11 +71,11 @@ namespace fb
             bool castRay( const Ray3<real_Num> &ray, SmartPtr<IRaycastHit> hit ) override;
             bool castRayDynamic( const Ray3<real_Num> &ray, SmartPtr<IRaycastHit> hit ) override;
 
-            /** @copydoc IPhysicsScene3::getStateObject */
-            SmartPtr<IStateContext> getStateObject() const override;
+            /** @copydoc IPhysicsScene3::getStateContext */
+            SmartPtr<IStateContext> getStateContext() const override;
 
-            /** @copydoc IPhysicsScene3::setStateObject */
-            void setStateObject( SmartPtr<IStateContext> stateObject ) override;
+            /** @copydoc IPhysicsScene3::setStateContext */
+            void setStateContext( SmartPtr<IStateContext> stateContext ) override;
 
         protected:
             static physx::PxFilterFlags simulationFilterShader(
@@ -157,7 +161,7 @@ namespace fb
             RawPtr<physx::PxDefaultCpuDispatcher> m_cpuDispatcher;
 
             /// The state object.
-            SmartPtr<IStateContext> m_stateObject;
+            SmartPtr<IStateContext> m_stateContext;
 
             /// The state listener.
             SmartPtr<IStateListener> m_stateListener;

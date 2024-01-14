@@ -2,75 +2,69 @@
 #include <ui/FileViewWindow.h>
 #include <FBCore/FBCore.h>
 
-
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    FileViewWindow::FileViewWindow( SmartPtr<ui::IUIWindow> parent )
     {
+        setParent( parent );
+    }
 
-        FileViewWindow::FileViewWindow( SmartPtr<ui::IUIWindow> parent )
+    FileViewWindow::~FileViewWindow() = default;
+
+    void FileViewWindow::load( SmartPtr<ISharedObject> data )
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto ui = applicationManager->getUI();
+        FB_ASSERT( ui );
+
+        auto parent = getParent();
+
+        auto parentWindow = ui->addElementByType<ui::IUIWindow>();
+        setParentWindow( parentWindow );
+
+        if( parent )
         {
-            setParent( parent );
+            parent->addChild( parentWindow );
         }
 
-        FileViewWindow::~FileViewWindow()
+        m_text = ui->addElementByType<ui::IUIText>();
+        FB_ASSERT( m_text );
+
+        parentWindow->addChild( m_text );
+    }
+
+    void FileViewWindow::unload( SmartPtr<ISharedObject> data )
+    {
+    }
+
+    void FileViewWindow::updateSelection()
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto fileSystem = applicationManager->getFileSystem();
+        FB_ASSERT( fileSystem );
+
+        auto selectionManager = applicationManager->getSelectionManager();
+        FB_ASSERT( selectionManager );
+
+        auto selection = selectionManager->getSelection();
+        if( !selection.empty() )
         {
-        }
-
-        void FileViewWindow::load( SmartPtr<ISharedObject> data )
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto ui = applicationManager->getUI();
-            FB_ASSERT( ui );
-
-            auto parent = getParent();
-
-            auto parentWindow = ui->addElementByType<ui::IUIWindow>();
-            setParentWindow( parentWindow );
-
-            if( parent )
+            auto selected = selection.front();
+            if( selected->isDerived<FileSelection>() )
             {
-                parent->addChild( parentWindow );
-            }
+                auto fileSelection = fb::static_pointer_cast<FileSelection>( selected );
+                auto filePath = fileSelection->getFilePath();
 
-            m_text = ui->addElementByType<ui::IUIText>();
-            FB_ASSERT( m_text );
+                auto data = fileSystem->readAllText( filePath );
 
-            parentWindow->addChild( m_text );
-        }
-
-        void FileViewWindow::unload( SmartPtr<ISharedObject> data )
-        {
-        }
-
-        void FileViewWindow::updateSelection()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto fileSystem = applicationManager->getFileSystem();
-            FB_ASSERT( fileSystem );
-
-            auto selectionManager = applicationManager->getSelectionManager();
-            FB_ASSERT( selectionManager );
-
-            auto selection = selectionManager->getSelection();
-            if( !selection.empty() )
-            {
-                auto selected = selection.front();
-                if( selected->isDerived<FileSelection>() )
-                {
-                    auto fileSelection = fb::static_pointer_cast<FileSelection>( selected );
-                    auto filePath = fileSelection->getFilePath();
-
-                    auto data = fileSystem->readAllText( filePath );
-
-                    m_text->setText( data );
-                }
+                m_text->setText( data );
             }
         }
+    }
 
-    }  // end namespace editor
-}  // end namespace fb
+}  // namespace fb::editor

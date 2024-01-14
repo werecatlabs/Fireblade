@@ -36,6 +36,8 @@ namespace fb
             Count      /**< Number of resource types. */
         };
 
+        static const String nameStr;
+
         /** Destructor. */
         ~IResource() override = default;
 
@@ -109,14 +111,14 @@ namespace fb
          *
          * @return The state object. Can be null.
          */
-        virtual SmartPtr<IStateContext> getStateObject() const = 0;
+        virtual SmartPtr<IStateContext> getStateContext() const = 0;
 
         /**
          * Sets the state object for the resource.
          *
-         * @param stateObject The state object to set. Can be null.
+         * @param stateContext The state object to set. Can be null.
          */
-        virtual void setStateObject( SmartPtr<IStateContext> stateObject ) = 0;
+        virtual void setStateContext( SmartPtr<IStateContext> stateContext ) = 0;
 
         /**
          * Gets the resource type.
@@ -146,12 +148,15 @@ namespace fb
          */
         virtual void setResourceTypeByName( const String &resourceTypeName ) = 0;
 
-        /**
-         * Gets a pointer to the specific implementation object for the resource.
-         *
+        /** Gets a pointer to the specific implementation object for the resource.
          * @param ppObject A pointer to store the object.
          */
         virtual void _getObject( void **ppObject ) const = 0;
+
+        /** Gets the resource dependencies.
+         * @return The resource dependencies.
+         */
+        virtual Array<SmartPtr<IResource>> getDependencies() const = 0;
 
         FB_CLASS_REGISTER_DECL;
     };

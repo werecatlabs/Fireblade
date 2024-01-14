@@ -2,9 +2,7 @@
 #include <FBCore/Core/Properties.h>
 #include <FBCore/Core/VectorUtil.h>
 #include <FBCore/Core/Exception.h>
-#include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Memory/Data.h>
-#include <FBCore/Interface/IApplicationManager.h>
 #include <FBCore/Interface/System/IFactory.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
 #include <FBCore/Interface/Scene/IActor.h>
@@ -58,9 +56,9 @@ namespace fb
 
         if( cascade )
         {
-            for( u32 i = 0; i < m_children.size(); ++i )
+            for( auto &i : m_children )
             {
-                m_children[i]->clearAll( cascade );
+                i->clearAll( cascade );
             }
         }
     }
@@ -70,7 +68,7 @@ namespace fb
         m_name = name;
     }
 
-    String Properties::getName() const
+    auto Properties::getName() const -> String
     {
         return m_name;
     }
@@ -94,7 +92,7 @@ namespace fb
         }
     }
 
-    bool Properties::hasProperty( const String &name ) const
+    auto Properties::hasProperty( const String &name ) const -> bool
     {
         for( auto &currentProperty : m_properties )
         {
@@ -181,7 +179,7 @@ namespace fb
         }
     }
 
-    bool Properties::setPropertyType( const String &name, const String &type )
+    auto Properties::setPropertyType( const String &name, const String &type ) -> bool
     {
         if( !hasProperty( name ) )
         {
@@ -193,7 +191,7 @@ namespace fb
         return true;
     }
 
-    bool Properties::removeProperty( const String &name )
+    auto Properties::removeProperty( const String &name ) -> bool
     {
         auto count = static_cast<size_t>( 0 );
         for( auto &property : m_properties )
@@ -217,7 +215,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::propertyValueEquals( const String &name, const String &value ) const
+    auto Properties::propertyValueEquals( const String &name, const String &value ) const -> bool
     {
         for( auto &property : m_properties )
         {
@@ -230,7 +228,7 @@ namespace fb
         return false;
     }
 
-    Properties &Properties::operator=( const Properties &other )
+    auto Properties::operator=( const Properties &other ) -> Properties &
     {
         if( this != &other )
         {
@@ -242,7 +240,7 @@ namespace fb
         return *this;
     }
 
-    Array<SmartPtr<Properties>> Properties::getChildren() const
+    auto Properties::getChildren() const -> Array<SmartPtr<Properties>>
     {
         return m_children;
     }
@@ -267,18 +265,18 @@ namespace fb
         }
     }
 
-    u32 Properties::getNumChildren() const
+    auto Properties::getNumChildren() const -> u32
     {
         return static_cast<u32>( m_children.size() );
     }
 
-    SmartPtr<Properties> Properties::getChild( u32 index ) const
+    auto Properties::getChild( u32 index ) const -> SmartPtr<Properties>
     {
         FB_ASSERT( index < m_children.size() );
         return m_children[index];
     }
 
-    SmartPtr<Properties> Properties::getChild( const String &name ) const
+    auto Properties::getChild( const String &name ) const -> SmartPtr<Properties>
     {
         for( auto &child : m_children )
         {
@@ -292,7 +290,7 @@ namespace fb
         return nullptr;
     }
 
-    Array<SmartPtr<Properties>> Properties::getChildrenByName( const String &name ) const
+    auto Properties::getChildrenByName( const String &name ) const -> Array<SmartPtr<Properties>>
     {
         Array<SmartPtr<Properties>> children;
         children.reserve( m_children.size() );
@@ -312,7 +310,7 @@ namespace fb
         return children;
     }
 
-    bool Properties::hasChild( const String &name ) const
+    auto Properties::hasChild( const String &name ) const -> bool
     {
         for( const auto &child : m_children )
         {
@@ -326,7 +324,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getProperty( const String &name, Property &property ) const
+    auto Properties::getProperty( const String &name, Property &property ) const -> bool
     {
         for( auto &currentProperty : m_properties )
         {
@@ -340,7 +338,7 @@ namespace fb
         return false;
     }
 
-    Property &Properties::getPropertyObject( const String &name )
+    auto Properties::getPropertyObject( const String &name ) -> Property &
     {
         for( auto &currentProperty : m_properties )
         {
@@ -353,7 +351,7 @@ namespace fb
         FB_EXCEPTION( "Could not get property" );
     }
 
-    const Property &Properties::getPropertyObject( const String &name ) const
+    auto Properties::getPropertyObject( const String &name ) const -> const Property &
     {
         for( auto &currentProperty : m_properties )
         {
@@ -371,12 +369,12 @@ namespace fb
         m_properties = array;
     }
 
-    Array<Property> Properties::getPropertiesAsArray() const
+    auto Properties::getPropertiesAsArray() const -> Array<Property>
     {
         return m_properties;
     }
 
-    String Properties::getProperty( const String &name, String defaultValue ) const
+    auto Properties::getProperty( const String &name, String defaultValue ) const -> String
     {
         String value;
         if( getPropertyValue( name, value ) )
@@ -387,33 +385,37 @@ namespace fb
         return defaultValue;
     }
 
-    bool Properties::getPropertyAsBool( const std::string &name, bool defaultValue /*= false*/ ) const
+    auto Properties::getPropertyAsBool( const std::string &name, bool defaultValue /*= false*/ ) const
+        -> bool
     {
         auto value = getProperty( name, "" );
         return StringUtil::parseBool( value, defaultValue );
     }
 
-    s32 Properties::getPropertyAsInt( const std::string &name, int defaultValue /*= 0*/ ) const
+    auto Properties::getPropertyAsInt( const std::string &name, int defaultValue /*= 0*/ ) const -> s32
     {
         auto value = getProperty( name, "" );
         return StringUtil::parseInt( value, defaultValue );
     }
 
-    f32 Properties::getPropertyAsFloat( const std::string &name, float defaultValue /*= 0.0f*/ ) const
+    auto Properties::getPropertyAsFloat( const std::string &name, float defaultValue /*= 0.0f*/ ) const
+        -> f32
     {
         auto value = getProperty( name, "" );
         return StringUtil::parseFloat( value, defaultValue );
     }
 
-    Vector3F Properties::getPropertyAsVector3(
-        const std::string &name, Vector3F defaultValue /*= Vector3<real_Num>::ZERO*/ ) const
+    auto Properties::getPropertyAsVector3( const std::string &name,
+                                           Vector3F defaultValue /*= Vector3<real_Num>::ZERO*/ ) const
+        -> Vector3F
     {
         auto value = getProperty( name, "" );
         return StringUtil::parseVector3( value, defaultValue );
     }
 
-    Vector3D Properties::getPropertyAsVector3D(
-        const std::string &name, Vector3D defaultValue /*= Vector3<real_Num>::ZERO*/ ) const
+    auto Properties::getPropertyAsVector3D( const std::string &name,
+                                            Vector3D defaultValue /*= Vector3<real_Num>::ZERO*/ ) const
+        -> Vector3D
     {
         auto value = getProperty( name, "" );
         return StringUtil::parseVector3<f64>( value, defaultValue );
@@ -604,6 +606,51 @@ namespace fb
         setProperty( name, valueStr, type, readOnly );
     }
 
+    void Properties::setPropertyAsEnum( const String &name, s32 value, const Array<String> &values,
+                                        bool readOnly )
+    {
+        setPropertyAsEnum( name, StringUtil::toString( value ), values, readOnly );
+    }
+
+    void Properties::setPropertyAsEnum( const String &name, const String &value,
+                                        const Array<String> &values, bool readOnly )
+    {
+        auto type = String( "enum" );
+        setProperty( name, value, type, readOnly );
+
+        auto &property = getPropertyObject( name );
+        auto valueStr = StringUtil::toString( values );
+        property.setAttribute( "enum", valueStr );
+    }
+
+    void Properties::setPropertyAsButton( const String &name, const String &value, bool readOnly )
+    {
+        setProperty( name, value, "button", readOnly );
+    }
+
+    void Properties::setButtonPressed( const String &name, bool value )
+    {
+        if( hasProperty( name ) )
+        {
+            auto &button = getPropertyObject( name );
+            button.setAttribute( "click", StringUtil::toString( value ) );
+        }
+    }
+
+    auto Properties::isButtonPressed( const String &name ) const -> bool
+    {
+        if( hasProperty( name ) )
+        {
+            auto &resetButton = getPropertyObject( name );
+            if( resetButton.getAttribute( "click" ) == "true" )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     void Properties::setProperty( const String &name, SmartPtr<ISharedObject> value, bool readOnly )
     {
         if( value )
@@ -762,7 +809,35 @@ namespace fb
         }
     }
 
-    bool Properties::getPropertyValue( const String &name, String &value ) const
+    void Properties::setProperty( const String &name, Array<SmartPtr<scene::IComponent>> value,
+                                  bool readOnly )
+    {
+        if( value.size() > 0 )
+        {
+            Array<String> uuids;
+            for( auto &component : value )
+            {
+                auto handle = component->getHandle();
+                auto uuid = handle->getUUID();
+                uuids.push_back( uuid );
+            }
+
+            auto valueStr = StringUtil::toString( uuids );
+            setProperty( name, valueStr, "resource", false );
+
+            auto &property = getPropertyObject( name );
+            property.setAttribute( "resourceType", "Component" );
+        }
+        else
+        {
+            setProperty( name, "", "resource", false );
+
+            auto &property = getPropertyObject( name );
+            property.setAttribute( "resourceType", "Component" );
+        }
+    }
+
+    auto Properties::getPropertyValue( const String &name, String &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
@@ -782,7 +857,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, bool &value ) const
+    auto Properties::getPropertyValue( const String &name, bool &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
@@ -794,7 +869,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, s32 &value ) const
+    auto Properties::getPropertyValue( const String &name, s32 &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
@@ -806,7 +881,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, u32 &value ) const
+    auto Properties::getPropertyValue( const String &name, u32 &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
@@ -818,7 +893,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, f32 &value ) const
+    auto Properties::getPropertyValue( const String &name, f32 &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
@@ -830,7 +905,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, f64 &value ) const
+    auto Properties::getPropertyValue( const String &name, f64 &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
@@ -842,7 +917,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, Vector2I &value ) const
+    auto Properties::getPropertyValue( const String &name, Vector2I &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
@@ -855,7 +930,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, Vector2F &value ) const
+    auto Properties::getPropertyValue( const String &name, Vector2F &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
@@ -868,7 +943,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, Vector3I &value ) const
+    auto Properties::getPropertyValue( const String &name, Vector3I &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
@@ -881,7 +956,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, Vector3F &value ) const
+    auto Properties::getPropertyValue( const String &name, Vector3F &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
@@ -894,7 +969,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, Vector3D &value ) const
+    auto Properties::getPropertyValue( const String &name, Vector3D &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
@@ -907,7 +982,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, QuaternionF &value ) const
+    auto Properties::getPropertyValue( const String &name, QuaternionF &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
@@ -920,7 +995,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, QuaternionD &value ) const
+    auto Properties::getPropertyValue( const String &name, QuaternionD &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
@@ -933,7 +1008,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, Transform3F &value ) const
+    auto Properties::getPropertyValue( const String &name, Transform3F &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
@@ -958,7 +1033,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, Transform3D &value ) const
+    auto Properties::getPropertyValue( const String &name, Transform3D &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
@@ -983,7 +1058,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, ColourI &value ) const
+    auto Properties::getPropertyValue( const String &name, ColourI &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
@@ -996,7 +1071,7 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, ColourF &value ) const
+    auto Properties::getPropertyValue( const String &name, ColourF &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
@@ -1009,14 +1084,14 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, SmartPtr<ISharedObject> &value ) const
+    auto Properties::getPropertyValue( const String &name, SmartPtr<ISharedObject> &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
             const auto &property = getPropertyObject( name );
             auto uuid = property.getValue();
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto resourceDatabase = applicationManager->getResourceDatabase();
@@ -1030,7 +1105,8 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, SmartPtr<render::IMaterial> &value ) const
+    auto Properties::getPropertyValue( const String &name, SmartPtr<render::IMaterial> &value ) const
+        -> bool
     {
         if( hasProperty( name ) )
         {
@@ -1038,13 +1114,20 @@ namespace fb
             auto uuid = property.getValue();
             if( !StringUtil::isNullOrEmpty( uuid ) )
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto resourceDatabase = applicationManager->getResourceDatabase();
                 FB_ASSERT( resourceDatabase );
 
-                value = resourceDatabase->getObject( uuid );
+                auto resource = resourceDatabase->getObject( uuid );
+                if( resource )
+                {
+                    if( resource->isDerived<render::IMaterial>() )
+                    {
+                        value = fb::static_pointer_cast<render::IMaterial>( resource );
+                    }
+                }
 
                 return true;
             }
@@ -1053,20 +1136,28 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, SmartPtr<render::ITexture> &value ) const
+    auto Properties::getPropertyValue( const String &name, SmartPtr<render::ITexture> &value ) const
+        -> bool
     {
         if( hasProperty( name ) )
         {
             const auto &property = getPropertyObject( name );
             auto uuid = property.getValue();
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto resourceDatabase = applicationManager->getResourceDatabase();
             FB_ASSERT( resourceDatabase );
 
-            value = resourceDatabase->getObject( uuid );
+            auto resource = resourceDatabase->getObject( uuid );
+            if( resource )
+            {
+                if( resource->isDerived<render::ITexture>() )
+                {
+                    value = fb::static_pointer_cast<render::ITexture>( resource );
+                }
+            }
 
             return true;
         }
@@ -1074,20 +1165,27 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, SmartPtr<scene::IActor> &value ) const
+    auto Properties::getPropertyValue( const String &name, SmartPtr<scene::IActor> &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
             const auto &property = getPropertyObject( name );
             auto uuid = property.getValue();
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto resourceDatabase = applicationManager->getResourceDatabase();
             FB_ASSERT( resourceDatabase );
 
-            value = resourceDatabase->getObject( uuid );
+            auto resource = resourceDatabase->getObject( uuid );
+            if( resource )
+            {
+                if( resource->isDerived<scene::IActor>() )
+                {
+                    value = fb::static_pointer_cast<scene::IActor>( resource );
+                }
+            }
 
             return true;
         }
@@ -1095,20 +1193,28 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, SmartPtr<scene::IComponent> &value ) const
+    auto Properties::getPropertyValue( const String &name, SmartPtr<scene::IComponent> &value ) const
+        -> bool
     {
         if( hasProperty( name ) )
         {
             const auto &property = getPropertyObject( name );
             auto uuid = property.getValue();
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto resourceDatabase = applicationManager->getResourceDatabase();
             FB_ASSERT( resourceDatabase );
 
-            value = resourceDatabase->getObject( uuid );
+            auto resource = resourceDatabase->getObject( uuid );
+            if( resource )
+            {
+                if( resource->isDerived<scene::IComponent>() )
+                {
+                    value = fb::static_pointer_cast<scene::IComponent>( resource );
+                }
+            }
 
             return true;
         }
@@ -1116,20 +1222,27 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, SmartPtr<IMeshResource> &value ) const
+    auto Properties::getPropertyValue( const String &name, SmartPtr<IMeshResource> &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
             const auto &property = getPropertyObject( name );
             auto uuid = property.getValue();
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto resourceDatabase = applicationManager->getResourceDatabase();
             FB_ASSERT( resourceDatabase );
 
-            value = resourceDatabase->getObject( uuid );
+            auto resource = resourceDatabase->getObject( uuid );
+            if( resource )
+            {
+                if( resource->isDerived<IMeshResource>() )
+                {
+                    value = fb::static_pointer_cast<IMeshResource>( resource );
+                }
+            }
 
             return true;
         }
@@ -1137,20 +1250,27 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, SmartPtr<ISound> &value ) const
+    auto Properties::getPropertyValue( const String &name, SmartPtr<ISound> &value ) const -> bool
     {
         if( hasProperty( name ) )
         {
             const auto &property = getPropertyObject( name );
             auto uuid = property.getValue();
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto resourceDatabase = applicationManager->getResourceDatabase();
             FB_ASSERT( resourceDatabase );
 
-            value = resourceDatabase->getObject( uuid );
+            auto resource = resourceDatabase->getObject( uuid );
+            if( resource )
+            {
+                if( resource->isDerived<ISound>() )
+                {
+                    value = fb::static_pointer_cast<ISound>( resource );
+                }
+            }
 
             return true;
         }
@@ -1158,7 +1278,41 @@ namespace fb
         return false;
     }
 
-    bool Properties::getPropertyValue( const String &name, Array<String> &value ) const
+    auto Properties::getPropertyValue( const String &name,
+                                       Array<SmartPtr<scene::IComponent>> &value ) const -> bool
+    {
+        if( hasProperty( name ) )
+        {
+            const auto &property = getPropertyObject( name );
+            auto valueStr = property.getValue();
+            auto uuids = Array<String>();
+            StringUtil::parseArray( valueStr, uuids );
+
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto resourceDatabase = applicationManager->getResourceDatabase();
+            FB_ASSERT( resourceDatabase );
+
+            for( auto &uuid : uuids )
+            {
+                auto resource = resourceDatabase->getObject( uuid );
+                if( resource )
+                {
+                    if( resource->isDerived<scene::IComponent>() )
+                    {
+                        value.push_back( fb::static_pointer_cast<scene::IComponent>( resource ) );
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    auto Properties::getPropertyValue( const String &name, Array<String> &value ) const -> bool
     {
         if( hasProperty( name ) )
         {

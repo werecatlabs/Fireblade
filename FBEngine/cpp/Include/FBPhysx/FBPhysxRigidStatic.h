@@ -171,12 +171,12 @@ namespace fb
 
                 void handleQuery( SmartPtr<IStateQuery> &query ) override;
 
-                PhysxRigidStatic *getOwner() const;
+                SmartPtr<PhysxRigidStatic> getOwner() const;
 
-                void setOwner( PhysxRigidStatic *owner );
+                void setOwner( SmartPtr<PhysxRigidStatic> owner );
 
             protected:
-                RawPtr<PhysxRigidStatic> m_owner = nullptr;
+                AtomicSmartPtr<PhysxRigidStatic> m_owner;
             };
 
             AABB3<real_Num> m_localAABB;

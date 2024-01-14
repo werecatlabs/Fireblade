@@ -3,20 +3,18 @@
 #include <FBCore/Core/StringUtil.h>
 
 #include <FBCore/Interface/IApplication.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IMaterial.h>
 #include <FBCore/Interface/Graphics/IMaterialNode.h>
 #include <FBCore/Interface/Graphics/ISceneNode.h>
 #include <FBCore/Interface/Graphics/ITexture.h>
-
+#include <FBCore/Interface/IO/IFileSystem.h>
 #include <FBCore/Interface/IO/IFolderExplorerW.h>
 #include <FBCore/Interface/IO/IFolderExplorer.h>
 #include <FBCore/Interface/IO/IArchive.h>
 #include <FBCore/Interface/IO/IStream.h>
-
 #include <FBCore/Interface/Memory/IData.h>
-
 #include <FBCore/Interface/System/IJob.h>
 #include <FBCore/Interface/System/ILogManager.h>
 #include <FBCore/Interface/System/IStateManager.h>
@@ -30,6 +28,7 @@
 #include <FBCore/Interface/Scene/IComponent.h>
 #include <FBCore/Interface/Scene/ISceneManager.h>
 #include <FBCore/Interface/FSM/IFSM.h>
+#include <FBCore/Interface/FSM/IFSMManager.h>
 #include <FBCore/Interface/FSM/IFSMListener.h>
 #include <FBCore/Interface/Graphics/IGraphicsMesh.h>
 #include <FBCore/Interface/UI/IUIElement.h>
@@ -37,13 +36,9 @@
 #include <FBCore/Interface/UI/IUITreeNode.h>
 #include <FBCore/Interface/UI/IUIRenderWindow.h>
 #include <FBCore/Interface/UI/IUIWindow.h>
+#include <FBCore/Interface/UI/IUIManager.h>
 #include <FBCore/Interface/Script/IScriptManager.h>
-
-#include "FBCore/Interface/FSM/IFSMManager.h"
-#include "FBCore/Interface/IO/IFileSystem.h"
-#include "FBCore/Interface/System/IStateListener.h"
-#include "FBCore/Interface/UI/IUIManager.h"
-//#include <FBCore/Interface/Graphics/IGraphicsSubMesh.h>
+#include <FBCore/Interface/System/IStateListener.h>
 
 namespace fb
 {
@@ -67,43 +62,46 @@ namespace fb
         m_numInstances.clear();
     }
 
-    String TypeManager::getName( u32 id ) const
+    auto TypeManager::getName( u32 id ) const -> const c8 *
     {
         SpinRWMutex::ScopedLock lock( m_nameMutex, false );
         FB_ASSERT( id < m_names.size() );
-        return m_names[id];
+        return m_names[id].c_str();
     }
 
-    String TypeManager::getLabel( u32 id ) const
+    auto TypeManager::getLabel( u32 id ) const -> const c8 *
     {
-        return m_labels[id];
+        SpinRWMutex::ScopedLock lock( m_labelsMutex, false );
+        FB_ASSERT( id < m_labels.size() );
+        return m_labels[id].c_str();
     }
 
     void TypeManager::setLabel( u32 id, const String &label )
     {
+        SpinRWMutex::ScopedLock lock( m_labelsMutex, true );
         m_labels[id] = label;
     }
 
-    hash64 TypeManager::getHash( u32 id ) const
+    auto TypeManager::getHash( u32 id ) const -> hash64
     {
         FB_ASSERT( id < getSize() );
         return m_hashes[id];
     }
 
-    u32 TypeManager::getBaseType( u32 id ) const
+    auto TypeManager::getBaseType( u32 id ) const -> u32
     {
         FB_ASSERT( id < getSize() );
         return m_baseType[id];
     }
 
-    bool TypeManager::isExactly( u32 a, u32 b ) const
+    auto TypeManager::isExactly( u32 a, u32 b ) const -> bool
     {
         FB_ASSERT( a < getSize() );
         FB_ASSERT( b < getSize() );
         return a == b;
     }
 
-    bool TypeManager::isDerived( u32 a, u32 b ) const
+    auto TypeManager::isDerived( u32 a, u32 b ) const -> bool
     {
         FB_ASSERT( a < getSize() );
         FB_ASSERT( b < getSize() );
@@ -122,7 +120,7 @@ namespace fb
         return false;
     }
 
-    Array<String> TypeManager::getClassHierarchy( u32 id ) const
+    auto TypeManager::getClassHierarchy( u32 id ) const -> Array<String>
     {
         Array<String> classHierarchy;
         classHierarchy.reserve( 4 );
@@ -131,14 +129,14 @@ namespace fb
         while( baseType )
         {
             auto name = getName( baseType );
-            classHierarchy.push_back( name );
+            classHierarchy.emplace_back( name );
             baseType = getBaseType( baseType );
         }
 
         return classHierarchy;
     }
 
-    Array<u32> TypeManager::getClassHierarchyId( u32 id ) const
+    auto TypeManager::getClassHierarchyId( u32 id ) const -> Array<u32>
     {
         Array<u32> classHierarchy;
         classHierarchy.reserve( 4 );
@@ -153,31 +151,37 @@ namespace fb
         return classHierarchy;
     }
 
-    u32 TypeManager::getTypeIndex( u32 id ) const
+    auto TypeManager::getTypeIndex( u32 id ) const -> u32
     {
         FB_ASSERT( id < getSize() );
         return m_typeIndex[id];
     }
 
-    u32 TypeManager::getNumInstances( u32 id ) const
+    auto TypeManager::getNumInstances( u32 id ) const -> u32
     {
         FB_ASSERT( id < getSize() );
         return m_numInstances[id];
     }
 
-    u32 TypeManager::getTypeByName( const String &name )
+    auto TypeManager::getTypeByName( const String &name ) -> u32
     {
         auto it = std::find( m_names.begin(), m_names.end(), name );
         if( it != m_names.end() )
         {
-            return (u32)std::distance( m_names.begin(), it );
+            return static_cast<u32>( std::distance( m_names.begin(), it ) );
         }
 
         return 0;
     }
 
-    u32 TypeManager::getNewTypeId( const String &name, u32 baseType )
+    auto TypeManager::getNewTypeId( const String &name, u32 baseType ) -> u32
     {
+        auto type = getTypeByName( name );
+        if( type != 0 )
+        {
+            return type;
+        }
+
         FB_ASSERT( m_typeCount < getSize() - 1 );
         auto newId = m_typeCount++;
         if( newId >= getSize() )
@@ -191,6 +195,13 @@ namespace fb
         if( !StringUtil::isNullOrEmpty( name ) )
         {
             SpinRWMutex::ScopedLock lock( m_nameMutex, true );
+
+            if( newId == 273 )
+            {
+                auto a = 1;
+                a = 1;
+            }
+
             m_names[newId] = name;
         }
 
@@ -202,21 +213,39 @@ namespace fb
         FB_ASSERT( m_baseType[newId].load() == 0 );
         m_baseType[newId] = baseType;
 
+        if( newId == 28 )
+        {
+            auto a = 1;
+            a = 1;
+        }
+
+        if( newId == 33 )
+        {
+            auto a = 1;
+            a = 1;
+        }
+
         return newId;
     }
 
-    u32 TypeManager::getNewTypeId()
+    auto TypeManager::getNewTypeId() -> u32
     {
         return m_typeCount++;
     }
 
-    u32 TypeManager::getNewTypeIdFromName( const String &name, const String &baseName )
+    auto TypeManager::getNewTypeIdFromName( const String &name, const String &baseName ) -> u32
     {
-        auto baseType = getTypeByName( baseName );
-        return getNewTypeId( name, baseType );
+        auto type = getTypeByName( name );
+        if( type == 0 )
+        {
+            auto baseType = getTypeByName( baseName );
+            return getNewTypeId( name, baseType );
+        }
+
+        return type;
     }
 
-    Array<u32> TypeManager::getBaseTypes( u32 type ) const
+    auto TypeManager::getBaseTypes( u32 type ) const -> Array<u32>
     {
         Array<u32> types;
         types.reserve( 12 );
@@ -231,7 +260,7 @@ namespace fb
         return types;
     }
 
-    Array<String> TypeManager::getBaseTypeNames( u32 type ) const
+    auto TypeManager::getBaseTypeNames( u32 type ) const -> Array<String>
     {
         Array<String> types;
         types.reserve( 12 );
@@ -240,14 +269,14 @@ namespace fb
         while( type )
         {
             auto name = getName( type );
-            types.push_back( name );
+            types.emplace_back( name );
             type = getBaseType( type );
         }
 
         return types;
     }
 
-    Array<u32> TypeManager::getDerivedTypes( u32 type ) const
+    auto TypeManager::getDerivedTypes( u32 type ) const -> Array<u32>
     {
         Array<u32> types;
         types.reserve( 12 );
@@ -264,7 +293,25 @@ namespace fb
         return types;
     }
 
-    u32 TypeManager::getTypeGroup( u32 id ) const
+    Array<String> TypeManager::getDerivedTypeNames( u32 type ) const
+    {
+        Array<String> types;
+        types.reserve( 12 );
+
+        for( size_t i = 0; i < m_typeCount; ++i )
+        {
+            auto currentType = static_cast<u32>( i );
+            if( isDerived( currentType, type ) )
+            {
+                auto name = getName( currentType );
+                types.push_back( name );
+            }
+        }
+
+        return types;
+    }
+
+    auto TypeManager::getTypeGroup( u32 id ) const -> u32
     {
         if( id < getSize() )
         {
@@ -279,12 +326,12 @@ namespace fb
         return 0;
     }
 
-    u32 TypeManager::getTotalNumTypes()
+    auto TypeManager::getTotalNumTypes() -> u32
     {
         return m_typeCount;
     }
 
-    u32 TypeManager::getDataType( u32 id ) const
+    auto TypeManager::getDataType( u32 id ) const -> u32
     {
         FB_ASSERT( id < getSize() );
         return m_dataTypes[id];
@@ -296,7 +343,7 @@ namespace fb
         m_dataTypes[id] = dataType;
     }
 
-    u32 TypeManager::calculateGroupIndex( u32 typeInfo ) const
+    auto TypeManager::calculateGroupIndex( u32 typeInfo ) const -> u32
     {
         auto index = TypeGroups::Application;
 
@@ -341,7 +388,7 @@ namespace fb
         {
             index = TypeGroups::IO;
         }
-        else if( isDerived( typeInfo, core::IApplicationManager::typeInfo() ) ||
+        else if( isDerived( typeInfo, core::ApplicationManager::typeInfo() ) ||
                  isDerived( typeInfo, render::IGraphicsSystem::typeInfo() ) ||
                  isDerived( typeInfo, IFactoryManager::typeInfo() ) ||
                  isDerived( typeInfo, IFSMManager::typeInfo() ) ||
@@ -422,10 +469,10 @@ namespace fb
             index = TypeGroups::Resources;
         }
 
-        return (u32)index;
+        return static_cast<u32>( index );
     }
 
-    u32 TypeManager::getSize() const
+    auto TypeManager::getSize() const -> u32
     {
         return m_size;
     }
@@ -452,7 +499,7 @@ namespace fb
         instance_ = typeManager;
     }
 
-    TypeManager *TypeManager::instance()
+    auto TypeManager::instance() -> TypeManager *
     {
         return instance_;
     }

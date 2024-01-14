@@ -6,34 +6,31 @@
 #include <FBImGui/ImGuiText.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    void FBImGui::load( SmartPtr<ISharedObject> data )
     {
-        void FBImGui::load( SmartPtr<ISharedObject> data )
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
 
-            auto factoryManager = applicationManager->getFactoryManager();
-            FB_ASSERT( factoryManager );
+        auto factoryManager = applicationManager->getFactoryManager();
+        FB_ASSERT( factoryManager );
 
-            FactoryUtil::addFactory<ImGuiTreeNode>();
-            FactoryUtil::addFactory<ImGuiTreeCtrl>();
-            FactoryUtil::addFactory<ImGuiText>();
+        FactoryUtil::addFactory<ImGuiTreeNode>();
+        FactoryUtil::addFactory<ImGuiTreeCtrl>();
+        FactoryUtil::addFactory<ImGuiText>();
 
-            factoryManager->setPoolSizeByType<ImGuiTreeNode>( 128 );
-            factoryManager->setPoolSizeByType<ImGuiTreeCtrl>( 12 );
-            factoryManager->setPoolSizeByType<ImGuiText>( 128 );
-        }
+        factoryManager->setPoolSizeByType<ImGuiTreeNode>( 1024 );
+        factoryManager->setPoolSizeByType<ImGuiTreeCtrl>( 12 );
+        factoryManager->setPoolSizeByType<ImGuiText>( 1024 );
+    }
 
-        void FBImGui::unload( SmartPtr<ISharedObject> data )
-        {
-        }
+    void FBImGui::unload( SmartPtr<ISharedObject> data )
+    {
+    }
 
-        SmartPtr<IUIManager> FBImGui::createUI()
-        {
-            return fb::make_ptr<ImGuiManager>();
-        }
-    }  // end namespace ui
-}  // end namespace fb
+    auto FBImGui::createUI() -> SmartPtr<IUIManager>
+    {
+        return fb::make_ptr<ImGuiManager>();
+    }
+}  // namespace fb::ui

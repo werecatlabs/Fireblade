@@ -6,19 +6,15 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageVector4, StateMessage );
 
-    StateMessageVector4::StateMessageVector4()
-    {
-    }
+    StateMessageVector4::StateMessageVector4() = default;
 
     StateMessageVector4::StateMessageVector4( const Vector4F &position ) : m_position( position )
     {
     }
 
-    StateMessageVector4::~StateMessageVector4()
-    {
-    }
+    StateMessageVector4::~StateMessageVector4() = default;
 
-    Vector4F StateMessageVector4::getValue() const
+    auto StateMessageVector4::getValue() const -> Vector4F
     {
         return m_position;
     }

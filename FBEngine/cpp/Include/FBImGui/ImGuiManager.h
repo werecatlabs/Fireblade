@@ -58,9 +58,9 @@ namespace fb
 
             void handleWindowEvent( SmartPtr<render::IWindowEvent> event );
 
-            SmartPtr<IUIApplication> addApplication();
+            SmartPtr<IUIApplication> addApplication() override;
 
-            void removeApplication( SmartPtr<IUIApplication> application );
+            void removeApplication( SmartPtr<IUIApplication> application ) override;
 
             SmartPtr<IUIElement> addElement( hash64 type ) override;
 
@@ -95,9 +95,17 @@ namespace fb
 
             void setDragging( bool dragging ) override;
 
-            SmartPtr<IUIWindow> getMainWindow() const;
+            SmartPtr<IUIWindow> getMainWindow() const override;
 
-            void setMainWindow( SmartPtr<IUIWindow> uiWindow );
+            void setMainWindow( SmartPtr<IUIWindow> uiWindow ) override;
+
+            void _getObject( void **ppObject ) override;
+
+            SmartPtr<IFactoryManager> getFactoryManager() const;
+
+            void setFactoryManager( SmartPtr<IFactoryManager> factoryManager );
+
+            FB_CLASS_REGISTER_DECL;
 
         protected:
             class InputListener : public IEventListener
@@ -151,12 +159,14 @@ namespace fb
 
             SmartPtr<IUIApplication> m_application;
 
+            SmartPtr<IFactoryManager> m_factoryManager;
+
             mutable RecursiveMutex m_elementsMutex;
             std::unordered_map<u32, AtomicSharedPtr<ConcurrentArray<SmartPtr<IUIElement>>>> m_elements;
 
             bool m_dragging = false;
         };
-    }  // end namespace ui
-}  // end namespace fb
+    } // end namespace ui
+}     // end namespace fb
 
 #endif  // CEGUIManager_h__

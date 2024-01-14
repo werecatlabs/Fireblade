@@ -14,6 +14,10 @@
 namespace fb
 {
 
+    /**
+     * @brief The Math class provides a collection of
+     * static methods for performing common mathematical operations.
+     */
     template <class T>
     class Math
     {
@@ -367,6 +371,22 @@ namespace fb
          */
         static T bound( T val, T boundary1, T boundary2 );
 
+        /**
+         * @brief Smoothly interpolate between the current angle and the target angle while applying damping.
+         *
+         * This function uses a smooth damping algorithm to interpolate between the current angle and the target angle,
+         * considering the current angular velocity and a specified time step. The angular velocity is updated to
+         * achieve a smooth transition from the current angle to the target angle over the specified time period.
+         *
+         * @param current     The current angle (in degrees).
+         * @param target      The target angle (in degrees).
+         * @param vel         The current angular velocity (in degrees per second).
+         * @param time        The time step for the interpolation (in seconds).
+         * @param smoothTime  The desired time to reach the target angle (in seconds).
+         * @return The new angle after interpolation.
+         */
+        static T smoothDampAngle( T current, T target, T vel, T time, T smoothTime );
+
     private:
         /**
          * The internal seed used for the Math class's random number generator.
@@ -415,8 +435,6 @@ namespace fb
         return val;
     }
 
-
-
     template <class T>
     T Math<T>::inverseLerp( const T a, const T b, const T t )
     {
@@ -428,20 +446,40 @@ namespace fb
         return ( t - a ) / ( b - a );
     }
 
+    template <class T>
+    T Math<T>::smoothDampAngle( T current, T target, T vel, T time, T smoothTime )
+    {
+        // Calculate the difference between the target and current angles
+        T deltaAngle = target - current;
+
+        // Ensure the delta angle is between -180 and 180 degrees
+        if( deltaAngle > T( 180 ) )
+        {
+            deltaAngle -= T( 360 );
+        }
+        else if( deltaAngle < T( -180 ) )
+        {
+            deltaAngle += T( 360 );
+        }
+
+        // Calculate the maximum allowed change in velocity
+        T maxDelta = T( 2.0 ) / smoothTime * time;
+
+        // Clamp the deltaAngle within the allowed range
+        deltaAngle = Math<T>::clamp( deltaAngle, -maxDelta, maxDelta );
+
+        // Update the velocity
+        vel = ( vel + deltaAngle * T( 2.0 ) / smoothTime ) / ( T( 1.0 ) + time * T( 2.0 ) / smoothTime );
+
+        // Calculate the new angle
+        T newAngle = current + vel * time;
+
+        return newAngle;
+    }
+
     using MathI = Math<s32>;
     using MathF = Math<f32>;
     using MathD = Math<f64>;
-
-    // template<> bool Math<f32>::equals(const f32 af, const f32 bf, const s32 maxDiff);
-    // template<> bool Math<f64>::equals(const f64 af, const f64 bf, const s32 maxDiff);
-
-    // template<> s32 Math<s32>::RangedRandom(s32 min, s32 max, s32 seed);
-    // template<> f32 Math<f32>::RangedRandom(f32 min, f32 max, s32 seed);
-    // template<> f64 Math<f64>::RangedRandom(f64 min, f64 max, s32 seed);
-
-    // template<> bool Math<s32>::isFinite(s32 value);
-    // template<> bool Math<f32>::isFinite(f32 value);
-    // template<> bool Math<f64>::isFinite(f64 value);
 
 }  // end namespace fb
 

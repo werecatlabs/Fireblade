@@ -42,12 +42,12 @@ namespace fb
     {
     }
 
-    bool IObject::isValid() const
+    auto IObject::isValid() const -> bool
     {
         return true;
     }
 
-    void *IObject::getCreatorData() const
+    auto IObject::getCreatorData() const -> void *
     {
         return nullptr;
     }
@@ -56,7 +56,7 @@ namespace fb
     {
     }
 
-    hash32 IObject::getFactoryData() const
+    auto IObject::getFactoryData() const -> hash32
     {
         return 0;
     }
@@ -65,22 +65,22 @@ namespace fb
     {
     }
 
-    String IObject::toString() const
+    auto IObject::toString() const -> String
     {
         return "";
     }
 
-    void *IObject::getUserData( hash32 id ) const
+    auto IObject::getUserData( hash32 id ) const -> void *
     {
         return nullptr;
     }
 
-    void *IObject::getUserData() const
+    auto IObject::getUserData() const -> void *
     {
         return nullptr;
     }
 
-    bool IObject::derived( u32 type ) const
+    auto IObject::derived( u32 type ) const -> bool
     {
         auto typeManager = TypeManager::instance();
 
@@ -88,7 +88,7 @@ namespace fb
         return typeManager->isDerived( typeInfo, type );
     }
 
-    bool IObject::exactly( u32 type ) const
+    auto IObject::exactly( u32 type ) const -> bool
     {
         auto typeManager = TypeManager::instance();
 
@@ -98,7 +98,7 @@ namespace fb
 
 #if FB_USE_CUSTOM_NEW_DELETE
 
-    void *IObject::operator new( size_t sz )
+    auto IObject::operator new( size_t sz ) -> void *
     {
         void *ptr = nullptr;
 
@@ -126,14 +126,14 @@ namespace fb
         return ptr;
     }
 
-    void *IObject::operator new( size_t sz, void *ptr )
+    auto IObject::operator new( size_t sz, void *ptr ) -> void *
     {
         (void)sz;
         return ptr;
     }
 
-    void *IObject::operator new( size_t sz, [[maybe_unused]] const c8 *file, [[maybe_unused]] s32 line,
-                                 [[maybe_unused]] const c8 *func )
+    auto IObject::operator new( size_t sz, [[maybe_unused]] const c8 *file, [[maybe_unused]] s32 line,
+                                [[maybe_unused]] const c8 *func ) -> void *
     {
         void *ptr = nullptr;
 
@@ -161,8 +161,8 @@ namespace fb
         return ptr;
     }
 
-    void *IObject::operator new( size_t sz, void *ptr, [[maybe_unused]] const c8 *file,
-                                 [[maybe_unused]] s32 line, [[maybe_unused]] const c8 *func )
+    auto IObject::operator new( size_t sz, void *ptr, [[maybe_unused]] const c8 *file,
+                                [[maybe_unused]] s32 line, [[maybe_unused]] const c8 *func ) -> void *
     {
         (void)sz;
 
@@ -184,8 +184,9 @@ namespace fb
         return ptr;
     }
 
-    void *IObject::operator new[]( size_t sz, [[maybe_unused]] const char *file,
-                                   [[maybe_unused]] int line, [[maybe_unused]] const char *func )
+    auto IObject::operator new[]( size_t sz, [[maybe_unused]] const char *file,
+                                  [[maybe_unused]] int line, [[maybe_unused]] const char *func )
+        -> void *
     {
         void *ptr = nullptr;
 
@@ -202,7 +203,7 @@ namespace fb
         return ptr;
     }
 
-    void *IObject::operator new[]( size_t sz )
+    auto IObject::operator new[]( size_t sz ) -> void *
     {
         void *ptr = nullptr;
 
@@ -268,7 +269,8 @@ namespace fb
     }
 
     void IObject::operator delete( void *ptr, [[maybe_unused]] const char *file,
-                                   [[maybe_unused]] int line, [[maybe_unused]] const char *func ) throw()
+                                   [[maybe_unused]] int line,
+                                   [[maybe_unused]] const char *func ) noexcept
     {
 #    if FB_OBJECT_ALIGNED_ALLOC
         Memory::ScalableAlignedFree( ptr );
@@ -294,7 +296,7 @@ namespace fb
 #    endif
     }
 
-    void IObject::operator delete[]( void *ptr, const char *file, int line, const char *func ) throw()
+    void IObject::operator delete[]( void *ptr, const char *file, int line, const char *func ) noexcept
     {
 #    if FB_OBJECT_ALIGNED_ALLOC
         Memory::ScalableAlignedFree( ptr );

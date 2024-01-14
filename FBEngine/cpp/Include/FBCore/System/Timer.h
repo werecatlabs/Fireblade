@@ -13,7 +13,10 @@ namespace fb
     class Timer : public ITimer
     {
     public:
+        /** Constructor. */
         Timer();
+
+        /** Destructor. */
         ~Timer() override;
 
         void update() override;

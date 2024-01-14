@@ -2,22 +2,18 @@
 #include <FBCore/State/States/UIElementState.h>
 #include <FBCore/Interface/Graphics/IMaterial.h>
 #include <FBCore/Interface/Graphics/ITexture.h>
-#include "FBCore/Memory/PointerUtil.h"
+#include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, UIElementState, BaseState );
 
-    UIElementState::UIElementState()
-    {
-    }
+    UIElementState::UIElementState() = default;
 
-    UIElementState::~UIElementState()
-    {
-    }
+    UIElementState::~UIElementState() = default;
 
-    Vector2F UIElementState::getPosition() const
+    auto UIElementState::getPosition() const -> Vector2F
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_position;
@@ -33,7 +29,7 @@ namespace fb
         }
     }
 
-    Vector2F UIElementState::getSize() const
+    auto UIElementState::getSize() const -> Vector2F
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_size;
@@ -52,6 +48,7 @@ namespace fb
     void UIElementState::setVisible( bool visible )
     {
         SpinRWMutex::ScopedLock lock( m_mutex, true );
+
         if( m_visible != visible )
         {
             m_visible = visible;
@@ -59,13 +56,25 @@ namespace fb
         }
     }
 
-    bool UIElementState::isVisible() const
+    auto UIElementState::isVisible() const -> bool
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_visible;
     }
 
-    SmartPtr<render::IMaterial> UIElementState::getMaterial() const
+    auto UIElementState::getElementVisible() const -> bool
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, false );
+        return m_elementVisible;
+    }
+
+    void UIElementState::setElementVisible( bool elementVisible )
+    {
+        SpinRWMutex::ScopedLock lock( m_mutex, true );
+        m_elementVisible = elementVisible;
+    }
+
+    auto UIElementState::getMaterial() const -> SmartPtr<render::IMaterial>
     {
         return m_material;
     }
@@ -79,7 +88,7 @@ namespace fb
         }
     }
 
-    SmartPtr<render::ITexture> UIElementState::getTexture() const
+    auto UIElementState::getTexture() const -> SmartPtr<render::ITexture>
     {
         return m_texture;
     }
@@ -93,7 +102,7 @@ namespace fb
         }
     }
 
-    String UIElementState::getCaption() const
+    auto UIElementState::getCaption() const -> String
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_caption;
@@ -109,7 +118,7 @@ namespace fb
         }
     }
 
-    ColourF UIElementState::getColour() const
+    auto UIElementState::getColour() const -> ColourF
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_colour;
@@ -126,7 +135,7 @@ namespace fb
         }
     }
 
-    u32 UIElementState::getTextSize() const
+    auto UIElementState::getTextSize() const -> u32
     {
         return m_textSize;
     }
@@ -137,7 +146,7 @@ namespace fb
         setDirty( true );
     }
 
-    u32 UIElementState::getZOrder() const
+    auto UIElementState::getZOrder() const -> u32
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_zOrder;
@@ -153,7 +162,7 @@ namespace fb
         }
     }
 
-    bool UIElementState::getHandleInputEvents() const
+    auto UIElementState::getHandleInputEvents() const -> bool
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_handleInputEvents;
@@ -169,7 +178,7 @@ namespace fb
         }
     }
 
-    SmartPtr<IState> UIElementState::clone() const
+    auto UIElementState::clone() const -> SmartPtr<IState>
     {
         auto state = fb::make_ptr<UIElementState>();
         makeClone( state );

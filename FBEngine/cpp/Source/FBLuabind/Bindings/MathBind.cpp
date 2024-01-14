@@ -32,10 +32,10 @@ namespace fb
                         .def( "setCenter", &Sphere3<T>::setCenter )
                         .def( "getRadius", &Sphere3<T>::getRadius )
                         .def( "setRadius", &Sphere3<T>::setRadius )
-                        //.def( "intersects", &Sphere3<T>::intersects )
-                        //.def( "intersectsSQ", &Sphere3<T>::intersectsSQ )
-                        //.def( "intersects", &Sphere3<T>::intersects )
-                    ];
+                    //.def( "intersects", &Sphere3<T>::intersects )
+                    //.def( "intersectsSQ", &Sphere3<T>::intersectsSQ )
+                    //.def( "intersects", &Sphere3<T>::intersects )
+        ];
     }
 
     void bindMath( lua_State *L )

@@ -1,52 +1,82 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/SubComponent.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+    FB_CLASS_REGISTER_DERIVED( fb::scene, SubComponent, Resource<ISubComponent> );
+
+    u32 SubComponent::m_idExt = 0;
+
+    SubComponent::SubComponent() = default;
+
+    SubComponent::~SubComponent() = default;
+
+    auto SubComponent::getParentComponent() const -> SmartPtr<IComponent>
     {
-        FB_CLASS_REGISTER_DERIVED( fb, SubComponent, Resource<ISubComponent> );
+        return m_parentComponent;
+    }
 
-        u32 SubComponent::m_idExt = 0;
+    void SubComponent::setParentComponent( SmartPtr<IComponent> parentComponent )
+    {
+        m_parentComponent = parentComponent;
+    }
 
-        SubComponent::SubComponent()
+    auto SubComponent::getParent() const -> SmartPtr<ISubComponent>
+    {
+        return m_parent;
+    }
+
+    auto SubComponent::toData() const -> SmartPtr<ISharedObject>
+    {
+        auto data = Resource<ISubComponent>::toData();
+        return data;
+    }
+
+    void SubComponent::fromData( SmartPtr<ISharedObject> data )
+    {
+        Resource<ISubComponent>::fromData( data );
+    }
+
+    auto SubComponent::getProperties() const -> SmartPtr<Properties>
+    {
+        auto properties = fb::make_ptr<Properties>();
+        return properties;
+    }
+
+    void SubComponent::setProperties( SmartPtr<Properties> properties )
+    {
+    }
+
+    void SubComponent::setParent( SmartPtr<ISubComponent> parent )
+    {
+        m_parent = parent;
+    }
+
+    void SubComponent::addChildByType( hash_type componentType )
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        auto factoryManager = applicationManager->getFactoryManager();
+
+        auto factory = factoryManager->getFactory( componentType );
+        if( factory )
         {
+            auto child = factory->make_object<ISubComponent>();
+            addChild( child );
         }
+    }
 
-        SubComponent::~SubComponent()
-        {
-        }
+    void SubComponent::addChild( SmartPtr<ISubComponent> child )
+    {
+        m_children.push_back( child );
+    }
 
-        SmartPtr<IComponent> SubComponent::getParent() const
-        {
-            return m_parent;
-        }
+    void SubComponent::removeChild( SmartPtr<ISubComponent> child )
+    {
+        m_children.erase( std::remove( m_children.begin(), m_children.end(), child ), m_children.end() );
+    }
 
-        void SubComponent::setParent( SmartPtr<IComponent> parent )
-        {
-            m_parent = parent;
-        }
-
-        SmartPtr<ISharedObject> SubComponent::toData() const
-        {
-            auto data = Resource<ISubComponent>::toData();
-            return data;
-        }
-
-        void SubComponent::fromData( SmartPtr<ISharedObject> data )
-        {
-            Resource<ISubComponent>::fromData( data );
-        }
-
-        SmartPtr<Properties> SubComponent::getProperties() const
-        {
-            auto properties = fb::make_ptr<Properties>();
-            return properties;
-        }
-
-        void SubComponent::setProperties( SmartPtr<Properties> properties )
-        {
-        }
-
-    }  // namespace scene
-}  // namespace fb
+    auto SubComponent::getChildren() const -> Array<SmartPtr<ISubComponent>>
+    {
+        return m_children;
+    }
+}  // namespace fb::scene

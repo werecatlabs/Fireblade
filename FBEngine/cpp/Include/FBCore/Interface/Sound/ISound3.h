@@ -31,6 +31,8 @@ namespace fb
 
         /** Gets the minimum and maximum distance of the sound. */
         virtual void getMinMaxDistance( f32 &minDistance, f32 &maxDistance ) = 0;
+
+        FB_CLASS_REGISTER_DECL;
     };
 }  // end namespace fb
 

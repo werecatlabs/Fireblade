@@ -8,19 +8,31 @@ namespace fb
     namespace scene
     {
 
+        /** Vertical layout container.
+         *  This container will lay out its children vertically, from top to bottom.
+         *  The width of the container will be the width of the widest child, and the height
+         *  will be the sum of the heights of all children plus the spacing between them.
+         */
         class VerticalLayout : public LayoutContainer
         {
         public:
-            VerticalLayout( int width );
+            VerticalLayout();
+            ~VerticalLayout() override;
 
-            void add_widget( const Widget &widget );
+            void updateTransform() override;
 
-            void layout();
+            /** @copydoc LayoutContainer::getProperties */
+            SmartPtr<Properties> getProperties() const override;
 
-            int width;
-            std::vector<Widget> widgets;
+            /** @copydoc LayoutContainer::setProperties */
+            void setProperties( SmartPtr<Properties> properties ) override;
+
+            FB_CLASS_REGISTER_DECL;
+
+        protected:
+            // Spacing between child elements
+            f32 m_spacing = 5.0f;
         };
-
     }  // namespace scene
 }  // namespace fb
 

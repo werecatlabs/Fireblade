@@ -4,92 +4,85 @@
 #include "ui/UIManager.h"
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    LeavePlaymodeJob::LeavePlaymodeJob() = default;
+
+    LeavePlaymodeJob::~LeavePlaymodeJob() = default;
+
+    void LeavePlaymodeJob::execute()
     {
-
-        LeavePlaymodeJob::LeavePlaymodeJob()
+        try
         {
-        }
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
 
-        LeavePlaymodeJob::~LeavePlaymodeJob()
-        {
-        }
+            auto taskManager = applicationManager->getTaskManager();
+            FB_ASSERT( taskManager );
 
-        void LeavePlaymodeJob::execute()
-        {
-            try
+            auto fileSystem = applicationManager->getFileSystem();
+            FB_ASSERT( fileSystem );
+
+            auto renderLock = taskManager->lockTask( Thread::Task::Render );
+            auto physicsLock = taskManager->lockTask( Thread::Task::Physics );
+            auto applicationLock = taskManager->lockTask( Thread::Task::Application );
+
+            if( applicationManager->isPlaying() )
             {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
+                applicationManager->setPlaying( false );
+                applicationManager->setEditorCamera( true );
 
-                auto taskManager = applicationManager->getTaskManager();
-                FB_ASSERT( taskManager );
+                auto sceneManager = applicationManager->getSceneManager();
+                FB_ASSERT( sceneManager );
 
-                auto fileSystem = applicationManager->getFileSystem();
-                FB_ASSERT( fileSystem );
+                auto scene = sceneManager->getCurrentScene();
+                FB_ASSERT( scene );
 
-                auto renderLock = taskManager->lockTask( Thread::Task::Render );
-                auto physicsLock = taskManager->lockTask( Thread::Task::Physics );
-                auto applicationLock = taskManager->lockTask( Thread::Task::Application );
+                auto cachePath = applicationManager->getCachePath();
+                FB_ASSERT( !StringUtil::isNullOrEmpty( cachePath ) );
 
-                if( applicationManager->isPlaying() )
+                static const auto filePath = "/tmp.fbscene";
+                auto tempScenePath = cachePath + filePath;
+
+                auto projectPath = applicationManager->getProjectPath();
+                if( StringUtil::isNullOrEmpty( projectPath ) )
                 {
-                    applicationManager->setPlaying( false );
-                    applicationManager->setEditorCamera( true );
-
-                    auto sceneManager = applicationManager->getSceneManager();
-                    FB_ASSERT( sceneManager );
-
-                    auto scene = sceneManager->getCurrentScene();
-                    FB_ASSERT( scene );
-
-                    auto cachePath = applicationManager->getCachePath();
-                    FB_ASSERT( !StringUtil::isNullOrEmpty( cachePath ) );
-
-                    static const auto filePath = "/tmp.fbscene";
-                    auto tempScenePath = cachePath + filePath;
-
-                    auto projectPath = applicationManager->getProjectPath();
-                    if( StringUtil::isNullOrEmpty( projectPath ) )
-                    {
-                        projectPath = Path::getWorkingDirectory();
-                    }
-
-                    tempScenePath = Path::getRelativePath( projectPath, tempScenePath );
-
-                    FB_ASSERT( !StringUtil::isNullOrEmpty( tempScenePath ) );
-                    FB_ASSERT( !Path::isPathAbsolute( tempScenePath ) );
-
-                    auto sceneFilePath = scene->getFilePath();
-                    scene->clear();
-                    scene->loadScene( sceneFilePath );
-
-                    auto editorManager = EditorManager::getSingletonPtr();
-                    FB_ASSERT( editorManager );
-
-                    auto uiManager = editorManager->getUI();
-                    FB_ASSERT( uiManager );
-
-                    uiManager->rebuildSceneTree();
+                    projectPath = Path::getWorkingDirectory();
                 }
 
-                if( auto sceneManager = applicationManager->getSceneManager() )
-                {
-                    sceneManager->edit();
-                }
+                tempScenePath = Path::getRelativePath( projectPath, tempScenePath );
 
-                if( auto cameraManager = applicationManager->getCameraManager() )
-                {
-                    cameraManager->edit();
-                }
+                FB_ASSERT( !StringUtil::isNullOrEmpty( tempScenePath ) );
+                FB_ASSERT( !Path::isPathAbsolute( tempScenePath ) );
+
+                auto sceneFilePath = scene->getFilePath();
+                scene->clear();
+                scene->loadScene( sceneFilePath );
+
+                auto editorManager = EditorManager::getSingletonPtr();
+                FB_ASSERT( editorManager );
+
+                auto uiManager = editorManager->getUI();
+                FB_ASSERT( uiManager );
+
+                uiManager->rebuildSceneTree();
             }
-            catch( Exception &e )
+
+            if( auto sceneManager = applicationManager->getSceneManager() )
             {
-                FB_LOG_EXCEPTION( e );
+                sceneManager->edit();
+            }
+
+            if( auto cameraManager = applicationManager->getCameraManager() )
+            {
+                cameraManager->edit();
             }
         }
+        catch( Exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
 
-    }  // namespace editor
-}  // namespace fb
+}  // namespace fb::editor

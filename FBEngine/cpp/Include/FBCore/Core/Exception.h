@@ -15,8 +15,8 @@ namespace fb
         Exception();
 
         /** Constructor. */
-        Exception( const String &description, const char *file = __FILE__, s32 line = __LINE__,
-                   const char *func = nullptr );
+        explicit Exception( const String &description, const char *file = __FILE__, s32 line = __LINE__,
+                            const char *func = nullptr );
 
         /** Destructor. */
         ~Exception() override;
@@ -33,22 +33,22 @@ namespace fb
     class RuntimeException : public Exception
     {
     public:
-        RuntimeException( const String &description, const char *file = __FILE__, long line = __LINE__,
-                          const char *func = nullptr );
+        explicit RuntimeException( const String &description, const char *file = __FILE__,
+                                   long line = __LINE__, const char *func = nullptr );
     };
 
     class FatalException : public Exception
     {
     public:
-        FatalException( const String &description, const char *file = __FILE__, long line = __LINE__,
-                        const char *func = nullptr );
+        explicit FatalException( const String &description, const char *file = __FILE__,
+                                 long line = __LINE__, const char *func = nullptr );
     };
 
     class ScriptException : public Exception
     {
     public:
-        ScriptException( const String &description, const char *file = __FILE__, long line = __LINE__,
-                         const char *func = nullptr );
+        explicit ScriptException( const String &description, const char *file = __FILE__,
+                                  long line = __LINE__, const char *func = nullptr );
     };
 }  // end namespace fb
 

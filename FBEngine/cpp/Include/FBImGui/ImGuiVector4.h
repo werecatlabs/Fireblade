@@ -9,7 +9,7 @@ namespace fb
 {
     namespace ui
     {
-        //---------------------------------------------
+        
         class ImGuiVector4 : public CImGuiElement<IUIVector4>
         {
         public:

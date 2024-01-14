@@ -24,11 +24,9 @@ namespace fb
     {
     }
 
-    StatePhysicsPosition2::StatePhysicsPosition2()
-    {
-    }
+    StatePhysicsPosition2::StatePhysicsPosition2() = default;
 
-    Vector2<real_Num> StatePhysicsPosition2::getPosition() const
+    auto StatePhysicsPosition2::getPosition() const -> Vector2<real_Num>
     {
         return m_position;
     }
@@ -38,7 +36,7 @@ namespace fb
         m_position = val;
     }
 
-    u32 StatePhysicsPosition2::getSubjectId() const
+    auto StatePhysicsPosition2::getSubjectId() const -> u32
     {
         return m_subjectId;
     }

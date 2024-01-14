@@ -1,7 +1,6 @@
 #ifndef PerlinNoiseGenerator_h__
 #define PerlinNoiseGenerator_h__
 
-
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Array.h>
 

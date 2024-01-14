@@ -11,9 +11,7 @@ namespace fb
     {
     }
 
-    FBOgreArchive::~FBOgreArchive()
-    {
-    }
+    FBOgreArchive::~FBOgreArchive() = default;
 
     void FBOgreArchive::load()
     {
@@ -23,10 +21,10 @@ namespace fb
     {
     }
 
-    Ogre::DataStreamPtr FBOgreArchive::open( const Ogre::String &filename,
-                                             bool readOnly /*= true */ ) const
+    auto FBOgreArchive::open( const Ogre::String &filename, bool readOnly /*= true */ ) const
+        -> Ogre::DataStreamPtr
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto fileSystem = applicationManager->getFileSystem();
 
         auto isBinary = true;
@@ -56,12 +54,12 @@ namespace fb
             return Ogre::DataStreamPtr( new FBOgreDataStream( stream ) );
         }
 
-        return Ogre::DataStreamPtr();
+        return {};
     }
 
-    Ogre::DataStreamPtr FBOgreArchive::open( const Ogre::String &filename, bool readOnly )
+    auto FBOgreArchive::open( const Ogre::String &filename, bool readOnly ) -> Ogre::DataStreamPtr
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto fileSystem = applicationManager->getFileSystem();
 
         auto isBinary = true;
@@ -124,12 +122,13 @@ namespace fb
             return Ogre::DataStreamPtr( new FBOgreDataStream( stream ) );
         }
 
-        return Ogre::DataStreamPtr();
+        return {};
     }
 
-    Ogre::StringVectorPtr FBOgreArchive::list( bool recursive /*= true*/, bool dirs /*= false */ )
+    auto FBOgreArchive::list( bool recursive /*= true*/, bool dirs /*= false */ )
+        -> Ogre::StringVectorPtr
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto fileSystem = applicationManager->getFileSystem();
 
         auto path = getName();
@@ -137,21 +136,21 @@ namespace fb
         return Ogre::StringVectorPtr( new Ogre::StringVector( files.begin(), files.end() ) );
     }
 
-    Ogre::FileInfoListPtr FBOgreArchive::listFileInfo( bool recursive /*= true*/,
-                                                       bool dirs /*= false */ )
+    auto FBOgreArchive::listFileInfo( bool recursive /*= true*/, bool dirs /*= false */ )
+        -> Ogre::FileInfoListPtr
     {
-        return Ogre::FileInfoListPtr();
+        return {};
     }
 
-    Ogre::StringVectorPtr FBOgreArchive::find( const Ogre::String &pattern, bool recursive /*= true*/,
-                                               bool dirs /*= false */ )
+    auto FBOgreArchive::find( const Ogre::String &pattern, bool recursive /*= true*/,
+                              bool dirs /*= false */ ) -> Ogre::StringVectorPtr
     {
-        return Ogre::StringVectorPtr();
+        return {};
     }
 
-    bool FBOgreArchive::exists( const Ogre::String &filename )
+    auto FBOgreArchive::exists( const Ogre::String &filename ) -> bool
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto fileSystem = applicationManager->getFileSystem();
 
         auto folderName = getName();
@@ -168,25 +167,24 @@ namespace fb
         return fileExists;
     }
 
-    Ogre::FileInfoListPtr FBOgreArchive::findFileInfo( const Ogre::String &pattern,
-                                                       bool recursive /*= true*/,
-                                                       bool dirs /*= false */ ) const
+    auto FBOgreArchive::findFileInfo( const Ogre::String &pattern, bool recursive /*= true*/,
+                                      bool dirs /*= false */ ) const -> Ogre::FileInfoListPtr
     {
-        return Ogre::FileInfoListPtr();
+        return {};
     }
 
-    Ogre::FileInfoListPtr FBOgreArchive::findFileInfo( const Ogre::String &pattern, bool recursive,
-                                                       bool dirs )
+    auto FBOgreArchive::findFileInfo( const Ogre::String &pattern, bool recursive, bool dirs )
+        -> Ogre::FileInfoListPtr
     {
-        return Ogre::FileInfoListPtr();
+        return {};
     }
 
-    time_t FBOgreArchive::getModifiedTime( const Ogre::String &filename )
+    auto FBOgreArchive::getModifiedTime( const Ogre::String &filename ) -> time_t
     {
         return 0;
     }
 
-    bool FBOgreArchive::isCaseSensitive() const
+    auto FBOgreArchive::isCaseSensitive() const -> bool
     {
         return false;
     }

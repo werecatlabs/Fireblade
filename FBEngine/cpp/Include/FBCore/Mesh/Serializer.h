@@ -69,7 +69,7 @@ namespace fb
         u32 mCurrentstreamLen;
         SmartPtr<IStream> mStream;
         String mVersion;
-        bool mFlipEndian; // default to native endian, derive from header
+        bool mFlipEndian;  // default to native endian, derive from header
 
         // Internal methods
         virtual void writeFileHeader( void );
@@ -114,6 +114,6 @@ namespace fb
 
     /** @} */
     /** @} */
-} // namespace fb
+}  // namespace fb
 
 #endif

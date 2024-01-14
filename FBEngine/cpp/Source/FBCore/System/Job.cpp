@@ -1,12 +1,18 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/Job.h>
+#include <FBCore/System/ApplicationManager.h>
+#include <FBCore/Interface/System/IThreadPool.h>
 #include <FBCore/System/JobYield.h>
 
 namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, Job, IJob );
 
-    IJob::State Job::getState() const
+    Job::Job() = default;
+
+    Job::~Job()  = default;
+
+    auto Job::getState() const -> IJob::State
     {
         return m_state;
     }
@@ -16,7 +22,7 @@ namespace fb
         m_state = state;
     }
 
-    u32 Job::getProgress() const
+    auto Job::getProgress() const -> u32
     {
         return m_progress;
     }
@@ -26,7 +32,7 @@ namespace fb
         m_progress = progress;
     }
 
-    s32 Job::getPriority() const
+    auto Job::getPriority() const -> s32
     {
         return m_priority;
     }
@@ -36,7 +42,7 @@ namespace fb
         m_priority = priority;
     }
 
-    bool Job::isPrimary() const
+    auto Job::isPrimary() const -> bool
     {
         return m_isPrimary;
     }
@@ -46,13 +52,35 @@ namespace fb
         m_isPrimary = primary;
     }
 
-    bool Job::isFinished() const
+    auto Job::isFinished() const -> bool
     {
         auto state = getState();
         return state == State::Finish || state == State::Ready;
     }
 
-    bool Job::wait()
+    auto Job::wait() -> bool
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        auto threadPool = applicationManager->getThreadPool();
+        if( threadPool->getNumThreads() > 0 )
+        {
+            while( getState() == IJob::State::Queue )
+            {
+                Thread::yield();
+            }
+
+            while( !isFinished() )
+            {
+                Thread::yield();
+            }
+
+            return true;
+        }
+
+        return true;
+    }
+
+    auto Job::wait( f64 maxWaitTime ) -> bool
     {
         while( getState() == IJob::State::Queue )
         {
@@ -67,22 +95,7 @@ namespace fb
         return true;
     }
 
-    bool Job::wait( f64 maxWaitTime )
-    {
-        while( getState() == IJob::State::Queue )
-        {
-            Thread::yield();
-        }
-
-        while( !isFinished() )
-        {
-            Thread::yield();
-        }
-
-        return true;
-    }
-
-    s32 Job::getAffinity() const
+    auto Job::getAffinity() const -> s32
     {
         return m_affinity;
     }
@@ -111,7 +124,7 @@ namespace fb
         setState( State::Finish );
     }
 
-    bool Job::isCoroutine() const
+    auto Job::isCoroutine() const -> bool
     {
         return m_isCoroutine;
     }

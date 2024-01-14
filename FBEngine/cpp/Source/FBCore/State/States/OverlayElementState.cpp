@@ -9,7 +9,7 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, OverlayElementState, BaseState );
 
-    Vector2F OverlayElementState::getPosition() const
+    auto OverlayElementState::getPosition() const -> Vector2F
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_position;
@@ -25,7 +25,7 @@ namespace fb
         }
     }
 
-    Vector2F OverlayElementState::getSize() const
+    auto OverlayElementState::getSize() const -> Vector2F
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_size;
@@ -41,7 +41,7 @@ namespace fb
         }
     }
 
-    String OverlayElementState::getName() const
+    auto OverlayElementState::getName() const -> String
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_name;
@@ -66,7 +66,7 @@ namespace fb
         }
     }
 
-    u8 OverlayElementState::getMetricsMode() const
+    auto OverlayElementState::getMetricsMode() const -> u8
     {
         return m_metricsMode;
     }
@@ -80,7 +80,7 @@ namespace fb
         }
     }
 
-    u8 OverlayElementState::getHorizontalAlignment() const
+    auto OverlayElementState::getHorizontalAlignment() const -> u8
     {
         return m_gha;
     }
@@ -94,12 +94,12 @@ namespace fb
         }
     }
 
-    u8 OverlayElementState::getVerticalAlignment() const
+    auto OverlayElementState::getVerticalAlignment() const -> u8
     {
         return m_gva;
     }
 
-    SmartPtr<render::IMaterial> OverlayElementState::getMaterial() const
+    auto OverlayElementState::getMaterial() const -> SmartPtr<render::IMaterial>
     {
         return m_material;
     }
@@ -123,7 +123,7 @@ namespace fb
         }
     }
 
-    String OverlayElementState::getCaption() const
+    auto OverlayElementState::getCaption() const -> String
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_caption;
@@ -138,12 +138,12 @@ namespace fb
         }
     }
 
-    bool OverlayElementState::isVisible() const
+    auto OverlayElementState::isVisible() const -> bool
     {
         return m_visible;
     }
 
-    u32 OverlayElementState::getZOrder() const
+    auto OverlayElementState::getZOrder() const -> u32
     {
         return m_zOrder;
     }
@@ -167,7 +167,7 @@ namespace fb
         }
     }
 
-    ColourF OverlayElementState::getColour() const
+    auto OverlayElementState::getColour() const -> ColourF
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_colour;

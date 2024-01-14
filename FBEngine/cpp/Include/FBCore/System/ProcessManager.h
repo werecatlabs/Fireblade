@@ -3,14 +3,22 @@
 
 #include <FBCore/Interface/System/IProcessManager.h>
 
-
 namespace fb
 {
-    
+
+    /** @class ProcessManager
+     * @brief
+     *        This class is used to manage processes.
+     *        It can create a process, shell execute a process, check if a process is running and
+     * terminate a process. It is a singleton class.
+     */
     class ProcessManager : public IProcessManager
     {
     public:
+        /** Constructor */
         ProcessManager();
+
+        /** Destructor */
         ~ProcessManager() override;
 
         void createProcess( const String &applicationName ) override;

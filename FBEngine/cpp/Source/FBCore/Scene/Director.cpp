@@ -1,88 +1,121 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Director.h>
+#include <FBCore/Interface/IO/IFileSystem.h>
+#include <FBCore/Core/DataUtil.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Core/FileInfo.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+    FB_CLASS_REGISTER_DERIVED( fb::scene, Director, Resource<IDirector> );
+
+    Director::Director() = default;
+
+    Director::~Director() = default;
+
+    void Director::load( SmartPtr<ISharedObject> data )
     {
-        FB_CLASS_REGISTER_DERIVED( fb, Director, Resource<IDirector> );
+        m_properties = fb::make_ptr<Properties>();
+    }
 
-        Director::Director()
+    void Director::unload( SmartPtr<ISharedObject> data )
+    {
+        if( m_properties )
         {
+            m_properties->unload( nullptr );
+            m_properties = nullptr;
         }
+    }
 
-        Director::~Director()
+    void Director::save()
+    {
+        try
         {
-        }
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
 
-        void Director::load( SmartPtr<ISharedObject> data )
-        {
-            m_properties = fb::make_ptr<Properties>();
-        }
+            auto fileSystem = applicationManager->getFileSystem();
+            FB_ASSERT( fileSystem );
 
-        void Director::unload( SmartPtr<ISharedObject> data )
-        {
-            if( m_properties )
+            auto data = fb::static_pointer_cast<Properties>( getProperties() );
+            FB_ASSERT( data );
+
+            auto dataStr = DataUtil::toString( data.get(), true );
+            FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );
+
+            auto fileId = getFileSystemId();
+            //FB_ASSERT( fileId != 0 );
+
+            FileInfo fileInfo;
+            if( fileSystem->findFileInfo( fileId, fileInfo ) )
             {
-                m_properties->unload( nullptr );
-                m_properties = nullptr;
+                fileSystem->writeAllText( fileInfo.filePath.c_str(), dataStr );
+            }
+            else
+            {
+                auto filePath = getFilePath();
+                fileSystem->writeAllText( filePath, dataStr );
             }
         }
-
-        SmartPtr<ISharedObject> Director::toData() const
+        catch( std::exception &e )
         {
-            return m_properties;
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        void Director::fromData( SmartPtr<ISharedObject> data )
-        {
-            setProperties( data );
-        }
+    auto Director::toData() const -> SmartPtr<ISharedObject>
+    {
+        return m_properties;
+    }
 
-        SmartPtr<Properties> Director::getProperties() const
-        {
-            return m_properties;
-        }
+    void Director::fromData( SmartPtr<ISharedObject> data )
+    {
+        setProperties( data );
+    }
 
-        void Director::setProperties( SmartPtr<Properties> properties )
-        {
-            m_properties = properties;
-        }
+    auto Director::getProperties() const -> SmartPtr<Properties>
+    {
+        return m_properties;
+    }
 
-        SmartPtr<IDirector> Director::getParent() const
-        {
-            return nullptr;
-        }
+    void Director::setProperties( SmartPtr<Properties> properties )
+    {
+        m_properties = properties;
+    }
 
-        void Director::setParent( SmartPtr<IDirector> parent )
-        {
-        }
+    auto Director::getParent() const -> SmartPtr<IDirector>
+    {
+        return nullptr;
+    }
 
-        void Director::addChild( SmartPtr<IDirector> child )
-        {
-        }
+    void Director::setParent( SmartPtr<IDirector> parent )
+    {
+    }
 
-        void Director::removeChild( SmartPtr<IDirector> child )
-        {
-        }
+    void Director::addChild( SmartPtr<IDirector> child )
+    {
+    }
 
-        void Director::removeChildren()
-        {
-        }
+    void Director::removeChild( SmartPtr<IDirector> child )
+    {
+    }
 
-        SmartPtr<IDirector> Director::findChild( const String &name )
-        {
-            return nullptr;
-        }
+    void Director::removeChildren()
+    {
+    }
 
-        Array<SmartPtr<IDirector>> Director::getChildren() const
-        {
-            return Array<SmartPtr<IDirector>>();
-        }
+    auto Director::findChild( const String &name ) -> SmartPtr<IDirector>
+    {
+        return nullptr;
+    }
 
-        SharedPtr<ConcurrentArray<SmartPtr<IDirector>>> Director::getChildrenPtr() const
-        {
-            return nullptr;
-        }
-    }  // namespace scene
-}  // namespace fb
+    auto Director::getChildren() const -> Array<SmartPtr<IDirector>>
+    {
+        return {};
+    }
+
+    auto Director::getChildrenPtr() const -> SharedPtr<ConcurrentArray<SmartPtr<IDirector>>>
+    {
+        return nullptr;
+    }
+}  // namespace fb::scene

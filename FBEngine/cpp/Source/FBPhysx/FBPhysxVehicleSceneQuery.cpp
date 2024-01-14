@@ -28,18 +28,18 @@ void SampleVehicleSetupVehicleShapeQueryFilterData( PxFilterData *qryFilterData 
     qryFilterData->word3 = static_cast<PxU32>(SAMPLEVEHICLE_UNDRIVABLE_SURFACE);
 }
 
-SampleVehicleSceneQueryData *SampleVehicleSceneQueryData::allocate( const PxU32 maxNumWheels )
+auto SampleVehicleSceneQueryData::allocate( const PxU32 maxNumWheels ) -> SampleVehicleSceneQueryData *
 {
     const PxU32 size = sizeof( SampleVehicleSceneQueryData ) + sizeof( PxRaycastQueryResult ) *
                        maxNumWheels + sizeof( PxRaycastHit ) * maxNumWheels;
     SampleVehicleSceneQueryData *sqData = nullptr;
     // = (SampleVehicleSceneQueryData*)PX_ALLOC(size, PX_DEBUG_EXP("PxVehicleNWSceneQueryData"));
     sqData->init();
-    auto ptr = (PxU8 *)sqData;
+    auto ptr = reinterpret_cast<PxU8 *>( sqData );
     ptr += sizeof( SampleVehicleSceneQueryData );
-    sqData->mSqResults = (PxRaycastQueryResult *)ptr;
+    sqData->mSqResults = reinterpret_cast<PxRaycastQueryResult *>( ptr );
     ptr += sizeof( PxRaycastQueryResult ) * maxNumWheels;
-    sqData->mSqHitBuffer = (PxRaycastHit *)ptr;
+    sqData->mSqHitBuffer = reinterpret_cast<PxRaycastHit *>( ptr );
     ptr += sizeof( PxRaycastHit ) * maxNumWheels;
     sqData->mNumQueries = maxNumWheels;
     return sqData;
@@ -50,7 +50,7 @@ void SampleVehicleSceneQueryData::free()
     //PX_FREE(this);
 }
 
-PxBatchQuery *SampleVehicleSceneQueryData::setUpBatchedSceneQuery( PxScene *scene )
+auto SampleVehicleSceneQueryData::setUpBatchedSceneQuery( PxScene *scene ) -> PxBatchQuery *
 {
     //PxBatchQueryDesc sqDesc;
     //sqDesc.userRaycastResultBuffer = mSqResults;

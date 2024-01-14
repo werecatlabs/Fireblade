@@ -147,11 +147,11 @@ namespace fb
     template <class T, class A>
     ConcurrentArrayBase<T, A>::ConcurrentArrayBase( std::initializer_list<value_type> il )
     {
-        resize(il.size());
+        resize( il.size() );
 
         RecursiveMutex::ScopedLock lock( m_mutex );
         auto count = 0;
-        for(auto& v : il)
+        for( auto &v : il )
         {
             m_array[count++] = v;
         }
@@ -255,7 +255,7 @@ namespace fb
     {
         RecursiveMutex::ScopedLock lock( m_mutex );
 
-        if (m_array)
+        if( m_array )
         {
             delete[] m_array;
             m_array = nullptr;
@@ -372,7 +372,6 @@ namespace fb
     template <class T, class A /*= std::allocator<T> */>
     void ConcurrentArrayBase<T, A>::shrink_to_fit()
     {
-
     }
 
     template <class T, class A /*= std::allocator<T> */>

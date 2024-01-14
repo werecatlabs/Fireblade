@@ -48,10 +48,10 @@ namespace fb
         void setName( const String &name );
 
         /** Gets the name of the property. */
-        const String& getName() const;
+        const String &getName() const;
 
         /** Sets the label of the property. */
-        const String& getLabel() const;
+        const String &getLabel() const;
 
         /** Gets the label of the property. */
         void setLabel( const String &label );
@@ -60,7 +60,7 @@ namespace fb
         void setValue( const String &value );
 
         /** Gets the value of the property. */
-        const String& getValue() const;
+        const String &getValue() const;
 
         /** Gets the value of the property as a boolean. */
         bool getValueAsBool() const;
@@ -81,7 +81,7 @@ namespace fb
         void setType( const String &type );
 
         /** Gets the type of the property. */
-        const String& getType() const;
+        const String &getType() const;
 
         /** Sets the property to read only. */
         void setReadOnly( bool readOnly );
@@ -93,7 +93,7 @@ namespace fb
         void setAttribute( const String &name, const String &value );
 
         /** Gets an attribute value. */
-        const String& getAttribute( const String &name ) const;
+        const String &getAttribute( const String &name ) const;
 
         /** Gets the attributes. */
         Array<Pair<String, String>> getAttributes() const;
@@ -116,15 +116,28 @@ namespace fb
         static void registerClass();
 
     private:
+        /** The label of the property. */
         String m_label;
+
+        /** The name of the property. */
         String m_name;
+
+        /** The value of the property. */
         String m_value;
+
+        /** The type of the property. */
         String m_type;
+
+        /** If the property is read only. */
         bool m_readOnly = false;
 
+        /** The any value. */
         Any m_any;
 
+        /** A typedef for an attributes map. */
         using Attributes = std::map<String, String>;
+
+        /** The attributes. */
         Attributes m_attributes;
     };
 

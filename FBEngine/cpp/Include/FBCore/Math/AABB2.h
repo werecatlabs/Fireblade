@@ -185,6 +185,13 @@ namespace fb
         Vector2<T> getSize() const;
 
         /**
+         * Gets half the size of the box.
+         *
+         * @return Half the size of the box.
+         */
+        Vector2<T> getHalfSize( void ) const;
+
+        /**
          * @brief Adds a point to the AABB2, causing it to grow bigger if the point is outside of the box.
          *
          * @param p The point to add.
@@ -473,6 +480,12 @@ namespace fb
     Vector2<T> AABB2<T>::getSize() const
     {
         return Vector2<T>( getWidth(), getHeight() );
+    }
+
+    template <class T>
+    Vector2<T> AABB2<T>::getHalfSize() const
+    {
+        return getSize() / T( 2.0 );
     }
 
     template <class T>

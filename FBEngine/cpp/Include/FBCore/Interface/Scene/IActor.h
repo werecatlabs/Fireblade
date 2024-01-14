@@ -2,14 +2,13 @@
 #define IActor_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Math/AABB3.h>
 #include <FBCore/Math/Vector3.h>
 #include <FBCore/Math/Quaternion.h>
 #include <FBCore/Math/Transform3.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
 #include <FBCore/Interface/Resource/IResource.h>
 #include <FBCore/Interface/Scene/IComponent.h>
@@ -18,7 +17,6 @@ namespace fb
 {
     namespace scene
     {
-
         /**
          * Interface for an actor class. Actors are entities in a scene that can be manipulated and moved.
          * @author	Zane Desir
@@ -32,11 +30,16 @@ namespace fb
              */
             enum class State
             {
-                None,       ///< The actor is being created
-                Create,     ///< The actor is being created
-                Destroyed,  ///< The actor has been destroyed
-                Edit,       ///< The actor is being edited
-                Play,       ///< The actor is being played
+                None,
+                ///< The actor is being created
+                Create,
+                ///< The actor is being created
+                Destroyed,
+                ///< The actor has been destroyed
+                Edit,
+                ///< The actor is being edited
+                Play,
+                ///< The actor is being played
 
                 Count  ///< The number of possible states
             };
@@ -46,30 +49,60 @@ namespace fb
              */
             enum class GameState
             {
-                None,       ///< The actor is being created
-                Create,     ///< The actor is being created
-                Edit,       ///< The actor is being edited
-                Play,       ///< The actor is being played
-                Destroyed,  ///< The actor has been destroyed
-                Reset,      ///< The actor is being reset
+                None,
+                ///< The actor is being created
+                Create,
+                ///< The actor is being created
+                Edit,
+                ///< The actor is being edited
+                Play,
+                ///< The actor is being played
+                Destroyed,
+                ///< The actor has been destroyed
+                Reset,
+                ///< The actor is being reset
 
                 Count  ///< The number of possible game states
             };
 
-            static const u32 ActorFlagReserved;  ///< Reserved actor flag
-            static const u32 ActorFlagStatic;    ///< Actor is static
-            static const u32 ActorFlagVisible;   ///< Actor is visible
-            static const u32 ActorFlagEnabled;   ///< Actor is enabled
-            static const u32 ActorFlagMine;      ///< Actor belongs to the client in network game
-            static const u32
-                ActorFlagPerpetual;             ///< Actor should be destroyed when a new scene is loaded
-            static const u32 ActorFlagDirty;    ///< Actor is dirty
-            static const u32 ActorFlagAwake;    ///< Actor is awake
-            static const u32 ActorFlagStarted;  ///< Actor is started
-            static const u32 ActorFlagDummy;    ///< Actor is a dummy
-            static const u32 ActorFlagInScene;  ///< Actor is in the scene
-            static const u32 ActorFlagEnabledInScene;  ///< Actor is enabled in the scene
-            static const u32 ActorFlagIsEditor;        ///< Actor is visible in the editor
+            ///< Reserved actor flag
+            static const u32 ActorFlagReserved;
+
+            ///< Actor is static
+            static const u32 ActorFlagStatic;
+
+            ///< Actor is visible
+            static const u32 ActorFlagVisible;
+
+            ///< Actor is enabled
+            static const u32 ActorFlagEnabled;
+
+            ///< Actor belongs to the client in network game
+            static const u32 ActorFlagMine;
+
+            ///< Actor should be destroyed when a new scene is loaded
+            static const u32 ActorFlagPerpetual;
+
+            ///< Actor is dirty
+            static const u32 ActorFlagDirty;
+
+            ///< Actor is awake
+            static const u32 ActorFlagAwake;
+
+            ///< Actor is started
+            static const u32 ActorFlagStarted;
+
+            ///< Actor is a dummy
+            static const u32 ActorFlagDummy;
+
+            ///< Actor is in the scene
+            static const u32 ActorFlagInScene;
+
+            ///< Actor is enabled in the scene
+            static const u32 ActorFlagEnabledInScene;
+
+            ///< Actor is visible in the editor
+            static const u32 ActorFlagIsEditor;
 
             /**
              * The destructor.
@@ -94,6 +127,20 @@ namespace fb
              * @return A Transform3 object representing the world transform of the actor.
              */
             virtual Transform3<real_Num> getWorldTransform() const = 0;
+
+            /**
+             * Gets the local transform of the actor.
+             * @param t The time interval to get the transform at.
+             * @return A Transform3 object representing the local transform of the actor.
+             */
+            virtual Transform3<real_Num> getLocalTransform( time_interval t ) const = 0;
+
+            /**
+             * Gets the world transform of the actor.
+             * @param t The time interval to get the transform at.
+             * @return A Transform3 object representing the world transform of the actor.
+             */
+            virtual Transform3<real_Num> getWorldTransform( time_interval t ) const = 0;
 
             /**
              * Gets the local position of the actor.
@@ -180,7 +227,7 @@ namespace fb
              * @param orientation The world orientation to set.
              */
             virtual void setOrientation( const Quaternion<real_Num> &orientation ) = 0;
-            
+
             /**
              * Called when the level is loaded.
              * @param scene The loaded scene.
@@ -246,7 +293,7 @@ namespace fb
             virtual void removeComponentInstance( SmartPtr<IComponent> component ) = 0;
 
             /** Gets all components in the actor. */
-            virtual Array<SmartPtr<scene::IComponent>> getComponents() const = 0;
+            virtual Array<SmartPtr<IComponent>> getComponents() const = 0;
 
             /** Gets all components in the actor. */
             virtual SharedPtr<ConcurrentArray<SmartPtr<IComponent>>> getComponentsPtr() const = 0;
@@ -261,13 +308,16 @@ namespace fb
             virtual s32 getSiblingIndex() const = 0;
 
             /** Unregister the component for updates. */
-            virtual void triggerEnter( SmartPtr<scene::IComponent> collision ) = 0;
+            virtual void triggerEnter( SmartPtr<IComponent> collision ) = 0;
 
             /** Unregister the component for updates. */
-            virtual void triggerLeave( SmartPtr<scene::IComponent> collision ) = 0;
+            virtual void triggerLeave( SmartPtr<IComponent> collision ) = 0;
 
             /** Called when a component is loaded. */
-            virtual void componentLoaded( SmartPtr<IComponent> component ) = 0;
+            virtual void componentLoaded( SmartPtr<IComponent> loadedComponent ) = 0;
+
+            /** Compares the tag with the actor's tag. */
+            virtual bool compareTag( const String &tag ) const = 0;
 
             /** Gets the parent. */
             virtual SmartPtr<IActor> getParent() const = 0;
@@ -288,10 +338,17 @@ namespace fb
             virtual SmartPtr<IActor> findChild( const String &name ) = 0;
 
             /** Gets children. */
+            virtual Array<SmartPtr<IActor>> getChildren() const = 0;
+
+            /** Gets children. */
             virtual SharedPtr<ConcurrentArray<SmartPtr<IActor>>> getChildrenPtr() const = 0;
 
             /** Gets children. */
             virtual Array<SmartPtr<IActor>> getAllChildren() const = 0;
+
+            virtual void setSiblingIndex( s32 index ) = 0;
+
+            virtual void setChildSiblingIndex( SmartPtr<IActor> child, s32 index ) = 0;
 
             /** Used to know if the actor belongs to the client in network game. */
             virtual bool isMine() const = 0;
@@ -338,7 +395,10 @@ namespace fb
             virtual u32 getSceneLevel() const = 0;
 
             /** The actor transform. */
-            virtual SmartPtr<ITransform> getTransform() const = 0;
+            virtual SmartPtr<ITransform> &getTransform() = 0;
+
+            /** The actor transform. */
+            virtual const SmartPtr<ITransform> &getTransform() const = 0;
 
             /** The actor transform. */
             virtual void setTransform( SmartPtr<ITransform> transform ) = 0;
@@ -346,12 +406,12 @@ namespace fb
             /** Gets the actor's state object.
             @return The state object. Can be null.
             */
-            SmartPtr<IStateContext> getStateObject() const override = 0;
+            SmartPtr<IStateContext> getStateContext() const override = 0;
 
             /** Sets the actor's state object.
-            @param stateObject The state object. Can be null.
+            @param stateContext The state object. Can be null.
             */
-            void setStateObject( SmartPtr<IStateContext> stateObject ) override = 0;
+            void setStateContext( SmartPtr<IStateContext> stateContext ) override = 0;
 
             /** Sets the state of the actor.
             @param state The new state of the actor.
@@ -395,28 +455,6 @@ namespace fb
             */
             virtual void setFlag( u32 flag, bool value ) = 0;
 
-            /** Gets the new flags of the actor.
-            @return The new flags of the actor.
-            */
-            virtual u32 getNewFlags() const = 0;
-
-            /** Sets the new flags of the actor.
-            @param flags The new flags of the actor.
-            */
-            virtual void setNewFlags( u32 flags ) = 0;
-
-            /** Gets a specific new flag of the actor.
-            @param flag The new flag to get.
-            @return The value of the specified new flag.
-            */
-            virtual bool getNewFlag( u32 flag ) const = 0;
-
-            /** Sets a specific new flag of the actor.
-            @param flag The new flag to set.
-            @param value The new value of the new flag.
-            */
-            virtual void setNewFlag( u32 flag, bool value ) = 0;
-
             /** Gets the scene this actor belongs to.
             @return A smart pointer to the scene this actor belongs to.
             */
@@ -429,6 +467,16 @@ namespace fb
 
             /** Updates the necessary flags. */
             virtual void updateVisibility() = 0;
+
+            virtual Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                           const Array<Parameter> &arguments,
+                                           SmartPtr<ISharedObject> sender,
+                                           SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) = 0;
+
+            virtual Parameter sendEvent( IEvent::Type eventType, hash_type eventValue,
+                                         const Array<Parameter> &arguments,
+                                         SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object,
+                                         SmartPtr<IEvent> event ) = 0;
 
             /**
              * Adds a component.
@@ -490,7 +538,7 @@ namespace fb
         template <class T>
         SmartPtr<T> IActor::addComponent()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto factoryManager = applicationManager->getFactoryManager();
 
             auto component = factoryManager->make_ptr<T>();
@@ -772,7 +820,6 @@ namespace fb
 
             return nullptr;
         }
-
     }  // namespace scene
 }  // namespace fb
 

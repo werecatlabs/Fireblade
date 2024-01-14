@@ -6,12 +6,14 @@
 namespace fb
 {
 
+    /** A job that is used to update objects. */
     class ObjectUpdateJob : public Job
     {
     public:
         ObjectUpdateJob();
         ~ObjectUpdateJob() override;
 
+        /** @copydoc Job::execute */
         void execute() override;
 
         SmartPtr<ISharedObject> getOwner() const;

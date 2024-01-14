@@ -44,8 +44,8 @@ namespace fb
     template <class T>
     int PointToWatch( const Vector2<T> &vec )
     {
-        auto applicationManager = core::IApplicationManager::instance();
-        auto luaMgr = fb::static_pointer_cast<LuaManager>( applicationManager->getScriptManager() ); 
+        auto applicationManager = core::ApplicationManager::instance();
+        auto luaMgr = fb::static_pointer_cast<LuaManager>( applicationManager->getScriptManager() );
         auto L = luaMgr->getLuaState();
 
         lua_newtable( L );
@@ -78,10 +78,7 @@ namespace fb
                         .def( self + other<Vector2I>() )
                         .def( self - other<Vector2I>() )
                         .def( self * other<Vector2I>() )
-                        .def( self * lua_Integer() )
-                        .def( tostring( self ) )
-
-        ];
+                        .def( self * lua_Integer() )];
 
         module( L )[class_<Vector2F>( "Vector2F" )
                         .def( constructor<>() )
@@ -103,8 +100,7 @@ namespace fb
                         .def( self + other<Vector2F>() )
                         .def( self - other<Vector2F>() )
                         .def( self * other<Vector2F>() )
-                        .def( self * f32() )
-                        .def( tostring( self ) )];
+                        .def( self * f32() )];
 
         //module(L)
         //	[

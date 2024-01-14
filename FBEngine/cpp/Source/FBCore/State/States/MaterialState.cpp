@@ -8,15 +8,11 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, MaterialState, BaseState );
 
-    MaterialState::MaterialState()
-    {
-    }
+    MaterialState::MaterialState() = default;
 
-    MaterialState::~MaterialState()
-    {
-    }
+    MaterialState::~MaterialState() = default;
 
-    render::IMaterial::MaterialType MaterialState::getMaterialType() const
+    auto MaterialState::getMaterialType() const -> render::IMaterial::MaterialType
     {
         return m_materialType;
     }

@@ -13,8 +13,8 @@
 
 namespace fb
 {
-    //---------------------------------------------
-    /// Provides functions to manipulate meshes.
+
+    /** Mesh utility class. */
     class MeshUtil
     {
     public:
@@ -109,6 +109,6 @@ namespace fb
         /** Utility method to get the most appropriate packed colour vertex element format. */
         static IVertexElement::VertexElementType getBestColourVertexElementType( void );
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif

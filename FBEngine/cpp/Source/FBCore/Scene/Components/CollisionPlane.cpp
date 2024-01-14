@@ -7,60 +7,55 @@
 #include <FBCore/Core/Exception.h>
 #include <FBCore/Core/LogManager.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+    FB_CLASS_REGISTER_DERIVED( fb::scene, CollisionPlane, Collision );
+
+    CollisionPlane::CollisionPlane() = default;
+
+    CollisionPlane::~CollisionPlane()
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, CollisionPlane, Collision );
+        unload( nullptr );
+    }
 
-        CollisionPlane::CollisionPlane()
+    void CollisionPlane::load( SmartPtr<ISharedObject> data )
+    {
+        try
         {
+            setLoadingState( LoadingState::Loading );
+
+            Collision::load( data );
+
+            auto applicationManager = core::ApplicationManager::instance();
+            auto physicsManager = applicationManager->getPhysicsManager();
+            m_material = physicsManager->addMaterial();
+
+            setLoadingState( LoadingState::Loaded );
         }
-
-        CollisionPlane::~CollisionPlane()
+        catch( std::exception &e )
         {
-            unload( nullptr );
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        void CollisionPlane::load( SmartPtr<ISharedObject> data )
+    void CollisionPlane::unload( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            try
+            const auto &loadingState = getLoadingState();
+            if( loadingState != LoadingState::Unloaded )
             {
-                setLoadingState( LoadingState::Loading );
+                setLoadingState( LoadingState::Unloading );
 
-                Collision::load( data );
+                Collision::unload( data );
 
-                auto applicationManager = core::IApplicationManager::instance();
-                auto physicsManager = applicationManager->getPhysicsManager();
-                m_material = physicsManager->addMaterial();
-
-                setLoadingState( LoadingState::Loaded );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void CollisionPlane::unload( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-                const auto &loadingState = getLoadingState();
-                if( loadingState != LoadingState::Unloaded )
-                {
-                    setLoadingState( LoadingState::Unloading );
-
-                    Collision::unload( data );
-
-                    setLoadingState( LoadingState::Unloaded );
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
+                setLoadingState( LoadingState::Unloaded );
             }
         }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
 
-    }  // namespace scene
-}  // end namespace fb
+}  // namespace fb::scene

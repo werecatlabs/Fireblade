@@ -12,9 +12,8 @@
 #include <OgreOverlaySystem.h>
 
 ResourceGroupHelper::UpdateMaterialRenderableVisitor::UpdateMaterialRenderableVisitor()
-//: Ogre::Renderable::Visitor()
-{
-}
+    //: Ogre::Renderable::Visitor()
+    = default;
 
 void ResourceGroupHelper::UpdateMaterialRenderableVisitor::visit( Ogre::Renderable *rend,
                                                                   Ogre::ushort lodIndex, bool isDebug,
@@ -104,12 +103,12 @@ ResourceGroupHelper::ResourceGroupHelperLogListener::~ResourceGroupHelperLogList
     // }
 }
 
-bool ResourceGroupHelper::ResourceGroupHelperLogListener::areMessagesKept()
+auto ResourceGroupHelper::ResourceGroupHelperLogListener::areMessagesKept() -> bool
 {
     return mKeptMessages.peek() == EOF;
 }
 
-std::string ResourceGroupHelper::ResourceGroupHelperLogListener::getKeptMessages()
+auto ResourceGroupHelper::ResourceGroupHelperLogListener::getKeptMessages() -> std::string
 {
     return mKeptMessages.str();
 }
@@ -137,7 +136,7 @@ void ResourceGroupHelper::ResourceGroupHelperLogListener::messageLogged( const O
     //  }
 }
 
-ResourceGroupHelper::ResourceGroupHelper( void ) : mRessourceGroupModificationTimes()
+ResourceGroupHelper::ResourceGroupHelper() : mRessourceGroupModificationTimes()
 {
     // reloading the default resource group is a bad idea.
     // lets make it harder, by giving it a big modification time.
@@ -152,12 +151,10 @@ ResourceGroupHelper::ResourceGroupHelper( void ) : mRessourceGroupModificationTi
     mRessourceGroupModificationTimes[Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME] = veryBig;
 }
 
-ResourceGroupHelper::~ResourceGroupHelper( void )
-{
-}
+ResourceGroupHelper::~ResourceGroupHelper() = default;
 
-std::vector<ResourceGroupHelper::ArchivePathAndType> ResourceGroupHelper::getAllPathAndTypesNames(
-    const std::string &pResourceGroupName )
+auto ResourceGroupHelper::getAllPathAndTypesNames( const std::string &pResourceGroupName )
+    -> std::vector<ResourceGroupHelper::ArchivePathAndType>
 {
     // note : unfortunately no access to the order in which path where loaded
     Ogre::FileInfoListPtr fli_dirs =
@@ -167,8 +164,8 @@ std::vector<ResourceGroupHelper::ArchivePathAndType> ResourceGroupHelper::getAll
 
     if( !fli_dirs.isNull() )
     {
-        Ogre::FileInfoList::iterator itFliD = fli_dirs->begin();
-        Ogre::FileInfoList::iterator itFliDEnd = fli_dirs->end();
+        auto itFliD = fli_dirs->begin();
+        auto itFliDEnd = fli_dirs->end();
         for( ; itFliD != itFliDEnd; itFliD++ )
         {
             Ogre::FileInfo &lFinfoD = ( *itFliD );
@@ -184,9 +181,9 @@ std::vector<ResourceGroupHelper::ArchivePathAndType> ResourceGroupHelper::getAll
     return lDirectoryInfos;
 }
 
-bool ResourceGroupHelper::reloadAResourceGroup(
+auto ResourceGroupHelper::reloadAResourceGroup(
     const std::string &pResourceGroupName,
-    const std::vector<ResourceGroupHelper::ArchivePathAndType> &pLocationToAdd )
+    const std::vector<ResourceGroupHelper::ArchivePathAndType> &pLocationToAdd ) -> bool
 {
     if( !resourceGroupExist( pResourceGroupName ) )
     {
@@ -205,10 +202,8 @@ bool ResourceGroupHelper::reloadAResourceGroup(
 
     resGroupMgr.createResourceGroup( pResourceGroupName );
 
-    std::vector<ResourceGroupHelper::ArchivePathAndType>::const_iterator iterLoc =
-        pLocationToAdd.begin();
-    std::vector<ResourceGroupHelper::ArchivePathAndType>::const_iterator iterLocEnd =
-        pLocationToAdd.end();
+    auto iterLoc = pLocationToAdd.begin();
+    auto iterLocEnd = pLocationToAdd.end();
     for( ; iterLoc != iterLocEnd; iterLoc++ )
     {
         // add the location in the resourceGroup
@@ -218,8 +213,8 @@ bool ResourceGroupHelper::reloadAResourceGroup(
     return true;
 }
 
-bool ResourceGroupHelper::reloadAResourceGroupWithoutDestroyingIt(
-    const std::string &pResourceGroupName )
+auto ResourceGroupHelper::reloadAResourceGroupWithoutDestroyingIt(
+    const std::string &pResourceGroupName ) -> bool
 {
     if( !resourceGroupExist( pResourceGroupName ) )
     {
@@ -232,13 +227,13 @@ bool ResourceGroupHelper::reloadAResourceGroupWithoutDestroyingIt(
     return true;
 }
 
-bool ResourceGroupHelper::resourceGroupExist( const std::string &pResourceGroupName )
+auto ResourceGroupHelper::resourceGroupExist( const std::string &pResourceGroupName ) -> bool
 {
     bool lIsPresent = false;
     Ogre::ResourceGroupManager &resGroupMgr = Ogre::ResourceGroupManager::getSingleton();
     Ogre::StringVector lAllResourceGroups = resGroupMgr.getResourceGroups();
-    Ogre::StringVector::iterator iter = lAllResourceGroups.begin();
-    Ogre::StringVector::iterator iterEnd = lAllResourceGroups.end();
+    auto iter = lAllResourceGroups.begin();
+    auto iterEnd = lAllResourceGroups.end();
     for( ; iter != iterEnd; iter++ )
     {
         if( ( *iter ) == pResourceGroupName )
@@ -271,8 +266,8 @@ void ResourceGroupHelper::updateOnEveryRenderable()
     {
         Ogre::SceneManager *scMgr = iterSceneManager.getNext();
 
-        std::vector<std::string>::iterator iterMovableType = allAvailableTypes.begin();
-        std::vector<std::string>::iterator iterMovableTypeEnd = allAvailableTypes.end();
+        auto iterMovableType = allAvailableTypes.begin();
+        auto iterMovableTypeEnd = allAvailableTypes.end();
         for( ; iterMovableType != iterMovableTypeEnd; iterMovableType++ )
         {
             Ogre::SceneManager::MovableObjectIterator iterMovable =
@@ -330,7 +325,7 @@ void ResourceGroupHelper::updateOnEveryRenderable()
 //    }
 // }
 
-time_t ResourceGroupHelper::getLatestModificationTime( const std::string &pResourceGroupName )
+auto ResourceGroupHelper::getLatestModificationTime( const std::string &pResourceGroupName ) -> time_t
 {
     time_t result( 0 );
 
@@ -344,14 +339,14 @@ time_t ResourceGroupHelper::getLatestModificationTime( const std::string &pResou
 
     // for each file, we check the modification date.
     // we keep the latest one.
-    Ogre::FileInfoList::iterator iterFiles = fli_files->begin();
-    Ogre::FileInfoList::iterator iterFilesEnd = fli_files->end();
+    auto iterFiles = fli_files->begin();
+    auto iterFilesEnd = fli_files->end();
     for( ; iterFiles != iterFilesEnd; iterFiles++ )
     {
         Ogre::FileInfo &file = *iterFiles;
         if( file.archive )
         {
-            Ogre::Archive *arc = (Ogre::Archive *)file.archive;
+            auto *arc = static_cast<Ogre::Archive *>( file.archive );
             time_t modifTime = arc->getModifiedTime( file.filename );
             if( result < modifTime )
             {
@@ -362,16 +357,16 @@ time_t ResourceGroupHelper::getLatestModificationTime( const std::string &pResou
     return result;
 }
 
-bool ResourceGroupHelper::checkTimeAndReloadIfNeeded( const std::string &pResourceGroupName,
+auto ResourceGroupHelper::checkTimeAndReloadIfNeeded( const std::string &pResourceGroupName,
                                                       std::string &pOutLoggedMessages, bool useLog )
+    -> bool
 {
     bool result = false;
 
     // 1/ get last modification time.
     time_t lastModificationTime = getLatestModificationTime( pResourceGroupName );
 
-    std::map<std::string, time_t>::iterator iterInfoTime =
-        mRessourceGroupModificationTimes.find( pResourceGroupName );
+    auto iterInfoTime = mRessourceGroupModificationTimes.find( pResourceGroupName );
     if( iterInfoTime != mRessourceGroupModificationTimes.end() )
     {
         if( iterInfoTime->second < lastModificationTime )

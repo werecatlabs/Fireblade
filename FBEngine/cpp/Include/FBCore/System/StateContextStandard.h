@@ -18,27 +18,27 @@ namespace fb
         StateContextStandard();
 
         /** Constructor. */
-        StateContextStandard( u32 id );
+        explicit StateContextStandard( u32 id );
 
         /** Destructor. */
         ~StateContextStandard() override;
 
-        /** @copydoc IStateObject::load */
+        /** @copydoc IStateContext::load */
         void load( SmartPtr<ISharedObject> data ) override;
 
-        /** @copydoc IStateObject::unload */
+        /** @copydoc IStateContext::unload */
         void unload( SmartPtr<ISharedObject> data ) override;
 
-        /** @copydoc IStateObject::update */
+        /** @copydoc IStateContext::update */
         void update() override;
 
-        /** @copydoc IStateObject::addMessage */
+        /** @copydoc IStateContext::addMessage */
         void addMessage( Thread::Task taskId, SmartPtr<IStateMessage> message ) override;
 
-        /** @copydoc IStateObject::addStateUpdate */
+        /** @copydoc IStateContext::addStateUpdate */
         void setDirty( bool dirty, bool cascade = true ) override;
 
-        /** @copydoc IStateObject::isDirty */
+        /** @copydoc IStateContext::isDirty */
         bool isDirty() const override;
 
         bool isStateDirty() const;
@@ -77,10 +77,20 @@ namespace fb
         void setOwner( SmartPtr<ISharedObject> owner ) override;
 
         /** Gets the owner. */
-        SmartPtr<ISharedObject> getOwner() const override;
+        SmartPtr<ISharedObject> &getOwner() override;
+        const SmartPtr<ISharedObject> &getOwner() const override;
 
-        /** Gets the state proxy object. */
-        SmartPtr<IStateQueue> getStateQueue( u32 taskId ) const;
+        /** Gets the state queue.
+        @param taskId The task id.
+        @return The state queue.
+        */
+        SmartPtr<IStateQueue> &getStateQueue( u32 taskId );
+
+        /** Gets the state queue.
+        @param taskId The task id.
+        @return The state queue.
+        */
+        const SmartPtr<IStateQueue> &getStateQueue( u32 taskId ) const;
 
         void sendMessage( SmartPtr<IStateMessage> message ) override;
         void _processStateUpdate( SmartPtr<IState> &state );
@@ -95,17 +105,17 @@ namespace fb
         /** Returns a boolean indicating whether this object is added to the state manager. */
         bool isAdded() const;
 
-        /** @copydoc IStateObject::getLatestOutputState */
-        SmartPtr<IState> getLatestOutputState() const override;
+        void addState( SmartPtr<IState> state ) override;
+        void removeState( SmartPtr<IState> state );
 
-        /** @copydoc IStateObject::getOutputState */
-        SmartPtr<IState> getOutputState( time_interval time ) const override;
+        SmartPtr<IState> &getStateByTypeId( u32 typeId );
+        const SmartPtr<IState> &getStateByTypeId( u32 typeId ) const;
 
-        /** @copydoc IStateObject::addOutputState */
-        void addOutputState( SmartPtr<IState> state ) override;
+        Array<SmartPtr<IState>> getStates() const;
 
-        SmartPtr<IState> getState() const override;
-        void setState( SmartPtr<IState> state ) override;
+        SharedPtr<ConcurrentArray<SmartPtr<IState>>> getStatesPtr() const;
+
+        void setStatesPtr( SharedPtr<ConcurrentArray<SmartPtr<IState>>> states );
 
         bool getUpdateState() const;
         void setUpdateState( bool val );
@@ -145,11 +155,9 @@ namespace fb
         SharedPtr<ConcurrentArray<SmartPtr<IStateQueue>>> getStateQueuesPtr() const;
         void setStateQueuesPtr( SharedPtr<ConcurrentArray<SmartPtr<IStateQueue>>> ptr );
 
-        AtomicWeakPtr<ISharedObject> m_owner;
+        SmartPtr<ISharedObject> m_owner;
 
-        AtomicSmartPtr<IState> m_state;
-
-        Array<SmartPtr<IState>> m_states;
+        SmartPtr<IState> m_state;
 
         u32 m_taskId = 0;
 
@@ -173,6 +181,8 @@ namespace fb
 
         SharedPtr<Array<SmartPtr<IEventListener>>> m_eventListeners;
 
+        SharedPtr<ConcurrentArray<SmartPtr<IState>>> m_states;
+
         ///
         AtomicSharedPtr<ConcurrentArray<SmartPtr<IStateListener>>> m_listeners;
 
@@ -181,6 +191,18 @@ namespace fb
         ///
         static u32 m_nextGeneratedNameExt;
     };
-} // end namespace fb
+
+    inline SharedPtr<ConcurrentArray<SmartPtr<IStateQueue>>> StateContextStandard::getStateQueuesPtr()
+        const
+    {
+        return m_stateQueues;
+    }
+
+    inline SharedPtr<ConcurrentArray<SmartPtr<IState>>> StateContextStandard::getStatesPtr() const
+    {
+        return m_states;
+    }
+
+}  // end namespace fb
 
 #endif  // StateObjectStandard_h__

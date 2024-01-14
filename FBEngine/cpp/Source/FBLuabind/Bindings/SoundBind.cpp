@@ -8,7 +8,6 @@
 namespace fb
 {
 
-    
     SmartPtr<ISound2> _addSound2( ISoundManager *soundMgr, const char *name, bool loop )
     {
         return soundMgr->addSound2( name, loop );
@@ -79,14 +78,12 @@ namespace fb
     //    return sound.get();
     //}
 
-    
     //ISound3 *_getSound3( SoundContainer *container, const char *id )
     //{
     //    auto hash = StringUtil::getHash( id );
     //    return _getSound3Hash( container, hash );
     //}
 
-    
     void bindSound( lua_State *L )
     {
         using namespace luabind;
@@ -101,7 +98,8 @@ namespace fb
                         .def( "getLoop", &ISound::getLoop )
                         .def( "getName", &ISound::getName )];
 
-        module( L )[class_<ISound2, ISound, SmartPtr<ISound>>( "Sound2" ).def( "setPan", &ISound2::setPan )];
+        module(
+            L )[class_<ISound2, ISound, SmartPtr<ISound>>( "Sound2" ).def( "setPan", &ISound2::setPan )];
 
         module( L )[class_<ISound3, ISound, SmartPtr<ISound>>( "Sound3" )];
 

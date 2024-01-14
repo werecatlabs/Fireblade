@@ -3,10 +3,7 @@
 
 #include <FBCore/System/RttiClassDefinition.h>
 
-namespace fb
+namespace fb::physics
 {
-    namespace physics
-    {
-        FB_CLASS_REGISTER_DERIVED( fb, IBoxShape3, IPhysicsShape3 );
-    }  // end namespace physics
-}  // end namespace fb
+    FB_CLASS_REGISTER_DERIVED( fb, IBoxShape3, IPhysicsShape3 );
+}  // namespace fb::physics

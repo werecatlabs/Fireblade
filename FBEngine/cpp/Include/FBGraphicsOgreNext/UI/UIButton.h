@@ -8,12 +8,11 @@ namespace fb
 {
     namespace ui
     {
-
-        class UIButton : public UIElement<ui::IUIButton>
+        class UIButton : public UIElement<IUIButton>
         {
         public:
             UIButton();
-            ~UIButton();
+            ~UIButton() override;
 
             void load( SmartPtr<ISharedObject> data ) override;
 
@@ -27,15 +26,16 @@ namespace fb
 
             f32 getTextSize() const override;
 
-            void handleStateChanged( SmartPtr<IState> &state );
+            void handleStateChanged( SmartPtr<IState> &state ) override;
+
+            FB_CLASS_REGISTER_DECL;
 
         protected:
             Colibri::Button *m_button = nullptr;
             String m_label;
             f32 m_textSize = 1.0;
         };
-
-    }  // namespace ui
-}  // namespace fb
+    } // namespace ui
+}     // namespace fb
 
 #endif  // UIButton_h__

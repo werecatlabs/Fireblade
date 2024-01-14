@@ -64,8 +64,8 @@ namespace fb
         bool operator!=( const Vector2<T> &other ) const;
 
         // member access
-        operator const T *() const;
-        operator T *();
+        explicit operator const T *() const;
+        explicit operator T *();
         T operator[]( s32 i ) const;
         T &operator[]( s32 i );
 

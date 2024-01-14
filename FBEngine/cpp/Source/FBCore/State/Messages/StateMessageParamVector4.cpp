@@ -6,15 +6,11 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageParamVector4, StateMessage );
 
-    StateMessageParamVector4::StateMessageParamVector4()
-    {
-    }
+    StateMessageParamVector4::StateMessageParamVector4() = default;
 
-    StateMessageParamVector4::~StateMessageParamVector4()
-    {
-    }
+    StateMessageParamVector4::~StateMessageParamVector4() = default;
 
-    hash32 StateMessageParamVector4::getId() const
+    auto StateMessageParamVector4::getId() const -> hash32
     {
         return m_id;
     }
@@ -24,7 +20,7 @@ namespace fb
         m_id = val;
     }
 
-    Vector4F StateMessageParamVector4::getValue() const
+    auto StateMessageParamVector4::getValue() const -> Vector4F
     {
         return m_value;
     }

@@ -1,20 +1,21 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/FBCore.h>
-#include "FBCore/IO/FolderListingT.h"
-#include "FBCore/IO/FileSystem.h"
-#include "FBCore/IO/FileSystemArchive.h"
-#include "FBCore/IO/FileDataStream.h"
-#include "FBCore/IO/ObfuscatedZipFile.h"
-#include "FBCore/IO/ZipArchive.h"
-#include "FBCore/IO/ZipFile.h"
+#include <FBCore/IO/FolderListingT.h>
+#include <FBCore/IO/FileSystem.h>
+#include <FBCore/IO/FileSystemArchive.h>
+#include <FBCore/IO/FileDataStream.h>
+#include <FBCore/IO/ObfuscatedZipFile.h>
+#include <FBCore/IO/ZipArchive.h>
+#include <FBCore/IO/ZipFile.h>
 #include <FBCore/Vehicle/VehicleController.h>
 #include <FBCore/Vehicle/WheelController.h>
+#include <FBCore/Resource/ResourceDatabase.h>
 
 namespace fb
 {
     void FBCore::load( SmartPtr<ISharedObject> data )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto factoryManager = applicationManager->getFactoryManager();
@@ -27,6 +28,9 @@ namespace fb
         FactoryUtil::addFactory<StateContextStandard>();
         FactoryUtil::addFactory<StateManagerStandard>();
         FactoryUtil::addFactory<WorkerThread>();
+
+        FactoryUtil::addFactory<ResourceDatabase>();
+        FactoryUtil::addFactory<ResourceDatabase::ImportFileJob>();
 
         FactoryUtil::addFactory<Data<FileInfo>>();
 
@@ -50,6 +54,8 @@ namespace fb
 
         FactoryUtil::addFactory<scene::AudioEmitter>();
         FactoryUtil::addFactory<scene::Camera>();
+        FactoryUtil::addFactory<scene::CameraTarget>();
+        FactoryUtil::addFactory<scene::CameraFollow>();
         FactoryUtil::addFactory<scene::CarController>();
         FactoryUtil::addFactory<scene::Constraint>();
         FactoryUtil::addFactory<scene::CollisionBox>();
@@ -76,7 +82,13 @@ namespace fb
         FactoryUtil::addFactory<scene::LayoutTransform>();
         FactoryUtil::addFactory<scene::Image>();
         FactoryUtil::addFactory<scene::InputField>();
+        FactoryUtil::addFactory<scene::Slider>();
+        FactoryUtil::addFactory<scene::TableLayout>();
+        FactoryUtil::addFactory<scene::Toggle>();
+        FactoryUtil::addFactory<scene::ToggleGroup>();
         FactoryUtil::addFactory<scene::Text>();
+        FactoryUtil::addFactory<scene::HorizontalLayout>();
+        FactoryUtil::addFactory<scene::VerticalLayout>();
 
         FactoryUtil::addFactory<StateMessageVector3>();
         FactoryUtil::addFactory<StateMessageVector4>();
@@ -89,6 +101,8 @@ namespace fb
         FactoryUtil::addFactory<SceneNodeState>();
         FactoryUtil::addFactory<RigidbodyState>();
         FactoryUtil::addFactory<TextureState>();
+        FactoryUtil::addFactory<TransformState>();
+
         FactoryUtil::addFactory<UITransformState>();
 
         FactoryUtil::addFactory<WindowMessageData>();
@@ -113,16 +127,21 @@ namespace fb
         factoryManager->setPoolSizeByType<WorkerThread>( 8 );
 
         factoryManager->setPoolSizeByType<SceneNodeState>( 32 );
-        factoryManager->setPoolSizeByType<TextureState>( 32 );
-        factoryManager->setPoolSizeByType<RigidbodyState>( 32 );
+        factoryManager->setPoolSizeByType<TextureState>( 4096 );
+        factoryManager->setPoolSizeByType<TransformState>( 32 );
+        factoryManager->setPoolSizeByType<RigidbodyState>( 4096 );
 
         factoryManager->setPoolSizeByType<WindowMessageData>( 4 );
 
-        const auto size = 32;
+        const auto size = 4096;
 
         factoryManager->setPoolSizeByType<Properties>( size );
 
         factoryManager->setPoolSizeByType<scene::Actor>( size );
+
+        factoryManager->setPoolSizeByType<scene::CameraTarget>( 2 );
+        factoryManager->setPoolSizeByType<scene::CameraFollow>( 2 );
+
         factoryManager->setPoolSizeByType<scene::Transform>( size );
 
         factoryManager->setPoolSizeByType<scene::Material>( size );
@@ -155,6 +174,18 @@ namespace fb
         factoryManager->setPoolSizeByType<FileDataStream>( 4 );
         factoryManager->setPoolSizeByType<ZipArchive>( 8 );
         factoryManager->setPoolSizeByType<ZipFile>( 4 );
+
+        factoryManager->setPoolSizeByType<ResourceDatabase::ImportFileJob>( 1024 );
+
+        auto typeManager = TypeManager::instance();
+
+        auto directorTypeInfo = scene::IDirector::typeInfo();
+        auto cDirectorTypeInfo = scene::Director::typeInfo();
+        auto derivedTypes = typeManager->getDerivedTypes( directorTypeInfo );
+
+        auto baseTypes = typeManager->getBaseTypes( cDirectorTypeInfo );
+        auto cDerivedTypes = typeManager->getDerivedTypes( cDirectorTypeInfo );
+        FB_ASSERT( derivedTypes.size() > 1 );
     }
 
     void FBCore::unload( SmartPtr<ISharedObject> data )

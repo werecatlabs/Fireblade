@@ -4,28 +4,33 @@
 #include <FBCore/System/RttiClassDefinition.h>
 #include <FBCore/Core/DebugTrace.h>
 #include <FBCore/Core/LogManager.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/Core/FSMManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/IJob.h>
 #include <FBCore/Interface/System/IProfile.h>
 #include <FBCore/Interface/System/ITaskManager.h>
 #include <FBCore/Interface/System/ITimer.h>
 #include <FBCore/Interface/FSM/IFSM.h>
 #include <FBCore/Interface/FSM/IFSMManager.h>
-#include <FBCore/Core/FSMManager.h>
+#include <FBCore/Memory/PointerUtil.h>
 
 namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, Task, ITask );
 
+    Task::Task() = default;
+
     Task::Task( const Task &other )
     {
     }
+
+    Task::~Task() = default;
 
     void Task::load( SmartPtr<ISharedObject> data )
     {
         setLoadingState( LoadingState::Loading );
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto taskManager = fb::static_pointer_cast<TaskManager>( applicationManager->getTaskManager() );
 
         auto taskId = getTask();
@@ -35,7 +40,7 @@ namespace fb
         applicationManager->setFsmManagerByTask( taskId, fsmManager );
         m_fsm = fsmManager->createFSM();
 
-        m_taskFlags = taskManager->getFlagsPtr( (u32)taskId );
+        m_taskFlags = taskManager->getFlagsPtr( static_cast<u32>( taskId ) );
         setLoadingState( LoadingState::Loaded );
     }
 
@@ -51,7 +56,7 @@ namespace fb
         {
             setLoadingState( LoadingState::Unloading );
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto taskManager =
                 fb::static_pointer_cast<TaskManager>( applicationManager->getTaskManager() );
 
@@ -76,7 +81,7 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto taskManager = applicationManager->getTaskManager();
 
             auto eTask = getTask();
@@ -133,7 +138,7 @@ namespace fb
                         else
                         {
                             auto tasks = taskManager->getTasks();
-                            for(auto task : tasks)
+                            for( auto task : tasks )
                             {
                                 if( task->isPrimary() )
                                 {
@@ -201,7 +206,7 @@ namespace fb
         m_tickCount = 0;
     }
 
-    void Task::queueJob( SmartPtr<IJob> job )
+    void Task::addJob( SmartPtr<IJob> job )
     {
         //FB_ASSERT( job->getState() != IJob::State::Queue );
         job->setState( IJob::State::Queue );
@@ -226,7 +231,7 @@ namespace fb
         }
     }
 
-    bool Task::isPrimary() const
+    auto Task::isPrimary() const -> bool
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return ( *m_taskFlags & primary_flag ) != 0;
@@ -246,7 +251,7 @@ namespace fb
         }
     }
 
-    bool Task::getRecycle() const
+    auto Task::getRecycle() const -> bool
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return ( *m_taskFlags & recycle_flag ) != 0;
@@ -257,12 +262,12 @@ namespace fb
         m_affinity = id;
     }
 
-    s32 Task::getAffinity() const
+    auto Task::getAffinity() const -> s32
     {
         return m_affinity;
     }
 
-    bool Task::isParallel() const
+    auto Task::isParallel() const -> bool
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return ( *m_taskFlags & parallel_flag ) != 0;
@@ -282,7 +287,7 @@ namespace fb
         }
     }
 
-    bool Task::isEnabled() const
+    auto Task::isEnabled() const -> bool
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return ( *m_taskFlags & enabled_flag ) != 0;
@@ -302,7 +307,7 @@ namespace fb
         }
     }
 
-    Thread::Task Task::getTask() const
+    auto Task::getTask() const -> Thread::Task
     {
         return m_taskId;
     }
@@ -312,7 +317,7 @@ namespace fb
         m_taskId = task;
     }
 
-    u32 Task::getThreadTaskFlags() const
+    auto Task::getThreadTaskFlags() const -> u32
     {
         return m_threadTaskFlags;
     }
@@ -344,9 +349,12 @@ namespace fb
                 {
                     if( fsm->isLoaded() )
                     {
-                        while( fsm->getCurrentState() != static_cast<u8>( State::Stopped ) )
+                        auto currentState = static_cast<State>( fsm->getCurrentState() );
+                        while( currentState != State::Stopped )
                         {
                             setState( State::Stopped );
+
+                            currentState = static_cast<State>( fsm->getCurrentState() );
                             Thread::yield();
                         }
                     }
@@ -364,12 +372,12 @@ namespace fb
         ++m_stopped;
     }
 
-    bool Task::isStopped() const
+    auto Task::isStopped() const -> bool
     {
         return m_stopped < 0;
     }
 
-    bool Task::isUpdating() const
+    auto Task::isUpdating() const -> bool
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return ( *m_taskFlags & updating_flag ) != 0;
@@ -389,14 +397,14 @@ namespace fb
         }
     }
 
-    bool Task::isExecuting() const
+    auto Task::isExecuting() const -> bool
     {
         return getState() == State::Executing;
     }
 
-    f64 Task::getTargetFPS() const
+    auto Task::getTargetFPS() const -> f64
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto pTaskManager = applicationManager->getTaskManager();
@@ -411,7 +419,7 @@ namespace fb
 
     void Task::setTargetFPS( f64 targetFPS )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto pTaskManager = applicationManager->getTaskManager();
@@ -422,7 +430,7 @@ namespace fb
         }
     }
 
-    bool Task::getUseFixedTime() const
+    auto Task::getUseFixedTime() const -> bool
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return ( *m_taskFlags & fixed_time_flag ) != 0;
@@ -442,9 +450,9 @@ namespace fb
         }
     }
 
-    time_interval Task::getNextUpdateTime() const
+    auto Task::getNextUpdateTime() const -> time_interval
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto pTaskManager = applicationManager->getTaskManager();
@@ -459,7 +467,7 @@ namespace fb
 
     void Task::setNextUpdateTime( time_interval nextUpdateTime )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto pTaskManager = applicationManager->getTaskManager();
@@ -472,13 +480,13 @@ namespace fb
 
     void Task::calculateAutoFPS()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto timer = applicationManager->getTimer();
 
         auto fps = 1.0 / timer->getSmoothDeltaTime();
         if( fps > 0.0 )
         {
-            auto targetFPS = (f64)( ( (s32)fps - 50 ) / 100 * 100 );
+            auto targetFPS = static_cast<f64>( ( static_cast<s32>( fps ) - 50 ) / 100 * 100 );
             targetFPS = Math<f64>::clamp( targetFPS, 30.0, 60.0 );
 
             setAutoFPS( targetFPS );
@@ -489,7 +497,7 @@ namespace fb
         }
     }
 
-    f64 Task::getAutoFPS() const
+    auto Task::getAutoFPS() const -> f64
     {
         return m_autoFPS;
     }
@@ -499,12 +507,12 @@ namespace fb
         m_autoFPS = autoFPS;
     }
 
-    u32 Task::getTicks() const
+    auto Task::getTicks() const -> u32
     {
         return m_tickCount;
     }
 
-    SmartPtr<IProfile> Task::getProfile() const
+    auto Task::getProfile() const -> SmartPtr<IProfile>
     {
         return m_profile;
     }
@@ -514,7 +522,7 @@ namespace fb
         m_profile = profile;
     }
 
-    SmartPtr<IFSM> Task::getFSM() const
+    auto Task::getFSM() const -> SmartPtr<IFSM>
     {
         return m_fsm;
     }
@@ -528,7 +536,7 @@ namespace fb
         }
     }
 
-    ITask::State Task::getState() const
+    auto Task::getState() const -> ITask::State
     {
         if( auto fsm = getFSM() )
         {
@@ -539,9 +547,9 @@ namespace fb
         return State::None;
     }
 
-    SmartPtr<ISharedObject> Task::getOwner() const
+    auto Task::getOwner() const -> SmartPtr<ISharedObject>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto pTaskManager = applicationManager->getTaskManager();
@@ -556,7 +564,7 @@ namespace fb
 
     void Task::setOwner( SmartPtr<ISharedObject> owner )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto pTaskManager = applicationManager->getTaskManager();
@@ -616,7 +624,7 @@ namespace fb
         }
     }
 
-    SmartPtr<Task> Task::Flags::getTask() const
+    auto Task::Flags::getTask() const -> SmartPtr<Task>
     {
         return m_task;
     }

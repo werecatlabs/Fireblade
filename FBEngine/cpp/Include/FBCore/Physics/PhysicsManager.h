@@ -11,10 +11,18 @@ namespace fb
 {
     namespace physics
     {
+
+        /** Implementation of the IPhysicsManager interface.
+         *  This class is responsible for managing all physics objects and scenes.
+         *  It also handles the physics simulation and the debug drawing.
+         */
         class PhysicsManager : public IPhysicsManager
         {
         public:
+            /** Constructor. */
             PhysicsManager();
+
+            /** Destructor. */
             ~PhysicsManager() override;
 
             /** @copydoc IObject::load */
@@ -43,14 +51,12 @@ namespace fb
 
             SmartPtr<IRigidStatic3> addRigidStatic( const Transform3<real_Num> &transform ) override;
 
-            SmartPtr<IRigidDynamic3> addRigidDynamic(
-                const Transform3<real_Num> &transform ) override;
+            SmartPtr<IRigidDynamic3> addRigidDynamic( const Transform3<real_Num> &transform ) override;
 
-            SmartPtr<IRigidStatic3> addRigidStatic(
-                SmartPtr<IPhysicsShape3> collisionShape ) override;
+            SmartPtr<IRigidStatic3> addRigidStatic( SmartPtr<IPhysicsShape3> collisionShape ) override;
 
             SmartPtr<IRigidStatic3> addRigidStatic( SmartPtr<IPhysicsShape3> collisionShape,
-                                                       SmartPtr<Properties> properties ) override;
+                                                    SmartPtr<Properties> properties ) override;
 
             SmartPtr<IPhysicsSoftBody3> addSoftBody( const String &filePath ) override;
 
@@ -70,22 +76,25 @@ namespace fb
                              SmartPtr<ISharedObject> &object, u32 collisionType = 0,
                              u32 collisionMask = 0 ) override;
 
-            SmartPtr<IConstraintD6> addJointD6( SmartPtr<IPhysicsBody3> actor0,
-                                                   const Transform3<real_Num> &localFrame0,
-                                                   SmartPtr<IPhysicsBody3> actor1,
-                                                   const Transform3<real_Num> &localFrame1 ) override;
+            SmartPtr<IConstraintD6> addConstraintD6( SmartPtr<IPhysicsBody3> actor0,
+                                                     const Transform3<real_Num> &localFrame0,
+                                                     SmartPtr<IPhysicsBody3> actor1,
+                                                     const Transform3<real_Num> &localFrame1 ) override;
 
-            SmartPtr<IConstraintFixed3> addFixedJoint(
+            SmartPtr<IConstraintFixed3> addFixedConstraint(
                 SmartPtr<IPhysicsBody3> actor0, const Transform3<real_Num> &localFrame0,
                 SmartPtr<IPhysicsBody3> actor1, const Transform3<real_Num> &localFrame1 ) override;
 
+            void removeConstraint( SmartPtr<IPhysicsConstraint3> constraint );
+
             SmartPtr<IConstraintDrive> addConstraintDrive() override;
 
-            SmartPtr<IConstraintLinearLimit> addConstraintLinearLimit(real_Num extent, real_Num contactDist = real_Num(-1.0)) override;
+            SmartPtr<IConstraintLinearLimit> addConstraintLinearLimit(
+                real_Num extent, real_Num contactDist = real_Num( -1.0 ) ) override;
 
             SmartPtr<IRaycastHit> addRaycastHitData() override;
 
-            void removeRaycastHitData(SmartPtr<IRaycastHit> raycastHitData) override;
+            void removeRaycastHitData( SmartPtr<IRaycastHit> raycastHitData ) override;
 
             Thread::Task getStateTask() const override;
 
@@ -94,6 +103,16 @@ namespace fb
             void loadObject( SmartPtr<ISharedObject> object, bool forceQueue = false ) override;
 
             void unloadObject( SmartPtr<ISharedObject> object, bool forceQueue = false ) override;
+
+            /** Locks the object for thread safety. */
+            virtual void lock();
+
+            /** Unlocks the object for thread safety. */
+            virtual void unlock();
+
+        protected:
+            Array<SmartPtr<IPhysicsConstraint3>> m_constraints;
+            mutable RecursiveMutex m_mutex;
         };
     }  // end namespace physics
 }  // end namespace fb

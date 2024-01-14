@@ -9,6 +9,9 @@ namespace fb
 {
     namespace scene
     {
+
+        /** CarController class that implements a vehicle controller for a car.
+         */
         class CarController : public VehicleController
         {
         public:
@@ -31,8 +34,6 @@ namespace fb
 
             /** @copydoc IComponent::edit */
             void edit();
-
-            void updateTransform() override;
 
             void setupWheels();
 
@@ -97,7 +98,7 @@ namespace fb
             {
             public:
                 VehicleCallback() = default;
-                VehicleCallback( CarController *controller );
+                explicit VehicleCallback( CarController *controller );
                 ~VehicleCallback() override;
 
                 String getData( const String &filePath ) override;
@@ -115,6 +116,7 @@ namespace fb
                 Vector3<real_Num> getLocalAngularVelocity() const override;
                 Vector3<real_Num> getLocalLinearVelocity() const override;
 
+                Vector3<real_Num> getScale() const override;
                 Vector3<real_Num> getPosition() const override;
                 Quaternion<real_Num> getOrientation() const override;
 
@@ -179,16 +181,8 @@ namespace fb
             SmartPtr<IVehicleController> m_vehicleController;
             SmartPtr<VehicleCallback> m_vehicleCallback;
 
-            // SmartPtr<render::IGraphicsObject> m_mesh;
-            // SmartPtr<render::ISceneNode> m_node;
-
             SmartPtr<Collision> m_collision;
             SmartPtr<Rigidbody> m_chassis;
-
-            // SmartPtr<WheelController> m_leftFront;
-            // SmartPtr<WheelController> m_rightFront;
-            // SmartPtr<WheelController> m_leftRear;
-            // SmartPtr<WheelController> m_rightRear;
 
             Array<SmartPtr<WheelController>> m_wheels;
             Array<SmartPtr<WheelController>> m_poweredWheels;

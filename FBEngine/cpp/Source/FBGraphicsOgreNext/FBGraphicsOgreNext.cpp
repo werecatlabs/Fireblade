@@ -10,55 +10,53 @@
 #include <FBGraphicsOgreNext/Compositor.h>
 #include <FBCore/FBCore.h>
 
+#include "FBGraphicsOgreNext/UI/UIImage.h"
+#include "FBGraphicsOgreNext/UI/UIButton.h"
 #include "FBGraphicsOgreNext/UI/UIManager.h"
 
-namespace fb
+namespace fb::render
 {
-    namespace render
+
+    void FBGraphicsOgreNext::load( SmartPtr<ISharedObject> data )
     {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
 
-        void FBGraphicsOgreNext::load( SmartPtr<ISharedObject> data )
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
+        auto factoryManager = applicationManager->getFactoryManager();
+        FB_ASSERT( factoryManager );
 
-            auto factoryManager = applicationManager->getFactoryManager();
-            FB_ASSERT( factoryManager );
+        FactoryUtil::addFactory<CGraphicsSystemOgreNext>();
+        FactoryUtil::addFactory<GraphicsSystemState>();
 
-            FactoryUtil::addFactory<CGraphicsSystemOgreNext>();
-            FactoryUtil::addFactory<GraphicsSystemState>();
+        FactoryUtil::addFactory<Compositor>();
 
-            FactoryUtil::addFactory<Compositor>();
+        FactoryUtil::addFactory<CMaterialOgreNext>();
+        FactoryUtil::addFactory<CMaterialOgreNext::MaterialStateListener>();
+        FactoryUtil::addFactory<CMaterialPassOgreNext>();
+        FactoryUtil::addFactory<CMaterialTechniqueOgreNext>();
+        FactoryUtil::addFactory<CMaterialTextureOgreNext>();
+        FactoryUtil::addFactory<CTextureOgreNext>();
+        FactoryUtil::addFactory<CSceneNodeOgreNext>();
 
-            FactoryUtil::addFactory<CMaterialOgreNext>();
-            FactoryUtil::addFactory<CMaterialPassOgreNext>();
-            FactoryUtil::addFactory<CMaterialTechniqueOgreNext>();
-            FactoryUtil::addFactory<CMaterialTextureOgreNext>();
+        FactoryUtil::addFactory<ui::UIManager>();
 
-            FactoryUtil::addFactory<CTextureOgreNext>();
+        factoryManager->setPoolSizeByType<Compositor>( 4 );
+        factoryManager->setPoolSizeByType<CMaterialOgreNext>( 1024 );
+        factoryManager->setPoolSizeByType<CMaterialOgreNext::MaterialStateListener>( 1024 );
+        factoryManager->setPoolSizeByType<CMaterialPassOgreNext>( 1024 );
+        factoryManager->setPoolSizeByType<CMaterialTechniqueOgreNext>( 1024 );
+        factoryManager->setPoolSizeByType<CMaterialTextureOgreNext>( 1024 );
+        factoryManager->setPoolSizeByType<CTextureOgreNext>( 1024 );
+        factoryManager->setPoolSizeByType<CSceneNodeOgreNext>( 1024 );
+    }
 
-            FactoryUtil::addFactory<CSceneNodeOgreNext>();
+    void FBGraphicsOgreNext::unload( SmartPtr<ISharedObject> data )
+    {
+    }
 
+    auto FBGraphicsOgreNext::createGraphicsOgre() -> SmartPtr<IGraphicsSystem>
+    {
+        return fb::make_ptr<CGraphicsSystemOgreNext>();
+    }
 
-            FactoryUtil::addFactory<ui::UIManager>();
-
-            factoryManager->setPoolSizeByType<Compositor>( 4 );
-            factoryManager->setPoolSizeByType<CMaterialOgreNext>( 1024 );
-            factoryManager->setPoolSizeByType<CMaterialPassOgreNext>( 1024 );
-            factoryManager->setPoolSizeByType<CMaterialTechniqueOgreNext>( 1024 );
-            factoryManager->setPoolSizeByType<CMaterialTextureOgreNext>( 1024 );
-            factoryManager->setPoolSizeByType<CTextureOgreNext>( 1024 );
-            factoryManager->setPoolSizeByType<CSceneNodeOgreNext>( 1024 );
-        }
-
-        void FBGraphicsOgreNext::unload( SmartPtr<ISharedObject> data )
-        {
-        }
-
-        SmartPtr<IGraphicsSystem> FBGraphicsOgreNext::createGraphicsOgre()
-        {
-            return fb::make_ptr<CGraphicsSystemOgreNext>();
-        }
-
-    }  // end namespace render
-}  // end namespace fb
+}  // namespace fb::render

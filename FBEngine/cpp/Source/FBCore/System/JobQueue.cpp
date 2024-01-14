@@ -1,6 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/JobQueue.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/IJob.h>
 #include <FBCore/Interface/System/IJobQueue.h>
 #include <FBCore/Interface/System/ITaskManager.h>
@@ -10,13 +10,9 @@
 
 namespace fb
 {
-    JobQueue::JobQueue()
-    {
-    }
+    JobQueue::JobQueue() = default;
 
-    JobQueue::~JobQueue()
-    {
-    }
+    JobQueue::~JobQueue() = default;
 
     void JobQueue::update()
     {
@@ -38,7 +34,7 @@ namespace fb
                 }
             }
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             if( auto threadPool = applicationManager->getThreadPool() )
@@ -105,7 +101,7 @@ namespace fb
 
     void JobQueue::addJob( SmartPtr<IJob> job, Thread::Task task )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto taskManager = applicationManager->getTaskManager();
@@ -114,13 +110,13 @@ namespace fb
         auto pTask = taskManager->getTask( task );
         if( pTask )
         {
-            pTask->queueJob( job );
+            pTask->addJob( job );
         }
     }
 
     void JobQueue::addJobAllTasks( SmartPtr<IJob> job )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         if( auto taskManager = applicationManager->getTaskManager() )
@@ -131,13 +127,13 @@ namespace fb
                 auto pTask = taskManager->getTask( task );
                 if( pTask )
                 {
-                    pTask->queueJob( job );
+                    pTask->addJob( job );
                 }
             }
         }
     }
 
-    bool JobQueue::isRunning() const
+    auto JobQueue::isRunning() const -> bool
     {
         return m_isRunning;
     }
@@ -147,7 +143,7 @@ namespace fb
         m_isRunning = running;
     }
 
-    f32 JobQueue::getRate() const
+    auto JobQueue::getRate() const -> f32
     {
         return m_rate;
     }
@@ -157,7 +153,7 @@ namespace fb
         m_rate = rate;
     }
 
-    bool JobQueue::getUseAffinity() const
+    auto JobQueue::getUseAffinity() const -> bool
     {
         return m_useAffinity;
     }
@@ -167,7 +163,7 @@ namespace fb
         m_useAffinity = affinity;
     }
 
-    bool JobQueue::isProcessing( s32 id ) const
+    auto JobQueue::isProcessing( s32 id ) const -> bool
     {
         return m_isProcessing;
     }

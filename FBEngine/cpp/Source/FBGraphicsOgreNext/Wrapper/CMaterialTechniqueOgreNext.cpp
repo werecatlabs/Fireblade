@@ -5,177 +5,174 @@
 #include <Ogre.h>
 #include <OgreTechnique.h>
 
-namespace fb
+namespace fb::render
 {
-    namespace render
+
+    FB_CLASS_REGISTER_DERIVED( fb, CMaterialTechniqueOgreNext, IMaterialTechnique );
+
+    CMaterialTechniqueOgreNext::CMaterialTechniqueOgreNext() = default;
+
+    CMaterialTechniqueOgreNext::~CMaterialTechniqueOgreNext()
     {
+        unload( nullptr );
+    }
 
-        FB_CLASS_REGISTER_DERIVED( fb, CMaterialTechniqueOgreNext, IMaterialTechnique );
-
-        CMaterialTechniqueOgreNext::CMaterialTechniqueOgreNext()
+    void CMaterialTechniqueOgreNext::load( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-        }
+            setLoadingState( LoadingState::Loading );
 
-        CMaterialTechniqueOgreNext::~CMaterialTechniqueOgreNext()
-        {
-            unload( 0 );
-        }
+            auto passes = getPasses();
 
-        void CMaterialTechniqueOgreNext::load( SmartPtr<ISharedObject> data )
-        {
-            try
+            if( passes.empty() )
             {
-                setLoadingState( LoadingState::Loading );
-
-                auto passes = getPasses();
-
-                if( passes.empty() )
-                {
-                    auto pass = createPass();
-                    FB_ASSERT( pass );
-                }
-
-                passes = getPasses();
-                for( auto pass : passes )
-                {
-                    pass->load( nullptr );
-                }
-
-                setLoadingState( LoadingState::Loaded );
+                auto pass = createPass();
+                FB_ASSERT( pass );
             }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
 
-        void CMaterialTechniqueOgreNext::reload( SmartPtr<ISharedObject> data )
-        {
-            try
+            passes = getPasses();
+            for( auto pass : passes )
             {
-                auto passes = getPasses();
-                for( auto pass : passes )
-                {
-                    pass->reload( data );
-                }
+                pass->load( nullptr );
             }
-            catch( std::exception &e )
+
+            setLoadingState( LoadingState::Loaded );
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void CMaterialTechniqueOgreNext::reload( SmartPtr<ISharedObject> data )
+    {
+        try
+        {
+            auto passes = getPasses();
+            for( auto pass : passes )
             {
-                FB_LOG_EXCEPTION( e );
+                pass->reload( data );
             }
         }
-
-        void CMaterialTechniqueOgreNext::unload( SmartPtr<ISharedObject> data )
+        catch( std::exception &e )
         {
-            try
-            {
-                setLoadingState( LoadingState::Unloading );
+            FB_LOG_EXCEPTION( e );
+        }
+    }
 
-                auto passes = getPasses();
-                for( auto pass : passes )
-                {
-                    pass->unload( nullptr );
-                }
+    void CMaterialTechniqueOgreNext::unload( SmartPtr<ISharedObject> data )
+    {
+        try
+        {
+            setLoadingState( LoadingState::Unloading );
 
-                setLoadingState( LoadingState::Unloaded );
-            }
-            catch( std::exception &e )
+            auto passes = getPasses();
+            for( auto pass : passes )
             {
-                FB_LOG_EXCEPTION( e );
+                pass->unload( nullptr );
             }
+
+            setLoadingState( LoadingState::Unloaded );
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void CMaterialTechniqueOgreNext::initialise( Ogre::Technique *technique )
+    {
+        m_technique = technique;
+
+        // auto passes = m_technique->getPasses();
+        // for( auto pass : passes )
+        //{
+        //     auto pPass = fb::make_ptr<CMaterialPass>();
+        //     pPass->initialise( pass );
+        //     m_passes.push_back( pPass );
+        // }
+    }
+
+    auto CMaterialTechniqueOgreNext::getScheme() const -> hash32
+    {
+        return 0;
+    }
+
+    void CMaterialTechniqueOgreNext::setScheme( hash32 val )
+    {
+    }
+
+    auto CMaterialTechniqueOgreNext::createPass() -> SmartPtr<IMaterialPass>
+    {
+        try
+        {
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto factoryManager = applicationManager->getFactoryManager();
+            FB_ASSERT( factoryManager );
+
+            auto pass = factoryManager->make_ptr<CMaterialPassOgreNext>();
+            FB_ASSERT( pass );
+
+            auto material = getMaterial();
+            pass->setMaterial( material );
+
+            pass->setParent( this );
+            addPass( pass );
+
+            FB_ASSERT( getPasses().size() == 1 );
+            return pass;
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
         }
 
-        void CMaterialTechniqueOgreNext::initialise( Ogre::Technique *technique )
+        return nullptr;
+    }
+
+    auto CMaterialTechniqueOgreNext::getChildObjects() const -> Array<SmartPtr<ISharedObject>>
+    {
+        auto passes = getPasses();
+
+        auto objects = Array<SmartPtr<ISharedObject>>();
+        objects.reserve( passes.size() );
+
+        for( auto pass : passes )
+        {
+            objects.emplace_back( pass );
+        }
+
+        return objects;
+    }
+
+    auto CMaterialTechniqueOgreNext::getTechnique() const -> Ogre::Technique *
+    {
+        return m_technique;
+    }
+
+    void CMaterialTechniqueOgreNext::setTechnique( Ogre::Technique *technique )
+    {
+        if( m_technique != technique )
         {
             m_technique = technique;
 
-            // auto passes = m_technique->getPasses();
-            // for( auto pass : passes )
+            //auto passes = technique->getPasses();
+            //if( passes.size() != m_passes.size() )
             //{
-            //     auto pPass = fb::make_ptr<CMaterialPass>();
-            //     pPass->initialise( pass );
-            //     m_passes.push_back( pPass );
-            // }
+            //    m_passes.clear();
+
+            //    for( auto pass : passes )
+            //    {
+            //        auto pPass = fb::make_ptr<CMaterialPass>();
+            //        pPass->setParent( this );
+            //        pPass->initialise( pass );
+            //        m_passes.push_back( pPass );
+            //    }
+            //}
         }
+    }
 
-        hash32 CMaterialTechniqueOgreNext::getScheme() const
-        {
-            return 0;
-        }
-
-        void CMaterialTechniqueOgreNext::setScheme( hash32 val )
-        {
-        }
-
-        SmartPtr<IMaterialPass> CMaterialTechniqueOgreNext::createPass()
-        {
-            try
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto factoryManager = applicationManager->getFactoryManager();
-                FB_ASSERT( factoryManager );
-
-                auto pass = factoryManager->make_ptr<CMaterialPassOgreNext>();
-                FB_ASSERT( pass );
-
-                auto material = getMaterial();
-                pass->setMaterial( material );
-
-                pass->setParent( this );
-                addPass( pass );
-
-                FB_ASSERT( getPasses().size() == 1 );
-                return pass;
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        Array<SmartPtr<ISharedObject>> CMaterialTechniqueOgreNext::getChildObjects() const
-        {
-            auto passes = getPasses();
-
-            auto objects = Array<SmartPtr<ISharedObject>>();
-            objects.reserve( passes.size() );
-
-            for( auto pass : passes )
-            {
-                objects.push_back( pass );
-            }
-
-            return objects;
-        }
-
-        Ogre::Technique *CMaterialTechniqueOgreNext::getTechnique() const
-        {
-            return m_technique;
-        }
-
-        void CMaterialTechniqueOgreNext::setTechnique( Ogre::Technique *technique )
-        {
-            if( m_technique != technique )
-            {
-                m_technique = technique;
-
-                //auto passes = technique->getPasses();
-                //if( passes.size() != m_passes.size() )
-                //{
-                //    m_passes.clear();
-
-                //    for( auto pass : passes )
-                //    {
-                //        auto pPass = fb::make_ptr<CMaterialPass>();
-                //        pPass->setParent( this );
-                //        pPass->initialise( pass );
-                //        m_passes.push_back( pPass );
-                //    }
-                //}
-            }
-        }
-
-    }  // end namespace render
-}  // end namespace fb
+}  // namespace fb::render

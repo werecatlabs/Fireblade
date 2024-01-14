@@ -7,20 +7,16 @@
 
 namespace fb
 {
-    ThreadDebug::~ThreadDebug()
-    {
-    }
+    ThreadDebug::~ThreadDebug() = default;
 
-    ThreadDebug::ThreadDebug() : m_writeThreadId( 0 )
-    {
-    }
+    ThreadDebug::ThreadDebug() = default;
 
     void ThreadDebug::setWriteThreadId( u32 val )
     {
         m_writeThreadId = val;
     }
 
-    u32 ThreadDebug::getWriteThreadId() const
+    auto ThreadDebug::getWriteThreadId() const -> u32
     {
         return m_writeThreadId;
     }
@@ -28,17 +24,19 @@ namespace fb
     ThreadDebug::Call::~Call()
     {
         if( m_bWrite )
+        {
             m_debug->setWriteThreadId( 0 );
+        }
     }
 
     ThreadDebug::Call::Call( ThreadDebug *debug, bool bWrite, const char *file /*= __FILE__*/,
                              const char *function /*= 0*/, const unsigned int line /*= __LINE__*/ ) :
         m_debug( debug ),
-        m_readThreadId( 0 ),
+
         m_bWrite( bWrite ),
         m_file( nullptr ),
-        m_function( nullptr ),
-        m_line( 0 )
+        m_function( nullptr )
+
     {
         if( m_bWrite )
         {
@@ -80,7 +78,7 @@ namespace fb
         m_bWrite = val;
     }
 
-    bool ThreadDebug::Call::getWrite() const
+    auto ThreadDebug::Call::getWrite() const -> bool
     {
         return m_bWrite;
     }
@@ -90,7 +88,7 @@ namespace fb
         m_readThreadId = val;
     }
 
-    u32 ThreadDebug::Call::getReadThreadId() const
+    auto ThreadDebug::Call::getReadThreadId() const -> u32
     {
         return m_readThreadId;
     }

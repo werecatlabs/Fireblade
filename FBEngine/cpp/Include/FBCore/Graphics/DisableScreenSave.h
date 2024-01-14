@@ -5,15 +5,36 @@
 
 namespace fb
 {
-    class CDisableScreenSave : public ISharedObject
+
+    /**
+     * @brief Disable screen saver
+     *
+     * @note
+     *  This class is used to disable screen saver.
+     *  It is used in the following way:
+     *  @code
+     *  CDisableScreenSave disableScreenSave;
+     *  // do something
+     *  @endcode
+     *  When the object is destroyed, the screen saver is enabled again.
+     */
+    class DisableScreenSave : public ISharedObject
     {
     public:
-        CDisableScreenSave();
-        ~CDisableScreenSave() override;
+        /**
+         * @brief Constructor
+         */
+        DisableScreenSave();
+
+        /**
+         * @brief Destructor
+         */
+        ~DisableScreenSave() override;
 
     protected:
-        int *m_pValue;
+        s32 *m_pValue = nullptr;
     };
+
 }  // end namespace fb
 
 #endif  // DisableScreenSave_h__

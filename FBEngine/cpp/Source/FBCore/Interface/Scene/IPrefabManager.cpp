@@ -7,10 +7,7 @@
 
 #include <FBCore/System/RttiClassDefinition.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
-    {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, IPrefabManager, IResourceManager );
-    }  // end namespace scene
-}  // end namespace fb
+    FB_CLASS_REGISTER_DERIVED( fb::scene, IPrefabManager, IResourceManager );
+}  // namespace fb::scene

@@ -7,138 +7,134 @@
 #include <ui/UIManager.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    void AddComponentCmd::undo()
     {
+        RecursiveMutex::ScopedLock lock( m_mutex );
 
-        void AddComponentCmd::undo()
+        if( auto actor = getActor() )
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-
-            if( auto actor = getActor() )
+            if( auto component = getComponent() )
             {
-                if( auto component = getComponent() )
-                {
-                    actor->removeComponentInstance( component );
-                }
-            }
-
-            auto editorManager = EditorManager::getSingletonPtr();
-            auto ui = editorManager->getUI();
-            if( auto actorWindow = ui->getActorWindow() )
-            {
-                actorWindow->buildTree();
+                actor->removeComponentInstance( component );
             }
         }
 
-        void AddComponentCmd::redo()
+        auto editorManager = EditorManager::getSingletonPtr();
+        auto ui = editorManager->getUI();
+        if( auto actorWindow = ui->getActorWindow() )
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );
+            actorWindow->buildTree();
+        }
+    }
 
-            if( auto actor = getActor() )
-            {
-                if( auto component = getComponent() )
-                {
-                    actor->addComponentInstance( component );
-                }
-            }
+    void AddComponentCmd::redo()
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
 
-            auto editorManager = EditorManager::getSingletonPtr();
-            auto ui = editorManager->getUI();
-            if( auto actorWindow = ui->getActorWindow() )
+        if( auto actor = getActor() )
+        {
+            if( auto component = getComponent() )
             {
-                actorWindow->buildTree();
+                actor->addComponentInstance( component );
             }
         }
 
-        void AddComponentCmd::execute()
+        auto editorManager = EditorManager::getSingletonPtr();
+        auto ui = editorManager->getUI();
+        if( auto actorWindow = ui->getActorWindow() )
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );
+            actorWindow->buildTree();
+        }
+    }
 
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
+    void AddComponentCmd::execute()
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
 
-            auto selectionManager = applicationManager->getSelectionManager();
-            FB_ASSERT( selectionManager );
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
 
-            auto selection = selectionManager->getSelection();
-            for( auto selected : selection )
+        auto selectionManager = applicationManager->getSelectionManager();
+        FB_ASSERT( selectionManager );
+
+        auto selection = selectionManager->getSelection();
+        for( auto selected : selection )
+        {
+            if( selected )
             {
-                if( selected )
+                if( selected->isDerived<scene::IActor>() )
                 {
-                    if( selected->isDerived<scene::IActor>() )
+                    auto actor = fb::static_pointer_cast<scene::IActor>( selected );
+                    if( actor )
                     {
-                        auto actor = fb::static_pointer_cast<scene::IActor>( selected );
-                        if( actor )
+                        setActor( actor );
+
+                        auto factory = getFactory();
+
+                        auto component = static_cast<scene::IComponent *>( factory->createObject() );
+                        actor->addComponentInstance( component );
+                        setComponent( component );
+
+                        if( component )
                         {
-                            setActor( actor );
-
-                            auto factory = getFactory();
-
-                            auto component =
-                                static_cast<scene::IComponent *>( factory->createObjectFromPool() );
-                            actor->addComponentInstance( component );
-                            setComponent( component );
-
-                            if( component )
+                            if( applicationManager->isEditor() )
                             {
-                                if( applicationManager->isEditor() )
-                                {
-                                    component->setState( scene::IComponent::State::Edit );
-                                }
-                                else
-                                {
-                                    component->setState( scene::IComponent::State::Play );
-                                }
+                                component->setState( scene::IComponent::State::Edit );
+                            }
+                            else
+                            {
+                                component->setState( scene::IComponent::State::Play );
                             }
                         }
                     }
                 }
             }
-
-            auto editorManager = EditorManager::getSingletonPtr();
-            auto ui = editorManager->getUI();
-            if( auto actorWindow = ui->getActorWindow() )
-            {
-                actorWindow->buildTree();
-            }
         }
 
-        SmartPtr<IFactory> AddComponentCmd::getFactory() const
+        auto editorManager = EditorManager::getSingletonPtr();
+        auto ui = editorManager->getUI();
+        if( auto actorWindow = ui->getActorWindow() )
         {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-            return m_factory;
+            actorWindow->buildTree();
         }
+    }
 
-        void AddComponentCmd::setFactory( SmartPtr<IFactory> factory )
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-            m_factory = factory;
-        }
+    auto AddComponentCmd::getFactory() const -> SmartPtr<IFactory>
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        return m_factory;
+    }
 
-        SmartPtr<scene::IComponent> AddComponentCmd::getComponent() const
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-            return m_component;
-        }
+    void AddComponentCmd::setFactory( SmartPtr<IFactory> factory )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_factory = factory;
+    }
 
-        void AddComponentCmd::setComponent( SmartPtr<scene::IComponent> component )
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-            m_component = component;
-        }
+    auto AddComponentCmd::getComponent() const -> SmartPtr<scene::IComponent>
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        return m_component;
+    }
 
-        SmartPtr<scene::IActor> AddComponentCmd::getActor() const
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-            return m_actor;
-        }
+    void AddComponentCmd::setComponent( SmartPtr<scene::IComponent> component )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_component = component;
+    }
 
-        void AddComponentCmd::setActor( SmartPtr<scene::IActor> actor )
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-            m_actor = actor;
-        }
-    }  // namespace editor
-}  // namespace fb
+    auto AddComponentCmd::getActor() const -> SmartPtr<scene::IActor>
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        return m_actor;
+    }
+
+    void AddComponentCmd::setActor( SmartPtr<scene::IActor> actor )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
+        m_actor = actor;
+    }
+}  // namespace fb::editor

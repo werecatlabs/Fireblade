@@ -16,10 +16,10 @@ namespace fb
     void StateMessage::unload( SmartPtr<ISharedObject> data )
     {
         m_sender = nullptr;
-        m_stateObject = nullptr;
+        m_stateContext = nullptr;
     }
 
-    hash_type StateMessage::getType() const
+    auto StateMessage::getType() const -> hash_type
     {
         return m_type;
     }
@@ -29,7 +29,7 @@ namespace fb
         m_type = type;
     }
 
-    SmartPtr<ISharedObject> StateMessage::getSender() const
+    auto StateMessage::getSender() const -> SmartPtr<ISharedObject>
     {
         auto p = m_sender.load();
         return p.lock();
@@ -40,14 +40,14 @@ namespace fb
         m_sender = object;
     }
 
-    SmartPtr<IStateContext> StateMessage::getStateObject() const
+    auto StateMessage::getStateContext() const -> SmartPtr<IStateContext>
     {
-        auto p = m_stateObject.load();
+        auto p = m_stateContext.load();
         return p.lock();
     }
 
-    void StateMessage::setStateObject( SmartPtr<IStateContext> object )
+    void StateMessage::setStateContext( SmartPtr<IStateContext> object )
     {
-        m_stateObject = object;
+        m_stateContext = object;
     }
 }  // end namespace fb

@@ -15,7 +15,7 @@ namespace fb
         static const hash_type SET_VELOCITY_HASH;
 
         StatePhysicsVelocity2();
-        StatePhysicsVelocity2( const Vector2<real_Num> &velocity );
+        explicit StatePhysicsVelocity2( const Vector2<real_Num> &velocity );
 
         Vector2<real_Num> getVelocity() const;
         void setVelocity( const Vector2<real_Num> &val );

@@ -2,65 +2,39 @@
 #define KeyFrameTransform3_h__
 
 #include "KeyFrame.h"
+#include "FBCore/Math/Quaternion.h"
+#include "FBCore/Math/Vector3.h"
 
 namespace fb
 {
 
-    //---------------------------------------------
     class KeyFrameTransform3 : public KeyFrame
     {
     public:
-        KeyFrameTransform3()
-        {
-        }
+        KeyFrameTransform3();
 
         KeyFrameTransform3( f32 time, const Vector3F &position, const QuaternionF &orientation,
-                            const Vector3F &scale ) :
-            Orientation( orientation ),
-            Position( position ),
-            Scale( scale )
-        {
-            m_time = time;
-        }
+                            const Vector3F &scale );
 
-        ~KeyFrameTransform3()
-        {
-        }
+        ~KeyFrameTransform3();
 
-        Vector3F getPosition() const
-        {
-            return Position;
-        }
-        void setPosition( Vector3F val )
-        {
-            Position = val;
-        }
+        Vector3F getPosition() const;
 
-        QuaternionF getOrientation() const
-        {
-            return Orientation;
-        }
-        void setOrientation( QuaternionF val )
-        {
-            Orientation = val;
-        }
+        void setPosition( const Vector3F &position );
 
-        Vector3F getScale() const
-        {
-            return Scale;
-        }
-        void setScale( Vector3F val )
-        {
-            Scale = val;
-        }
+        QuaternionF getOrientation() const;
+
+        void setOrientation( const QuaternionF &orientation );
+
+        Vector3F getScale() const;
+
+        void setScale( const Vector3F &scale );
 
     private:
-        QuaternionF Orientation;
-        Vector3F Position;
-        Vector3F Scale;
+        QuaternionF m_orientation;
+        Vector3F m_position;
+        Vector3F m_scale;
     };
-
-    typedef SmartPtr<KeyFrameTransform3> KeyFrameTransform3Ptr;
 
 }  // end namespace fb
 

@@ -5,7 +5,7 @@
 #include <FBCore/Interface/Graphics/IDebug.h>
 #include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Core/ConcurrentQueue.h>
-#include <FBCore/Graphics/CSharedGraphicsObject.h>
+#include <FBCore/Graphics/SharedGraphicsObject.h>
 #include <FBCore/Interface/System/IStateListener.h>
 
 namespace fb
@@ -13,7 +13,7 @@ namespace fb
     namespace render
     {
 
-        class CDebugOgreNext : public CSharedGraphicsObject<IDebug>
+        class CDebugOgreNext : public SharedGraphicsObject<IDebug>
         {
         public:
             CDebugOgreNext() = default;
@@ -39,16 +39,20 @@ namespace fb
             void clear() override;
 
             /** @copydoc IDebug::drawPoint */
-            void drawPoint( s32 id, const Vector3<real_Num> &positon, u32 color ) override;
+            void drawPoint( hash_type id, const Vector3<real_Num> &positon, u32 color ) override;
 
             /** @copydoc IDebug::drawLine */
-            SmartPtr<IDebugLine> drawLine( s32 id, const Vector3<real_Num> &start, const Vector3<real_Num> &end,
+            SmartPtr<IDebugLine> drawLine( hash_type id, const Vector3<real_Num> &start, const Vector3<real_Num> &end,
                            u32 colour ) override;
+
+            SmartPtr<IDebugCircle> drawCircle( hash_type id, const Vector3<real_Num> &position,
+                                               const Quaternion<real_Num> &orientation, real_Num radius,
+                                               u32 color );
 
             Ogre::HlmsUnlitDatablock *getDatablock() const;
             void setDatablock( Ogre::HlmsUnlitDatablock *datablock );
 
-            void drawText( s32 id, const Vector2<real_Num> &position, const String &text,
+            void drawText( hash_type id, const Vector2<real_Num> &position, const String &text,
                            u32 color ) override;
 
         private:
@@ -75,10 +79,19 @@ namespace fb
             SharedPtr<ConcurrentArray<SmartPtr<IDebugLine>>> getDebugLines() const;
             void setDebugLines( SharedPtr<ConcurrentArray<SmartPtr<IDebugLine>>> debugLines );
 
+            SharedPtr<ConcurrentArray<SmartPtr<IDebugCircle>>> getDebugCircles() const;
+            void setDebugCircles( SharedPtr<ConcurrentArray<SmartPtr<IDebugCircle>>> debugCircles );
+
+
             SmartPtr<IDebugLine> addLine( s32 id );
             void removeLine( s32 id );
-            void removeLine( SmartPtr<IDebugLine> visualForceVector );
+            void removeLine( SmartPtr<IDebugLine> debugLine );
             SmartPtr<IDebugLine> getLine( s32 id ) const;
+
+            SmartPtr<IDebugCircle> addCircle( s32 id );
+            void removeCircle( s32 id );
+            void removeCircle( SmartPtr<IDebugCircle> debugCircle );
+            SmartPtr<IDebugCircle> getCircle( s32 id ) const;
 
             SmartPtr<IOverlay> getOverlay() const;
 
@@ -93,6 +106,7 @@ namespace fb
 
             ConcurrentQueue<SmartPtr<IDebugLine>> m_removeQueue;
             AtomicSharedPtr<ConcurrentArray<SmartPtr<IDebugLine>>> m_debugLines;
+            AtomicSharedPtr<ConcurrentArray<SmartPtr<IDebugCircle>>> m_debugCircles;
 
             SmartPtr<IOverlay> m_overlay;
             SharedPtr<ConcurrentArray<SmartPtr<IOverlayElement>>> m_overlayElements;

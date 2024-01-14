@@ -78,13 +78,13 @@ namespace fb
 
     private:
         /** The central axis of the cylinder. */
-        Line3<T> m_axis;       
+        Line3<T> m_axis;
 
         /** The radius of the cylinder. */
-        T m_radius = T( 0.0 );  
+        T m_radius = T( 0.0 );
 
         /** The height of the cylinder. */
-        T m_height = T( 0.0 );  
+        T m_height = T( 0.0 );
     };
 
     template <typename T>

@@ -3,51 +3,46 @@
 #include <FBCore/Interface/Graphics/ITerrainBlendMap.h>
 #include <FBCore/Core/LogManager.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+    FB_CLASS_REGISTER_DERIVED( fb, TerrainBlendMap, SubComponent );
+
+    TerrainBlendMap::TerrainBlendMap() = default;
+
+    TerrainBlendMap::~TerrainBlendMap()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, TerrainBlendMap, SubComponent );
+        unload( nullptr );
+    }
 
-        TerrainBlendMap::TerrainBlendMap()
+    void TerrainBlendMap::load( SmartPtr<ISharedObject> data )
+    {
+        try
         {
         }
-
-        TerrainBlendMap::~TerrainBlendMap()
+        catch( std::exception &e )
         {
-            unload( nullptr );
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        void TerrainBlendMap::load( SmartPtr<ISharedObject> data )
+    void TerrainBlendMap::unload( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            try
-            {
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
         }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
 
-        void TerrainBlendMap::unload( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
+    auto TerrainBlendMap::getBlendMap() const -> SmartPtr<render::ITerrainBlendMap>
+    {
+        return m_blendMap;
+    }
 
-        SmartPtr<render::ITerrainBlendMap> TerrainBlendMap::getBlendMap() const
-        {
-            return m_blendMap;
-        }
-
-        void TerrainBlendMap::setBlendMap( SmartPtr<render::ITerrainBlendMap> blendMap )
-        {
-            m_blendMap = blendMap;
-        }
-    }  // namespace scene
-}  // namespace fb
+    void TerrainBlendMap::setBlendMap( SmartPtr<render::ITerrainBlendMap> blendMap )
+    {
+        m_blendMap = blendMap;
+    }
+}  // namespace fb::scene

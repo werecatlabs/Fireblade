@@ -3,27 +3,38 @@
 
 #include "ImCurveEdit.h"
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+
+    FB_CLASS_REGISTER_DERIVED( fb, ImGuiColourPicker, CImGuiElement<IUIColourPicker> );
+
+    ImGuiColourPicker::ImGuiColourPicker() = default;
+
+    ImGuiColourPicker::~ImGuiColourPicker() = default;
+
+    void ImGuiColourPicker::update()
     {
+        auto colour = getColour();
+        auto name = getName();
+        ImGui::ColorEdit3( name.c_str(), &colour.r );
+    }
 
-        FB_CLASS_REGISTER_DERIVED( fb, ImGuiColourPicker, CImGuiElement<IUIColourPicker> );
+    void ImGuiColourPicker::setGradient( const ColourF &startColour, const ColourF &endColour )
+    {
+    }
 
-        ImGuiColourPicker::ImGuiColourPicker()
-        {
-        }
+    auto ImGuiColourPicker::getGradient() const -> fb::Pair<fb::ColourF, fb::ColourF>
+    {
+        return {};
+    }
 
-        ImGuiColourPicker::~ImGuiColourPicker()
-        {
-        }
+    void ImGuiColourPicker::setColourFormat( ColourFormat format )
+    {
+    }
 
-        void ImGuiColourPicker::update()
-        {
-            auto colour = getColour();
-            auto name = getName();
-            ImGui::ColorEdit3(name.c_str(), &colour.r);
-        }
+    auto ImGuiColourPicker::getColourFormat() const -> fb::ui::IUIColourPicker::ColourFormat
+    {
+        return ColourFormat::RGB;
+    }
 
-    }  // namespace ui
-}  // namespace fb
+}  // namespace fb::ui

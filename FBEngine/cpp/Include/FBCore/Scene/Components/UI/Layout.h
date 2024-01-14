@@ -1,5 +1,5 @@
-#ifndef CanvasComponent_h__
-#define CanvasComponent_h__
+#ifndef Layout_h__
+#define Layout_h__
 
 #include <FBCore/Scene/Components/UI/UIComponent.h>
 
@@ -8,10 +8,18 @@ namespace fb
     namespace scene
     {
 
+        /** Layout component.
+         *  This component is used to layout UI components.
+         *  It is used to layout UI components in a specific way.
+         *  It is also used to set the reference size for the UI components.
+         */
         class Layout : public UIComponent
         {
         public:
+            /** Constructor. */
             Layout();
+
+            /** Destructor. */
             ~Layout() override;
 
             /** @copydoc IObject::load */
@@ -20,13 +28,17 @@ namespace fb
             /** @copydoc IObject::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            void update() override;
-
+            /** Layout object. */
             SmartPtr<ui::IUILayout> getLayout() const;
-            void setLayout( SmartPtr<ui::IUILayout> val );
 
+            /** Layout object. */
+            void setLayout( SmartPtr<ui::IUILayout> layout );
+
+            /** Reference size. */
             Vector2I getReferenceSize() const;
-            void setReferenceSize( const Vector2I &val );
+
+            /**  Reference size. */
+            void setReferenceSize( const Vector2I &referenceSize );
 
             /** @copydoc IComponent::getChildObjects */
             Array<SmartPtr<ISharedObject>> getChildObjects() const override;
@@ -38,46 +50,37 @@ namespace fb
             void setProperties( SmartPtr<Properties> properties ) override;
 
             /** @copydoc IComponent::updateDirty */
-            void updateDirty( u32 flags, u32 oldFlags ) override;
+            void updateFlags( u32 flags, u32 oldFlags ) override;
 
+            /** Get the order of the element in the layout. */
             u32 getElementOrder( SmartPtr<UIComponent> component ) const;
 
+            /** Get the order of the element in the layout. */
             u32 getElementOrderReversed( SmartPtr<UIComponent> component ) const;
 
-            void childAdded( SmartPtr<IActor> child );
-
-            void childRemoved( SmartPtr<IActor> child );
-
-            /** @copydoc UIComponent::childAddedInHierarchy */
-            virtual void childAddedInHierarchy( SmartPtr<IActor> child );
-
-            /** @copydoc UIComponent::childRemovedInHierarchy */
-            virtual void childRemovedInHierarchy( SmartPtr<IActor> child );
-
-            u32 getZOrder() const;
-
-            void setZOrder( u32 zOrder );
-
+            /** Get the order of the element in the layout. */
             s32 getZOrder( SmartPtr<IActor> obj );
 
-            void levelWasLoaded( s32 level ) override;
+            Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                   const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                   SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
 
             FB_CLASS_REGISTER_DECL;
 
         protected:
+            /** @copydoc UIComponent::handleComponentEvent */
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType ) override;
 
+            /** @copydoc UIComponent::updateVisibility */
             void updateVisibility() override;
 
+            /** Layout object. */
             SmartPtr<ui::IUILayout> m_layout;
-            Vector2I m_referenceSize = Vector2I( 1920, 1080 );
 
-            /**
-             * @brief The ui component's z order.
-             */
-            u32 m_zOrder = 0;
+            /** Reference size. */
+            Vector2I m_referenceSize = Vector2I( 1920, 1080 );
         };
     }  // namespace scene
-}  // end namespace fb
+}  // namespace fb
 
-#endif  // CanvasComponent_h__
+#endif  // Layout_h__

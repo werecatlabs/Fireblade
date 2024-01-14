@@ -51,6 +51,6 @@ namespace fb
         String m_label;
         String m_windowHandle;
     };
-} // end namespace fb
+}  // end namespace fb
 
 #endif  // RenderWindowState_h__

@@ -7,6 +7,9 @@ namespace fb
 {
     namespace scene
     {
+
+        /** WheelController component.
+         */
         class WheelController : public Component
         {
         public:

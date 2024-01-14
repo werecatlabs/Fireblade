@@ -5,6 +5,7 @@
 
 namespace fb
 {
+
     class ThreadDebug
     {
     public:

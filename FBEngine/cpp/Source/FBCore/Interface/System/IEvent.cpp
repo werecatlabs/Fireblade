@@ -38,6 +38,7 @@ namespace fb
 
     const hash_type IEvent::handleEnterFrame = StringUtil::getHash( "handleEnterFrame" );
 
+    const hash_type IEvent::CLICK_HASH = StringUtil::getHash( "click" );
     const hash_type IEvent::ACTIVATE_HASH = StringUtil::getHash( "activate" );
     const hash_type IEvent::UPDATE_HASH = StringUtil::getHash( "update" );
     const hash_type IEvent::HANDLE_MESSAGE_HASH = StringUtil::getHash( "handleMessage" );
@@ -89,5 +90,9 @@ namespace fb
     const hash_type IEvent::addSelectedObjects = StringUtil::getHash( "addSelectedObjects" );
     const hash_type IEvent::deselectObjects = StringUtil::getHash( "deselectObjects" );
     const hash_type IEvent::deselectAll = StringUtil::getHash( "deselectAll" );
+
+    const hash_type IEvent::addCommand = StringUtil::getHash( "addCommand" );
+    const hash_type IEvent::getNextCommand = StringUtil::getHash( "getNextCommand" );
+    const hash_type IEvent::getPreviousCommand = StringUtil::getHash( "getPreviousCommand" );
 
 }  // end namespace fb

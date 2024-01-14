@@ -75,6 +75,10 @@ namespace fb
 
             void setColour( u32 colour );
 
+            bool isDirty() const;
+
+            void setDirty( bool dirty );
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
@@ -89,7 +93,6 @@ namespace fb
             Vector3F m_vector = Vector3F::unitY();
             Vector3F m_position = Vector3F::zero();
 
-            RawPtr<DynamicLines> m_dynamicLines;
             RawPtr<Ogre::SceneNode> m_sceneNode;
 
             f64 m_lifeTime = 0.0;
@@ -97,8 +100,8 @@ namespace fb
 
             atomic_u32 m_colour = 1;
 
-            bool m_isDirty = true;
-            bool m_isVisible = false;
+            atomic_bool m_isDirty = true;
+            atomic_bool m_isVisible = false;
 
             String m_materialName;
 

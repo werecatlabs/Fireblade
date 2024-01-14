@@ -1,38 +1,86 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/Light.h>
 #include <FBCore/Scene/Transform.h>
+#include <FBCore/Interface/Graphics/IDebug.h>
+#include <FBCore/Interface/Graphics/IDebugLine.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IGraphicsScene.h>
 #include <FBCore/Interface/Graphics/ISceneNode.h>
+#include <FBCore/Interface/Scene/IActor.h>
+#include <FBCore/Interface/Scene/ISceneManager.h>
 #include <FBCore/Core/BitUtil.h>
 #include <FBCore/Core/LogManager.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+    FB_CLASS_REGISTER_DERIVED( fb::scene, Light, IComponent );
+
+    u32 Light::m_nameExt = 0;
+
+    Light::Light() = default;
+
+    Light::~Light()
     {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, Light, IComponent );
+        unload( nullptr );
+    }
 
-        u32 Light::m_nameExt = 0;
-
-        Light::Light()
+    void Light::load( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-        }
+            setLoadingState( LoadingState::Loading );
 
-        Light::~Light()
-        {
-            unload( nullptr );
-        }
+            Component::load( data );
 
-        void Light::load( SmartPtr<ISharedObject> data )
-        {
-            try
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto sceneManager = applicationManager->getSceneManager();
+
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            if( graphicsSystem )
             {
-                setLoadingState( LoadingState::Loading );
+                auto smgr = graphicsSystem->getGraphicsScene();
+                FB_ASSERT( smgr );
 
-                Component::load( data );
+                auto name = String( "Light" ) + StringUtil::toString( m_nameExt++ );
 
-                auto applicationManager = core::IApplicationManager::instance();
+                auto light = smgr->addLight( name );
+                light = light;
+
+                light->setType( render::ILight::LightTypes::LT_DIRECTIONAL );
+                setLight( light );
+
+                auto rootSceneNode = smgr->getRootSceneNode();
+                FB_ASSERT( rootSceneNode );
+
+                auto sceneNode = rootSceneNode->addChildSceneNode( name );
+                FB_ASSERT( sceneNode );
+
+                sceneNode->attachObject( light );
+                setSceneNode( sceneNode );
+            }
+
+            sceneManager->registerComponentUpdate( Thread::Task::Render, Thread::UpdateState::Transform,
+                                                   this );
+            setLoadingState( LoadingState::Loaded );
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void Light::unload( SmartPtr<ISharedObject> data )
+    {
+        try
+        {
+            const auto &loadingState = getLoadingState();
+            if( loadingState == LoadingState::Loaded )
+            {
+                setLoadingState( LoadingState::Unloading );
+
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -41,234 +89,211 @@ namespace fb
                     auto smgr = graphicsSystem->getGraphicsScene();
                     FB_ASSERT( smgr );
 
-                    auto name = String( "Light" ) + StringUtil::toString( m_nameExt++ );
-
-                    auto light = smgr->addLight( name );
-                    light = light;
-
-                    light->setType( render::ILight::LightTypes::LT_DIRECTIONAL );
-                    setLight( light );
-
-                    auto rootSceneNode = smgr->getRootSceneNode();
-                    FB_ASSERT( rootSceneNode );
-
-                    auto sceneNode = rootSceneNode->addChildSceneNode( name );
-                    FB_ASSERT( sceneNode );
-
-                    sceneNode->attachObject( light );
-                    setSceneNode( sceneNode );
-                }
-
-                setLoadingState( LoadingState::Loaded );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void Light::unload( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-                const auto &loadingState = getLoadingState();
-                if( loadingState == LoadingState::Loaded )
-                {
-                    setLoadingState( LoadingState::Unloading );
-
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto graphicsSystem = applicationManager->getGraphicsSystem();
-                    if( graphicsSystem )
+                    if( auto light = getLight() )
                     {
-                        auto smgr = graphicsSystem->getGraphicsScene();
-                        FB_ASSERT( smgr );
-
-                        if( auto light = getLight() )
-                        {
-                            if( auto sceneNode = getSceneNode() )
-                            {
-                                sceneNode->detachObject( light );
-                            }
-
-                            smgr->removeGraphicsObject( light );
-                            setLight( nullptr );
-                        }
-
                         if( auto sceneNode = getSceneNode() )
                         {
-                            smgr->removeSceneNode( sceneNode );
-                            setSceneNode( nullptr );
+                            sceneNode->detachObject( light );
                         }
+
+                        smgr->removeGraphicsObject( light );
+                        setLight( nullptr );
                     }
-
-                    Component::unload( data );
-
-                    setLoadingState( LoadingState::Unloaded );
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void Light::updateDirty( u32 flags, u32 oldFlags )
-        {
-            if( auto actor = getActor() )
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                if( auto graphicsSystem = applicationManager->getGraphicsSystem() )
-                {
-                    auto smgr = graphicsSystem->getGraphicsScene();
-                    FB_ASSERT( smgr );
-
-                    auto rootNode = smgr->getRootSceneNode();
-
-                    if( BitUtil::getFlagValue( flags, IActor::ActorFlagInScene ) !=
-                        BitUtil::getFlagValue( oldFlags, IActor::ActorFlagInScene ) )
-                    {
-                        auto visible = isEnabled() && actor->isEnabledInScene();
-
-                        if( auto light = getLight() )
-                        {
-                            light->setVisible( visible );
-                        }
-                    }
-                    else if( BitUtil::getFlagValue( flags, IActor::ActorFlagEnabled ) !=
-                             BitUtil::getFlagValue( oldFlags, IActor::ActorFlagEnabled ) )
-                    {
-                        auto visible = isEnabled() && actor->isEnabledInScene();
-
-                        if( auto light = getLight() )
-                        {
-                            light->setVisible( visible );
-                        }
-                    }
-                }
-            }
-        }
-
-        SmartPtr<Properties> Light::getProperties() const
-        {
-            auto properties = Component::getProperties();
-
-            auto diffuseColour = getDiffuseColour();
-            auto specularColour = getSpecularColour();
-
-            properties->setProperty( "diffuseColour", diffuseColour );
-            properties->setProperty( "specularColour", specularColour );
-            properties->setProperty( "lightType", (u32)m_lightType );
-
-            return properties;
-        }
-
-        void Light::setProperties( SmartPtr<Properties> properties )
-        {
-            auto diffuseColour = getDiffuseColour();
-            auto specularColour = getSpecularColour();
-
-            properties->getPropertyValue( "diffuseColour", diffuseColour );
-            properties->getPropertyValue( "specularColour", specularColour );
-
-            u32 lightType = (u32)m_lightType;
-            properties->getPropertyValue( "lightType", lightType );
-
-            m_diffuseColour = diffuseColour;
-            m_specularColour = specularColour;
-
-            if( auto light = getLight() )
-            {
-                light->setDiffuseColour( diffuseColour );
-                light->setSpecularColour( specularColour );
-
-                if( lightType < (u32)render::ILight::LightTypes::Count )
-                {
-                    if( lightType != (u32)m_lightType )
-                    {
-                        m_lightType = (render::ILight::LightTypes)lightType;
-                        light->setType( m_lightType );
-                    }
-                }
-            }
-        }
-
-        void Light::updateTransform()
-        {
-            if( auto actor = getActor() )
-            {
-                if( auto actorTransform = actor->getTransform() )
-                {
-                    auto actorPosition = actorTransform->getPosition();
-                    auto actorOrientation = actorTransform->getOrientation();
-                    auto actorScale = actorTransform->getScale();
 
                     if( auto sceneNode = getSceneNode() )
                     {
-                        sceneNode->setPosition( actorPosition );
-                        sceneNode->setOrientation( actorOrientation );
-                        sceneNode->setScale( actorScale );
+                        smgr->removeSceneNode( sceneNode );
+                        setSceneNode( nullptr );
+                    }
+                }
+
+                Component::unload( data );
+
+                setLoadingState( LoadingState::Unloaded );
+            }
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void Light::updateDebugDraw()
+    {
+        auto &applicationManager = core::ApplicationManager::instance();
+        auto &graphicsSystem = applicationManager->getGraphicsSystem();
+        auto &debug = graphicsSystem->getDebug();
+
+        static const auto hash = StringUtil::getHash( "Light" );
+
+        auto &actor = getActor();
+        auto pos = actor->getPosition();
+        debug->drawLine( hash, pos, pos + Vector3F::unitX(), 0xFFFFFF );
+    }
+
+    void Light::updateFlags( u32 flags, u32 oldFlags )
+    {
+        if( auto actor = getActor() )
+        {
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            if( auto graphicsSystem = applicationManager->getGraphicsSystem() )
+            {
+                auto smgr = graphicsSystem->getGraphicsScene();
+                FB_ASSERT( smgr );
+
+                auto rootNode = smgr->getRootSceneNode();
+
+                if( BitUtil::getFlagValue( flags, IActor::ActorFlagInScene ) !=
+                    BitUtil::getFlagValue( oldFlags, IActor::ActorFlagInScene ) )
+                {
+                    auto visible = isEnabled() && actor->isEnabledInScene();
+
+                    if( auto light = getLight() )
+                    {
+                        light->setVisible( visible );
+                    }
+                }
+                else if( BitUtil::getFlagValue( flags, IActor::ActorFlagEnabled ) !=
+                         BitUtil::getFlagValue( oldFlags, IActor::ActorFlagEnabled ) )
+                {
+                    auto visible = isEnabled() && actor->isEnabledInScene();
+
+                    if( auto light = getLight() )
+                    {
+                        light->setVisible( visible );
                     }
                 }
             }
         }
+    }
 
-        render::ILight::LightTypes Light::getLightType() const
+    auto Light::getProperties() const -> SmartPtr<Properties>
+    {
+        auto properties = Component::getProperties();
+
+        auto diffuseColour = getDiffuseColour();
+        auto specularColour = getSpecularColour();
+
+        properties->setProperty( "diffuseColour", diffuseColour );
+        properties->setProperty( "specularColour", specularColour );
+        properties->setProperty( "lightType", static_cast<u32>( m_lightType ) );
+
+        return properties;
+    }
+
+    void Light::setProperties( SmartPtr<Properties> properties )
+    {
+        auto diffuseColour = getDiffuseColour();
+        auto specularColour = getSpecularColour();
+
+        properties->getPropertyValue( "diffuseColour", diffuseColour );
+        properties->getPropertyValue( "specularColour", specularColour );
+
+        u32 lightType = static_cast<u32>( m_lightType );
+        properties->getPropertyValue( "lightType", lightType );
+
+        m_diffuseColour = diffuseColour;
+        m_specularColour = specularColour;
+
+        if( auto light = getLight() )
         {
-            return m_lightType;
-        }
+            light->setDiffuseColour( diffuseColour );
+            light->setSpecularColour( specularColour );
 
-        void Light::setLightType( render::ILight::LightTypes lightType )
-        {
-            m_lightType = lightType;
-
-            if( m_light )
+            if( lightType < static_cast<u32>( render::ILight::LightTypes::Count ) )
             {
-                m_light->setType( m_lightType );
+                if( lightType != static_cast<u32>( m_lightType ) )
+                {
+                    m_lightType = static_cast<render::ILight::LightTypes>( lightType );
+                    light->setType( m_lightType );
+                }
             }
         }
+    }
 
-        ColourF Light::getDiffuseColour() const
+    void Light::updateTransform()
+    {
+        if( auto actor = getActor() )
         {
-            return m_diffuseColour;
+            if( auto actorTransform = actor->getTransform() )
+            {
+                auto actorPosition = actorTransform->getPosition();
+                auto actorOrientation = actorTransform->getOrientation();
+                auto actorScale = actorTransform->getScale();
+
+                if( auto sceneNode = getSceneNode() )
+                {
+                    sceneNode->setPosition( actorPosition );
+                    sceneNode->setOrientation( actorOrientation );
+                    sceneNode->setScale( actorScale );
+                }
+            }
+        }
+    }
+
+    void Light::updateTransform( const Transform3<real_Num> &transform )
+    {
+        if( auto &sceneNode = getSceneNode() )
+        {
+            auto &p = transform.getPosition();
+            auto &r = transform.getOrientation();
+
+            sceneNode->setPosition( p );
+            sceneNode->setOrientation( r );
         }
 
-        void Light::setDiffuseColour( const ColourF &diffuseColour )
-        {
-            m_diffuseColour = diffuseColour;
-        }
+        //updateDebugDraw();
+    }
 
-        ColourF Light::getSpecularColour() const
-        {
-            return m_specularColour;
-        }
+    auto Light::getLightType() const -> render::ILight::LightTypes
+    {
+        return m_lightType;
+    }
 
-        void Light::setSpecularColour( const ColourF &specularColour )
-        {
-            m_specularColour = specularColour;
-        }
+    void Light::setLightType( render::ILight::LightTypes lightType )
+    {
+        m_lightType = lightType;
 
-        SmartPtr<render::ILight> Light::getLight() const
+        if( m_light )
         {
-            return m_light;
+            m_light->setType( m_lightType );
         }
+    }
 
-        void Light::setLight( SmartPtr<render::ILight> light )
-        {
-            m_light = light;
-        }
+    auto Light::getDiffuseColour() const -> ColourF
+    {
+        return m_diffuseColour;
+    }
 
-        SmartPtr<render::ISceneNode> Light::getSceneNode() const
-        {
-            return m_sceneNode;
-        }
+    void Light::setDiffuseColour( const ColourF &diffuseColour )
+    {
+        m_diffuseColour = diffuseColour;
+    }
 
-        void Light::setSceneNode( SmartPtr<render::ISceneNode> sceneNode )
-        {
-            m_sceneNode = sceneNode;
-        }
-    }  // namespace scene
-}  // end namespace fb
+    auto Light::getSpecularColour() const -> ColourF
+    {
+        return m_specularColour;
+    }
+
+    void Light::setSpecularColour( const ColourF &specularColour )
+    {
+        m_specularColour = specularColour;
+    }
+
+    auto Light::getLight() const -> SmartPtr<render::ILight>
+    {
+        return m_light;
+    }
+
+    void Light::setLight( SmartPtr<render::ILight> light )
+    {
+        m_light = light;
+    }
+
+    void Light::setSceneNode( SmartPtr<render::ISceneNode> sceneNode )
+    {
+        m_sceneNode = sceneNode;
+    }
+}  // namespace fb::scene

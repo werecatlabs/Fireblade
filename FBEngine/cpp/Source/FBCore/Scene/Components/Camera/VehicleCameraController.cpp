@@ -1,67 +1,77 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/Camera/VehicleCameraController.h>
 #include <FBCore/Scene/Components/VehicleController.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Interface/System/ITimer.h>
+#include <FBCore/Interface/Scene/ISceneManager.h>
+#include <FBCore/Interface/Scene/ITransform.h>
+#include <FBCore/Interface/Input/IInputDeviceManager.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+    FB_CLASS_REGISTER_DERIVED( fb, VehicleCameraController, CameraController );
+
+    VehicleCameraController::VehicleCameraController() = default;
+
+    VehicleCameraController::~VehicleCameraController()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, VehicleCameraController, CameraController );
+        unload( nullptr );
+    }
 
-        VehicleCameraController::VehicleCameraController()
+    void VehicleCameraController::load( SmartPtr<ISharedObject> data )
+    {
+        try
         {
+            setLoadingState( LoadingState::Loading );
+
+            CameraController::load( data );
+
+            setLoadingState( LoadingState::Loaded );
         }
-
-        VehicleCameraController::~VehicleCameraController()
+        catch( std::exception &e )
         {
-            unload( nullptr );
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        void VehicleCameraController::load( SmartPtr<ISharedObject> data )
+    void VehicleCameraController::unload( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            try
+            const auto &loadingState = getLoadingState();
+            if( loadingState != LoadingState::Unloaded )
             {
-                setLoadingState( LoadingState::Loading );
+                setLoadingState( LoadingState::Unloading );
 
-                CameraController::load( data );
+                m_target = nullptr;
+                CameraController::unload( data );
 
-                setLoadingState( LoadingState::Loaded );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void VehicleCameraController::unload( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-                const auto &loadingState = getLoadingState();
-                if( loadingState != LoadingState::Unloaded )
-                {
-                    setLoadingState( LoadingState::Unloading );
-
-                    m_target = nullptr;
-                    CameraController::unload( data );
-
-                    setLoadingState( LoadingState::Unloaded );
-                }
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
+                setLoadingState( LoadingState::Unloaded );
             }
         }
-
-        void VehicleCameraController::update()
+        catch( std::exception &e )
         {
-            switch( auto task = Thread::getCurrentTask() )
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void VehicleCameraController::update()
+    {
+        auto task = Thread::getCurrentTask();
+        switch( task )
+        {
+        case Thread::Task::Application:
+        {
+            auto actor = getActor();
+            if( !actor )
             {
-            case Thread::Task::Application:
+                return;
+            }
+
+            auto enabled = isEnabled() && actor->isEnabledInScene();
+            if( enabled )
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto sceneManager = applicationManager->getSceneManager();
@@ -91,11 +101,11 @@ namespace fb
                         auto mouseScrollDelta = inputDeviceManager->getMouseScroll();
                         if( mouseScrollDelta.y > 0.0f )
                         {
-                            m_distance -= m_ZoomSpeed * static_cast<real_Num>( dt );
+                            m_distance -= m_zoomSpeed * static_cast<real_Num>( dt );
                         }
                         else if( mouseScrollDelta.y < 0.0f )
                         {
-                            m_distance += m_ZoomSpeed * static_cast<real_Num>( dt );
+                            m_distance += m_zoomSpeed * static_cast<real_Num>( dt );
                         }
                     }
 
@@ -109,141 +119,137 @@ namespace fb
                             auto position = worldTransform->getPosition();
                             auto orientation = worldTransform->getOrientation();
 
-                            //static Vector3F debugPos = Vector3F(0,1,-5);
-                            //position = debugPos;
-                            //orientation = QuaternionF::identity();
-
-                            wantedHeight = position.y + m_height;
-                            currentHeight = position.y;
+                            m_targetHeight = position.y + m_height;
 
                             auto fRotationSnapTime =
-                                m_MaxRotationSnapTime - ( m_rotationSnapTime + m_MinRotationSnapTime );
-                            currentRotationAngle = wantedRotationAngle;
-                            //Math<real_Num>::smoothDampAngle( currentRotationAngle, wantedRotationAngle,
-                            //                       ref yVelocity, fRotationSnapTime );
+                                m_maxRotationSnapTime - ( m_rotationSnapTime + m_minRotationSnapTime );
+                            currentRotationAngle = Math<real_Num>::smoothDampAngle(
+                                currentRotationAngle, m_targetRotationAngle, real_Num(0.0), (real_Num)dt,
+                                fRotationSnapTime );
 
-                            currentHeight = Math<real_Num>::lerp( currentHeight, wantedHeight,
-                                                                  m_heightDamping * (real_Num)dt );
+                            m_currentHeight =
+                                Math<real_Num>::lerp( m_currentHeight, m_targetHeight,
+                                                      m_heightDamping * static_cast<real_Num>( dt ) );
 
-                            wantedPosition = position;
-                            wantedPosition.y = currentHeight;
+                            m_targetPosition = position;
+                            m_targetPosition.y = position.y + m_targetOffset;
 
-                            position += Vector3<real_Num>::unitY() * 0.1f;
+                            position += Vector3<real_Num>::unitY() * real_Num(0.1);
 
                             auto cameraPosition =
                                 position + ( orientation * Vector3<real_Num>::unitZ() * m_distance );
-                            cameraPosition += Vector3<real_Num>::unitY() * currentHeight;
+                            cameraPosition.y = m_currentHeight;
 
-                            auto targetPosition = m_target->getPosition();
+                            m_lastPosition += ( cameraPosition - m_lastPosition ) *
+                                              static_cast<real_Num>( dt ) *
+                                              static_cast<real_Num>( 10.0 );
+                            m_lastTarget += ( m_targetPosition - m_lastTarget ) *
+                                            static_cast<real_Num>( dt ) * static_cast<real_Num>( 10.0 );
 
-                            m_LastPosition += ( cameraPosition - m_LastPosition ) * (real_Num)dt * (real_Num)10.0;
-                            m_LastTarget += ( targetPosition - m_LastTarget ) * (real_Num)dt * (real_Num)10.0;
-
-                            // if (m_cameraSceneNode)
-                            //{
-                            //	m_cameraSceneNode->setPosition(
-                            //			Vector3F(cameraPosition.X(), cameraPosition.Y(),
-                            // cameraPosition.Z())); 	m_cameraSceneNode->lookAt(Vector3F(position.X(),
-                            // position.Y(), position.Z()));
-                            // }
-
-                            if( auto actor = getActor() )
-                            {
-                                actor->setPosition( m_LastPosition );
-                                actor->lookAt( m_LastTarget, Vector3<real_Num>::unitY() );
-                                actor->updateTransform();
-
-                                /*auto vec = m_LastTarget - m_LastPosition;
-                                auto rot = MathUtil<real_Num>::getOrientationFromDirection(
-                                   vec, -Vector3<real_Num>::unitZ(), true,  Vector3<real_Num>::up() );
-
-                                auto transform =
-                                    Transform3<real_Num>( m_LastPosition, rot, Vector3F::unit() );
-                                auto id = getActor()->getTransform()->getHandle()->getInstanceId();
-                                sceneManager->addTransformState( id, t, transform );*/
-                            }
+                            actor->setPosition( m_lastPosition );
+                            actor->lookAt( m_lastTarget, Vector3<real_Num>::unitY() );
+                            //actor->updateTransform();
                         }
                     }
                 }
             }
-            break;
-            default:
-            {
-            }
-            }
         }
-
-        Array<SmartPtr<ISharedObject>> VehicleCameraController::getChildObjects() const
+        break;
+        default:
         {
-            auto objects = CameraController::getChildObjects();
-            return objects;
         }
+        }
+    }
 
-        SmartPtr<Properties> VehicleCameraController::getProperties() const
+    auto VehicleCameraController::getChildObjects() const -> Array<SmartPtr<ISharedObject>>
+    {
+        auto objects = CameraController::getChildObjects();
+        objects.emplace_back( m_target );
+        return objects;
+    }
+
+    auto VehicleCameraController::getProperties() const -> SmartPtr<Properties>
+    {
+        auto properties = CameraController::getProperties();
+
+        if( m_target )
         {
-            auto properties = CameraController::getProperties();
-
-            if( m_target )
-            {
-                auto handle = m_target->getHandle();
-                auto uuid = handle->getUUID();
-                properties->setProperty( "target", uuid, "resource", false );
-            }
-            else
-            {
-                properties->setProperty( "target", "", "resource", false );
-            }
-
-            properties->setProperty( "height", m_height );
-
-            return properties;
+            auto handle = m_target->getHandle();
+            auto uuid = handle->getUUID();
+            properties->setProperty( "target", uuid, "resource", false );
         }
-
-        void VehicleCameraController::setProperties( SmartPtr<Properties> properties )
+        else
         {
-            properties->getPropertyValue( "height", m_height );
-
-            CameraController::setProperties( properties );
+            properties->setProperty( "target", "", "resource", false );
         }
 
-        SmartPtr<IActor> VehicleCameraController::getTarget() const
-        {
-            return m_target;
-        }
+        properties->setProperty( "height", m_height );
+        properties->setProperty( "targetOffset", m_targetOffset );
+        properties->setProperty( "distance", m_distance );
+        properties->setProperty( "minDistance", m_minDistance );
+        properties->setProperty( "maxDistance", m_maxDistance );
+        properties->setProperty( "heightDamping", m_heightDamping );
+        properties->setProperty( "rotationSnapTime", m_rotationSnapTime );
+        properties->setProperty( "maxRotationSnapTime", m_maxRotationSnapTime );
+        properties->setProperty( "minRotationSnapTime", m_minRotationSnapTime );
+        properties->setProperty( "zoomSpeed", m_zoomSpeed );
 
-        void VehicleCameraController::setTarget( SmartPtr<IActor> target )
-        {
-            m_target = target;
-        }
+        return properties;
+    }
 
-        real_Num VehicleCameraController::getDistance() const
-        {
-            return m_distance;
-        }
+    void VehicleCameraController::setProperties( SmartPtr<Properties> properties )
+    {
+        CameraController::setProperties( properties );
 
-        void VehicleCameraController::setDistance( real_Num distance )
-        {
-            m_distance = distance;
-        }
+        properties->getPropertyValue( "height", m_height );
+        properties->getPropertyValue( "targetOffset", m_targetOffset );
+        properties->getPropertyValue( "distance", m_distance );
+        properties->getPropertyValue( "minDistance", m_minDistance );
+        properties->getPropertyValue( "maxDistance", m_maxDistance );
+        properties->getPropertyValue( "heightDamping", m_heightDamping );
+        properties->getPropertyValue( "rotationSnapTime", m_rotationSnapTime );
+        properties->getPropertyValue( "maxRotationSnapTime", m_maxRotationSnapTime );
+        properties->getPropertyValue( "minRotationSnapTime", m_minRotationSnapTime );
+        properties->getPropertyValue( "zoomSpeed", m_zoomSpeed );
+    }
 
-        real_Num VehicleCameraController::getMinDistance() const
-        {
-            return m_minDistance;
-        }
+    auto VehicleCameraController::getTarget() const -> SmartPtr<IActor>
+    {
+        return m_target;
+    }
 
-        void VehicleCameraController::setMinDistance( real_Num minDistance )
-        {
-            m_minDistance = minDistance;
-        }
+    void VehicleCameraController::setTarget( SmartPtr<IActor> target )
+    {
+        m_target = target;
+    }
 
-        real_Num VehicleCameraController::getMaxDistance() const
-        {
-            return m_maxDistance;
-        }
+    auto VehicleCameraController::getDistance() const -> real_Num
+    {
+        return m_distance;
+    }
 
-        void VehicleCameraController::setMaxDistance( real_Num maxDistance )
-        {
-            m_maxDistance = maxDistance;
-        }
-    }  // namespace scene
-}  // namespace fb
+    void VehicleCameraController::setDistance( real_Num distance )
+    {
+        m_distance = distance;
+    }
+
+    auto VehicleCameraController::getMinDistance() const -> real_Num
+    {
+        return m_minDistance;
+    }
+
+    void VehicleCameraController::setMinDistance( real_Num minDistance )
+    {
+        m_minDistance = minDistance;
+    }
+
+    auto VehicleCameraController::getMaxDistance() const -> real_Num
+    {
+        return m_maxDistance;
+    }
+
+    void VehicleCameraController::setMaxDistance( real_Num maxDistance )
+    {
+        m_maxDistance = maxDistance;
+    }
+}  // namespace fb::scene

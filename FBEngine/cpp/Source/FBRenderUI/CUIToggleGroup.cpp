@@ -3,47 +3,42 @@
 #include <FBRenderUI/CUIToggleButton.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+
+    CUIToggleGroup::CUIToggleGroup( const String &id ) : m_curToggledBtn( nullptr )
     {
+        setName( id );
+    }
 
-        CUIToggleGroup::CUIToggleGroup( const String &id ) : m_curToggledBtn( nullptr )
-        {
-            setName( id );
-        }
+    CUIToggleGroup::~CUIToggleGroup() = default;
 
-        CUIToggleGroup::~CUIToggleGroup()
-        {
-        }
+    void CUIToggleGroup::addToggleButton( CUIToggleButton *button )
+    {
+        m_toggleButtons.push_back( button );
+    }
 
-        void CUIToggleGroup::addToggleButton( CUIToggleButton *button )
-        {
-            m_toggleButtons.push_back( button );
-        }
+    auto CUIToggleGroup::removeToggleButton( CUIToggleButton *button ) -> bool
+    {
+        return false;  // m_toggleButtons.erase_element(button);
+    }
 
-        bool CUIToggleGroup::removeToggleButton( CUIToggleButton *button )
+    void CUIToggleGroup::OnSetButtonToggled( CUIToggleButton *button )
+    {
+        if( m_curToggledBtn != button )
         {
-            return false;  // m_toggleButtons.erase_element(button);
-        }
-
-        void CUIToggleGroup::OnSetButtonToggled( CUIToggleButton *button )
-        {
-            if( m_curToggledBtn != button )
+            for( auto &m_toggleButton : m_toggleButtons )
             {
-                for( u32 i = 0; i < m_toggleButtons.size(); ++i )
-                {
-                    m_toggleButtons[i]->setToggled( false );
-                }
-
-                m_curToggledBtn = button;
-                m_curToggledBtn->setToggled( true );
+                m_toggleButton->setToggled( false );
             }
-        }
 
-        CUIToggleButton *CUIToggleGroup::getCurToggledButton() const
-        {
-            return m_curToggledBtn;
+            m_curToggledBtn = button;
+            m_curToggledBtn->setToggled( true );
         }
-    }  // end namespace ui
-}  // end namespace fb
+    }
+
+    auto CUIToggleGroup::getCurToggledButton() const -> CUIToggleButton *
+    {
+        return m_curToggledBtn;
+    }
+}  // namespace fb::ui

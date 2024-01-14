@@ -4,10 +4,7 @@
 #include <FBCore/Memory/TypeManager.h>
 #include <FBCore/Core/StringUtil.h>
 
-namespace fb
+namespace fb::render
 {
-    namespace render
-    {
-        FB_CLASS_REGISTER_DERIVED( fb, IFrustum, IGraphicsObject );
-    }  // end namespace render
-}  // end namespace fb
+    FB_CLASS_REGISTER_DERIVED( fb, IFrustum, IGraphicsObject );
+}  // namespace fb::render

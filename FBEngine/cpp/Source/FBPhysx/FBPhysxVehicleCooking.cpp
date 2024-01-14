@@ -2,9 +2,8 @@
 #include "FBPhysx/FBPhysxVehicleCooking.h"
 //#include "PxTkStream.h"
 
-
-PxConvexMesh *createConvexMesh( const PxVec3 *verts, const PxU32 numVerts, PxPhysics &physics,
-                                PxCooking &cooking )
+auto createConvexMesh( const PxVec3 *verts, const PxU32 numVerts, PxPhysics &physics,
+                       PxCooking &cooking ) -> PxConvexMesh *
 {
     // Create descriptor for convex mesh
     PxConvexMeshDesc convexDesc;
@@ -24,7 +23,8 @@ PxConvexMesh *createConvexMesh( const PxVec3 *verts, const PxU32 numVerts, PxPhy
     return convexMesh;
 }
 
-PxConvexMesh *createCuboidConvexMesh( const PxVec3 &halfExtents, PxPhysics &physics, PxCooking &cooking )
+auto createCuboidConvexMesh( const PxVec3 &halfExtents, PxPhysics &physics, PxCooking &cooking )
+    -> PxConvexMesh *
 {
     PxVec3 verts[8] =
     {
@@ -42,7 +42,8 @@ PxConvexMesh *createCuboidConvexMesh( const PxVec3 &halfExtents, PxPhysics &phys
     return createConvexMesh( verts, numVerts, physics, cooking );
 }
 
-PxConvexMesh *createWedgeConvexMesh( const PxVec3 &halfExtents, PxPhysics &physics, PxCooking &cooking )
+auto createWedgeConvexMesh( const PxVec3 &halfExtents, PxPhysics &physics, PxCooking &cooking )
+    -> PxConvexMesh *
 {
     PxVec3 verts[6] =
     {
@@ -58,9 +59,8 @@ PxConvexMesh *createWedgeConvexMesh( const PxVec3 &halfExtents, PxPhysics &physi
     return createConvexMesh( verts, numVerts, physics, cooking );
 }
 
-PxConvexMesh *createCylinderConvexMesh( const PxF32 width, const PxF32 radius,
-                                        const PxU32 numCirclePoints, PxPhysics &physics,
-                                        PxCooking &cooking )
+auto createCylinderConvexMesh( const PxF32 width, const PxF32 radius, const PxU32 numCirclePoints,
+                               PxPhysics &physics, PxCooking &cooking ) -> PxConvexMesh *
 {
 #define  MAX_NUM_VERTS_IN_CIRCLE 16
     PX_ASSERT( numCirclePoints<MAX_NUM_VERTS_IN_CIRCLE );
@@ -79,9 +79,9 @@ PxConvexMesh *createCylinderConvexMesh( const PxF32 width, const PxF32 radius,
     return createConvexMesh( verts, numVerts, physics, cooking );
 }
 
-PxConvexMesh *createSquashedCuboidMesh( const PxF32 baseLength, const PxF32 baseDepth,
-                                        const PxF32 height1, const PxF32 height2, PxPhysics &physics,
-                                        PxCooking &cooking )
+auto createSquashedCuboidMesh( const PxF32 baseLength, const PxF32 baseDepth, const PxF32 height1,
+                               const PxF32 height2, PxPhysics &physics, PxCooking &cooking )
+    -> PxConvexMesh *
 {
     const PxF32 x = baseLength * 0.5f;
     const PxF32 z = baseDepth * 0.5f;
@@ -101,9 +101,8 @@ PxConvexMesh *createSquashedCuboidMesh( const PxF32 baseLength, const PxF32 base
     return createConvexMesh( verts, numVerts, physics, cooking );
 }
 
-
-PxConvexMesh *createPrismConvexMesh( const PxF32 baseLength, const PxF32 baseDepth, const PxF32 height,
-                                     PxPhysics &physics, PxCooking &cooking )
+auto createPrismConvexMesh( const PxF32 baseLength, const PxF32 baseDepth, const PxF32 height,
+                            PxPhysics &physics, PxCooking &cooking ) -> PxConvexMesh *
 {
     const PxF32 x = baseLength * 0.5f;
     const PxF32 z = baseDepth * 0.5f;
@@ -122,14 +121,14 @@ PxConvexMesh *createPrismConvexMesh( const PxF32 baseLength, const PxF32 baseDep
     return createConvexMesh( verts, numVerts, physics, cooking );
 }
 
-PxConvexMesh *createChassisConvexMesh( const PxVec3 *verts, const PxU32 numVerts, PxPhysics &physics,
-                                       PxCooking &cooking )
+auto createChassisConvexMesh( const PxVec3 *verts, const PxU32 numVerts, PxPhysics &physics,
+                              PxCooking &cooking ) -> PxConvexMesh *
 {
     return createConvexMesh( verts, numVerts, physics, cooking );
 }
 
-PxConvexMesh *createWheelConvexMesh( const PxVec3 *verts, const PxU32 numVerts, PxPhysics &physics,
-                                     PxCooking &cooking )
+auto createWheelConvexMesh( const PxVec3 *verts, const PxU32 numVerts, PxPhysics &physics,
+                            PxCooking &cooking ) -> PxConvexMesh *
 {
     //Extract the wheel radius and width from the aabb of the wheel convex mesh.
     PxVec3 wheelMin( PX_MAX_F32,PX_MAX_F32,PX_MAX_F32 );

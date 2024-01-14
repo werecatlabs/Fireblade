@@ -10,34 +10,111 @@
 #include <FBCore/FBCore.h>
 #include <geometry/PxHeightFieldDesc.h>
 
-namespace fb
+namespace fb::physics
 {
-    namespace physics
+
+    PhysxTerrain::PhysxTerrain()
     {
+        m_heightScale = Vector3F::unit();
+        m_terrainSize = Vector3F( 1024, 0.0, 1024 );
+        m_size = Vector2I( 513, 513 );
+        m_heightData.resize( 513 * 513 );
 
-        PhysxTerrain::PhysxTerrain()
+        for( auto &value : m_heightData )
         {
-            m_heightScale = Vector3F::unit();
-            m_terrainSize = Vector3F( 1024, 0.0, 1024 );
-            m_size = Vector2I( 513, 513 );
-            m_heightData.resize( 513 * 513 );
-
-            for( auto &value : m_heightData )
-            {
-                value = 0.0f;
-            }
+            value = 0.0f;
         }
+    }
 
-        PhysxTerrain::~PhysxTerrain()
+    PhysxTerrain::~PhysxTerrain()
+    {
+        unload( nullptr );
+    }
+
+    void PhysxTerrain::load( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            unload( nullptr );
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto physicsManager =
+                fb::static_pointer_cast<PhysxManager>( applicationManager->getPhysicsManager() );
+            FB_ASSERT( physicsManager );
+
+            auto factoryManager = applicationManager->getFactoryManager();
+            FB_ASSERT( factoryManager );
+
+            auto physics = physicsManager->getPhysics();
+            FB_ASSERT( physics );
+
+            ISharedObject::ScopedLock lock( physicsManager );
+
+            //auto shape = createDefaultTerrain( 513, 513, 0.0f );
+            //setShape( shape );
+
+            // smart_ptr<physics::PxScene> physicsScene =
+            // applicationManager->getPhysicsManager()->getPhysicsScene();
+
+            // smart_ptr<physics::PxPhysics> physics =
+            // applicationManager->getPhysicsManager()->getPhysics();
+            // PhysicsManagerPtr physicsManager =
+            // applicationManager->getPhysicsManager();
+            // physx::PxCooking* cooking =
+            // physicsManager->getCooking();
+
+            auto heightData = getHeightData();
+
+            // auto transform = getTransform();
+            // auto pos = transform.getPosition();
+            // auto rot = transform.getOrientation();
+            // auto tranformScale = transform.getScale();
+
+            auto transformF = Transform3F();
+
+            auto hfGeom = createTerrainGeometry( heightData, getSize(), getHeightScale(),
+                                                 getTerrainSize(), transformF );
+
+            auto pose = physx::PxTransform::createIdentity();
+
+            // Transform3<real_Num> t = getTransform();
+            // Vector3<real_Num> position = t.getPosition();
+            // Vector3<real_Num> scale = t.getScale();
+            Quaternion<real_Num> orientation;  // = t.getOrientation();
+
+            auto size = getSize();
+            auto terrainSize = getTerrainSize();
+            auto terrainScale = terrainSize / Vector3F( static_cast<f32>( size.x - 1 ), 1.0f,
+                                                        static_cast<f32>( size.y - 1 ) );
+            auto halfTerrainSize = terrainSize * static_cast<real_Num>( 0.5 );
+
+            auto center = Vector3<real_Num>( -halfTerrainSize.x, 0.0f, -halfTerrainSize.z );
+            pose.p = physx::PxVec3( center.x, center.y, center.z );
+            pose.q = physx::PxQuat( orientation.x, orientation.y, orientation.z, orientation.w );
+
+            auto terrainMat = physics->createMaterial( 1, 1, 1 );
+
+            auto shape = physics->createShape( hfGeom, *terrainMat );
+            shape->setLocalPose( pose );
+            setShape( shape );
+
+            setLoadingState( LoadingState::Loaded );
         }
-
-        void PhysxTerrain::load( SmartPtr<ISharedObject> data )
+        catch( std::exception &e )
         {
-            try
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void PhysxTerrain::unload( SmartPtr<ISharedObject> data )
+    {
+        try
+        {
+            if( isLoaded() )
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                setLoadingState( LoadingState::Unloading );
+
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto physicsManager =
@@ -50,318 +127,236 @@ namespace fb
                 auto physics = physicsManager->getPhysics();
                 FB_ASSERT( physics );
 
-                ISharedObject::ScopedLock lock( physicsManager );
-
-                //auto shape = createDefaultTerrain( 513, 513, 0.0f );
-                //setShape( shape );
-
-                // smart_ptr<physics::PxScene> physicsScene =
-                // applicationManager->getPhysicsManager()->getPhysicsScene();
-
-                // smart_ptr<physics::PxPhysics> physics =
-                // applicationManager->getPhysicsManager()->getPhysics();
-                // PhysicsManagerPtr physicsManager =
-                // applicationManager->getPhysicsManager();
-                // physx::PxCooking* cooking =
-                // physicsManager->getCooking();
-
-                auto heightData = getHeightData();
-
-                // auto transform = getTransform();
-                // auto pos = transform.getPosition();
-                // auto rot = transform.getOrientation();
-                // auto tranformScale = transform.getScale();
-
-                auto transformF = Transform3F();
-
-                auto hfGeom = createTerrainGeometry( heightData, getSize(), getHeightScale(),
-                                                     getTerrainSize(), transformF );
-
-                auto pose = physx::PxTransform::createIdentity();
-
-                // Transform3<real_Num> t = getTransform();
-                // Vector3<real_Num> position = t.getPosition();
-                // Vector3<real_Num> scale = t.getScale();
-                Quaternion<real_Num> orientation;  // = t.getOrientation();
-
-                auto size = getSize();
-                auto terrainSize = getTerrainSize();
-                auto terrainScale =
-                    terrainSize / Vector3F( (f32)( size.x - 1 ), 1.0f, (f32)( size.y - 1 ) );
-                auto halfTerrainSize = terrainSize * real_Num( 0.5 );
-
-                auto center = Vector3<real_Num>( -halfTerrainSize.x, 0.0f, -halfTerrainSize.z );
-                pose.p = physx::PxVec3( center.x, center.y, center.z );
-                pose.q = physx::PxQuat( orientation.x, orientation.y, orientation.z, orientation.w );
-
-                auto terrainMat = physics->createMaterial( 1, 1, 1 );
-
-                auto shape = physics->createShape( hfGeom, *terrainMat );
-                shape->setLocalPose( pose );
-                setShape( shape );
-
-                setLoadingState( LoadingState::Loaded );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void PhysxTerrain::unload( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-                if( isLoaded() )
+                if( auto shape = getShape() )
                 {
-                    setLoadingState( LoadingState::Unloading );
-
-                    auto applicationManager = core::IApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
-
-                    auto physicsManager =
-                        fb::static_pointer_cast<PhysxManager>( applicationManager->getPhysicsManager() );
-                    FB_ASSERT( physicsManager );
-
-                    auto factoryManager = applicationManager->getFactoryManager();
-                    FB_ASSERT( factoryManager );
-
-                    auto physics = physicsManager->getPhysics();
-                    FB_ASSERT( physics );
-
-                    if( auto shape = getShape() )
+                    if( auto actor = getPxActor() )
                     {
-                        if( auto actor = getPxActor() )
-                        {
-                            actor->detachShape( *shape, false );
-                        }
-
-                        shape->release();
-                        setShape( nullptr );
+                        actor->detachShape( *shape, false );
                     }
 
-                    PhysxShape<ITerrainShape>::unload( data );
-
-                    setLoadingState( LoadingState::Unloaded );
+                    shape->release();
+                    setShape( nullptr );
                 }
+
+                PhysxShape<ITerrainShape>::unload( data );
+
+                setLoadingState( LoadingState::Unloaded );
             }
-            catch( std::exception &e )
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    inline auto getIndex( u32 tileSize, u32 x, u32 z ) -> u32
+    {
+        return x + z * tileSize;
+    }
+
+    auto PhysxTerrain::createTerrainGeometry( const Array<float> &heightData, const Vector2I &size,
+                                              const Vector3F &heightScale, const Vector3F &terrainSize,
+                                              const Transform3<f32> &t ) -> PxHeightFieldGeometry
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto physicsManager =
+            fb::static_pointer_cast<PhysxManager>( applicationManager->getPhysicsManager() );
+        auto physics = physicsManager->getPhysics();
+
+        auto physicsScene = applicationManager->getPhysicsScene();
+
+        PxCooking *cooking = physicsManager->getCooking();
+
+        PxHeightFieldDesc heightFieldDesc;
+        heightFieldDesc.format = PxHeightFieldFormat::eS16_TM;
+        heightFieldDesc.nbColumns = size.X();
+        heightFieldDesc.nbRows = size.Y();
+        heightFieldDesc.samples.stride = sizeof( PxHeightFieldSample );
+
+        PxReal fHeightScale = heightScale.Y() / std::numeric_limits<PxI16>::max();
+
+        int numSamples = size.X() * size.Y();
+        auto samples = new PxHeightFieldSample[numSamples];
+
+        auto currentByte = reinterpret_cast<PxU8 *>( samples );
+
+        // for ( int y = 0; y < m_size.y; y++ )
+        //{
+
+        for( int x = 0; x < size.X(); x++ )
+        //{
+        // for ( int x = m_size.x - 1; x >= 0; x-- )
+        {
+            for( int y = size.Y() - 1; y >= 0; y-- )
             {
-                FB_LOG_EXCEPTION( e );
+                auto currentSample = reinterpret_cast<PxHeightFieldSample *>( currentByte );
+
+                int heightIdx = x + y * size.X();
+                float heightValue = heightData[heightIdx];
+                float height = heightValue * std::numeric_limits<PxI16>::max();
+
+                currentSample->height = static_cast<PxI16>( height );
+                currentSample->materialIndex0 = 0;
+                currentSample->materialIndex1 = 0;
+
+                currentByte += heightFieldDesc.samples.stride;
             }
         }
 
-        inline u32 getIndex( u32 tileSize, u32 x, u32 z )
+        heightFieldDesc.samples.data = samples;
+
+        PxHeightField *heightField = physics->createHeightField( heightFieldDesc );
+
+        PxTransform pose = PxTransform::createIdentity();
+
+        auto position = t.getPosition();
+        auto scale = t.getScale();
+        auto orientation = t.getOrientation();
+
+        auto terrainScale = terrainSize / Vector3F( static_cast<f32>( size.X() - 1 ), 1.0f,
+                                                    static_cast<f32>( size.Y() - 1 ) );
+
+        auto center = position + Vector3F( 0.0f, 0.0f, -terrainSize.Z() );
+        pose.p = PhysxUtil::toPx( center );
+        pose.q = PhysxUtil::toPx( orientation );
+
+        return { heightField, PxMeshGeometryFlags(), fHeightScale, terrainScale.X(), terrainScale.Z() };
+    }
+
+    auto PhysxTerrain::createDefaultTerrain( s32 sizeX, s32 sizeY, f32 maxHeight ) -> physx::PxShape *
+    {
+        using namespace physx;
+
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto physicsManager =
+            fb::static_pointer_cast<PhysxManager>( applicationManager->getPhysicsManager() );
+        auto gPhysics = physicsManager->getPhysics();
+
+        // Create a heightfield
+        PxHeightFieldDesc heightFieldDesc;
+        heightFieldDesc.format = PxHeightFieldFormat::eS16_TM;
+        heightFieldDesc.nbColumns = sizeX;
+        heightFieldDesc.nbRows = sizeY;
+
+        auto pData = new PxU16[sizeX * sizeY];
+        heightFieldDesc.samples.data = pData;
+
+        heightFieldDesc.samples.stride = sizeof( PxU16 );
+
+        // Fill in the heightfield samples
+        for( int i = 0; i < sizeX * sizeY; ++i )
         {
-            return x + z * tileSize;
+            // Generate some random height values
+            //float height = maxHeight * (float)rand() / RAND_MAX;
+            //pData[i] = PxU16( height * 0xffff );
+            pData[i] = 0;
         }
 
-        PxHeightFieldGeometry PhysxTerrain::createTerrainGeometry( const Array<float> &heightData,
-                                                                   const Vector2I &size,
-                                                                   const Vector3F &heightScale,
-                                                                   const Vector3F &terrainSize,
-                                                                   const Transform3<f32> &t )
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
+        // Create a heightfield object
+        PxHeightField *heightField = gPhysics->createHeightField( heightFieldDesc );
+        BOOST_ASSERT( heightField != nullptr );
 
-            auto physicsManager =
-                fb::static_pointer_cast<PhysxManager>( applicationManager->getPhysicsManager() );
-            auto physics = physicsManager->getPhysics();
+        PxMaterial *material = gPhysics->createMaterial( 1, 1, 1 );
+        BOOST_ASSERT( material != nullptr );
 
-            auto physicsScene = applicationManager->getPhysicsScene();
+        // Create a heightfield shape
+        auto tolerancesScale = gPhysics->getTolerancesScale();
+        auto heightScale = maxHeight / 0xffff;
+        physx::PxHeightFieldGeometry hfGeom( heightField, physx::PxMeshGeometryFlags(), heightScale,
+                                             static_cast<physx::PxReal>( 1 ),
+                                             static_cast<physx::PxReal>( 1 ) );
+        PxShape *heightFieldShape = gPhysics->createShape( hfGeom, *material );
+        BOOST_ASSERT( heightFieldShape != nullptr );
 
-            PxCooking *cooking = physicsManager->getCooking();
+        // Create a heightfield actor
+        //PxRigidActor *heightFieldActor =
+        ///   gPhysics->createRigidStatic( PxTransform( PxIdentity ) );
+        //heightFieldActor->attachShape( *heightFieldShape );
 
-            PxHeightFieldDesc heightFieldDesc;
-            heightFieldDesc.format = PxHeightFieldFormat::eS16_TM;
-            heightFieldDesc.nbColumns = size.X();
-            heightFieldDesc.nbRows = size.Y();
-            heightFieldDesc.samples.stride = sizeof( PxHeightFieldSample );
+        // Add the heightfield actor to the scene
+        //gScene->addActor( *heightFieldActor );
 
-            PxReal fHeightScale = heightScale.Y() / std::numeric_limits<PxI16>::max();
+        return heightFieldShape;
+    }
 
-            int numSamples = size.X() * size.Y();
-            auto samples = new PxHeightFieldSample[numSamples];
+    void PhysxTerrain::setCollisionType( u32 mask )
+    {
+    }
 
-            auto currentByte = (PxU8 *)samples;
+    auto PhysxTerrain::getCollisionType() const -> u32
+    {
+        return 0;
+    }
 
-            // for ( int y = 0; y < m_size.y; y++ )
-            //{
+    void PhysxTerrain::setCollisionMask( u32 mask )
+    {
+    }
 
-            for( int x = 0; x < size.X(); x++ )
-            //{
-            // for ( int x = m_size.x - 1; x >= 0; x-- )
-            {
-                for( int y = size.Y() - 1; y >= 0; y-- )
-                {
-                    auto currentSample = (PxHeightFieldSample *)currentByte;
+    auto PhysxTerrain::getCollisionMask() const -> u32
+    {
+        return 0;
+    }
 
-                    int heightIdx = x + y * size.X();
-                    float heightValue = heightData[heightIdx];
-                    float height = heightValue * std::numeric_limits<PxI16>::max();
+    void PhysxTerrain::setEnabled( bool enabled )
+    {
+    }
 
-                    currentSample->height = static_cast<PxI16>( height );
-                    currentSample->materialIndex0 = 0;
-                    currentSample->materialIndex1 = 0;
+    auto PhysxTerrain::isEnabled() const -> bool
+    {
+        return true;
+    }
 
-                    currentByte += heightFieldDesc.samples.stride;
-                }
-            }
+    auto PhysxTerrain::getUserData() const -> void *
+    {
+        return nullptr;
+    }
 
-            heightFieldDesc.samples.data = samples;
+    void PhysxTerrain::setUserData( void *userData )
+    {
+    }
 
-            PxHeightField *heightField = physics->createHeightField( heightFieldDesc );
+    auto PhysxTerrain::getHeightData() const -> Array<f32>
+    {
+        return m_heightData;
+    }
 
-            PxTransform pose = PxTransform::createIdentity();
+    void PhysxTerrain::setHeightData( const Array<f32> &heightData )
+    {
+        m_heightData = heightData;
+    }
 
-            auto position = t.getPosition();
-            auto scale = t.getScale();
-            auto orientation = t.getOrientation();
+    auto PhysxTerrain::getSize() const -> Vector2I
+    {
+        return m_size;
+    }
 
-            auto terrainScale = terrainSize / Vector3F( static_cast<f32>( size.X() - 1 ), 1.0f,
-                                                        static_cast<f32>( size.Y() - 1 ) );
+    void PhysxTerrain::setSize( const Vector2I &size )
+    {
+        m_size = size;
+    }
 
-            auto center = position + Vector3F( 0.0f, 0.0f, -terrainSize.Z() );
-            pose.p = PhysxUtil::toPx( center );
-            pose.q = PhysxUtil::toPx( orientation );
+    auto PhysxTerrain::getTerrainSize() const -> Vector3<real_Num>
+    {
+        return m_terrainSize;
+    }
 
-            return PxHeightFieldGeometry( heightField, PxMeshGeometryFlags(), fHeightScale,
-                                          terrainScale.X(), terrainScale.Z() );
-        }
+    void PhysxTerrain::setTerrainSize( const Vector3<real_Num> &terrainSize )
+    {
+        m_terrainSize = terrainSize;
+    }
 
-        physx::PxShape *PhysxTerrain::createDefaultTerrain( s32 sizeX, s32 sizeY, f32 maxHeight )
-        {
-            using namespace physx;
+    auto PhysxTerrain::getHeightScale() const -> Vector3<real_Num>
+    {
+        return m_heightScale;
+    }
 
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
+    void PhysxTerrain::setHeightScale( const Vector3<real_Num> &heightScale )
+    {
+        m_heightScale = heightScale;
+    }
 
-            auto physicsManager =
-                fb::static_pointer_cast<PhysxManager>( applicationManager->getPhysicsManager() );
-            auto gPhysics = physicsManager->getPhysics();
-
-            // Create a heightfield
-            PxHeightFieldDesc heightFieldDesc;
-            heightFieldDesc.format = PxHeightFieldFormat::eS16_TM;
-            heightFieldDesc.nbColumns = sizeX;
-            heightFieldDesc.nbRows = sizeY;
-
-            auto pData = new PxU16[sizeX * sizeY];
-            heightFieldDesc.samples.data = pData;
-
-            heightFieldDesc.samples.stride = sizeof( PxU16 );
-
-            // Fill in the heightfield samples
-            for( int i = 0; i < sizeX * sizeY; ++i )
-            {
-                // Generate some random height values
-                //float height = maxHeight * (float)rand() / RAND_MAX;
-                //pData[i] = PxU16( height * 0xffff );
-                pData[i] = 0;
-            }
-
-            // Create a heightfield object
-            PxHeightField *heightField = gPhysics->createHeightField( heightFieldDesc );
-            BOOST_ASSERT( heightField != nullptr );
-
-            PxMaterial *material = gPhysics->createMaterial( 1, 1, 1 );
-            BOOST_ASSERT( material != nullptr );
-
-            // Create a heightfield shape
-            auto tolerancesScale = gPhysics->getTolerancesScale();
-            auto heightScale = maxHeight / 0xffff;
-            physx::PxHeightFieldGeometry hfGeom( heightField, physx::PxMeshGeometryFlags(), heightScale,
-                                                 (physx::PxReal)1, (physx::PxReal)1 );
-            PxShape *heightFieldShape = gPhysics->createShape( hfGeom, *material );
-            BOOST_ASSERT( heightFieldShape != nullptr );
-
-            // Create a heightfield actor
-            //PxRigidActor *heightFieldActor =
-            ///   gPhysics->createRigidStatic( PxTransform( PxIdentity ) );
-            //heightFieldActor->attachShape( *heightFieldShape );
-
-            // Add the heightfield actor to the scene
-            //gScene->addActor( *heightFieldActor );
-
-            return heightFieldShape;
-        }
-
-        void PhysxTerrain::setCollisionType( u32 mask )
-        {
-        }
-
-        u32 PhysxTerrain::getCollisionType() const
-        {
-            return 0;
-        }
-
-        void PhysxTerrain::setCollisionMask( u32 mask )
-        {
-        }
-
-        u32 PhysxTerrain::getCollisionMask() const
-        {
-            return 0;
-        }
-
-        void PhysxTerrain::setEnabled( bool enabled )
-        {
-        }
-
-        bool PhysxTerrain::isEnabled() const
-        {
-            return true;
-        }
-
-        void *PhysxTerrain::getUserData() const
-        {
-            return nullptr;
-        }
-
-        void PhysxTerrain::setUserData( void *userData )
-        {
-        }
-
-        Array<f32> PhysxTerrain::getHeightData() const
-        {
-            return m_heightData;
-        }
-
-        void PhysxTerrain::setHeightData( const Array<f32> &heightData )
-        {
-            m_heightData = heightData;
-        }
-
-        Vector2I PhysxTerrain::getSize() const
-        {
-            return m_size;
-        }
-
-        void PhysxTerrain::setSize( const Vector2I &size )
-        {
-            m_size = size;
-        }
-
-        Vector3<real_Num> PhysxTerrain::getTerrainSize() const
-        {
-            return m_terrainSize;
-        }
-
-        void PhysxTerrain::setTerrainSize( const Vector3<real_Num> &terrainSize )
-        {
-            m_terrainSize = terrainSize;
-        }
-
-        Vector3<real_Num> PhysxTerrain::getHeightScale() const
-        {
-            return m_heightScale;
-        }
-
-        void PhysxTerrain::setHeightScale( const Vector3<real_Num> &heightScale )
-        {
-            m_heightScale = heightScale;
-        }
-
-    }  // end namespace physics
-}  // end namespace fb
+}  // namespace fb::physics

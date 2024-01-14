@@ -1,10 +1,8 @@
 #ifndef ref_h__
 #define ref_h__
 
-
 #include <luabind/detail/ref.hpp>
 #include <luabind/detail/stack_utils.hpp>
-
 #include "luabind/detail/object.hpp"
 
 namespace luabind

@@ -33,7 +33,7 @@ namespace fb
     void MeshLoader::createMaterials( Array<render::IMaterial> &materials, const aiScene *mScene,
                                       const aiNode *pNode, const String &mDir )
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto fileSystem = applicationManager->getFileSystem();
@@ -71,11 +71,11 @@ namespace fb
         }
     }
 
-    Array<render::IMaterial> MeshLoader::createMaterials( const String &meshPath )
+    auto MeshLoader::createMaterials( const String &meshPath ) -> Array<render::IMaterial>
     {
         auto materials = Array<render::IMaterial>();
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto fileSystem = applicationManager->getFileSystem();
@@ -87,7 +87,7 @@ namespace fb
         if( fileExt == ".fbmeshbin" )
         {
         }
-        else if( fileExt == ".fbx" || fileExt == ".FBX" )
+        else if( ApplicationUtil::isSupportedMesh( meshPath ) )
         {
 #if FB_USE_FBXSDK
 #elif FB_USE_ASSET_IMPORT
@@ -125,41 +125,9 @@ namespace fb
         return materials;
     }
 
-    void MeshLoader::createActor( SmartPtr<ITransformNode> parentNode,
-                                  SmartPtr<scene::IActor> parentActor )
+    auto MeshLoader::loadActor( SmartPtr<IMeshResource> resource ) -> SmartPtr<scene::IActor>
     {
-        auto applicationManager = core::IApplicationManager::instance();
-        FB_ASSERT( applicationManager );
-
-        auto sceneManager = applicationManager->getSceneManager();
-        FB_ASSERT( sceneManager );
-
-        auto actor = sceneManager->createActor();
-
-        auto name = parentNode->getName();
-        actor->setName( name );
-
-        auto localTransform = parentNode->getLocalTransform();
-        auto worldTransform = parentNode->getWorldTransform();
-
-        SmartPtr<scene::Transform> actorTransform = actor->getTransform();
-        actorTransform->setLocalTransform( localTransform );
-
-        auto pWorldTransform = actorTransform->getWorldTransform();
-        actorTransform->setWorldTransform( worldTransform );
-
-        parentActor->addChild( actor );
-
-        auto children = parentNode->getChildren();
-        for( auto child : children )
-        {
-            createActor( child, actor );
-        }
-    }
-
-    SmartPtr<scene::IActor> MeshLoader::loadActor( SmartPtr<IMeshResource> resource )
-    {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto sceneManager = applicationManager->getSceneManager();
@@ -168,12 +136,17 @@ namespace fb
         auto fileSystem = applicationManager->getFileSystem();
         FB_ASSERT( fileSystem );
 
+        auto resourceDatabase = applicationManager->getResourceDatabase();
+
         if( resource )
         {
             setMeshResource( resource );
 
             m_meshScale = Vector3<f32>::unit() * resource->getScale();
             m_meshPath = resource->getFilePath();
+
+            m_director = resourceDatabase->loadDirectorFromResourcePath(
+                m_meshPath, scene::MeshResourceDirector::typeInfo() );
         }
 
         FB_ASSERT( !StringUtil::isNullOrEmpty( m_meshPath ) );
@@ -195,7 +168,7 @@ namespace fb
                 auto meshComponent = actor->addComponent<scene::Mesh>();
                 if( meshComponent )
                 {
-                    meshComponent->setMesh( mesh );
+                    meshComponent->setMeshResource( resource );
                 }
 
                 auto meshRenderer = actor->addComponent<scene::MeshRenderer>();
@@ -203,7 +176,7 @@ namespace fb
                 return actor;
             }
         }
-        else if( fileExt == ".fbx" || fileExt == ".FBX" )
+        else if( ApplicationUtil::isSupportedMesh( m_meshPath ) )
         {
             auto actor = sceneManager->createActor();
             setRootActor( actor );
@@ -238,7 +211,7 @@ namespace fb
 #elif FB_USE_ASSET_IMPORT
             Assimp::Importer importer;
 
-            u32 flags = aiProcess_Triangulate;
+            u32 flags = aiProcessPreset_TargetRealtime_MaxQuality;
 
             auto stream = fileSystem->open( m_meshPath );
             if( stream )
@@ -262,6 +235,8 @@ namespace fb
 
                     auto path = Path::getFilePath( m_meshPath );
                     loadDataFromActor( actor, scene, scene->mRootNode, path );
+
+                    actor->updateTransform();
                 }
             }
 #endif
@@ -272,13 +247,13 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<scene::IActor> MeshLoader::loadActor( const String &meshName )
+    auto MeshLoader::loadActor( const String &meshName ) -> SmartPtr<scene::IActor>
     {
         try
         {
             FB_ASSERT( !StringUtil::isNullOrEmpty( meshName ) );
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto sceneManager = applicationManager->getSceneManager();
@@ -289,6 +264,8 @@ namespace fb
 
             auto meshManager = applicationManager->getMeshManager();
             FB_ASSERT( meshManager );
+
+            auto resourceDatabase = applicationManager->getResourceDatabase();
 
             auto resource = meshManager->loadFromFile( meshName );
             if( !resource )
@@ -302,6 +279,10 @@ namespace fb
                 setMeshResource( meshResource );
 
                 m_meshScale = Vector3<f32>::unit() * meshResource->getScale();
+                m_meshPath = resource->getFilePath();
+
+                m_director = resourceDatabase->loadDirectorFromResourcePath(
+                    m_meshPath, scene::MeshResourceDirector::typeInfo() );
             }
 
             m_meshPath = meshName;
@@ -323,7 +304,7 @@ namespace fb
                     auto meshComponent = actor->addComponent<scene::Mesh>();
                     if( meshComponent )
                     {
-                        meshComponent->setMesh( mesh );
+                        //meshComponent->setMeshResource( mesh );
                     }
 
                     auto meshRenderer = actor->addComponent<scene::MeshRenderer>();
@@ -331,7 +312,7 @@ namespace fb
                     return actor;
                 }
             }
-            else if( fileExt == ".fbx" || fileExt == ".FBX" )
+            else if( ApplicationUtil::isSupportedMesh( meshName ) )
             {
                 auto actor = sceneManager->createActor();
                 setRootActor( actor );
@@ -376,7 +357,8 @@ namespace fb
                 }
 
                 auto projectFolder = applicationManager->getProjectPath();
-                auto absolutePath = Path::getAbsolutePath( projectFolder, m_meshPath );
+                auto meshFilePath = resource->getFilePath();
+                auto absolutePath = Path::getAbsolutePath( projectFolder, meshFilePath );
 
                 if( stream )
                 {
@@ -386,9 +368,29 @@ namespace fb
                     stream->read( buffer, size );
 
                     //const auto scene = importer.ReadFile( absolutePath.c_str(), flags );
-                    const auto scene = importer.ReadFileFromMemory( buffer, size, flags, "fbx" );
+
+                    auto ext = Path::getFileExtension( meshName );
+                    ext = StringUtil::make_lower( ext );
+                    ext = StringUtil::replaceAll( ext, ".", "" );
+
+                    Assimp::Importer importer;
+                    u32 flags = aiProcessPreset_TargetRealtime_MaxQuality;
+                    auto scene = importer.ReadFile( absolutePath.c_str(), flags );
+                    if( !scene )
+                    {
+                        // The line below causes a weird material index bug.
+                        scene = importer.ReadFileFromMemory( buffer, size, flags, ext.c_str() );
+                    }
+
                     if( scene )
                     {
+                        auto numMaterials = scene->mNumMaterials;
+                        for( size_t i = 0; i < numMaterials; i++ )
+                        {
+                            auto pAIMaterial = scene->mMaterials[i];
+                            createMaterial( nullptr, i, pAIMaterial, "" );
+                        }
+
                         auto hash = StringUtil::getHash64( meshName );
                         m_fileHash = *&hash;
 
@@ -415,19 +417,24 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<IMesh> MeshLoader::loadMesh( SmartPtr<IMeshResource> resource )
+    auto MeshLoader::loadMesh( SmartPtr<IMeshResource> resource ) -> SmartPtr<IMesh>
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto fileSystem = applicationManager->getFileSystem();
         FB_ASSERT( fileSystem );
+
+        auto resourceDatabase = applicationManager->getResourceDatabase();
 
         if( resource )
         {
             setMeshResource( resource );
             m_meshScale = Vector3<f32>::unit() * resource->getScale();
             m_meshPath = resource->getFilePath();
+
+            m_director = resourceDatabase->loadDirectorFromResourcePath(
+                m_meshPath, scene::MeshResourceDirector::typeInfo() );
         }
 
         FB_ASSERT( !StringUtil::isNullOrEmpty( m_meshPath ) );
@@ -453,7 +460,7 @@ namespace fb
                 return mesh;
             }
         }
-        else if( fileExt == ".fbx" )
+        else if( ApplicationUtil::isSupportedMesh( m_meshPath ) )
         {
             auto mesh = fb::make_ptr<Mesh>();
 
@@ -489,7 +496,7 @@ namespace fb
             auto absolutePath = Path::getAbsolutePath( projectFolder, m_meshPath );
 
             Assimp::Importer importer;
-            u32 flags = aiProcess_Triangulate;
+            u32 flags = aiProcessPreset_TargetRealtime_MaxQuality;
             const auto scene = importer.ReadFile( absolutePath.c_str(), flags );
             if( scene )
             {
@@ -502,6 +509,13 @@ namespace fb
                 auto name = Path::getFileNameWithoutExtension( m_meshPath );
                 mesh->setName( name );
 
+                auto numMaterials = scene->mNumMaterials;
+                for( size_t i = 0; i < numMaterials; i++ )
+                {
+                    auto pAIMaterial = scene->mMaterials[i];
+                    createMaterial( nullptr, i, pAIMaterial, "" );
+                }
+
                 auto path = Path::getFilePath( m_meshPath );
                 loadToMesh( mesh, scene, scene->mRootNode, path );
             }
@@ -513,15 +527,17 @@ namespace fb
         return nullptr;
     }
 
-    SmartPtr<IMesh> MeshLoader::loadMesh( const String &meshName )
+    auto MeshLoader::loadMesh( const String &meshName ) -> SmartPtr<IMesh>
     {
         FB_ASSERT( !StringUtil::isNullOrEmpty( meshName ) );
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto fileSystem = applicationManager->getFileSystem();
         FB_ASSERT( fileSystem );
+
+        auto resourceDatabase = applicationManager->getResourceDatabase();
 
         // auto graphicsSystem = applicationManager->getGraphicsSystem();
         // FB_ASSERT(graphicsSystem);
@@ -534,6 +550,10 @@ namespace fb
         if( meshResource )
         {
             m_meshScale = Vector3<f32>::unit() * meshResource->getScale();
+            m_meshPath = resource->getFilePath();
+
+            m_director = resourceDatabase->loadDirectorFromResourcePath(
+                m_meshPath, scene::MeshResourceDirector::typeInfo() );
         }
 
         m_meshPath = meshName;
@@ -553,7 +573,7 @@ namespace fb
                 return mesh;
             }
         }
-        else if( fileExt == ".fbx" || fileExt == ".FBX" )
+        else if( ApplicationUtil::isSupportedMesh( m_meshPath ) )
         {
             auto mesh = fb::make_ptr<Mesh>();
 
@@ -589,12 +609,19 @@ namespace fb
             auto absolutePath = Path::getAbsolutePath( projectFolder, meshName );
 
             Assimp::Importer importer;
-            u32 flags = aiProcess_Triangulate;
+            u32 flags = aiProcessPreset_TargetRealtime_MaxQuality;
             const auto scene = importer.ReadFile( absolutePath.c_str(), flags );
             if( scene )
             {
                 auto hash = StringUtil::getHash64( meshName );
                 m_fileHash = *&hash;
+
+                auto numMaterials = scene->mNumMaterials;
+                for( size_t i = 0; i < numMaterials; i++ )
+                {
+                    auto pAIMaterial = scene->mMaterials[i];
+                    createMaterial( nullptr, i, pAIMaterial, "" );
+                }
 
                 computeNodesDerivedTransform( scene, scene->mRootNode,
                                               scene->mRootNode->mTransformation );
@@ -621,18 +648,18 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto sceneManager = applicationManager->getSceneManager();
             auto fileSystem = applicationManager->getFileSystem();
             auto factoryManager = applicationManager->getFactoryManager();
+            auto meshManager = applicationManager->getMeshManager();
+            auto resourceDatabase = applicationManager->getResourceDatabase();
 
             auto actor = sceneManager->createActor();
             parent->addChild( actor );
 
             auto name = pNode->mName;
             actor->setName( name.C_Str() );
-
-            auto meshResource = getMeshResource();
 
             auto localTransform = pNode->mTransformation;
             localTransform = localTransform.Inverse();
@@ -710,6 +737,8 @@ namespace fb
                 actorTransform->setOrientation( actorOrientation );
                 actorTransform->setScale( actorScale );
 
+                actorTransform->setLocalDirty( true );
+
                 FB_ASSERT( actorWorldTransform.isSane() );
 
                 actorTransform->updateLocalFromWorld();
@@ -717,65 +746,70 @@ namespace fb
 
             auto numMeshes = pNode->mNumMeshes;
 
-            auto meshFilePath = String( pNode->mName.data ) + "_" + StringUtil::toString( m_fileHash );
+            static const auto meshExt = String( ".fbmeshbin" );
+            auto nodeName = String( pNode->mName.data );
+
+            auto cachePath = applicationManager->getCachePath();
+            auto meshFilePath = "Cache/" + nodeName + "_" + StringUtil::toString( m_fileHash ) + meshExt;
+            meshFilePath = StringUtil::cleanupPath( meshFilePath );
 
             if( numMeshes > 0 )
             {
-                auto mesh = fb::make_ptr<Mesh>();
+                auto resource = meshManager->createOrRetrieve( meshFilePath );
+                auto meshResource = fb::static_pointer_cast<MeshResource>( resource.first );
 
-                if( getUseSingleMesh() )
+                if( meshResource )
                 {
-                    // if(mMeshes.size() == 0)
-                    //{
-                    //	static int nameExt = 0;
-                    //	mesh = m_meshMgr->create(String("ROOTMesh") + StringUtil::toString(nameExt++),
-                    //IResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+                    auto mesh = meshResource->getMesh();
 
-                    //	SmartPtr<IMesh> pMesh(new CMesh);
-                    //	mesh->setMesh(pMesh);
-
-                    //	mMeshes.push_back(mesh);
-                    //}
-                    // else
-                    //{
-                    //	mesh = mMeshes[0];
-                    //}
-                }
-
-                for( u32 idx = 0; idx < numMeshes; ++idx )
-                {
-                    auto meshIndex = pNode->mMeshes[idx];
-
-                    auto pAIMesh = mScene->mMeshes[meshIndex];
-                    FB_ASSERT( pAIMesh );
-
-                    if( !m_quietMode )
+                    //if( !Path::isExistingFile(meshFilePath) )
                     {
-                        FB_LOG_MESSAGE( "MeshLoader", String( "SubMesh " ) +
-                                                          StringUtil::toString( idx ) +
-                                                          String( " for mesh '" ) +
-                                                          String( pNode->mName.data ) + "'" );
+                        if( !mesh )
+                        {
+                            mesh = fb::make_ptr<Mesh>();
+                            meshResource->setMesh( mesh );
+                        }
+
+                        for( u32 idx = 0; idx < numMeshes; ++idx )
+                        {
+                            auto meshIndex = pNode->mMeshes[idx];
+
+                            auto pAIMesh = mScene->mMeshes[meshIndex];
+                            FB_ASSERT( pAIMesh );
+
+                            if( !m_quietMode )
+                            {
+                                FB_LOG_MESSAGE( "MeshLoader", String( "SubMesh " ) +
+                                                                  StringUtil::toString( idx ) +
+                                                                  String( " for mesh '" ) +
+                                                                  String( pNode->mName.data ) + "'" );
+                            }
+
+                            // Create a material instance for the mesh.
+                            const auto pAIMaterial = mScene->mMaterials[pAIMesh->mMaterialIndex];
+
+                            auto fileCachePath = applicationManager->getCachePath();
+                            auto fileMeshCachePath = fileCachePath + meshFilePath;
+
+                            if( !fileSystem->isExistingFile( fileMeshCachePath ) )
+                            {
+                                auto nodeNode = String( pNode->mName.data );
+                                createSubMesh( nodeNode, idx, pNode, pAIMesh, pAIMaterial, mesh, mDir );
+                            }
+                        }
                     }
 
-                    // Create a material instance for the mesh.
-                    const auto pAIMaterial = mScene->mMaterials[pAIMesh->mMaterialIndex];
-
-                    auto fileCachePath = applicationManager->getCachePath();
-                    auto fileMeshCachePath = fileCachePath + meshFilePath;
-
-                    if( !fileSystem->isExistingFile( fileMeshCachePath ) )
+                    auto meshComponent = actor->addComponent<scene::Mesh>();
+                    if( meshComponent )
                     {
-                        auto nodeNode = String( pNode->mName.data );
-                        createSubMesh( nodeNode, idx, pNode, pAIMesh, pAIMaterial, mesh, mDir );
-                    }
-                }
+                        meshComponent->setMeshPath( meshFilePath );
+                        meshComponent->setMeshResource( meshResource );
 
-                auto meshComponent = actor->addComponent<scene::Mesh>();
-                if( meshComponent )
-                {
-                    mesh->setName( meshFilePath );
-                    meshComponent->setMeshPath( meshFilePath );
-                    meshComponent->setMesh( mesh );
+                        if( mesh )
+                        {
+                            mesh->setName( meshFilePath );
+                        }
+                    }
                 }
 
                 auto meshRenderer = actor->addComponent<scene::MeshRenderer>();
@@ -784,14 +818,51 @@ namespace fb
                     //
                 }
 
+                /*
+                if( auto meshComponent = actor->getComponent<scene::Mesh>() )
+                {
+                    if( auto mesh = meshComponent->getMesh() )
+                    {
+                        auto count = 0;
+                        auto subMeshes = mesh->getSubMeshes();
+                        for( auto subMesh : subMeshes )
+                        {
+                            auto materialName = subMesh->getMaterialName();
+                            auto fbMaterial =
+                                resourceDatabase->loadResourceByType<render::IMaterial>( materialName );
+                            if( fbMaterial )
+                            {
+                                auto materialComponent = actor->addComponent<scene::Material>();
+                                if( materialComponent )
+                                {
+                                    materialComponent->setIndex( count );
+                                    materialComponent->setMaterial( fbMaterial );
+                                    materialComponent->updateMaterial();
+                                }
+                            }
+
+                            count++;
+                        }
+                    }
+                }*/
+
                 for( u32 idx = 0; idx < pNode->mNumMeshes; ++idx )
                 {
                     auto meshIndex = pNode->mMeshes[idx];
                     auto pAIMesh = mScene->mMeshes[meshIndex];
                     FB_ASSERT( pAIMesh );
 
-                    const auto pAIMaterial = mScene->mMaterials[pAIMesh->mMaterialIndex];
+                    auto materialIndex = pAIMesh->mMaterialIndex;
+                    const auto pAIMaterial = mScene->mMaterials[materialIndex];
                     FB_ASSERT( pAIMaterial );
+
+                    auto materialName = pAIMaterial->GetName();
+                    auto pMaterialName = materialName.C_Str();
+                    auto materialNameStr = String( pMaterialName );
+                    auto materialPath = materialNameStr + ".mat";
+
+                    auto fbMaterial =
+                        resourceDatabase->loadResourceByType<render::IMaterial>( materialPath );
 
                     if( pAIMaterial )
                     {
@@ -800,22 +871,14 @@ namespace fb
                         {
                             auto pName = pAIMaterial->GetName().C_Str();
 
-                            /*
-                            materialComponent->setMaterialName(pName ? pName : "");
-
-                            if (materialComponent->getMaterialName() == "F40f40")
-                            {
-                                int stop = 0;
-                                stop = 0;
-                            }
-                            */
-
                             materialComponent->setIndex( idx );
-                            createMaterial( materialComponent, idx, pAIMaterial, "" );
+                            materialComponent->setMaterial( fbMaterial );
                             materialComponent->updateMaterial();
                         }
                     }
                 }
+
+                actor->updateTransform();
             }
 
             // Traverse all child nodes of the current node instance
@@ -836,7 +899,7 @@ namespace fb
     {
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto fileSystem = applicationManager->getFileSystem();
 
             auto name = pNode->mName;
@@ -916,7 +979,9 @@ namespace fb
 
             auto numMeshes = pNode->mNumMeshes;
 
-            auto meshFilePath = String( pNode->mName.data ) + "_" + StringUtil::toString( m_fileHash );
+            static const auto engineMeshExtention = String( ".fbmeshbin" );
+            auto meshFilePath = String( pNode->mName.data ) + "_" + StringUtil::toString( m_fileHash ) +
+                                engineMeshExtention;
 
             if( numMeshes > 0 )
             {
@@ -996,12 +1061,12 @@ namespace fb
         m_rootActor = rootActor;
     }
 
-    SmartPtr<scene::IActor> MeshLoader::getRootActor() const
+    auto MeshLoader::getRootActor() const -> SmartPtr<scene::IActor>
     {
         return m_rootActor;
     }
 
-    String MeshLoader::getMeshPath() const
+    auto MeshLoader::getMeshPath() const -> String
     {
         return m_meshPath;
     }
@@ -1013,11 +1078,15 @@ namespace fb
         {
             auto materialName = mat->GetName();
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto fileSystem = applicationManager->getFileSystem();
             FB_ASSERT( fileSystem );
+
+            static const auto materialType = render::IMaterial::typeInfo();
+
+            auto projectFolder = applicationManager->getProjectPath();
 
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             if( !graphicsSystem )
@@ -1031,23 +1100,31 @@ namespace fb
             auto materialManager = graphicsSystem->getMaterialManager();
 
             auto meshPath = getMeshPath();
-            auto materialsPath = Path::getFilePath( meshPath ) + "/Materials";
+            auto materialsPath = projectFolder + "/" + Path::getFilePath( meshPath ) + "/Materials";
+            materialsPath = StringUtil::cleanupPath( materialsPath );
+
             if( !fileSystem->isExistingFolder( materialsPath ) )
             {
                 fileSystem->createDirectories( materialsPath );
             }
 
-            auto materialPath = materialsPath + "/" + String( materialName.C_Str() ) + ".mat";
-            omat->setMaterialPath( materialPath );
+            auto pMaterialName = materialName.C_Str();
+            auto materialNameStr = String( pMaterialName );
+            auto materialPath = materialsPath + "/" + materialNameStr + ".mat";
 
-            if( fileSystem->isExistingFile( materialPath ) )
+            if( omat )
             {
-                return;
+                omat->setMaterialPath( materialPath );
             }
+
+            //if( fileSystem->isExistingFile( materialPath ) )
+            //{
+            //    return;
+            //}
 
             auto pass = SmartPtr<render::IMaterialPass>();
 
-            auto materialResult = resourceDatabase->createOrRetrieve( materialPath );
+            auto materialResult = resourceDatabase->createOrRetrieve( materialType, materialPath );
             auto material = fb::static_pointer_cast<render::IMaterial>( materialResult.first );
             if( material )
             {
@@ -1100,7 +1177,8 @@ namespace fb
             {
                 FB_LOG( "Didn't find any texture units..." );
 
-                szPath = String( "dummyMat" + StringUtil::toString( dummyMatCount ) ).c_str();
+                szPath =
+                    static_cast<String>( "dummyMat" + StringUtil::toString( dummyMatCount ) ).c_str();
                 dummyMatCount++;
             }
 
@@ -1119,7 +1197,9 @@ namespace fb
             aiColor4D clr( 1.0f, 1.0f, 1.0f, 1.0 );
             // Ambient is usually way too low! FIX ME!
             if( mat->GetTexture( type, 0, &path ) != AI_SUCCESS )
+            {
                 aiGetMaterialColor( mat, AI_MATKEY_COLOR_AMBIENT, &clr );
+            }
             // omat->setAmbient(ColourF(clr.r, clr.g, clr.b, 1.0f));
 
             // diffuse
@@ -1169,16 +1249,13 @@ namespace fb
                             " for channel " + StringUtil::toString( uvindex ) );
                 }
 
-                if( auto m = omat->getMaterial() )
+                auto textureName = String( path.C_Str() );
+                if( !fileSystem->isExistingFile( textureName ) )
                 {
-                    auto textureName = String( path.C_Str() );
-                    if( !fileSystem->isExistingFile( textureName ) )
-                    {
-                        textureName = Path::getFileName( textureName );
-                    }
-
-                    m->setTexture( textureName, 0 );
+                    textureName = Path::getFileName( textureName );
                 }
+
+                material->setTexture( textureName, 0 );
             }
 
             if( material )
@@ -1217,7 +1294,7 @@ namespace fb
 
     void MeshLoader::loadDataFromNode( const aiScene *mScene, const aiNode *pNode, const String &mDir )
     {
-        // auto engine = core::IApplicationManager::instance();
+        // auto engine = core::ApplicationManager::instance();
         // SmartPtr<IGraphicsSystem> graphicsSystem = engine->getGraphicsSystem();
         // SmartPtr<IMeshManager> meshMgr = graphicsSystem->getMeshManager();
 
@@ -1269,11 +1346,11 @@ namespace fb
         }
     }
 
-    bool MeshLoader::createSubMesh( const String &name, int index, const aiNode *pNode,
+    auto MeshLoader::createSubMesh( const String &name, int index, const aiNode *pNode,
                                     const aiMesh *mesh, const aiMaterial *mat, SmartPtr<IMesh> mMesh,
-                                    const String &mDir )
+                                    const String &mDir ) -> bool
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         auto factoryManager = applicationManager->getFactoryManager();
 
         // if animated all submeshes must have bone weights
@@ -1284,10 +1361,12 @@ namespace fb
                 FB_LOG_MESSAGE( "MeshLoader", String( "Skipping Mesh " ) + String( mesh->mName.data ) +
                                                   String( "with no bone weights" ) );
             }
+
             return false;
         }
 
-        auto pName = mat->GetName().C_Str();
+        auto matName = mat->GetName();
+        auto pName = matName.C_Str();
         String materialName = pName ? pName : "";
 
         // now begin the object definition
@@ -1295,27 +1374,51 @@ namespace fb
         auto submesh = factoryManager->make_ptr<SubMesh>();
         mMesh->addSubMesh( submesh );
 
+        bool swapZY = false;
+
+        if( m_director )
+        {
+            swapZY = m_director->getSwapZY();
+        }
+
         // prime pointers to vertex related data
         aiVector3D *vec = mesh->mVertices;
         aiVector3D *tangent = mesh->mTangents;
         aiVector3D *bitangent = mesh->mBitangents;
 
         aiVector3D *norm = mesh->mNormals;
-        aiVector3D *uv = mesh->mTextureCoords[0];
+        //aiVector3D *uv = mesh->mTextureCoords[0];
         aiColor4D *col = mesh->mColors[0];
+
+        Array<Array<Vector3<f32> > > uvs;
+        for( auto uv : mesh->mTextureCoords )
+        {
+            if( uv )
+            {
+                Array<Vector3<f32> > uvArray;
+                for( size_t j = 0; j < mesh->mNumVertices; ++j )
+                {
+                    uvArray.emplace_back( uv->x, uv->y, uv->z );
+                    uv++;
+                }
+
+                //std::reverse( uvArray.begin(), uvArray.end() );
+                uvs.push_back( uvArray );
+            }
+        }
 
         // We must create the vertex data, indicating how many vertices there will be
         // submesh->useSharedVertices = false;
 
         auto vertexData = factoryManager->make_ptr<VertexBuffer>();
         submesh->setVertexBuffer( vertexData );
-        vertexData->setNumVerticies( mesh->mNumVertices );
+        vertexData->setNumVertices( mesh->mNumVertices );
 
         // We must now declare what the vertex data contains
         auto declaration = factoryManager->make_ptr<VertexDeclaration>();
         vertexData->setVertexDeclaration( declaration );
 
-        static const unsigned short source = 0;
+        auto source = 0;
         u32 offset = 0;
 
         auto vertexElem = declaration->addElement(
@@ -1368,16 +1471,11 @@ namespace fb
             offset += normalElem->getSize();
         }
 
-        if( uv )
+        for( size_t i = 0; i < uvs.size(); ++i )
         {
-            if( !m_quietMode )
-            {
-                FB_LOG_MESSAGE( "MeshLoader", StringUtil::toString( mesh->mNumVertices ) + " uvs" );
-            }
-
             auto uvElem = declaration->addElement(
-                source, offset, IVertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
-                IVertexElement::VertexElementType::VET_FLOAT2, 0 );
+                source, offset, VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
+                IVertexElement::VertexElementType::VET_FLOAT3, i );
             offset += uvElem->getSize();
         }
 
@@ -1389,87 +1487,95 @@ namespace fb
             offset += colElem->getSize();
         }
 
-        aiMatrix4x4 aiM;
-
-        auto nodeTransformData = m_nodeDerivedTransformByName.find( pNode->mName.data );
-        if( nodeTransformData != m_nodeDerivedTransformByName.end() )
-        {
-            aiM = nodeTransformData->second;
-        }
-
-        aiMatrix4x4 normalMatrix = aiM;
-        normalMatrix.a4 = 0;
-        normalMatrix.b4 = 0;
-        normalMatrix.c4 = 0;
-        normalMatrix.Transpose().Inverse();
-
         auto vdata = static_cast<f32 *>( vertexData->createVertexData() );
         FB_ASSERT( vdata );
 
         for( u32 i = 0; i < mesh->mNumVertices; ++i )
         {
-            // Position
-            aiVector3D vect;
-            vect.x = vec->x;
-            vect.y = vec->y;
-            vect.z = vec->z;
-
-            auto pos = Vector3<f32>( vect.x, vect.y, vect.z );
-            pos *= m_meshScale;
-
-            *vdata++ = pos.X();
-            *vdata++ = pos.Y();
-            *vdata++ = pos.Z();
-            vec++;
-
-            // Normal
-            if( norm )
+            if( !swapZY )
             {
-                vect.x = norm->x;
-                vect.y = norm->y;
-                vect.z = norm->z;
+                // Position
+                auto pos = Vector3<f32>( vec->x, vec->y, vec->z );
+                pos *= m_meshScale;
 
-                // vect *= normalMatrix;
-                // vect = vect.Normalize();
+                *vdata++ = pos.x;
+                *vdata++ = pos.y;
+                *vdata++ = pos.z;
+                vec++;
 
-                *vdata++ = vect.x;
-                *vdata++ = vect.y;
-                *vdata++ = vect.z;
-                norm++;
+                // Normal
+                if( norm )
+                {
+                    *vdata++ = norm->x;
+                    *vdata++ = norm->y;
+                    *vdata++ = norm->z;
+                    norm++;
+                }
+
+                if( tangent )
+                {
+                    *vdata++ = tangent->x;
+                    *vdata++ = tangent->y;
+                    *vdata++ = tangent->z;
+
+                    tangent++;
+                }
+
+                if( bitangent )
+                {
+                    *vdata++ = bitangent->x;
+                    *vdata++ = bitangent->y;
+                    *vdata++ = bitangent->z;
+                    bitangent++;
+                }
+            }
+            else
+            {
+                // Position
+                auto pos = Vector3<f32>( vec->x, vec->z, vec->y );
+                pos *= m_meshScale;
+
+                *vdata++ = pos.x;
+                *vdata++ = pos.y;
+                *vdata++ = pos.z;
+                vec++;
+
+                // Normal
+                if( norm )
+                {
+                    *vdata++ = norm->x;
+                    *vdata++ = norm->z;
+                    *vdata++ = norm->y;
+                    norm++;
+                }
+
+                if( tangent )
+                {
+                    *vdata++ = tangent->x;
+                    *vdata++ = tangent->z;
+                    *vdata++ = tangent->y;
+
+                    tangent++;
+                }
+
+                if( bitangent )
+                {
+                    *vdata++ = bitangent->x;
+                    *vdata++ = bitangent->z;
+                    *vdata++ = bitangent->y;
+                    bitangent++;
+                }
             }
 
-            if( tangent )
+            if( uvs.size() > 0 )
             {
-                vect.x = tangent->x;
-                vect.y = tangent->y;
-                vect.z = tangent->z;
-
-                *vdata++ = vect.x;
-                *vdata++ = vect.y;
-                *vdata++ = vect.z;
-
-                tangent++;
-            }
-
-            if( bitangent )
-            {
-                vect.x = bitangent->x;
-                vect.y = bitangent->y;
-                vect.z = bitangent->z;
-
-                *vdata++ = vect.x;
-                *vdata++ = vect.y;
-                *vdata++ = vect.z;
-                bitangent++;
-            }
-
-            // uvs
-            if( uv )
-            {
-                *vdata++ = uv->x;
-                *vdata++ = uv->y;
-                //*vdata++ = uv->z;
-                uv++;
+                for( auto &j : uvs )
+                {
+                    auto uv = j[i];
+                    *vdata++ = uv.x;
+                    *vdata++ = 1.0 - uv.y;
+                    *vdata++ = uv.z;
+                }
             }
 
             if( col )
@@ -1482,39 +1588,35 @@ namespace fb
             }
         }
 
-        if( !m_quietMode )
-        {
-            FB_LOG_MESSAGE( "MeshLoader", StringUtil::toString( mesh->mNumFaces ) + " faces" );
-        }
+        FB_LOG_MESSAGE( "MeshLoader", StringUtil::toString( mesh->mNumFaces ) + " faces" );
 
         // Creates the index data
         auto indexBuffer = factoryManager->make_ptr<IndexBuffer>();
         submesh->setIndexBuffer( indexBuffer );
 
-        constexpr auto maxVertices = std::numeric_limits<u16>::max() - 1;
-        if( mesh->mNumVertices > maxVertices )
-        {
-            indexBuffer->setIndexType( IndexBuffer::Type::IT_32BIT );
-            indexBuffer->setNumIndices( mesh->mNumFaces * 3 );
-            auto idata = static_cast<u32 *>( indexBuffer->createIndexData() );
-
-            // for (s32 i = mesh->mNumFaces - 1; i >= 0; --i)
-            for( u32 i = 0; i < mesh->mNumFaces; ++i )
-            {
-                auto f = &mesh->mFaces[i];
-                for( auto index = 0; index < f->mNumIndices; ++index )
-                {
-                    *idata++ = f->mIndices[index];
-                }
-            }
-        }
-        else
+        if( mesh->mNumVertices < std::numeric_limits<u16>::max() )
         {
             indexBuffer->setIndexType( IndexBuffer::Type::IT_16BIT );
             indexBuffer->setNumIndices( mesh->mNumFaces * 3 );
             auto idata = static_cast<u16 *>( indexBuffer->createIndexData() );
 
-            // for (s32 i = mesh->mNumFaces - 1; i >= 0; --i)
+            for( u32 i = 0; i < mesh->mNumFaces; ++i )
+            {
+                auto f = &mesh->mFaces[i];
+                for( auto index = 0; index < f->mNumIndices; ++index )
+                {
+                    auto faceIndex = f->mIndices[index];
+                    FB_ASSERT( faceIndex < std::numeric_limits<u16>::max() );
+                    *idata++ = faceIndex;
+                }
+            }
+        }
+        else
+        {
+            indexBuffer->setIndexType( IndexBuffer::Type::IT_32BIT );
+            indexBuffer->setNumIndices( mesh->mNumFaces * 3 );
+            auto idata = static_cast<u32 *>( indexBuffer->createIndexData() );
+
             for( u32 i = 0; i < mesh->mNumFaces; ++i )
             {
                 auto f = &mesh->mFaces[i];
@@ -1556,7 +1658,7 @@ namespace fb
     }
 #endif
 
-    bool MeshLoader::getUseSingleMesh() const
+    auto MeshLoader::getUseSingleMesh() const -> bool
     {
         return m_useSingleMesh;
     }
@@ -1566,7 +1668,7 @@ namespace fb
         m_useSingleMesh = useSingleMesh;
     }
 
-    bool MeshLoader::getQuietMode() const
+    auto MeshLoader::getQuietMode() const -> bool
     {
         return m_quietMode;
     }
@@ -1576,7 +1678,7 @@ namespace fb
         m_quietMode = quietMode;
     }
 
-    SmartPtr<IMeshResource> MeshLoader::getMeshResource() const
+    auto MeshLoader::getMeshResource() const -> SmartPtr<IMeshResource>
     {
         return m_meshResource;
     }

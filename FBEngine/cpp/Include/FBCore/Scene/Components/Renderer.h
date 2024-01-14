@@ -68,7 +68,7 @@ namespace fb
             void unload( SmartPtr<ISharedObject> data ) override;
 
             /** @copydoc IComponent::updateDirty */
-            void updateDirty( u32 flags, u32 oldFlags ) override;
+            void updateFlags( u32 flags, u32 oldFlags ) override;
 
             /** @copydoc BaseComponent::preUpdate */
             void preUpdate() override;
@@ -101,10 +101,13 @@ namespace fb
             void setMaterialName( const String &materialName );
 
             /** @brief Updates the materials used by the Renderer */
-            void updateMaterials();
+            void updateMaterials() override;
 
-            /** @copydoc IComponent::visibilityChanged */
-            void visibilityChanged() override;
+            void updateVisibility() override;
+
+            Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                   const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                   SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
             /** @copydoc IComponent::updateTransform */
             void updateTransform() override;
@@ -116,12 +119,15 @@ namespace fb
             void setGraphicsObject( SmartPtr<render::IGraphicsObject> graphicsObject );
 
             /** @brief Returns the graphics node used by the Renderer */
-            SmartPtr<render::ISceneNode> getGraphicsNode() const;
+            SmartPtr<render::ISceneNode> &getGraphicsNode();
+
+            /** @brief Returns the graphics node used by the Renderer */
+            const SmartPtr<render::ISceneNode> &getGraphicsNode() const;
 
             /** @brief Sets the graphics node used by the Renderer */
             void setGraphicsNode( SmartPtr<render::ISceneNode> graphicshNode );
 
-            void updateTransform( const Transform3<real_Num> &transform );
+            void updateTransform( const Transform3<real_Num> &transform ) override;
 
             FB_CLASS_REGISTER_DECL;
 
@@ -133,7 +139,7 @@ namespace fb
             String m_materialName;
 
             SmartPtr<render::IGraphicsObject> m_graphicsObject;
-            SmartPtr<render::ISceneNode> m_graphicshNode;
+            SmartPtr<render::ISceneNode> m_graphicsNode;
 
             SmartPtr<render::IMaterial> m_sharedMaterial;
 
@@ -148,6 +154,15 @@ namespace fb
             static u32 m_idExt;
         };
 
+        inline SmartPtr<render::ISceneNode> &Renderer::getGraphicsNode()
+        {
+            return m_graphicsNode;
+        }
+
+        inline const SmartPtr<render::ISceneNode> &Renderer::getGraphicsNode() const
+        {
+            return m_graphicsNode;
+        }
     }  // namespace scene
 }  // end namespace fb
 

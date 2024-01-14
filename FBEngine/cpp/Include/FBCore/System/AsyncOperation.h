@@ -7,6 +7,7 @@
 
 namespace fb
 {
+
     class AsyncOperation : public IAsyncOperation
     {
     public:
@@ -21,6 +22,7 @@ namespace fb
     protected:
         std::function<void()> m_completeEvent;
     };
+
 }  // end namespace fb
 
 #endif  // __AsyncOperation_h__

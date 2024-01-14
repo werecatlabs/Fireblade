@@ -19,12 +19,10 @@ namespace fb
     }
 
     //---------------------------------------------
-    StateMessageLoad::~StateMessageLoad()
-    {
-    }
+    StateMessageLoad::~StateMessageLoad() = default;
 
     //---------------------------------------------
-    SmartPtr<ISharedObject> StateMessageLoad::getObject() const
+    auto StateMessageLoad::getObject() const -> SmartPtr<ISharedObject>
     {
         return m_object;
     }

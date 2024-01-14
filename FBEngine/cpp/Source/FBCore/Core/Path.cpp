@@ -51,68 +51,68 @@ namespace fb
     // DirectoryListingW BaseFileSystem<StringW>::getDirectoryListing(const StringW& path);
 
     template <>
-    Array<String> BasePath<String>::getFolders( const String &path, bool recursive );
+    auto BasePath<String>::getFolders( const String &path, bool recursive ) -> Array<String>;
 
     template <>
-    Array<StringW> BasePath<StringW>::getFolders( const StringW &path, bool recursive );
+    auto BasePath<StringW>::getFolders( const StringW &path, bool recursive ) -> Array<StringW>;
 
     template <>
-    Array<String> BasePath<String>::getFiles( const String &path, const String &extension );
+    auto BasePath<String>::getFiles( const String &path, const String &extension ) -> Array<String>;
 
     template <>
-    Array<StringW> BasePath<StringW>::getFiles( const StringW &path, const StringW &extension );
+    auto BasePath<StringW>::getFiles( const StringW &path, const StringW &extension ) -> Array<StringW>;
 
     template <>
-    String BasePath<String>::getFilePath( const String &filePath )
+    auto BasePath<String>::getFilePath( const String &filePath ) -> String
     {
         boost::filesystem::path path( filePath );
         return path.remove_filename().string();
     }
 
     template <>
-    StringW BasePath<StringW>::getFilePath( const StringW &filePath )
+    auto BasePath<StringW>::getFilePath( const StringW &filePath ) -> StringW
     {
         boost::filesystem::path path( filePath );
         return path.remove_filename().wstring();
     }
 
     template <>
-    String BasePath<String>::getFileName( const String &filePath )
+    auto BasePath<String>::getFileName( const String &filePath ) -> String
     {
         boost::filesystem::path path( filePath );
         return path.filename().string();
     }
 
     template <>
-    StringW BasePath<StringW>::getFileName( const StringW &filePath )
+    auto BasePath<StringW>::getFileName( const StringW &filePath ) -> StringW
     {
         boost::filesystem::path path( filePath );
         return path.filename().wstring();
     }
 
     template <>
-    String BasePath<String>::getFileExtension( const String &filePath )
+    auto BasePath<String>::getFileExtension( const String &filePath ) -> String
     {
         boost::filesystem::path path( filePath );
         return path.extension().string();
     }
 
     template <>
-    StringW BasePath<StringW>::getFileExtension( const StringW &filePath )
+    auto BasePath<StringW>::getFileExtension( const StringW &filePath ) -> StringW
     {
         boost::filesystem::path path( filePath );
         return path.extension().wstring();
     }
 
     template <>
-    String BasePath<String>::getFileNameWithoutExtension( const String &filePath )
+    auto BasePath<String>::getFileNameWithoutExtension( const String &filePath ) -> String
     {
         boost::filesystem::path path( filePath );
         return path.filename().replace_extension().string();
     }
 
     template <>
-    StringW BasePath<StringW>::getFileNameWithoutExtension( const StringW &filePath )
+    auto BasePath<StringW>::getFileNameWithoutExtension( const StringW &filePath ) -> StringW
     {
         boost::filesystem::path path( filePath );
         return path.filename().replace_extension().wstring();
@@ -126,21 +126,21 @@ namespace fb
     }
 
     template <>
-    String BasePath<String>::getWorkingDirectory()
+    auto BasePath<String>::getWorkingDirectory() -> String
     {
         auto str = boost::filesystem::current_path().string();
         return StringUtil::cleanupPath( str );
     }
 
     template <>
-    StringW BasePath<StringW>::getWorkingDirectory()
+    auto BasePath<StringW>::getWorkingDirectory() -> StringW
     {
         auto str = boost::filesystem::current_path().wstring();
         return StringUtilW::cleanupPath( str );
     }
 
     template <>
-    Array<String> BasePath<String>::getFolders( const String &path, bool recursive )
+    auto BasePath<String>::getFolders( const String &path, bool recursive ) -> Array<String>
     {
         Array<String> files;
 
@@ -182,7 +182,7 @@ namespace fb
     }
 
     template <>
-    Array<StringW> BasePath<StringW>::getFolders( const StringW &path, bool recursive )
+    auto BasePath<StringW>::getFolders( const StringW &path, bool recursive ) -> Array<StringW>
     {
         Array<StringW> files;
 
@@ -217,7 +217,7 @@ namespace fb
     }
 
     template <>
-    Array<String> BasePath<String>::getPaths( const String &path, bool recursive )
+    auto BasePath<String>::getPaths( const String &path, bool recursive ) -> Array<String>
     {
         Array<String> files;
 
@@ -252,7 +252,7 @@ namespace fb
     }
 
     template <>
-    Array<StringW> BasePath<StringW>::getPaths( const StringW &path, bool recursive )
+    auto BasePath<StringW>::getPaths( const StringW &path, bool recursive ) -> Array<StringW>
     {
         Array<StringW> files;
 
@@ -287,7 +287,7 @@ namespace fb
     }
 
     template <>
-    Array<String> BasePath<String>::getFiles( const String &path )
+    auto BasePath<String>::getFiles( const String &path ) -> Array<String>
     {
         Array<String> files;
         files.reserve( 8 );
@@ -308,7 +308,7 @@ namespace fb
     }
 
     template <>
-    Array<StringW> BasePath<StringW>::getFiles( const StringW &path )
+    auto BasePath<StringW>::getFiles( const StringW &path ) -> Array<StringW>
     {
         Array<StringW> files;
         files.reserve( 8 );
@@ -330,7 +330,8 @@ namespace fb
     }
 
     template <>
-    Array<StringW> BasePath<StringW>::getFilesAsAbsolutePaths( const StringW &path, bool recursive )
+    auto BasePath<StringW>::getFilesAsAbsolutePaths( const StringW &path, bool recursive )
+        -> Array<StringW>
     {
         Array<StringW> fileList;
 
@@ -381,7 +382,7 @@ namespace fb
     }
 
     template <>
-    Array<String> BasePath<String>::getFiles( const String &path, const String &extension )
+    auto BasePath<String>::getFiles( const String &path, const String &extension ) -> Array<String>
     {
         Array<String> fileList;
 
@@ -405,7 +406,9 @@ namespace fb
                         {
                             String fileName( fileData.cFileName );
                             if( getFileExtension( fileName ) == extension )
+                            {
                                 fileList.push_back( fileName );
+                            }
                         }
                     }
                 }
@@ -419,7 +422,7 @@ namespace fb
     }
 
     template <>
-    Array<String> BasePath<String>::getFilesAsAbsolutePaths( const String &path, bool recursive )
+    auto BasePath<String>::getFilesAsAbsolutePaths( const String &path, bool recursive ) -> Array<String>
     {
         Array<String> files;
         files.reserve( 8 );
@@ -449,7 +452,7 @@ namespace fb
     }
 
     template <>
-    Array<StringW> BasePath<StringW>::getFiles( const StringW &path, const StringW &extension )
+    auto BasePath<StringW>::getFiles( const StringW &path, const StringW &extension ) -> Array<StringW>
     {
         Array<StringW> fileList;
 
@@ -473,7 +476,9 @@ namespace fb
                         {
                             StringW fileName( fileData.cFileName );
                             if( getFileExtension( fileName ) == extension )
+                            {
                                 fileList.push_back( fileName );
+                            }
                         }
                     }
                 }
@@ -487,8 +492,8 @@ namespace fb
     }
 
     template <>
-    Array<String> BasePath<String>::getFilesAsAbsolutePaths( const String &path, const String &extension,
-                                                             bool recursive )
+    auto BasePath<String>::getFilesAsAbsolutePaths( const String &path, const String &extension,
+                                                    bool recursive ) -> Array<String>
     {
         Array<String> files;
         files.reserve( 8 );
@@ -529,8 +534,8 @@ namespace fb
     }
 
     template <>
-    Array<StringW> BasePath<StringW>::getFilesAsAbsolutePaths( const StringW &path,
-                                                               const StringW &extension, bool recursive )
+    auto BasePath<StringW>::getFilesAsAbsolutePaths( const StringW &path, const StringW &extension,
+                                                     bool recursive ) -> Array<StringW>
     {
         Array<StringW> files;
         files.reserve( 8 );
@@ -571,7 +576,7 @@ namespace fb
     }
 
     template <>
-    String BasePath<String>::getLeaf( const String &filePath )
+    auto BasePath<String>::getLeaf( const String &filePath ) -> String
     {
         boost::filesystem::path path( filePath );
         auto fileName = path.filename();
@@ -579,7 +584,7 @@ namespace fb
     }
 
     template <>
-    StringW BasePath<StringW>::getLeaf( const StringW &filePath )
+    auto BasePath<StringW>::getLeaf( const StringW &filePath ) -> StringW
     {
         boost::filesystem::path path( filePath );
         auto fileName = path.filename();
@@ -587,21 +592,21 @@ namespace fb
     }
 
     template <class T>
-    bool BasePath<T>::isFolder( const T &path )
+    auto BasePath<T>::isFolder( const T &path ) -> bool
     {
         boost::filesystem::path p( path );
         return boost::filesystem::is_directory( p );
     }
 
     template <class T>
-    bool BasePath<T>::isFile( const T &filePath )
+    auto BasePath<T>::isFile( const T &filePath ) -> bool
     {
         boost::filesystem::path path( filePath );
         return boost::filesystem::is_regular_file( path );
     }
 
     template <class T>
-    bool BasePath<T>::isExistingFolder( const T &path )
+    auto BasePath<T>::isExistingFolder( const T &path ) -> bool
     {
 #if defined FB_PLATFORM_WIN32
         std::ifstream file( path );
@@ -618,13 +623,13 @@ namespace fb
     }
 
     template <class T>
-    bool BasePath<T>::isExistingFile( const T &filePath )
+    auto BasePath<T>::isExistingFile( const T &filePath ) -> bool
     {
         return boost::filesystem::exists( filePath );
     }
 
     template <>
-    Array<String> BasePath<String>::getFilePathFolders( [[maybe_unused]] const String &filePath )
+    auto BasePath<String>::getFilePathFolders( [[maybe_unused]] const String &filePath ) -> Array<String>
     {
 #if FB_USE_BOOST
         Array<String> folders;
@@ -652,7 +657,8 @@ namespace fb
     }
 
     template <>
-    Array<StringW> BasePath<StringW>::getFilePathFolders( [[maybe_unused]] const StringW &filePath )
+    auto BasePath<StringW>::getFilePathFolders( [[maybe_unused]] const StringW &filePath )
+        -> Array<StringW>
     {
 #if FB_USE_BOOST
         Array<StringW> folders;
@@ -680,7 +686,7 @@ namespace fb
     }
 
     template <class T>
-    bool BasePath<T>::isFilesEqual( const T &lFilePath, const T &rFilePath )
+    auto BasePath<T>::isFilesEqual( const T &lFilePath, const T &rFilePath ) -> bool
     {
 #if defined FB_PLATFORM_WIN32
         std::ifstream lFile( lFilePath, std::ios::in | std::ios::binary );
@@ -722,7 +728,7 @@ namespace fb
     }
 
     template <class T>
-    size_t BasePath<T>::getFileSize( const T &filename )
+    auto BasePath<T>::getFileSize( const T &filename ) -> size_t
     {
 #if defined FB_PLATFORM_WIN32
         std::ifstream in( filename, std::ifstream::in | std::ifstream::binary );
@@ -754,7 +760,8 @@ namespace fb
                     }
 
                     // Recursively copy the contents of the source directory to the destination
-                    auto flags = boost::filesystem::copy_options::recursive | boost::filesystem::copy_options::overwrite_existing;
+                    auto flags = boost::filesystem::copy_options::recursive |
+                                 boost::filesystem::copy_options::overwrite_existing;
                     boost::filesystem::copy( sourcePath, destinationPath, flags );
                 }
                 else
@@ -774,6 +781,50 @@ namespace fb
             std::cerr << "Error: " << ex.what() << std::endl;
         }
     }
+
+    template <>
+    void BasePath<StringW>::copyFolder( const StringW &srcPath, const StringW &dstPath )
+    {
+        boost::filesystem::path sourcePath( srcPath );
+        boost::filesystem::path destinationPath( dstPath );
+
+        try
+        {
+            // Check if the source path exists
+            if( boost::filesystem::exists( sourcePath ) )
+            {
+                // Check if the source is a directory
+                if( boost::filesystem::is_directory( sourcePath ) )
+                {
+                    // Create the destination directory if it doesn't exist
+                    if( !boost::filesystem::exists( destinationPath ) )
+                    {
+                        boost::filesystem::create_directories( destinationPath );
+                    }
+
+                    // Recursively copy the contents of the source directory to the destination
+                    auto flags = boost::filesystem::copy_options::recursive |
+                                 boost::filesystem::copy_options::overwrite_existing;
+                    boost::filesystem::copy( sourcePath, destinationPath, flags );
+                }
+                else
+                {
+                    // Source is not a directory
+                    std::cerr << "Source is not a directory." << std::endl;
+                }
+            }
+            else
+            {
+                // Source path doesn't exist
+                std::cerr << "Source path does not exist." << std::endl;
+            }
+        }
+        catch( const boost::filesystem::filesystem_error &ex )
+        {
+            std::cerr << "Error: " << ex.what() << std::endl;
+        }
+    }
+
 
     template <>
     void BasePath<String>::copyFile( const String &srcPath, const String &dstPath )
@@ -922,7 +973,7 @@ namespace fb
     }
 
     template <>
-    String BasePath<String>::getMD5( [[maybe_unused]] const String &filePath )
+    auto BasePath<String>::getMD5( [[maybe_unused]] const String &filePath ) -> String
     {
 #if FB_USE_OPENSSL
         if( !BasePath<String>::isExistingFile( filePath ) )
@@ -970,7 +1021,7 @@ namespace fb
             stream.seekg( 0, std::ios_base::beg );
 
             auto data = new unsigned char[size];
-            stream.read( (char *)data, size );
+            stream.read( reinterpret_cast<char *>( data ), size );
 
             return getMD5( data, size );
         }
@@ -980,7 +1031,7 @@ namespace fb
     }
 
     template <>
-    String BasePath<StringW>::getMD5( [[maybe_unused]] const StringW &filePath )
+    auto BasePath<StringW>::getMD5( [[maybe_unused]] const StringW &filePath ) -> String
     {
 #if FB_USE_OPENSSL
         if( !BasePath<StringW>::isExistingFile( filePath ) )
@@ -1036,7 +1087,7 @@ namespace fb
             stream.seekg( 0, std::ios_base::beg );
 
             auto data = new unsigned char[size];
-            stream.read( (char *)data, size );
+            stream.read( reinterpret_cast<char *>( data ), size );
 
             return getMD5( data, size );
         }
@@ -1046,7 +1097,7 @@ namespace fb
     }
 
     template <class T>
-    String BasePath<T>::getMD5( [[maybe_unused]] void *data, [[maybe_unused]] size_t size )
+    auto BasePath<T>::getMD5( [[maybe_unused]] void *data, [[maybe_unused]] size_t size ) -> String
     {
 #if FB_USE_OPENSSL
         if( !BasePath<String>::isExistingFile( filePath ) )
@@ -1153,9 +1204,8 @@ namespace fb
     void BasePath<StringW>::deleteFiles( [[maybe_unused]] const StringW &path )
     {
         Array<StringW> files = getFiles( path );
-        for( u32 i = 0; i < files.size(); ++i )
+        for( auto fileName : files )
         {
-            StringW fileName = files[i];
             StringW filePath = path + StringW( L"/" ) + fileName;
 
             boost::filesystem::path dir( filePath );
@@ -1163,11 +1213,10 @@ namespace fb
         }
 
         Array<StringW> folders = getFolders( path, false );
-        for( u32 i = 0; i < folders.size(); ++i )
+        for( auto folder : folders )
         {
             try
             {
-                StringW folder = folders[i];
                 StringW folderPath = path + StringW( L"/" ) + folder + StringW( L"/" );
                 // deleteFiles(folderPath);
 
@@ -1185,7 +1234,7 @@ namespace fb
     }
 
     template <>
-    String BasePath<String>::getAbsolutePath( const String &path )
+    auto BasePath<String>::getAbsolutePath( const String &path ) -> String
     {
         auto full_path( boost::filesystem::initial_path<boost::filesystem::path>() );
         full_path = system_complete( boost::filesystem::path( path ) );
@@ -1196,7 +1245,7 @@ namespace fb
     }
 
     template <>
-    StringW BasePath<StringW>::getAbsolutePath( const StringW &path )
+    auto BasePath<StringW>::getAbsolutePath( const StringW &path ) -> StringW
     {
         auto full_path( boost::filesystem::initial_path<boost::filesystem::path>() );
         full_path = system_complete( boost::filesystem::path( path ) );
@@ -1207,7 +1256,7 @@ namespace fb
     }
 
     template <>
-    String BasePath<String>::getAbsolutePath( const String &path, const String &relativePath )
+    auto BasePath<String>::getAbsolutePath( const String &path, const String &relativePath ) -> String
     {
         try
         {
@@ -1217,7 +1266,7 @@ namespace fb
             }
 
             auto p = boost::filesystem::canonical( relativePath.c_str(), path.c_str() );
-            auto absolutePath = String( p.string() );
+            auto absolutePath = static_cast<String>( p.string() );
             return StringUtil::cleanupPath( absolutePath );
         }
         catch( std::exception &e )
@@ -1229,7 +1278,8 @@ namespace fb
     }
 
     template <>
-    StringW BasePath<StringW>::getAbsolutePath( const StringW &path, const StringW &relativePath )
+    auto BasePath<StringW>::getAbsolutePath( const StringW &path, const StringW &relativePath )
+        -> StringW
     {
         if( StringUtilW::isNullOrEmpty( relativePath ) )
         {
@@ -1242,7 +1292,7 @@ namespace fb
     }
 
     template <>
-    String BasePath<String>::lexically_normal( const String &path )
+    auto BasePath<String>::lexically_normal( const String &path ) -> String
     {
 #if defined FB_USE_BOOST
         auto p = boost::filesystem::path( path );
@@ -1256,7 +1306,7 @@ namespace fb
     }
 
     template <>
-    StringW BasePath<StringW>::lexically_normal( const StringW &path )
+    auto BasePath<StringW>::lexically_normal( const StringW &path ) -> StringW
     {
 #if defined FB_USE_BOOST
         auto p = boost::filesystem::path( path );
@@ -1270,7 +1320,7 @@ namespace fb
     }
 
     template <>
-    String BasePath<String>::lexically_normal( const String &path, const String &relativePath )
+    auto BasePath<String>::lexically_normal( const String &path, const String &relativePath ) -> String
     {
 #if defined FB_USE_BOOST
         auto p = boost::filesystem::path( path + "/" + relativePath );
@@ -1284,7 +1334,8 @@ namespace fb
     }
 
     template <>
-    StringW BasePath<StringW>::lexically_normal( const StringW &path, const StringW &relativePath )
+    auto BasePath<StringW>::lexically_normal( const StringW &path, const StringW &relativePath )
+        -> StringW
     {
 #if defined FB_USE_BOOST
         auto p = boost::filesystem::path( path + L"/" + relativePath );
@@ -1298,7 +1349,7 @@ namespace fb
     }
 
     template <>
-    String BasePath<String>::lexically_relative( const String &path, const String &relativePath )
+    auto BasePath<String>::lexically_relative( const String &path, const String &relativePath ) -> String
     {
 #if defined FB_USE_BOOST
         auto p = boost::filesystem::path( path );
@@ -1314,7 +1365,8 @@ namespace fb
     }
 
     template <>
-    StringW BasePath<StringW>::lexically_relative( const StringW &path, const StringW &relativePath )
+    auto BasePath<StringW>::lexically_relative( const StringW &path, const StringW &relativePath )
+        -> StringW
     {
 #if defined FB_USE_BOOST
         auto p = boost::filesystem::path( path );
@@ -1330,7 +1382,8 @@ namespace fb
     }
 
     template <>
-    String BasePath<String>::lexically_proximate( const String &path, const String &relativePath )
+    auto BasePath<String>::lexically_proximate( const String &path, const String &relativePath )
+        -> String
     {
 #if defined FB_USE_BOOST
         auto p = boost::filesystem::path( path );
@@ -1346,7 +1399,8 @@ namespace fb
     }
 
     template <>
-    StringW BasePath<StringW>::lexically_proximate( const StringW &path, const StringW &relativePath )
+    auto BasePath<StringW>::lexically_proximate( const StringW &path, const StringW &relativePath )
+        -> StringW
     {
 #if defined FB_USE_BOOST
         auto p = boost::filesystem::path( path );
@@ -1372,7 +1426,8 @@ namespace fb
     }
 
     // Return path when appended to a_From will resolve to same as a_To
-    boost::filesystem::path make_relative( boost::filesystem::path a_From, boost::filesystem::path a_To )
+    auto make_relative( boost::filesystem::path a_From, boost::filesystem::path a_To )
+        -> boost::filesystem::path
     {
         a_From = absolute( a_From );
         a_To = absolute( a_To );
@@ -1381,12 +1436,16 @@ namespace fb
         // Find common base
         for( auto toEnd( a_To.end() ), fromEnd( a_From.end() );
              itrFrom != fromEnd && itrTo != toEnd && *itrFrom == *itrTo; ++itrFrom, ++itrTo )
+        {
             ;
+        }
         // Navigate backwards in directory to reach previously found base
         for( auto fromEnd( a_From.end() ); itrFrom != fromEnd; ++itrFrom )
         {
             if( ( *itrFrom ) != "." )
+            {
                 ret /= "..";
+            }
         }
         // Now navigate down the directory branch
         _append<boost::filesystem::path::iterator>( ret, itrTo, a_To.end() );
@@ -1394,7 +1453,7 @@ namespace fb
     }
 
     template <>
-    String BasePath<String>::getRelativePath( const String &path, const String &relativePath )
+    auto BasePath<String>::getRelativePath( const String &path, const String &relativePath ) -> String
     {
         boost::filesystem::path basePath( path );
         boost::filesystem::path relPath( relativePath );
@@ -1404,7 +1463,8 @@ namespace fb
     }
 
     template <>
-    StringW BasePath<StringW>::getRelativePath( const StringW &path, const StringW &relativePath )
+    auto BasePath<StringW>::getRelativePath( const StringW &path, const StringW &relativePath )
+        -> StringW
     {
         boost::filesystem::path basePath( path );
         boost::filesystem::path relPath( relativePath );
@@ -1422,7 +1482,7 @@ namespace fb
     }
 
     template <>
-    String BasePath<String>::macBundlePath()
+    auto BasePath<String>::macBundlePath() -> String
     {
 #if defined FB_PLATFORM_APPLE
         return fb::macBundlePath();
@@ -1432,13 +1492,13 @@ namespace fb
     }
 
     template <>
-    StringW BasePath<StringW>::macBundlePath()
+    auto BasePath<StringW>::macBundlePath() -> StringW
     {
         return L"";
     }
 
     template <class T>
-    bool BasePath<T>::isPathAbsolute( const T &basePath )
+    auto BasePath<T>::isPathAbsolute( const T &basePath ) -> bool
     {
 #ifdef FB_USE_BOOST
         boost::filesystem::path path( basePath );
@@ -1450,8 +1510,8 @@ namespace fb
     }
 
     template <class T>
-    bool BasePath<T>::isPathRelative( [[maybe_unused]] const T &basePath,
-                                      [[maybe_unused]] const T &relativePath )
+    auto BasePath<T>::isPathRelative( [[maybe_unused]] const T &basePath,
+                                      [[maybe_unused]] const T &relativePath ) -> bool
     {
 #ifdef FB_USE_BOOST
         boost::filesystem::path path( relativePath.c_str() );
@@ -1462,14 +1522,14 @@ namespace fb
     }
 
     template <class T>
-    bool BasePath<T>::hasFileName( const String &path )
+    auto BasePath<T>::hasFileName( const String &path ) -> bool
     {
         boost::filesystem::path p( path );
         return p.has_filename();
     }
 
     template <>
-    String BasePath<String>::readAllText( const String &path )
+    auto BasePath<String>::readAllText( const String &path ) -> String
     {
         std::fstream fs;
         fs.open( path, std::fstream::in );
@@ -1504,7 +1564,7 @@ namespace fb
     }
 
     template <>
-    StringW BasePath<StringW>::readAllText( const StringW &path )
+    auto BasePath<StringW>::readAllText( const StringW &path ) -> StringW
     {
         std::wfstream fs;
 

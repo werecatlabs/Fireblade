@@ -2,72 +2,65 @@
 #include <FBGraphicsOgreNext/MaterialAnimator.h>
 #include <FBCore/Interface/Graphics/IMaterial.h>
 
-namespace fb
+namespace fb::render
 {
-    namespace render
+
+    MaterialAnimator::MaterialAnimator() = default;
+
+    MaterialAnimator::~MaterialAnimator() = default;
+
+    void MaterialAnimator::setId( u32 id )
     {
+    }
 
-        MaterialAnimator::MaterialAnimator()
-        {
-        }
+    auto MaterialAnimator::getId() const -> u32
+    {
+        return 0;
+    }
 
-        MaterialAnimator::~MaterialAnimator()
-        {
-        }
+    void MaterialAnimator::start()
+    {
+    }
 
-        void MaterialAnimator::setId( u32 id )
-        {
-        }
+    void MaterialAnimator::stop()
+    {
+    }
 
-        u32 MaterialAnimator::getId() const
-        {
-            return 0;
-        }
+    void MaterialAnimator::setLoop( bool loop )
+    {
+    }
 
-        void MaterialAnimator::start()
-        {
-        }
+    auto MaterialAnimator::isLoop() const -> bool
+    {
+        return false;
+    }
 
-        void MaterialAnimator::stop()
-        {
-        }
+    void MaterialAnimator::setReverse( bool reverse )
+    {
+    }
 
-        void MaterialAnimator::setLoop( bool loop )
-        {
-        }
+    auto MaterialAnimator::isReverse() const -> bool
+    {
+        return false;
+    }
 
-        bool MaterialAnimator::isLoop() const
-        {
-            return false;
-        }
+    auto MaterialAnimator::isFinished() const -> bool
+    {
+        return false;
+    }
 
-        void MaterialAnimator::setReverse( bool reverse )
-        {
-        }
+    void MaterialAnimator::setAnimationLength( f32 animationLength )
+    {
+    }
 
-        bool MaterialAnimator::isReverse() const
-        {
-            return false;
-        }
+    auto MaterialAnimator::getOwner() const -> IMaterial *
+    {
+        return m_owner;
+    }
 
-        bool MaterialAnimator::isFinished() const
-        {
-            return false;
-        }
+    void MaterialAnimator::setOwner( IMaterial *val )
+    {
+        m_owner = val;
+    }
 
-        void MaterialAnimator::setAnimationLength( f32 animationLength )
-        {
-        }
-
-        IMaterial *MaterialAnimator::getOwner() const
-        {
-            return m_owner;
-        }
-
-        void MaterialAnimator::setOwner( IMaterial *val )
-        {
-            m_owner = val;
-        }
-
-    }  // end namespace render
-}  // end namespace fb
+}  // namespace fb::render

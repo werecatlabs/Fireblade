@@ -107,10 +107,7 @@ namespace fb
 
             virtual void setMainWindow( SmartPtr<IUIWindow> uiWindow ) = 0;
 
-            virtual void _getObject(void** ppObject)
-            {
-                
-            }
+            virtual void _getObject( void **ppObject ) = 0;
 
             FB_CLASS_REGISTER_DECL;
         };

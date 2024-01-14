@@ -20,181 +20,197 @@
 #include <FBCore/Interface/Physics/ICharacterController3.h>
 #include <FBCore/Interface/Scene/IDirector.h>
 
-namespace fb
+namespace fb::physics
 {
-    namespace physics
+
+    PhysicsManager::PhysicsManager() = default;
+
+    PhysicsManager::~PhysicsManager() = default;
+
+    void PhysicsManager::load( SmartPtr<ISharedObject> data )
     {
-        PhysicsManager::PhysicsManager()
-        {
-        }
+    }
 
-        PhysicsManager::~PhysicsManager()
-        {
-        }
+    void PhysicsManager::unload( SmartPtr<ISharedObject> data )
+    {
+    }
 
-        void PhysicsManager::load( SmartPtr<ISharedObject> data )
-        {
-        }
+    auto PhysicsManager::getEnableDebugDraw() const -> bool
+    {
+        return false;
+    }
 
-        void PhysicsManager::unload( SmartPtr<ISharedObject> data )
-        {
-        }
+    void PhysicsManager::setEnableDebugDraw( bool enableDebugDraw )
+    {
+    }
 
-        bool PhysicsManager::getEnableDebugDraw() const
-        {
-            return false;
-        }
+    auto PhysicsManager::addMaterial() -> SmartPtr<IPhysicsMaterial3>
+    {
+        return nullptr;
+    }
 
-        void PhysicsManager::setEnableDebugDraw( bool enableDebugDraw )
-        {
-        }
+    void PhysicsManager::removeMaterial( SmartPtr<IPhysicsMaterial3> material )
+    {
+    }
 
-        SmartPtr<IPhysicsMaterial3> PhysicsManager::addMaterial()
-        {
-            return nullptr;
-        }
+    auto PhysicsManager::addScene() -> SmartPtr<IPhysicsScene3>
+    {
+        return nullptr;
+    }
 
-        void PhysicsManager::removeMaterial( SmartPtr<IPhysicsMaterial3> material )
-        {
-        }
+    void PhysicsManager::removeScene( SmartPtr<IPhysicsScene3> scene )
+    {
+    }
 
-        SmartPtr<IPhysicsScene3> PhysicsManager::addScene()
-        {
-            return nullptr;
-        }
+    auto PhysicsManager::removeCollisionShape( SmartPtr<IPhysicsShape3> collisionShape ) -> bool
+    {
+        return false;
+    }
 
-        void PhysicsManager::removeScene( SmartPtr<IPhysicsScene3> scene )
-        {
-        }
+    auto PhysicsManager::removePhysicsBody( SmartPtr<IRigidBody3> body ) -> bool
+    {
+        return false;
+    }
 
-        bool PhysicsManager::removeCollisionShape( SmartPtr<IPhysicsShape3> collisionShape )
-        {
-            return false;
-        }
+    auto PhysicsManager::addCharacter() -> SmartPtr<ICharacterController3>
+    {
+        return nullptr;
+    }
 
-        bool PhysicsManager::removePhysicsBody( SmartPtr<IRigidBody3> body )
-        {
-            return false;
-        }
+    auto PhysicsManager::addRigidStatic( const Transform3<real_Num> &transform )
+        -> SmartPtr<IRigidStatic3>
+    {
+        return nullptr;
+    }
 
-        SmartPtr<ICharacterController3> PhysicsManager::addCharacter()
-        {
-            return nullptr;
-        }
+    auto PhysicsManager::addRigidStatic( SmartPtr<IPhysicsShape3> collisionShape )
+        -> SmartPtr<IRigidStatic3>
+    {
+        return nullptr;
+    }
 
-        SmartPtr<IRigidStatic3> PhysicsManager::addRigidStatic( const Transform3<real_Num> &transform )
-        {
-            return nullptr;
-        }
+    auto PhysicsManager::addRigidStatic( SmartPtr<IPhysicsShape3> collisionShape,
+                                         SmartPtr<Properties> properties ) -> SmartPtr<IRigidStatic3>
+    {
+        return nullptr;
+    }
 
-        SmartPtr<IRigidStatic3> PhysicsManager::addRigidStatic(
-            SmartPtr<IPhysicsShape3> collisionShape )
-        {
-            return nullptr;
-        }
+    auto PhysicsManager::addSoftBody( const String &filePath ) -> SmartPtr<IPhysicsSoftBody3>
+    {
+        return nullptr;
+    }
 
-        SmartPtr<IRigidStatic3> PhysicsManager::addRigidStatic( SmartPtr<IPhysicsShape3> collisionShape,
-                                                                 SmartPtr<Properties> properties )
-        {
-            return nullptr;
-        }
+    auto PhysicsManager::addVehicle( SmartPtr<IRigidBody3> chassis,
+                                     const SmartPtr<Properties> &properties )
+        -> SmartPtr<IPhysicsVehicle3>
+    {
+        return nullptr;
+    }
 
-        SmartPtr<IPhysicsSoftBody3> PhysicsManager::addSoftBody( const String &filePath )
-        {
-            return nullptr;
-        }
+    auto PhysicsManager::addVehicle( SmartPtr<scene::IDirector> vehicleTemplate )
+        -> SmartPtr<IPhysicsVehicle3>
+    {
+        return nullptr;
+    }
 
-        SmartPtr<IPhysicsVehicle3> PhysicsManager::addVehicle( SmartPtr<IRigidBody3> chassis,
-                                                                const SmartPtr<Properties> &properties )
-        {
-            return nullptr;
-        }
+    auto PhysicsManager::removeVehicle( SmartPtr<IPhysicsVehicle3> vehicle ) -> bool
+    {
+        return false;
+    }
 
-        SmartPtr<IPhysicsVehicle3> PhysicsManager::addVehicle(
-            SmartPtr<scene::IDirector> vehicleTemplate )
-        {
-            return nullptr;
-        }
+    auto PhysicsManager::rayTest( const Vector3<real_Num> &start, const Vector3<real_Num> &direction,
+                                  Vector3<real_Num> &hitPos, Vector3<real_Num> &hitNormal,
+                                  u32 collisionType /*= 0*/, u32 collisionMask /*= 0 */ ) -> bool
+    {
+        return false;
+    }
 
-        bool PhysicsManager::removeVehicle( SmartPtr<IPhysicsVehicle3> vehicle )
-        {
-            return false;
-        }
+    auto PhysicsManager::intersects( const Vector3<real_Num> &start, const Vector3<real_Num> &end,
+                                     Vector3<real_Num> &hitPos, Vector3<real_Num> &hitNormal,
+                                     SmartPtr<ISharedObject> &object, u32 collisionType /*= 0*/,
+                                     u32 collisionMask /*= 0 */ ) -> bool
+    {
+        return false;
+    }
 
-        bool PhysicsManager::rayTest( const Vector3<real_Num> &start,
-                                       const Vector3<real_Num> &direction, Vector3<real_Num> &hitPos,
-                                       Vector3<real_Num> &hitNormal, u32 collisionType /*= 0*/,
-                                       u32 collisionMask /*= 0 */ )
-        {
-            return false;
-        }
+    auto PhysicsManager::addConstraintD6( SmartPtr<IPhysicsBody3> actor0,
+                                          const Transform3<real_Num> &localFrame0,
+                                          SmartPtr<IPhysicsBody3> actor1,
+                                          const Transform3<real_Num> &localFrame1 )
+        -> SmartPtr<IConstraintD6>
+    {
+        return nullptr;
+    }
 
-        bool PhysicsManager::intersects( const Vector3<real_Num> &start, const Vector3<real_Num> &end,
-                                          Vector3<real_Num> &hitPos, Vector3<real_Num> &hitNormal,
-                                          SmartPtr<ISharedObject> &object, u32 collisionType /*= 0*/,
-                                          u32 collisionMask /*= 0 */ )
-        {
-            return false;
-        }
+    auto PhysicsManager::addFixedConstraint( SmartPtr<IPhysicsBody3> actor0,
+                                             const Transform3<real_Num> &localFrame0,
+                                             SmartPtr<IPhysicsBody3> actor1,
+                                             const Transform3<real_Num> &localFrame1 )
+        -> SmartPtr<IConstraintFixed3>
+    {
+        return nullptr;
+    }
 
-        SmartPtr<IConstraintD6> PhysicsManager::addJointD6( SmartPtr<IPhysicsBody3> actor0,
-                                                             const Transform3<real_Num> &localFrame0,
-                                                             SmartPtr<IPhysicsBody3> actor1,
-                                                             const Transform3<real_Num> &localFrame1 )
-        {
-            return nullptr;
-        }
+    void PhysicsManager::removeConstraint( SmartPtr<IPhysicsConstraint3> constraint )
+    {
+        RecursiveMutex::ScopedLock lock( m_mutex );
 
-        SmartPtr<IConstraintFixed3> PhysicsManager::addFixedJoint(
-            SmartPtr<IPhysicsBody3> actor0, const Transform3<real_Num> &localFrame0,
-            SmartPtr<IPhysicsBody3> actor1, const Transform3<real_Num> &localFrame1 )
-        {
-            return nullptr;
-        }
+        unloadObject( constraint );
+        m_constraints.erase( std::remove( m_constraints.begin(), m_constraints.end(), constraint ),
+                             m_constraints.end() );
+    }
 
-        SmartPtr<IConstraintDrive> PhysicsManager::addConstraintDrive()
-        {
-            return nullptr;
-        }
+    auto PhysicsManager::addConstraintDrive() -> SmartPtr<IConstraintDrive>
+    {
+        return nullptr;
+    }
 
-        SmartPtr<IConstraintLinearLimit> PhysicsManager::addConstraintLinearLimit(
-            real_Num extent, real_Num contactDist )
-        {
-            return nullptr;
-        }
+    auto PhysicsManager::addConstraintLinearLimit( real_Num extent, real_Num contactDist )
+        -> SmartPtr<IConstraintLinearLimit>
+    {
+        return nullptr;
+    }
 
-        SmartPtr<IRaycastHit> PhysicsManager::addRaycastHitData()
-        {
-            return nullptr;
-        }
+    auto PhysicsManager::addRaycastHitData() -> SmartPtr<IRaycastHit>
+    {
+        return nullptr;
+    }
 
-        void PhysicsManager::removeRaycastHitData( SmartPtr<IRaycastHit> raycastHitData )
-        {
-        }
+    void PhysicsManager::removeRaycastHitData( SmartPtr<IRaycastHit> raycastHitData )
+    {
+    }
 
-        Thread::Task PhysicsManager::getStateTask() const
-        {
-            return static_cast<Thread::Task>( 0 );
-        }
+    auto PhysicsManager::getStateTask() const -> Thread::Task
+    {
+        return static_cast<Thread::Task>( 0 );
+    }
 
-        Thread::Task PhysicsManager::getPhysicsTask() const
-        {
-            return static_cast<Thread::Task>( 0 );
-        }
+    auto PhysicsManager::getPhysicsTask() const -> Thread::Task
+    {
+        return static_cast<Thread::Task>( 0 );
+    }
 
-        void PhysicsManager::loadObject( SmartPtr<ISharedObject> object, bool forceQueue /*= false */ )
-        {
-        }
+    void PhysicsManager::loadObject( SmartPtr<ISharedObject> object, bool forceQueue /*= false */ )
+    {
+    }
 
-        void PhysicsManager::unloadObject( SmartPtr<ISharedObject> object,
-                                            bool forceQueue /*= false */ )
-        {
-        }
+    void PhysicsManager::unloadObject( SmartPtr<ISharedObject> object, bool forceQueue /*= false */ )
+    {
+    }
 
-        SmartPtr<IRigidDynamic3> PhysicsManager::addRigidDynamic(
-            const Transform3<real_Num> &transform )
-        {
-            return nullptr;
-        }
-    }  // end namespace physics
-}  // end namespace fb
+    void PhysicsManager::lock()
+    {
+        m_mutex.lock();
+    }
+
+    void PhysicsManager::unlock()
+    {
+        m_mutex.unlock();
+    }
+
+    auto PhysicsManager::addRigidDynamic( const Transform3<real_Num> &transform )
+        -> SmartPtr<IRigidDynamic3>
+    {
+        return nullptr;
+    }
+}  // namespace fb::physics

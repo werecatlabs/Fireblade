@@ -6,11 +6,7 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, PhysicsBodyState, BaseState );
 
-    PhysicsBodyState::PhysicsBodyState()
-    {
-    }
+    PhysicsBodyState::PhysicsBodyState() = default;
 
-    PhysicsBodyState::~PhysicsBodyState()
-    {
-    }
+    PhysicsBodyState::~PhysicsBodyState() = default;
 }  // end namespace fb

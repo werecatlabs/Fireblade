@@ -10,7 +10,7 @@ namespace fb
     {
     public:
         StateMessageStandard();
-        StateMessageStandard( u32 subjectId );
+        explicit StateMessageStandard( u32 subjectId );
         ~StateMessageStandard() override;
 
         void setSubjectId( u32 id );

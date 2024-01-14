@@ -4,12 +4,12 @@
 #include "FBCore/Animation/BaseAnimator.h"
 #include "FBCore/Math/Vector2.h"
 #include <FBCore/Math/Vector3.h>
-#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/System/ITimer.h>
 
 namespace fb
 {
-        
+
     /** An animator to interpolate a value.
      */
     template <class T>
@@ -45,7 +45,7 @@ namespace fb
         /** */
         void update()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto timer = applicationManager->getTimer();
 
             auto task = Thread::getCurrentTask();

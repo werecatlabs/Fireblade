@@ -30,15 +30,15 @@ namespace fb
 
         /**
          * Sets the number of vertices.
-         * @param numVerticies The number of vertices to set.
+         * @param numVertices The number of vertices to set.
          */
-        virtual void setNumVerticies( u32 numVerticies ) = 0;
+        virtual void setNumVertices( u32 numVertices ) = 0;
 
         /**
          * Gets the number of vertices.
          * @return The number of vertices.
          */
-        virtual u32 getNumVerticies() const = 0;
+        virtual u32 getNumVertices() const = 0;
 
         /**
          * Creates the vertex data.

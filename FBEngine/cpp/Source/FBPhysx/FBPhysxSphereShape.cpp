@@ -2,33 +2,26 @@
 #include <FBPhysx/FBPhysxSphereShape.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::physics
 {
-    namespace physics
+    PhysxSphereShape::PhysxSphereShape() = default;
+
+    PhysxSphereShape::~PhysxSphereShape() = default;
+
+    void PhysxSphereShape::load( SmartPtr<ISharedObject> data )
     {
-        PhysxSphereShape::PhysxSphereShape()
-        {
-        }
+    }
 
-        PhysxSphereShape::~PhysxSphereShape()
-        {
-        }
+    void PhysxSphereShape::unload( SmartPtr<ISharedObject> data )
+    {
+    }
 
-        void PhysxSphereShape::load( SmartPtr<ISharedObject> data )
-        {
-        }
+    void PhysxSphereShape::setRadius( real_Num radius )
+    {
+    }
 
-        void PhysxSphereShape::unload( SmartPtr<ISharedObject> data )
-        {
-        }
-
-        void PhysxSphereShape::setRadius( real_Num radius )
-        {
-        }
-
-        real_Num PhysxSphereShape::getRadius() const
-        {
-            return 0.f;
-        }
-    } // namespace physics
-}     // namespace fb
+    auto PhysxSphereShape::getRadius() const -> real_Num
+    {
+        return 0.f;
+    }
+}  // namespace fb::physics

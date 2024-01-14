@@ -2,10 +2,7 @@
 #include <FBCore/Interface/IApplication.h>
 #include <FBCore/System/RttiClassDefinition.h>
 
-namespace fb
+namespace fb::core
 {
-    namespace core
-    {
-        FB_CLASS_REGISTER_DERIVED( fb::core, IApplication, ISharedObject );
-    }  // namespace core
-}  // end namespace fb
+    FB_CLASS_REGISTER_DERIVED( fb::core, IApplication, ISharedObject );
+}  // namespace fb::core

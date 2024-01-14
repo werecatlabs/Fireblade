@@ -6,15 +6,11 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageObjectsArray, StateMessage );
 
-    StateMessageObjectsArray::StateMessageObjectsArray()
-    {
-    }
+    StateMessageObjectsArray::StateMessageObjectsArray() = default;
 
-    StateMessageObjectsArray::~StateMessageObjectsArray()
-    {
-    }
+    StateMessageObjectsArray::~StateMessageObjectsArray() = default;
 
-    Array<SmartPtr<ISharedObject>> StateMessageObjectsArray::getObjects() const
+    auto StateMessageObjectsArray::getObjects() const -> Array<SmartPtr<ISharedObject>>
     {
         return m_objects;
     }

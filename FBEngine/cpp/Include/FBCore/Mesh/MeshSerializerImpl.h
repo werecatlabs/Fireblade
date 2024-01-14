@@ -62,6 +62,7 @@ namespace fb
     public:
         MeshSerializerImpl();
         ~MeshSerializerImpl() override;
+
         /** Exports a mesh to the file specified.
         @remarks
         This method takes an externally created Mesh object, and exports both it
@@ -255,10 +256,10 @@ namespace fb
         void readGeometry( SmartPtr<IStream> &stream, Mesh *pMesh, VertexBuffer *dest ) override;
         virtual void readGeometryPositions( unsigned short bindIdx, SmartPtr<IStream> &stream,
                                             Mesh *pMesh, VertexBuffer *dest );
-        virtual void readGeometryNormals( unsigned short bindIdx, SmartPtr<IStream> &stream,
-                                          Mesh *pMesh, VertexBuffer *dest );
-        virtual void readGeometryColours( unsigned short bindIdx, SmartPtr<IStream> &stream,
-                                          Mesh *pMesh, VertexBuffer *dest );
+        virtual void readGeometryNormals( unsigned short bindIdx, SmartPtr<IStream> &stream, Mesh *pMesh,
+                                          VertexBuffer *dest );
+        virtual void readGeometryColours( unsigned short bindIdx, SmartPtr<IStream> &stream, Mesh *pMesh,
+                                          VertexBuffer *dest );
         virtual void readGeometryTexCoords( unsigned short bindIdx, SmartPtr<IStream> &stream,
                                             Mesh *pMesh, VertexBuffer *dest, unsigned short set );
     };
@@ -279,6 +280,6 @@ namespace fb
 
     /** @} */
     /** @} */
-} // namespace fb
+}  // namespace fb
 
 #endif

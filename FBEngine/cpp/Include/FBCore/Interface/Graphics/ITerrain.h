@@ -131,6 +131,10 @@ namespace fb
              */
             virtual void _getObject( void **ppObject ) const = 0;
 
+            virtual SmartPtr<ITexture> getHeightMap() const = 0;
+
+            virtual void setHeightMap( SmartPtr<ITexture> heightMap ) = 0;
+
             /** Sets a texture layer.
              * @param layer The layer index.
              * @param textureName The name of the texture to set.

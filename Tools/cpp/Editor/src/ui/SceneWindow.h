@@ -38,8 +38,12 @@ namespace fb
                 ADD_BUTTON,
                 ADD_SIMPLE_BUTTON,
                 ADD_CANVAS,
+                ADD_CHECKBOX,
                 ADD_PANEL,
+                ADD_SLIDER,
                 ADD_TEXT,
+                ADD_TOGGLE_BUTTON,
+
 
                 SCENE_REMOVE_ACTOR
             };
@@ -79,6 +83,8 @@ namespace fb
              * Builds the scene tree.
              */
             void buildTree();
+
+	        void addObjectToTree( SmartPtr<ISharedObject> object, SmartPtr<ui::IUITreeNode> parentNode );
 
             /**
              * Adds the specified actor to the scene tree.

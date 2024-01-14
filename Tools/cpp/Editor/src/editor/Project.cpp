@@ -6,117 +6,115 @@
 #include <ui/UIManager.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+    const String Project::DEFAULT_PROJECT_NAME = "Project";
+    const String Project::DEFAULT_MEDIA_PATH = "../Media/";
+    const String Project::DEFAULT_SCRIPTS_PATH = "../Media/Scripts/";
+    const String Project::DEFAULT_ENTITIES_PATH = "../Media/Scripts/Entities/";
+    const String Project::DEFAULT_VERSION = "1.0.0";
+
+    Project::Project() :
+        m_label( StringUtil::EmptyString ),
+        m_projectDirectory( StringUtil::EmptyString ),
+        m_projectPath( StringUtil::EmptyString ),
+        m_applicationFilePath( StringUtil::EmptyString ),
+        m_scriptsPath( StringUtil::EmptyString ),
+        m_entitiesPath( StringUtil::EmptyString ),
+        m_version( StringUtil::EmptyString )
     {
-        const String Project::DEFAULT_PROJECT_NAME = "Project";
-        const String Project::DEFAULT_MEDIA_PATH = "../Media/";
-        const String Project::DEFAULT_SCRIPTS_PATH = "../Media/Scripts/";
-        const String Project::DEFAULT_ENTITIES_PATH = "../Media/Scripts/Entities/";
-        const String Project::DEFAULT_VERSION = "1.0.0";
+    }
 
-        Project::Project() :
-            m_label( StringUtil::EmptyString ),
-            m_projectDirectory( StringUtil::EmptyString ),
-            m_projectPath( StringUtil::EmptyString ),
-            m_applicationFilePath( StringUtil::EmptyString ),
-            m_scriptsPath( StringUtil::EmptyString ),
-            m_entitiesPath( StringUtil::EmptyString ),
-            m_version( StringUtil::EmptyString )
+    Project::~Project()
+    {
+        unload( nullptr );
+    }
+
+    void Project::load( SmartPtr<ISharedObject> data )
+    {
+    }
+
+    void Project::unload( SmartPtr<ISharedObject> data )
+    {
+        try
         {
         }
-
-        Project::~Project()
+        catch( std::exception &e )
         {
-            unload( nullptr );
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        void Project::load( SmartPtr<ISharedObject> data )
+    void Project::create( const String &path )
+    {
+        try
         {
-        }
-
-        void Project::unload( SmartPtr<ISharedObject> data )
-        {
-            try
-            {
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void Project::create( const String &path )
-        {
-            try
-            {
-                auto applicationManager = core::IApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto fileSystem = applicationManager->getFileSystem();
-                FB_ASSERT( fileSystem );
-
-                auto editorManager = EditorManager::getSingletonPtr();
-
-                auto uiManager = editorManager->getUI();
-                FB_ASSERT( uiManager );
-
-                auto projectDirectory = StringUtil::cleanupPath( path );
-                setPath( projectDirectory );
-
-                auto defaultData = fb::static_pointer_cast<Properties>( getDefaultData() );
-                auto dataStr = DataUtil::toString( defaultData.get(), true );
-
-                auto filePath = path + "/" + "project.fbproject";
-                fileSystem->writeAllText( filePath, dataStr );
-
-                Path::createDirectories( path + "/Assets" );
-
-                auto cachePath = path + "/Cache";
-                Path::createDirectories( cachePath );
-
-                auto enginePath = path + "/Engine";
-                Path::createDirectories( enginePath );
-
-                auto pluginPath = path + "/Plugin";
-                Path::createDirectories( pluginPath );
-
-                auto pluginHeader = getPluginHeader();
-                auto pluginSource = getPluginSource();
-
-                Path::writeAllText( pluginPath + "/Plugin.h", pluginHeader );
-                Path::writeAllText( pluginPath + "/Plugin.cpp", pluginSource );
-
-                uiManager->rebuildResourceTree();
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
-        }
-
-        void Project::loadFromFile( const String &filePath )
-        {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
-
-            auto jobQueue = applicationManager->getJobQueue();
 
             auto fileSystem = applicationManager->getFileSystem();
             FB_ASSERT( fileSystem );
 
-            auto scriptManager = applicationManager->getScriptManager();
+            auto editorManager = EditorManager::getSingletonPtr();
 
-            auto projectPath = StringUtil::cleanupPath( filePath );
-            auto path = Path::getFilePath( projectPath );
+            auto uiManager = editorManager->getUI();
+            FB_ASSERT( uiManager );
 
             auto projectDirectory = StringUtil::cleanupPath( path );
             setPath( projectDirectory );
 
-            try
-            {
-                String scriptExt;
+            auto defaultData = fb::static_pointer_cast<Properties>( getDefaultData() );
+            auto dataStr = DataUtil::toString( defaultData.get(), true );
+
+            auto filePath = path + "/" + "project.fbproject";
+            fileSystem->writeAllText( filePath, dataStr );
+
+            Path::createDirectories( path + "/Assets" );
+
+            auto cachePath = path + "/Cache";
+            Path::createDirectories( cachePath );
+
+            auto enginePath = path + "/Engine";
+            Path::createDirectories( enginePath );
+
+            auto pluginPath = path + "/Plugin";
+            Path::createDirectories( pluginPath );
+
+            auto pluginHeader = getPluginHeader();
+            auto pluginSource = getPluginSource();
+
+            Path::writeAllText( pluginPath + "/Plugin.h", pluginHeader );
+            Path::writeAllText( pluginPath + "/Plugin.cpp", pluginSource );
+
+            uiManager->rebuildResourceTree();
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void Project::loadFromFile( const String &filePath )
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto jobQueue = applicationManager->getJobQueue();
+
+        auto fileSystem = applicationManager->getFileSystem();
+        FB_ASSERT( fileSystem );
+
+        auto scriptManager = applicationManager->getScriptManager();
+
+        auto projectPath = StringUtil::cleanupPath( filePath );
+        auto path = Path::getFilePath( projectPath );
+
+        auto projectDirectory = StringUtil::cleanupPath( path );
+        setPath( projectDirectory );
+
+        try
+        {
+            String scriptExt;
 
 #if FB_ENABLE_LUA
                 scriptExt = ".lua";
@@ -129,14 +127,27 @@ namespace fb
 
                 setFilePath( projectPath );
 
-                auto pluginFileName = String( "Plugin.dll" );
-                auto pluginPath = projectDirectory + "/bin/windows/RelWithDebInfo/" +
-                                  pluginFileName;
+                auto projectPluginFileName = String( "Plugin.dll" );
 
-                auto job = fb::make_ptr<LoadPluginJob>();
-                job->setPluginPath( pluginPath );
-                jobQueue->addJob( job );
-                job->wait();
+                Array<String> pluginPaths;
+                pluginPaths.reserve( 4 );
+
+#if _DEBUG
+                pluginPaths.push_back( projectDirectory + "/bin/windows/Debug/" +
+                                       projectPluginFileName );
+#else
+                pluginPaths.push_back( projectDirectory + "/bin/windows/RelWithDebInfo/" +
+                                       projectPluginFileName );
+#endif
+                //pluginPaths.push_back( projectDirectory + "/Assets/Plugins/x64/RelWithDebInfo/FBApplication.dll" );
+
+                for( auto pluginPath : pluginPaths )
+                {
+                    auto job = fb::make_ptr<LoadPluginJob>();
+                    job->setPluginPath( pluginPath );
+                    jobQueue->addJob( job );
+                    job->wait();
+                }
 
                 auto dataStr = fileSystem->readAllText( projectPath );
                 auto data = fb::make_ptr<Properties>();
@@ -156,7 +167,7 @@ namespace fb
             {
                 FB_ASSERT( !StringUtil::isNullOrEmpty( filePath ) );
 
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
 
                 auto fileSystem = applicationManager->getFileSystem();
@@ -187,7 +198,7 @@ namespace fb
             }
         }
 
-        String Project::getLabel() const
+        auto Project::getLabel() const -> String
         {
             return m_label;
         }
@@ -197,7 +208,7 @@ namespace fb
             m_label = label;
         }
 
-        String Project::getPath() const
+        auto Project::getPath() const -> String
         {
             return m_projectDirectory;
         }
@@ -207,7 +218,7 @@ namespace fb
             m_projectDirectory = projectDirectory;
         }
 
-        String Project::getWorkingDirectory() const
+        auto Project::getWorkingDirectory() const -> String
         {
             return m_workingDirectory;
         }
@@ -217,7 +228,7 @@ namespace fb
             m_workingDirectory = workingDirectory;
         }
 
-        String Project::getApplicationFilePath() const
+        auto Project::getApplicationFilePath() const -> String
         {
             return m_applicationFilePath;
         }
@@ -227,7 +238,7 @@ namespace fb
             m_applicationFilePath = applicationFilePath;
         }
 
-        Array<String> Project::getPaths() const
+        auto Project::getPaths() const -> Array<String>
         {
             return m_paths;
         }
@@ -260,7 +271,7 @@ namespace fb
             //		m_mediaPaths[i] = Path::getRelativePath( m_projectDirectory, mediaPath );
             //}
 
-            // auto applicationManager = core::IApplicationManager::instance();
+            // auto applicationManager = core::ApplicationManager::instance();
             // SmartPtr<IFileSystem> fileSystem = engine->getFileSystem();
             // for(u32 i=0; i<m_mediaPaths.size(); ++i)
             //{
@@ -306,7 +317,7 @@ namespace fb
         {
         }
 
-        String Project::getSelectedProjectPath() const
+        auto Project::getSelectedProjectPath() const -> String
         {
             return m_selectedProjectPath;
         }
@@ -320,7 +331,7 @@ namespace fb
         {
         }
 
-        SmartPtr<ISharedObject> Project::getOwner() const
+        auto Project::getOwner() const -> SmartPtr<ISharedObject>
         {
             return nullptr;
         }
@@ -329,7 +340,7 @@ namespace fb
         {
         }
 
-        String Project::getCurrentScenePath() const
+        auto Project::getCurrentScenePath() const -> String
         {
             return m_currentScenePath;
         }
@@ -339,7 +350,7 @@ namespace fb
             m_currentScenePath = currentScenePath;
         }
 
-        SmartPtr<ISharedObject> Project::getDefaultData() const
+        auto Project::getDefaultData() const -> SmartPtr<ISharedObject>
         {
             auto properties = fb::make_ptr<Properties>();
 
@@ -357,7 +368,7 @@ namespace fb
             return properties;
         }
 
-        SmartPtr<ISharedObject> Project::toData() const
+        auto Project::toData() const -> SmartPtr<ISharedObject>
         {
             auto properties = fb::make_ptr<Properties>();
 
@@ -374,7 +385,7 @@ namespace fb
         {
             try
             {
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 auto resourceDatabase = applicationManager->getResourceDatabase();
 
                 auto sceneManager = applicationManager->getSceneManager();
@@ -398,7 +409,7 @@ namespace fb
 
         void Project::compile()
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             auto fileSystem = applicationManager->getFileSystem();
             auto processManager = applicationManager->getProcessManager();
 
@@ -440,7 +451,7 @@ namespace fb
             auto projectFolderW = StringUtil::toUTF8to16( projectFolder );
 
             Array<StringW> args;
-            args.push_back( L"-T v143" );
+            args.emplace_back( L"-T v143" );
             args.push_back( projectFolderW );
 
             processManager->shellExecute( L"cmake", args );
@@ -476,7 +487,7 @@ namespace fb
             }
         }
 
-        String Project::getPluginHeader() const
+        auto Project::getPluginHeader() const -> String
         {
             return "#ifndef Plugin_h__\n"
                    "#define Plugin_h__\n"
@@ -511,14 +522,14 @@ namespace fb
                    "\n"
                    "        void unload( SmartPtr<ISharedObject> data ) override;\n"
                    "\n"
-                   "        core::IApplicationManager *getApplicationManager() const;\n"
-                   "        void setApplicationManager( core::IApplicationManager *applicationManager "
+                   "        core::ApplicationManager *getApplicationManager() const;\n"
+                   "        void setApplicationManager( core::ApplicationManager *applicationManager "
                    ");\n"
                    "\n"
                    "        static Plugin *instance();\n"
                    "\n"
                    "    protected:\n"
-                   "        core::IApplicationManager *m_applicationManager;\n"
+                   "        core::ApplicationManager *m_applicationManager;\n"
                    "\n"
                    "        static Plugin *msPlugin;\n"
                    "    };\n"
@@ -527,7 +538,7 @@ namespace fb
                    "#endif  // Plugin_h__";
         }
 
-        String Project::getPluginSource() const
+        auto Project::getPluginSource() const -> String
         {
             return "#include \"Plugin.h\"\n"
                    "#include \"FBCore/FBCore.h\"\n"
@@ -575,12 +586,12 @@ namespace fb
                    "        std::cout << \"Plugin::unload\" << std::endl;\n"
                    "    }\n"
                    "\n"
-                   "    core::IApplicationManager *Plugin::getApplicationManager() const\n"
+                   "    core::ApplicationManager *Plugin::getApplicationManager() const\n"
                    "    {\n"
                    "        return m_applicationManager;\n"
                    "    }\n"
                    "\n"
-                   "    void Plugin::setApplicationManager( core::IApplicationManager "
+                   "    void Plugin::setApplicationManager( core::ApplicationManager "
                    "*applicationManager )\n"
                    "    {\n"
                    "        m_applicationManager = applicationManager;\n"
@@ -595,11 +606,11 @@ namespace fb
                    "extern \"C\" {\n"
                    "\n"
                    "void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API\n"
-                   "loadPlugin( fb::core::IApplicationManager *applicationManager )\n"
+                   "loadPlugin( fb::core::ApplicationManager *applicationManager )\n"
                    "{\n"
                    "    using namespace fb;\n"
                    "\n"
-                   "    core::IApplicationManager::setInstance( applicationManager );\n"
+                   "    core::ApplicationManager::setInstance( applicationManager );\n"
                    "\n"
                    "    auto typeManager = applicationManager->getTypeManager();\n"
                    "    TypeManager::setInstance( typeManager );\n"
@@ -610,7 +621,7 @@ namespace fb
                    "}\n"
                    "\n"
                    "void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API\n"
-                   "unloadPlugin( fb::core::IApplicationManager *applicationManager )\n"
+                   "unloadPlugin( fb::core::ApplicationManager *applicationManager )\n"
                    "{\n"
                    "    using namespace fb;\n"
                    "\n"
@@ -621,7 +632,7 @@ namespace fb
                    "}";
         }
 
-        SmartPtr<IPlugin> Project::getPlugin() const
+        auto Project::getPlugin() const -> SmartPtr<IPlugin>
         {
             return m_plugin;
         }
@@ -631,25 +642,25 @@ namespace fb
             m_plugin = plugin;
         }
 
-        fb::Array<fb::String> Project::getScriptFilePaths() const
+        auto Project::getScriptFilePaths() const -> fb::Array<fb::String>
         {
-            return fb::Array<fb::String>();
+            return {};
         }
 
         void Project::setScriptFilePaths( const Array<String> &val )
         {
         }
 
-        fb::Array<fb::String> Project::getResourceFolders() const
+        auto Project::getResourceFolders() const -> fb::Array<fb::String>
         {
-            return fb::Array<fb::String>();
+            return {};
         }
 
         void Project::setResourceFolders( const Array<String> &val )
         {
         }
 
-        fb::String Project::getApplicationType() const
+        auto Project::getApplicationType() const -> fb::String
         {
             return "";
         }
@@ -658,7 +669,7 @@ namespace fb
         {
         }
 
-        bool Project::isArchive() const
+        auto Project::isArchive() const -> bool
         {
             return false;
         }
@@ -667,7 +678,7 @@ namespace fb
         {
         }
 
-        bool Project::isDirty() const
+        auto Project::isDirty() const -> bool
         {
             return false;
         }
@@ -677,9 +688,8 @@ namespace fb
             m_mediaPaths = mediaPaths;
         }
 
-        Array<String> Project::getMediaPaths() const
+        auto Project::getMediaPaths() const -> Array<String>
         {
             return m_mediaPaths;
         }
-    }  // end namespace editor
-}  // end namespace fb
+}  // namespace fb::editor

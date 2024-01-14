@@ -6,20 +6,19 @@
 
 namespace fb
 {
-
     class ResourceReference : public IResourceReference
     {
     public:
         ResourceReference();
-        ~ResourceReference();
+        ~ResourceReference() override;
 
-        String getOwnerUUID() const;
+        String getOwnerUUID() const override;
 
-        void setOwnerUUID( const String &ownerUUID );
+        void setOwnerUUID( const String &ownerUUID ) override;
 
-        String getResourceUUID() const;
+        String getResourceUUID() const override;
 
-        void setResourceUUID( const String &resourceUUID );
+        void setResourceUUID( const String &resourceUUID ) override;
 
         FB_CLASS_REGISTER_DECL;
 
@@ -27,7 +26,6 @@ namespace fb
         String m_ownerUUID;
         String m_resourceUUID;
     };
-
-}  // namespace fb
+} // namespace fb
 
 #endif  // ResourceReference_h__

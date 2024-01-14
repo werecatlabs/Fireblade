@@ -4,13 +4,15 @@
 #include <FBCore/Interface/Vehicle/IVehicleController.h>
 #include <FBCore/Interface/Vehicle/IVehicleComponent.h>
 #include <FBCore/Memory/PointerUtil.h>
-#include <FBCore/Core/Handle.h>
 #include <FBCore/Core/StringUtil.h>
 #include <FBCore/Math/Transform3.h>
 
 namespace fb
 {
 
+    /** Template class for vehicle components.
+     *  @ingroup Vehicle
+     */
     template <class T>
     class VehicleComponent : public T
     {
@@ -111,8 +113,7 @@ namespace fb
     template <class T>
     void VehicleComponent<T>::updateTransform()
     {
-        auto owner = getOwner();
-        if( owner )
+        if( auto owner = getOwner() )
         {
             auto parentTransform = owner->getWorldTransform();
 

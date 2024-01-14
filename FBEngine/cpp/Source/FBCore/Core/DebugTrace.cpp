@@ -2,8 +2,7 @@
 #include <FBCore/Core/DebugTrace.h>
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/Core/StringUtil.h>
-
-#include "FBCore/System/DebugUtil.h"
+#include <FBCore/System/DebugUtil.h>
 
 #if defined FB_PLATFORM_WIN32
 #    include "windows.h"
@@ -16,16 +15,12 @@ namespace fb
 
     Map<String, List<RawPtr<DebugTrace>>> DebugTrace::m_debugObjects;
 
-    DebugTrace::DebugTrace()
-    {
-    }
+    DebugTrace::DebugTrace() = default;
 
     DebugTrace::DebugTrace( bool bCheckHeap, bool bCheckGrowth ) :
         m_bCheckHeap( bCheckHeap ),
-        m_bCheckGrowth( bCheckGrowth ),
-        m_bEnableConsoleOutput( false ),
-        m_virtualMemUsed( 0 ),
-        m_physMemUsed( 0 )
+        m_bCheckGrowth( bCheckGrowth )
+
     {
         m_currentTask = -1;
 
@@ -100,7 +95,7 @@ namespace fb
 
     DebugTrace::~DebugTrace()
     {
-        // auto applicationManager = core::IApplicationManager::instance();
+        // auto applicationManager = core::ApplicationManager::instance();
         // auto timer = applicationManager->getTimer();
         //
         // if (timer)
@@ -119,7 +114,7 @@ namespace fb
 
         if (Thread::getCurrentTaskId() == Tasks::ET_PRIMARY)
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             if (applicationManager)
             {
                 SmartPtr<Profiler> profiler = applicationManager->getProfiler();
@@ -218,7 +213,7 @@ namespace fb
         m_bEnableConsoleOutput = val;
     }
 
-    bool DebugTrace::getEnableConsoleOutput() const
+    auto DebugTrace::getEnableConsoleOutput() const -> bool
     {
         return m_bEnableConsoleOutput;
     }
@@ -228,7 +223,7 @@ namespace fb
         m_physMemUsed = val;
     }
 
-    size_t DebugTrace::getPhysMemUsed() const
+    auto DebugTrace::getPhysMemUsed() const -> size_t
     {
         return m_physMemUsed;
     }
@@ -238,7 +233,7 @@ namespace fb
         m_virtualMemUsed = val;
     }
 
-    size_t DebugTrace::getVirtualMemUsed() const
+    auto DebugTrace::getVirtualMemUsed() const -> size_t
     {
         return m_virtualMemUsed;
     }
@@ -248,12 +243,12 @@ namespace fb
         m_bCheckGrowth = val;
     }
 
-    bool DebugTrace::getCheckGrowth() const
+    auto DebugTrace::getCheckGrowth() const -> bool
     {
         return m_bCheckGrowth;
     }
 
-    bool DebugTrace::getCheckHeap() const
+    auto DebugTrace::getCheckHeap() const -> bool
     {
         return m_bCheckHeap;
     }
@@ -304,7 +299,7 @@ namespace fb
         }
     }
 
-    s32 DebugTrace::getLineNumber() const
+    auto DebugTrace::getLineNumber() const -> s32
     {
         return m_lineNumber;
     }
@@ -314,7 +309,7 @@ namespace fb
         m_functionName = val;
     }
 
-    String DebugTrace::getFunctionName() const
+    auto DebugTrace::getFunctionName() const -> String
     {
         return m_functionName;
     }
@@ -324,7 +319,7 @@ namespace fb
         m_sourceFile = val;
     }
 
-    String DebugTrace::getSourceFile() const
+    auto DebugTrace::getSourceFile() const -> String
     {
         return m_sourceFile;
     }
@@ -348,7 +343,5 @@ namespace fb
         }
     }
 
-    DebugTrace::DebugCheckFunction::DebugCheckFunction()
-    {
-    }
+    DebugTrace::DebugCheckFunction::DebugCheckFunction() = default;
 }  // end namespace fb

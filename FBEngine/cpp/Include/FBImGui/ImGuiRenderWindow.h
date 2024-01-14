@@ -30,6 +30,8 @@ namespace fb
             SmartPtr<render::ITexture> getRenderTexture() const override;
             void setRenderTexture( SmartPtr<render::ITexture> renderTexture ) override;
 
+            FB_CLASS_REGISTER_DECL;
+
         protected:
             WeakPtr<render::IWindow> m_window;
             WeakPtr<render::ITexture> m_renderTexture;

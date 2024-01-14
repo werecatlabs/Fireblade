@@ -10,6 +10,7 @@ namespace fb
 {
     namespace physics
     {
+
         class PhysxPoolAllocator : public physx::PxAllocatorCallback
         {
         public:
@@ -28,6 +29,7 @@ namespace fb
             std::list<std::pair<size_t, size_t>> mFreeBlocks;
             std::mutex mMutex;
         };
+
     }  // end namespace physics
 }  // end namespace fb
 

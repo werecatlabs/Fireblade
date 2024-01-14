@@ -6,7 +6,7 @@ namespace fb
 {
 
     template <class T>
-    bool Line2<T>::intersectWith( const Line2<T> &l, Vector2<T> &out ) const
+    auto Line2<T>::intersectWith( const Line2<T> &l, Vector2<T> &out ) const -> bool
     {
 #if 0
 		bool found=false;
@@ -97,11 +97,15 @@ namespace fb
         // it is within the line segment.
         const T uA = numeratorA / commonDenominator;
         if( uA < -Math<T>::epsilon() || uA > ( T( 1.0 ) + Math<T>::epsilon() ) )
+        {
             return false;  // Outside the line segment
+        }
 
         const T uB = numeratorB / commonDenominator;
         if( uB < -Math<T>::epsilon() || uB > ( T( 1.0 ) + Math<T>::epsilon() ) )
+        {
             return false;  // Outside the line segment
+        }
 
         // Calculate the intersection point.
         out.X() = m_start.X() + uA * ( m_end.X() - m_start.X() );
@@ -112,12 +116,14 @@ namespace fb
     }
 
     template <class T>
-    bool Line2<T>::intersectWith( const Vector2<T> &center, T radius ) const
+    auto Line2<T>::intersectWith( const Vector2<T> &center, T radius ) const -> bool
     {
         Vector2<T> closestPoint = getClosestPoint( center );
         T distance = ( center - closestPoint ).length();
         if( Math<T>::Abs( distance ) <= radius )
+        {
             return true;
+        }
 
         return false;
     }

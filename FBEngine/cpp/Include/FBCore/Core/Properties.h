@@ -1,11 +1,16 @@
-#ifndef _FBPropertyGroup_H
-#define _FBPropertyGroup_H
+#ifndef _FBProperties_H
+#define _FBProperties_H
 
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/Property.h>
 #include <FBCore/Core/Array.h>
 #include <FBCore/Core/StringUtil.h>
 #include <FBCore/Math/Transform3.h>
+#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/Interface/Resource/IResourceDatabase.h>
+#include <FBCore/Interface/Scene/IActor.h>
+#include <FBCore/Memory/PointerUtil.h>
+#include <FBCore/Memory/TypeManager.h>
 
 namespace fb
 {
@@ -283,7 +288,10 @@ namespace fb
         */
         void setProperty( const String &name, const QuaternionD &value, bool readOnly = false );
 
+        /** Sets the a property value. */
         void setProperty( const String &name, const Transform3F &value, bool readOnly = false );
+
+        /** Sets the a property value. */
         void setProperty( const String &name, const Transform3D &value, bool readOnly = false );
 
         /** Sets the a property value.
@@ -302,19 +310,60 @@ namespace fb
         */
         void setProperty( const String &name, const ColourF &value, bool readOnly = false );
 
+        /** Sets the a property value as an enum. */
+        void setPropertyAsEnum( const String &name, s32 value, const Array<String> &values,
+                                bool readOnly = false );
+
+        /** Sets the a property value as an enum. */
+        void setPropertyAsEnum( const String &name, const String &value, const Array<String> &values,
+                                bool readOnly = false );
+
+        /** Sets the a property value as a button. */
+        void setPropertyAsButton( const String &name, const String &value, bool readOnly = false );
+
+        /** Sets the a property value as a button. */
+        void setButtonPressed( const String &name, bool value );
+
+        /** Checks if a button is pressed. */
+        bool isButtonPressed( const String &name ) const;
+
+        /** Sets the a property value. */
+        template <class T>
+        void setPropertyAsType( const String &name, SmartPtr<T> value, bool readOnly = false );
+
+        /** Gets a property value. */
+        template <class T>
+        bool getPropertyAsType( const String &name, SmartPtr<T> &value ) const;
+
         /** Sets the a property value.
         @param name The name of the property.
         @param value A reference to the value.
         @param readOnly Sets whether or not the property is read only.
         @return Returns true if the property was found. Returns false if the property was not found.
         */
-        void setProperty( const String &name, SmartPtr<ISharedObject> value, bool readOnly = false );        
+        void setProperty( const String &name, SmartPtr<ISharedObject> value, bool readOnly = false );
+
+        /** Sets the a property value. */
         void setProperty( const String &name, SmartPtr<render::IMaterial> value, bool readOnly = false );
+
+        /** Sets the a property value. */
         void setProperty( const String &name, SmartPtr<render::ITexture> value, bool readOnly = false );
+
+        /** Sets the a property value. */
         void setProperty( const String &name, SmartPtr<scene::IActor> value, bool readOnly = false );
+
+        /** Sets the a property value. */
         void setProperty( const String &name, SmartPtr<scene::IComponent> value, bool readOnly = false );
+
+        /** Sets the a property value. */
         void setProperty( const String &name, SmartPtr<IMeshResource> value, bool readOnly = false );
+
+        /** Sets the a property value. */
         void setProperty( const String &name, SmartPtr<ISound> value, bool readOnly = false );
+
+        /** Sets the a property value. */
+        void setProperty( const String &name, Array<SmartPtr<scene::IComponent>> value,
+                          bool readOnly = false );
 
         /** Gets a property value. Returns true if the property was found.
         @param name The name of the property.
@@ -392,11 +441,17 @@ namespace fb
         @return Returns true if the property was found. Returns false if the property was not found.
         */
         bool getPropertyValue( const String &name, Vector3D &value ) const;
-        
+
+        /** Gets a property value. */
         bool getPropertyValue( const String &name, QuaternionF &value ) const;
+
+        /** Gets a property value. */
         bool getPropertyValue( const String &name, QuaternionD &value ) const;
 
+        /** Gets a property value. */
         bool getPropertyValue( const String &name, Transform3F &value ) const;
+
+        /** Gets a property value. */
         bool getPropertyValue( const String &name, Transform3D &value ) const;
 
         /** Gets a property value. Returns true if the property was found.
@@ -413,13 +468,29 @@ namespace fb
         */
         bool getPropertyValue( const String &name, ColourF &value ) const;
 
+        /** Gets a property value. */
         bool getPropertyValue( const String &name, SmartPtr<ISharedObject> &value ) const;
+
+        /** Gets a property value. */
         bool getPropertyValue( const String &name, SmartPtr<render::IMaterial> &value ) const;
+
+        /** Gets a property value. */
         bool getPropertyValue( const String &name, SmartPtr<render::ITexture> &value ) const;
+
+        /** Gets a property value. */
         bool getPropertyValue( const String &name, SmartPtr<scene::IActor> &value ) const;
+
+        /** Gets a property value. */
         bool getPropertyValue( const String &name, SmartPtr<scene::IComponent> &value ) const;
+
+        /** Gets a property value. */
         bool getPropertyValue( const String &name, SmartPtr<IMeshResource> &value ) const;
+
+        /** Gets a property value. */
         bool getPropertyValue( const String &name, SmartPtr<ISound> &value ) const;
+
+        /** Gets a property value. */
+        bool getPropertyValue( const String &name, Array<SmartPtr<scene::IComponent>> &value ) const;
 
         /** Gets a property value. Returns true if the property was found.
         @param name The name of the property.
@@ -442,6 +513,66 @@ namespace fb
         /// An Array of the children of the property group.
         Array<SmartPtr<Properties>> m_children;
     };
+
+    template <class T>
+    void Properties::setPropertyAsType( const String &name, SmartPtr<T> value, bool readOnly )
+    {
+        auto typeManager = TypeManager::instance();
+
+        if( value )
+        {
+            auto typeInfo = value->getTypeInfo();
+            auto typeName = typeManager->getName( typeInfo );
+
+            auto handle = value->getHandle();
+            auto uuid = handle->getUUID();
+            setProperty( name, uuid, "resource", false );
+
+            auto &property = getPropertyObject( name );
+            property.setAttribute( "resourceType", typeName );
+        }
+        else
+        {
+            setProperty( name, "", "resource", false );
+
+            auto typeInfo = T::typeInfo();
+            auto typeName = typeManager->getName( typeInfo );
+
+            auto &property = getPropertyObject( name );
+            property.setAttribute( "resourceType", typeName );
+        }
+    }
+
+    template <class T>
+    bool Properties::getPropertyAsType( const String &name, SmartPtr<T> &value ) const
+    {
+        if( hasProperty( name ) )
+        {
+            const auto &property = getPropertyObject( name );
+            const auto uuid = property.getValue();
+
+            auto applicationManager = core::IApplicationManager::instance();
+            auto resourceDatabase = applicationManager->getResourceDatabase();
+
+            if( auto resource = resourceDatabase->getObject( uuid ) )
+            {
+                if( resource->isDerived<T>() )
+                {
+                    value = fb::static_pointer_cast<T>( resource );
+                }
+                else if( resource->isDerived<scene::IActor>() )
+                {
+                    auto actor = fb::static_pointer_cast<scene::IActor>( resource );
+                    value = actor->getComponent<T>();
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
 }  // end namespace fb
 
 #endif

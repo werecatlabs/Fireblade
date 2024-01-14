@@ -12,6 +12,12 @@ namespace fb
         class ImGuiSearchBar : public IUISearchBar
         {
         public:
+            ImGuiSearchBar();
+            ~ImGuiSearchBar() override;
+
+            void update() override;
+
+            FB_CLASS_REGISTER_DECL;
         };
     } // end namespace ui
 }     // end namespace fb

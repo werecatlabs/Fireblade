@@ -7,59 +7,52 @@
 #include "ui/TerrainWindow.h"
 #include "ui/UIManager.h"
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    ReloadScriptsJob::ReloadScriptsJob() = default;
+
+    ReloadScriptsJob::~ReloadScriptsJob() = default;
+
+    void ReloadScriptsJob::execute()
     {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
 
-        ReloadScriptsJob::ReloadScriptsJob()
+        auto taskManager = applicationManager->getTaskManager();
+        FB_ASSERT( taskManager );
+
+        auto threadPool = applicationManager->getThreadPool();
+
+        auto renderLock = taskManager->lockTask( Thread::Task::Render );
+        //auto applicationLock = taskManager->lockTask( Thread::Task::Application );
+        auto physicsLock = taskManager->lockTask( Thread::Task::Physics );
+
+        auto scriptManager = applicationManager->getScriptManager();
+        FB_ASSERT( scriptManager );
+
+        scriptManager->reloadScripts();
+
+        if( threadPool->getNumThreads() > 0 )
         {
-        }
-
-        ReloadScriptsJob::~ReloadScriptsJob()
-        {
-        }
-
-        void ReloadScriptsJob::execute()
-        {
-            auto applicationManager = core::IApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto taskManager = applicationManager->getTaskManager();
-            FB_ASSERT( taskManager );
-
-            auto threadPool = applicationManager->getThreadPool();
-
-            auto renderLock = taskManager->lockTask( Thread::Task::Render );
-            //auto applicationLock = taskManager->lockTask( Thread::Task::Application );
-            auto physicsLock = taskManager->lockTask( Thread::Task::Physics );
-
-            auto scriptManager = applicationManager->getScriptManager();
-            FB_ASSERT( scriptManager );
-
-            scriptManager->reloadScripts();
-
-            if( threadPool->getNumThreads() > 0 )
+            while( scriptManager->reloadPending() )
             {
-                while( scriptManager->reloadPending() )
-                {
-                    Thread::sleep( 3.0 );
-                }
-            }
-
-            // hack
-            auto editorManager = EditorManager::getSingletonPtr();
-            auto ui = editorManager->getUI();
-            if( auto materialWindow = ui->getObjectWindow() )
-            {
-                materialWindow->reload( nullptr );
-            }
-
-            if( auto terrainWindow = ui->getTerrainWindow() )
-            {
-                terrainWindow->reload( nullptr );
+                Thread::sleep( 3.0 );
             }
         }
 
-    }  // namespace editor
-}  // namespace fb
+        // hack
+        auto editorManager = EditorManager::getSingletonPtr();
+        auto ui = editorManager->getUI();
+        if( auto materialWindow = ui->getObjectWindow() )
+        {
+            materialWindow->reload( nullptr );
+        }
+
+        if( auto terrainWindow = ui->getTerrainWindow() )
+        {
+            terrainWindow->reload( nullptr );
+        }
+    }
+
+}  // namespace fb::editor

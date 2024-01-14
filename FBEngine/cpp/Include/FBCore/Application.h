@@ -9,7 +9,6 @@ namespace fb
 {
     namespace core
     {
-
         /** Base class which manages the standard startup of a game application.
         Create defaults components. Designed to be subclassed for specific case if required. */
         class Application : public IApplication
@@ -43,58 +42,58 @@ namespace fb
             size_t getActiveThreads() const;
             void setActiveThreads( size_t activeThreads );
 
-	        SmartPtr<scene::IActor> createDefaultSky( bool addToScene = true );
+            SmartPtr<scene::IActor> createDefaultSky( bool addToScene = true ) override;
 
-            SmartPtr<scene::IActor> createDefaultCamera( bool addToScene = true );
+            SmartPtr<scene::IActor> createDefaultCamera( bool addToScene = true ) override;
 
             void createRigidStaticMesh();
 
             void createRigidDynamicMesh();
 
-            SmartPtr<scene::IActor> createDefaultCubemap( bool addToScene = true );
+            SmartPtr<scene::IActor> createDefaultCubemap( bool addToScene = true ) override;
 
-            SmartPtr<scene::IActor> createDefaultCube( bool addToScene = true );
+            SmartPtr<scene::IActor> createDefaultCube( bool addToScene = true ) override;
 
-            SmartPtr<scene::IActor> createDefaultCubeMesh( bool addToScene = true );
+            SmartPtr<scene::IActor> createDefaultCubeMesh( bool addToScene = true ) override;
 
-            SmartPtr<scene::IActor> createDefaultGround( bool addToScene = true );
+            SmartPtr<scene::IActor> createDefaultGround( bool addToScene = true ) override;
 
-            SmartPtr<scene::IActor> createDefaultTerrain( bool addToScene = true );
+            SmartPtr<scene::IActor> createDefaultTerrain( bool addToScene = true ) override;
 
-            SmartPtr<scene::IActor> createDefaultConstraint();
+            SmartPtr<scene::IActor> createDefaultConstraint() override;
 
-            SmartPtr<scene::IActor> createDirectionalLight( bool addToScene = true );
+            SmartPtr<scene::IActor> createDirectionalLight( bool addToScene = true ) override;
 
-            SmartPtr<scene::IActor> createPointLight( bool addToScene = true );
+            SmartPtr<scene::IActor> createPointLight( bool addToScene = true ) override;
 
-            SmartPtr<scene::IActor> createDefaultPlane( bool addToScene = true );
+            SmartPtr<scene::IActor> createDefaultPlane( bool addToScene = true ) override;
 
-            SmartPtr<scene::IActor> createDefaultVehicle( bool addToScene = true );
+            SmartPtr<scene::IActor> createDefaultVehicle( bool addToScene = true ) override;
 
-            SmartPtr<scene::IActor> createDefaultCar( bool addToScene = true );
+            SmartPtr<scene::IActor> createDefaultCar( bool addToScene = true ) override;
 
-            SmartPtr<scene::IActor> createDefaultTruck( bool addToScene = true );
+            SmartPtr<scene::IActor> createDefaultTruck( bool addToScene = true ) override;
 
-            SmartPtr<scene::IActor> createVehicleFromDatabase( s32 id );
+            SmartPtr<scene::IActor> createVehicleFromDatabase( s32 id ) override;
 
-            SmartPtr<scene::IActor> createDefaultParticleSystem( bool addToScene = true );
+            SmartPtr<scene::IActor> createDefaultParticleSystem( bool addToScene = true ) override;
 
             SmartPtr<IData> loadVehicleDataFromDatabase( s32 id );
 
             SmartPtr<render::IMaterial> createDefaultMaterialUI();
 
-            SmartPtr<render::IMaterial> createDefaultMaterial();
+            SmartPtr<render::IMaterial> createDefaultMaterial() override;
 
-            void createDefaultMaterials();
+            void createDefaultMaterials() override;
 
-            void createRigidStaticMesh( SmartPtr<scene::IActor> actor, bool recursive );
-            void createRigidDynamicMesh( SmartPtr<scene::IActor> actor, bool recursive );
+            void createRigidStaticMesh( SmartPtr<scene::IActor> actor, bool recursive ) override;
+            void createRigidDynamicMesh( SmartPtr<scene::IActor> actor, bool recursive ) override;
 
-            IResource::ResourceType getResourceType( const String &resourceTypeName );
+            IResource::ResourceType getResourceType( const String &resourceTypeName ) override;
 
-            String getResourceTypeByName( IResource::ResourceType resourceType );
+            String getResourceTypeByName( IResource::ResourceType resourceType ) override;
 
-            SmartPtr<Properties> importScene( const String &filePath );
+            SmartPtr<Properties> importScene( const String &filePath ) override;
 
         protected:
             virtual void createLogManager();
@@ -138,7 +137,7 @@ namespace fb
             /** */
             virtual bool createGraphicsSystem();
 
-	        virtual void createDefaultFont();
+            virtual void createDefaultFont();
             virtual void createRenderWindow();
 
             virtual void createGraphicsSceneManager();
@@ -194,7 +193,7 @@ namespace fb
 
             SmartPtr<IFrameStatistics> m_frameStatistics;
         };
-    }  // namespace application
+    }  // namespace core
 }  // namespace fb
 
 #endif

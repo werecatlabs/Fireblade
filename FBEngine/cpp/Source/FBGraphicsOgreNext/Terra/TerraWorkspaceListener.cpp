@@ -45,7 +45,9 @@ namespace Ogre
     {
     }
     //-------------------------------------------------------------------------
-    TerraWorkspaceListener::~TerraWorkspaceListener() {}
+    TerraWorkspaceListener::~TerraWorkspaceListener()
+    {
+    }
     //-------------------------------------------------------------------------
     void TerraWorkspaceListener::passPreExecute( CompositorPass *pass )
     {

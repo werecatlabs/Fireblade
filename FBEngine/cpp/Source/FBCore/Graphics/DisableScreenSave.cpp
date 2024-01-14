@@ -16,7 +16,7 @@ namespace fb
     static const int dss_ListCount = _countof( dss_GetList );
 #endif
 
-    CDisableScreenSave::CDisableScreenSave()
+    DisableScreenSave::DisableScreenSave()
     {
 #if defined FB_PLATFORM_WIN32
         m_pValue = new int[dss_ListCount];
@@ -34,7 +34,7 @@ namespace fb
 #endif
     }
 
-    CDisableScreenSave::~CDisableScreenSave()
+    DisableScreenSave::~DisableScreenSave()
     {
 #if defined FB_PLATFORM_WIN32
         for( int x = 0; x < dss_ListCount; x++ )

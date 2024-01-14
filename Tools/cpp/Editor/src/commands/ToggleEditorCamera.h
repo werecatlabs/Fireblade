@@ -16,6 +16,13 @@ namespace fb
             void undo() override;
             void redo() override;
             void execute() override;
+
+            bool getToggleValue() const;
+
+            void setToggleValue( bool toggleValue );
+
+        protected:
+            bool m_toggleValue = false;
         };
 
     }  // namespace editor

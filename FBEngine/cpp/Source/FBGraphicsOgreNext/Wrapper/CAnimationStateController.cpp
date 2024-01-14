@@ -5,348 +5,350 @@
 #include <OgreAnimationState.h>
 #include <OgreSceneManager.h>
 
-namespace fb
+#include <utility>
+
+namespace fb::render
 {
-    namespace render
+
+    //--------------------------------------------
+    CAnimationStateController::CAnimationStateController( SmartPtr<render::IGraphicsScene> creator ) :
+        m_creator( std::move( creator ) )
     {
+    }
 
-        //--------------------------------------------
-        CAnimationStateController::CAnimationStateController( SmartPtr<render::IGraphicsScene> creator ) :
-            m_creator( creator )
+    //--------------------------------------------
+    CAnimationStateController::~CAnimationStateController()
+    {
+        Ogre::SceneManager *ogreSceneMgr = nullptr;
+        m_creator->_getObject( reinterpret_cast<void **>( &ogreSceneMgr ) );
+
+        for( auto animState : m_animationStates )
         {
+            animState->setEnabled( false );
+
+            ogreSceneMgr->destroyAnimationState( animState->getAnimationName() );
         }
 
-        //--------------------------------------------
-        CAnimationStateController::~CAnimationStateController()
+        //auto engine = core::ApplicationManager::instance();
+        //SmartPtr<IGraphicsSystem> graphicsSystem = engine->getGraphicsSystem();
+        //graphicsSystem->removeFrameListener( m_frameListener );
+    }
+
+    //--------------------------------------------
+    void CAnimationStateController::update( const s32 &task, const time_interval &t,
+                                            const time_interval &dt )
+    {
+        if( Thread::getCurrentTask() != Thread::Task::Render )
         {
-            Ogre::SceneManager *ogreSceneMgr = NULL;
-            m_creator->_getObject( (void **)&ogreSceneMgr );
+            return;
+        }
 
-            for( u32 i = 0; i < m_animationStates.size(); ++i )
+        for( auto animState : m_animationStates )
+        {
+            bool isReversed = false;  // m_reversedAnimationStates.find_element_index(animState) != -1;
+
+            if( animState->getEnabled() && !animState->getLoop() )
             {
-                Ogre::v1::AnimationState *animState = m_animationStates[i];
-                animState->setEnabled( false );
-
-                ogreSceneMgr->destroyAnimationState( animState->getAnimationName() );
+                if( isReversed && animState->getTimePosition() == 0.0f )
+                {
+                    animState->setEnabled( false );
+                }
+                else if( animState->hasEnded() )
+                {
+                    animState->setEnabled( false );
+                }
             }
 
-            //auto engine = core::IApplicationManager::instance();
-            //SmartPtr<IGraphicsSystem> graphicsSystem = engine->getGraphicsSystem();
-            //graphicsSystem->removeFrameListener( m_frameListener );
-        }
-
-        //--------------------------------------------
-        void CAnimationStateController::update( const s32 &task, const time_interval &t,
-                                                const time_interval &dt )
-        {
-            if( Thread::getCurrentTask() != Thread::Task::Render )
-                return;
-
-            for( u32 i = 0; i < m_animationStates.size(); ++i )
+            if( animState->getEnabled() )
             {
-                Ogre::v1::AnimationState *animState = m_animationStates[i];
-
-                bool isReversed =
-                    false;  // m_reversedAnimationStates.find_element_index(animState) != -1;
-
-                if( animState->getEnabled() && !animState->getLoop() )
+                if( !isReversed )
                 {
-                    if( isReversed && animState->getTimePosition() == 0.0f )
-                    {
-                        animState->setEnabled( false );
-                    }
-                    else if( animState->hasEnded() )
-                    {
-                        animState->setEnabled( false );
-                    }
+                    animState->addTime( dt );
                 }
-
-                if( animState->getEnabled() )
+                else
                 {
-                    if( !isReversed )
-                        animState->addTime( dt );
-                    else
-                        animState->addTime( -dt );
+                    animState->addTime( -dt );
                 }
             }
         }
+    }
 
-        //--------------------------------------------
-        bool CAnimationStateController::setAnimationEnabled( const String &animationName, bool enabled )
-        {
-            //
+    //--------------------------------------------
+    auto CAnimationStateController::setAnimationEnabled( const String &animationName, bool enabled )
+        -> bool
+    {
+        //
 
-            // Ogre::SceneManager* ogreSceneMgr = NULL;
-            // m_creator->_getObject((void**)&ogreSceneMgr);
+        // Ogre::SceneManager* ogreSceneMgr = NULL;
+        // m_creator->_getObject((void**)&ogreSceneMgr);
 
-            // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
-            //{
-            //	String msg = String("CAnimationStateController::setAnimationEnabled: Animation not found.
-            // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return false;
-            // }
+        // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
+        //{
+        //	String msg = String("CAnimationStateController::setAnimationEnabled: Animation not found.
+        // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return false;
+        // }
 
-            // Ogre::AnimationState* animState = ogreSceneMgr->getAnimationState(animationName.c_str());
-            // if( animState )
-            //{
-            //	if(m_animationStates.linear_search(animState) == -1)
-            //	{
-            //		m_animationStates.push_back(animState);
-            //	}
+        // Ogre::AnimationState* animState = ogreSceneMgr->getAnimationState(animationName.c_str());
+        // if( animState )
+        //{
+        //	if(m_animationStates.linear_search(animState) == -1)
+        //	{
+        //		m_animationStates.push_back(animState);
+        //	}
 
-            //	animState->setEnabled(enabled);
-            //	return true;
-            //}
-            //}
+        //	animState->setEnabled(enabled);
+        //	return true;
+        //}
+        //}
 
-            return false;
-        }
+        return false;
+    }
 
-        //--------------------------------------------
-        bool CAnimationStateController::setAnimationEnabled( const String &animationName, bool enabled,
-                                                             f32 timePosition )
-        {
-            //
+    //--------------------------------------------
+    auto CAnimationStateController::setAnimationEnabled( const String &animationName, bool enabled,
+                                                         f32 timePosition ) -> bool
+    {
+        //
 
-            // Ogre::SceneManager* ogreSceneMgr = NULL;
-            // m_creator->_getObject((void**)&ogreSceneMgr);
+        // Ogre::SceneManager* ogreSceneMgr = NULL;
+        // m_creator->_getObject((void**)&ogreSceneMgr);
 
-            // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
-            //{
-            //	String msg = String("CAnimationStateController::hasAnimationEnded: Animation not found.
-            // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return false;
-            // }
+        // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
+        //{
+        //	String msg = String("CAnimationStateController::hasAnimationEnded: Animation not found.
+        // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return false;
+        // }
 
-            // Ogre::AnimationState* animState = ogreSceneMgr->getAnimationState(animationName.c_str());
-            // if( animState )
-            //{
-            //	if(m_animationStates.linear_search(animState) == -1)
-            //	{
-            //		m_animationStates.push_back(animState);
-            //	}
+        // Ogre::AnimationState* animState = ogreSceneMgr->getAnimationState(animationName.c_str());
+        // if( animState )
+        //{
+        //	if(m_animationStates.linear_search(animState) == -1)
+        //	{
+        //		m_animationStates.push_back(animState);
+        //	}
 
-            //	animState->setEnabled(enabled);
-            //	animState->setTimePosition(timePosition);
-            //	return true;
-            //}
+        //	animState->setEnabled(enabled);
+        //	animState->setTimePosition(timePosition);
+        //	return true;
+        //}
 
-            return false;
-        }
+        return false;
+    }
 
-        //--------------------------------------------
-        bool CAnimationStateController::isAnimationEnabled( const String &animationName )
-        {
-            //
+    //--------------------------------------------
+    auto CAnimationStateController::isAnimationEnabled( const String &animationName ) -> bool
+    {
+        //
 
-            // Ogre::SceneManager* ogreSceneMgr = NULL;
-            // m_creator->_getObject((void**)&ogreSceneMgr);
+        // Ogre::SceneManager* ogreSceneMgr = NULL;
+        // m_creator->_getObject((void**)&ogreSceneMgr);
 
-            // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
-            //{
-            //	String msg = String("CAnimationStateController::setAnimationEnabled: Animation not found.
-            // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return false;
-            // }
+        // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
+        //{
+        //	String msg = String("CAnimationStateController::setAnimationEnabled: Animation not found.
+        // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return false;
+        // }
 
-            // Ogre::AnimationState* animState = ogreSceneMgr->getAnimationState(animationName.c_str());
-            // if( animState )
-            //{
-            //	return animState->getEnabled();
-            // }
+        // Ogre::AnimationState* animState = ogreSceneMgr->getAnimationState(animationName.c_str());
+        // if( animState )
+        //{
+        //	return animState->getEnabled();
+        // }
 
-            return false;
-        }
+        return false;
+    }
 
-        //--------------------------------------------
-        void CAnimationStateController::stopAllAnimations()
-        {
-            //
+    //--------------------------------------------
+    void CAnimationStateController::stopAllAnimations()
+    {
+        //
 
-            // for(u32 i=0; i<m_animationStates.size(); ++i)
-            //{
-            //	Ogre::AnimationState* animState = m_animationStates[i];
-            //	animState->setEnabled(false);
-            // }
+        // for(u32 i=0; i<m_animationStates.size(); ++i)
+        //{
+        //	Ogre::AnimationState* animState = m_animationStates[i];
+        //	animState->setEnabled(false);
+        // }
 
-            // m_animationStates.clear();
-        }
+        // m_animationStates.clear();
+    }
 
-        //--------------------------------------------
-        bool CAnimationStateController::hasAnimationEnded( const String &animationName )
-        {
-            //
+    //--------------------------------------------
+    auto CAnimationStateController::hasAnimationEnded( const String &animationName ) -> bool
+    {
+        //
 
-            // Ogre::SceneManager* ogreSceneMgr = NULL;
-            // m_creator->_getObject((void**)&ogreSceneMgr);
+        // Ogre::SceneManager* ogreSceneMgr = NULL;
+        // m_creator->_getObject((void**)&ogreSceneMgr);
 
-            // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
-            //{
-            //	String msg = String("CAnimationStateController::hasAnimationEnded: Animation not found.
-            // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return false;
-            // }
+        // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
+        //{
+        //	String msg = String("CAnimationStateController::hasAnimationEnded: Animation not found.
+        // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return false;
+        // }
 
-            // Ogre::AnimationState* pAnimState = ogreSceneMgr->getAnimationState(animationName.c_str());
-            // if( pAnimState && pAnimState->hasEnded() )
-            //{
-            //	return true;
-            // }
+        // Ogre::AnimationState* pAnimState = ogreSceneMgr->getAnimationState(animationName.c_str());
+        // if( pAnimState && pAnimState->hasEnded() )
+        //{
+        //	return true;
+        // }
 
-            return false;
-        }
+        return false;
+    }
 
-        //--------------------------------------------
-        bool CAnimationStateController::hasAnimation( const String &animationName ) const
-        {
-            //
+    //--------------------------------------------
+    auto CAnimationStateController::hasAnimation( const String &animationName ) const -> bool
+    {
+        //
 
-            // Ogre::SceneManager* ogreSceneMgr = NULL;
-            // m_creator->_getObject((void**)&ogreSceneMgr);
+        // Ogre::SceneManager* ogreSceneMgr = NULL;
+        // m_creator->_getObject((void**)&ogreSceneMgr);
 
-            // return ogreSceneMgr->hasAnimationState(animationName.c_str());
+        // return ogreSceneMgr->hasAnimationState(animationName.c_str());
 
-            return false;
-        }
+        return false;
+    }
 
-        //--------------------------------------------
-        void CAnimationStateController::setAnimationLoop( const String &animationName, bool loop )
-        {
-            //
+    //--------------------------------------------
+    void CAnimationStateController::setAnimationLoop( const String &animationName, bool loop )
+    {
+        //
 
-            // Ogre::SceneManager* ogreSceneMgr = NULL;
-            // m_creator->_getObject((void**)&ogreSceneMgr);
+        // Ogre::SceneManager* ogreSceneMgr = NULL;
+        // m_creator->_getObject((void**)&ogreSceneMgr);
 
-            // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
-            //{
-            //	String msg = String("CAnimationStateController::setAnimationLoop: Animation not found.
-            // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return;
-            // }
+        // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
+        //{
+        //	String msg = String("CAnimationStateController::setAnimationLoop: Animation not found.
+        // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return;
+        // }
 
-            // Ogre::AnimationState* pAnimState = ogreSceneMgr->getAnimationState(animationName.c_str());
-            // if( pAnimState )
-            //{
-            //	pAnimState->setLoop(loop);
-            // }
-        }
+        // Ogre::AnimationState* pAnimState = ogreSceneMgr->getAnimationState(animationName.c_str());
+        // if( pAnimState )
+        //{
+        //	pAnimState->setLoop(loop);
+        // }
+    }
 
-        //--------------------------------------------
-        bool CAnimationStateController::isAnimationLooping( const String &animationName )
-        {
-            //
+    //--------------------------------------------
+    auto CAnimationStateController::isAnimationLooping( const String &animationName ) -> bool
+    {
+        //
 
-            // Ogre::SceneManager* ogreSceneMgr = NULL;
-            // m_creator->_getObject((void**)&ogreSceneMgr);
+        // Ogre::SceneManager* ogreSceneMgr = NULL;
+        // m_creator->_getObject((void**)&ogreSceneMgr);
 
-            // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
-            //{
-            //	String msg = String("CAnimationStateController::getAnimationLoop: Animation not found.
-            // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return false;
-            // }
+        // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
+        //{
+        //	String msg = String("CAnimationStateController::getAnimationLoop: Animation not found.
+        // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return false;
+        // }
 
-            // Ogre::AnimationState* pAnimState = ogreSceneMgr->getAnimationState(animationName.c_str());
-            // if( pAnimState && pAnimState->getLoop() )
-            //{
-            //	return true;
-            // }
+        // Ogre::AnimationState* pAnimState = ogreSceneMgr->getAnimationState(animationName.c_str());
+        // if( pAnimState && pAnimState->getLoop() )
+        //{
+        //	return true;
+        // }
 
-            return false;
-        }
+        return false;
+    }
 
-        //--------------------------------------------
-        void CAnimationStateController::setAnimationReversed( const String &animationName,
-                                                              bool reversed )
-        {
-            //
+    //--------------------------------------------
+    void CAnimationStateController::setAnimationReversed( const String &animationName, bool reversed )
+    {
+        //
 
-            // Ogre::SceneManager* ogreSceneMgr = NULL;
-            // m_creator->_getObject((void**)&ogreSceneMgr);
+        // Ogre::SceneManager* ogreSceneMgr = NULL;
+        // m_creator->_getObject((void**)&ogreSceneMgr);
 
-            // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
-            //{
-            //	String msg = String("CAnimationStateController::getAnimationLoop: Animation not found.
-            // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return;
-            // }
+        // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
+        //{
+        //	String msg = String("CAnimationStateController::getAnimationLoop: Animation not found.
+        // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return;
+        // }
 
-            // Ogre::AnimationState* animState = ogreSceneMgr->getAnimationState(animationName.c_str());
-            // if(reversed)
-            //{
-            //	m_reversedAnimationStates.push_back(animState);
-            // }
-            // else
-            //{
-            //	m_reversedAnimationStates.erase_element(animState);
-            // }
-        }
+        // Ogre::AnimationState* animState = ogreSceneMgr->getAnimationState(animationName.c_str());
+        // if(reversed)
+        //{
+        //	m_reversedAnimationStates.push_back(animState);
+        // }
+        // else
+        //{
+        //	m_reversedAnimationStates.erase_element(animState);
+        // }
+    }
 
-        //--------------------------------------------
-        bool CAnimationStateController::isAnimationReversed( const String &animationName )
-        {
-            //
+    //--------------------------------------------
+    auto CAnimationStateController::isAnimationReversed( const String &animationName ) -> bool
+    {
+        //
 
-            // Ogre::SceneManager* ogreSceneMgr = NULL;
-            // m_creator->_getObject((void**)&ogreSceneMgr);
+        // Ogre::SceneManager* ogreSceneMgr = NULL;
+        // m_creator->_getObject((void**)&ogreSceneMgr);
 
-            // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
-            //{
-            //	String msg = String("CAnimationStateController::getAnimationLoop: Animation not found.
-            // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return false;
-            // }
+        // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
+        //{
+        //	String msg = String("CAnimationStateController::getAnimationLoop: Animation not found.
+        // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return false;
+        // }
 
-            // Ogre::AnimationState* animState = ogreSceneMgr->getAnimationState(animationName.c_str());
-            // return m_reversedAnimationStates.linear_search(animState) != -1;
+        // Ogre::AnimationState* animState = ogreSceneMgr->getAnimationState(animationName.c_str());
+        // return m_reversedAnimationStates.linear_search(animState) != -1;
 
-            return false;
-        }
+        return false;
+    }
 
-        //--------------------------------------------
-        bool CAnimationStateController::setTimePosition( const String &animationName, f32 timePosition )
-        {
-            //
+    //--------------------------------------------
+    auto CAnimationStateController::setTimePosition( const String &animationName, f32 timePosition )
+        -> bool
+    {
+        //
 
-            // Ogre::SceneManager* ogreSceneMgr = NULL;
-            // m_creator->_getObject((void**)&ogreSceneMgr);
+        // Ogre::SceneManager* ogreSceneMgr = NULL;
+        // m_creator->_getObject((void**)&ogreSceneMgr);
 
-            // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
-            //{
-            //	String msg = String("CAnimationStateController::setTimePosition: Animation not found.
-            // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return false;
-            // }
+        // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
+        //{
+        //	String msg = String("CAnimationStateController::setTimePosition: Animation not found.
+        // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return false;
+        // }
 
-            // Ogre::AnimationState* pAnimState = ogreSceneMgr->getAnimationState(animationName.c_str());
-            // if( pAnimState )
-            //{
-            //	pAnimState->setTimePosition(timePosition);
-            //	return true;
-            // }
+        // Ogre::AnimationState* pAnimState = ogreSceneMgr->getAnimationState(animationName.c_str());
+        // if( pAnimState )
+        //{
+        //	pAnimState->setTimePosition(timePosition);
+        //	return true;
+        // }
 
-            return false;
-        }
+        return false;
+    }
 
-        //--------------------------------------------
-        f32 CAnimationStateController::getTimePosition( const String &animationName )
-        {
-            //
+    //--------------------------------------------
+    auto CAnimationStateController::getTimePosition( const String &animationName ) -> f32
+    {
+        //
 
-            // Ogre::SceneManager* ogreSceneMgr = NULL;
-            // m_creator->_getObject((void**)&ogreSceneMgr);
+        // Ogre::SceneManager* ogreSceneMgr = NULL;
+        // m_creator->_getObject((void**)&ogreSceneMgr);
 
-            // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
-            //{
-            //	String msg = String("CAnimationStateController::setTimePosition: Animation not found.
-            // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return false;
-            // }
+        // if(!ogreSceneMgr->hasAnimationState(animationName.c_str()))
+        //{
+        //	String msg = String("CAnimationStateController::setTimePosition: Animation not found.
+        // animation: ") + animationName; 	LOG_MESSAGE("Graphics", msg.c_str()); 	return false;
+        // }
 
-            // Ogre::AnimationState* pAnimState = ogreSceneMgr->getAnimationState(animationName.c_str());
-            // if( pAnimState )
-            //{
-            //	return pAnimState->getTimePosition();
-            // }
+        // Ogre::AnimationState* pAnimState = ogreSceneMgr->getAnimationState(animationName.c_str());
+        // if( pAnimState )
+        //{
+        //	return pAnimState->getTimePosition();
+        // }
 
-            return 0.0f;
-        }
+        return 0.0f;
+    }
 
-        //--------------------------------------------
-        CAnimationStateController::Animation::Animation( CAnimationStateController *controller ) :
-            m_controller( controller )
-        {
-        }
+    //--------------------------------------------
+    CAnimationStateController::Animation::Animation( CAnimationStateController *controller ) :
+        m_controller( controller )
+    {
+    }
 
-    }  // namespace render
-}  // end namespace fb
+}  // namespace fb::render

@@ -6,11 +6,8 @@
 #include <FBCore/Interface/Scene/IPrefab.h>
 #include <FBCore/System/RttiClassDefinition.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
-    {
-        FB_CLASS_REGISTER_DERIVED( fb::scene, IPrefab, IResource );
+    FB_CLASS_REGISTER_DERIVED( fb::scene, IPrefab, IResource );
 
-    }  // end namespace scene
-}  // end namespace fb
+}  // namespace fb::scene

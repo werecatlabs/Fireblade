@@ -21,10 +21,10 @@ namespace fb
         str = data;
     }
 
-    Vector2F Parameter::getVector2() const
+    auto Parameter::getVector2() const -> Vector2F
     {
         FB_ASSERT( array.size() >= 2 );
-        return Vector2F( array[0].data.fData, array[1].data.fData );
+        return { array[0].data.fData, array[1].data.fData };
     }
 
     void Parameter::setVector2( const Vector2F &data )
@@ -34,10 +34,10 @@ namespace fb
         array[1].data.fData = data.y;
     }
 
-    Vector3F Parameter::getVector3() const
+    auto Parameter::getVector3() const -> Vector3F
     {
         FB_ASSERT( array.size() >= 3 );
-        return Vector3F( array[0].data.fData, array[1].data.fData, array[2].data.fData );
+        return { array[0].data.fData, array[1].data.fData, array[2].data.fData };
     }
 
     void Parameter::setVector3( const Vector3F &data )
@@ -48,11 +48,10 @@ namespace fb
         array[2].data.fData = data.z;
     }
 
-    QuaternionF Parameter::getQuaternion() const
+    auto Parameter::getQuaternion() const -> QuaternionF
     {
         FB_ASSERT( array.size() >= 4 );
-        return QuaternionF( array[0].data.fData, array[1].data.fData, array[2].data.fData,
-                            array[3].data.fData );
+        return { array[0].data.fData, array[1].data.fData, array[2].data.fData, array[3].data.fData };
     }
 
     void Parameter::setQuaternion( const QuaternionF &data )
@@ -65,17 +64,17 @@ namespace fb
         array[3].data.fData = data[3];
     }
 
-    SmartPtr<ISharedObject> Parameter::getObject() const
+    auto Parameter::getObject() const -> SmartPtr<ISharedObject>
     {
         return object;
     }
 
-    const Array<Parameter> &Parameter::getArray() const
+    auto Parameter::getArray() const -> const Array<Parameter> &
     {
         return array;
     }
 
-    String Parameter::getStr() const
+    auto Parameter::getStr() const -> String
     {
         return str;
     }
@@ -124,7 +123,7 @@ namespace fb
 
     Parameter::Parameter( const c8 *data )
     {
-        setCharPtr( (c8 *)data );
+        setCharPtr( const_cast<c8 *>( data ) );
     }
 
     Parameter::Parameter( bool data )
@@ -155,11 +154,9 @@ namespace fb
         str = data;
     }
 
-    Parameter::~Parameter()
-    {
-    }
+    Parameter::~Parameter() = default;
 
-    bool Parameter::operator==( const Parameter &other ) const
+    auto Parameter::operator==( const Parameter &other ) const -> bool
     {
         return type == other.type && data.iData == other.data.iData;
     }

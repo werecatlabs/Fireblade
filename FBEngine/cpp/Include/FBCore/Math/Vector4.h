@@ -20,7 +20,7 @@ namespace fb
 
         Vector4( T x, T y, T z, T w );
         Vector4( const Vector4<T> &other );
-        Vector4( const T *ptr );
+        explicit Vector4( const T *ptr );
 
         // operators
         Vector4<T> operator-() const;
@@ -51,8 +51,8 @@ namespace fb
         bool operator!=( const Vector4<T> &other ) const;
 
         // member access
-        operator const T *() const;
-        operator T *();
+        explicit operator const T *() const;
+        explicit operator T *();
         T operator[]( s32 i ) const;
         T &operator[]( s32 i );
 

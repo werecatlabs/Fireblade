@@ -4,7 +4,6 @@
 #include <FBCore/Scene/Components/Component.h>
 #include <FBCore/Interface/System/IEventListener.h>
 #include <FBCore/Math/AABB3.h>
-#include <FBCore/Math/Ray3.h>
 
 namespace fb
 {
@@ -18,13 +17,13 @@ namespace fb
             CameraController();
             ~CameraController() override;
 
-            /** @copydoc IObject::load */
+            /** @copydoc Component::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::unload */
+            /** @copydoc Component::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::reload */
+            /** @copydoc Component::reload */
             void reload( SmartPtr<ISharedObject> data ) override;
 
             void setFlag( u32 flag, bool value );
@@ -32,8 +31,6 @@ namespace fb
 
             void setViewportId( u32 viewportId );
             u32 getViewportId() const;
-
-            bool isInFrustum( const AABB3<real_Num> &box ) const;
 
             void handleSetActive( bool active );
 
@@ -59,8 +56,7 @@ namespace fb
 
                 Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
                                        const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
-                                       SmartPtr<ISharedObject> object,
-                                       SmartPtr<IEvent> event ) override;
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
                 void setOwner( CameraController *owner );
                 CameraController *getOwner() const;
@@ -73,7 +69,7 @@ namespace fb
             atomic_u32 m_flags = 0;
             SmartPtr<IEventListener> m_eventListener;
         };
-    } // namespace scene
-}     // namespace fb
+    }  // namespace scene
+}  // namespace fb
 
 #endif

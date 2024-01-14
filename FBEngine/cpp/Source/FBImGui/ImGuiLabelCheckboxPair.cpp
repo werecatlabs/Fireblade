@@ -1,47 +1,52 @@
 #include <FBImGui/FBImGuiPCH.h>
 #include <FBImGui/ImGuiLabelCheckboxPair.h>
 
-namespace fb
+namespace fb::ui
 {
-    namespace ui
+    FB_CLASS_REGISTER_DERIVED( fb, ImGuiLabelCheckboxPair, CImGuiElement<IUILabelTogglePair> );
+
+    ImGuiLabelCheckboxPair::ImGuiLabelCheckboxPair() = default;
+
+    ImGuiLabelCheckboxPair::~ImGuiLabelCheckboxPair()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, ImGuiLabelCheckboxPair, CImGuiElement<IUILabelCheckboxPair> );
+        unload( nullptr );
+    }
 
-        ImGuiLabelCheckboxPair::ImGuiLabelCheckboxPair()
-        {
-        }
+    void ImGuiLabelCheckboxPair::load( SmartPtr<ISharedObject> data )
+    {
+    }
 
-        ImGuiLabelCheckboxPair::~ImGuiLabelCheckboxPair()
-        {
-            unload( nullptr );
-        }
+    void ImGuiLabelCheckboxPair::unload( SmartPtr<ISharedObject> data )
+    {
+    }
 
-        void ImGuiLabelCheckboxPair::load( SmartPtr<ISharedObject> data )
-        {
-        }
+    auto ImGuiLabelCheckboxPair::getLabel() const -> String
+    {
+        return m_label;
+    }
 
-        void ImGuiLabelCheckboxPair::unload( SmartPtr<ISharedObject> data )
-        {
-        }
+    void ImGuiLabelCheckboxPair::setLabel( const String &val )
+    {
+        m_label = val;
+    }
 
-        String ImGuiLabelCheckboxPair::getLabel() const
-        {
-            return m_label;
-        }
+    auto ImGuiLabelCheckboxPair::getValue() const -> bool
+    {
+        return m_value;
+    }
 
-        void ImGuiLabelCheckboxPair::setLabel( const String &val )
-        {
-            m_label = val;
-        }
+    void ImGuiLabelCheckboxPair::setValue( bool val )
+    {
+        m_value = val;
+    }
 
-        bool ImGuiLabelCheckboxPair::getValue() const
-        {
-            return m_value;
-        }
+    auto ImGuiLabelCheckboxPair::getShowLabel() const -> bool
+    {
+        return false;
+    }
 
-        void ImGuiLabelCheckboxPair::setValue( bool val )
-        {
-            m_value = val;
-        }
-    } // end namespace ui
-}     // end namespace fb
+    void ImGuiLabelCheckboxPair::setShowLabel( bool showLabel )
+    {
+    }
+
+}  // namespace fb::ui

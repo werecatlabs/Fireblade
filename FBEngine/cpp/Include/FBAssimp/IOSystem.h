@@ -12,7 +12,7 @@ namespace fb
     {
     public:
         IOSystem();
-        IOSystem( const SmartPtr<IStream> &_source, const String &group );
+        IOSystem( const SmartPtr<IStream> &_source, String group );
 
         bool Exists( const char *pFile ) const;
         char getOsSeparator() const override;

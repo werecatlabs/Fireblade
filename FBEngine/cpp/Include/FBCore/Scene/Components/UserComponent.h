@@ -61,17 +61,11 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            struct usercomponent_data
-            {
-                bool dirty = false;
-                UserComponent *owner = nullptr;
-            };
-
             class ScriptReceiver : public IScriptReceiver
             {
             public:
                 ScriptReceiver();
-                ScriptReceiver( UserComponent *owner );
+                explicit ScriptReceiver( UserComponent *owner );
                 ~ScriptReceiver() override;
 
                 s32 setProperty( hash_type hash, const String &value ) override;

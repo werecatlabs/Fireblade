@@ -57,7 +57,7 @@ namespace fb
                 WeakPtr<ui::IUIVector3> m_vectorUI;
             };
 
-            SmartPtr<ui::IUILabelCheckboxPair> m_actorEnabled;
+            SmartPtr<ui::IUILabelTogglePair> m_actorEnabled;
 
             SmartPtr<ui::IUIVector3> m_localPosition;
             SmartPtr<ui::IUIVector3> m_localRotation;

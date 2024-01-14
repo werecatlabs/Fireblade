@@ -42,9 +42,12 @@ namespace fb
         @param p Starting value for pitch
         @param r Starting value for roll
         */
-        Euler( const T &y, const T &p = T( 0.0 ), const T &r = T( 0.0 ) );
+        explicit Euler( const T &y, const T &p = T( 0.0 ), const T &r = T( 0.0 ) );
 
-        Euler( const Vector3<T> &rads ) : mYaw( rads.Y() ), mPitch( rads.X() ), mRoll( rads.Z() )
+        explicit Euler( const Vector3<T> &rads ) :
+            mYaw( rads.Y() ),
+            mPitch( rads.X() ),
+            mRoll( rads.Z() )
         {
         }
 
@@ -145,7 +148,7 @@ namespace fb
 
         /// Casting operator. This allows any ogre function that wants a Quaternion to accept a Euler
         /// instead.
-        operator Quaternion<T>() const;
+        explicit operator Quaternion<T>() const;
 
         /**
         @brief Calculate the current euler angles of a given quaternion object.
@@ -401,7 +404,7 @@ namespace fb
         if( mChanged )
         {
             mCachedQuaternion = Quaternion<T>::angleAxis( mYaw, Vector3<T>::positiveY() ) *
-                                Quaternion<T>::angleAxis( mPitch, Vector3<T>::negativeX() ) *
+                                Quaternion<T>::angleAxis( mPitch, Vector3<T>::positiveX() ) *
                                 Quaternion<T>::angleAxis( mRoll, Vector3<T>::positiveZ() );
 
             mChanged = false;

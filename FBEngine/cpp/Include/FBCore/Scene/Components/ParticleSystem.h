@@ -37,15 +37,6 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-#if FB_USE_PARTICLE_UNIVERSE
-            state::MovablePtr m_smokeObject;
-            state::MovablePtr m_smokeObjectUltraHigh;
-
-            SmartPtr<IParticleSystem> m_particleSystemUltraHigh;
-
-            RawPtr<ParticleGroundEffect> m_particleGroundEffect;
-#endif
-
             SmartPtr<render::IGraphicsObject> m_graphicsObject;
             SmartPtr<render::ISceneNode> m_graphicshNode;
 

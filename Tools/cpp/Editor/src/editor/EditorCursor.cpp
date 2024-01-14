@@ -1,37 +1,30 @@
 #include <GameEditorPCH.h>
 #include "EditorCursor.h"
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    EditorCursor::EditorCursor() = default;
+
+    EditorCursor::~EditorCursor() = default;
+
+    void EditorCursor::update()
     {
+    }
 
-        EditorCursor::EditorCursor()
-        {
-        }
+    void EditorCursor::setState( u32 state )
+    {
+        m_state = state;
+    }
 
-        EditorCursor::~EditorCursor()
-        {
-        }
+    auto EditorCursor::getState() const -> u32
+    {
+        return m_state;
+    }
 
-        void EditorCursor::update()
-        {
-        }
+    void EditorCursor::setSize( f32 size )
+    {
+        m_size = size;
+    }
 
-        void EditorCursor::setState( u32 state )
-        {
-            m_state = state;
-        }
-
-        u32 EditorCursor::getState() const
-        {
-            return m_state;
-        }
-
-        void EditorCursor::setSize( f32 size )
-        {
-            m_size = size;
-        }
-
-    }  // namespace editor
-}  // namespace fb
+}  // namespace fb::editor

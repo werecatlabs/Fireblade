@@ -2,12 +2,14 @@
 #include "FBGraphicsOgreNext/FBOgreDataStream.h"
 #include <FBCore/Interface/IO/IStream.h>
 
+#include <utility>
+
 namespace fb
 {
 
     FBOgreDataStream::FBOgreDataStream( SmartPtr<IStream> stream ) :
         Ogre::DataStream(),
-        m_stream( stream )
+        m_stream( std::move( stream ) )
     {
         mSize = m_stream->size();
     }
@@ -17,7 +19,7 @@ namespace fb
         m_stream = nullptr;
     }
 
-    size_t FBOgreDataStream::read( void *buf, size_t count )
+    auto FBOgreDataStream::read( void *buf, size_t count ) -> size_t
     {
         FB_ASSERT( m_stream );
         if( m_stream->isValid() )
@@ -28,7 +30,7 @@ namespace fb
         return 0;
     }
 
-    Ogre::String FBOgreDataStream::getLine( bool trimAfter )
+    auto FBOgreDataStream::getLine( bool trimAfter ) -> Ogre::String
     {
         if( m_stream )
         {
@@ -50,13 +52,13 @@ namespace fb
         m_stream->seek( pos );
     }
 
-    size_t FBOgreDataStream::tell( void ) const
+    auto FBOgreDataStream::tell() const -> size_t
     {
         FB_ASSERT( m_stream );
         return m_stream->tell();
     }
 
-    bool FBOgreDataStream::eof( void ) const
+    auto FBOgreDataStream::eof() const -> bool
     {
         FB_ASSERT( m_stream );
         if( m_stream->isValid() )
@@ -67,13 +69,13 @@ namespace fb
         return true;
     }
 
-    void FBOgreDataStream::close( void )
+    void FBOgreDataStream::close()
     {
         FB_ASSERT( m_stream );
         m_stream->close();
     }
 
-    SmartPtr<IStream> FBOgreDataStream::getStream() const
+    auto FBOgreDataStream::getStream() const -> SmartPtr<IStream>
     {
         return m_stream;
     }

@@ -5,5 +5,20 @@ namespace fb
 {
     namespace ui
     {
-    } // end namespace ui
-}     // end namespace fb
+
+        FB_CLASS_REGISTER_DERIVED( fb, ImGuiSearchBar, CImGuiElement<IUISearchBar> );
+
+        ImGuiSearchBar::ImGuiSearchBar()
+        {
+        }
+
+        ImGuiSearchBar::~ImGuiSearchBar()
+        {
+        }
+
+        void ImGuiSearchBar::update()
+        {
+        }
+
+    }  // namespace ui
+}  // namespace fb

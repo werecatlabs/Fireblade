@@ -6,6 +6,7 @@
 
 namespace fb
 {
+
     /**
      * @class IProcessManager
      * @brief Interface for managing processes.

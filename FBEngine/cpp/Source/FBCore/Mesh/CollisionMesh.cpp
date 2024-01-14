@@ -9,13 +9,9 @@
 namespace fb
 {
 
-    CollisionMesh::CollisionMesh()
-    {
-    }
+    CollisionMesh::CollisionMesh() = default;
 
-    CollisionMesh::~CollisionMesh()
-    {
-    }
+    CollisionMesh::~CollisionMesh() = default;
 
     void CollisionMesh::load( SmartPtr<ISharedObject> data )
     {
@@ -41,7 +37,7 @@ namespace fb
         m_hitDistance = hitDistance;
     }
 
-    f32 CollisionMesh::HitData::getHitDistance() const
+    auto CollisionMesh::HitData::getHitDistance() const -> f32
     {
         return m_hitDistance;
     }
@@ -50,11 +46,12 @@ namespace fb
     {
     }
 
-    CollisionMesh::HitData::HitData() : m_hitDistance( 0.0f )
+    CollisionMesh::HitData::HitData()
     {
     }
 
-    bool CollisionMesh::rayCast( const Vector3F &origin, const Vector3F &dir, Array<HitData> &hits )
+    auto CollisionMesh::rayCast( const Vector3F &origin, const Vector3F &dir, Array<HitData> &hits )
+        -> bool
     {
         bool retValue = false;
 
@@ -65,7 +62,7 @@ namespace fb
 
             if( retValue )
             {
-                hits.push_back( HitData( distances[0] ) );
+                hits.emplace_back( distances[0] );
                 return true;
             }
         }
@@ -73,7 +70,7 @@ namespace fb
         return retValue;
     }
 
-    bool CollisionMesh::rayCast( const Vector3F &origin, const Vector3F &dir, Array<f32> &hits )
+    auto CollisionMesh::rayCast( const Vector3F &origin, const Vector3F &dir, Array<f32> &hits ) -> bool
     {
         bool retValue = false;
 

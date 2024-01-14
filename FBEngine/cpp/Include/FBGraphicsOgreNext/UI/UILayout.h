@@ -8,12 +8,11 @@ namespace fb
 {
     namespace ui
     {
-
-        class UILayout : public UIElement<ui::IUILayout>
+        class UILayout : public UIElement<IUILayout>
         {
         public:
             UILayout();
-            ~UILayout();
+            ~UILayout() override;
 
             void load( SmartPtr<ISharedObject> data ) override;
 
@@ -21,15 +20,16 @@ namespace fb
 
             SmartPtr<IFSM> getFSM() override;
 
-            SmartPtr<ui::IUIWindow> getUiWindow() const override;
+            SmartPtr<IUIWindow> getUiWindow() const override;
 
-            void setUiWindow( SmartPtr<ui::IUIWindow> uiWindow ) override;
+            void setUiWindow( SmartPtr<IUIWindow> uiWindow ) override;
+
+            FB_CLASS_REGISTER_DECL;
 
         protected:
             Colibri::Window *m_window = nullptr;
         };
-
-    }  // namespace render
-}  // namespace fb
+    } // namespace render
+}     // namespace fb
 
 #endif  // UILayout_h__

@@ -5,7 +5,7 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, WindowMessageData, ISharedObject );
 
-    void *WindowMessageData::getWindowHandle() const
+    auto WindowMessageData::getWindowHandle() const -> void *
     {
         return m_windowHandle;
     }
@@ -15,7 +15,7 @@ namespace fb
         m_windowHandle = windowHandle;
     }
 
-    u32 WindowMessageData::getMessage() const
+    auto WindowMessageData::getMessage() const -> u32
     {
         return m_message;
     }
@@ -25,7 +25,7 @@ namespace fb
         m_message = message;
     }
 
-    size_t WindowMessageData::getWParam() const
+    auto WindowMessageData::getWParam() const -> size_t
     {
         return m_wParam;
     }
@@ -35,7 +35,7 @@ namespace fb
         m_wParam = wParam;
     }
 
-    size_t WindowMessageData::getLParam() const
+    auto WindowMessageData::getLParam() const -> size_t
     {
         return m_lParam;
     }
@@ -45,7 +45,7 @@ namespace fb
         m_lParam = lParam;
     }
 
-    void *WindowMessageData::getEvent() const
+    auto WindowMessageData::getEvent() const -> void *
     {
         return m_event;
     }
@@ -55,7 +55,7 @@ namespace fb
         m_event = event;
     }
 
-    void *WindowMessageData::getSelf() const
+    auto WindowMessageData::getSelf() const -> void *
     {
         return m_self;
     }

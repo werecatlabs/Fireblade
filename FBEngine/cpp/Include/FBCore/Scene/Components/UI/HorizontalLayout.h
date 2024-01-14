@@ -8,17 +8,25 @@ namespace fb
     namespace scene
     {
 
+        /** Horizontal layout container. */
         class HorizontalLayout : public LayoutContainer
         {
         public:
-            HorizontalLayout( int width );
+            HorizontalLayout();
 
-            void add_widget( const Widget &widget );
+            void updateTransform() override;
 
-            void layout();
+            /** @copydoc LayoutContainer::getProperties */
+            SmartPtr<Properties> getProperties() const override;
 
-            int width;
-            std::vector<Widget> widgets;
+            /** @copydoc LayoutContainer::setProperties */
+            void setProperties( SmartPtr<Properties> properties ) override;
+
+            FB_CLASS_REGISTER_DECL;
+
+        protected:
+            // Spacing between child elements
+            f32 m_spacing = 5.0f;
         };
 
     }  // namespace scene

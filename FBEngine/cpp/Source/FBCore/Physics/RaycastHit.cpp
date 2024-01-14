@@ -3,138 +3,135 @@
 #include <FBCore/Interface/Physics/IPhysicsShape3.h>
 #include <FBCore/Interface/Physics/IRigidBody3.h>
 
-namespace fb
+namespace fb::physics
 {
-    namespace physics
+    auto RaycastHit::getCollider() const -> SmartPtr<IPhysicsShape3>
     {
-        SmartPtr<IPhysicsShape3> RaycastHit::getCollider() const
-        {
-            return m_collider;
-        }
+        return m_collider;
+    }
 
-        void RaycastHit::setCollider( SmartPtr<IPhysicsShape3> shape )
-        {
-            m_collider = shape;
-        }
+    void RaycastHit::setCollider( SmartPtr<IPhysicsShape3> shape )
+    {
+        m_collider = shape;
+    }
 
-        SmartPtr<IRigidBody3> RaycastHit::getRigidBody() const
-        {
-            return m_rigidbody;
-        }
+    auto RaycastHit::getRigidBody() const -> SmartPtr<IRigidBody3>
+    {
+        return m_rigidbody;
+    }
 
-        void RaycastHit::setRigidBody( SmartPtr<IRigidBody3> rigidBody )
-        {
-            m_rigidbody = rigidBody;
-        }
+    void RaycastHit::setRigidBody( SmartPtr<IRigidBody3> rigidBody )
+    {
+        m_rigidbody = rigidBody;
+    }
 
-        Vector2<real_Num> RaycastHit::getBarycentricCoordinate() const
-        {
-            return m_barycentricCoordinate;
-        }
+    auto RaycastHit::getBarycentricCoordinate() const -> Vector2<real_Num>
+    {
+        return m_barycentricCoordinate;
+    }
 
-        void RaycastHit::setBarycentricCoordinate( const Vector2<real_Num> &barycentricCoordinate )
-        {
-            m_barycentricCoordinate = barycentricCoordinate;
-        }
+    void RaycastHit::setBarycentricCoordinate( const Vector2<real_Num> &barycentricCoordinate )
+    {
+        m_barycentricCoordinate = barycentricCoordinate;
+    }
 
-        Vector2<real_Num> RaycastHit::getLightmapCoord() const
-        {
-            return m_lightmapCoord;
-        }
+    auto RaycastHit::getLightmapCoord() const -> Vector2<real_Num>
+    {
+        return m_lightmapCoord;
+    }
 
-        void RaycastHit::setLightmapCoord( const Vector2<real_Num> &lightmapCoord )
-        {
-            m_lightmapCoord = lightmapCoord;
-        }
+    void RaycastHit::setLightmapCoord( const Vector2<real_Num> &lightmapCoord )
+    {
+        m_lightmapCoord = lightmapCoord;
+    }
 
-        Vector3<real_Num> RaycastHit::getNormal() const
-        {
-            return m_normal;
-        }
+    auto RaycastHit::getNormal() const -> Vector3<real_Num>
+    {
+        return m_normal;
+    }
 
-        void RaycastHit::setNormal( const Vector3<real_Num> &normal )
-        {
-            m_normal = normal;
-        }
+    void RaycastHit::setNormal( const Vector3<real_Num> &normal )
+    {
+        m_normal = normal;
+    }
 
-        Vector3<real_Num> RaycastHit::getPoint() const
-        {
-            return m_point;
-        }
+    auto RaycastHit::getPoint() const -> Vector3<real_Num>
+    {
+        return m_point;
+    }
 
-        void RaycastHit::setPoint( const Vector3<real_Num> &point )
-        {
-            m_point = point;
-        }
+    void RaycastHit::setPoint( const Vector3<real_Num> &point )
+    {
+        m_point = point;
+    }
 
-        Vector2<real_Num> RaycastHit::getTextureCoord() const
-        {
-            return m_textureCoord;
-        }
+    auto RaycastHit::getTextureCoord() const -> Vector2<real_Num>
+    {
+        return m_textureCoord;
+    }
 
-        void RaycastHit::setTextureCoord( const Vector2<real_Num> &textureCoord )
-        {
-            m_textureCoord = textureCoord;
-        }
+    void RaycastHit::setTextureCoord( const Vector2<real_Num> &textureCoord )
+    {
+        m_textureCoord = textureCoord;
+    }
 
-        Vector2<real_Num> RaycastHit::getTextureCoord2() const
-        {
-            return m_textureCoord2;
-        }
+    auto RaycastHit::getTextureCoord2() const -> Vector2<real_Num>
+    {
+        return m_textureCoord2;
+    }
 
-        void RaycastHit::setTextureCoord2( const Vector2<real_Num> &textureCoord2 )
-        {
-            m_textureCoord2 = textureCoord2;
-        }
+    void RaycastHit::setTextureCoord2( const Vector2<real_Num> &textureCoord2 )
+    {
+        m_textureCoord2 = textureCoord2;
+    }
 
-        real_Num RaycastHit::getDistance() const
-        {
-            return m_distance;
-        }
+    auto RaycastHit::getDistance() const -> real_Num
+    {
+        return m_distance;
+    }
 
-        void RaycastHit::setDistance( real_Num distance )
-        {
-            m_distance = distance;
-        }
+    void RaycastHit::setDistance( real_Num distance )
+    {
+        m_distance = distance;
+    }
 
-        s32 RaycastHit::getTriangleIndex() const
-        {
-            return m_triangleIndex;
-        }
+    auto RaycastHit::getTriangleIndex() const -> s32
+    {
+        return m_triangleIndex;
+    }
 
-        void RaycastHit::setTriangleIndex( s32 triangleIndex )
-        {
-            m_triangleIndex = triangleIndex;
-        }
+    void RaycastHit::setTriangleIndex( s32 triangleIndex )
+    {
+        m_triangleIndex = triangleIndex;
+    }
 
-        u32 RaycastHit::getCollisionMask() const
-        {
-            return m_collisionMask;
-        }
+    auto RaycastHit::getCollisionMask() const -> u32
+    {
+        return m_collisionMask;
+    }
 
-        void RaycastHit::setCollisionMask( u32 collisionMask )
-        {
-            m_collisionMask = collisionMask;
-        }
+    void RaycastHit::setCollisionMask( u32 collisionMask )
+    {
+        m_collisionMask = collisionMask;
+    }
 
-        bool RaycastHit::getCheckStatic() const
-        {
-            return m_checkStatic;
-        }
+    auto RaycastHit::getCheckStatic() const -> bool
+    {
+        return m_checkStatic;
+    }
 
-        void RaycastHit::setCheckStatic( bool checkStatic )
-        {
-            m_checkStatic = checkStatic;
-        }
+    void RaycastHit::setCheckStatic( bool checkStatic )
+    {
+        m_checkStatic = checkStatic;
+    }
 
-        bool RaycastHit::getCheckDynamic() const
-        {
-            return m_checkDynamic;
-        }
+    auto RaycastHit::getCheckDynamic() const -> bool
+    {
+        return m_checkDynamic;
+    }
 
-        void RaycastHit::setCheckDynamic( bool checkDynamic )
-        {
-            m_checkDynamic = checkDynamic;
-        }
-    }  // namespace physics
-}  // end namespace fb
+    void RaycastHit::setCheckDynamic( bool checkDynamic )
+    {
+        m_checkDynamic = checkDynamic;
+    }
+}  // namespace fb::physics

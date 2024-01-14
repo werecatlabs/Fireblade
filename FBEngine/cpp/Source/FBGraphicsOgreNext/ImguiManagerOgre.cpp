@@ -34,10 +34,10 @@
 //#include <OgreD3D11Device.h>
 //#endif
 
-template<> ImguiManagerOgre* Ogre::Singleton<ImguiManagerOgre>::msSingleton = 0;
+template <>
+ImguiManagerOgre *Ogre::Singleton<ImguiManagerOgre>::msSingleton = nullptr;
 
-
-ImguiManagerOgre* ImguiManagerOgre::getSingletonPtr(void)
+auto ImguiManagerOgre::getSingletonPtr() -> ImguiManagerOgre *
 {
 	if (!msSingleton)
 	{
@@ -45,7 +45,7 @@ ImguiManagerOgre* ImguiManagerOgre::getSingletonPtr(void)
 	}
 	return msSingleton;
 }
-ImguiManagerOgre& ImguiManagerOgre::getSingleton(void)
+auto ImguiManagerOgre::getSingleton() -> ImguiManagerOgre &
 {
 	if (!msSingleton)
 	{
@@ -54,10 +54,7 @@ ImguiManagerOgre& ImguiManagerOgre::getSingleton(void)
 	return (*msSingleton);
 }
 
-ImguiManagerOgre::ImguiManagerOgre() :
-	mSceneMgr(0),
-	mLastRenderedFrame(4),
-	mFrameEnded(true)
+ImguiManagerOgre::ImguiManagerOgre() : mSceneMgr( nullptr ), mLastRenderedFrame( 4 ), mFrameEnded( true )
 {
 }
 ImguiManagerOgre::~ImguiManagerOgre()
@@ -149,9 +146,11 @@ void ImguiManagerOgre::render()
 
 		//Cancel rendering if not necessary
 		//or if newFrame didn't got called
-	if (mFrameEnded)
-		return;
-	mFrameEnded = true;
+    if( mFrameEnded )
+    {
+        return;
+    }
+    mFrameEnded = true;
 
 	int currentFrame = ImGui::GetFrameCount();
 	if (currentFrame == mLastRenderedFrame)
@@ -226,12 +225,12 @@ void ImguiManagerOgre::render()
 			scTop = scTop < 0 ? 0 : (scTop > vpHeight ? vpHeight : scTop);
 			scBottom = scBottom < 0 ? 0 : (scBottom > vpHeight ? vpHeight : scBottom);
 
-			float left = (float)scLeft / (float)vpWidth;
-			float top = (float)scTop / (float)vpHeight;
-			float width = (float)(scRight - scLeft) / (float)vpWidth;
-			float height = (float)(scBottom - scTop) / (float)vpHeight;
+            float left = static_cast<float>( scLeft ) / static_cast<float>( vpWidth );
+            float top = static_cast<float>( scTop ) / static_cast<float>( vpHeight );
+            float width = static_cast<float>( scRight - scLeft ) / static_cast<float>( vpWidth );
+            float height = static_cast<float>( scBottom - scTop ) / static_cast<float>( vpHeight );
 
-			//vp->setScissors(left, top, width, height);
+            //vp->setScissors(left, top, width, height);
 			//mSceneMgr->getDestinationRenderSystem()->_setViewport(vp);
 
 			//render the object
@@ -435,11 +434,10 @@ void ImguiManagerOgre::createMaterial()
 		pixelShaderUnified = mgr.createProgram("imgui/FP", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, "unified", Ogre::GPT_FRAGMENT_PROGRAM);
 	}
 
-	Ogre::UnifiedHighLevelGpuProgram* vertexShaderPtr = static_cast<Ogre::UnifiedHighLevelGpuProgram*>(vertexShaderUnified.get());
-	Ogre::UnifiedHighLevelGpuProgram* pixelShaderPtr = static_cast<Ogre::UnifiedHighLevelGpuProgram*>(pixelShaderUnified.get());
+    auto *vertexShaderPtr = static_cast<Ogre::UnifiedHighLevelGpuProgram *>( vertexShaderUnified.get() );
+    auto *pixelShaderPtr = static_cast<Ogre::UnifiedHighLevelGpuProgram *>( pixelShaderUnified.get() );
 
-
-	if (vertexShaderD3D11.isNull())
+    if (vertexShaderD3D11.isNull())
 	{
 		vertexShaderD3D11 = mgr.createProgram("imgui/VP/D3D11", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
 			"hlsl", Ogre::GPT_VERTEX_PROGRAM);
@@ -547,8 +545,9 @@ void ImguiManagerOgre::createFontTexture()
 	float guiScale = 1;
 	if(guiScale >= 2.0f){
 		//13 being the default font size.
-		ImFont* font = io.Fonts->AddFontFromMemoryCompressedBase85TTF(MyFont_compressed_data_base85, (int)(guiScale*13));
-        #ifdef __APPLE__
+        ImFont *font = io.Fonts->AddFontFromMemoryCompressedBase85TTF(
+            MyFont_compressed_data_base85, static_cast<int>( guiScale * 13 ) );
+#ifdef __APPLE__
             //This is a work around for macOS.
             //Currently the only way I've found to represent high-res fonts with the metal renderer is to do this.
             //My theory is that this is something to do with my metal imgui implementation, but I haven't found the cause yet.

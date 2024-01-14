@@ -2,48 +2,43 @@
 #include <FBCore/Scene/Components/Camera/ThirdPersonCameraController.h>
 #include <FBCore/FBCore.h>
 
-namespace fb
+namespace fb::scene
 {
-    namespace scene
+    FB_CLASS_REGISTER_DERIVED( fb, ThirdPersonCameraController, CameraController );
+
+    ThirdPersonCameraController::ThirdPersonCameraController() = default;
+
+    ThirdPersonCameraController::~ThirdPersonCameraController()
     {
-        FB_CLASS_REGISTER_DERIVED( fb, ThirdPersonCameraController, CameraController );
+        unload( nullptr );
+    }
 
-        ThirdPersonCameraController::ThirdPersonCameraController()
-        {
-        }
+    void ThirdPersonCameraController::load( SmartPtr<ISharedObject> data )
+    {
+    }
 
-        ThirdPersonCameraController::~ThirdPersonCameraController()
-        {
-            unload( nullptr );
-        }
+    void ThirdPersonCameraController::unload( SmartPtr<ISharedObject> data )
+    {
+    }
 
-        void ThirdPersonCameraController::load( SmartPtr<ISharedObject> data )
-        {
-        }
+    void ThirdPersonCameraController::postUpdate()
+    {
+    }
 
-        void ThirdPersonCameraController::unload( SmartPtr<ISharedObject> data )
-        {
-        }
+    auto ThirdPersonCameraController::getChildObjects() const -> Array<SmartPtr<ISharedObject>>
+    {
+        auto objects = CameraController::getChildObjects();
+        return objects;
+    }
 
-        void ThirdPersonCameraController::postUpdate()
-        {
-        }
+    auto ThirdPersonCameraController::getProperties() const -> SmartPtr<Properties>
+    {
+        auto properties = CameraController::getProperties();
+        return properties;
+    }
 
-        Array<SmartPtr<ISharedObject>> ThirdPersonCameraController::getChildObjects() const
-        {
-            auto objects = CameraController::getChildObjects();
-            return objects;
-        }
-
-        SmartPtr<Properties> ThirdPersonCameraController::getProperties() const
-        {
-            auto properties = CameraController::getProperties();
-            return properties;
-        }
-
-        void ThirdPersonCameraController::setProperties( SmartPtr<Properties> properties )
-        {
-            CameraController::setProperties( properties );
-        }
-    }  // namespace scene
-}  // namespace fb
+    void ThirdPersonCameraController::setProperties( SmartPtr<Properties> properties )
+    {
+        CameraController::setProperties( properties );
+    }
+}  // namespace fb::scene

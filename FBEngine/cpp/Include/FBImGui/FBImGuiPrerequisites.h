@@ -41,7 +41,7 @@ namespace fb
         class ImGuiWindowT;
 
         class ImGuiMenu;
-        class ImGuiMenubar;
+        class ImGuiMenuBar;
         class ImGuiMenuItem;
     } // end namespace ui
 }     // end namespace fb

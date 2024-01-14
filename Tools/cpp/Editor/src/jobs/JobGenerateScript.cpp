@@ -3,187 +3,179 @@
 #include "commands/AddNewScriptCmd.h"
 #include "ui/ProjectWindow.h"
 #include "editor/EditorManager.h"
-
 #include <FBCore/FBCore.h>
 #include <fstream>
 
-namespace fb
+namespace fb::editor
 {
-    namespace editor
+
+    JobGenerateScript::JobGenerateScript() = default;
+
+    JobGenerateScript::~JobGenerateScript() = default;
+
+    void JobGenerateScript::execute()
     {
+        // auto applicationManager = core::ApplicationManager::instance();
+        // SmartPtr<IFileSystem>& fileSystem = engine->getFileSystem();
 
-        JobGenerateScript::JobGenerateScript() : m_isExistingScript( false )
-        {
-        }
+        // ApplicationManager* appRoot = ApplicationManager::instance();
+        // SmartPtr<Project> project = appRoot->getProject();
+        // SmartPtr<UIManager> guiMgr = appRoot->getGUIManager();
 
-        JobGenerateScript::~JobGenerateScript()
-        {
-        }
+        // AppFrame* appFrame = guiMgr->getAppFrame();
+        // if(!appFrame)
+        //{
+        //	FB_EXCEPTION("Error: App frame null! ");
+        //	return;
+        // }
 
-        void JobGenerateScript::execute()
-        {
-            // auto applicationManager = core::IApplicationManager::instance();
-            // SmartPtr<IFileSystem>& fileSystem = engine->getFileSystem();
+        // ProjectWindow* projectWindow = guiMgr->getProjectWindow();
+        // if(!projectWindow)
+        //{
+        //	FB_EXCEPTION("Error: projectWindow null! ");
+        //	return;
+        // }
 
-            // ApplicationManager* appRoot = IApplicationManager::instance();
-            // SmartPtr<Project> project = appRoot->getProject();
-            // SmartPtr<UIManager> guiMgr = appRoot->getGUIManager();
+        // SmartPtr<EventTemplate> event = getEvent();
+        // EventTemplateContainer* eventTemplateContainer = event->getOwner();
+        // SmartPtr<IDirector> objectTemplate = eventTemplateContainer->getOwner();
 
-            // AppFrame* appFrame = guiMgr->getAppFrame();
-            // if(!appFrame)
-            //{
-            //	FB_EXCEPTION("Error: App frame null! ");
-            //	return;
-            // }
+        // Properties templateProperties;
+        // objectTemplate->getProperties(templateProperties);
 
-            // ProjectWindow* projectWindow = guiMgr->getProjectWindow();
-            // if(!projectWindow)
-            //{
-            //	FB_EXCEPTION("Error: projectWindow null! ");
-            //	return;
-            // }
+        // String className;
 
-            // SmartPtr<EventTemplate> event = getEvent();
-            // EventTemplateContainer* eventTemplateContainer = event->getOwner();
-            // SmartPtr<IDirector> objectTemplate = eventTemplateContainer->getOwner();
+        // String templateType = objectTemplate->getEditableType();
+        // if(templateType==("EntityTemplate"))
+        //{
+        //	templateProperties.getPropertyValue("name", className);
+        // }
+        // else
+        //{
+        //	templateProperties.getPropertyValue("className", className);
+        // }
 
-            // Properties templateProperties;
-            // objectTemplate->getProperties(templateProperties);
+        //// build script db
 
-            // String className;
+        //// search for existing function
 
-            // String templateType = objectTemplate->getEditableType();
-            // if(templateType==("EntityTemplate"))
-            //{
-            //	templateProperties.getPropertyValue("name", className);
-            // }
-            // else
-            //{
-            //	templateProperties.getPropertyValue("className", className);
-            // }
+        //// add function to source file
 
-            //// build script db
+        //// find source file
 
-            //// search for existing function
+        //// check if script exists
+        // bool isExistingScript = false;
+        // String fileName;
+        // SmartPtr<ScriptTemplate> existingScriptTemplate;
 
-            //// add function to source file
+        // Array<SmartPtr<ScriptTemplate>> scriptTemplates = project->getScriptTemplates();
+        // for(u32 i=0; i<scriptTemplates.size(); ++i)
+        //{
+        //	SmartPtr<ScriptTemplate> scriptTemplate = scriptTemplates[i];
 
-            //// find source file
+        //	// temp code assume to the class name equals the file name
+        //	fileName = scriptTemplate->getFileName();
+        //	String templateClassName = StringUtil::cutFilenameExtension(fileName);
 
-            //// check if script exists
-            // bool isExistingScript = false;
-            // String fileName;
-            // SmartPtr<ScriptTemplate> existingScriptTemplate;
+        //	if(className==(templateClassName))
+        //	{
+        //		existingScriptTemplate = scriptTemplate;
+        //		isExistingScript = true;
+        //		break;
+        //	}
+        //}
 
-            // Array<SmartPtr<ScriptTemplate>> scriptTemplates = project->getScriptTemplates();
-            // for(u32 i=0; i<scriptTemplates.size(); ++i)
-            //{
-            //	SmartPtr<ScriptTemplate> scriptTemplate = scriptTemplates[i];
+        //// check class exists
 
-            //	// temp code assume to the class name equals the file name
-            //	fileName = scriptTemplate->getFileName();
-            //	String templateClassName = StringUtil::cutFilenameExtension(fileName);
+        //// generate script
+        // String filePath;
 
-            //	if(className==(templateClassName))
-            //	{
-            //		existingScriptTemplate = scriptTemplate;
-            //		isExistingScript = true;
-            //		break;
-            //	}
-            //}
+        // if(!isExistingScript)
+        //{
+        //	filePath = guiMgr->saveScript(className);
+        //	if(filePath == StringUtil::EmptyString)
+        //		return;
+        // }
+        // else
+        //{
+        //	if(existingScriptTemplate)
+        //	{
+        //		filePath = existingScriptTemplate->getFilePath();
+        //		filePath += "/";
+        //		filePath += existingScriptTemplate->getFileName();
+        //	}
+        //	else
+        //	{
+        //		FB_EXCEPTION("Error: Unexpected null. ");
+        //	}
+        // }
 
-            //// check class exists
+        // String path = Path::getFilePath(filePath);
+        // path += String("/");
+        // fileSystem->addFileArchive(path, true, true, FB_ARCH_TYPE_FOLDER);
 
-            //// generate script
-            // String filePath;
+        // String scriptFullFilePath = Path::getFullPath(project->getProjectDirectory(), path);
 
-            // if(!isExistingScript)
-            //{
-            //	filePath = guiMgr->saveScript(className);
-            //	if(filePath == StringUtil::EmptyString)
-            //		return;
-            // }
-            // else
-            //{
-            //	if(existingScriptTemplate)
-            //	{
-            //		filePath = existingScriptTemplate->getFilePath();
-            //		filePath += "/";
-            //		filePath += existingScriptTemplate->getFileName();
-            //	}
-            //	else
-            //	{
-            //		FB_EXCEPTION("Error: Unexpected null. ");
-            //	}
-            // }
+        // if(!isExistingScript)
+        //{
+        //	Properties properties;
+        //	properties.setProperty("filePath", path, String("string"));
+        //	properties.setProperty("className", className, String("string"));
+        //	properties.setProperty("fileName", Path::getFileName(filePath), String("string"));
 
-            // String path = Path::getFilePath(filePath);
-            // path += String("/");
-            // fileSystem->addFileArchive(path, true, true, FB_ARCH_TYPE_FOLDER);
+        //	SmartPtr<AddNewScriptCmd> cmd(new AddNewScriptCmd(properties));
+        //	engine->getCommandManager()->add(cmd);
+        //	cmd->execute();
 
-            // String scriptFullFilePath = Path::getFullPath(project->getProjectDirectory(), path);
+        //	existingScriptTemplate = cmd->getScriptTemplate();
+        //}
 
-            // if(!isExistingScript)
-            //{
-            //	Properties properties;
-            //	properties.setProperty("filePath", path, String("string"));
-            //	properties.setProperty("className", className, String("string"));
-            //	properties.setProperty("fileName", Path::getFileName(filePath), String("string"));
+        //// generate script
+        // if(!isExistingScript)
+        //{
+        //	ScriptGenerator generator;
+        //	String classScriptStr = generator.createClass(className);
 
-            //	SmartPtr<AddNewScriptCmd> cmd(new AddNewScriptCmd(properties));
-            //	engine->getCommandManager()->add(cmd);
-            //	cmd->execute();
+        //	std::ofstream scriptStream;
+        //	scriptStream.open( scriptFullFilePath.c_str() );
 
-            //	existingScriptTemplate = cmd->getScriptTemplate();
-            //}
+        //	scriptStream << classScriptStr.c_str() << std::endl;
 
-            //// generate script
-            // if(!isExistingScript)
-            //{
-            //	ScriptGenerator generator;
-            //	String classScriptStr = generator.createClass(className);
+        //	// generate function
+        //	String functionScriptStr = generator.createFunction(className, event);
+        //	scriptStream << functionScriptStr.c_str() << std::endl;
 
-            //	std::ofstream scriptStream;
-            //	scriptStream.open( scriptFullFilePath.c_str() );
+        //	// close the stream
+        //	scriptStream.close();
+        //}
+        // else
+        //{
+        //	ScriptGenerator generator;
 
-            //	scriptStream << classScriptStr.c_str() << std::endl;
+        //	std::ofstream scriptStream;
+        //	scriptStream.open( (scriptFullFilePath + String("/") +
+        // existingScriptTemplate->getFileName()).c_str(), std::ofstream::app );
 
-            //	// generate function
-            //	String functionScriptStr = generator.createFunction(className, event);
-            //	scriptStream << functionScriptStr.c_str() << std::endl;
+        //	// generate function
+        //	String functionScriptStr = generator.createFunction(className, event);
+        //	scriptStream << functionScriptStr.c_str() << std::endl;
 
-            //	// close the stream
-            //	scriptStream.close();
-            //}
-            // else
-            //{
-            //	ScriptGenerator generator;
+        //	// close the stream
+        //	scriptStream.close();
+        //}
 
-            //	std::ofstream scriptStream;
-            //	scriptStream.open( (scriptFullFilePath + String("/") +
-            // existingScriptTemplate->getFileName()).c_str(), std::ofstream::app );
+        // setScriptTemplate(existingScriptTemplate);
+        // setExistingScript(isExistingScript);
+    }
 
-            //	// generate function
-            //	String functionScriptStr = generator.createFunction(className, event);
-            //	scriptStream << functionScriptStr.c_str() << std::endl;
+    auto JobGenerateScript::isExistingScript() const -> bool
+    {
+        return m_isExistingScript;
+    }
 
-            //	// close the stream
-            //	scriptStream.close();
-            //}
+    void JobGenerateScript::setExistingScript( bool val )
+    {
+        m_isExistingScript = val;
+    }
 
-            // setScriptTemplate(existingScriptTemplate);
-            // setExistingScript(isExistingScript);
-        }
-
-        bool JobGenerateScript::isExistingScript() const
-        {
-            return m_isExistingScript;
-        }
-
-        void JobGenerateScript::setExistingScript( bool val )
-        {
-            m_isExistingScript = val;
-        }
-
-    }  // end namespace editor
-}  // end namespace fb
+}  // namespace fb::editor

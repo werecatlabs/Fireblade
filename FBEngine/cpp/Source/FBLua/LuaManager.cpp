@@ -52,7 +52,7 @@ namespace fb
 
         lua_pop( luaState, 1 );
 
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         SmartPtr<LuaManager> scriptMgr = applicationManager->getScriptManager();
         if( scriptMgr )
         {
@@ -118,7 +118,7 @@ namespace fb
 
                 //doc.Accept( &printer );
 
-                // auto engine = core::IApplicationManager::instance();
+                // auto engine = core::ApplicationManager::instance();
                 //String outputStr = printer.CStr();
                 //engine->getOutputManager()->output( outputStr );
             }
@@ -126,7 +126,7 @@ namespace fb
             --level;
         }
 
-        auto engine = core::IApplicationManager::instance();
+        auto engine = core::ApplicationManager::instance();
         SmartPtr<LuaManager> scriptMgr = engine->getScriptManager();
         scriptMgr->setError( true );
 
@@ -165,7 +165,7 @@ namespace fb
             --level;
         }
 
-        auto engine = core::IApplicationManager::instance();
+        auto engine = core::ApplicationManager::instance();
         SmartPtr<LuaManager> scriptMgr = engine->getScriptManager();
         scriptMgr->setError( true );
 
@@ -246,7 +246,7 @@ namespace fb
                 return;
             }
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto fileSystem = applicationManager->getFileSystem();
@@ -295,7 +295,7 @@ namespace fb
         {
             RecursiveMutex::ScopedLock lock( m_scriptMutex );
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto luaState = getLuaState();
@@ -1342,20 +1342,18 @@ namespace fb
         bindAABB( luaState );
 
         bindAi( luaState );
-        bindScriptProperties( luaState );
         bindFSM( luaState );
 
-        bindEntityMgr( luaState );
-        bindEntity( luaState );
+        bindSceneManager( luaState );
+        bindScene( luaState );
 
-        bindSColorf( luaState );
+        bindColour( luaState );
         bindInput( luaState );
-        //bindFlash( luaState );
         bindVideo( luaState );
         bindSound( luaState );
         bindComponent( luaState );
         bindGraphicsSystem( luaState );
-        bindGUIManager( luaState );
+        bindUI( luaState );
         bindPhysics( luaState );
         bindDatabase( luaState );
         bindQuery( luaState );
@@ -1427,7 +1425,7 @@ namespace fb
 
         try
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
@@ -1482,9 +1480,11 @@ namespace fb
 
     void LuaManager::destroyObject( SmartPtr<ISharedObject> object )
     {
+        RecursiveMutex::ScopedLock lock( m_scriptMutex );
+
         if( object )
         {
-            if( SmartPtr<LuaObjectData> objectData = object->getScriptData() )
+            if( auto objectData = object->getScriptData() )
             {
                 objectData->unload( nullptr );
 
@@ -1602,7 +1602,7 @@ namespace fb
             if( luaObject )
             {
 #if FB_PROFILE_LUA_CALLS
-                auto engine = core::IApplicationManager::instance();
+                auto engine = core::ApplicationManager::instance();
                 auto profiler = engine->getProfiler();
 
                 String profileClass = data->getClassName();
@@ -1700,7 +1700,7 @@ namespace fb
 
     void LuaManager::update()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
         auto timer = applicationManager->getTimer();
@@ -1748,7 +1748,7 @@ namespace fb
         {
             RecursiveMutex::ScopedLock lock( m_scriptMutex );
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             auto fileSystem = applicationManager->getFileSystem();
@@ -1986,7 +1986,7 @@ namespace fb
 
         //String outputStr = printer.CStr();
 
-        // auto engine = core::IApplicationManager::instance();
+        // auto engine = core::ApplicationManager::instance();
         //engine->getOutputManager()->output( outputStr );
     }
 
@@ -2077,16 +2077,6 @@ namespace fb
     bool LuaManager::getEnableFullDebug() const
     {
         return m_enableFullDebug;
-    }
-
-    u32 LuaManager::getTaskId() const
-    {
-        return m_taskId;
-    }
-
-    void LuaManager::setTaskId( u32 taskId )
-    {
-        m_taskId = taskId;
     }
 
     hash_type LuaManager::ScriptProfile::getHash() const

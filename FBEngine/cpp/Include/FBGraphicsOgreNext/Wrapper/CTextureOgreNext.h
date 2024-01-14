@@ -2,20 +2,24 @@
 #define _CTextureOgre_H
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
-#include <FBCore/Interface/Graphics/ITexture.h>
-#include <FBCore/Graphics/CTexture.h>
+#include <FBCore/Graphics/Texture.h>
 
 namespace fb
 {
     namespace render
     {
 
-        class CTextureOgreNext : public CTexture
+        /** Ogre texture implementation. */
+        class CTextureOgreNext : public Texture
         {
         public:
+            /** Constructor. */
             CTextureOgreNext();
+
+            /** Destructor. */
             ~CTextureOgreNext() override;
 
+            /** @copydoc Texture::save */
             void save() override;
 
             /** @copydoc ISharedObject::load */
@@ -27,11 +31,16 @@ namespace fb
             /** @copydoc ISharedObject::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
+            /** @copydoc Texture::getSize */
             Vector2I getSize() const override;
+
+            /** @copydoc Texture::setSize */
             void setSize( const Vector2I &size ) override;
 
+            /** @copydoc Texture::_getObject */
             void _getObject( void **ppObject ) const override;
 
+            /** @copydoc Texture::getActualSize */
             Vector2I getActualSize() const override;
 
             /** Gets the gpu texture. */
@@ -49,14 +58,23 @@ namespace fb
             /** @copydoc ITexture::setUsageFlags */
             void setUsageFlags( u32 usageFlags ) override;
 
+            /** Gets the ogre texture. */
             Ogre::TextureGpu *getTexture() const;
+
+            /** Sets the ogre texture. */
             void setTexture( Ogre::TextureGpu *texture );
 
         protected:
-            void createStateObject();
+            /** @copydoc Texture::createStateObject */
+            void createStateObject() override;
 
+            /** Time to process the next resize event. */
             time_interval m_nextResize = 0.0;
+
+            /** The ogre texture. */
             Ogre::TextureGpu *m_texture = nullptr;
+
+            /** The size of the texture. */
             Vector2I m_size = Vector2I::zero();
         };
     }  // end namespace render

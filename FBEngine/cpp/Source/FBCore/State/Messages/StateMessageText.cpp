@@ -6,7 +6,7 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageText, StateMessage );
 
-    String StateMessageText::getText() const
+    auto StateMessageText::getText() const -> String
     {
         return m_text;
     }

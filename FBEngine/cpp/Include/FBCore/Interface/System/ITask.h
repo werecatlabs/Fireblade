@@ -82,7 +82,7 @@ namespace fb
          *
          * @param job The job to queue.
          */
-        virtual void queueJob( SmartPtr<IJob> job ) = 0;
+        virtual void addJob( SmartPtr<IJob> job ) = 0;
 
         /**
          * @brief Sets whether to run the task on the primary thread or not.

@@ -67,8 +67,7 @@ namespace fb
                         .def( self + other<QuaternionF>() )
                         .def( self - other<QuaternionF>() )
                         .def( self * other<QuaternionF>() )
-                        .def( self * f32() )
-                        .def( tostring( self ) )];
+                        .def( self * f32() )];
     }
 
 }  // end namespace fb

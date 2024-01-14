@@ -27,7 +27,7 @@ namespace fb
         delete[] pool_;
     }
 
-    void *MemoryPool::allocate()
+    auto MemoryPool::allocate() -> void *
     {
         if( head_ == nullptr )
         {
