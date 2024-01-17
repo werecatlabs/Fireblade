@@ -14,6 +14,7 @@
 namespace fb::scene
 {
     FB_CLASS_REGISTER_DERIVED( fb::scene, Light, IComponent );
+    const hash_type Light::lightHash = StringUtil::getHash( "Light" );
 
     u32 Light::m_nameExt = 0;
 
@@ -124,11 +125,11 @@ namespace fb::scene
         auto &graphicsSystem = applicationManager->getGraphicsSystem();
         auto &debug = graphicsSystem->getDebug();
 
-        static const auto hash = StringUtil::getHash( "Light" );
-
-        auto &actor = getActor();
-        auto pos = actor->getPosition();
-        debug->drawLine( hash, pos, pos + Vector3F::unitX(), 0xFFFFFF );
+        if( auto actor = getActor() )
+        {
+            auto pos = actor->getPosition();
+            debug->drawLine( lightHash, pos, pos + Vector3F::unitX(), 0xFFFFFF );
+        }
     }
 
     void Light::updateFlags( u32 flags, u32 oldFlags )

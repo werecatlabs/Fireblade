@@ -7,33 +7,39 @@ namespace fb
 {
     namespace scene
     {
-
+        /** Implementation for a component system. */
         class ComponentSystem : public IComponentSystem
         {
         public:
+            /** @brief Constructor. */
             ComponentSystem();
-            virtual ~ComponentSystem();
 
+            /** @brief Destructor. */
+            ~ComponentSystem() override;
+
+            /** @copydoc IComponentSystem::load */
             void load( SmartPtr<ISharedObject> data ) override;
+
+            /** @copydoc IComponentSystem::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            u32 addComponent( SmartPtr<IComponent> component );
+            u32 addComponent( SmartPtr<IComponent> component ) override;
 
-            void removeComponent( SmartPtr<IComponent> component );
+            void removeComponent( SmartPtr<IComponent> component ) override;
 
-            void removeComponent( u32 id );
+            void removeComponent( u32 id ) override;
 
-            void reserve( size_t size );
+            void reserve( size_t size ) override;
 
-            size_t getSize() const;
-            void setSize( size_t size );
+            size_t getSize() const override;
+            void setSize( size_t size ) override;
 
-            hash_type getStateType() const;
+            hash_type getStateType() const override;
 
-            void setStateType( hash_type type );
+            void setStateType( hash_type type ) override;
 
-            SmartPtr<IState> getState( u32 id ) const;
-            void setState( u32 id, SmartPtr<IState> state );
+            SmartPtr<IState> getState( u32 id ) const override;
+            void setState( u32 id, SmartPtr<IState> state ) override;
 
             u32 getGrowSize() const;
 
@@ -66,8 +72,7 @@ namespace fb
             Array<Atomic<LoadingState>> m_loadingStates;
             mutable RecursiveMutex m_mutex;
         };
-
-    }  // namespace scene
-}  // namespace fb
+    } // namespace scene
+}     // namespace fb
 
 #endif  // ComponentSystem_h__

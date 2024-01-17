@@ -2,18 +2,21 @@
 #define CanvasTransformSystem_h__
 
 #include <FBCore/Scene/Systems/ComponentSystem.h>
-#include <FBCore/Scene/Components/UI/LayoutTransform.h>
 
 namespace fb
 {
     namespace scene
     {
 
+        /** Component system for a layout transform. */
         class LayoutTransformSystem : public ComponentSystem
         {
         public:
+            /** @brief Constructor. */
             LayoutTransformSystem();
-            ~LayoutTransformSystem();
+
+            /** @brief Destructor. */
+            ~LayoutTransformSystem() override;
 
             void update() override;
 
@@ -38,8 +41,7 @@ namespace fb
                                                   const Vector2F &anchorMin, const Vector2F &anchorMax,
                                                   f32 &left, f32 &right, f32 &top, f32 &bottom );
         };
-
-    }  // namespace scene
-}  // namespace fb
+    } // namespace scene
+}     // namespace fb
 
 #endif  // CanvasTransformSystem_h__

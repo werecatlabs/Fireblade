@@ -10,7 +10,7 @@ namespace fb
 {
     namespace scene
     {
-        /** Implementation of the camera manager. */
+        /** Implementation of a camera manager. */
         class CameraManager : public ICameraManager
         {
         public:

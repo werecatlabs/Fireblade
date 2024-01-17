@@ -15,11 +15,9 @@ namespace fb
             FpsCameraController();
             ~FpsCameraController() override;
 
-            void initialise();
-
             void update() override;
 
-            bool OnEvent( const SmartPtr<IInputEvent> &event );
+            bool handleInputEvent( const SmartPtr<IInputEvent> &event );
 
             void setPosition( const Vector3F &position );
             Vector3F getPosition() const;
@@ -43,6 +41,8 @@ namespace fb
             void addCamera( SmartPtr<render::ICamera> camera );
             bool removeCamera( SmartPtr<render::ICamera> camera );
 
+            FB_CLASS_REGISTER_DECL;
+
         private:
             struct SCamKeyMap
             {
@@ -57,8 +57,6 @@ namespace fb
 
             bool isMouseKeyDown( s32 key );
             void allKeysUp();
-
-            String m_name;
 
             Array<SmartPtr<render::ICamera>> m_cameras;
             SmartPtr<render::ICamera> m_selectedCamera;

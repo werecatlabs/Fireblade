@@ -19,16 +19,19 @@ namespace fb
 
             static const Vector3F DEFAULT_SPHERICAL_COORDS;
 
+            /** Constructor. */
             SphericalCameraController();
+
+            /** Destructor. */
             ~SphericalCameraController() override;
 
-            /** @copydoc IObject::load */
+            /** @copydoc CameraController::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::unload */
+            /** @copydoc CameraController::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::update */
+            /** @copydoc CameraController::update */
             void update() override;
 
             bool handleEvent( const SmartPtr<IInputEvent> &event );

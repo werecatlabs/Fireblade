@@ -1,9 +1,11 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Graphics/Light.h>
 #include <FBCore/State/States/LightState.h>
+#include <FBCore/Core/StringUtil.h>
 
 namespace fb::render
 {
+
     Light::Light() = default;
 
     Light::~Light() = default;

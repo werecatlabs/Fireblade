@@ -14,6 +14,8 @@ namespace fb
         class Light : public Component
         {
         public:
+            static const hash_type lightHash;
+
             /** Constructor. */
             Light();
 

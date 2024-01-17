@@ -1,6 +1,10 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/Camera/ThirdPersonCameraController.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Interface/System/ITimer.h>
+#include <FBCore/Interface/Scene/ISceneManager.h>
+#include <FBCore/Interface/Scene/ITransform.h>
+#include <FBCore/Interface/Input/IInputDeviceManager.h>
 
 namespace fb::scene
 {

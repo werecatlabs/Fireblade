@@ -459,16 +459,16 @@ namespace fb::scene
                 {
                     if( applicationManager->isPlaying() )
                     {
-                        scene->play();
+                        scene->setState( scene::IScene::State::Play );
                     }
                     else
                     {
-                        scene->edit();
+                        scene->setState( scene::IScene::State::Edit );
                     }
                 }
                 else
                 {
-                    scene->play();
+                    scene->setState( scene::IScene::State::Play );
                 }
             }
 
@@ -730,7 +730,7 @@ namespace fb::scene
         auto scene = fb::static_pointer_cast<Scene>( getCurrentScene() );
         if( scene )
         {
-            scene->play();
+            scene->setState( scene::IScene::State::Play );
         }
     }
 
@@ -739,7 +739,7 @@ namespace fb::scene
         auto scene = fb::static_pointer_cast<Scene>( getCurrentScene() );
         if( scene )
         {
-            scene->edit();
+            scene->setState( scene::IScene::State::Edit );
         }
     }
 
@@ -748,7 +748,7 @@ namespace fb::scene
         auto scene = fb::static_pointer_cast<Scene>( getCurrentScene() );
         if( scene )
         {
-            scene->stop();
+            scene->setState( scene::IScene::State::None );
         }
     }
 

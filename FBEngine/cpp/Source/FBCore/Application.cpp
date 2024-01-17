@@ -249,7 +249,7 @@ namespace fb::core
         auto sceneManager = applicationManager->getSceneManager();
         auto scene = sceneManager->getCurrentScene();
 
-        scene->play();
+        scene->setState( scene::IScene::State::Play);
         taskManager->setState( ITaskManager::State::FreeStep );
         threadPool->setState( IThreadPool::State::Start );
 
@@ -679,7 +679,7 @@ namespace fb::core
 
         auto scene = factoryManager->make_object<scene::IScene>();
         scene->load( nullptr );
-        scene->setName( "Application" );
+        scene->setLabel( "Application" );
         sceneManager->setCurrentScene( scene );
         FB_ASSERT( scene->isValid() );
     }

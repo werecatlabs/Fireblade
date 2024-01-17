@@ -3,8 +3,6 @@
 
 #include <FBCore/Interface/Scene/IScene.h>
 #include <FBCore/Interface/Scene/IActor.h>
-#include <FBCore/Core/Array.h>
-#include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Core/ConcurrentQueue.h>
 #include <FBCore/Core/ConcurrentHashMap.h>
 #include <FBCore/Core/FixedArray.h>
@@ -14,7 +12,6 @@ namespace fb
 {
     namespace scene
     {
-
         /** Scene implementation. */
         class Scene : public Resource<IScene>
         {
@@ -35,10 +32,10 @@ namespace fb
             void saveScene() override;
 
             /** The name of the scene. */
-            String getName() const override;
+            String getLabel() const override;
 
             /** The name of the scene. */
-            void setName( const String &name ) override;
+            void setLabel( const String &label ) override;
 
             /** @copydoc IScene::load */
             void load( SmartPtr<ISharedObject> data ) override;
@@ -57,9 +54,6 @@ namespace fb
 
             /** @copydoc IScene::postUpdate */
             void postUpdate() override;
-
-            SharedPtr<ConcurrentArray<SmartPtr<IActor>>> getUpdateArray( Thread::UpdateState updateState,
-                                                                         s32 task );
 
             void addActor( SmartPtr<IActor> actor ) override;
             void removeActor( SmartPtr<IActor> actor ) override;
@@ -81,9 +75,10 @@ namespace fb
             void unregisterAll( SmartPtr<IActor> object ) override;
 
             SharedPtr<ConcurrentArray<SmartPtr<IActor>>> getRegisteredObjects(
-                Thread::UpdateState updateState, Thread::Task task ) const;
+                Thread::UpdateState updateState, Thread::Task task ) const override;
+
             void setRegisteredObjects( Thread::UpdateState updateState, Thread::Task task,
-                                       SharedPtr<ConcurrentArray<SmartPtr<IActor>>> objects );
+                                       SharedPtr<ConcurrentArray<SmartPtr<IActor>>> objects ) override;
 
             void sortObjects();
 
@@ -92,13 +87,6 @@ namespace fb
             SmartPtr<ISharedObject> toData() const override;
 
             void fromData( SmartPtr<ISharedObject> data ) override;
-
-            String getFilePath() const override;
-            void setFilePath( const String &filePath ) override;
-
-            void play() override;
-            void edit() override;
-            void stop() override;
 
             /** Sets the component state. */
             void setState( State state ) override;
@@ -129,19 +117,18 @@ namespace fb
             State m_state = State::None;
             SceneLoadingState m_sceneLoadingState = SceneLoadingState::None;
 
-            String m_filePath;
-            String m_name;
+            String m_label;
 
             ConcurrentQueue<SmartPtr<IActor>> m_playQueue;
             ConcurrentQueue<SmartPtr<IActor>> m_editQueue;
 
             AtomicSharedPtr<Array<SmartPtr<IActor>>> m_actors;
             FixedArray<FixedArray<SharedPtr<ConcurrentArray<SmartPtr<IActor>>>,
-                                  static_cast<s32>( Thread::Task::Count )>,
-                       static_cast<s32>( Thread::UpdateState::Count )>
-                m_updateObjects;
+                                  static_cast<s32>(Thread::Task::Count)>,
+                       static_cast<s32>(Thread::UpdateState::Count)>
+            m_updateObjects;
         };
-    }  // namespace scene
-}  // namespace fb
+    } // namespace scene
+}     // namespace fb
 
 #endif  // Scene_h__

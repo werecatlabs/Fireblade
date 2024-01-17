@@ -1,9 +1,25 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/Camera/FPSCameraController.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Math/MathUtil.h>
+#include <FBCore/Interface/Graphics/ICamera.h>
+#include <FBCore/Interface/Graphics/IViewport.h>
+#include <FBCore/Interface/Graphics/IWindow.h>
+#include <FBCore/Interface/Input/IInputEvent.h>
+#include <FBCore/Interface/Input/IKeyboardState.h>
+#include <FBCore/Interface/Input/IMouseState.h>
+#include <FBCore/Interface/System/ISelectionManager.h>
+#include <FBCore/Interface/System/ITimer.h>
+#include <FBCore/Interface/Scene/ICameraManager.h>
+#include <FBCore/Interface/Scene/ISceneManager.h>
+#include <FBCore/Interface/Scene/ITransform.h>
+#include <FBCore/Interface/UI/IUIWindow.h>
+#include <FBCore/Scene/Components/Camera.h>
 
 namespace fb::scene
 {
+
+    FB_CLASS_REGISTER_DERIVED( fb, FpsCameraController, CameraController );
 
     FpsCameraController::FpsCameraController() :
         m_selectedCamera( nullptr ),
@@ -35,13 +51,6 @@ namespace fb::scene
     }
 
     FpsCameraController::~FpsCameraController() = default;
-
-    void FpsCameraController::initialise()
-    {
-        // String cameraName = "FPSCameraController";
-        // setName( cameraName );
-        // m_propertyGroup.setProperty( "Name", cameraName );
-    }
 
     void FpsCameraController::update()
     {
@@ -79,7 +88,7 @@ namespace fb::scene
         m_selectedCamera->setPosition(Ogre::Vector3(ogreCameraPosition));	*/
     }
 
-    auto FpsCameraController::OnEvent( const SmartPtr<IInputEvent> &event ) -> bool
+    auto FpsCameraController::handleInputEvent( const SmartPtr<IInputEvent> &event ) -> bool
     {
         bool eventHandled = false;
 

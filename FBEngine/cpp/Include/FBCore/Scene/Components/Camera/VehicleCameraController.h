@@ -12,15 +12,19 @@ namespace fb
         class VehicleCameraController : public CameraController
         {
         public:
+            /** Constructor. */
             VehicleCameraController();
+
+            /** Destructor. */
             ~VehicleCameraController() override;
 
-            /** @copydoc IObject::load */
+            /** @copydoc CameraController::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::unload */
+            /** @copydoc CameraController::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
+            /** @copydoc CameraController::update */
             void update() override;
 
             /** @copydoc IComponent::getChildObjects */
@@ -49,6 +53,7 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
+            // The camera target.
             SmartPtr<IActor> m_target;
 
             real_Num m_distance = 5.0f;

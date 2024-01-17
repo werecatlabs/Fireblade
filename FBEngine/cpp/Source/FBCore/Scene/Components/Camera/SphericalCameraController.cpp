@@ -1,6 +1,20 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/Camera/SphericalCameraController.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Math/MathUtil.h>
+#include <FBCore/Interface/Graphics/ICamera.h>
+#include <FBCore/Interface/Graphics/IViewport.h>
+#include <FBCore/Interface/Graphics/IWindow.h>
+#include <FBCore/Interface/Input/IInputEvent.h>
+#include <FBCore/Interface/Input/IKeyboardState.h>
+#include <FBCore/Interface/Input/IMouseState.h>
+#include <FBCore/Interface/System/ISelectionManager.h>
+#include <FBCore/Interface/System/ITimer.h>
+#include <FBCore/Interface/Scene/ICameraManager.h>
+#include <FBCore/Interface/Scene/ISceneManager.h>
+#include <FBCore/Interface/Scene/ITransform.h>
+#include <FBCore/Interface/UI/IUIWindow.h>
+#include <FBCore/Scene/Components/Camera.h>
 
 namespace fb::scene
 {

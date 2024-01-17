@@ -3,6 +3,7 @@
 
 #include <FBCore/Interface/Resource/IResource.h>
 #include <FBCore/Core/Array.h>
+#include <FBCore/Core/ConcurrentArray.h>
 #include <FBCore/Thread/ThreadTypes.h>
 #include <FBCore/Interface/Scene/IActor.h>
 
@@ -89,15 +90,15 @@ namespace fb
 
             /**
              * @brief Returns the name of the scene.
-             * @return The name of the scene.
+             * @return The label of the scene.
              */
-            virtual String getName() const = 0;
+            virtual String getLabel() const = 0;
 
             /**
              * @brief Sets the name of the scene.
-             * @param name The new name for the scene.
+             * @param label The new name for the scene.
              */
-            virtual void setName( const String &name ) = 0;
+            virtual void setLabel( const String &label ) = 0;
 
             /**
              * @brief Adds an actor to the scene.
@@ -161,11 +162,13 @@ namespace fb
             */
             virtual void unregisterAll( SmartPtr<IActor> actor ) = 0;
 
-            /** Gets the file path. */
-            virtual String getFilePath() const = 0;
-
-            /** Sets the file path. */
-            virtual void setFilePath( const String &val ) = 0;
+            /** Gets the registered objects. */
+            virtual SharedPtr<ConcurrentArray<SmartPtr<IActor>>> getRegisteredObjects(
+                Thread::UpdateState updateState, Thread::Task task ) const = 0;
+            
+            /** Sets the registered objects. */
+            virtual void setRegisteredObjects( Thread::UpdateState updateState, Thread::Task task,
+                                       SharedPtr<ConcurrentArray<SmartPtr<IActor>>> objects ) = 0;
 
             /** Sets the component state. */
             virtual void setState( State state ) = 0;
@@ -178,21 +181,6 @@ namespace fb
 
             /** Gets the component state. */
             virtual SceneLoadingState getSceneLoadingState() const = 0;
-
-            /**
-             * @brief Enters play mode for the scene.
-             */
-            virtual void play() = 0;
-
-            /**
-             * @brief Enters edit mode for the scene.
-             */
-            virtual void edit() = 0;
-
-            /**
-             * @brief Stops the scene.
-             */
-            virtual void stop() = 0;
 
             /**
              * @brief Gets a smart pointer to the first component of the specified type attached to any actor in the scene.

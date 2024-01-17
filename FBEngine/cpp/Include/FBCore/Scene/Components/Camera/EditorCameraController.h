@@ -45,6 +45,8 @@ namespace fb
             bool getInvert() const;
             void setInvert( bool val );
 
+            FB_CLASS_REGISTER_DECL;
+
         private:
             struct SCamKeyMap
             {

@@ -32,14 +32,14 @@ namespace fb::scene
         unload( nullptr );
     }
 
-    auto Scene::getName() const -> String
+    auto Scene::getLabel() const -> String
     {
-        return m_name;
+        return m_label;
     }
 
-    void Scene::setName( const String &name )
+    void Scene::setLabel( const String &name )
     {
-        m_name = name;
+        m_label = name;
     }
 
     void Scene::load( SmartPtr<ISharedObject> data )
@@ -94,7 +94,7 @@ namespace fb::scene
             if( stream )
             {
                 auto name = Path::getFileNameWithoutExtension( path );
-                setName( name );
+                setLabel( name );
 
                 auto dataStr = stream->getAsString();
                 auto sceneData = fb::make_ptr<Properties>();
@@ -167,7 +167,7 @@ namespace fb::scene
             setFilePath( path );
 
             auto name = Path::getFileNameWithoutExtension( path );
-            setName( name );
+            setLabel( name );
 
             auto dataStr = DataUtil::toString( data.get(), true );
             FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );
@@ -397,13 +397,6 @@ namespace fb::scene
         {
         }
         }
-    }
-
-    auto Scene::getUpdateArray( Thread::UpdateState updateState, s32 task )
-        -> SharedPtr<ConcurrentArray<SmartPtr<IActor>>>
-    {
-        auto &updateObjects = m_updateObjects;
-        return updateObjects[static_cast<u32>( updateState )][static_cast<u32>( task )];
     }
 
     void Scene::addActor( SmartPtr<IActor> actor )
@@ -864,47 +857,49 @@ namespace fb::scene
         }
     }
 
-    auto Scene::getFilePath() const -> String
-    {
-        return m_filePath;
-    }
-
-    void Scene::setFilePath( const String &filePath )
-    {
-        m_filePath = filePath;
-    }
-
-    void Scene::play()
-    {
-        if( auto pActors = getActorsPtr() )
-        {
-            auto &actors = *pActors;
-            for( auto actor : actors )
-            {
-                m_playQueue.push( actor );
-            }
-        }
-    }
-
-    void Scene::edit()
-    {
-        if( auto pActors = getActorsPtr() )
-        {
-            auto &actors = *pActors;
-            for( auto actor : actors )
-            {
-                m_editQueue.push( actor );
-            }
-        }
-    }
-
-    void Scene::stop()
-    {
-    }
-
     void Scene::setState( State state )
     {
         m_state = state;
+
+        switch( m_state )
+        {
+        case State::None:
+        {
+        }
+        break;
+        case State::Edit:
+        {
+            if( auto pActors = getActorsPtr() )
+            {
+                auto &actors = *pActors;
+                for( auto actor : actors )
+                {
+                    m_editQueue.push( actor );
+                }
+            }
+        }
+        break;
+        case State::Play:
+        {
+            if( auto pActors = getActorsPtr() )
+            {
+                auto &actors = *pActors;
+                for( auto actor : actors )
+                {
+                    m_playQueue.push( actor );
+                }
+            }
+        }
+        break;
+        case State::Reset:
+        {
+        }
+        break;
+        default:
+        {
+        }
+        break;
+        }
     }
 
     auto Scene::getState() const -> IScene::State

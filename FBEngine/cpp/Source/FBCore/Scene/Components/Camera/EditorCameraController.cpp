@@ -1,9 +1,19 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Components/Camera/EditorCameraController.h>
-#include <FBCore/FBCore.h>
+#include <FBCore/Core/LogManager.h>
+#include <FBCore/Scene/CameraManager.h>
+#include <FBCore/Interface/System/ITimer.h>
+#include <FBCore/Interface/Graphics/ICamera.h>
+#include <FBCore/Interface/Scene/ISceneManager.h>
+#include <FBCore/Interface/Scene/ITransform.h>
+#include <FBCore/Interface/Input/IInputDeviceManager.h>
+#include <FBCore/Interface/Input/IInputEvent.h>
+#include <FBCore/Interface/Input/IKeyboardState.h>
+#include <FBCore/Interface/Input/IMouseState.h>
 
 namespace fb::scene
 {
+    FB_CLASS_REGISTER_DERIVED( fb, EditorCameraController, CameraController );
 
     EditorCameraController::EditorCameraController() :
         m_moveSpeed( 1.0f ),
@@ -89,7 +99,7 @@ namespace fb::scene
         {
             if( camera )
             {
-                camera->getOwner()->setPosition( m_position );
+                //actor->setPosition( m_position );
             }
         }
 
@@ -113,7 +123,7 @@ namespace fb::scene
         {
             if( camera )
             {
-                camera->getOwner()->setOrientation( orientation );
+                //actor->setOrientation( orientation );
             }
         }
     }

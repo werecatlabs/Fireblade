@@ -7,21 +7,24 @@ namespace fb
 {
     namespace scene
     {
-
         /** Class for a third person camera controller.
          */
         class ThirdPersonCameraController : public CameraController
         {
         public:
+            /** Constructor. */
             ThirdPersonCameraController();
+
+            /** Destructor. */
             ~ThirdPersonCameraController() override;
 
-            /** @copydoc IObject::load */
+            /** @copydoc CameraController::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::unload */
+            /** @copydoc CameraController::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
+            /** @copydoc CameraController::postUpdate */
             void postUpdate() override;
 
             /** @copydoc IComponent::getChildObjects */
@@ -36,7 +39,8 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            SmartPtr<scene::IActor> target;
+            // The camera target.
+            SmartPtr<IActor> target;
         };
     }  // namespace scene
 }  // namespace fb
