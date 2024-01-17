@@ -41,7 +41,8 @@ namespace fb::scene
             auto sceneManager = applicationManager->getSceneManager();
             FB_ASSERT( sceneManager );
 
-            auto fsmManager = sceneManager->getComponentFsmManager( getTypeInfo() );
+            auto typeInfo = getTypeInfo();
+            auto fsmManager = sceneManager->getComponentFsmManager( typeInfo );
             FB_ASSERT( fsmManager );
 
             m_componentFSM = fsmManager->createFSM();
@@ -172,8 +173,11 @@ namespace fb::scene
             auto eState = static_cast<State>( state );
             switch( eState )
             {
+            case State::Edit:
             case State::Play:
             {
+                updateTransform();
+                updateVisibility();
             }
             break;
             default:
@@ -518,6 +522,10 @@ namespace fb::scene
     {
     }
 
+    void Component::updateDependentComponents()
+    {
+    }
+
     void Component::setState( State state )
     {
         if( m_componentFSM )
@@ -761,4 +769,5 @@ namespace fb::scene
 
         return {};
     }
+
 }  // namespace fb::scene

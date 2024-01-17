@@ -61,6 +61,14 @@ namespace fb
             */
             virtual SmartPtr<ITexture> createSkyBoxCubeMap( SmartPtr<IMaterial> material ) = 0;
 
+            /** Clone a texture. */
+            virtual SmartPtr<ITexture> cloneTexture( SmartPtr<ITexture> texture,
+                                                     const String &clonedTextureName ) = 0;
+
+            /** Clone a texture. */
+            virtual SmartPtr<ITexture> cloneTexture( const String &name,
+                                                     const String &clonedTextureName ) = 0;
+
             FB_CLASS_REGISTER_DECL;
         };
     }  // end namespace render

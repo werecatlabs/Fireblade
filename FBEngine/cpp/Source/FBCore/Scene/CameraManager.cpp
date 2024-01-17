@@ -53,7 +53,8 @@ namespace fb::scene
 
     void CameraManager::update()
     {
-        switch( auto task = Thread::getCurrentTask() )
+        auto task = Thread::getCurrentTask();
+        switch( task )
         {
         case Thread::Task::Application:
         {
@@ -68,15 +69,15 @@ namespace fb::scene
                 }
             }
 
-            //else
-            {
-                auto sceneManager = applicationManager->getSceneManager();
-                auto scene = sceneManager->getCurrentScene();
+            auto sceneManager = applicationManager->getSceneManager();
+            auto scene = sceneManager->getCurrentScene();
 
-                auto cameras = scene->getComponents<Camera>();
-                for( auto camera : cameras )
+            auto cameras = scene->getComponents<Camera>();
+            for( auto camera : cameras )
+            {
+                if( auto cameraActor = camera->getActor() )
                 {
-                    camera->getActor()->update();
+                    cameraActor->update();
                 }
             }
         }
@@ -146,35 +147,7 @@ namespace fb::scene
 
     auto CameraManager::getCameras() const -> Array<SmartPtr<IActor>>
     {
-        //auto applicationManager = core::ApplicationManager::instance();
-        //FB_ASSERT( applicationManager );
-
-        //auto sceneManager = applicationManager->getSceneManager();
-        //auto scene = sceneManager->getCurrentScene();
-
-        //auto cameras = scene->getComponents<Camera>();
-        //Array<SmartPtr<IActor>> cameraActors;
-        //for( auto camera : cameras )
-        //{
-        //    if( auto actor = camera->getActor() )
-        //    {
-        //        cameraActors.push_back( actor );
-        //    }
-        //}
-
         return m_cameras;
-    }
-
-    void CameraManager::play()
-    {
-    }
-
-    void CameraManager::edit()
-    {
-    }
-
-    void CameraManager::stop()
-    {
     }
 
     void CameraManager::reset()

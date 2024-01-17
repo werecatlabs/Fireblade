@@ -13,6 +13,7 @@ namespace fb
         public:
             static const String mainTextureStr;
             static const String materialStr;
+            static const String materialPathStr;
             static const String indexStr;
 
             Material();
@@ -101,6 +102,7 @@ namespace fb
             AtomicSmartPtr<IEventListener> m_materialObjectListener;
             SmartPtr<IStateListener> m_materialListener;
             SmartPtr<render::IMaterial> m_material;
+            String m_materialPath;  
             s32 m_index = 0;
         };
     }  // namespace scene

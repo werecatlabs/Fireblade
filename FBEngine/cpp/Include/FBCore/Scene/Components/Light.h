@@ -8,20 +8,22 @@ namespace fb
 {
     namespace scene
     {
-
         /**
          * A component that represents a light in the scene.
          */
         class Light : public Component
         {
         public:
+            /** Constructor. */
             Light();
+
+            /** Destructor. */
             ~Light() override;
 
-            /** @copydoc BaseComponent::load */
+            /** @copydoc Component::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc BaseComponent::unload */
+            /** @copydoc Component::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
             void updateDebugDraw();
@@ -38,7 +40,7 @@ namespace fb
             /** @copydoc IComponent::updateTransform */
             void updateTransform() override;
 
-            void updateTransform( const Transform3<real_Num> &transform );
+            void updateTransform( const Transform3<real_Num> &transform ) override;
             /**
              * Gets the type of the light.
              */
@@ -137,8 +139,7 @@ namespace fb
         {
             return m_sceneNode;
         }
-
-    }  // namespace scene
-}  // end namespace fb
+    } // namespace scene
+}     // end namespace fb
 
 #endif  // LightComponent_h__

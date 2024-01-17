@@ -48,14 +48,20 @@ namespace fb
         /** @copydoc ISharedObject::unload */
         void unload( SmartPtr<ISharedObject> data ) override;
 
+        /** @copydoc IResourceDatabase::build */
         void build() override;
+
+        /** @copydoc IResourceDatabase::refresh */
         void refresh() override;
 
-        void optimise();
+        /** @copydoc IResourceDatabase::optimise */
+        void optimise() override;
 
-        void clean();
+        /** @copydoc IResourceDatabase::clean */
+        void clean() override;
 
-        void deleteCache();
+        /** @copydoc IResourceDatabase::deleteCache */
+        void deleteCache() override;
 
         bool hasResource( SmartPtr<IResource> resource ) override;
         void addResource( SmartPtr<IResource> resource ) override;

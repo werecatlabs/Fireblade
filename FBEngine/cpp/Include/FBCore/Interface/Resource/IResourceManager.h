@@ -38,9 +38,7 @@ namespace fb
                                                                   const String &type ) = 0;
 
         /** Creates a resource or retrieves an existing a resource.
-        @param uuid The uuid of the resource.
         @param path The path of the resource.
-        @param type The type of the resource.
         @returns The resource instance. Can be null if the resource does not exist.
         */
         virtual Pair<SmartPtr<IResource>, bool> createOrRetrieve( const String &path ) = 0;
@@ -70,7 +68,7 @@ namespace fb
         virtual SmartPtr<IResource> getByName( const String &name ) = 0;
 
         /** Gets an existing resource by passing the hash id.
-        @param hash The name of the resource as a hash value.
+        @param uuid The name of the resource as a hash value.
         @returns The resource instance. Can be null if the resource does not exist.
         */
         virtual SmartPtr<IResource> getById( const String &uuid ) = 0;

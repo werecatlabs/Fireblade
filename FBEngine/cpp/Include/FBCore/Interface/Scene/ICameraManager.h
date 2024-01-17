@@ -1,5 +1,5 @@
-#ifndef _ICameraControllerMgr_H
-#define _ICameraControllerMgr_H
+#ifndef __ICameraManager_H
+#define __ICameraManager_H
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
@@ -11,6 +11,7 @@ namespace fb
 {
     namespace scene
     {
+
         /**
          * @brief A class to manage camera controllers.
          */
@@ -67,21 +68,6 @@ namespace fb
             virtual Array<SmartPtr<IActor>> getCameras() const = 0;
 
             /**
-             * @brief Triggers the play event, transitioning the camera manager state to play mode.
-             */
-            virtual void play() = 0;
-
-            /**
-             * @brief Triggers the edit event, transitioning the camera manager state to edit mode.
-             */
-            virtual void edit() = 0;
-
-            /**
-             * @brief Triggers the stop event, stopping the current camera's movement.
-             */
-            virtual void stop() = 0;
-
-            /**
              * @brief Triggers the reset event, resetting the current camera to its initial position.
              */
             virtual void reset() = 0;
@@ -98,8 +84,16 @@ namespace fb
              */
             virtual void setEditorTexture( SmartPtr<render::ITexture> editorTexture ) = 0;
 
+            /**
+            * @brief Gets the editor camera.
+            * @return The editor camera.
+            */
             virtual SmartPtr<IActor> getEditorCamera() const = 0;
 
+            /** 
+            * @brief Sets the editor camera.
+            * @param editorCamera The editor camera.
+            */
             virtual void setEditorCamera( SmartPtr<IActor> editorCamera ) = 0;
 
             FB_CLASS_REGISTER_DECL;

@@ -45,12 +45,12 @@ namespace fb::scene
         properties->getPropertyValue( "lights", m_lights );
         properties->getPropertyValue( "lightmapUVs", m_lightmapUVs );
 
-        if(properties->isButtonPressed( "Save" ))
+        if( properties->isButtonPressed( "Save" ) )
         {
             save();
         }
 
-        if(properties->isButtonPressed( "Import" ))
+        if( properties->isButtonPressed( "Import" ) )
         {
             import();
         }
@@ -136,4 +136,4 @@ namespace fb::scene
         return m_rotate90DegreesX;
     }
 
-} // namespace fb::scene
+}  // namespace fb::scene

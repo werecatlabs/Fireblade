@@ -651,7 +651,7 @@ namespace fb::scene
         auto applicationTask = taskManager->getTask( Thread::Task::Application );
         auto task = Thread::getCurrentTask();
 
-        if( task == Thread::Task::Application)
+        if( task == Thread::Task::Application )
         {
             //if( sender )
             //{

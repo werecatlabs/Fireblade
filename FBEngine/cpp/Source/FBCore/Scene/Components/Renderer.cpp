@@ -16,6 +16,7 @@
 #include <FBCore/State/Messages/StateMessageLoad.h>
 #include <FBCore/Interface/Scene/IActor.h>
 #include <FBCore/Interface/Scene/ITransform.h>
+#include <FBCore/Interface/Scene/ISceneManager.h>
 #include <FBCore/Core/BitUtil.h>
 #include <FBCore/Core/LogManager.h>
 
@@ -124,6 +125,10 @@ namespace fb::scene
                 }
             }
         }
+
+        updateStatic();
+
+        Component::updateFlags( flags, oldFlags );
     }
 
     void Renderer::preUpdate()
@@ -160,6 +165,7 @@ namespace fb::scene
             setLoadingState( LoadingState::Loading );
 
             Component::load( data );
+            updateStatic();
 
             setLoadingState( LoadingState::Loaded );
         }
@@ -393,6 +399,9 @@ namespace fb::scene
                                 const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
                                 SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) -> Parameter
     {
+        auto applicationManager = core::ApplicationManager::instance();
+        auto sceneManager = applicationManager->getSceneManager();
+
         if( eventValue == IComponent::visibilityChanged )
         {
             if( auto actor = getActor() )
@@ -403,6 +412,10 @@ namespace fb::scene
                     m_graphicsNode->setVisible( enabled );
                 }
             }
+        }
+        else if( eventValue == IComponent::staticChanged )
+        {
+            updateStatic();
         }
 
         return Component::handleEvent( eventType, eventValue, arguments, sender, object, event );
@@ -466,6 +479,27 @@ namespace fb::scene
             graphicsNode->setPosition( p );
             graphicsNode->setOrientation( r );
             graphicsNode->setScale( s );
+        }
+    }
+
+    void Renderer::updateStatic()
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        auto sceneManager = applicationManager->getSceneManager();
+
+        if( auto actor = getActor() )
+        {
+            auto isstatic = actor->isStatic();
+            if( !isstatic )
+            {
+                sceneManager->registerComponentUpdate( Thread::Task::Render,
+                                                       Thread::UpdateState::Transform, this );
+            }
+            else
+            {
+                sceneManager->unregisterComponentUpdate( Thread::Task::Render,
+                                                         Thread::UpdateState::Transform, this );
+            }
         }
     }
 

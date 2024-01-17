@@ -129,6 +129,8 @@ namespace fb
 
             void updateTransform( const Transform3<real_Num> &transform ) override;
 
+            void updateStatic();
+
             FB_CLASS_REGISTER_DECL;
 
         protected:

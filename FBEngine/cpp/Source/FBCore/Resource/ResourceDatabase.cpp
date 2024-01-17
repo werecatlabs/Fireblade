@@ -376,14 +376,19 @@ namespace fb
 
     void ResourceDatabase::removeResourceFromPath( const String &path )
     {
+        auto databaseManager = getDatabaseManager();
+        FB_ASSERT( databaseManager );
+
+        auto assetDatabaseManager = fb::static_pointer_cast<AssetDatabaseManager>( databaseManager );
+        FB_ASSERT( assetDatabaseManager );
+
+        assetDatabaseManager->removeResourceEntryFromPath( path );
     }
 
     auto ResourceDatabase::findResource( u32 type, const String &path ) -> SmartPtr<IResource>
     {
         auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
-
-        auto typeManager = TypeManager::instance();
 
         const auto MATERIAL_TYPE = render::IMaterial::typeInfo();
         const auto TEXTURE_TYPE = render::ITexture::typeInfo();
@@ -394,6 +399,13 @@ namespace fb
             auto materialManager = graphicsSystem->getMaterialManager();
 
             return materialManager->getByName( path );
+        }
+        else if( type == TEXTURE_TYPE )
+        {
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            auto textureManager = graphicsSystem->getTextureManager();
+
+            return textureManager->getByName( path );
         }
 
         return nullptr;
@@ -431,6 +443,16 @@ namespace fb
         }
         else if( type == TEXTURE_TYPE )
         {
+            auto textureManager = graphicsSystem->getTextureManager();
+            FB_ASSERT( textureManager );
+
+            if( textureManager )
+            {
+                auto clonedTexture = textureManager->cloneTexture( resource, path );
+                FB_ASSERT( clonedTexture );
+
+                return clonedTexture;
+            }
         }
 
         return nullptr;
@@ -1423,6 +1445,39 @@ namespace fb
                     return Pair<SmartPtr<IResource>, bool>( resIt->second.lock(), false );
                 }
             }
+
+            static const auto materialType = render::IMaterial::typeInfo();
+            static const auto meshResourceType = IMeshResource::typeInfo();
+            static const auto textureResourceType = render::ITexture::typeInfo();
+
+            u32 type = 0;
+
+            if( ApplicationUtil::isSupportedMesh( path ) )
+            {
+                type = meshResourceType;
+            }
+            else if( Path::getFileExtension( path ) == ".mat" )
+            {
+                type = materialType;
+            }
+            else if( ApplicationUtil::isSupportedTexture( path ) )
+            {
+                type = textureResourceType;
+            }
+
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto assetDatabaseManager =
+                fb::static_pointer_cast<AssetDatabaseManager>( getDatabaseManager() );
+            auto director = assetDatabaseManager->getResourceEntryFromPath( path );
+
+            auto result = createOrRetrieveFromDirector( type, path, director );
+
+            // The resource does not exist in the database, so create a new one.
+            m_resourceMap[type][path] = result.first;
+
+            return result;
         }
         catch( std::exception &e )
         {

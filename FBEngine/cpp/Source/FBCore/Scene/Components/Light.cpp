@@ -239,12 +239,12 @@ namespace fb::scene
         {
             auto &p = transform.getPosition();
             auto &r = transform.getOrientation();
+            auto &s = transform.getScale();
 
             sceneNode->setPosition( p );
             sceneNode->setOrientation( r );
+            sceneNode->setScale( s );
         }
-
-        //updateDebugDraw();
     }
 
     auto Light::getLightType() const -> render::ILight::LightTypes

@@ -133,6 +133,8 @@ namespace fb
              */
             void updateMaterials() override;
 
+            void updateDependentComponents();
+
             /** @copydoc IComponent::setState */
             void setState( State state ) override;
 

@@ -18,6 +18,7 @@ namespace fb
         /** Destructor. */
         ~IResourceDatabase() override = default;
 
+        /** Imports the cache data into the database. */
         virtual void importCache() = 0;
 
         /** Import assets. */
@@ -140,7 +141,7 @@ namespace fb
 
         /**
          * @brief Loads a director with the given path.
-         * @param path The path of the resource to load.
+         * @param filePath The path of the resource to load.
          * @param type The type of the resource to load.
          * @return A pointer to the loaded director if successful, nullptr otherwise.
          */
@@ -167,6 +168,8 @@ namespace fb
         virtual void setDatabaseManager( SmartPtr<IDatabaseManager> databaseManager ) = 0;
 
         /** Creates a resource or retrieves an existing a resource.
+        @param type The type of the resource.
+        @param path The path of the resource.
         @param director The build director to build the resource.
         @returns The resource instance. Can be null if the resource does not exist.
         */
@@ -187,29 +190,50 @@ namespace fb
         */
         virtual Pair<SmartPtr<IResource>, bool> createOrRetrieve( const String &path ) = 0;
 
-        /** Gets an object using an id. */
+        /** Gets an object using an id. 
+        @param uuid The id of the object.
+        @returns The object instance. Can be null if the object does not exist.
+        */
         virtual SmartPtr<ISharedObject> getObject( const String &uuid ) = 0;
 
-        /** Gets an object by it's file id. */
+        /** Gets an object by it's file id. 
+        @param fileId The file id of the object.
+        @returns The object instance. Can be null if the object does not exist.
+        */
         virtual SmartPtr<ISharedObject> getObjectByFileId( const String &fileId ) const = 0;
 
-        /** Gets an object by it's file id. */
+        /** Gets an object by it's file id. 
+        @param fileId The file id of the object.
+        @returns The object instance. Can be null if the object does not exist.
+        */
         template <class T>
         SmartPtr<T> getObjectTypeByFileId( const String &fileId ) const;
 
-        /** Finds a resource. */
+        /** Finds a resource.
+        @param path The path of the resource.
+        @returns The resource instance. Can be null if the resource does not exist.
+        */
         template <class T>
         SmartPtr<T> findResourceByType( const String &path );
 
-        /** Finds a resource. */
+        /** Finds a resource.
+        @param resource The resource to clone.
+        @param path The path of the resource.
+        @returns The resource instance. Can be null if the resource does not exist.        
+        */
         template <class T>
         SmartPtr<T> cloneResourceByType( SmartPtr<IResource> resource, const String &path );
 
-        /** Loads a resource. */
+        /** Loads a resource. 
+        @param path The path of the resource.
+        @returns The resource instance. Can be null if the resource does not exist.
+        */
         template <class T>
         SmartPtr<T> loadResourceByType( const String &path );
 
-        /** Gets resources by type. */
+        /** Gets resources by type.
+        @returns The resource instances.
+        */
         template <class T>
         Array<SmartPtr<T>> getResourcesByType() const;
 

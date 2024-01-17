@@ -22,6 +22,7 @@ namespace fb
         void addResourceEntry( SmartPtr<ISharedObject> object );
         void updateResourceEntry( SmartPtr<ISharedObject> object );
         void removeResourceEntry( SmartPtr<ISharedObject> object );
+        void removeResourceEntryFromPath(const String &path);
 
         SmartPtr<scene::IDirector> getResourceEntry( const String &uuid );
         SmartPtr<scene::IDirector> getResourceEntryFromPath( const String &path );

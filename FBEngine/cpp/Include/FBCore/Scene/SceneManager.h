@@ -14,7 +14,6 @@ namespace fb
 {
     namespace scene
     {
-
         /** SceneManager implementation.
         @author	Zane Desir
         @version 1.0
@@ -56,10 +55,10 @@ namespace fb
             void setFsmManager( SmartPtr<IFSMManager> fsmManager ) override;
 
             /** @copydoc ISceneManager::getFsmManager */
-            SmartPtr<IFSMManager> getComponentFsmManager( u32 typeId );
+            SmartPtr<IFSMManager> getComponentFsmManager( u32 typeId ) override;
 
             /** @copydoc ISceneManager::setFsmManager */
-            void setComponentFsmManager( u32 typeId, SmartPtr<IFSMManager> fsmManager );
+            void setComponentFsmManager( u32 typeId, SmartPtr<IFSMManager> fsmManager ) override;
 
             /** @copydoc ISceneManager::getCurrentScene */
             SmartPtr<IScene> getCurrentScene() const override;
@@ -72,8 +71,6 @@ namespace fb
 
             /** @copydoc ISceneManager::createActor */
             SmartPtr<IActor> createActor() override;
-
-            SmartPtr<IActor> createDummyActor();
 
             /** @copydoc ISceneManager::destroyActor */
             void destroyActor( SmartPtr<IActor> actor ) override;
@@ -95,9 +92,9 @@ namespace fb
             u32 addComponent( SmartPtr<IComponent> component ) override;
             u32 removeComponent( SmartPtr<IComponent> component ) override;
 
-            void addSystem( u32 id, SmartPtr<IComponentSystem> system );
+            void addSystem( u32 id, SmartPtr<IComponentSystem> system ) override;
 
-            void removeSystem( u32 id );
+            void removeSystem( u32 id ) override;
 
             SmartPtr<IActor> getActor( u32 id ) const override;
             SmartPtr<IActor> getActorByName( const String &name ) const override;
@@ -133,9 +130,9 @@ namespace fb
             void addDirty( SmartPtr<IActor> actor );
             void removeDirty( SmartPtr<IActor> actor );
 
-            void makeActorTransformsDirty();
+            void makeActorTransformsDirty() override;
 
-            void addDirtyTransform( SmartPtr<IActor> actor );
+            void addDirtyTransform( SmartPtr<IActor> actor ) override;
             void addDirtyTransform( SmartPtr<ITransform> transform );
 
             void addDirtyComponent( SmartPtr<IComponent> component );
@@ -157,32 +154,33 @@ namespace fb
             const Array<SmartPtr<ITransform>> &getTransforms() const;
             void setTransforms( Array<SmartPtr<ITransform>> transforms );
 
-            Array<String> getComponentFactoryIgnoreList() const;
+            Array<String> getComponentFactoryIgnoreList() const override;
 
-            void setComponentFactoryIgnoreList( const Array<String> &ignoreList );
+            void setComponentFactoryIgnoreList( const Array<String> &ignoreList ) override;
 
-            Map<String, String> getComponentFactoryMap() const;
+            Map<String, String> getComponentFactoryMap() const override;
 
-            void setComponentFactoryMap( const Map<String, String> &map );
+            void setComponentFactoryMap( const Map<String, String> &map ) override;
 
-            String getComponentFactoryType( const String &type ) const;
+            String getComponentFactoryType( const String &type ) const override;
 
-            void addTransformState( u32 id, time_interval time, const Transform3<real_Num> &transform );
+            void addTransformState( u32 id, time_interval time,
+                                    const Transform3<real_Num> &transform ) override;
 
-            bool getTransformState( u32 id, time_interval t, Transform3<real_Num> &transform );
+            bool getTransformState( u32 id, time_interval t, Transform3<real_Num> &transform ) override;
 
             SharedPtr<Array<SmartPtr<IComponent>>> getRegisteredComponents( Thread::UpdateState state,
-                                                                            Thread::Task task ) const;
+                Thread::Task task ) const override;
 
             void registerComponentUpdate( Thread::Task task, Thread::UpdateState state,
-                                          SmartPtr<IComponent> component );
+                                          SmartPtr<IComponent> component ) override;
 
             void unregisterComponentUpdate( Thread::Task task, Thread::UpdateState state,
-                                            SmartPtr<IComponent> component );
+                                            SmartPtr<IComponent> component ) override;
 
-            void unregisterAllComponent( SmartPtr<IComponent> component );
+            void unregisterAllComponent( SmartPtr<IComponent> component ) override;
 
-            s32 getNumActors() const;
+            s32 getNumActors() const override;
 
             FB_CLASS_REGISTER_DECL;
 
@@ -255,8 +253,7 @@ namespace fb
         {
             return m_fsmManager;
         }
-
-    }  // namespace scene
-}  // end namespace fb
+    } // namespace scene
+}     // end namespace fb
 
 #endif  // CSceneManager_h__

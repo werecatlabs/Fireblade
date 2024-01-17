@@ -377,7 +377,7 @@ namespace fb
         template <class T>
         SmartPtr<Properties> GraphicsObject<T>::getProperties() const
         {
-            auto properties = fb::make_ptr<Properties>();
+            auto properties = SharedGraphicsObject<T>::getProperties();
 
             auto name = String( "null" );
 
@@ -399,6 +399,15 @@ namespace fb
         template <class T>
         void GraphicsObject<T>::setProperties( [[maybe_unused]] SmartPtr<Properties> properties )
         {
+            SharedGraphicsObject<T>::setProperties( properties );
+
+            auto visible = GraphicsObject<T>::isVisible();
+            properties->setProperty( "visible", visible );
+
+            if( visible != GraphicsObject<T>::isVisible() )
+            {
+                GraphicsObject<T>::setVisible( visible );
+            }
         }
 
         template <class T>

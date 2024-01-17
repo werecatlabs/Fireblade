@@ -51,6 +51,16 @@ namespace fb
              */
             void setStateListener( SmartPtr<IStateListener> stateListener );
 
+            SmartPtr<Properties> getProperties() const override
+            {
+                return ISharedObject::getProperties();
+            }
+
+            void setProperties( SmartPtr<Properties> properties ) override
+            {
+                ISharedObject::setProperties( properties );
+            }
+
             FB_CLASS_REGISTER_TEMPLATE_DECL( SharedGraphicsObject, T );
 
         protected:

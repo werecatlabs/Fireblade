@@ -3,6 +3,7 @@
 #include <FBCore/Core/DebugTrace.h>
 #include <FBCore/Core/Path.h>
 #include <FBCore/Core/LogManager.h>
+#include <FBCore/Memory/MemoryTracker.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Interface/Scene/IActor.h>
 #include <FBCore/Interface/Scene/ICameraManager.h>
@@ -55,6 +56,10 @@
 #include <FBCore/System/RttiClassDefinition.h>
 #include <algorithm>
 #include <cstdio>
+
+#if FB_ENABLE_MEMORY_TRACKER
+#include <boost/stacktrace/stacktrace.hpp>
+#endif
 
 namespace fb::core
 {
@@ -1245,12 +1250,34 @@ namespace fb::core
 
     auto ApplicationManager::allocateMemory( size_t size ) -> void *
     {
-        return Memory::ScalableAlignedMalloc( size, FB_ALIGNMENT );
+        auto ptr = Memory::ScalableAlignedMalloc( size, FB_ALIGNMENT );
+        if( !ptr )
+        {
+            FB_ASSERT( false );
+            return nullptr;
+        }
+
+#if FB_ENABLE_MEMORY_TRACKER
+        const char *file = __FILE__;
+        int line = __LINE__;
+        const char *func = __FUNCTION__;
+
+        std::stringstream backtraceMsg;
+        backtraceMsg << boost::stacktrace::stacktrace();
+        auto msg = backtraceMsg.str();
+        MemoryTracker::get()._recordAlloc( ptr, size, 0, file, line, msg.c_str() );
+#endif
+
+        return ptr;
     }
 
     void ApplicationManager::freeMemory( void *ptr )
     {
         Memory::ScalableAlignedFree( ptr );
+
+#if FB_ENABLE_MEMORY_TRACKER
+        MemoryTracker::get()._recordDealloc( ptr );
+#endif
     }
 
     auto ApplicationManager::getFSMManagersPtr() const -> SharedPtr<Array<SmartPtr<IFSMManager>>>

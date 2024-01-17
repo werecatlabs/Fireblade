@@ -8,7 +8,6 @@
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IGraphicsScene.h>
 #include <FBCore/Interface/Graphics/IMaterial.h>
-#include <FBCore/Interface/Graphics/IMaterialManager.h>
 #include <FBCore/Interface/Graphics/ISceneNode.h>
 #include <FBCore/Interface/Graphics/ITexture.h>
 #include <FBCore/Interface/Scene/IActor.h>
@@ -26,6 +25,7 @@ namespace fb::scene
 
     const String Material::mainTextureStr = String( "Main Texture" );
     const String Material::materialStr = String( "Material" );
+    const String Material::materialPathStr = String( "Material Path" );
     const String Material::indexStr = String( "index" );
 
     Material::Material()
@@ -168,6 +168,7 @@ namespace fb::scene
         FB_ASSERT( properties );
 
         properties->setProperty( materialStr, m_material );
+        properties->setProperty( materialPathStr, m_materialPath );
         properties->setProperty( indexStr, m_index );
 
         return properties;
@@ -191,20 +192,28 @@ namespace fb::scene
             auto index = getIndex();
 
             properties->getPropertyValue( materialStr, material );
+            properties->getPropertyValue( materialPathStr, m_materialPath );
             properties->getPropertyValue( indexStr, index );
 
             auto dirty = false;
+
             if( m_material != material )
             {
                 m_material = material;
 
-                if( material )
+                if( m_material )
                 {
-                    if( !material->isLoaded() )
-                    {
-                        graphicsSystem->loadObject( material );
-                    }
+                    m_materialPath = m_material->getFilePath();
+                }
 
+                dirty = true;
+            }
+
+            if( material )
+            {
+                if( !material->isLoaded() )
+                {
+                    graphicsSystem->loadObject( material );
                     dirty = true;
                 }
             }
@@ -267,19 +276,13 @@ namespace fb::scene
 
     auto Material::getMaterialPath() const -> String
     {
-        if( auto material = getMaterial() )
-        {
-            if( auto materialHandle = material->getHandle() )
-            {
-                return materialHandle->getName();
-            }
-        }
-
-        return "";
+        return m_materialPath;
     }
 
     void Material::setMaterialPath( const String &val )
     {
+        m_materialPath = val;
+
         auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
@@ -348,34 +351,15 @@ namespace fb::scene
         auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
+        auto resourceDatabase = applicationManager->getResourceDatabase();
+
         auto graphicsSystem = applicationManager->getGraphicsSystem();
 
         auto material = getMaterial();
         if( !material )
         {
-            if( graphicsSystem )
-            {
-                auto smgr = graphicsSystem->getGraphicsScene();
-                FB_ASSERT( graphicsSystem );
-
-                auto materialManager = graphicsSystem->getMaterialManager();
-                FB_ASSERT( materialManager );
-
-                if( materialManager )
-                {
-                    auto materialPath = getMaterialPath();
-                    if( !StringUtil::isNullOrEmpty( materialPath ) )
-                    {
-                        auto newMaterial = materialManager->loadFromFile( materialPath );
-                        if( !newMaterial )
-                        {
-                            FB_LOG_ERROR( "Could not load material: " + materialPath );
-                        }
-
-                        setMaterial( newMaterial );
-                    }
-                }
-            }
+            auto newMaterial = resourceDatabase->createOrRetrieveByType<render::IMaterial>( getMaterialPath() );
+            setMaterial( newMaterial.first );
         }
         else
         {

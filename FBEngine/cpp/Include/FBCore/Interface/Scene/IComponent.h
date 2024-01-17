@@ -132,6 +132,11 @@ namespace fb
             virtual void updateMaterials() = 0;
 
             /**
+             * Updates the component dependencies.
+             */
+            virtual void updateDependentComponents() = 0;
+
+            /**
              * Sets the component state.
              * @param state The new state for the component.
              */

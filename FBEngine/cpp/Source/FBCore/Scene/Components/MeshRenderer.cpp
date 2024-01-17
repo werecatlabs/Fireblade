@@ -113,6 +113,8 @@ namespace fb::scene
                 }
             }
         }
+
+        Renderer::updateFlags( flags, oldFlags );
     }
 
     void MeshRenderer::load( SmartPtr<ISharedObject> data )
@@ -124,10 +126,7 @@ namespace fb::scene
             auto applicationManager = core::ApplicationManager::instance();
             auto sceneManager = applicationManager->getSceneManager();
 
-            Component::load( data );
-
-            sceneManager->registerComponentUpdate( Thread::Task::Render, Thread::UpdateState::Transform,
-                                                   this );
+            Renderer::load( data );
 
             setLoadingState( LoadingState::Loaded );
         }
@@ -169,11 +168,13 @@ namespace fb::scene
                         meshNode->detachAllObjects();
                         smgr->removeSceneNode( meshNode );
                         setMeshNode( nullptr );
+                        setGraphicsObject( nullptr );
                     }
                     else
                     {
                         setMeshObject( nullptr );
                         setMeshNode( nullptr );
+                        setGraphicsObject( nullptr );
                     }
                 }
 
@@ -301,63 +302,53 @@ namespace fb::scene
     {
         try
         {
-            auto applicationManager = core::ApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto graphicsSystem = applicationManager->getGraphicsSystem();
-            if( graphicsSystem )
+            if( !getMeshObject() )
             {
-                auto smgr = graphicsSystem->getGraphicsScene();
-                FB_ASSERT( smgr );
+                auto applicationManager = core::ApplicationManager::instance();
+                FB_ASSERT( applicationManager );
 
-                if( auto actor = getActor() )
+                auto graphicsSystem = applicationManager->getGraphicsSystem();
+                if( graphicsSystem )
                 {
-                    auto meshComponent = actor->getComponent<Mesh>();
-                    if( meshComponent )
+                    auto smgr = graphicsSystem->getGraphicsScene();
+                    FB_ASSERT( smgr );
+
+                    if( auto actor = getActor() )
                     {
-                        auto meshPath = meshComponent->getMeshPath();
-                        if( !StringUtil::isNullOrEmpty( meshPath ) )
+                        auto meshComponent = actor->getComponent<Mesh>();
+                        if( meshComponent )
                         {
-                            auto meshObject = smgr->addMesh( meshPath );
-                            if( !meshObject )
+                            auto meshPath = meshComponent->getMeshPath();
+                            if( !StringUtil::isNullOrEmpty( meshPath ) )
                             {
-                                FB_LOG( "Mesh not loaded: " + meshPath );
-                            }
-
-                            setMeshObject( meshObject );
-
-                            //// todo refactor
-                            // auto materialComponent =
-                            // actor->getComponent<scene::MaterialComponent>(); if
-                            // (materialComponent)
-                            //{
-                            //	auto material = materialComponent->getMaterial();
-                            //	if (material)
-                            //	{
-                            //		if (m_meshObject)
-                            //		{
-                            //			m_meshObject->setMaterial(material);
-                            //		}
-                            //	}
-                            // }
-
-                            if( meshObject )
-                            {
-                                auto actorName = actor->getName();
-                                auto nodeName = actorName + String( "_MeshComponent" ) +
-                                                StringUtil::toString( m_idExt++ );
-
-                                auto rootNode = smgr->getRootSceneNode();
-                                auto meshNode = rootNode->addChildSceneNode( nodeName );
-
-                                if( meshNode )
+                                auto meshObject = smgr->addMesh( meshPath );
+                                if( !meshObject )
                                 {
-                                    meshNode->attachObject( meshObject );
+                                    FB_LOG( "Mesh not loaded: " + meshPath );
                                 }
 
-                                meshObject->setVisibilityFlags( render::IGraphicsObject::SceneFlag );
+                                setMeshObject( meshObject );
+                                setGraphicsObject( meshObject );
+                                ;
 
-                                setMeshNode( meshNode );
+                                if( meshObject )
+                                {
+                                    auto actorName = actor->getName();
+                                    auto nodeName = actorName + String( "_MeshComponent" ) +
+                                                    StringUtil::toString( m_idExt++ );
+
+                                    auto rootNode = smgr->getRootSceneNode();
+                                    auto meshNode = rootNode->addChildSceneNode( nodeName );
+
+                                    if( meshNode )
+                                    {
+                                        meshNode->attachObject( meshObject );
+                                    }
+
+                                    meshObject->setVisibilityFlags( render::IGraphicsObject::SceneFlag );
+
+                                    setMeshNode( meshNode );
+                                }
                             }
                         }
                     }

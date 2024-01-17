@@ -1,6 +1,11 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/Factory.h>
 #include <FBCore/Memory/Memory.h>
+#include "FBCore/Memory/MemoryTracker.h"
+
+#if FB_ENABLE_TRACE
+#    include <boost/stacktrace.hpp>
+#endif
 
 namespace fb
 {
@@ -48,6 +53,17 @@ namespace fb
             std::terminate();
         }
 
+#if FB_ENABLE_MEMORY_TRACKER
+        const char *file = __FILE__;
+        int line = __LINE__;
+        const char *func = __FUNCTION__;
+
+        std::stringstream backtraceMsg;
+        backtraceMsg << boost::stacktrace::stacktrace();
+        auto msg = backtraceMsg.str();
+        MemoryTracker::get()._recordAlloc( ptr, m_objectSize, 0, file, line, msg.c_str() );
+#endif
+
         return ptr;
     }
 
@@ -64,12 +80,27 @@ namespace fb
             std::terminate();
         }
 
+#if FB_ENABLE_MEMORY_TRACKER
+        const char *file = __FILE__;
+        int line = __LINE__;
+        const char *func = __FUNCTION__;
+
+        std::stringstream backtraceMsg;
+        backtraceMsg << boost::stacktrace::stacktrace();
+        auto msg = backtraceMsg.str();
+        MemoryTracker::get()._recordAlloc( ptr, m_objectSize, 0, file, line, msg.c_str() );
+#endif
+
         return ptr;
     }
 
     void Factory::freeObject( void *object )
     {
         Memory::ScalableAlignedFree( object );
+
+#if FB_ENABLE_MEMORY_TRACKER
+        MemoryTracker::get()._recordDealloc( object );
+#endif
     }
 
     auto Factory::getObjectSize() const -> u32

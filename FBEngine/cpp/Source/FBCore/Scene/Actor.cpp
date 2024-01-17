@@ -904,101 +904,86 @@ namespace fb::scene
             {
                 setLoadingState( LoadingState::Unloading );
 
-                auto isDummy = getFlag( ActorFlagDummy );
-                if( !isDummy )
+                auto applicationManager = core::ApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto pSceneManager = applicationManager->getSceneManager();
+                auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
+
+                if( auto transform = getTransform() )
                 {
-                    auto applicationManager = core::ApplicationManager::instance();
-                    FB_ASSERT( applicationManager );
+                    transform->unload( nullptr );
+                }
 
-                    auto pSceneManager = applicationManager->getSceneManager();
-                    auto sceneManager = fb::static_pointer_cast<SceneManager>( pSceneManager );
-
-                    if( auto transform = getTransform() )
+                if( auto p = getChildrenPtr() )
+                {
+                    auto &children = *p;
+                    for( auto child : children )
                     {
-                        transform->unload( nullptr );
-                    }
-
-                    if( auto p = getChildrenPtr() )
-                    {
-                        auto &children = *p;
-                        for( auto child : children )
+                        if( child )
                         {
-                            if( child )
-                            {
-                                child->unload( data );
-                            }
-                        }
-                    }
-
-                    auto components = getComponents();
-                    for( auto component : components )
-                    {
-                        try
-                        {
-                            if( component )
-                            {
-                                component->unload( nullptr );
-                            }
-                        }
-                        catch( std::exception &e )
-                        {
-                            FB_LOG_EXCEPTION( e );
-                        }
-                    }
-
-                    m_scene = nullptr;
-                    m_parent = nullptr;
-                    m_transform = nullptr;
-
-                    if( auto p = getChildrenPtr() )
-                    {
-                        auto &children = *p;
-                        children.clear();
-                    }
-
-                    if( auto p = getComponentsPtr() )
-                    {
-                        auto &components = *p;
-                        components.clear();
-                    }
-
-                    // for (u32 x = 0; x < int(Thread::UpdateState::Count); ++x)
-                    //{
-                    //	for (u32 y = 0; y < int(Thread::Task::Count); ++y)
-                    //	{
-                    //		m_updateComponents[x][y] = nullptr;
-                    //	}
-                    // }
-
-                    if( auto scene = getScene() )
-                    {
-                        auto pThis = getSharedFromThis<Actor>();
-                        scene->unregisterAll( pThis );
-                    }
-
-                    setScene( nullptr );
-
-                    if( sceneManager )
-                    {
-                        auto transform = getTransform();
-                        sceneManager->destroyTransformComponent( transform );
-                        setTransform( nullptr );
-                    }
-
-                    // m_componentCache = nullptr;
-                    // m_parent = nullptr;
-
-                    for( auto component : components )
-                    {
-                        if( component )
-                        {
-                            component->handleEvent( IEvent::Type::Actor, IComponent::actorUnload,
-                                                    Array<Parameter>(), this, component, nullptr );
+                            child->unload( data );
                         }
                     }
                 }
 
+                auto components = getComponents();
+                for( auto component : components )
+                {
+                    try
+                    {
+                        if( component )
+                        {
+                            component->unload( nullptr );
+                        }
+                    }
+                    catch( std::exception &e )
+                    {
+                        FB_LOG_EXCEPTION( e );
+                    }
+                }
+
+                m_scene = nullptr;
+                m_parent = nullptr;
+                m_transform = nullptr;
+
+                if( auto p = getChildrenPtr() )
+                {
+                    auto &children = *p;
+                    children.clear();
+                }
+
+                if( auto p = getComponentsPtr() )
+                {
+                    auto &components = *p;
+                    components.clear();
+                }
+
+                if( auto scene = getScene() )
+                {
+                    auto pThis = getSharedFromThis<Actor>();
+                    scene->unregisterAll( pThis );
+                }
+
+                setScene( nullptr );
+
+                if( sceneManager )
+                {
+                    auto transform = getTransform();
+                    sceneManager->destroyTransformComponent( transform );
+                    setTransform( nullptr );
+                }
+
                 setStateContext( nullptr );
+
+                for( auto component : components )
+                {
+                    if( component )
+                    {
+                        component->handleEvent( IEvent::Type::Actor, IComponent::actorUnload,
+                                                Array<Parameter>(), this, component, nullptr );
+                    }
+                }
 
                 setLoadingState( LoadingState::Unloaded );
             }
@@ -1011,28 +996,35 @@ namespace fb::scene
 
     auto Actor::getPerpetual() const -> bool
     {
-        return m_perpetual;
+        auto flags = getFlags();
+        return BitUtil::getFlagValue( flags, ActorFlagPerpetual );
     }
 
-    void Actor::setPerpetual( bool perpetual )
+    void Actor::setPerpetual( bool perpetual, bool cascade )
     {
-        m_perpetual = perpetual;
-    }
+        if( getPerpetual() != perpetual )
+        {
+            auto flags = getFlags();
+            auto newFlags = BitUtil::setFlagValue( flags, ActorFlagPerpetual, perpetual );
+            setFlags( newFlags );
 
-    auto Actor::getAutoUpdateComponents() const -> bool
-    {
-        return m_autoUpdateComponents;
-    }
-
-    void Actor::setAutoUpdateComponents( bool autoUpdateComponents )
-    {
-        m_autoUpdateComponents = autoUpdateComponents;
+            if( cascade )
+            {
+                if( auto p = getChildrenPtr() )
+                {
+                    auto &children = *p;
+                    for( auto child : children )
+                    {
+                        child->setPerpetual( perpetual );
+                    }
+                }
+            }
+        }
     }
 
     auto Actor::getScene() const -> SmartPtr<IScene>
     {
-        auto p = m_scene.load();
-        return p.lock();
+        return m_scene;
     }
 
     void Actor::setScene( SmartPtr<IScene> scene )
@@ -1055,8 +1047,9 @@ namespace fb::scene
         auto components = getComponents();
         for( auto component : components )
         {
-            component->handleEvent( IEvent::Type::Actor, IComponent::triggerCollisionLeave,
-                                    Array<Parameter>(), this, collision, nullptr );
+            auto args = Array<Parameter>();
+            component->handleEvent( IEvent::Type::Actor, IComponent::triggerCollisionLeave, args, this,
+                                    collision, nullptr );
         }
     }
 
@@ -1065,8 +1058,9 @@ namespace fb::scene
         auto components = getComponents();
         for( auto component : components )
         {
-            component->handleEvent( IEvent::Type::Actor, IComponent::componentLoaded, Array<Parameter>(),
-                                    this, loadedComponent, nullptr );
+            auto args = Array<Parameter>();
+            component->handleEvent( IEvent::Type::Actor, IComponent::componentLoaded, args, this,
+                                    loadedComponent, nullptr );
         }
     }
 
@@ -1340,8 +1334,7 @@ namespace fb::scene
 
     auto Actor::getParent() const -> SmartPtr<IActor>
     {
-        auto p = m_parent.load();
-        return p.lock();
+        return m_parent;
     }
 
     void Actor::setParent( SmartPtr<IActor> parent )
@@ -1614,12 +1607,8 @@ namespace fb::scene
         auto properties = Resource<IActor>::getProperties();
 
         properties->setProperty( "name", getName() );
-
-        bool bIsStatic = isStatic();
-        properties->setProperty( "static", bIsStatic );
-
-        auto enabled = isEnabled();
-        properties->setProperty( "enabled", enabled );
+        properties->setProperty( "static", isStatic() );
+        properties->setProperty( "enabled", isEnabled() );
 
         return properties;
     }
@@ -1627,21 +1616,19 @@ namespace fb::scene
     void Actor::setProperties( SmartPtr<Properties> properties )
     {
         auto applicationManager = core::ApplicationManager::instance();
-        FB_ASSERT( applicationManager );
-
         auto factoryManager = applicationManager->getFactoryManager();
         auto sceneManager = applicationManager->getSceneManager();
 
         auto name = String();
-        properties->getPropertyValue( "label", name );
-        setName( name );
-
         bool bIsStatic = false;
-        properties->getPropertyValue( "static", bIsStatic );
-        setStatic( bIsStatic );
-
         auto enabled = isEnabled();
+
+        properties->getPropertyValue( "label", name );
+        properties->getPropertyValue( "static", bIsStatic );
         properties->getPropertyValue( "enabled", enabled );
+
+        setName( name );
+        setStatic( bIsStatic );
         setEnabled( enabled );
 
         if( auto handle = getHandle() )

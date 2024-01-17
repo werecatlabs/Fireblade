@@ -7,6 +7,7 @@ namespace fb
 {
     namespace physics
     {
+        /** Interface for effects. E.g. wind effects etc. */
         class IPhysicsBodyEffect2 : public IPhysicsEffect2
         {
         public:

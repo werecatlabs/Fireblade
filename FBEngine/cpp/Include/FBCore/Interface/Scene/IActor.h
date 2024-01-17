@@ -283,8 +283,9 @@ namespace fb
 
             /** Sets a boolean to indicate if this actor should be destroyed when a new scene is loaded.
             @param perpetual A boolean value to indicate if this actor should be destroyed.
+            @param cascade A boolean value to indicate if the children should be destroyed.
             */
-            virtual void setPerpetual( bool perpetual ) = 0;
+            virtual void setPerpetual( bool perpetual, bool cascade = false ) = 0;
 
             /** Adds a component instance. */
             virtual void addComponentInstance( SmartPtr<IComponent> component ) = 0;
@@ -346,8 +347,15 @@ namespace fb
             /** Gets children. */
             virtual Array<SmartPtr<IActor>> getAllChildren() const = 0;
 
+            /** Sets the sibling index. 
+            @param index The new sibling index.
+            */
             virtual void setSiblingIndex( s32 index ) = 0;
 
+            /** Sets the child sibling index. 
+            @param child The child actor.
+            @param index The new sibling index.
+            */
             virtual void setChildSiblingIndex( SmartPtr<IActor> child, s32 index ) = 0;
 
             /** Used to know if the actor belongs to the client in network game. */

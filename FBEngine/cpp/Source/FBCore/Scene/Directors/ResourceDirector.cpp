@@ -50,4 +50,4 @@ namespace fb::scene
         properties->setProperty( "resourceUUID", getResourceUUID() );
         return properties;
     }
-} // namespace fb::scene
+}  // namespace fb::scene

@@ -311,6 +311,20 @@ namespace fb
         }
     }
 
+    void AssetDatabaseManager::removeResourceEntryFromPath( const String &path )
+    {
+        auto sql = String( "select * from resources where path = '" ) + path + "'";
+        auto query = executeQuery( sql );
+        if( query )
+        {
+            if( !query->eof() )
+            {
+                auto deleteSql = String( "DELETE FROM resources WHERE path = '" ) + path + "'";
+                executeQuery( deleteSql );
+            }
+        }
+    }
+
     auto AssetDatabaseManager::hasResourceById( const String &uuid ) -> bool
     {
         auto sql = static_cast<String>( "select * from 'resources' where uuid='" + uuid + "'" );

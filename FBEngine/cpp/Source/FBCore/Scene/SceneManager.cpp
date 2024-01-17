@@ -67,8 +67,6 @@ namespace fb::scene
             m_stateListeners.resize( size );
             m_scenes.resize( size );
 
-            //m_meshComponents.resize( size );
-            //m_meshRenderers.resize( size );
             m_transforms.resize( size );
 
             m_actorPreviousFlags.resize( size );
@@ -85,10 +83,6 @@ namespace fb::scene
             {
                 v.resize( static_cast<s32>( Thread::Task::Count ) );
             }
-
-            // auto transformStateData = fb::make_ptr<TransformStateData>();
-            // stateManager->setStateDataByType(transformStateData);
-            // m_transformStateData = transformStateData;
 
             setLoadingState( LoadingState::Loaded );
         }
@@ -123,9 +117,6 @@ namespace fb::scene
                 }
 
                 m_components.clear();
-                //m_collisionBoxes.clear();
-                //m_meshComponents.clear();
-                //m_meshRenderers.clear();
                 m_transforms.clear();
 
                 m_fsms.clear();
@@ -612,78 +603,6 @@ namespace fb::scene
         return nullptr;
     }
 
-    auto SceneManager::createDummyActor() -> SmartPtr<IActor>
-    {
-        try
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
-
-            auto applicationManager = core::ApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto factoryManager = applicationManager->getFactoryManager();
-            FB_ASSERT( factoryManager );
-
-            auto fsmManager = getFsmManager();
-            FB_ASSERT( fsmManager );
-
-            auto newId = 0;
-            for( auto actor : m_actors )
-            {
-                if( !actor )
-                {
-                    break;
-                }
-
-                newId++;
-            }
-
-            auto actor = factoryManager->make_ptr<Actor>();
-
-            auto handle = actor->getHandle();
-            if( handle )
-            {
-                handle->setInstanceId( newId );
-                handle->setName( "Dummy" );
-            }
-
-            actor->setFlag( IActor::ActorFlagDummy, true );
-            actor->load( nullptr );
-
-            m_actors[newId] = actor;
-
-            auto fsm = fsmManager->createFSM();
-            auto gameFSM = fsmManager->createFSM();
-
-            m_fsms[newId] = fsm;
-            m_gameFSMs[newId] = gameFSM;
-
-            auto actorFsmListener = factoryManager->make_ptr<Actor::ActorFsmListener>();
-            auto actorGameFsmListener = factoryManager->make_ptr<Actor::ActorGameFsmListener>();
-
-            m_fsmListeners[newId] = actorFsmListener;
-            m_gameFsmListeners[newId] = actorGameFsmListener;
-
-            actorFsmListener->setOwner( actor.get() );
-            fsm->addListener( actorFsmListener );
-
-            actorGameFsmListener->setOwner( actor.get() );
-            gameFSM->addListener( actorGameFsmListener );
-
-            auto flags = IActor::ActorFlagEnabled;
-            m_actorCurrentFlags[newId] = flags;
-
-            ++m_numActors;
-            return actor;
-        }
-        catch( std::exception &e )
-        {
-            FB_LOG_EXCEPTION( e );
-        }
-
-        return nullptr;
-    }
-
     void SceneManager::destroyActor( SmartPtr<IActor> actor )
     {
         try
@@ -701,6 +620,14 @@ namespace fb::scene
 
             if( actor )
             {
+                //auto allActors = actor->getAllChildren();
+                //allActors.push_back( actor );
+
+                //for(auto child : allActors )
+                //{
+                //    child->unload( nullptr );
+                //}
+
                 if( auto parent = actor->getParent() )
                 {
                     parent->removeChild( actor );

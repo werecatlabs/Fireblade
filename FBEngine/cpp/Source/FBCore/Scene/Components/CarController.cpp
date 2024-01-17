@@ -802,7 +802,7 @@ namespace fb::scene
 
     auto CarController::handleComponentEvent( u32 state, IFSM::Event eventType ) -> IFSM::ReturnType
     {
-        FB_ASSERT( Thread::getCurrentTask() == Thread::Task::Application );
+        //FB_ASSERT( Thread::getCurrentTask() == Thread::Task::Application );
 
         switch( eventType )
         {

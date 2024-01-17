@@ -36,6 +36,7 @@ namespace fb
             Count      /**< Number of resource types. */
         };
 
+        /** The name of the resource type. */
         static const String nameStr;
 
         /** Destructor. */

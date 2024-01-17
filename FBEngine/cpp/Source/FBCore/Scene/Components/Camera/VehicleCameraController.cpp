@@ -124,8 +124,8 @@ namespace fb::scene
                             auto fRotationSnapTime =
                                 m_maxRotationSnapTime - ( m_rotationSnapTime + m_minRotationSnapTime );
                             currentRotationAngle = Math<real_Num>::smoothDampAngle(
-                                currentRotationAngle, m_targetRotationAngle, real_Num(0.0), (real_Num)dt,
-                                fRotationSnapTime );
+                                currentRotationAngle, m_targetRotationAngle, real_Num( 0.0 ),
+                                (real_Num)dt, fRotationSnapTime );
 
                             m_currentHeight =
                                 Math<real_Num>::lerp( m_currentHeight, m_targetHeight,
@@ -134,7 +134,7 @@ namespace fb::scene
                             m_targetPosition = position;
                             m_targetPosition.y = position.y + m_targetOffset;
 
-                            position += Vector3<real_Num>::unitY() * real_Num(0.1);
+                            position += Vector3<real_Num>::unitY() * real_Num( 0.1 );
 
                             auto cameraPosition =
                                 position + ( orientation * Vector3<real_Num>::unitZ() * m_distance );

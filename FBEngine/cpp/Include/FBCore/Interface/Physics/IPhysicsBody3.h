@@ -88,6 +88,7 @@ namespace fb
             /** Clones the physics body. */
             virtual SmartPtr<IPhysicsBody3> clone() = 0;
 
+            /** Wakes up the body. */
             virtual void wakeUp() = 0;
 
             /** Gets the data as a properties object.
@@ -106,6 +107,7 @@ namespace fb
             /** Sets the state object. */
             virtual void setStateContext( SmartPtr<IStateContext> stateContext ) = 0;
 
+            /** Gets the object implementation. */
             virtual void _getObject( void **object ) const = 0;
 
             FB_CLASS_REGISTER_DECL;

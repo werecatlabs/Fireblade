@@ -7,25 +7,32 @@ namespace fb
 {
     namespace scene
     {
+
+        /** @brief Audio emitter component.
+        *  This component is used to play sounds.
+        */
         class AudioEmitter : public Component
         {
         public:
+            /** @brief Constructor. */
             AudioEmitter();
+
+            /** @brief Destructor. */
             ~AudioEmitter() override;
 
-            /** @copydoc BaseComponent::load */
+            /** @copydoc Component::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc BaseComponent::unload */
+            /** @copydoc Component::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc BaseComponent::getProperties */
+            /** @copydoc Component::getProperties */
             SmartPtr<Properties> getProperties() const override;
 
-            /** @copydoc BaseComponent::setProperties */
+            /** @copydoc Component::setProperties */
             void setProperties( SmartPtr<Properties> properties ) override;
 
-            /** @copydoc IComponent::getChildObjects */
+            /** @copydoc Component::getChildObjects */
             Array<SmartPtr<ISharedObject>> getChildObjects() const override;
 
             SmartPtr<ISound> getSound() const;

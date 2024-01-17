@@ -28,22 +28,7 @@ namespace fb::render
             m_creator = nullptr;
             m_parent = nullptr;
 
-            auto applicationManager = core::ApplicationManager::instance();
-
-            if( auto stateContext = getStateContext() )
-            {
-                if( auto stateListener = getStateListener() )
-                {
-                    stateContext->removeStateListener( stateListener );
-                }
-
-                if( auto stateManager = applicationManager->getStateManager() )
-                {
-                    stateManager->removeStateObject( stateContext );
-                }
-
-                setStateContext( nullptr );
-            }
+            SharedGraphicsObject<ISceneNode>::unload( data );
         }
         catch( std::exception &e )
         {

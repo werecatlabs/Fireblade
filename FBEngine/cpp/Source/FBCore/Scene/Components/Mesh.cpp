@@ -107,7 +107,7 @@ namespace fb::scene
         //    setMeshPath( meshPath );
         //}
         //else
-        
+
         if( meshPath != getMeshPath() )
         {
             meshPath = StringUtil::cleanupPath( meshPath );

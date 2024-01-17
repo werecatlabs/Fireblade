@@ -8,6 +8,8 @@ namespace fb
     namespace physics
     {
 
+        /** Snap effect interface.
+        */
         class IPhysicsBodyEffectSnap2 : public IPhysicsBodyEffect2
         {
         public:

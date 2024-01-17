@@ -196,6 +196,12 @@ namespace fb
 
             /**
              * @brief Gets a smart pointer to the first component of the specified type attached to any actor in the scene.
+             */
+            template <class T>
+            SmartPtr<T> getComponentFromActor( SmartPtr<IActor> actor ) const;
+
+            /**
+             * @brief Gets a smart pointer to the first component of the specified type attached to any actor in the scene.
              * @tparam T The type of component to get.
              * @return A smart pointer to the first component of the specified type attached to any actor in the scene, or null if no such component was found.
              */
@@ -214,6 +220,32 @@ namespace fb
         };
 
         template <class T>
+        SmartPtr<T> IScene::getComponentFromActor( SmartPtr<IActor> actor ) const
+        {
+            if( actor )
+            {
+                if( auto actorComponent = actor->getComponent<T>() )
+                {
+                    return actorComponent;
+                }
+
+                const auto children = actor->getChildren();
+                for( auto child : children )
+                {
+                    if( child )
+                    {
+                        if( auto childComponent = getComponentFromActor<T>( child ) )
+                        {
+                            return childComponent;
+                        }
+                    }
+                }
+            }
+
+            return nullptr;
+        }
+
+        template <class T>
         SmartPtr<T> IScene::getComponent() const
         {
             FB_ASSERT( isValid() );
@@ -223,7 +255,7 @@ namespace fb
             {
                 if( actor )
                 {
-                    if( auto actorComponent = actor->getComponent<T>() )
+                    if( auto actorComponent = getComponentFromActor<T>( actor ) )
                     {
                         return actorComponent;
                     }

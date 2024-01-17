@@ -56,7 +56,10 @@ namespace fb
                 AtomicSmartPtr<Actor> m_owner;
             };
 
+            /** @brief Constructor. */
             Actor();
+
+            /** @brief Destructor. */
             ~Actor() override;
 
             /** @copydoc IActor::getName */
@@ -143,19 +146,19 @@ namespace fb
             /** @copydoc IActor::postUpdate */
             void postUpdate() override;
 
-            /** @copydoc IObject::load */
+            /** @copydoc Resource<IActor>::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::unload */
+            /** @copydoc Resource<IActor>::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IObject::reload */
+            /** @copydoc Resource<IActor>::reload */
             void reload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IActor::addComponentInstance */
+            /** @copydoc Resource<IActor>::addComponentInstance */
             void addComponentInstance( SmartPtr<IComponent> component ) override;
 
-            /** @copydoc IActor::removeComponent */
+            /** @copydoc Resource<IActor>::removeComponent */
             void removeComponentInstance( SmartPtr<IComponent> component ) override;
 
             /** @copydoc IActor::hasComponent */
@@ -167,19 +170,14 @@ namespace fb
             /** @copydoc IActor::getComponents */
             Array<SmartPtr<IComponent>> getComponents() const override;
 
+            /** @copydoc IActor::getComponentsPtr */
             SharedPtr<ConcurrentArray<SmartPtr<IComponent>>> getComponentsPtr() const override;
 
             /** @copydoc IActor::getPerpetual */
             bool getPerpetual() const override;
 
             /** @copydoc IActor::setPerpetual */
-            void setPerpetual( bool perpetual ) override;
-
-            /** @copydoc IActor::getAutoUpdateComponents */
-            bool getAutoUpdateComponents() const;
-
-            /** @copydoc IActor::setAutoUpdateComponents */
-            void setAutoUpdateComponents( bool autoUpdateComponents );
+            void setPerpetual( bool perpetual, bool cascade = false ) override;
 
             /** @copydoc IActor::getScene */
             SmartPtr<IScene> getScene() const override;
@@ -196,10 +194,13 @@ namespace fb
             /** @copydoc IActor::componentLoaded */
             void componentLoaded( SmartPtr<IComponent> loadedComponent ) override;
 
+            /** @copydoc IActor::getChildByIndex */
             SmartPtr<IActor> getChildByIndex( u32 index ) const override;
 
+            /** @copydoc IActor::getNumChildren */
             u32 getNumChildren() const override;
 
+            /** @copydoc IActor::getSiblingIndex */
             s32 getSiblingIndex() const override;
 
             /** Adds a child to this actor. */
@@ -232,8 +233,10 @@ namespace fb
             /** @copydoc IActor::getAllChildren */
             Array<SmartPtr<IActor>> getAllChildren( SmartPtr<IActor> parent ) const;
 
+            /** @copydoc IActor::setSiblingIndex */
             void setSiblingIndex( s32 index ) override;
 
+            /** @copydoc IActor::setChildSiblingIndex */
             void setChildSiblingIndex( SmartPtr<IActor> child, s32 index ) override;
 
             /** @copydoc IActor::toData */
@@ -323,20 +326,27 @@ namespace fb
             /** @copydoc IActor::getGameState */
             GameState getGameState() const override;
 
+            /** @copydoc IActor::getFlags */
             u32 getFlags() const override;
 
+            /** @copydoc IActor::setFlags */
             void setFlags( u32 flags ) override;
 
+            /** @copydoc IActor::getFlag */
             bool getFlag( u32 flag ) const override;
 
+            /** @copydoc IActor::setFlag */
             void setFlag( u32 flag, bool value ) override;
 
+            /** @copydoc IActor::updateVisibility */
             void updateVisibility() override;
 
+            /** @copydoc IActor::handleEvent */
             Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
                                    const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
                                    SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
+            /** @copydoc IActor::sendEvent */
             Parameter sendEvent( IEvent::Type eventType, hash_type eventValue,
                                  const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
                                  SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
@@ -346,28 +356,37 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
+            /** Handle an actor event. */
             IFSM::ReturnType handleActorEvent( u32 state, IFSM::Event eventType );
 
+            /** Handle an actor game event. */
             IFSM::ReturnType handleActorGameEvent( u32 state, IFSM::Event eventType );
 
-            AtomicWeakPtr<IScene> m_scene;
+            // The scene this actor belongs to.
+            SmartPtr<IScene> m_scene;
 
-            AtomicWeakPtr<IActor> m_parent;
+            // The parent of this actor.
+            SmartPtr<IActor> m_parent;
 
+            // The transform of this actor.
             SmartPtr<ITransform> m_transform;
 
+            // The components.
             AtomicSharedPtr<ConcurrentArray<SmartPtr<IComponent>>> m_components;
 
+            // The actor children.
             AtomicSharedPtr<ConcurrentArray<SmartPtr<IActor>>> m_children;
 
+            // The actor factory manager.
             AtomicWeakPtr<IFactoryManager> m_factoryManager;
 
+            // The actor flags.
             u32 *m_flags = nullptr;
-            atomic_bool m_autoUpdateComponents = true;
-            atomic_bool m_perpetual = false;
 
+            // The actor flags.
             Array<String> m_tags;
-
+            
+            // Used to generate unique ids.
             static u32 m_idExt;
         };
     }  // namespace scene
