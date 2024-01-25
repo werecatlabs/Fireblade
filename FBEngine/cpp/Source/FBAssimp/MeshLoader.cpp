@@ -755,18 +755,24 @@ namespace fb
 
             if( numMeshes > 0 )
             {
-                auto resource = meshManager->createOrRetrieve( meshFilePath );
+                auto resource = resourceDatabase->createOrRetrieve( meshFilePath );
                 auto meshResource = fb::static_pointer_cast<MeshResource>( resource.first );
 
                 if( meshResource )
                 {
                     auto mesh = meshResource->getMesh();
 
-                    //if( !Path::isExistingFile(meshFilePath) )
+                    auto importMesh = getImportMesh();
+                    if( !fileSystem->isExistingFile( meshFilePath ) )
+                    {
+                        importMesh = true;
+                    }
+
+                    if( importMesh )
                     {
                         if( !mesh )
                         {
-                            mesh = fb::make_ptr<Mesh>();
+                            mesh = factoryManager->make_ptr<Mesh>();
                             meshResource->setMesh( mesh );
                         }
 
@@ -859,10 +865,24 @@ namespace fb
                     auto materialName = pAIMaterial->GetName();
                     auto pMaterialName = materialName.C_Str();
                     auto materialNameStr = String( pMaterialName );
-                    auto materialPath = materialNameStr + ".mat";
 
-                    auto fbMaterial =
-                        resourceDatabase->loadResourceByType<render::IMaterial>( materialPath );
+                    auto materialsFolderName = String( "Materials" );
+                    auto materialFileName = materialNameStr + ".mat";
+
+                    auto materialPath = Path::getFilePath( m_meshPath );
+
+                    auto materialFilePath = materialPath + "/" + materialFileName;
+                    auto existingFile = fileSystem->isExistingFile( materialFilePath, false, true );
+                    if( !existingFile )
+                    {
+                        materialFilePath =
+                            materialPath + "/" + materialsFolderName + "/" + materialFileName;
+                        existingFile = fileSystem->isExistingFile( materialFilePath, false, true );
+                    }
+
+                    auto result =
+                        resourceDatabase->createOrRetrieveByType<render::IMaterial>( materialFilePath );
+                    auto fbMaterial = result.first;
 
                     if( pAIMaterial )
                     {
@@ -1059,6 +1079,16 @@ namespace fb
     void MeshLoader::setRootActor( SmartPtr<scene::IActor> rootActor )
     {
         m_rootActor = rootActor;
+    }
+
+    bool MeshLoader::getImportMesh() const
+    {
+        return m_importMesh;
+    }
+
+    void MeshLoader::setImportMesh( bool importMesh )
+    {
+        m_importMesh = importMesh;
     }
 
     auto MeshLoader::getRootActor() const -> SmartPtr<scene::IActor>
@@ -1292,60 +1322,6 @@ namespace fb
         }
     }
 
-    void MeshLoader::loadDataFromNode( const aiScene *mScene, const aiNode *pNode, const String &mDir )
-    {
-        // auto engine = core::ApplicationManager::instance();
-        // SmartPtr<IGraphicsSystem> graphicsSystem = engine->getGraphicsSystem();
-        // SmartPtr<IMeshManager> meshMgr = graphicsSystem->getMeshManager();
-
-        if( pNode->mNumMeshes > 0 )
-        {
-            // MeshGeometryPtr mesh;
-
-            if( getUseSingleMesh() )
-            {
-                // if(mMeshes.size() == 0)
-                //{
-                //	static int nameExt = 0;
-                //	mesh = m_meshMgr->create(String("ROOTMesh") + StringUtil::toString(nameExt++),
-                //IResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-
-                //	SmartPtr<IMesh> pMesh(new CMesh);
-                //	mesh->setMesh(pMesh);
-
-                //	mMeshes.push_back(mesh);
-                //}
-                // else
-                //{
-                //	mesh = mMeshes[0];
-                //}
-            }
-
-            for( u32 idx = 0; idx < pNode->mNumMeshes; ++idx )
-            {
-                aiMesh *pAIMesh = mScene->mMeshes[pNode->mMeshes[idx]];
-                if( !m_quietMode )
-                {
-                    FB_LOG_MESSAGE( "MeshLoader", String( "SubMesh " ) + StringUtil::toString( idx ) +
-                                                      String( " for mesh '" ) +
-                                                      String( pNode->mName.data ) + "'" );
-                }
-
-                // Create a material instance for the mesh.
-                const aiMaterial *pAIMaterial = mScene->mMaterials[pAIMesh->mMaterialIndex];
-                // createSubMesh(pNode->mName.data, idx, pNode, pAIMesh, pAIMaterial, mesh->getMesh(),
-                // mDir);
-            }
-        }
-
-        // Traverse all child nodes of the current node instance
-        for( u32 childIdx = 0; childIdx < pNode->mNumChildren; childIdx++ )
-        {
-            const aiNode *pChildNode = pNode->mChildren[childIdx];
-            loadDataFromNode( mScene, pChildNode, mDir );
-        }
-    }
-
     auto MeshLoader::createSubMesh( const String &name, int index, const aiNode *pNode,
                                     const aiMesh *mesh, const aiMaterial *mat, SmartPtr<IMesh> mMesh,
                                     const String &mDir ) -> bool
@@ -1402,7 +1378,6 @@ namespace fb
                     uv++;
                 }
 
-                //std::reverse( uvArray.begin(), uvArray.end() );
                 uvs.push_back( uvArray );
             }
         }
@@ -1627,35 +1602,107 @@ namespace fb
             }
         }
 
-        // set bone weigths
-        // if(mesh->HasBones())
-        //{
-        //    for ( Ogre::uint32 i=0; i < mesh->mNumBones; i++ )
-        //    {
-        //        aiBone *pAIBone = mesh->mBones[ i ];
-        //        if ( NULL != pAIBone )
-        //        {
-        //            Ogre::String bname = pAIBone->mName.data;
-        //            for ( Ogre::uint32 weightIdx = 0; weightIdx < pAIBone->mNumWeights; weightIdx++ )
-        //            {
-        //                aiVertexWeight aiWeight = pAIBone->mWeights[ weightIdx ];
+        // set bone weights
+        if( mesh->HasBones() )
+        {
+            for( u32 i = 0; i < mesh->mNumBones; i++ )
+            {
+                aiBone *pAIBone = mesh->mBones[i];
+                if( NULL != pAIBone )
+                {
+                    String bname = pAIBone->mName.data;
+                    for( u32 weightIdx = 0; weightIdx < pAIBone->mNumWeights; weightIdx++ )
+                    {
+                        aiVertexWeight aiWeight = pAIBone->mWeights[weightIdx];
 
-        //                Ogre::VertexBoneAssignment vba;
-        //                vba.vertexIndex = aiWeight.mVertexId;
-        //                vba.boneIndex = mSkeleton->getBone(bname)->getHandle();
-        //                vba.weight= aiWeight.mWeight;
+                        auto vba = fb::make_ptr<VertexBoneAssignment>();
+                        vba->setVertexIndex( aiWeight.mVertexId );
 
-        //                submesh->addBoneAssignment(vba);
-        //            }
-        //        }
-        //    }
-        //} // if mesh has bones
+                        //auto boneIndex = mSkeleton->getBone(bname)->getHandle();
+                        //vba.boneIndex = mSkeleton->getBone(bname)->getHandle();
+
+                        vba->setWeight( aiWeight.mWeight );
+
+                        submesh->addBoneAssignment( vba );
+                    }
+                }
+            }
+        }  // if mesh has bones
 
         // Finally we set a material to the submesh
         submesh->setMaterialName( materialName );
 
         return true;
     }
+
+    void MeshLoader::loadAnimations( const aiScene *scene, SmartPtr<scene::IActor> actor )
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        auto factoryManager = applicationManager->getFactoryManager();
+
+        if( scene->HasAnimations() )
+        {
+            auto animator = actor->getComponent<scene::Animator>();
+            if( !animator )
+            {
+                animator = actor->addComponent<scene::Animator>();
+            }
+
+            for( u32 animIndex = 0; animIndex < scene->mNumAnimations; ++animIndex )
+            {
+                auto anim = scene->mAnimations[animIndex];
+
+                auto animation = factoryManager->make_ptr<scene::Animation>();
+                //auto ogreAnim =
+                //    entity->getSkeleton()->createAnimation( anim->mName.data, anim->mDuration );
+                //ogreAnim->setInterpolationMode( Ogre::Animation::IM_LINEAR );
+
+                animator->addSubComponent( animation );
+            }
+        }
+    }
+
+    /*
+    void MeshLoader::loadAnimations(const aiScene* scene, Ogre::Entity* entity, Ogre::SceneManager* sceneMgr) {
+    // Check if the scene contains animations
+    if (scene->HasAnimations()) {
+        // Iterate through each animation in the scene
+        for (unsigned int animIndex = 0; animIndex < scene->mNumAnimations; ++animIndex) {
+            aiAnimation* anim = scene->mAnimations[animIndex];
+
+            // Create an Ogre animation
+            Ogre::Animation* ogreAnim = entity->getSkeleton()->createAnimation(anim->mName.data, anim->mDuration);
+            ogreAnim->setInterpolationMode(Ogre::Animation::IM_LINEAR);
+
+            // Iterate through each channel in the animation
+            for (unsigned int channelIndex = 0; channelIndex < anim->mNumChannels; ++channelIndex) {
+                aiNodeAnim* channel = anim->mChannels[channelIndex];
+                Ogre::Node* bone = entity->getSkeleton()->getBone(channel->mNodeName.data);
+
+                // Create a track for the bone
+                Ogre::TransformKeyFrame* keyFrame = ogreAnim->createNodeKeyFrame(channel->mPositionKeys[0].mTime);
+                keyFrame->setTranslate(Ogre::Vector3(channel->mPositionKeys[0].mValue.x,
+                                                     channel->mPositionKeys[0].mValue.y,
+                                                     channel->mPositionKeys[0].mValue.z));
+
+                // Interpolate position for the rest of the keyframes
+                for (unsigned int keyIndex = 1; keyIndex < channel->mNumPositionKeys; ++keyIndex) {
+                    Ogre::TransformKeyFrame* keyFrame = ogreAnim->createNodeKeyFrame(channel->mPositionKeys[keyIndex].mTime);
+                    keyFrame->setTranslate(Ogre::Vector3(channel->mPositionKeys[keyIndex].mValue.x,
+                                                         channel->mPositionKeys[keyIndex].mValue.y,
+                                                         channel->mPositionKeys[keyIndex].mValue.z));
+                }
+
+                // Repeat the process for rotation and scaling keys
+                // ...
+
+                // Attach the track to the bone
+                ogreAnim->getNodeTrack(channel->mNodeName.data)->setAssociatedNode(bone);
+            }
+        }
+    }
+}
+*/
 #endif
 
     auto MeshLoader::getUseSingleMesh() const -> bool

@@ -5,6 +5,8 @@
 namespace fb
 {
 
+    FB_CLASS_REGISTER_DERIVED( fb, Mesh, IMesh );
+
     Mesh::Mesh() = default;
 
     Mesh::~Mesh() = default;
@@ -49,24 +51,6 @@ namespace fb
         return m_subMeshes;
     }
 
-    void Mesh::setName( const String &name )
-    {
-        if( auto handle = getHandle() )
-        {
-            handle->setName( name );
-        }
-    }
-
-    auto Mesh::getName() const -> String
-    {
-        if( auto handle = getHandle() )
-        {
-            return handle->getName();
-        }
-
-        return "";
-    }
-
     void Mesh::updateAABB( bool forceSubMeshUpdate )
     {
         if( m_subMeshes.size() > 0 )
@@ -103,20 +87,25 @@ namespace fb
 
     auto Mesh::clone() const -> SmartPtr<IMesh>
     {
-        SmartPtr<IMesh> newMesh = fb::make_ptr<Mesh>();
-        Array<SmartPtr<ISubMesh>> subMeshes = getSubMeshes();
+        auto applicationManager = core::IApplicationManager::instance();
+        auto factoryManager = applicationManager->getFactoryManager();
+
+        auto newMesh = factoryManager->make_ptr<Mesh>();
+        auto subMeshes = getSubMeshes();
+
         for( auto &subMesh : subMeshes )
         {
-            SmartPtr<ISubMesh> newSubMesh = subMesh->clone();
+            auto newSubMesh = subMesh->clone();
             FB_ASSERT( newSubMesh );
             newMesh->addSubMesh( newSubMesh );
         }
 
-        AABB3F aabb = getAABB();
+        auto aabb = getAABB();
         newMesh->setAABB( aabb );
 
-        // SmartPtr<IAnimationInterface> animationInterface = getAnimationInterface();
-        // animationInterface->clone();
+        auto animationInterface = getAnimationInterface();
+        auto cloneAnimationInterface = animationInterface->clone();
+        newMesh->setAnimationInterface( cloneAnimationInterface );
 
         return newMesh;
     }
@@ -131,9 +120,9 @@ namespace fb
         return m_animationInterface;
     }
 
-    void Mesh::setHasSharedVertexData( bool val )
+    void Mesh::setHasSharedVertexData( bool hasSharedVertexData )
     {
-        m_hasSharedVertexData = val;
+        m_hasSharedVertexData = hasSharedVertexData;
     }
 
     auto Mesh::hasSkeleton() const -> bool

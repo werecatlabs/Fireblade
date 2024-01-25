@@ -82,6 +82,12 @@ namespace fb
             /** @copydoc ITextureManager::createSkyBoxCubeMap */
             SmartPtr<ITexture> createSkyBoxCubeMap( SmartPtr<IMaterial> material ) override;
 
+            SmartPtr<ITexture> cloneTexture( SmartPtr<ITexture> texture,
+                                                       const String &clonedTextureName );
+
+            SmartPtr<ITexture> cloneTexture( const String &name,
+                                                       const String &clonedTextureName );
+
             /** @copydoc ITextureManager::_getObject */
             void _getObject( void **ppObject ) const override;
 

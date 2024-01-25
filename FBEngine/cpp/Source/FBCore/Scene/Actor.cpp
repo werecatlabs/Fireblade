@@ -35,18 +35,20 @@ namespace fb::scene
 
     auto Actor::getName() const -> String
     {
-        auto handle = getHandle();
-        FB_ASSERT( handle );
+        if( auto handle = getHandle() )
+        {
+            return handle->getName();
+        }
 
-        return handle->getName();
+        return {};
     }
 
     void Actor::setName( const String &name )
     {
-        auto handle = getHandle();
-        FB_ASSERT( handle );
-
-        handle->setName( name );
+        if( auto handle = getHandle() )
+        {
+            handle->setName( name );
+        }
     }
 
     auto Actor::getWorldTransform( time_interval t ) const -> Transform3<real_Num>
@@ -1094,10 +1096,11 @@ namespace fb::scene
             return 0;
         }
 
+        const auto pThis = getSharedFromThis<IActor>();
         for( u32 i = 0; i < parentTransform->getNumChildren(); i++ )
         {
             const auto child = parentTransform->getChildByIndex( i );
-            if( child == getSharedFromThis<IActor>() )
+            if( child == pThis )
             {
                 return i;
             }

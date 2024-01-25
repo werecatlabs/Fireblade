@@ -70,15 +70,6 @@ namespace fb
             /** @copydoc IComponent::updateDirty */
             void updateFlags( u32 flags, u32 oldFlags ) override;
 
-            /** @copydoc BaseComponent::preUpdate */
-            void preUpdate() override;
-
-            /** @copydoc BaseComponent::update */
-            void update() override;
-
-            /** @copydoc BaseComponent::postUpdate */
-            void postUpdate() override;
-
             /** @copydoc BaseComponent::getChildObjects */
             Array<SmartPtr<ISharedObject>> getChildObjects() const override;
 

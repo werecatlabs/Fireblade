@@ -114,9 +114,9 @@ namespace fb
             /**
              * Sets the selected object.
              *
-             * @param val The object to select.
+             * @param selectedObject The object to select.
              */
-            void setSelectedObject( SmartPtr<ISharedObject> val );
+            void setSelectedObject( SmartPtr<ISharedObject> selectedObject );
 
             /**
              * Deselects all objects.

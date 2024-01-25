@@ -4,5 +4,5 @@
 
 namespace fb::render
 {
-    FB_CLASS_REGISTER_DERIVED( fb, ITerrainBlendMap, ISharedObject );
+    FB_CLASS_REGISTER_DERIVED( fb::render, ITerrainBlendMap, ISharedObject );
 }  // namespace fb::render

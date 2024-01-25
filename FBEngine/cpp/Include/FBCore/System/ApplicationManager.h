@@ -13,7 +13,6 @@ namespace fb
 {
     namespace core
     {
-
         /** Implementation of the IApplicationManager interface. */
         class ApplicationManager : public IApplicationManager
         {
@@ -218,9 +217,9 @@ namespace fb
             const SmartPtr<render::IGraphicsSystem> &getGraphicsSystem() const override;
             void setGraphicsSystem( SmartPtr<render::IGraphicsSystem> graphicsSystem ) override;
 
-            SmartPtr<IVideoManager> getVideoManager() const override;
+            SmartPtr<render::IVideoManager> getVideoManager() const override;
 
-            void setVideoManager( SmartPtr<IVideoManager> videoManager ) override;
+            void setVideoManager( SmartPtr<render::IVideoManager> videoManager ) override;
 
             SmartPtr<ITaskManager> getTaskManager() const override;
             void setTaskManager( SmartPtr<ITaskManager> taskManager ) override;
@@ -308,8 +307,8 @@ namespace fb
             SmartPtr<IDatabaseManager> getDatabase() const override;
             void setDatabase( SmartPtr<IDatabaseManager> val ) override;
 
-            SmartPtr<Properties> getProperties() const;
-            void setProperties( SmartPtr<Properties> val );
+            SmartPtr<Properties> getProperties() const override;
+            void setProperties( SmartPtr<Properties> val ) override;
 
             SmartPtr<IVehicleManager> getVehicleManager() const override;
             void setVehicleManager( SmartPtr<IVehicleManager> vehicleManager ) override;
@@ -369,13 +368,13 @@ namespace fb
 
             void setTypeManager( RawPtr<TypeManager> typeManager ) override;
 
-            Array<SmartPtr<ISharedObject>> getChildObjects() const;
+            Array<SmartPtr<ISharedObject>> getChildObjects() const override;
 
             /** Allocate memory. */
-            void *allocateMemory( size_t size );
+            void *allocateMemory( size_t size ) override;
 
             /** Frees memory. */
-            virtual void freeMemory( void *ptr );
+            void freeMemory( void *ptr ) override;
 
             /** Gets the instance of the application manager. */
             static SmartPtr<ApplicationManager> &instance();
@@ -452,7 +451,7 @@ namespace fb
             SmartPtr<IJobQueue> m_jobQueue;
             SmartPtr<ITaskManager> m_taskManager;
             SmartPtr<render::IGraphicsSystem> m_graphicsSystem;
-            SmartPtr<IVideoManager> m_videoManager;
+            SmartPtr<render::IVideoManager> m_videoManager;
             SmartPtr<IFileSystem> m_fileSystem;
             SmartPtr<IApplication> m_application;
 
@@ -572,7 +571,7 @@ namespace fb
         {
             return m_instance;
         }
-    }  // namespace core
-}  // namespace fb
+    } // namespace core
+}     // namespace fb
 
 #endif  // CApplicationManager_h__

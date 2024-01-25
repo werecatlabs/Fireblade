@@ -20,19 +20,19 @@ namespace fb
             /** Destructor. */
             ~TerrainSystem() override;
 
-            /** @copydoc BaseComponent::load */
+            /** @copydoc Component::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc BaseComponent::unload */
+            /** @copydoc Component::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc BaseComponent::updateDirty */
+            /** @copydoc Component::updateDirty */
             void updateFlags( u32 flags, u32 oldFlags ) override;
 
-            /** @copydoc BaseComponent::getProperties */
+            /** @copydoc Component::getProperties */
             SmartPtr<Properties> getProperties() const override;
 
-            /** @copydoc BaseComponent::setProperties */
+            /** @copydoc Component::setProperties */
             void setProperties( SmartPtr<Properties> properties ) override;
 
             /** @copydoc IComponent::updateTransform */

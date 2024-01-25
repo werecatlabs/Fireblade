@@ -13,10 +13,14 @@ namespace fb
     namespace render
     {
 
+        /** @brief Window class for OgreNext */
         class CWindowOgreNext : public CRenderTargetOgreNext<IWindow>
         {
         public:
+            /** @brief Constructor */
             CWindowOgreNext();
+
+            /** @brief Destructor */
             ~CWindowOgreNext() override;
 
             void load( SmartPtr<ISharedObject> data ) override;

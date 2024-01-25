@@ -497,8 +497,8 @@ namespace fb
                 .def( "saveScene", ( void( IScene::* )( const String & ) ) & IScene::saveScene )
                 .def( "saveScene", ( void( IScene::* )() ) & IScene::saveScene )
                 .def( "clear", &IScene::clear )
-                .def( "getName", &IScene::getName )
-                .def( "setName", &IScene::setName )
+                .def( "getLabel", &IScene::getLabel )
+                .def( "setLabel", &IScene::setLabel )
                 .def( "addActor", &IScene::addActor )
                 .def( "removeActor", &IScene::removeActor )
                 .def( "removeAllActors", &IScene::removeAllActors )
@@ -515,9 +515,7 @@ namespace fb
                 //.def( "getState", &IScene::getState )
                 //.def( "setSceneLoadingState", &IScene::setSceneLoadingState )
                 //.def( "getSceneLoadingState", &IScene::getSceneLoadingState )
-                .def( "play", &IScene::play )
-                .def( "edit", &IScene::edit )
-                .def( "stop", &IScene::stop )];
+                ];
 
         module( L )[class_<ISceneManager, ISharedObject, SmartPtr<ISceneManager>>( "ISceneManager" )
                         .def( "loadScene", &ISceneManager::loadScene )

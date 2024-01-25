@@ -789,7 +789,7 @@ namespace fb::editor
                 auto uiManager = editorManager->getUI();
                 FB_ASSERT( uiManager );
 
-                scene->setName( "Untitled" );
+                scene->setLabel( "Untitled" );
                 scene->setFilePath( String() );
                 scene->clear();
 

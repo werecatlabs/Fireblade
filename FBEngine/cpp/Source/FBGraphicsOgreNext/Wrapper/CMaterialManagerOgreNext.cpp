@@ -20,21 +20,20 @@ namespace fb::render
 
     void CMaterialManagerOgreNext::load( SmartPtr<ISharedObject> data )
     {
+        setLoadingState( LoadingState::Loading );
+        MaterialManager::load( data );
+        setLoadingState( LoadingState::Loaded );
     }
 
     void CMaterialManagerOgreNext::unload( SmartPtr<ISharedObject> data )
     {
         try
         {
-            for( auto &material : m_materials )
-            {
-                if( material )
-                {
-                    material->unload( nullptr );
-                }
-            }
+            setLoadingState( LoadingState::Unloading );
 
-            m_materials.clear();
+            MaterialManager::unload( data );
+
+            setLoadingState( LoadingState::Unloaded );
         }
         catch( std::exception &e )
         {

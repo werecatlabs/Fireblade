@@ -11,7 +11,6 @@ namespace fb
 {
     namespace editor
     {
-
         /**
          * @brief Represents the main application for the editor.
          *
@@ -26,10 +25,13 @@ namespace fb
              */
             enum class State
             {
-                Loading,  /**< The application is in the loading state. */
-                Editor,   /**< The application is in the editor state. */
-                Shutdown, /**< The application is in the shutdown state. */
-                Count     /**< The total number of states. */
+                Loading,
+                /**< The application is in the loading state. */
+                Editor,
+                /**< The application is in the editor state. */
+                Shutdown,
+                /**< The application is in the shutdown state. */
+                Count /**< The total number of states. */
             };
 
             /**
@@ -55,8 +57,8 @@ namespace fb
             void unload( SmartPtr<ISharedObject> data ) override;
 
             /**
-            * @brief Runs the editor application.
-            */
+             * @brief Runs the editor application.
+             */
             void run() override;
             void iterate();
 
@@ -109,6 +111,12 @@ namespace fb
             SmartPtr<render::IViewport> getRttViewport() const;
 
             void setRttViewport( SmartPtr<render::IViewport> rttViewport );
+
+            bool isDebugMode() const;
+
+            void setDebugMode( bool debugMode );
+
+            FB_CLASS_REGISTER_DECL;
 
         private:
             class ApplicationListener : public IEventListener
@@ -176,6 +184,7 @@ namespace fb
             };
 
             void loadDebug( SmartPtr<ISharedObject> data );
+            void loadEditor( SmartPtr<ISharedObject> data );
 
             void createTimer() override;
 
@@ -184,7 +193,6 @@ namespace fb
 
             void createTaskManager() override;
 
-            void createProfiler();
             void createThreadPool() override;
 
             void createStateManager() override;
@@ -232,8 +240,10 @@ namespace fb
 
             SmartPtr<ui::IUIApplication> m_application;
             SmartPtr<ui::IUIRenderWindow> m_renderWindow;
+
+            bool m_isDebugMode = false;
         };
-    }  // end namespace editor
-}  // end namespace fb
+    } // end namespace editor
+}     // end namespace fb
 
 #endif  // App_h__

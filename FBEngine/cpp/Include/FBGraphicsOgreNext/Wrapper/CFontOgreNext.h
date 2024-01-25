@@ -40,21 +40,6 @@ namespace fb
             hash32 getRendererType() const;
             void setRendererType( hash32 rendererType );
 
-            /** @copydoc IMaterial::setDirty */
-            void setDirty( bool dirty );
-
-            /** @copydoc IMaterial::isDirty */
-            bool isDirty() const;
-
-            /** @copydoc IObject::toJson */
-            String toJson() const;
-
-            /** @copydoc IObject::toData */
-            SmartPtr<ISharedObject> toData() const override;
-
-            /** @copydoc IObject::fromData */
-            void fromData( SmartPtr<ISharedObject> data ) override;
-
             /** @copydoc IResource::getProperties */
             SmartPtr<Properties> getProperties() const override;
 
@@ -67,40 +52,11 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class MaterialStateListener : public IStateListener
-            {
-            public:
-                MaterialStateListener();
-                MaterialStateListener( CFontOgreNext *material );
-                ~MaterialStateListener() override;
-
-                void handleStateChanged( const SmartPtr<IStateMessage> &message ) override;
-                void handleStateChanged( SmartPtr<IState> &state ) override;
-                void handleQuery( SmartPtr<IStateQuery> &query ) override;
-
-                CFontOgreNext *getOwner() const;
-                void setOwner( CFontOgreNext *owner );
-
-            protected:
-                CFontOgreNext *m_owner = nullptr;
-            };
-
-            void createMaterialByType();
-
-            String m_name;
-
-            SmartPtr<IMaterialNode> m_root;
-            SmartPtr<IStateContext> m_stateContext;
-            SmartPtr<IStateListener> m_stateListener;
-
-            SmartPtr<IMaterialTechnique> m_technique;
-
-            Array<SmartPtr<IMaterialTechnique>> m_techniques;
-
             hash32 m_rendererType = 0;
 
             s32 m_id = 0;
 
+            String m_name;
             String font_type;
             String font_source;
             u32 font_size = 12;

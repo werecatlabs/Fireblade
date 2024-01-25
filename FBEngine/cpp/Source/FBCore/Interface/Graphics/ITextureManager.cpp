@@ -4,5 +4,5 @@
 
 namespace fb::render
 {
-    FB_CLASS_REGISTER_DERIVED( fb, ITextureManager, IResourceManager );
+    FB_CLASS_REGISTER_DERIVED( fb::render, ITextureManager, IResourceManager );
 }  // namespace fb::render

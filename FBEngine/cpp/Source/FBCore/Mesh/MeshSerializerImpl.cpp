@@ -1160,11 +1160,11 @@ namespace fb
         writeChunkHeader( M_MESH_BONE_ASSIGNMENT, calcBoneAssignmentSize() );
 
         // unsigned int vertexIndex;
-        writeInts( &( assign.vertexIndex ), 1 );
+        writeInts( &( assign.m_vertexIndex ), 1 );
         // unsigned short boneIndex;
-        writeShorts( &( assign.boneIndex ), 1 );
+        writeShorts( &( assign.m_boneIndex ), 1 );
         // float weight;
-        writeFloats( &( assign.weight ), 1 );
+        writeFloats( &( assign.m_weight ), 1 );
     }
 
     //---------------------------------------------------------------------
@@ -1173,11 +1173,11 @@ namespace fb
         writeChunkHeader( M_SUBMESH_BONE_ASSIGNMENT, calcBoneAssignmentSize() );
 
         // unsigned int vertexIndex;
-        writeInts( &( assign.vertexIndex ), 1 );
+        writeInts( &( assign.m_vertexIndex ), 1 );
         // unsigned short boneIndex;
-        writeShorts( &( assign.boneIndex ), 1 );
+        writeShorts( &( assign.m_boneIndex ), 1 );
         // float weight;
-        writeFloats( &( assign.weight ), 1 );
+        writeFloats( &( assign.m_weight ), 1 );
     }
 
     //---------------------------------------------------------------------
@@ -1186,11 +1186,11 @@ namespace fb
         VertexBoneAssignment assign;
 
         // unsigned int vertexIndex;
-        readInts( stream, &( assign.vertexIndex ), 1 );
+        readInts( stream, &( assign.m_vertexIndex ), 1 );
         // unsigned short boneIndex;
-        readShorts( stream, &( assign.boneIndex ), 1 );
+        readShorts( stream, &( assign.m_boneIndex ), 1 );
         // float weight;
-        readFloats( stream, &( assign.weight ), 1 );
+        readFloats( stream, &( assign.m_weight ), 1 );
 
         // pMesh->addBoneAssignment(assign);
     }
@@ -1202,11 +1202,11 @@ namespace fb
         VertexBoneAssignment assign;
 
         // unsigned int vertexIndex;
-        readInts( stream, &( assign.vertexIndex ), 1 );
+        readInts( stream, &( assign.m_vertexIndex ), 1 );
         // unsigned short boneIndex;
-        readShorts( stream, &( assign.boneIndex ), 1 );
+        readShorts( stream, &( assign.m_boneIndex ), 1 );
         // float weight;
-        readFloats( stream, &( assign.weight ), 1 );
+        readFloats( stream, &( assign.m_weight ), 1 );
 
         //  sub->addBoneAssignment(assign);
     }

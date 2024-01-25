@@ -39,7 +39,7 @@ namespace fb
         U m_second;
     };
 
-    FB_CLASS_REGISTER_DERIVED_TEMPLATE_PAIR( fb, StateMessagePair, T, U, StateMessage );
+    FB_CLASS_REGISTER_DERIVED_TEMPLATE_PAIR_TYPEID( fb, StateMessagePair, T, U, StateMessage );
 
 }  // end namespace fb
 

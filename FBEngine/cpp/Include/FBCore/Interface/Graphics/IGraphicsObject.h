@@ -143,10 +143,10 @@ namespace fb
             virtual void setAttached( bool attached ) = 0;
 
             /** Get the render technique. */
-            virtual hash32 getRenderTechnique() const = 0;
+            virtual hash_type getRenderTechnique() const = 0;
 
             /** Set the render technique. */
-            virtual void setRenderTechnique( hash32 renderTechnique ) = 0;
+            virtual void setRenderTechnique( hash_type renderTechnique ) = 0;
 
             /** Sets the render queue group. */
             virtual void setRenderQueueGroup( u32 queueID ) = 0;
@@ -154,15 +154,11 @@ namespace fb
             /** Gets the render queue group. */
             virtual u32 getRenderQueueGroup() const = 0;
 
-            /** Gets the data as a properties object.
-            @return The data as a properties object.
-            */
-            virtual SmartPtr<Properties> getProperties() const = 0;
+            /** Gets the creator of the object. */
+            virtual SmartPtr<IGraphicsScene> getCreator() const = 0;
 
-            /** Sets the data as a properties object.
-            @param properties The properties object.
-            */
-            virtual void setProperties( SmartPtr<Properties> properties ) = 0;
+            /** Sets the creator of the object. */
+            virtual void setCreator( SmartPtr<IGraphicsScene> creator ) = 0;
 
             FB_CLASS_REGISTER_DECL;
         };

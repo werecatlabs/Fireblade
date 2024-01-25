@@ -8,7 +8,6 @@ namespace fb
 {
     namespace render
     {
-
         /**
          * @brief Implementation of the ISceneNode interface.
          */
@@ -96,12 +95,6 @@ namespace fb
 
             AABB3<real_Num> getWorldAABB() const override;
 
-            void setVisible( bool isVisible, bool cascade = true ) override;
-
-            void setCulled( bool culled ) override;
-
-            bool isCulled() const override;
-
             void attachObject( SmartPtr<IGraphicsObject> object ) override;
 
             void detachObject( SmartPtr<IGraphicsObject> object ) override;
@@ -109,8 +102,6 @@ namespace fb
             void detachAllObjects() override;
 
             Array<SmartPtr<IGraphicsObject>> getObjects() const override;
-
-            u32 getObjectsBuffer( SmartPtr<IGraphicsObject> *buffer, u32 bufferSize ) const override;
 
             u32 getNumObjects() const override;
 
@@ -123,8 +114,6 @@ namespace fb
 
             bool removeChild( SmartPtr<ISceneNode> child ) override;
 
-            void add() override;
-
             void remove() override;
 
             void removeChildren() override;
@@ -133,8 +122,6 @@ namespace fb
 
             Array<SmartPtr<ISceneNode>> getChildren() const override;
 
-            u32 getChildrenBuffer( SmartPtr<ISceneNode> *children, u32 bufferSize ) const override;
-
             u32 getNumChildren() const override;
 
             void needUpdate( bool forceParentUpdate = false ) override;
@@ -142,25 +129,15 @@ namespace fb
             SmartPtr<ISceneNode> clone( SmartPtr<ISceneNode> parent = nullptr,
                                         const String &name = StringUtil::EmptyString ) const override;
 
-            void showBoundingBox( bool show ) override;
-
-            bool getShowBoundingBox() const override;
-
             void updateBounds() override;
 
-            void setVisibilityFlags( u32 flags ) override;
-
             void _getObject( void **ppObject ) const override;
-
-            void setFlag( u32 flag, bool value ) override;
-
-            bool getFlag( u32 flag ) const override;
 
             SmartPtr<Properties> getProperties() const override;
 
             void setProperties( SmartPtr<Properties> properties ) override;
 
-            Array<SmartPtr<ISharedObject>> getChildObjects() const;
+            Array<SmartPtr<ISharedObject>> getChildObjects() const override;
 
             FB_CLASS_REGISTER_DECL;
 
@@ -177,8 +154,7 @@ namespace fb
             /// The objects attached to this scene node.
             Array<SmartPtr<IGraphicsObject>> m_graphicsObjects;
         };
-
-    }  // namespace render
-}  // namespace fb
+    } // namespace render
+}     // namespace fb
 
 #endif  // CSceneNode_h__

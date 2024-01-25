@@ -5,7 +5,7 @@
 
 namespace fb::render
 {
-    FB_CLASS_REGISTER_DERIVED( fb, IWindow, IRenderTarget );
+    FB_CLASS_REGISTER_DERIVED( fb::render, IWindow, IRenderTarget );
 
     const hash_type IWindow::RESIZE_HASH = StringUtil::getHash( "resize" );
     const hash_type IWindow::REPOSITION_HASH = StringUtil::getHash( "reposition" );

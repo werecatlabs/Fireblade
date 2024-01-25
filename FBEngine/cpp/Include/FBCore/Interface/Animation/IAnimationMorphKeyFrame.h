@@ -10,6 +10,7 @@ namespace fb
     class IAnimationMorphKeyFrame : public IAnimationKeyFrame
     {
     public:
+        ~IAnimationMorphKeyFrame() override = default;
     };
 
 }  // end namespace fb

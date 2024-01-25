@@ -1,5 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Scene/Scene.h>
+#include <FBCore/Scene/Directors/SceneLightingDirector.h>
 #include <FBCore/Interface/IO/IFileSystem.h>
 #include <FBCore/Interface/IO/IStream.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
@@ -16,7 +17,7 @@
 #include <FBCore/Core/DebugTrace.h>
 #include <FBCore/Core/Path.h>
 #include <FBCore/Core/LogManager.h>
-#include "FBCore/Jobs/CameraManagerReset.h"
+#include <FBCore/Jobs/CameraManagerReset.h>
 #include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb::scene
@@ -32,7 +33,7 @@ namespace fb::scene
         unload( nullptr );
     }
 
-    auto Scene::getLabel() const -> String
+    String Scene::getLabel() const
     {
         return m_label;
     }
@@ -47,6 +48,13 @@ namespace fb::scene
         try
         {
             setLoadingState( LoadingState::Loading );
+
+            m_updateObjects.resize( static_cast<s32>( Thread::UpdateState::Count ) );
+
+            for( u32 x = 0; x < static_cast<s32>( Thread::UpdateState::Count ); ++x )
+            {
+                m_updateObjects[x].resize( static_cast<s32>( Thread::Task::Count ) );
+            }
 
             setupCache();
 
@@ -139,7 +147,7 @@ namespace fb::scene
         }
     }
 
-    auto Scene::getActorsPtr() const -> SharedPtr<Array<SmartPtr<IActor>>>
+    SharedPtr<Array<SmartPtr<IActor>>> Scene::getActorsPtr() const
     {
         return m_actors;
     }
@@ -513,7 +521,7 @@ namespace fb::scene
         }
     }
 
-    auto Scene::findActorById( int id ) const -> SmartPtr<IActor>
+    SmartPtr<IActor> Scene::findActorById( int id ) const
     {
         FB_ASSERT( getLoadingState() == LoadingState::Loaded );
 
@@ -533,7 +541,7 @@ namespace fb::scene
         return nullptr;
     }
 
-    auto Scene::getActors() const -> Array<SmartPtr<IActor>>
+    Array<SmartPtr<IActor>> Scene::getActors() const
     {
         FB_ASSERT( isValid() );
         FB_ASSERT( isLoaded() );
@@ -676,7 +684,7 @@ namespace fb::scene
             {
                 auto p = getRegisteredObjects( static_cast<Thread::UpdateState>( x ),
                                                static_cast<Thread::Task>( y ) );
-                ConcurrentArray<SmartPtr<scene::IActor>> &updateObjects = *p;
+                ConcurrentArray<SmartPtr<IActor>> &updateObjects = *p;
                 std::sort( updateObjects.begin(), updateObjects.end() );
             }
         }
@@ -758,8 +766,8 @@ namespace fb::scene
         sortObjects();
     }
 
-    auto Scene::getRegisteredObjects( Thread::UpdateState updateState, Thread::Task task ) const
-        -> boost::shared_ptr<ConcurrentArray<SmartPtr<IActor>>>
+    boost::shared_ptr<ConcurrentArray<SmartPtr<IActor>>> Scene::getRegisteredObjects(
+        Thread::UpdateState updateState, Thread::Task task ) const
     {
         FB_ASSERT( static_cast<size_t>( updateState ) < m_updateObjects.size() );
         FB_ASSERT( static_cast<size_t>( task ) <
@@ -785,7 +793,7 @@ namespace fb::scene
         ptr = objects;
     }
 
-    auto Scene::isValid() const -> bool
+    bool Scene::isValid() const
     {
         auto updateObjects = m_updateObjects;
 
@@ -807,7 +815,7 @@ namespace fb::scene
         return result;
     }
 
-    auto Scene::toData() const -> SmartPtr<ISharedObject>
+    SmartPtr<ISharedObject> Scene::toData() const
     {
         auto properties = fb::make_ptr<Properties>();
 
@@ -902,7 +910,7 @@ namespace fb::scene
         }
     }
 
-    auto Scene::getState() const -> IScene::State
+    Scene::State Scene::getState() const
     {
         return m_state;
     }
@@ -912,8 +920,22 @@ namespace fb::scene
         m_sceneLoadingState = state;
     }
 
-    auto Scene::getSceneLoadingState() const -> IScene::SceneLoadingState
+    Scene::SceneLoadingState Scene::getSceneLoadingState() const
     {
         return m_sceneLoadingState;
+    }
+
+    SmartPtr<Properties> Scene::getProperties() const
+    {
+        auto properties = Resource<IScene>::getProperties();
+        properties->setPropertyAsType( "sceneLightingDirector", m_sceneLightingDirector );
+        return properties;
+    }
+
+    void Scene::setProperties( SmartPtr<Properties> properties )
+    {
+        Resource<IScene>::setProperties( properties );
+
+        properties->getPropertyAsType( "sceneLightingDirector", m_sceneLightingDirector );
     }
 }  // namespace fb::scene

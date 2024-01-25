@@ -62,20 +62,8 @@ namespace fb
             /** @copydoc IComponent::reload */
             void reload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc IComponent::updateDirty */
+            /** @copydoc IComponent::updateFlags */
             void updateFlags( u32 flags, u32 oldFlags ) override;
-
-            /** @copydoc IComponent::setDirty */
-            void setDirty( Thread::Task taskId, Thread::UpdateState updateType, bool dirty );
-
-            /** @copydoc IComponent::isDirty */
-            bool isDirty( Thread::Task taskId, Thread::UpdateState updateType ) const;
-
-            /** @copydoc IComponent::makeDirty */
-            void makeDirty() override;
-
-            /** @copydoc IComponent::makeDirty */
-            void makeDirty( Thread::Task task ) override;
 
             /** @copydoc IComponent::getActor */
             SmartPtr<IActor> &getActor() override;
@@ -86,23 +74,23 @@ namespace fb
             /** @copydoc IComponent::setActor */
             void setActor( SmartPtr<IActor> actor ) override;
 
+            /** Gets the flags of this component. */
+            u32 getComponentFlags() const override;
+
             /** Sets the flags of this component. */
-            void setComponentFlag( u32 flag, bool value );
+            void setComponentFlags( u32 flags ) override;
+
+            /** Sets the flags of this component. */
+            void setComponentFlag( u32 flag, bool value ) override;
 
             /** Gets the flags of this component. */
-            bool getComponentFlag( u32 flag ) const;
+            bool getComponentFlag( u32 flag ) const override;
 
             /** @copydoc IComponent::setEnabled */
             void setEnabled( bool enabled ) override;
 
             /** @copydoc IComponent::isEnabled */
             bool isEnabled() const override;
-
-            /** @copydoc IComponent::isDirty */
-            bool isDirty() const;
-
-            /** @copydoc IComponent::setDirty */
-            virtual void setDirty( bool dirty );
 
             /** @copydoc IComponent::toData */
             SmartPtr<ISharedObject> toData() const override;
@@ -133,7 +121,8 @@ namespace fb
              */
             void updateMaterials() override;
 
-            void updateDependentComponents();
+            /** @copydoc IComponent::updateDependentComponents */
+            void updateDependentComponents() override;
 
             /** @copydoc IComponent::setState */
             void setState( State state ) override;
@@ -270,11 +259,6 @@ namespace fb
             SharedPtr<ConcurrentArray<SmartPtr<ISubComponent>>> m_children;
 
             /**
-             * The events of the component.
-             */
-            Array<SmartPtr<IComponentEvent>> m_events;
-
-            /**
              * The finite state machine of the component.
              */
             SmartPtr<IFSM> m_componentFSM;
@@ -300,21 +284,16 @@ namespace fb
             atomic_u32 m_componentFlags = 0;
 
             /**
-             * Whether the component is enabled or not.
+             * The events of the component.
              */
-            atomic_bool m_enabled = true;
-
-            /**
-             * Whether the component is dirty or not.
-             */
-            atomic_bool m_isDirty = false;
+            Array<SmartPtr<IComponentEvent>> m_events;
 
             /**
              * The ID extension of the component.
              */
             static u32 m_idExt;
         };
-    }  // namespace scene
-}  // namespace fb
+    } // namespace scene
+}     // namespace fb
 
 #endif  // BaseComponent_h__

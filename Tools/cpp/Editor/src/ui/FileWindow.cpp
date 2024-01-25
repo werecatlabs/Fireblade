@@ -125,7 +125,7 @@ namespace fb::editor
 
                 //auto appTemplate = project->getApplicationTemplate();
 
-                auto sceneName = currentScene->getName();
+                auto sceneName = currentScene->getLabel();
 
                 // ProjectTreeData data("project", "project", project, project);
                 // ProjectTreeData scriptsData(m_applicationMenu, "project", "filter", project,

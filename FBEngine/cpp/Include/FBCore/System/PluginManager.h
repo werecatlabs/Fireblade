@@ -36,6 +36,8 @@ namespace fb
             /** @copydoc IPluginManager::unloadPlugin */
             void unloadPlugin( SmartPtr<IPlugin> plugin ) override;
 
+            FB_CLASS_REGISTER_DECL;
+
         protected:
             /** Array of loaded plugins. */
             Array<SmartPtr<ISharedObject>> m_plugins;

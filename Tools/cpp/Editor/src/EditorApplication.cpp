@@ -48,6 +48,8 @@
 namespace fb::editor
 {
 
+    FB_CLASS_REGISTER_DERIVED( fb::editor, EditorApplication, core::Application );
+
     EditorApplication::EditorApplication() = default;
 
     EditorApplication::~EditorApplication()
@@ -113,11 +115,8 @@ namespace fb::editor
         }
     }
 
-    void EditorApplication::load( SmartPtr<ISharedObject> data )
+    void EditorApplication::loadEditor( SmartPtr<ISharedObject> data )
     {
-        //EditorApplication::loadDebug( data );
-        //return;
-
         try
         {
             setLoadingState( LoadingState::Loading );
@@ -178,16 +177,33 @@ namespace fb::editor
 
             core::Application::load( data );
 
-            // todo move
-            auto processManager = fb::make_ptr<ProcessManager>();
-            applicationManager->setProcessManager( processManager );
+            auto fileSystem = applicationManager->getFileSystem();
+            auto sceneManager = applicationManager->getSceneManager();
 
-            loadScripts();
+            auto ignoreListStr = Path::readAllText( "ignorelist.settings" );
+            auto ignoreList = Array<String>();
+            StringUtil::parseArray( ignoreListStr, ignoreList );
+            sceneManager->setComponentFactoryIgnoreList( ignoreList );
 
-            createDefaultMaterialUI();
-            createDefaultMaterial();
-            createDefaultMaterials();
-            createDefaultFont();
+            auto componentmapDataStr = Path::readAllText( "componentmap.settings" );
+            if( !StringUtil::isNullOrEmpty( componentmapDataStr ) )
+            {
+                auto componentmapSettings = fb::make_ptr<Properties>();
+                DataUtil::parse( componentmapDataStr, componentmapSettings.get() );
+
+                Map<String, String> componentMap;
+
+                auto properties = componentmapSettings->getPropertiesAsArray();
+                for( auto &property : properties )
+                {
+                    auto key = property.getName();
+                    auto value = property.getValue();
+
+                    componentMap[key] = value;
+                }
+
+                sceneManager->setComponentFactoryMap( componentMap );
+            }
 
             auto factoryManager = applicationManager->getFactoryManager();
             FB_ASSERT( factoryManager );
@@ -202,9 +218,6 @@ namespace fb::editor
             m_stateListener = applicationStateListener;
             m_stateContext->addStateListener( m_stateListener );
 
-            auto jobQueue = fb::make_ptr<JobQueue>();
-            applicationManager->setJobQueue( jobQueue );
-
             m_editorManager = fb::make_ptr<EditorManager>();
             EditorManager::setSingletonPtr( m_editorManager );
 
@@ -213,11 +226,6 @@ namespace fb::editor
 
             auto pProject = fb::make_ptr<Project>();
             m_editorManager->setProject( pProject );
-
-            //auto renderUI = ui::FBRenderUI::createUIManager();
-            //auto renderUI = factoryManager->make_object<ui::IUIManager>();
-            //FB_ASSERT(renderUI);
-            //applicationManager->setRenderUI( renderUI );
 
             auto editorUiManager = fb::make_ptr<UIManager>();
             m_editorManager->setUI( editorUiManager );
@@ -261,38 +269,11 @@ namespace fb::editor
             //  ApplicationUtil::createProceduralTest();
             //  ApplicationUtil::createOverlayPanelTest();
 
-            // auto currentScene = sceneManager->getCurrentScene();
-            // auto prefab = prefabManager->loadPrefab("car.prefab");
-            // auto carActor = prefab->getActor();
-            // if (carActor)
-            //{
-            //	auto groundPosition = Vector3F::unitY() * 5.0f;
-            //	auto groundScale = Vector3F::unit() * 1.0f;
-
-            //	auto localTransform = carActor->getLocalTransform();
-            //	if (localTransform)
-            //	{
-            //		localTransform->setPosition(groundPosition);
-            //		localTransform->setScale(groundScale);
-            //	}
-
-            //	carActor->updateTransform();
-            //	currentScene->addActor(carActor);
-            //	currentScene->registerAllUpdates(carActor);
-            //}
-
             editorUiManager->rebuildSceneTree();
 
-            auto sceneManager = applicationManager->getSceneManager();
             if( sceneManager )
             {
                 sceneManager->edit();
-            }
-
-            auto cameraManager = applicationManager->getCameraManager();
-            if( cameraManager )
-            {
-                cameraManager->edit();
             }
 
             auto taskManager = applicationManager->getTaskManager();
@@ -318,9 +299,6 @@ namespace fb::editor
                 }
             }
 
-            //auto resourceDatabase = applicationManager->getResourceDatabase();
-            //resourceDatabase->build();
-
             if( m_sphericalCameraActor )
             {
                 auto sphericalCamera =
@@ -343,43 +321,6 @@ namespace fb::editor
                 }
             }
 
-            Array<String> ignoreList;
-            ignoreList.emplace_back( "UnityEngine.Transform" );
-            sceneManager->setComponentFactoryIgnoreList( ignoreList );
-
-            Map<String, String> componentMap;
-            componentMap["saracen.ApplicationManager"] = "SimulatorApplication";
-            componentMap["FB.FBFiniteStateMachine"] = "FiniteStateMachine";
-            componentMap["UnityEngine.Canvas"] = "Layout";
-            componentMap["UnityEngine.RectTransform"] = "LayoutTransform";
-            componentMap["UnityEngine.UI.Text"] = "Text";
-            componentMap["UnityEngine.UI.Image"] = "Image";
-            componentMap["UnityEngine.UI.Button"] = "Button";
-            componentMap["Unitycoding.UIWidgets.TooltipTrigger"] = "Tooltip";
-            componentMap["UI.Tables.TableLayout"] = "TableLayout";
-            componentMap["UnityEngine.UI.VerticalLayoutGroup"] = "TableLayout";
-            componentMap["saracen.StartMenu"] = "StartMenu";
-
-            componentMap["CameraComponent"] = "Camera";
-            componentMap["MeshComponent"] = "Mesh";
-            componentMap["LightComponent"] = "Light";
-            componentMap["MaterialComponent"] = "Material";
-            componentMap["RigidbodyComponent"] = "Rigidbody";
-            componentMap["SkyboxComponent"] = "Skybox";
-            componentMap["Canvas"] = "Layout";
-            componentMap["CanvasTransform"] = "LayoutTransform";
-            componentMap["TextComponent"] = "Text";
-            componentMap["ImageComponent"] = "Image";
-            componentMap["ButtonComponent"] = "Button";
-
-            // unity map
-            componentMap["5f7201a12d95ffc409449d95f23cf332"] = "Text";
-            componentMap["dc42784cf147c0c48a680349fa168899"] = "Layout";
-            componentMap["fe87c0e1cc204ed48ad3b37840f39efc"] = "Image";
-            componentMap["4e29b1a8efbd4b44bb3f3716e73f07ff"] = "Button";
-
-            sceneManager->setComponentFactoryMap( componentMap );
-
             setLoadingState( LoadingState::Loaded );
         }
         catch( Exception &e )
@@ -391,6 +332,19 @@ namespace fb::editor
             FB_LOG_EXCEPTION( e );
         }
     }
+
+    void EditorApplication::load( SmartPtr<ISharedObject> data )
+    {
+        if( isDebugMode() )
+        {
+            loadDebug( data );
+        }
+        else
+        {
+            loadEditor( data );
+        }
+    }
+
 
     void EditorApplication::unload( SmartPtr<ISharedObject> data )
     {
@@ -1249,15 +1203,6 @@ namespace fb::editor
         taskManager->load( nullptr );
     }
 
-    void EditorApplication::createProfiler()
-    {
-        auto applicationManager = core::ApplicationManager::instance();
-        FB_ASSERT( applicationManager );
-
-        auto profiler = fb::make_ptr<Profiler>();
-        applicationManager->setProfiler( profiler );
-    }
-
     void EditorApplication::createThreadPool()
     {
         auto applicationManager = core::ApplicationManager::instance();
@@ -1310,7 +1255,7 @@ namespace fb::editor
 
         auto scene = fb::make_ptr<scene::Scene>();
         scene->load( nullptr );
-        scene->setName( "Untitled" );
+        scene->setLabel( "Untitled" );
         sceneManager->setCurrentScene( scene );
     }
 
@@ -1975,6 +1920,16 @@ namespace fb::editor
     void EditorApplication::setRttViewport( SmartPtr<render::IViewport> rttViewport )
     {
         m_rttViewport = rttViewport;
+    }
+
+    void EditorApplication::setDebugMode( bool debugMode )
+    {
+        m_isDebugMode = debugMode;
+    }
+
+    bool EditorApplication::isDebugMode() const
+    {
+        return m_isDebugMode;
     }
 
     EditorApplication::ApplicationListener::ApplicationListener( EditorApplication *app ) :

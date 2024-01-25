@@ -57,11 +57,6 @@ namespace fb::render
         m_viewport = viewport;
     }
 
-    void CViewportOgreNext::update()
-    {
-        // m_viewport->update();
-    }
-
     void CViewportOgreNext::_getObject( void **ppObject ) const
     {
         *ppObject = m_viewport;

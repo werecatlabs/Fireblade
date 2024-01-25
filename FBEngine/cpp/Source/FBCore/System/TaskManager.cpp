@@ -5,6 +5,7 @@
 #include <FBCore/Core/DebugTrace.h>
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/Math/Math.h>
+#include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Interface/System/IJob.h>
 #include <FBCore/Interface/System/IProfile.h>
 #include <FBCore/Interface/System/IThreadPool.h>
@@ -13,10 +14,7 @@
 #include <FBCore/System/Task.h>
 #include <FBCore/Core/FSMManager.h>
 #include <FBCore/System/TaskLock.h>
-
 #include <utility>
-
-#include "FBCore/Memory/PointerUtil.h"
 
 namespace fb
 {

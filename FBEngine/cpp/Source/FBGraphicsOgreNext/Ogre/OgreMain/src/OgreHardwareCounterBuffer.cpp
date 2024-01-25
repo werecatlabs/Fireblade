@@ -31,42 +31,38 @@ THE SOFTWARE.
 #include "OgreHardwareBufferManager.h"
 #include "OgreDefaultHardwareBufferManager.h"
 
-namespace Ogre
-{
-    namespace v1
+namespace Ogre {
+namespace v1 {
+
+    HardwareCounterBuffer::HardwareCounterBuffer(HardwareBufferManagerBase* mgr, size_t sizeBytes, 
+                                    HardwareBuffer::Usage usage, bool useShadowBuffer, const String& name)
+        : HardwareBuffer(usage, false, useShadowBuffer)
+        , mMgr(mgr), mName(name)
+    {
+        // Calculate the size of the vertices
+        mSizeInBytes = sizeBytes;
+
+        // Create a shadow buffer if required
+        if (mUseShadowBuffer)
+        {
+            mShadowBuffer = OGRE_NEW DefaultHardwareCounterBuffer(mMgr, sizeBytes, HardwareBuffer::HBU_DYNAMIC, false);
+        }
+    }
+    
+    HardwareCounterBuffer::~HardwareCounterBuffer()
+    {
+        if (mMgr)
+        {
+            mMgr->_notifyCounterBufferDestroyed(this);
+        }
+        OGRE_DELETE mShadowBuffer;
+    }
+
+    //-----------------------------------------------------------------------------
+    HardwareCounterBufferSharedPtr::HardwareCounterBufferSharedPtr(HardwareCounterBuffer* buf)
+        : SharedPtr<HardwareCounterBuffer>(buf)
     {
 
-        HardwareCounterBuffer::HardwareCounterBuffer( HardwareBufferManagerBase *mgr, size_t sizeBytes,
-                                                      HardwareBuffer::Usage usage, bool useShadowBuffer,
-                                                      const String &name ) :
-            HardwareBuffer( usage, false, useShadowBuffer ),
-            mMgr( mgr ),
-            mName( name )
-        {
-            // Calculate the size of the vertices
-            mSizeInBytes = sizeBytes;
-
-            // Create a shadow buffer if required
-            if( mUseShadowBuffer )
-            {
-                mShadowBuffer = OGRE_NEW DefaultHardwareCounterBuffer(
-                    mMgr, sizeBytes, HardwareBuffer::HBU_DYNAMIC, false );
-            }
-        }
-
-        HardwareCounterBuffer::~HardwareCounterBuffer()
-        {
-            if( mMgr )
-            {
-                mMgr->_notifyCounterBufferDestroyed( this );
-            }
-            OGRE_DELETE mShadowBuffer;
-        }
-
-        //-----------------------------------------------------------------------------
-        HardwareCounterBufferSharedPtr::HardwareCounterBufferSharedPtr( HardwareCounterBuffer *buf ) :
-            SharedPtr<HardwareCounterBuffer>( buf )
-        {
-        }
-    }  // namespace v1
-}  // namespace Ogre
+    }
+}
+}

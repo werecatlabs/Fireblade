@@ -208,12 +208,8 @@ namespace Ogre {
 
         for(vector<DEVMODE>::type::const_iterator i = mDevModes.begin(); i != mDevModes.end(); ++i)
         {
-            /*
             if (i->dmPelsWidth != width || i->dmPelsHeight != height)
-            {
                 continue;
-            }*/
-
             optColourDepth->possibleValues.push_back(StringConverter::toString((unsigned int)i->dmBitsPerPel));
             optDisplayFrequency->possibleValues.push_back(StringConverter::toString((unsigned int)i->dmDisplayFrequency));
         }

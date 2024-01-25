@@ -25,6 +25,8 @@ namespace fb
         @param plugin The plugin to unload.
         */
         virtual void unloadPlugin( SmartPtr<IPlugin> plugin ) = 0;
+
+        FB_CLASS_REGISTER_DECL;
     };
 }  // end namespace fb
 

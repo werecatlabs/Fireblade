@@ -4,7 +4,7 @@
 
 namespace fb::render
 {
-    FB_CLASS_REGISTER_DERIVED( fb, ISceneNode, ISharedObject );
+    FB_CLASS_REGISTER_DERIVED( fb::render, ISceneNode, ISharedObject );
 
     const hash_type ISceneNode::STATE_QUERY_TYPE_LOCAL_AABB = StringUtil::getHash( "LocalAABB" );
     const hash_type ISceneNode::STATE_QUERY_TYPE_WORLD_AABB = StringUtil::getHash( "WorldAABB" );

@@ -1,7 +1,6 @@
 #ifndef __CTerrain_h__
 #define __CTerrain_h__
 
-#include <FBGraphics/FBGraphicsPrerequisites.h>
 #include <FBCore/Interface/Graphics/ITerrain.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Graphics/SharedGraphicsObject.h>

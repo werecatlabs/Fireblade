@@ -8,6 +8,8 @@
 namespace fb
 {
 
+    using namespace render;
+
     IVideo *_addVideo( IVideoManager *mgr, const char *fileName )
     {
         //VideoPtr video = mgr->addVideo( fileName );

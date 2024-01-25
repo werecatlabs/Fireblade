@@ -1,7 +1,6 @@
 #ifndef _IAnimationController_H_
 #define _IAnimationController_H_
 
-#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Core/StringTypes.h>
 

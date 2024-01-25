@@ -7,6 +7,8 @@
 namespace fb::core
 {
 
+    FB_CLASS_REGISTER_DERIVED( fb, PluginManager, IPluginManager );
+
     void PluginManager::load( SmartPtr<ISharedObject> data )
     {
     }

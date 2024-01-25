@@ -9,15 +9,6 @@ namespace fb
 
     Animation::Animation() = default;
 
-    auto Animation::getName() const -> String
-    {
-        return StringUtil::EmptyString;
-    }
-
-    void Animation::setName( const String &name )
-    {
-    }
-
     auto Animation::getLength() const -> f32
     {
         return 0.0f;

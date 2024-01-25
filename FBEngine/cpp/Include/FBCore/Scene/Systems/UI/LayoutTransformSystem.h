@@ -2,6 +2,7 @@
 #define CanvasTransformSystem_h__
 
 #include <FBCore/Scene/Systems/ComponentSystem.h>
+#include <FBCore/Math/Vector2.h>
 
 namespace fb
 {
@@ -18,23 +19,30 @@ namespace fb
             /** @brief Destructor. */
             ~LayoutTransformSystem() override;
 
+            /** @copydoc ComponentSystem::update */
             void update() override;
 
         protected:
+            /** Calculates the position of an element. */
             Vector2F calculateElementPosition( const Vector2F &parentPosition,
                                                const Vector2F &parentSize, const Vector2F &position,
                                                const Vector2F &size, const Vector2F &anchor,
                                                const Vector2F &anchorMin, const Vector2F &anchorMax );
+
+            /** Calculates the size of an element. */
             void calculateElementPositionAndSize( const Vector2F &parentPosition,
                                                   const Vector2F &parentSize, const Vector2F &position,
                                                   const Vector2F &size, const Vector2F &anchor,
                                                   const Vector2F &anchorMin, const Vector2F &anchorMax,
                                                   Vector2F &elementPosition, Vector2F &elementSize );
 
+            /** Calculates the size of an element. */
             void calculateElementPositionAndSize( const Vector2F &position, const Vector2F &size,
                                                   const Vector2F &anchor, const Vector2F &anchorMin,
                                                   const Vector2F &anchorMax, Vector2F &elementPosition,
                                                   Vector2F &elementSize );
+
+            /** Calculates the size of an element. */
             void calculateElementPositionAndSize( const Vector2F &parentPosition,
                                                   const Vector2F &parentSize, const Vector2F &position,
                                                   const Vector2F &size, const Vector2F &anchor,

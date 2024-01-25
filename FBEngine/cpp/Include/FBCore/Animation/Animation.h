@@ -12,9 +12,6 @@ namespace fb
         Animation();
         ~Animation();
 
-        String getName() const;
-        void setName( const String &name );
-
         f32 getLength() const;
         void setLength( f32 len );
     };

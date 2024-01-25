@@ -175,7 +175,7 @@ namespace Ogre
     //-----------------------------------------------------------------------------------
     void TextureGpu::scheduleReupload( Image2 *image, bool autoDeleteImage )
     {
-        //OGRE_ASSERT_LOW( mNextResidencyStatus != GpuResidency::OnStorage );
+        OGRE_ASSERT_LOW( mNextResidencyStatus != GpuResidency::OnStorage );
         OGRE_ASSERT_LOW( mDataPreparationsPending < std::numeric_limits<uint8>::max() &&
                          "Overflow. Too many transitions queued up" );
 
@@ -494,7 +494,7 @@ namespace Ogre
     void TextureGpu::_transitionTo( GpuResidency::GpuResidency newResidency, uint8 *sysRamCopy,
                                     bool autoDeleteSysRamCopy )
     {
-        //assert( newResidency != mResidencyStatus );
+        assert( newResidency != mResidencyStatus );
 
         bool allowResidencyChange = true;
         TextureGpuListener::Reason listenerReason = TextureGpuListener::Unknown;

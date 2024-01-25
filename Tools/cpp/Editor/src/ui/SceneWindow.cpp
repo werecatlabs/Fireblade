@@ -315,7 +315,7 @@ namespace fb::editor
 
             if( currentScene )
             {
-                auto sceneName = currentScene->getName();
+                auto sceneName = currentScene->getLabel();
 
                 auto rootNode = m_tree->addRoot();
                 if( rootNode )
@@ -332,6 +332,12 @@ namespace fb::editor
                     {
                         addActorToTree( actor, rootNode );
                     }
+
+                    auto projectRoot = m_tree->addNode();
+                    FB_ASSERT( projectRoot );
+                    addObjectToTree( project, projectRoot );
+                    Util::setText( projectRoot, "Project" );
+                    rootNode->addChild( projectRoot );
 
                     auto engineRoot = m_tree->addNode();
                     FB_ASSERT( engineRoot );
@@ -663,9 +669,9 @@ namespace fb::editor
         return m_selectedObject;
     }
 
-    void SceneWindow::setSelectedObject( SmartPtr<ISharedObject> val )
+    void SceneWindow::setSelectedObject( SmartPtr<ISharedObject> selectedObject )
     {
-        m_selectedObject = val;
+        m_selectedObject = selectedObject;
     }
 
     void SceneWindow::deselectAll()
@@ -697,7 +703,15 @@ namespace fb::editor
                                                      SmartPtr<ISharedObject> object,
                                                      SmartPtr<IEvent> event ) -> Parameter
     {
-        if( eventValue == IEvent::handleTreeSelectionRelease )
+        if( eventValue == IEvent::handleTreeSelectionActivated )
+        {
+            if( sender == m_owner->m_tree )
+            {
+                auto node = fb::static_pointer_cast<ui::IUITreeNode>( arguments[0].object );
+                m_owner->handleTreeSelectionChanged( node );
+            }
+        }
+        else if( eventValue == IEvent::handleTreeSelectionRelease )
         {
             auto node = fb::static_pointer_cast<ui::IUITreeNode>( arguments[0].object );
             m_owner->handleTreeSelectionChanged( node );
@@ -916,7 +930,7 @@ namespace fb::editor
         }
         else if( eventValue == IEvent::handleMouseClicked )
         {
-            //m_owner->deselectAll();
+            m_owner->deselectAll();
         }
 
         return {};

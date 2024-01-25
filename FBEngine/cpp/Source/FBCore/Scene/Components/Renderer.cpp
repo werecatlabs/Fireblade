@@ -72,7 +72,7 @@ namespace fb::scene
                                 rootNode->addChild( graphicsNode );
                             }
 
-                            graphicsNode->setVisible( true );
+                            m_graphicsObject->setVisible( true );
                         }
                     }
                     else
@@ -86,7 +86,7 @@ namespace fb::scene
                                 parent->removeChild( graphicsNode );
                             }
 
-                            graphicsNode->setVisible( false );
+                            m_graphicsObject->setVisible( false );
                         }
                     }
                 }
@@ -105,7 +105,7 @@ namespace fb::scene
                                 rootNode->addChild( graphicsNode );
                             }
 
-                            graphicsNode->setVisible( true );
+                            m_graphicsObject->setVisible( true );
                         }
                     }
                     else
@@ -119,7 +119,7 @@ namespace fb::scene
                                 parent->removeChild( graphicsNode );
                             }
 
-                            graphicsNode->setVisible( false );
+                            m_graphicsObject->setVisible( false );
                         }
                     }
                 }
@@ -129,33 +129,6 @@ namespace fb::scene
         updateStatic();
 
         Component::updateFlags( flags, oldFlags );
-    }
-
-    void Renderer::preUpdate()
-    {
-        auto applicationManager = core::ApplicationManager::instance();
-        FB_ASSERT( applicationManager );
-
-        auto stateTask = applicationManager->getStateTask();
-        auto applicationState = applicationManager->getApplicationTask();
-
-        auto task = Thread::getCurrentTask();
-        if( task == applicationState )
-        {
-            // if (!m_meshObject)
-            //{
-            //	updateMesh();
-            //	updateMaterials();
-            // }
-        }
-    }
-
-    void Renderer::update()
-    {
-    }
-
-    void Renderer::postUpdate()
-    {
     }
 
     void Renderer::load( SmartPtr<ISharedObject> data )
@@ -387,10 +360,10 @@ namespace fb::scene
     {
         if( auto actor = getActor() )
         {
-            if( m_graphicsNode )
+            if( m_graphicsObject )
             {
                 auto enabled = isEnabled() && actor->isEnabledInScene();
-                m_graphicsNode->setVisible( enabled );
+                m_graphicsObject->setVisible( enabled );
             }
         }
     }
@@ -406,10 +379,10 @@ namespace fb::scene
         {
             if( auto actor = getActor() )
             {
-                if( m_graphicsNode )
+                if( m_graphicsObject )
                 {
                     auto enabled = isEnabled() && actor->isEnabledInScene();
-                    m_graphicsNode->setVisible( enabled );
+                    m_graphicsObject->setVisible( enabled );
                 }
             }
         }

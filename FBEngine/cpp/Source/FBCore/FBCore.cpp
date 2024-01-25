@@ -23,7 +23,9 @@ namespace fb
 
         FactoryUtil::addFactory<EventJob>();
         FactoryUtil::addFactory<FSMManager>();
+        FactoryUtil::addFactory<Profiler>();
         FactoryUtil::addFactory<Properties>();
+        FactoryUtil::addFactory<ProcessManager>();
         FactoryUtil::addFactory<StateQueueStandard>();
         FactoryUtil::addFactory<StateContextStandard>();
         FactoryUtil::addFactory<StateManagerStandard>();
@@ -56,6 +58,7 @@ namespace fb
         FactoryUtil::addFactory<scene::ThirdPersonCameraController>();
         FactoryUtil::addFactory<scene::VehicleCameraController>();
 
+        FactoryUtil::addFactory<scene::Animator>();
         FactoryUtil::addFactory<scene::AudioEmitter>();
         FactoryUtil::addFactory<scene::Camera>();
         FactoryUtil::addFactory<scene::CarController>();

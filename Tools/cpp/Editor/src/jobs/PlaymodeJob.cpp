@@ -92,11 +92,6 @@ namespace fb::editor
                 sceneManager->play();
             }
 
-            if( auto cameraManager = applicationManager->getCameraManager() )
-            {
-                cameraManager->play();
-            }
-
             std::cout << "PlaymodeJob::execute end" << std::endl;
         }
         catch( Exception &e )

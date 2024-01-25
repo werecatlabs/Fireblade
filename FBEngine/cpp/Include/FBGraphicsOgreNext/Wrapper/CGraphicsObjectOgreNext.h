@@ -15,6 +15,8 @@
 #include <FBCore/Interface/System/IStateContext.h>
 #include <FBCore/State/States/GraphicsObjectState.h>
 #include <OgreMovableObject.h>
+#include <OgreSceneNode.h>
+#include <OgreSceneManager.h>
 
 namespace fb
 {
@@ -27,6 +29,8 @@ namespace fb
         public:
             CGraphicsObjectOgreNext() = default;
             ~CGraphicsObjectOgreNext() override = default;
+
+            void unload( SmartPtr<ISharedObject> data ) override;
 
             Ogre::MovableObject *getMovableObject() const;
 
@@ -41,7 +45,6 @@ namespace fb
 
                 void handleStateChanged( const SmartPtr<IStateMessage> &message ) override
                 {
-                
                 }
 
                 void handleStateChanged( SmartPtr<IState> &state ) override
@@ -65,22 +68,44 @@ namespace fb
                 {
                 }
 
-                CGraphicsObjectOgreNext<T>* getOwner() const
+                CGraphicsObjectOgreNext<T> *getOwner() const
                 {
                     return m_owner;
                 }
 
-                void setOwner( CGraphicsObjectOgreNext<T>* *owner )
+                void setOwner( CGraphicsObjectOgreNext<T> *owner )
                 {
                     m_owner = owner;
                 }
 
             protected:
-                CGraphicsObjectOgreNext<T>* m_owner = nullptr;
+                CGraphicsObjectOgreNext<T> *m_owner = nullptr;
             };
 
             Ogre::MovableObject *m_movableObject = nullptr;
         };
+
+        template <class T>
+        void CGraphicsObjectOgreNext<T>::unload( SmartPtr<ISharedObject> data )
+        {
+            Ogre::SceneManager *smgr = nullptr;
+
+            if( auto creator = GraphicsObject<T>::getCreator() )
+            {
+                creator->_getObject( reinterpret_cast<void **>( &smgr ) );
+            }
+
+            if( auto movableObject = getMovableObject() )
+            {
+                movableObject->detachFromParent();
+                if( smgr )
+                {
+                    smgr->destroyMovableObject( movableObject );
+                }
+            }
+
+            GraphicsObject<T>::unload( data );
+        }
 
         template <class T>
         Ogre::MovableObject *CGraphicsObjectOgreNext<T>::getMovableObject() const

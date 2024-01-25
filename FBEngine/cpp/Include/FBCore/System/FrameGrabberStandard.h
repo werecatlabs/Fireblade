@@ -19,7 +19,7 @@ namespace fb
         SmartPtr<IStateMessage> popFrame() const override;
 
     protected:
-        SmartPtr<IVideoStream> m_videoStream;
+        SmartPtr<render::IVideoStream> m_videoStream;
     };
 }  // end namespace fb
 

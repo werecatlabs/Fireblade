@@ -179,6 +179,7 @@ namespace fb
             auto applicationManager = core::ApplicationManager::instance();
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             auto sceneManager = graphicsSystem->getGraphicsScene();
+            FB_ASSERT( sceneManager );
 
             Ogre::String dataPath = applicationManager->getRenderMediaPath() + "/";
 

@@ -14,13 +14,7 @@ namespace fb::render
 
     FB_CLASS_REGISTER_DERIVED( fb, CSceneNodeOgreNext, SceneNode );
 
-    CSceneNodeOgreNext::CSceneNodeOgreNext() :
-
-        m_flags( 0 ),
-        m_lastUpdate( 0 ),
-        m_transformUpdate( 0 ),
-
-        m_isCulled( true )
+    CSceneNodeOgreNext::CSceneNodeOgreNext()
     {
         if( auto handle = getHandle() )
         {
@@ -70,15 +64,11 @@ namespace fb::render
         auto renderTask = graphicsSystem->getStateTask();
         sceneNodeState->setTaskId( renderTask );
         transformState->setTaskId( renderTask );
+
+        constexpr auto size = sizeof( CSceneNodeOgreNext );
     }
 
-    CSceneNodeOgreNext::CSceneNodeOgreNext( SmartPtr<IGraphicsScene> creator ) :
-
-        m_flags( 0 ),
-        m_lastUpdate( 0 ),
-        m_transformUpdate( 0 ),
-
-        m_isCulled( true )
+    CSceneNodeOgreNext::CSceneNodeOgreNext( SmartPtr<IGraphicsScene> creator )
     {
         m_nodeListener = nullptr;
 
@@ -134,11 +124,17 @@ namespace fb::render
     {
         try
         {
-#if _DEBUG
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            FB_ASSERT( graphicsSystem );
+
+            ScopedLock lock( graphicsSystem );
+
             auto task = Thread::getCurrentTask();
-            auto renderTask = core::ApplicationManager::instance()->getGraphicsSystem()->getRenderTask();
-            FB_ASSERT( task == renderTask );
-#endif
+            auto renderTask = graphicsSystem->getRenderTask();
+            FB_ASSERT( Thread::getTaskFlag( Thread::Render_Flag ) );
 
             setLoadingState( LoadingState::Loading );
 
@@ -149,25 +145,33 @@ namespace fb::render
                 creator->_getObject( reinterpret_cast<void **>( &smgr ) );
             }
 
-            auto handle = getHandle();
-            FB_ASSERT( handle );
-
-            auto name = handle->getName();
-            FB_ASSERT( !StringUtil::isNullOrEmpty( name ) );
+            if( auto handle = getHandle() )
+            {
+                auto name = handle->getName();
+                FB_ASSERT( !StringUtil::isNullOrEmpty( name ) );
+            }
 
             m_sceneNode = smgr->createSceneNode();
 
-            // auto parent = getParent();
-            // if (parent)
-            //{
-            //	Ogre::SceneNode* parentSceneNode = nullptr;
-            //	parent->_getObject((void**)&parentSceneNode);
+            auto graphicsObjects = getObjects();
+            for( auto graphicsObject : graphicsObjects )
+            {
+                if( !graphicsObject->isLoaded() )
+                {
+                    graphicsObject->load( nullptr );
+                }
 
-            //	if (parentSceneNode)
-            //	{
-            //		parentSceneNode->addChild(m_sceneNode);
-            //	}
-            //}
+                Ogre::MovableObject *moveable = nullptr;
+                graphicsObject->_getObject( reinterpret_cast<void **>( &moveable ) );
+
+                if( moveable )
+                {
+                    if( !moveable->isAttached() )
+                    {
+                        m_sceneNode->attachObject( moveable );
+                    }
+                }
+            }
 
             setLoadingState( LoadingState::Loaded );
         }
@@ -185,6 +189,11 @@ namespace fb::render
 
             auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
+
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            FB_ASSERT( graphicsSystem );
+
+            ScopedLock lock( graphicsSystem );
 
             if( auto stateManager = applicationManager->getStateManager() )
             {
@@ -267,7 +276,7 @@ namespace fb::render
         }
     }
 
-    void CSceneNodeOgreNext::initialise( Ogre::SceneNode *sceneNode )
+    void CSceneNodeOgreNext::setupNode( Ogre::SceneNode *sceneNode )
     {
         m_sceneNode = sceneNode;
 
@@ -362,57 +371,6 @@ namespace fb::render
         return { minPoint.x, minPoint.y, minPoint.z, maxPoint.x, maxPoint.y, maxPoint.z };
     }
 
-    void CSceneNodeOgreNext::setVisible( bool visible, bool cascade /*= true*/ )
-    {
-        auto applicationManager = core::ApplicationManager::instance();
-        FB_ASSERT( applicationManager );
-
-        auto graphicsSystem = applicationManager->getGraphicsSystem();
-        FB_ASSERT( graphicsSystem );
-
-        auto factoryManager = applicationManager->getFactoryManager();
-        FB_ASSERT( factoryManager );
-
-        const auto renderTask = graphicsSystem->getRenderTask();
-        const auto stateTask = graphicsSystem->getStateTask();
-        const auto task = Thread::getCurrentTask();
-
-        const auto &loadingState = getLoadingState();
-        if( loadingState == LoadingState::Loaded && task == renderTask )
-        {
-            if( m_sceneNode )
-            {
-                m_sceneNode->setVisible( visible, cascade );
-            }
-        }
-        else
-        {
-            auto stateMessageVisible = factoryManager->make_ptr<StateMessageVisible>();
-            stateMessageVisible->setVisible( visible );
-            stateMessageVisible->setCascade( cascade );
-
-            auto stateContext = getStateContext();
-            stateContext->addMessage( stateTask, stateMessageVisible );
-        }
-    }
-
-    auto CSceneNodeOgreNext::isVisible() const -> bool
-    {
-        return true;
-    }
-
-    void CSceneNodeOgreNext::setCulled( bool culled )
-    {
-        m_isCulled = culled;
-
-        // m_sceneNode->setShouldCull(m_isCulled);
-    }
-
-    auto CSceneNodeOgreNext::isCulled() const -> bool
-    {
-        return m_isCulled;
-    }
-
     void CSceneNodeOgreNext::attachObject( SmartPtr<IGraphicsObject> object )
     {
         FB_ASSERT( object );
@@ -443,19 +401,19 @@ namespace fb::render
                 {
                     auto camera = fb::static_pointer_cast<CCameraOgreNext>( object );
 
-                    Ogre::MovableObject *moveable = nullptr;
-                    object->_getObject( reinterpret_cast<void **>( &moveable ) );
+                    Ogre::MovableObject *movable = nullptr;
+                    object->_getObject( reinterpret_cast<void **>( &movable ) );
 
-                    if( moveable )
+                    if( movable )
                     {
-                        if( !moveable->isAttached() )
+                        if( !movable->isAttached() )
                         {
-                            m_sceneNode->attachObject( moveable );
+                            m_sceneNode->attachObject( movable );
                         }
                         else
                         {
-                            moveable->detachFromParent();
-                            m_sceneNode->attachObject( moveable );
+                            movable->detachFromParent();
+                            m_sceneNode->attachObject( movable );
                         }
                     }
 
@@ -464,14 +422,14 @@ namespace fb::render
                 }
                 else
                 {
-                    Ogre::MovableObject *moveable = nullptr;
-                    object->_getObject( reinterpret_cast<void **>( &moveable ) );
+                    Ogre::MovableObject *movable = nullptr;
+                    object->_getObject( reinterpret_cast<void **>( &movable ) );
 
-                    if( moveable )
+                    if( movable )
                     {
-                        if( !moveable->isAttached() )
+                        if( !movable->isAttached() )
                         {
-                            m_sceneNode->attachObject( moveable );
+                            m_sceneNode->attachObject( movable );
                         }
                         else
                         {
@@ -580,6 +538,7 @@ namespace fb::render
         const auto &loadingState = getLoadingState();
         if( loadingState == LoadingState::Loaded && task == renderTask )
         {
+            ISharedObject::ScopedLock lock( graphicsSystem );
             m_sceneNode->detachAllObjects();
             m_graphicsObjects.clear();
         }
@@ -661,6 +620,8 @@ namespace fb::render
         if( loadingState == LoadingState::Loaded && childLoadingState == LoadingState::Loaded &&
             task == renderTask )
         {
+            ISharedObject::ScopedLock lock( graphicsSystem );
+
             const auto &childLoadingState = child->getLoadingState();
             if( childLoadingState == LoadingState::Loaded )
             {
@@ -724,6 +685,8 @@ namespace fb::render
                 const auto &childLoadingState = child->getLoadingState();
                 if( childLoadingState == LoadingState::Loaded )
                 {
+                    ISharedObject::ScopedLock lock( graphicsSystem );
+
                     auto it = std::find( m_children.begin(), m_children.end(), child );
                     if( it != m_children.end() )
                     {
@@ -770,40 +733,6 @@ namespace fb::render
         return false;
     }
 
-    void CSceneNodeOgreNext::add()
-    {
-        auto applicationManager = core::ApplicationManager::instance();
-        FB_ASSERT( applicationManager );
-
-        auto graphicsSystem = applicationManager->getGraphicsSystem();
-        FB_ASSERT( graphicsSystem );
-
-        auto factoryManager = applicationManager->getFactoryManager();
-        FB_ASSERT( factoryManager );
-
-        const auto renderTask = graphicsSystem->getRenderTask();
-        const auto stateTask = graphicsSystem->getStateTask();
-        const auto task = Thread::getCurrentTask();
-
-        const auto &loadingState = getLoadingState();
-        if( loadingState == LoadingState::Loaded && task == renderTask )
-        {
-            // if (!m_sceneNode->isInSceneGraph())
-            if( auto creator = getCreator() )
-            {
-                creator->getRootSceneNode()->addChild( this );
-            }
-        }
-        else
-        {
-            auto stateMessage = factoryManager->make_ptr<StateMessageType>();
-            stateMessage->setType( STATE_MESSAGE_ADD );
-
-            auto stateContext = getStateContext();
-            stateContext->addMessage( stateTask, stateMessage );
-        }
-    }
-
     void CSceneNodeOgreNext::remove()
     {
         try
@@ -824,6 +753,8 @@ namespace fb::render
             const auto &loadingState = getLoadingState();
             if( loadingState == LoadingState::Loaded && task == renderTask )
             {
+                ISharedObject::ScopedLock lock( graphicsSystem );
+
                 auto parent = getParent();
                 if( parent )
                 {
@@ -850,6 +781,14 @@ namespace fb::render
     {
         try
         {
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            FB_ASSERT( graphicsSystem );
+
+            ISharedObject::ScopedLock lock( graphicsSystem );
+
             if( auto pParent = getParent() )
             {
                 for( auto child : m_children )
@@ -934,24 +873,9 @@ namespace fb::render
         return sceneNode;
     }
 
-    void CSceneNodeOgreNext::showBoundingBox( bool show )
-    {
-        //
-        // return m_sceneNode->showBoundingBox(show);
-    }
-
-    auto CSceneNodeOgreNext::getShowBoundingBox() const -> bool
-    {
-        return false;  // m_sceneNode->getShowBoundingBox();
-    }
-
     void CSceneNodeOgreNext::_getObject( void **ppObject ) const
     {
         *ppObject = m_sceneNode;
-    }
-
-    void CSceneNodeOgreNext::setTransformationDirty( u32 msgType )
-    {
     }
 
     auto CSceneNodeOgreNext::getSceneNode() const -> Ogre::SceneNode *
@@ -959,42 +883,8 @@ namespace fb::render
         return m_sceneNode;
     }
 
-    void CSceneNodeOgreNext::_updateBoundingBox()
-    {
-    }
-
     void CSceneNodeOgreNext::updateBounds()
     {
-    }
-
-    void CSceneNodeOgreNext::setVisibilityFlags( u32 flags )
-    {
-        m_visibilityFlags = flags;
-
-        for( auto graphicsObject : m_graphicsObjects )
-        {
-            graphicsObject->setVisibilityFlags( flags );
-        }
-
-        for( auto &i : m_children )
-        {
-            i->setVisibilityFlags( flags );
-        }
-    }
-
-    auto CSceneNodeOgreNext::getVisibilityFlags() const -> u32
-    {
-        return m_visibilityFlags;
-    }
-
-    void CSceneNodeOgreNext::setFlag( u32 flag, bool value )
-    {
-        m_flags = BitUtil::setFlagValue( static_cast<u32>( m_flags ), flag, value );
-    }
-
-    auto CSceneNodeOgreNext::getFlag( u32 flag ) const -> bool
-    {
-        return BitUtil::getFlagValue( static_cast<u32>( m_flags ), flag );
     }
 
     auto CSceneNodeOgreNext::getProperties() const -> SmartPtr<Properties>
@@ -1121,24 +1011,10 @@ namespace fb::render
                 else if( message->isExactly<StateMessageType>() )
                 {
                     auto stateMessage = fb::static_pointer_cast<StateMessageType>( message );
-                    if( stateMessage->getType() == STATE_MESSAGE_ADD )
-                    {
-                        owner->add();
-                    }
-                    else if( stateMessage->getType() == STATE_MESSAGE_REMOVE )
+                    if( stateMessage->getType() == STATE_MESSAGE_REMOVE )
                     {
                         owner->remove();
                     }
-                }
-                else if( message->isExactly<StateMessageVisible>() )
-                {
-                    auto visibleMessage = fb::static_pointer_cast<StateMessageVisible>( message );
-                    FB_ASSERT( visibleMessage );
-
-                    auto visible = visibleMessage->isVisible();
-                    auto cascade = visibleMessage->getCascade();
-
-                    owner->setVisible( visible, cascade );
                 }
             }
         }
@@ -1283,30 +1159,13 @@ namespace fb::render
         return { minPoint.x, minPoint.y, minPoint.z, maxPoint.x, maxPoint.y, maxPoint.z };
     }
 
-    auto CSceneNodeOgreNext::_getFlag( u32 flag ) const -> bool
-    {
-        return ( m_flags & flag ) != 0;
-    }
-
     auto CSceneNodeOgreNext::_getRenderSystemTransform() const -> void *
     {
         return nullptr;
     }
 
-    auto CSceneNodeOgreNext::getObjectsBuffer( SmartPtr<IGraphicsObject> *buffer, u32 bufferSize ) const
-        -> u32
-    {
-        return 0;
-    }
-
     void CSceneNodeOgreNext::removeChildren()
     {
-    }
-
-    auto CSceneNodeOgreNext::getChildrenBuffer( SmartPtr<ISceneNode> *children, u32 bufferSize ) const
-        -> u32
-    {
-        return 0;
     }
 
     CSceneNodeOgreNext::NodeListener::NodeListener( CSceneNodeOgreNext *owner ) : m_owner( owner )

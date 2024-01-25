@@ -493,7 +493,7 @@ namespace fb::render
 
     auto CCameraOgreNext::getRealOrientation() const -> QuaternionF
     {
-        Ogre::Quaternion orientation = m_camera->getRealOrientation();
+        auto orientation = m_camera->getRealOrientation();
         m_realOrientation.W() = orientation.w;
         m_realOrientation.X() = orientation.x;
         m_realOrientation.Y() = orientation.y;

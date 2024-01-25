@@ -74,10 +74,10 @@ namespace fb
             virtual void setAttached( bool attached ) override;
 
             /** @copydoc IGraphicsObject::getRenderTechnique */
-            virtual hash32 getRenderTechnique() const override;
+            virtual hash_type getRenderTechnique() const override;
 
             /** @copydoc IGraphicsObject::setRenderTechnique */
-            virtual void setRenderTechnique( hash32 renderTechnique ) override;
+            virtual void setRenderTechnique( hash_type renderTechnique ) override;
 
             /** @copydoc IGraphicsObject::setRenderQueueGroup */
             virtual void setRenderQueueGroup( u32 queueID );
@@ -119,14 +119,16 @@ namespace fb
             FB_CLASS_REGISTER_TEMPLATE_DECL( GraphicsObject, T );
 
         protected:
+            /** Sets up the state object.  */
             virtual void setupStateObject();
 
+            /** Graphics object state. */
             SmartPtr<GraphicsObjectState> m_graphicsObjectState;
 
             /** The scene node this is attached to. */
             WeakPtr<ISceneNode> m_owner;
 
-            /// The scene manager that created the camera.
+            /** The scene manager that created the camera. */
             WeakPtr<IGraphicsScene> m_creator;
         };
 
@@ -252,15 +254,15 @@ namespace fb
         }
 
         template <class T>
-        hash32 GraphicsObject<T>::getRenderTechnique() const
+        hash_type GraphicsObject<T>::getRenderTechnique() const
         {
             return m_graphicsObjectState->getRenderTechnique();
         }
 
         template <class T>
-        void GraphicsObject<T>::setRenderTechnique( hash32 val )
+        void GraphicsObject<T>::setRenderTechnique( hash_type renderTechnique )
         {
-            m_graphicsObjectState->setRenderTechnique( val );
+            m_graphicsObjectState->setRenderTechnique( renderTechnique );
         }
 
         template <class T>

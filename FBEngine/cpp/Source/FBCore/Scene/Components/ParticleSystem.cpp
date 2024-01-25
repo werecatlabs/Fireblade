@@ -2,7 +2,7 @@
 #include <FBCore/Scene/Components/ParticleSystem.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IGraphicsScene.h>
-#include <FBCore/Interface/Particle/IParticleSystem.h>
+#include <FBCore/Interface/Graphics/IParticleSystem.h>
 #include <FBCore/Interface/Graphics/ISceneNode.h>
 #include <FBCore/Core/LogManager.h>
 
@@ -21,6 +21,8 @@ namespace fb::scene
     {
         try
         {
+            setLoadingState( LoadingState::Loading );
+
             auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
@@ -28,12 +30,16 @@ namespace fb::scene
             if( graphicsSystem )
             {
                 auto smgr = graphicsSystem->getGraphicsScene();
-                FB_ASSERT( smgr );
-
                 auto particleSystem = smgr->addGraphicsObjectByType<render::IParticleSystem>();
-                auto node = smgr->getRootSceneNode()->addChildSceneNode();
+
+                auto rootNode = smgr->getRootSceneNode();
+                auto node = rootNode->addChildSceneNode();
                 node->attachObject( particleSystem );
+
+                setParticleSystem( particleSystem );
             }
+
+            setLoadingState( LoadingState::Loaded );
         }
         catch( std::exception &e )
         {
@@ -45,6 +51,20 @@ namespace fb::scene
     {
         try
         {
+            setLoadingState( LoadingState::Unloading );
+
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            if( graphicsSystem )
+            {
+                auto smgr = graphicsSystem->getGraphicsScene();
+                smgr->removeGraphicsObject( m_particleSystem );
+                setParticleSystem( nullptr );
+            }
+
+            setLoadingState( LoadingState::Unloaded );
         }
         catch( std::exception &e )
         {
@@ -52,12 +72,16 @@ namespace fb::scene
         }
     }
 
-    auto ParticleSystem::getChildObjects() const -> Array<SmartPtr<ISharedObject>>
+    Array<SmartPtr<ISharedObject>> ParticleSystem::getChildObjects() const
     {
-        return {};
+        Array<SmartPtr<ISharedObject>> childObjects;
+        childObjects.push_back( m_particleSystem );
+        childObjects.push_back( m_graphicsObject );
+        childObjects.push_back( m_graphicsNode );
+        return childObjects;
     }
 
-    auto ParticleSystem::getProperties() const -> SmartPtr<Properties>
+    SmartPtr<Properties> ParticleSystem::getProperties() const
     {
         auto properties = Component::getProperties();
         properties->setProperty( "lifetime", m_lifetime );
@@ -69,7 +93,7 @@ namespace fb::scene
         properties->getPropertyValue( "lifetime", m_lifetime );
     }
 
-    auto ParticleSystem::getGraphicsObject() const -> SmartPtr<render::IGraphicsObject>
+    SmartPtr<render::IGraphicsObject> ParticleSystem::getGraphicsObject() const
     {
         return m_graphicsObject;
     }
@@ -79,13 +103,25 @@ namespace fb::scene
         m_graphicsObject = graphicsObject;
     }
 
-    auto ParticleSystem::getGraphicshNode() const -> SmartPtr<render::ISceneNode>
+    SmartPtr<render::ISceneNode> ParticleSystem::getGraphicsNode() const
     {
-        return m_graphicshNode;
+        return m_graphicsNode;
     }
 
-    void ParticleSystem::setGraphicshNode( SmartPtr<render::ISceneNode> graphicshNode )
+    void ParticleSystem::setGraphicsNode( SmartPtr<render::ISceneNode> graphicsNode )
     {
-        m_graphicshNode = graphicshNode;
+        m_graphicsNode = graphicsNode;
+    }
+
+    void ParticleSystem::setParticleSystem( SmartPtr<render::IParticleSystem> particleSystem )
+    {
+        m_particleSystem = particleSystem;
+    }
+
+    SmartPtr<render::IParticleSystem> ParticleSystem::getParticleSystem() const
+    {
+        return m_particleSystem;
     }
 }  // namespace fb::scene
+
+

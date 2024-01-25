@@ -11,6 +11,8 @@ namespace fb
 {
     namespace editor
     {
+
+        /** Project implementation. */
         class Project : public Resource<IProject>
         {
         public:
@@ -23,8 +25,8 @@ namespace fb
             Project();
             ~Project() override;
 
-            void load( SmartPtr<ISharedObject> data );
-            void unload( SmartPtr<ISharedObject> data );
+            void load( SmartPtr<ISharedObject> data ) override;
+            void unload( SmartPtr<ISharedObject> data ) override;
 
             void create( const String &path );
             void loadFromFile( const String &filePath ) override;
@@ -47,14 +49,13 @@ namespace fb
             void setPaths( const Array<String> &paths );
             void addPath( const String &path );
 
-            void setProperties( const Properties &properties );
-            void getProperties( Properties &properties ) const;
+            void setProperties( SmartPtr<Properties> properties ) override;
+            SmartPtr<Properties> getProperties() const override;
+
+            Array<SmartPtr<ISharedObject>> getChildObjects() const;
 
             Array<String> getMediaPaths() const;
             void setMediaPaths( const Array<String> &mediaPaths );
-
-            bool isDirty() const;
-            void setDirty( bool dirty );
 
             String getSelectedProjectPath() const;
             void setSelectedProjectPath( const String &selectedProjectPath );
@@ -81,9 +82,9 @@ namespace fb
 
             String getPluginSource() const;
 
-            SmartPtr<IPlugin> getPlugin() const;
+            SmartPtr<IPlugin> getPlugin() const override;
 
-            void setPlugin( SmartPtr<IPlugin> plugin );
+            void setPlugin( SmartPtr<IPlugin> plugin ) override;
 
             Array<String> getScriptFilePaths() const override;
 
@@ -99,12 +100,18 @@ namespace fb
 
             bool isArchive() const override;
 
-            void setArchive( bool val ) override;
+            void setArchive( bool archive ) override;
+
+            bool isDirty() const override;
+            void setDirty( bool dirty ) override;
 
         protected:
-            void addDefaultTasks();
-
             SmartPtr<IPlugin> m_plugin;
+
+            SmartPtr<scene::GraphicsSettingsDirector> m_graphicsSettingsDirector;
+
+            bool m_archive = false;
+            bool m_dirty = false;
 
             String m_currentScenePath;
 
@@ -145,7 +152,7 @@ namespace fb
             ///
             Array<String> m_paths;
         };
-    }  // end namespace editor
-}  // end namespace fb
+    } // end namespace editor
+}     // end namespace fb
 
 #endif  // Project_h__

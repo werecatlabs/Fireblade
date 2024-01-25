@@ -9,9 +9,9 @@ namespace fb
     class KeyFrame : public ISharedObject
     {
     public:
-        KeyFrame() = default;
+        KeyFrame();
 
-        virtual ~KeyFrame() = default;
+        virtual ~KeyFrame();
 
         f32 getTime() const;
 

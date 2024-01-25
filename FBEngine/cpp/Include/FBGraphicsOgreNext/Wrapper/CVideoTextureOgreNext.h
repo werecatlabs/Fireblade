@@ -2,7 +2,7 @@
 #define FBOgreVideoTexture_h__
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
-#include <FBCore/Interface/Video/IVideoTexture.h>
+#include <FBCore/Interface/Graphics/IVideoTexture.h>
 #include <FBCore/Graphics/ResourceGraphics.h>
 //#include <OgreTexture.h>
 

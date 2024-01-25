@@ -17,7 +17,10 @@ namespace fb
         class Compositor : public SharedGraphicsObject<ISharedObject>
         {
         public:
+            /** @brief Constructor. */
             Compositor();
+
+            /** @brief Destructor. */
             ~Compositor() override;
 
             /** @copydoc ISharedObject::load */

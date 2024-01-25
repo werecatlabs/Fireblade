@@ -19,8 +19,6 @@ namespace fb
             handle->setName( "StateManager" );
         }
 
-        setGarbageCollected( false );
-
         m_stateQueues.resize( static_cast<u32>( Thread::Task::Count ) );
 
         auto applicationManager = core::ApplicationManager::instance();

@@ -3,8 +3,8 @@
 #include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IWindow.h>
-#include <FBCore/Interface/Video/IVideoManager.h>
-#include <FBCore/Interface/Video/IVideoStream.h>
+#include <FBCore/Interface/Graphics/IVideoManager.h>
+#include <FBCore/Interface/Graphics/IVideoStream.h>
 #include <FBCore/Interface/System/IStateMessage.h>
 #include <FBCore/State/Messages/StateFrameData.h>
 

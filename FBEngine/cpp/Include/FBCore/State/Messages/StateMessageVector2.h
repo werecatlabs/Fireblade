@@ -32,7 +32,7 @@ namespace fb
         Vector2<T> m_value = Vector2<T>::zero();
     };
 
-    FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, StateMessageVector2, StateMessage, StateMessage );
+    FB_CLASS_REGISTER_DERIVED_TEMPLATE_TYPEID( fb, StateMessageVector2, StateMessage, StateMessage );
 
     using StateMessageVector2I = StateMessageVector2<s32>;
     using StateMessageVector2F = StateMessageVector2<f32>;

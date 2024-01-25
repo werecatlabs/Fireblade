@@ -227,7 +227,7 @@ namespace v1 {
     void MeshSerializerImpl::writeSubMeshNameTable(const Mesh* pMesh)
     {
         // Header
-        writeChunkHeader(M_SUBMESH_NAME_TABLE, calSubMeshNameTableSize(pMesh));
+        writeChunkHeader(M_SUBMESH_NAME_TABLE, calcSubMeshNameTableSize(pMesh));
 
         // Loop through and save out the index and names.
         Mesh::SubMeshNameMap::const_iterator it = pMesh->mSubMeshNameMap.begin();
@@ -251,7 +251,7 @@ namespace v1 {
     void MeshSerializerImpl::writeSubMesh(const SubMesh* s)
     {
         // Header
-        writeChunkHeader(M_SUBMESH, calSubMeshSize(s));
+        writeChunkHeader(M_SUBMESH, calcSubMeshSize(s));
 
         // char* materialName
         writeString(s->getMaterialName());
@@ -343,7 +343,7 @@ namespace v1 {
         {
             SubMesh *sm = pMesh->getSubMesh(i);
             if (!sm->extremityPoints.empty()){
-                size += calSubMeshExtremesSize(i, sm);
+                size += calcSubMeshExtremesSize(i, sm);
             }
         }
         return size;
@@ -352,7 +352,7 @@ namespace v1 {
     void MeshSerializerImpl::writeSubMeshExtremes(unsigned short idx, const SubMesh* s)
     {
         
-        writeChunkHeader(M_TABLE_EXTREMES, calSubMeshExtremesSize(idx, s));
+        writeChunkHeader(M_TABLE_EXTREMES, calcSubMeshExtremesSize(idx, s));
 
         writeShorts(&idx, 1);
 
@@ -371,7 +371,7 @@ namespace v1 {
         OGRE_FREE(vertices, MEMCATEGORY_GEOMETRY);
     }
 
-    size_t MeshSerializerImpl::calSubMeshExtremesSize(unsigned short idx, const SubMesh* s)
+    size_t MeshSerializerImpl::calcSubMeshExtremesSize(unsigned short idx, const SubMesh* s)
     {
         return MSTREAM_OVERHEAD_SIZE + sizeof (unsigned short) +
             s->extremityPoints.size() * sizeof (float)* 3;
@@ -405,7 +405,7 @@ namespace v1 {
     void MeshSerializerImpl::writeSubMeshOperation(const SubMesh* sm)
     {
         // Header
-        writeChunkHeader(M_SUBMESH_OPERATION, calSubMeshOperationSize(sm));
+        writeChunkHeader(M_SUBMESH_OPERATION, calcSubMeshOperationSize(sm));
 
         // unsigned short operationType
         unsigned short opType = static_cast<unsigned short>(sm->operationType);
@@ -508,7 +508,7 @@ namespace v1 {
         popInnerChunk(mStream);
     }
     //---------------------------------------------------------------------
-    size_t MeshSerializerImpl::calSubMeshNameTableSize(const Mesh* pMesh)
+    size_t MeshSerializerImpl::calcSubMeshNameTableSize(const Mesh* pMesh)
     {
         size_t size = MSTREAM_OVERHEAD_SIZE;
         // Figure out the size of the Name table.
@@ -545,7 +545,7 @@ namespace v1 {
         // Submeshes
         for (unsigned i = 0; i < pMesh->getNumSubMeshes(); ++i)
         {
-            size += calSubMeshSize(pMesh->getSubMesh(i));
+            size += calcSubMeshSize(pMesh->getSubMesh(i));
         }
 
         // Skeleton link
@@ -567,7 +567,7 @@ namespace v1 {
         size += calcBoundsInfoSize(pMesh);
 
         // Submesh name table
-        size += calSubMeshNameTableSize(pMesh);
+        size += calcSubMeshNameTableSize(pMesh);
 
         // Edge list
         if (pMesh->isEdgeListBuilt())
@@ -589,7 +589,7 @@ namespace v1 {
         return size;
     }
     //---------------------------------------------------------------------
-    size_t MeshSerializerImpl::calSubMeshSize(const SubMesh* pSub)
+    size_t MeshSerializerImpl::calcSubMeshSize(const SubMesh* pSub)
     {
         size_t size = MSTREAM_OVERHEAD_SIZE;
         
@@ -624,8 +624,8 @@ namespace v1 {
             }
         }
 
-        size += calSubMeshTextureAliasesSize(pSub);
-        size += calSubMeshOperationSize(pSub);
+        size += calcSubMeshTextureAliasesSize(pSub);
+        size += calcSubMeshOperationSize(pSub);
 
         // Bone assignments
         if (!pSub->mBoneAssignments.empty())
@@ -641,12 +641,12 @@ namespace v1 {
         return size;
     }
     //---------------------------------------------------------------------
-    size_t MeshSerializerImpl::calSubMeshOperationSize(const SubMesh* pSub)
+    size_t MeshSerializerImpl::calcSubMeshOperationSize(const SubMesh* pSub)
     {
         return MSTREAM_OVERHEAD_SIZE + sizeof(uint16);
     }
     //---------------------------------------------------------------------
-    size_t MeshSerializerImpl::calSubMeshTextureAliasesSize(const SubMesh* pSub)
+    size_t MeshSerializerImpl::calcSubMeshTextureAliasesSize(const SubMesh* pSub)
     {
         size_t chunkSize = 0;
         AliasTextureNamePairList::const_iterator i;

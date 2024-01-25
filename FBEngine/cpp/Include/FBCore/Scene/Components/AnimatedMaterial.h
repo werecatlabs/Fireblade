@@ -8,6 +8,7 @@ namespace fb
     namespace scene
     {
 
+        /** Animated material component. */
         class AnimatedMaterial : public Component
         {
         public:

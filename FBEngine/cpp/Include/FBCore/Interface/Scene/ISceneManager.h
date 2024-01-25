@@ -201,12 +201,16 @@ namespace fb
             virtual void unregisterComponentUpdate( Thread::Task task, Thread::UpdateState state,
                                                     SmartPtr<IComponent> component ) = 0;
 
+            /** Unregisters the component from all updates. */
             virtual void unregisterAllComponent( SmartPtr<IComponent> component ) = 0;
 
+            /** Gets the number actors. */
             virtual s32 getNumActors() const = 0;
 
+            /** Makes all the actor transformation dirty. */
             virtual void makeActorTransformsDirty() = 0;
 
+            /** Adds a dirty transform. */
             virtual void addDirtyTransform( SmartPtr<IActor> actor ) = 0;
 
             /**

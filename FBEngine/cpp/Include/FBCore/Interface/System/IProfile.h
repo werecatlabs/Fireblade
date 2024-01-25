@@ -79,6 +79,8 @@ namespace fb
 
         /** Clears the profile. */
         virtual void clear() = 0;
+
+        FB_CLASS_REGISTER_DECL;
     };
 
 }  // end namespace fb

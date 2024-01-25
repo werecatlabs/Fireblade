@@ -52,18 +52,6 @@ namespace fb
             /** Hash code used to query the world axis-aligned bounding box of a node. */
             static const hash_type STATE_QUERY_TYPE_WORLD_AABB;
 
-            /** Flag indicating that the node should look at a target point. */
-            static const u32 STATE_FLAG_LOOK_AT = ( 1 << 1 );
-
-            /** Flag indicating that the node position has changed. */
-            static const u32 STATE_FLAG_POSITION = ( 1 << 2 );
-
-            /** Flag indicating that the node orientation has changed. */
-            static const u32 STATE_FLAG_ORIENTATION = ( 1 << 3 );
-
-            /** Flag indicating that the node should be updated. */
-            static const u32 STATE_FLAG_UPDATE = ( 1 << 4 );
-
             /** Hash code used to send a position state message to a node. */
             static const hash_type STATE_MESSAGE_POSITION;
 
@@ -144,16 +132,6 @@ namespace fb
              */
             virtual AABB3<real_Num> getWorldAABB() const = 0;
 
-            /** Makes all objects attached to this node become visible / invisible.
-             */
-            virtual void setVisible( bool isVisible, bool cascade = true ) = 0;
-
-            /** Sets a flag indicating whether or not this node is culled. */
-            virtual void setCulled( bool culled ) = 0;
-
-            /** Returns a boolean indicting whether or not this node is culled. */
-            virtual bool isCulled() const = 0;
-
             /** Adds an instance of a scene object to this node.
              */
             virtual void attachObject( SmartPtr<IGraphicsObject> object ) = 0;
@@ -167,11 +145,6 @@ namespace fb
 
             /** Gets the attached objects. */
             virtual Array<SmartPtr<IGraphicsObject>> getObjects() const = 0;
-
-            /** Gets the attached objects.
-            @return The number of objects.
-            */
-            virtual u32 getObjectsBuffer( SmartPtr<IGraphicsObject> *buffer, u32 bufferSize ) const = 0;
 
             /** Gets the number of objects. */
             virtual u32 getNumObjects() const = 0;
@@ -195,9 +168,6 @@ namespace fb
             /** Removes a child of this entity. */
             virtual bool removeChild( SmartPtr<ISceneNode> child ) = 0;
 
-            /** Adds the scene node to the scene. */
-            virtual void add() = 0;
-
             /** Remove the child from its parent. */
             virtual void remove() = 0;
 
@@ -210,9 +180,6 @@ namespace fb
             /** Gets children. */
             virtual Array<SmartPtr<ISceneNode>> getChildren() const = 0;
 
-            /** Fills an Array with the children of this entity. */
-            virtual u32 getChildrenBuffer( SmartPtr<ISceneNode> *children, u32 bufferSize ) const = 0;
-
             /** Gets the number of children. */
             virtual u32 getNumChildren() const = 0;
 
@@ -224,52 +191,18 @@ namespace fb
             virtual SmartPtr<ISceneNode> clone( SmartPtr<ISceneNode> parent = nullptr,
                                                 const String &name = StringUtil::EmptyString ) const = 0;
 
-            /** Allows the showing of the node's bounding box.
-            @remarks
-            Use this to show or hide the bounding box of the node.
-            */
-            virtual void showBoundingBox( bool show ) = 0;
-
-            /** This allows scene managers to determine if the node's bounding box
-            should be added to the rendering queue.
-            @remarks
-            Scene Managers that implement their own _findVisibleObjects will have to
-            check this flag and then use _addBoundingBoxToQueue to add the bounding box
-            wireframe.
-            */
-            virtual bool getShowBoundingBox() const = 0;
-
             /** Updates the bounds of the scene node. */
             virtual void updateBounds() = 0;
-
-            /** Sets the visibility flags for the attached graphic objects. */
-            virtual void setVisibilityFlags( u32 flags ) = 0;
 
             /** Gets a pointer to the underlying scene node object. This is dependent on the graphics
              * library used. */
             virtual void _getObject( void **ppObject ) const = 0;
-
-            /** Sets a flag of the scene node. */
-            virtual void setFlag( u32 flag, bool value ) = 0;
-
-            /** Gets a value of a flag. */
-            virtual bool getFlag( u32 flag ) const = 0;
 
             /** Gets the scene manager that created the scene node. */
             virtual SmartPtr<IGraphicsScene> getCreator() const = 0;
 
             /** Sets the scene manager that created the scene node. */
             virtual void setCreator( SmartPtr<IGraphicsScene> creator ) = 0;
-
-            /** Gets the data as a properties object.
-            @return The data as a properties object.
-            */
-            virtual SmartPtr<Properties> getProperties() const = 0;
-
-            /** Sets the data as a properties object.
-            @param properties The properties object.
-            */
-            virtual void setProperties( SmartPtr<Properties> properties ) = 0;
 
             FB_CLASS_REGISTER_DECL;
         };

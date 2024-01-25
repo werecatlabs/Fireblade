@@ -9,7 +9,6 @@ namespace fb
 {
     namespace scene
     {
-
         /** Transformation implementation. */
         class Transform : public ITransform
         {
@@ -27,16 +26,17 @@ namespace fb
             ~Transform() override;
 
             void load( SmartPtr<ISharedObject> data ) override;
+
             void unload( SmartPtr<ISharedObject> data ) override;
 
             void updateTransform() override;
 
-            void parentChanged( SmartPtr<scene::IActor> newParent,
-                                SmartPtr<scene::IActor> oldParent ) override;
+            void parentChanged( SmartPtr<IActor> newParent,
+                                SmartPtr<IActor> oldParent ) override;
 
-            SmartPtr<scene::IActor> getActor() const override;
+            SmartPtr<IActor> getActor() const override;
 
-            void setActor( SmartPtr<scene::IActor> actor ) override;
+            void setActor( SmartPtr<IActor> actor ) override;
 
             bool isLocalDirty() const override;
             void setLocalDirty( bool localDirty, bool cascade = true ) override;
@@ -93,13 +93,13 @@ namespace fb
 
             static void registerClass();
 
-            time_interval getFrameTime() const;
+            time_interval getFrameTime() const override;
 
-            void setFrameTime( time_interval frameTime );
+            void setFrameTime( time_interval frameTime ) override;
 
-            time_interval getFrameDeltaTime() const;
+            time_interval getFrameDeltaTime() const override;
 
-            void setFrameDeltaTime( time_interval frameDeltaTime );
+            void setFrameDeltaTime( time_interval frameDeltaTime ) override;
 
             FB_CLASS_REGISTER_DECL;
 
@@ -113,7 +113,7 @@ namespace fb
 
             // SmartPtr<TransformState> m_state;
 
-            SmartPtr<scene::IActor> m_actor;
+            SmartPtr<IActor> m_actor;
             SmartPtr<IStateContext> m_stateContext;
 
             Transform3<real_Num> m_worldTransform;
@@ -126,8 +126,7 @@ namespace fb
             /// The id extension.
             static u32 m_idExt;
         };
-
-    }  // namespace scene
-}  // end namespace fb
+    } // namespace scene
+}     // end namespace fb
 
 #endif  // Transformation_h__

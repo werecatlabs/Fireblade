@@ -80,6 +80,8 @@ namespace fb
          * @brief Log profiling results.
          */
         virtual void logResults() = 0;
+
+        FB_CLASS_REGISTER_DECL;
     };
 }  // end namespace fb
 

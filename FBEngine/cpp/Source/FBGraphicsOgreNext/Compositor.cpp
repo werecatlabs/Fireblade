@@ -287,11 +287,7 @@ namespace fb::render
             {
                 if( m_compositorWorkspace )
                 {
-                    //m_scenePassDef->mVisibilityMask = 0;
                     m_compositorWorkspace->setEnabled( false );
-                    //pOgreCompositorManager->removeWorkspace( m_compositorWorkspace );
-
-                    //m_compositorWorkspace = nullptr;
                 }
 
                 if( m_compositorWorkspace )

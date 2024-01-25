@@ -366,7 +366,7 @@ namespace fb
     }
 
     template <class T>
-    Array<SmartPtr<IResource>> Resource<T>::getDependencies() const 
+    Array<SmartPtr<IResource>> Resource<T>::getDependencies() const
     {
         return Array<SmartPtr<IResource>>();
     }

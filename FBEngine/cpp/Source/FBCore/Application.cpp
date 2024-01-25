@@ -10,6 +10,9 @@
 
 namespace fb::core
 {
+
+    FB_CLASS_REGISTER_DERIVED( fb::editor, core::Application, core::IApplication );
+
     Application::Application()
     {
         if( auto handle = getHandle() )
@@ -71,6 +74,8 @@ namespace fb::core
 
             createPlatformManager();
             FB_ASSERT( applicationManager->isValid() );
+
+            createProcessManager();
 
             createStateManager();
             FB_ASSERT( applicationManager->isValid() );
@@ -151,10 +156,6 @@ namespace fb::core
             FB_LOG( "RenderUI created." );
             FB_ASSERT( applicationManager->isValid() );
 
-            createEntitySystem();
-            FB_LOG( "EntitySystem created." );
-            FB_ASSERT( applicationManager->isValid() );
-
             setupRenderpipeline();
             FB_LOG( "Renderpipeline created." );
             FB_ASSERT( applicationManager->isValid() );
@@ -170,6 +171,13 @@ namespace fb::core
             FB_LOG( "Finished creating base components." );
 
             createPrefabManager();
+
+            createDefaultMaterialUI();
+            createDefaultMaterial();
+            createDefaultMaterials();
+            createDefaultFont();
+
+            loadScripts();
 
             createScene();
         }
@@ -249,7 +257,7 @@ namespace fb::core
         auto sceneManager = applicationManager->getSceneManager();
         auto scene = sceneManager->getCurrentScene();
 
-        scene->setState( scene::IScene::State::Play);
+        scene->setState( scene::IScene::State::Play );
         taskManager->setState( ITaskManager::State::FreeStep );
         threadPool->setState( IThreadPool::State::Start );
 
@@ -1983,12 +1991,20 @@ namespace fb::core
 
     auto Application::createScriptManager() -> bool
     {
-        return true;
-    }
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
 
-    auto Application::createEntitySystem() -> bool
-    {
-        return true;
+        auto factoryManager = applicationManager->getFactoryManager();
+        FB_ASSERT( factoryManager );
+
+        auto scriptManager = factoryManager->make_object<IScriptManager>();
+        if( scriptManager )
+        {
+            scriptManager->load( nullptr );
+            applicationManager->setScriptManager( scriptManager );
+        }
+
+        return scriptManager != nullptr;
     }
 
     auto Application::createSoundManager() -> bool
@@ -2007,22 +2023,25 @@ namespace fb::core
         return true;
     }
 
-    auto Application::createCameraCtrlManager() -> bool
-    {
-        return true;
-    }
-
     void Application::createPluginManager()
     {
         auto applicationManager = ApplicationManager::instance();
-        FB_ASSERT( applicationManager );
+        auto factoryManager = applicationManager->getFactoryManager();
 
-        auto pluginManager = fb::make_ptr<PluginManager>();
+        auto pluginManager = factoryManager->make_ptr<PluginManager>();
         applicationManager->setPluginManager( pluginManager );
     }
 
     void Application::createPlugins()
     {
+    }
+
+    void Application::createProcessManager()
+    {
+        auto applicationManager = ApplicationManager::instance();
+
+        auto processManager = fb::make_ptr<ProcessManager>();
+        applicationManager->setProcessManager( processManager );
     }
 
     void Application::destroyScene()
@@ -2038,18 +2057,20 @@ namespace fb::core
 
             auto fileSystem = applicationManager->getFileSystem();
             auto scriptManager = applicationManager->getScriptManager();
-
-            String scriptExt;
+            if( scriptManager )
+            {
+                String scriptExt;
 
 #if FB_ENABLE_LUA
-            scriptExt = ".lua";
+                scriptExt = ".lua";
 #elif FB_ENABLE_PYTHON
-            scriptExt = ".py";
+                scriptExt = ".py";
 #endif
 
-            auto scripts = fileSystem->getFileNamesWithExtension( scriptExt );
-            std::sort( scripts.begin(), scripts.end() );
-            scriptManager->loadScripts( scripts );
+                auto scripts = fileSystem->getFileNamesWithExtension( scriptExt );
+                std::sort( scripts.begin(), scripts.end() );
+                scriptManager->loadScripts( scripts );
+            }
         }
         catch( std::exception &e )
         {
@@ -2200,6 +2221,14 @@ namespace fb::core
 
     void Application::createProfiler()
     {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto factoryManager = applicationManager->getFactoryManager();
+        FB_ASSERT( factoryManager );
+
+        auto profiler = factoryManager->make_object<IProfiler>();
+        applicationManager->setProfiler( profiler );
     }
 
     void Application::createThreadPool()
@@ -2219,7 +2248,7 @@ namespace fb::core
             numThreads = maxThreads;
         }
 
-        auto threadPool = fb::make_ptr<ThreadPool>();
+        auto threadPool = factoryManager->make_ptr<ThreadPool>();
         applicationManager->setThreadPool( threadPool );
 
         threadPool->setNumThreads( numThreads );
@@ -2308,7 +2337,9 @@ namespace fb::core
         FB_ASSERT( applicationManager );
         FB_ASSERT( applicationManager->isValid() );
 
-        auto jobQueue = fb::make_ptr<JobQueue>();
+        auto factoryManager = applicationManager->getFactoryManager();
+
+        auto jobQueue = factoryManager->make_ptr<JobQueue>();
         applicationManager->setJobQueue( jobQueue );
     }
 

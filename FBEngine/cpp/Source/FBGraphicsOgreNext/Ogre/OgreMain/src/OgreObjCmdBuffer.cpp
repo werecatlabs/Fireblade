@@ -123,7 +123,7 @@ namespace Ogre
     void ObjCmdBuffer::TransitionToLoaded::execute(void)
     {
         texture->_transitionTo( targetResidency, reinterpret_cast<uint8*>( sysRamCopy ) );
-        //OGRE_ASSERT_MEDIUM( !texture->isManualTexture() );
+        OGRE_ASSERT_MEDIUM( !texture->isManualTexture() );
 
         //Do not update metadata cache when loading from OnStorage to OnSystemRam as
         //it may have tainted (incomplete, mostly mipmaps) data. Only when going Resident.

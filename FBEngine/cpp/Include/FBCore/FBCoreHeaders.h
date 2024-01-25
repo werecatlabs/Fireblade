@@ -134,7 +134,18 @@
 #include <FBCore/Interface/Graphics/IDeferredShadingSystem.h>
 #include <FBCore/Interface/Graphics/IMaterialShader.h>
 #include <FBCore/Interface/Graphics/IGraphicsScene.h>
+#include <FBCore/Interface/Graphics/IParticle.h>
+#include <FBCore/Interface/Graphics/IParticleAffector.h>
+#include <FBCore/Interface/Graphics/IParticleEmitter.h>
+#include <FBCore/Interface/Graphics/IParticleManager.h>
+#include <FBCore/Interface/Graphics/IParticleRenderer.h>
+#include <FBCore/Interface/Graphics/IParticleSystem.h>
+#include <FBCore/Interface/Graphics/IParticleSystemBuilder.h>
+#include <FBCore/Interface/Graphics/IParticleSystemListener.h>
+#include <FBCore/Interface/Graphics/IParticleTechnique.h>
 #include <FBCore/Interface/Graphics/ISceneNode.h>
+#include <FBCore/Interface/Graphics/IShaderManager.h>
+#include <FBCore/Interface/Graphics/ISkeleton.h>
 #include <FBCore/Interface/Graphics/IScreenSpaceEffect.h>
 #include <FBCore/Interface/Graphics/IScreenSpaceEffectRenderer.h>
 #include <FBCore/Interface/Graphics/ISprite.h>
@@ -145,6 +156,11 @@
 #include <FBCore/Interface/Graphics/ITexture.h>
 #include <FBCore/Interface/Graphics/ITerrainRayResult.h>
 #include <FBCore/Interface/Graphics/IViewport.h>
+#include <FBCore/Interface/Graphics/IVideo.h>
+#include <FBCore/Interface/Graphics/IVideoManager.h>
+#include <FBCore/Interface/Graphics/IVideoMaterial.h>
+#include <FBCore/Interface/Graphics/IVideoStream.h>
+#include <FBCore/Interface/Graphics/IVideoTexture.h>
 #include <FBCore/Interface/Graphics/IWater.h>
 #include <FBCore/Interface/Graphics/IWindow.h>
 #include <FBCore/Interface/Graphics/IWindowEvent.h>
@@ -154,17 +170,6 @@
 #include <FBCore/Interface/Resource/IResource.h>
 #include <FBCore/Interface/Resource/IResourceManager.h>
 #include <FBCore/Interface/Resource/IResourceGroupManager.h>
-
-// particle
-#include <FBCore/Interface/Particle/IParticle.h>
-#include <FBCore/Interface/Particle/IParticleAffector.h>
-#include <FBCore/Interface/Particle/IParticleEmitter.h>
-#include <FBCore/Interface/Particle/IParticleManager.h>
-#include <FBCore/Interface/Particle/IParticleRenderer.h>
-#include <FBCore/Interface/Particle/IParticleSystem.h>
-#include <FBCore/Interface/Particle/IParticleSystemBuilder.h>
-#include <FBCore/Interface/Particle/IParticleSystemListener.h>
-#include <FBCore/Interface/Particle/IParticleTechnique.h>
 
 // ui
 #include <FBCore/Interface/UI/IUIAbout.h>
@@ -389,13 +394,6 @@
 #include <FBCore/Interface/System/ISelectionManager.h>
 #include <FBCore/Interface/System/ISystemSettings.h>
 
-// video
-#include <FBCore/Interface/Video/IVideo.h>
-#include <FBCore/Interface/Video/IVideoManager.h>
-#include <FBCore/Interface/Video/IVideoMaterial.h>
-#include <FBCore/Interface/Video/IVideoStream.h>
-#include <FBCore/Interface/Video/IVideoTexture.h>
-
 // vehicle
 #include <FBCore/Interface/Vehicle/IVehicleController.h>
 #include <FBCore/Interface/Vehicle/IVehicleComponent.h>
@@ -446,6 +444,7 @@
 #include <FBCore/Mesh/MeshGenerator.h>
 #include <FBCore/Mesh/CollisionMesh.h>
 #include <FBCore/Mesh/CollisionSubMesh.h>
+#include <FBCore/Mesh/VertexBoneAssignment.h>
 #include <FBCore/Mesh/VertexDeclaration.h>
 
 #include <FBCore/Memory/Data.h>
@@ -462,6 +461,8 @@
 
 #include <FBCore/System/RttiClassDefinition.h>
 
+#include <FBCore/Scene/Components/Animation.h>
+#include <FBCore/Scene/Components/Animator.h>
 #include <FBCore/Scene/Components/AudioEmitter.h>
 #include <FBCore/Scene/Components/Component.h>
 #include "FBCore/Scene/Components/CarController.h"
@@ -512,6 +513,7 @@
 #include <FBCore/Scene/Components/UI/HorizontalLayout.h>
 #include <FBCore/Scene/Components/UI/VerticalLayout.h>
 
+#include <FBCore/Scene/Directors/GraphicsSettingsDirector.h>
 #include <FBCore/Scene/Directors/MeshResourceDirector.h>
 #include <FBCore/Scene/Directors/SoundResourceDirector.h>
 #include <FBCore/Scene/Directors/TextureResourceDirector.h>

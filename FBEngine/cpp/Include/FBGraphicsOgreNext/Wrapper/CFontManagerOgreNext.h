@@ -12,10 +12,14 @@ namespace fb
     namespace render
     {
 
+        /** @brief Font manager */
         class CFontManagerOgreNext : public IFontManager
         {
         public:
+            /** @brief Constructor */
             CFontManagerOgreNext();
+
+            /** @brief Destructor */
             ~CFontManagerOgreNext() override;
 
             /** @copydoc IObject::load */

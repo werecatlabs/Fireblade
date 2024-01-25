@@ -14,7 +14,6 @@
 
 namespace fb
 {
-
     /**
      * An interface for a shared object.
      *
@@ -74,11 +73,11 @@ namespace fb
          */
         ~ISharedObject() override;
 
-        virtual void preUpdate() override;
+        void preUpdate() override;
 
-        virtual void update() override;
+        void update() override;
 
-        virtual void postUpdate() override;
+        void postUpdate() override;
 
         /**
          * Adds a weak reference to the shared object and increments the reference counter.
@@ -157,6 +156,10 @@ namespace fb
         @return The number of references.
         */
         s32 getWeakReferences() const;
+
+        virtual String getName() const;
+
+        virtual void setName( const String &name );
 
         /** Used to load the object.
         @param data An object containing the necessary data. Can be null.
@@ -426,7 +429,7 @@ namespace fb
 #        endif
 #    endif
 
-        if( --m_references == 0 )
+        if(--m_references == 0)
         {
             destroySharedObject();
             return true;
@@ -469,17 +472,16 @@ namespace fb
     template <class B>
     const SmartPtr<B> ISharedObject::getSharedFromThis() const
     {
-        auto p = (B *)this;
+        auto p = static_cast<const B *>(this);
         return SmartPtr<B>( p );
     }
 
     template <class B>
     SmartPtr<B> ISharedObject::getSharedFromThis()
     {
-        auto p = static_cast<B *>( this );
+        auto p = static_cast<B *>(this);
         return SmartPtr<B>( p );
     }
-
-}  // end namespace fb
+} // end namespace fb
 
 #endif  // ISharedObject_h__

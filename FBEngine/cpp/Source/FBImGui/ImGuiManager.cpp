@@ -196,6 +196,8 @@ namespace fb::ui
 
     auto ImGuiManager::addElement( hash64 type ) -> SmartPtr<IUIElement>
     {
+        FB_ASSERT( isLoaded() );
+
         auto applicationManager = core::ApplicationManager::instance();
 
         auto element = SmartPtr<IUIElement>();
@@ -216,14 +218,12 @@ namespace fb::ui
         {
             auto factoryManager = applicationManager->getFactoryManager();
             element = factoryManager->make_ptr<ImGuiButton>();
-            element->load( nullptr );
         }
         break;
         case UITypes::Toolbar:
         {
             auto factoryManager = applicationManager->getFactoryManager();
             element = factoryManager->make_ptr<ImGuiToolbar>();
-            element->load( nullptr );
         }
         break;
         case UITypes::None:
@@ -237,19 +237,23 @@ namespace fb::ui
             if( type == WINDOW_TYPEINFO )
             {
                 element = factoryManager->make_ptr<ImGuiWindow>();
-                element->load( nullptr );
             }
             else
             {
                 element = factoryManager->make_object<IUIElement>( type );
-                element->load( nullptr );
             }
         }
         break;
         };
 
-        addElement( type, element );
-        return element;
+        if (element)
+        {
+            element->load( nullptr );
+            addElement( type, element );
+            return element;
+        }
+
+        return nullptr;
     }
 
     auto ImGuiManager::addElement( SmartPtr<IUIElement> parent, u8 type ) -> SmartPtr<IUIElement>

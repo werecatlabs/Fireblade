@@ -18,7 +18,7 @@ namespace fb
     void SceneNodeHelper::_setVisibilityFlags( ISceneNode *node, lua_Integer flag )
     {
         u32 mask = *reinterpret_cast<u32 *>( &flag );
-        node->setVisibilityFlags( mask );
+        //node->setVisibilityFlags( mask );
     }
 
     lua_Integer SceneNodeHelper::_getVisibilityFlags( ISceneNode *node )
@@ -55,7 +55,7 @@ namespace fb
 
     void SceneNodeHelper::_setVisible( ISceneNode *node, bool isVisible )
     {
-        node->setVisible( isVisible );
+        //node->setVisible( isVisible );
     }
 
 }  // end namespace fb

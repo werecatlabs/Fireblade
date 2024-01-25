@@ -110,11 +110,13 @@ namespace Ogre {
             true if the automatic render should proceed, false to skip it on 
             the assumption that the Renderable has done it manually.
         */
-        virtual bool preRender(SceneManager* sm, RenderSystem* rsys);
+        virtual bool preRender(SceneManager* sm, RenderSystem* rsys)
+                { (void)sm; (void)rsys; return true; }
 
         /** Called immediately after the Renderable has been rendered. 
         */
-        virtual void postRender(SceneManager* sm, RenderSystem* rsys);
+        virtual void postRender(SceneManager* sm, RenderSystem* rsys)
+                { (void)sm; (void)rsys; }
 
         /** Gets the world transform matrix / matrices for this renderable object.
         @remarks
@@ -138,9 +140,9 @@ namespace Ogre {
             If a renderable does not use vertex blending this method returns 1, which is the default for 
             simplicity.
         */
-        virtual unsigned short getNumWorldTransforms(void) const;
+        virtual unsigned short getNumWorldTransforms(void) const { return 1; }
 
-        bool hasSkeletonAnimation(void) const;
+        bool hasSkeletonAnimation(void) const               { return mHasSkeletonAnimation; }
 
         unsigned short getNumPoses(void) const;
         bool getPoseHalfPrecision() const;
@@ -161,7 +163,7 @@ namespace Ogre {
             and this function will be called at creation time to use a different shader;
             not during rendering time per Renderable.
         */
-        virtual bool getUseIdentityWorldMatrix(void) const;
+        virtual bool getUseIdentityWorldMatrix(void) const          { return false; }
 
         /** Returns whether the Hlms implementation should evaluate getUseIdentityProjection
             per object at runtime, or if it can assume the Renderable will remain with
@@ -172,7 +174,7 @@ namespace Ogre {
             For example currently Unlit supports them all, but will assume this returns
             always true if getUseIdentityWorldMatrix returns false.
         */
-        virtual bool getUseIdentityViewProjMatrixIsDynamic(void) const;
+        virtual bool getUseIdentityViewProjMatrixIsDynamic(void) const  { return false; }
 
         /** Sets whether or not to use an 'identity' projection.
         @remarks
@@ -183,7 +185,10 @@ namespace Ogre {
             need not change this. The default is false.
         @see Renderable::getUseIdentityProjection
         */
-        void setUseIdentityProjection(bool useIdentityProjection);
+        void setUseIdentityProjection(bool useIdentityProjection)
+        {
+            mUseIdentityProjection = useIdentityProjection;
+        }
 
         /** Returns whether or not to use an 'identity' projection.
         @remarks
@@ -194,7 +199,7 @@ namespace Ogre {
             need not change this.
         @see Renderable::setUseIdentityProjection
         */
-        bool getUseIdentityProjection(void) const;
+        bool getUseIdentityProjection(void) const { return mUseIdentityProjection; }
 
         /** Sets whether or not to use an 'identity' view.
         @remarks
@@ -205,7 +210,10 @@ namespace Ogre {
             Normal renderables need not change this. The default is false.
         @see Renderable::getUseIdentityView
         */
-        void setUseIdentityView(bool useIdentityView);
+        void setUseIdentityView(bool useIdentityView)
+        {
+            mUseIdentityView = useIdentityView;
+        }
 
         /** Returns whether or not to use an 'identity' view.
         @remarks
@@ -216,7 +224,7 @@ namespace Ogre {
             Normal renderables need not change this.
         @see Renderable::setUseIdentityView
         */
-        bool getUseIdentityView(void) const;
+        bool getUseIdentityView(void) const { return mUseIdentityView; }
 
         /** Gets a list of lights, ordered relative to how close they are to this renderable.
         @remarks
@@ -230,7 +238,7 @@ namespace Ogre {
             Subclasses should override this if they could have been used to 
             generate a shadow.
         */
-        virtual bool getCastsShadows(void) const;
+        virtual bool getCastsShadows(void) const { return false; }
 
         /** Sets a custom parameter for this Renderable, which may be used to 
             drive calculations for this specific Renderable, like GPU program parameters.
@@ -247,28 +255,50 @@ namespace Ogre {
             two is performed by the ACT_CUSTOM entry, if that is used.
         @param value The value to associate.
         */
-        void setCustomParameter(size_t index, const Vector4& value);
+        void setCustomParameter(size_t index, const Vector4& value) 
+        {
+            mCustomParameters[index] = value;
+        }
 
         /** Removes a custom value which is associated with this Renderable at the given index.
         @param index Index of the parameter to remove.
             @see setCustomParameter for full details.
         */
-        void removeCustomParameter(size_t index);
+        void removeCustomParameter(size_t index)
+        {
+            mCustomParameters.erase(index);
+        }
 
         /** Checks whether a custom value is associated with this Renderable at the given index.
         @param index Index of the parameter to check for existence.
             @see setCustomParameter for full details.
         */
-        bool hasCustomParameter(size_t index) const;
+        bool hasCustomParameter(size_t index) const
+        {
+            return mCustomParameters.find(index) != mCustomParameters.end();
+        }
 
         /** Gets the custom value associated with this Renderable at the given index.
         @param index Index of the parameter to retrieve.
             @see setCustomParameter for full details.
         */
-        const Vector4& getCustomParameter(size_t index) const;
+        const Vector4& getCustomParameter(size_t index) const
+        {
+            CustomParameterMap::const_iterator i = mCustomParameters.find(index);
+            if (i != mCustomParameters.end())
+            {
+                return i->second;
+            }
+            else
+            {
+                OGRE_EXCEPT(Exception::ERR_ITEM_NOT_FOUND, 
+                    "Parameter at the given index was not found.",
+                    "Renderable::getCustomParameter");
+            }
+        }
 
         typedef map<size_t, Vector4>::type CustomParameterMap;
-        const CustomParameterMap& getCustomParameters(void) const;
+        const CustomParameterMap& getCustomParameters(void) const   { return mCustomParameters; }
 
         /** Update a custom GpuProgramParameters constant which is derived from 
             information only this Renderable knows.
@@ -303,12 +333,18 @@ namespace Ogre {
         @param override true means that a lower camera detail will override this
             renderables detail level, false means it won't.
         */
-        virtual void setPolygonModeOverrideable(bool override);
+        virtual void setPolygonModeOverrideable(bool override)
+        {
+            mPolygonModeOverrideable = override;
+        }
 
         /** Gets whether this renderable's chosen detail level can be
             overridden (downgraded) by the camera setting. 
         */
-        virtual bool getPolygonModeOverrideable(void) const;
+        virtual bool getPolygonModeOverrideable(void) const
+        {
+            return mPolygonModeOverrideable;
+        }
 
         /** @deprecated use UserObjectBindings::setUserAny via getUserObjectBindings() instead.
             Sets any kind of user value on this object.
@@ -317,30 +353,31 @@ namespace Ogre {
             this Renderable. This can be a pointer back to one of your own
             classes for instance.
         */
-        OGRE_DEPRECATED virtual void setUserAny(const Any& anything);
+        OGRE_DEPRECATED virtual void setUserAny(const Any& anything) { getUserObjectBindings().setUserAny(anything); }
 
         /** @deprecated use UserObjectBindings::getUserAny via getUserObjectBindings() instead.
             Retrieves the custom user value associated with this object.
         */
-        OGRE_DEPRECATED virtual const Any& getUserAny(void) const;
+        OGRE_DEPRECATED virtual const Any& getUserAny(void) const { return getUserObjectBindings().getUserAny(); }
 
         /** Return an instance of user objects binding associated with this class.
             You can use it to associate one or more custom objects with this class instance.
         @see UserObjectBindings::setUserAny.
         */
-        UserObjectBindings& getUserObjectBindings();
+        UserObjectBindings& getUserObjectBindings() { return mUserObjectBindings; }
 
         /** Return an instance of user objects binding associated with this class.
             You can use it to associate one or more custom objects with this class instance.
         @see UserObjectBindings::setUserAny.
         */
-        const UserObjectBindings& getUserObjectBindings() const;
+        const UserObjectBindings& getUserObjectBindings() const { return mUserObjectBindings; }
 
-        const VertexArrayObjectArray& getVaos( VertexPass vertexPass ) const;
+        const VertexArrayObjectArray& getVaos( VertexPass vertexPass ) const
+                                                { return mVaoPerLod[vertexPass]; }
 
-        uint32 getHlmsHash(void) const;
-        uint32 getHlmsCasterHash(void) const;
-        HlmsDatablock* getDatablock(void) const;
+        uint32 getHlmsHash(void) const          { return mHlmsHash; }
+        uint32 getHlmsCasterHash(void) const    { return mHlmsCasterHash; }
+        HlmsDatablock* getDatablock(void) const { return mHlmsDatablock; }
 
         const String& getDatablockOrMaterialName() const;
 
@@ -373,7 +410,7 @@ namespace Ogre {
         /// Manually sets the hlms hashes. Don't call this directly
         virtual void _setHlmsHashes( uint32 hash, uint32 casterHash );
 
-        uint8 getCurrentMaterialLod(void) const;
+        uint8 getCurrentMaterialLod(void) const { return mCurrentMaterialLod; }
 
         friend void LodStrategy::lodSet( ObjectData &t, Real lodValues[ARRAY_PACKED_REALS] );
 
@@ -391,13 +428,13 @@ namespace Ogre {
             The sub group. This value can't exceed OGRE_MAKE_MASK( SubRqIdBits )
             @See RenderQueue
         */
-        void setRenderQueueSubGroup( uint8 subGroup );
-        uint8 getRenderQueueSubGroup(void) const;
+        void setRenderQueueSubGroup( uint8 subGroup )   { mRenderQueueSubGroup = subGroup; }
+        uint8 getRenderQueueSubGroup(void) const        { return mRenderQueueSubGroup; }
 
         /** Sets the default render queue sub group for all future Renderable instances.
         */
-        static void setDefaultRenderQueueSubGroup( uint8 subGroup );
-        static uint8 getDefaultRenderQueueSubGroup();
+        static void setDefaultRenderQueueSubGroup( uint8 subGroup ) { msDefaultRenderQueueSubGroup = subGroup; }
+        static uint8 getDefaultRenderQueueSubGroup() { return msDefaultRenderQueueSubGroup; }
 
     protected:
         /// Default query flags

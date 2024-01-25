@@ -13,11 +13,6 @@ namespace fb
     {
 
         /**
-         * @file ICamera.h
-         * @brief A camera for the graphics system.
-         */
-
-        /**
          * @class ICamera
          * @brief A camera for the graphics system.
          */

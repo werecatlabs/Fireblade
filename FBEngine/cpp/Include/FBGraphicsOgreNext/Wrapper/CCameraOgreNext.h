@@ -123,10 +123,10 @@ namespace fb
 
             void setEditorTexture( SmartPtr<ITexture> editorTexture ) override;
 
-            /** copydoc ICamera::setRenderUI */
+            /** @copydoc ICamera::setRenderUI */
             void setRenderUI( bool enabled ) override;
 
-            /** copydoc ICamera::getRenderUI */
+            /** @copydoc ICamera::getRenderUI */
             bool getRenderUI() const override;
 
             /** @copydoc CGraphicsObjectOgreNext<ICamera>::getProperties */

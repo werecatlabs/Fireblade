@@ -9,15 +9,14 @@ namespace fb
     FB_CLASS_REGISTER_DERIVED( fb, SceneNodeState, BaseState );
 
     SceneNodeState::SceneNodeState() :
-        m_isVisible( true ),
-        m_isAttached( false ),
         m_id( 0 ),
 
         m_flags( 0 ),
-        m_queueCount( 0 ),
-        m_isRegistered( false )
+        m_queueCount( 0 )
     {
         m_localTransform.setScale( Vector3<real_Num>::unit() );
+
+        constexpr auto size = sizeof( SceneNodeState );
     }
 
     SceneNodeState::SceneNodeState( const SceneNodeState &state )
@@ -157,16 +156,6 @@ namespace fb
         return m_lookAt;
     }
 
-    auto SceneNodeState::isRegistered() const -> bool
-    {
-        return m_isRegistered;
-    }
-
-    void SceneNodeState::setRegistered( bool val )
-    {
-        m_isRegistered = val;
-    }
-
     auto SceneNodeState::getProperties() const -> SmartPtr<Properties>
     {
         auto properties = BaseState::getProperties();
@@ -206,20 +195,6 @@ namespace fb
         state->m_localTransform = m_localTransform;
 
         return state;
-    }
-
-    auto SceneNodeState::isVisible() const -> bool
-    {
-        return m_isVisible;
-    }
-
-    void SceneNodeState::setVisible( bool visible )
-    {
-        if( m_isVisible != visible )
-        {
-            m_isVisible = visible;
-            setDirty( true );
-        }
     }
 
 }  // end namespace fb

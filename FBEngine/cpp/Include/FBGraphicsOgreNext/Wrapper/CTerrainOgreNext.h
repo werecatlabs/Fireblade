@@ -10,6 +10,8 @@ namespace fb
 {
     namespace render
     {
+
+        /** @brief Terrain implementation for OgreNext */
         class CTerrainOgreNext : public Terrain
         {
         public:

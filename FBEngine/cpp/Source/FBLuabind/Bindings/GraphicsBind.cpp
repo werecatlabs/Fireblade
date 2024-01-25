@@ -159,7 +159,6 @@ namespace fb
 
                         .def( "getParent", &ISceneNode::getParent )
 
-                        .def( "add", &ISceneNode::add )
                         .def( "remove", &ISceneNode::remove )
 
                         .def( "addChild", &ISceneNode::addChild )

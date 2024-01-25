@@ -441,7 +441,7 @@ namespace fb
     {
         // try
         //{
-        //	auto engine = core::IApplicationManager::instance();
+        //	auto engine = core::ApplicationManager::instance();
         //	SmartPtr<IFileSystem> fileSystem = engine->getFileSystem();
         //
         //	String plantFilePath = fileSystem->getFileDir(meshName);

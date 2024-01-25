@@ -78,7 +78,7 @@ namespace Ogre
     */
     class _OgreExport Matrix4
     {
-    public:
+    protected:
         friend class ArrayMatrix4;
         friend class ArrayMatrixAf4x3;
         friend class SimpleMatrix4;

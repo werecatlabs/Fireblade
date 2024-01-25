@@ -75,28 +75,7 @@ namespace fb::render
 
     CMaterialOgreNext::~CMaterialOgreNext()
     {
-        const auto &loadingState = getLoadingState();
-        if( loadingState != LoadingState::Unloaded )
-        {
-            unload( nullptr );
-        }
-    }
-
-    void CMaterialOgreNext::initialise( Ogre::MaterialPtr &material )
-    {
-        m_material = material;
-
-        load( nullptr );
-
-        auto it = m_material->getTechniqueIterator();
-        while( it.hasMoreElements() )
-        {
-            Ogre::Technique *technique = it.getNext();
-
-            SmartPtr<CMaterialTechniqueOgreNext> pTechnique;  // (new CMaterialTechnique);
-            pTechnique->initialise( technique );
-            //m_techniques.push_back( pTechnique );
-        }
+        unload( nullptr );
     }
 
     void CMaterialOgreNext::load( SmartPtr<ISharedObject> data )
@@ -119,13 +98,6 @@ namespace fb::render
 
             ScopedLock lock( graphicsSystem );
 
-            const auto renderTask = graphicsSystem->getRenderTask();
-            const auto stateTask = graphicsSystem->getStateTask();
-            const auto task = Thread::getCurrentTask();
-
-            const auto &loadingState = getLoadingState();
-            const auto &resourceGroupManagerLoadingState = resourceGroupManager->getLoadingState();
-
             // FB_ASSERT(getLoadingState() == LoadingState::Unloaded);
             setLoadingState( LoadingState::Loading );
 
@@ -142,17 +114,12 @@ namespace fb::render
                 }
             }
 
-            setLoadingState( LoadingState::Loaded );
-
-            auto message = factoryManager->make_ptr<StateMessageLoad>();
-            message->setType( StateMessageLoad::LOADED_HASH );
-            message->setObject( this );
-
             if( auto stateContext = getStateContext() )
             {
-                stateContext->addMessage( stateTask, message );
                 stateContext->setDirty( true );
             }
+
+            setLoadingState( LoadingState::Loaded );
         }
         catch( std::exception &e )
         {
@@ -341,6 +308,7 @@ namespace fb::render
 
         Array<u32> map;
         map.reserve( 6 );
+
         map.push_back( static_cast<u32>( IMaterial::SkyboxTextureTypes::Right ) );
         map.push_back( static_cast<u32>( IMaterial::SkyboxTextureTypes::Left ) );
         map.push_back( static_cast<u32>( IMaterial::SkyboxTextureTypes::Up ) );
@@ -947,35 +915,8 @@ namespace fb::render
                     {
                         auto ogreNextPass = fb::static_pointer_cast<CMaterialPassOgreNext>( pass );
                         ogreNextPass->setupMaterial();
-
-                        /*
-                        auto textures = *owner->getTextures();
-
-                        auto count = 0;
-                        auto textureUnits = pass->getTextureUnits();
-                        for( auto tu : textureUnits )
-                        {
-                            auto texture = textures[count];
-                            if( texture )
-                            {
-                                tu->setTextureType( count );
-                                tu->setTexture( texture );
-                            }
-
-                            count++;
-                        }
-                        */
                     }
                 }
-
-                //auto message = factoryManager->make_ptr<StateMessageLoad>();
-                //message->setType( StateMessageLoad::LOADED_HASH );
-                //message->setObject( owner );
-
-                //if( auto stateContext = owner->getStateContext() )
-                //{
-                //    stateContext->addMessage( Thread::Task::Render, message );
-                //}
 
                 state->setDirty( false );
             }

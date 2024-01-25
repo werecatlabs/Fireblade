@@ -14,6 +14,7 @@ namespace fb
 {
     namespace scene
     {
+
         /** SceneManager implementation.
         @author	Zane Desir
         @version 1.0
@@ -172,12 +173,15 @@ namespace fb
             SharedPtr<Array<SmartPtr<IComponent>>> getRegisteredComponents( Thread::UpdateState state,
                 Thread::Task task ) const override;
 
+            /** @copydoc ISceneManager::registerComponentUpdate */
             void registerComponentUpdate( Thread::Task task, Thread::UpdateState state,
                                           SmartPtr<IComponent> component ) override;
 
+            /** @copydoc ISceneManager::unregisterComponentUpdate */
             void unregisterComponentUpdate( Thread::Task task, Thread::UpdateState state,
                                             SmartPtr<IComponent> component ) override;
 
+            /** @copydoc ISceneManager::unregisterAllComponent */
             void unregisterAllComponent( SmartPtr<IComponent> component ) override;
 
             s32 getNumActors() const override;

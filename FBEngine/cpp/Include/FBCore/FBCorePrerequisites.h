@@ -167,6 +167,7 @@ namespace fb
         class IAnimationTextureControl;
         class IBillboard;
         class IBillboardSet;
+        class IBone;
         class ICamera;
         class ICubemap;
         class IDebug;
@@ -197,6 +198,7 @@ namespace fb
         class IMaterialManager;
         class IMaterialNodePasses;
         class IMeshConverter;
+        class ISkeleton;
         class IOverlay;
         class IOverlayElement;
         class IOverlayElementContainer;
@@ -224,6 +226,12 @@ namespace fb
         class ITexture;
         class ITextureManager;
         class IMaterialTexture;
+                
+        class IVideoManager;
+        class IVideo;
+        class IVideoStream;
+        class IVideoTexture;
+
         class IViewport;
         class IWater;
         class IWindow;
@@ -265,6 +273,7 @@ namespace fb
     class IMeshLoader;
     class IMeshResource;
     class ISubMesh;
+    class IVertexBoneAssignment;
     class IVertexBuffer;
     class IVertexDeclaration;
     class IVertexElement;
@@ -423,12 +432,6 @@ namespace fb
         class IUIVector4;
         class IUIWindow;
     }  // namespace ui
-
-    // video
-    class IVideoManager;
-    class IVideo;
-    class IVideoStream;
-    class IVideoTexture;
 
     // input
     class IChordDetector;
@@ -686,7 +689,9 @@ namespace fb
         class WheelController;
 
         class Director;
+        class GraphicsSettingsDirector;
         class MeshResourceDirector;
+        class SceneLightingDirector;
 
         // terrain
         class TerrainBlendMap;

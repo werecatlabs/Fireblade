@@ -63,7 +63,7 @@ namespace fb::scene
                                 rootNode->addChild( m_graphicsNode );
                             }
 
-                            m_graphicsNode->setVisible( true );
+                            m_graphicsObject->setVisible( true );
                         }
                     }
                     else
@@ -76,7 +76,7 @@ namespace fb::scene
                                 parent->removeChild( m_graphicsNode );
                             }
 
-                            m_graphicsNode->setVisible( false );
+                            m_graphicsObject->setVisible( false );
                         }
                     }
                 }
@@ -94,7 +94,7 @@ namespace fb::scene
                                 rootNode->addChild( m_graphicsNode );
                             }
 
-                            m_graphicsNode->setVisible( true );
+                            m_graphicsObject->setVisible( true );
                         }
                     }
                     else
@@ -107,7 +107,7 @@ namespace fb::scene
                                 parent->removeChild( m_graphicsNode );
                             }
 
-                            m_graphicsNode->setVisible( false );
+                            m_graphicsObject->setVisible( false );
                         }
                     }
                 }

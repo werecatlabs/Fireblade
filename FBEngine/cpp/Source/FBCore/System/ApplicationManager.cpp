@@ -18,12 +18,13 @@
 #include <FBCore/Interface/FSM/IFSMManager.h>
 #include <FBCore/Interface/IApplication.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
+#include <FBCore/Interface/Graphics/IParticleManager.h>
+#include <FBCore/Interface/Graphics/IVideoManager.h>
 #include <FBCore/Interface/Graphics/IWindow.h>
 #include <FBCore/Interface/Input/IInput.h>
 #include <FBCore/Interface/Input/IInputDeviceManager.h>
 #include <FBCore/Interface/IO/IFileSystem.h>
 #include <FBCore/Interface/Mesh/IMeshLoader.h>
-#include <FBCore/Interface/Particle/IParticleManager.h>
 #include <FBCore/Interface/Physics/IPhysicsManager2D.h>
 #include <FBCore/Interface/Physics/IPhysicsManager.h>
 #include <FBCore/Interface/Physics/IPhysicsScene2.h>
@@ -52,7 +53,6 @@
 #include <FBCore/Interface/UI/IUIManager.h>
 #include <FBCore/Interface/UI/IUIWindow.h>
 #include <FBCore/Interface/Vehicle/IVehicleManager.h>
-#include <FBCore/Interface/Video/IVideoManager.h>
 #include <FBCore/System/RttiClassDefinition.h>
 #include <algorithm>
 #include <cstdio>
@@ -615,12 +615,12 @@ namespace fb::core
         m_graphicsSystem = graphicsSystem;
     }
 
-    auto ApplicationManager::getVideoManager() const -> SmartPtr<IVideoManager>
+    auto ApplicationManager::getVideoManager() const -> SmartPtr<render::IVideoManager>
     {
         return m_videoManager;
     }
 
-    void ApplicationManager::setVideoManager( SmartPtr<IVideoManager> videoManager )
+    void ApplicationManager::setVideoManager( SmartPtr<render::IVideoManager> videoManager )
     {
         m_videoManager = videoManager;
     }

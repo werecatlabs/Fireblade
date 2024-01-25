@@ -333,9 +333,9 @@ namespace fb
              */
             virtual void setGraphicsSystem( SmartPtr<render::IGraphicsSystem> graphicsSystem ) = 0;
 
-            virtual SmartPtr<IVideoManager> getVideoManager() const = 0;
+            virtual SmartPtr<render::IVideoManager> getVideoManager() const = 0;
 
-            virtual void setVideoManager( SmartPtr<IVideoManager> videoManager ) = 0;
+            virtual void setVideoManager( SmartPtr<render::IVideoManager> videoManager ) = 0;
 
             /**
              * Gets a pointer to the task manager for the application.

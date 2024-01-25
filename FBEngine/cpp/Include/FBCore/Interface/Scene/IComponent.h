@@ -60,6 +60,12 @@ namespace fb
             static const hash_type triggerCollisionLeave;
             static const hash_type componentLoaded;
 
+            ///< Flag with a zero value.
+            static const u32 ComponentReservedFlag;
+
+            ///< Flag to know if the component is enabled.
+            static const u32 ComponentEnabledFlag;
+
             /** Virtual destructor. */
             ~IComponent() override = default;
 
@@ -69,17 +75,6 @@ namespace fb
              * @param oldFlags An integer bitmask representing the old dirty flags.
              */
             virtual void updateFlags( u32 flags, u32 oldFlags ) = 0;
-
-            /**
-             * Marks the component as dirty on all tasks.
-             */
-            virtual void makeDirty() = 0;
-
-            /**
-             * Marks the component as dirty on a specific task.
-             * @param task The task that should update the dirty state.
-             */
-            virtual void makeDirty( Thread::Task task ) = 0;
 
             /**
              * Gets the actor that this component is attached to.
@@ -141,6 +136,18 @@ namespace fb
              * @param state The new state for the component.
              */
             virtual void setState( State state ) = 0;
+
+            /** Gets the flags of this component. */
+            virtual u32 getComponentFlags() const = 0;
+
+            /** Sets the flags of this component. */
+            virtual void setComponentFlags( u32 flags ) = 0;
+
+            /** Sets the flags of this component. */
+            virtual void setComponentFlag( u32 flag, bool value ) = 0;
+
+            /** Gets the flags of this component. */
+            virtual bool getComponentFlag( u32 flag ) const = 0;
 
             /**
              * Sets whether the component is enabled.

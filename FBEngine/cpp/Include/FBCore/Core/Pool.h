@@ -58,7 +58,7 @@ namespace fb
         size_t m_nextSize = 32;
     };
 
-    FB_CLASS_REGISTER_DERIVED_TEMPLATE_PAIR( fb, Pool, T, A, ISharedObject );
+    FB_CLASS_REGISTER_DERIVED_TEMPLATE_PAIR_TYPEID( fb, Pool, T, A, ISharedObject );
 
     template <class T, class A>
     Pool<T, A>::Pool()

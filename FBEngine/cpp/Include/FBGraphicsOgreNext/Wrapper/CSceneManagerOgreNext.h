@@ -18,6 +18,7 @@ namespace fb
     namespace render
     {
 
+        /** @brief SceneManager for OgreNext */
         class CSceneManagerOgreNext : public IGraphicsScene
         {
         public:
@@ -77,8 +78,6 @@ namespace fb
 
             SmartPtr<IParticleSystem> addParticleSystem( const String &name,
                                                          const String &templateName ) override;
-            SmartPtr<IParticleSystem> addParticleSystem( const String &name,
-                                                         SmartPtr<IParticleSystemBuilder> &builder );
             SmartPtr<IParticleSystem> getParticleSystem( const String &name ) const override;
 
             SmartPtr<IAnimationStateController> createAnimationStateController() override;
@@ -158,6 +157,10 @@ namespace fb
 
             SmartPtr<IGraphicsObject> addGraphicsObjectByTypeId( u32 id ) override;
 
+            SmartPtr<IFactoryManager> getFactoryManager() const;
+
+            void setFactoryManager( SmartPtr<IFactoryManager> factoryManager );
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
@@ -202,6 +205,8 @@ namespace fb
             SharedPtr<ConcurrentArray<SmartPtr<ISceneNode>>> getRegisteredSceneNodes() const;
             void setRegisteredSceneNodes( SharedPtr<ConcurrentArray<SmartPtr<ISceneNode>>> sceneNodes );
 
+            SmartPtr<IFactoryManager> m_factoryManager;
+
             SmartPtr<ISkybox> m_skybox;
 
             SmartPtr<ICamera> m_camera;
@@ -244,7 +249,9 @@ namespace fb
 
             u32 nextRenderQueueUpdate;
 
-            bool m_isClearing;
+            bool m_isClearing = false;
+            bool m_enableShadows = false;
+            bool m_depthShadows = false;
 
             // Set<ISceneNode*> m_registeredSceneNodes;
             Set<IGraphicsObject *> m_registeredGfxObjects;
@@ -260,7 +267,7 @@ namespace fb
             /// Value used to generate a unique entity name.
             static u32 m_nextGeneratedNameExt;
         };
-    }  // end namespace render
-}  // end namespace fb
+    } // end namespace render
+}     // end namespace fb
 
 #endif

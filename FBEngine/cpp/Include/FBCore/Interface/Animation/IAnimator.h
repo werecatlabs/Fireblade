@@ -42,7 +42,7 @@ namespace fb
         /** Gets whether the animation is finished. */
         virtual bool isFinished() const = 0;
 
-        /** */
+        /** Sets the animation length. */
         virtual void setAnimationLength( f32 animationLength ) = 0;
     };
 }  // end namespace fb

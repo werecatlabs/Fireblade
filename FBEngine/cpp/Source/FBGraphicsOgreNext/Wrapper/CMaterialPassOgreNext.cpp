@@ -803,22 +803,23 @@ namespace fb::render
                 {
                 case IMaterial::MaterialType::Standard:
                 {
-                    auto pDatablock = static_cast<Ogre::HlmsPbsDatablock *>( datablock );
+                    if( auto pDatablock = static_cast<Ogre::HlmsPbsDatablock *>( datablock ) )
+                    {
+                        auto d = materialPassState->getDiffuse();
+                        auto specular = materialPassState->getSpecular();
+                        auto e = materialPassState->getEmissive();
 
-                    auto d = materialPassState->getDiffuse();
-                    auto specular = materialPassState->getSpecular();
-                    auto e = materialPassState->getEmissive();
+                        auto metalness = materialPassState->getMetalness();
+                        auto roughness = materialPassState->getRoughness();
 
-                    auto metalness = materialPassState->getMetalness();
-                    auto roughness = materialPassState->getRoughness();
+                        pDatablock->setSpecular( Ogre::Vector3( specular.r, specular.g, specular.b ) );
+                        pDatablock->setDiffuse( Ogre::Vector3( d.r, d.g, d.b ) );
+                        pDatablock->setEmissive( Ogre::Vector3( e.r, e.g, e.b ) );
 
-                    pDatablock->setSpecular( Ogre::Vector3( specular.r, specular.g, specular.b ) );
-                    pDatablock->setDiffuse( Ogre::Vector3( d.r, d.g, d.b ) );
-                    pDatablock->setEmissive( Ogre::Vector3( e.r, e.g, e.b ) );
-
-                    pDatablock->setWorkflow( Ogre::HlmsPbsDatablock::Workflows::MetallicWorkflow );
-                    pDatablock->setMetalness( metalness );
-                    pDatablock->setRoughness( roughness );
+                        pDatablock->setWorkflow( Ogre::HlmsPbsDatablock::Workflows::MetallicWorkflow );
+                        pDatablock->setMetalness( metalness );
+                        pDatablock->setRoughness( roughness );
+                    }
                 }
                 break;
                 default:

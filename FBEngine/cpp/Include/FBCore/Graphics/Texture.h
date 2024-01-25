@@ -1,7 +1,6 @@
 #ifndef _CTexture_H
 #define _CTexture_H
 
-#include <FBGraphics/FBGraphicsPrerequisites.h>
 #include <FBCore/Interface/Graphics/ITexture.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Graphics/ResourceGraphics.h>

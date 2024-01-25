@@ -116,12 +116,12 @@ namespace v1 {
         virtual void writeSubMeshExtremes(unsigned short idx, const SubMesh* s);
 
         virtual size_t calcMeshSize(const Mesh* pMesh);
-        virtual size_t calSubMeshSize(const SubMesh* pSub);
+        virtual size_t calcSubMeshSize(const SubMesh* pSub);
         virtual size_t calcGeometrySize(const VertexData* pGeom);
         virtual size_t calcSkeletonLinkSize(const String& skelName);
         virtual size_t calcBoneAssignmentSize(void);
-        virtual size_t calSubMeshOperationSize(const SubMesh* pSub);
-        virtual size_t calSubMeshNameTableSize(const Mesh* pMesh);
+        virtual size_t calcSubMeshOperationSize(const SubMesh* pSub);
+        virtual size_t calcSubMeshNameTableSize(const Mesh* pMesh);
         virtual size_t calcLodLevelSize(const Mesh* pMesh);
         virtual size_t calcLodUsageManualSize(const MeshLodUsage& usage);
         virtual size_t calcLodUsageGeneratedSize(const Mesh* pMesh, const MeshLodUsage& usage, unsigned short lodNum, uint8 casterPass);
@@ -138,10 +138,10 @@ namespace v1 {
         virtual size_t calcPoseKeyframeSize(const VertexPoseKeyFrame* kf);
         virtual size_t calcPoseKeyframePoseRefSize(void);
         virtual size_t calcPoseVertexSize(const Pose* pose);
-        virtual size_t calSubMeshTextureAliasesSize(const SubMesh* pSub);
+        virtual size_t calcSubMeshTextureAliasesSize(const SubMesh* pSub);
         virtual size_t calcBoundsInfoSize(const Mesh* pMesh);
         virtual size_t calcExtremesSize(const Mesh* pMesh);
-        virtual size_t calSubMeshExtremesSize(unsigned short idx, const SubMesh* s);
+        virtual size_t calcSubMeshExtremesSize(unsigned short idx, const SubMesh* s);
 
         virtual void readTextureLayer(DataStreamPtr& stream, Mesh* pMesh, MaterialPtr& pMat);
         virtual void readSubMeshNameTable(DataStreamPtr& stream, Mesh* pMesh);

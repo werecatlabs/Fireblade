@@ -128,14 +128,14 @@ namespace Ogre {
         virtual void writePoseKeyframePoseRef(const VertexPoseKeyFrame::PoseRef& poseRef);*/
 
         virtual size_t calcMeshSize(const Mesh* pMesh, const LodLevelVertexBufferTableVec &lodVertexTable);
-        virtual size_t calSubMeshSize(const SubMesh* pSub, const LodLevelVertexBufferTable &lodVertexTable);
-        virtual size_t calSubMeshLodSize( const VertexArrayObject *vao, bool skipVertexBuffer );
+        virtual size_t calcSubMeshSize(const SubMesh* pSub, const LodLevelVertexBufferTable &lodVertexTable);
+        virtual size_t calcSubMeshLodSize( const VertexArrayObject *vao, bool skipVertexBuffer );
         virtual size_t calcGeometrySize(const VertexBufferPackedVec &vertexData );
         virtual size_t calcVertexDeclSize(const VertexBufferPackedVec &vertexData);
         size_t calcHashForCachesSize( void );
         virtual size_t calcSkeletonLinkSize(const String& skelName);
-        virtual size_t calSubMeshLodOperationSize(const VertexArrayObject *vao);
-        virtual size_t calSubMeshNameTableSize(const Mesh* pMesh);
+        virtual size_t calcSubMeshLodOperationSize(const VertexArrayObject *vao);
+        virtual size_t calcSubMeshNameTableSize(const Mesh* pMesh);
         /*virtual size_t calcEdgeListSize(const Mesh* pMesh);
         virtual size_t calcEdgeListLodSize(const EdgeData* data, bool isManual);
         virtual size_t calcEdgeGroupSize(const EdgeData::EdgeGroup& group);

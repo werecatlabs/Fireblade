@@ -13,6 +13,8 @@ namespace fb
         public:
             /** Virtual destructor. */
             ~IShaderManager() override = default;
+
+            FB_CLASS_REGISTER_DECL;
         };
 
     }  // end namespace render

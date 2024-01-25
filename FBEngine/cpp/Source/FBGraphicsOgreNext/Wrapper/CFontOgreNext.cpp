@@ -42,22 +42,6 @@ namespace fb::render
         FB_ASSERT( factoryManager );
 
         m_stateContext = stateManager->addStateObject();
-
-        auto stateListener = factoryManager->make_ptr<MaterialStateListener>();
-        stateListener->setOwner( this );
-        m_stateListener = stateListener;
-        m_stateContext->addStateListener( m_stateListener );
-
-        /*
-        auto sceneNodeState = factoryManager->make_ptr<MaterialState>();
-        sceneNodeState->setSceneNode(this);
-        m_stateContext->setState(sceneNodeState);
-        m_stateContext->setOwner(this);
-        m_state = sceneNodeState;
-
-        auto renderTask = graphicsSystem->getStateTask();
-        m_state->setTaskId(renderTask);
-         */
     }
 
     CFontOgreNext::~CFontOgreNext()
@@ -107,6 +91,8 @@ namespace fb::render
     {
         try
         {
+            unload( data );
+            load( data );
         }
         catch( std::exception &e )
         {
@@ -174,96 +160,14 @@ namespace fb::render
         m_rendererType = rendererType;
     }
 
-    void CFontOgreNext::createMaterialByType()
-    {
-        try
-        {
-        }
-        catch( std::exception &e )
-        {
-            FB_LOG_EXCEPTION( e );
-        }
-    }
-
-    void CFontOgreNext::setDirty( bool dirty )
-    {
-        // if (m_isDirty != dirty)
-        //{
-        //	m_isDirty = dirty;
-
-        //	auto applicationManager = core::ApplicationManager::instance();
-        //	FB_ASSERT(applicationManager);
-
-        //	auto factoryManager = applicationManager->getFactoryManager();
-        //	auto message = factoryManager->make_ptr<StateMessageDirty>();
-        //	message->setDirty(dirty);
-
-        //	auto graphicsSystem = applicationManager->getGraphicsSystem();
-        //	auto stateTask = graphicsSystem->getStateTask();
-        //	m_stateContext->addMessage(stateTask, message);
-        //}
-    }
-
-    auto CFontOgreNext::isDirty() const -> bool
-    {
-        return false;
-    }
-
-    auto CFontOgreNext::toJson() const -> String
-    {
-        //auto data = toData();
-        //if( data )
-        //{
-        //    auto materialData = data->getDataAsType<data::material_graph>();
-        //    return DataUtil::toString( materialData, true );
-        //}
-
-        return nullptr;
-    }
-
-    auto CFontOgreNext::toData() const -> SmartPtr<ISharedObject>
-    {
-        //try
-        //{
-        //    auto applicationManager = core::ApplicationManager::instance();
-        //    FB_ASSERT( applicationManager );
-
-        //    auto factoryManager = applicationManager->getFactoryManager();
-        //    FB_ASSERT( factoryManager );
-
-        //    auto data = factoryManager->make_ptr<Data<data::material_graph>>();
-        //    auto materialData = data->getDataAsType<data::material_graph>();
-        //    //materialData->materialType = static_cast<s32>( getMaterialType() );
-
-        //    return data;
-        //}
-        //catch( std::exception &e )
-        //{
-        //    FB_LOG_EXCEPTION( e );
-        //}
-
-        return nullptr;
-    }
-
-    void CFontOgreNext::fromData( SmartPtr<ISharedObject> data )
-    {
-        try
-        {
-            auto applicationManager = core::ApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto factoryManager = applicationManager->getFactoryManager();
-            FB_ASSERT( factoryManager );
-        }
-        catch( std::exception &e )
-        {
-            FB_LOG_EXCEPTION( e );
-        }
-    }
-
     auto CFontOgreNext::getProperties() const -> SmartPtr<Properties>
     {
-        return nullptr;
+        auto properties = ResourceGraphics<IFont>::getProperties();
+        properties->setProperty( "font_type", font_type );
+        properties->setProperty( "font_source", font_source );
+        properties->setProperty( "font_size", font_size );
+        properties->setProperty( "font_resolution", font_resolution );
+        return properties;
     }
 
     void CFontOgreNext::setProperties( SmartPtr<Properties> properties )
@@ -281,53 +185,4 @@ namespace fb::render
         return objects;
     }
 
-    void CFontOgreNext::MaterialStateListener::handleStateChanged(
-        const SmartPtr<IStateMessage> &message )
-    {
-        if( message->isExactly<StateMessageLoad>() )
-        {
-            auto loadMessage = fb::static_pointer_cast<StateMessageLoad>( message );
-            if( loadMessage->getType() == StateMessageLoad::LOAD_HASH )
-            {
-                m_owner->load( nullptr );
-            }
-            else
-            {
-                m_owner->reload( nullptr );
-            }
-        }
-        else if( message->isExactly<StateMessageFragmentParam>() )
-        {
-        }
-        else if( message->isExactly<StateMessageSetTexture>() )
-        {
-        }
-    }
-
-    void CFontOgreNext::MaterialStateListener::handleStateChanged( SmartPtr<IState> &state )
-    {
-    }
-
-    void CFontOgreNext::MaterialStateListener::handleQuery( SmartPtr<IStateQuery> &query )
-    {
-    }
-
-    auto CFontOgreNext::MaterialStateListener::getOwner() const -> CFontOgreNext *
-    {
-        return m_owner;
-    }
-
-    void CFontOgreNext::MaterialStateListener::setOwner( CFontOgreNext *owner )
-    {
-        m_owner = owner;
-    }
-
-    CFontOgreNext::MaterialStateListener::~MaterialStateListener() = default;
-
-    CFontOgreNext::MaterialStateListener::MaterialStateListener() = default;
-
-    CFontOgreNext::MaterialStateListener::MaterialStateListener( CFontOgreNext *material ) :
-        m_owner( material )
-    {
-    }
 }  // namespace fb::render

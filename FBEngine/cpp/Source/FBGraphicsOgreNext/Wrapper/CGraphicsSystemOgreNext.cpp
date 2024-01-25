@@ -246,8 +246,6 @@ namespace fb::render
             if( renderUI )
             {
                 applicationManager->setRenderUI( renderUI );
-
-                //renderUI->load( nullptr );
                 loadObject( renderUI );
             }
             else
@@ -326,12 +324,6 @@ namespace fb::render
                 m_windows.clear();
                 m_defaultWindow = nullptr;
 
-                if( auto compositorManager = getCompositorManager() )
-                {
-                    compositorManager->unload( nullptr );
-                    setCompositorManager( nullptr );
-                }
-
                 for( auto sceneManager : m_sceneManagers )
                 {
                     sceneManager->clearScene();
@@ -339,6 +331,12 @@ namespace fb::render
                 }
 
                 m_sceneManagers.clear();
+
+                if( auto compositorManager = getCompositorManager() )
+                {
+                    compositorManager->unload( nullptr );
+                    setCompositorManager( nullptr );
+                }
 
                 if( auto materialManager = getMaterialManager() )
                 {
@@ -1320,15 +1318,15 @@ namespace fb::render
     void CGraphicsSystemOgreNext::loadObject( SmartPtr<ISharedObject> graphicsObject, bool forceQueue )
     {
 #if 0
-            if( graphicsObject )
-            {
-                RecursiveMutex::ScopedLock lock( m_mutex );
+        if( graphicsObject )
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
 
-                if( !graphicsObject->isLoaded() )
-                {
-                    graphicsObject->load( nullptr );
-                }
+            if( !graphicsObject->isLoaded() )
+            {
+                graphicsObject->load( nullptr );
             }
+        }
 #else
         FB_ASSERT( graphicsObject );
 
@@ -1370,12 +1368,11 @@ namespace fb::render
 
     void CGraphicsSystemOgreNext::unloadObject( SmartPtr<ISharedObject> graphicsObject, bool forceQueue )
     {
-#if 1
+#if 0
         if( graphicsObject )
         {
             RecursiveMutex::ScopedLock lock( m_mutex );
-            graphicsObject->unload( nullptr );
-            ;
+            graphicsObject->unload( nullptr ); 
         }
 #else
         FB_ASSERT( graphicsObject );

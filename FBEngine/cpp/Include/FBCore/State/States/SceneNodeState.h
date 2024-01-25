@@ -43,9 +43,6 @@ namespace fb
 
         bool operator!=( SceneNodeState *other ) const;
 
-        bool isRegistered() const;
-        void setRegistered( bool val );
-
         /** Gets the data as a properties object.
         @return The data as a properties object.
         */
@@ -57,10 +54,6 @@ namespace fb
         void setProperties( SmartPtr<Properties> properties ) override;
 
         SmartPtr<IState> clone() const override;
-
-        bool isVisible() const;
-
-        void setVisible( bool visible );
 
         FB_CLASS_REGISTER_DECL;
 
@@ -77,14 +70,10 @@ namespace fb
 
         Vector3<real_Num> m_lookAt;
 
-        atomic_bool m_isVisible = true;
-        atomic_bool m_isAttached = false;
-
         atomic_u32 m_id;
         atomic_u32 m_flags;
         atomic_s32 m_queueCount;
         atomic_s32 m_tickCount;
-        atomic_bool m_isRegistered;
     };
 }  // end namespace fb
 

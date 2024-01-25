@@ -184,6 +184,24 @@ namespace fb
 #endif
     }
 
+    String ISharedObject::getName() const
+    {
+        if( auto handle = getHandle() )
+        {
+            return handle->getName();
+        }
+
+        return {};
+    }
+
+    void ISharedObject::setName( const String &name )
+    {
+        if( auto handle = getHandle() )
+        {
+            handle->setName( name );
+        }
+    }
+
     void ISharedObject::load( SmartPtr<ISharedObject> data )
     {
     }

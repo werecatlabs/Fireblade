@@ -73,11 +73,6 @@ namespace fb::editor
             {
                 sceneManager->edit();
             }
-
-            if( auto cameraManager = applicationManager->getCameraManager() )
-            {
-                cameraManager->edit();
-            }
         }
         catch( Exception &e )
         {

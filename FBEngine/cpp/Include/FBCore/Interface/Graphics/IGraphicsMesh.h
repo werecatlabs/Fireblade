@@ -87,6 +87,12 @@ namespace fb
              */
             virtual void setMeshName( const String &meshName ) = 0;
 
+            /** Gets the mesh skeleton. */
+            virtual SmartPtr<ISkeleton> getSkeleton() const = 0;
+
+            /** Sets the mesh skeleton. */
+            virtual void setSkeleton( SmartPtr<ISkeleton> skeleton ) = 0;
+
             FB_CLASS_REGISTER_DECL;
         };
 

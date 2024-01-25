@@ -28,12 +28,6 @@ namespace fb
         /** Gets all submeshes in the mesh. */
         virtual Array<SmartPtr<ISubMesh>> getSubMeshes() const = 0;
 
-        /** Sets the name of the mesh. */
-        virtual void setName( const String &name ) = 0;
-
-        /** Gets the name of the mesh. */
-        virtual String getName() const = 0;
-
         /** Updates the axis-aligned bounding box of the mesh. */
         virtual void updateAABB( bool forceSubMeshUpdate = false ) = 0;
 

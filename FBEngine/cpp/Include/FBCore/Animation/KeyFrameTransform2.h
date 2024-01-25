@@ -10,39 +10,21 @@ namespace fb
     class KeyFrameTransform2 : public KeyFrame
     {
     public:
-        KeyFrameTransform2()
-        {
-        }
-        ~KeyFrameTransform2()
-        {
-        }
+        KeyFrameTransform2();
 
-        Vector2F getPosition() const
-        {
-            return m_position;
-        }
-        void setPosition( fb::Vector2F val )
-        {
-            m_position = val;
-        }
+        ~KeyFrameTransform2();
 
-        Vector2F getScale() const
-        {
-            return m_scale;
-        }
-        void setScale( fb::Vector2F val )
-        {
-            m_scale = val;
-        }
+        Vector2F getPosition() const;
 
-        f32 getRotation() const
-        {
-            return m_rotation;
-        }
-        void setRotation( f32 val )
-        {
-            m_rotation = val;
-        }
+        void setPosition( const Vector2F& position );
+
+        Vector2F getScale() const;
+
+        void setScale( const Vector2F& scale );
+
+        f32 getRotation() const;
+
+        void setRotation( f32 rotation );
 
     private:
         ///

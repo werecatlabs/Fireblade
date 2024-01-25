@@ -347,16 +347,16 @@ namespace Ogre {
 
         if (mParentNode)
         {
-            if (mLightType == Light::LT_DIRECTIONAL)
-            {
-                ret = -(getDerivedDirection()); // negate direction as 'position'
-                ret.w = 0.0; // infinite distance
-            }   
-            else
-            {
-                ret = mParentNode->_getDerivedPosition();
-                ret.w = 1.0;
-            }
+        if (mLightType == Light::LT_DIRECTIONAL)
+        {
+            ret = -(getDerivedDirection()); // negate direction as 'position'
+            ret.w = 0.0; // infinite distance
+        }   
+        else
+        {
+            ret = mParentNode->_getDerivedPosition();
+            ret.w = 1.0;
+        }
         }
 
         return ret;

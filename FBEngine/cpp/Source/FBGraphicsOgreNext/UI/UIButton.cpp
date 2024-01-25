@@ -56,6 +56,14 @@ namespace fb
             {
                 setLoadingState( LoadingState::Unloading );
 
+                auto applicationManager = core::ApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto graphicsSystem = applicationManager->getGraphicsSystem();
+                FB_ASSERT( graphicsSystem );
+
+                ScopedLock lock( graphicsSystem );
+
                 m_button = nullptr;
                 UIElement<ui::IUIButton>::unload( data );
 

@@ -1449,8 +1449,8 @@ namespace Ogre
         {
             OGRE_ASSERT_MEDIUM( targetResidency == GpuResidency::Resident ||
                                 targetResidency == GpuResidency::OnSystemRam );
-            //OGRE_ASSERT_MEDIUM( !task.residencyTransitionTask.reuploadOnly ||
-            //                    texture->getResidencyStatus() == GpuResidency::Resident );
+            OGRE_ASSERT_MEDIUM( !task.residencyTransitionTask.reuploadOnly ||
+                                texture->getResidencyStatus() == GpuResidency::Resident );
 
             scheduleLoadRequest( texture,
                                  task.residencyTransitionTask.image,
@@ -1738,8 +1738,8 @@ namespace Ogre
     void TextureGpuManager::scheduleLoadRequest( TextureGpu *texture, Image2 *image,
                                                  bool autoDeleteImage, bool toSysRam, bool reuploadOnly )
     {
-        //OGRE_ASSERT_LOW( ( texture->getResidencyStatus() == GpuResidency::OnStorage && !reuploadOnly ) ||
-        //                 ( texture->getResidencyStatus() == GpuResidency::Resident && reuploadOnly ) );
+        OGRE_ASSERT_LOW( ( texture->getResidencyStatus() == GpuResidency::OnStorage && !reuploadOnly ) ||
+                         ( texture->getResidencyStatus() == GpuResidency::Resident && reuploadOnly ) );
 
         String name, resourceGroup;
         uint32 filters = 0;

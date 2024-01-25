@@ -2,7 +2,7 @@
 #define CParticleNode_h__
 
 #include <FBCore/Interface/Memory/ISharedObject.h>
-#include <FBCore/Interface/Particle/IParticleNode.h>
+#include <FBCore/Interface/Graphics/IParticleNode.h>
 
 namespace fb
 {
@@ -13,114 +13,45 @@ namespace fb
         class CParticleNode : public T
         {
         public:
-            CParticleNode()
-            {
-            }
+            CParticleNode();
 
-            ~CParticleNode()
-            {
-            }
+            ~CParticleNode();
 
-            virtual void initialise( SmartPtr<scene::IDirector> objectTemplate )
-            {
-            }
+            virtual void addChild( SmartPtr<IParticleNode> child );
 
-            virtual void initialise( SmartPtr<scene::IDirector> objectTemplate,
-                                     SmartPtr<Properties> instanceProperties )
-            {
-            }
+            virtual void addChild( SmartPtr<IParticleNode> child, int index );
 
-            virtual void update( const s32 &task, const time_interval &t, const time_interval &dt )
-            {
-            }
+            virtual void removeChild( SmartPtr<IParticleNode> child );
 
-            virtual void addChild( SmartPtr<IParticleNode> child )
-            {
-                m_children.push_back( child );
-            }
+            virtual void remove();
 
-            virtual void addChild( SmartPtr<IParticleNode> child, int index )
-            {
-                m_children[index] = child;
-            }
+            virtual u32 getNumChildren() const;
 
-            virtual void removeChild( SmartPtr<IParticleNode> child )
-            {
-                // m_children.erase_element(child);
-                child->setParent( nullptr );
-            }
+            virtual SmartPtr<IParticleNode> &getChildByIndex( u32 index );
 
-            virtual void remove()
-            {
-                // if (m_parent)
-                //	m_parent->removeChild(this);
-            }
+            virtual const SmartPtr<IParticleNode> &getChildByIndex( u32 index ) const;
 
-            virtual u32 getNumChildren() const
-            {
-                return m_children.size();
-            }
+            virtual SmartPtr<IParticleNode> &getChildById( hash32 id );
 
-            virtual SmartPtr<IParticleNode> &getChildByIndex( u32 index )
-            {
-                return m_children[index];
-            }
+            virtual const SmartPtr<IParticleNode> &getChildById( hash32 id ) const;
 
-            virtual const SmartPtr<IParticleNode> &getChildByIndex( u32 index ) const
-            {
-                return m_children[index];
-            }
+            virtual Array<SmartPtr<IParticleNode>> getChildren() const;
 
-            virtual SmartPtr<IParticleNode> &getChildById( hash32 id )
-            {
-                static SmartPtr<IParticleNode> ptr;
-                return ptr;
-            }
+            virtual SmartPtr<IParticleNode> getParent() const;
 
-            virtual const SmartPtr<IParticleNode> &getChildById( hash32 id ) const
-            {
-                return nullptr;
-            }
+            virtual void setParent( SmartPtr<IParticleNode> parent );
 
-            virtual Array<SmartPtr<IParticleNode>> getChildren() const
-            {
-                return m_children;
-            }
+            virtual void setPosition( const Vector3F &position );
 
-            virtual SmartPtr<IParticleNode> getParent() const
-            {
-                return m_parent;
-            }
+            virtual Vector3F getPosition() const;
 
-            virtual void setParent( SmartPtr<IParticleNode> parent )
-            {
-                m_parent = parent;
-            }
+            virtual Vector3F getAbsolutePosition() const;
 
-            virtual void setPosition( const Vector3F &position )
-            {
-                m_position = position;
-            }
+            virtual SmartPtr<IParticleSystem> getParticleSystem() const;
 
-            virtual Vector3F getPosition() const
-            {
-                return m_position;
-            }
+            virtual void setParticleSystem( SmartPtr<IParticleSystem> particleSystem );
 
-            virtual Vector3F getAbsolutePosition() const
-            {
-                return m_absolutePosition;
-            }
-
-            virtual SmartPtr<IParticleSystem> getParticleSystem() const
-            {
-                return m_particleSystem;
-            }
-
-            virtual void setParticleSystem( SmartPtr<IParticleSystem> val )
-            {
-                m_particleSystem = val;
-            }
+            FB_CLASS_REGISTER_TEMPLATE_DECL( CParticleNode, T );
 
         protected:
             Array<SmartPtr<IParticleNode>> m_children;
@@ -129,6 +60,123 @@ namespace fb
             SmartPtr<IParticleNode> m_parent;
             SmartPtr<IParticleSystem> m_particleSystem;
         };
+
+        FB_CLASS_REGISTER_DERIVED_TEMPLATE( fb, CParticleNode, T, T );
+
+        template <class T>
+        CParticleNode<T>::CParticleNode()
+        {
+        }
+
+        template <class T>
+        CParticleNode<T>::~CParticleNode()
+        {
+        }
+
+        template <class T>
+        void CParticleNode<T>::addChild( SmartPtr<IParticleNode> child )
+        {
+            m_children.push_back( child );
+        }
+
+        template <class T>
+        void CParticleNode<T>::addChild( SmartPtr<IParticleNode> child, int index )
+        {
+            m_children[index] = child;
+        }
+
+        template <class T>
+        void CParticleNode<T>::removeChild( SmartPtr<IParticleNode> child )
+        {
+            // m_children.erase_element(child);
+            child->setParent( nullptr );
+        }
+
+        template <class T>
+        void CParticleNode<T>::remove()
+        {
+            // if (m_parent)
+            //	m_parent->removeChild(this);
+        }
+
+        template <class T>
+        u32 CParticleNode<T>::getNumChildren() const
+        {
+            return m_children.size();
+        }
+
+        template <class T>
+        SmartPtr<IParticleNode> &CParticleNode<T>::getChildByIndex( u32 index )
+        {
+            return m_children[index];
+        }
+
+        template <class T>
+        const SmartPtr<IParticleNode> &CParticleNode<T>::getChildByIndex( u32 index ) const
+        {
+            return m_children[index];
+        }
+
+        template <class T>
+        SmartPtr<IParticleNode> &CParticleNode<T>::getChildById( hash32 id )
+        {
+            static SmartPtr<IParticleNode> ptr;
+            return ptr;
+        }
+
+        template <class T>
+        const SmartPtr<IParticleNode> &CParticleNode<T>::getChildById( hash32 id ) const
+        {
+            return nullptr;
+        }
+
+        template <class T>
+        Array<SmartPtr<IParticleNode>> CParticleNode<T>::getChildren() const
+        {
+            return m_children;
+        }
+
+        template <class T>
+        SmartPtr<IParticleNode> CParticleNode<T>::getParent() const
+        {
+            return m_parent;
+        }
+
+        template <class T>
+        void CParticleNode<T>::setParent( SmartPtr<IParticleNode> parent )
+        {
+            m_parent = parent;
+        }
+
+        template <class T>
+        void CParticleNode<T>::setPosition( const Vector3F &position )
+        {
+            m_position = position;
+        }
+
+        template <class T>
+        Vector3F CParticleNode<T>::getPosition() const
+        {
+            return m_position;
+        }
+
+        template <class T>
+        Vector3F CParticleNode<T>::getAbsolutePosition() const
+        {
+            return m_absolutePosition;
+        }
+
+        template <class T>
+        SmartPtr<IParticleSystem> CParticleNode<T>::getParticleSystem() const
+        {
+            return m_particleSystem;
+        }
+
+        template <class T>
+        void CParticleNode<T>::setParticleSystem( SmartPtr<IParticleSystem> particleSystem )
+        {
+            m_particleSystem = particleSystem;
+        }
 
     }  // end namespace render
 }  // end namespace fb

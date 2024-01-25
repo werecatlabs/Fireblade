@@ -8,6 +8,8 @@
 #include <FBCore/Interface/Scene/ISceneManager.h>
 #include <FBCore/Interface/System/IState.h>
 
+#include "FBCore/Core/BitUtil.h"
+
 namespace fb::scene
 {
     FB_CLASS_REGISTER_DERIVED( fb::scene, Component, Resource<IComponent> );
@@ -40,6 +42,8 @@ namespace fb::scene
 
             auto sceneManager = applicationManager->getSceneManager();
             FB_ASSERT( sceneManager );
+
+            setEnabled( true );
 
             auto typeInfo = getTypeInfo();
             auto fsmManager = sceneManager->getComponentFsmManager( typeInfo );
@@ -132,6 +136,16 @@ namespace fb::scene
         updateVisibility();
     }
 
+    u32 Component::getComponentFlags() const
+    {
+        return m_componentFlags;
+    }
+
+    void Component::setComponentFlags( u32 flags )
+    {
+        m_componentFlags = flags;
+    }
+
     void Component::setComponentFlag( u32 flag, bool value )
     {
         u32 flags = m_componentFlags;
@@ -154,12 +168,20 @@ namespace fb::scene
 
     void Component::setEnabled( bool enabled )
     {
-        m_enabled = enabled;
+        if( enabled != isEnabled() )
+        {
+            auto flags = getComponentFlags();
+            auto newFlags = BitUtil::setFlagValue( flags, ComponentEnabledFlag, enabled );
+            setComponentFlags( newFlags );
+
+            updateVisibility();
+        }
     }
 
     auto Component::isEnabled() const -> bool
     {
-        return m_enabled;
+        auto flags = getComponentFlags();
+        return BitUtil::getFlagValue( flags, ComponentEnabledFlag );
     }
 
     auto Component::handleComponentEvent( u32 state, IFSM::Event eventType ) -> IFSM::ReturnType
@@ -216,33 +238,6 @@ namespace fb::scene
         }
 
         return IFSM::ReturnType::Ok;
-    }
-
-    void Component::setDirty( bool dirty )
-    {
-        m_isDirty = dirty;
-    }
-
-    void Component::setDirty( Thread::Task taskId, Thread::UpdateState updateType, bool dirty )
-    {
-    }
-
-    auto Component::isDirty( Thread::Task taskId, Thread::UpdateState updateType ) const -> bool
-    {
-        return m_isDirty;
-    }
-
-    auto Component::isDirty() const -> bool
-    {
-        return m_isDirty;
-    }
-
-    void Component::makeDirty()
-    {
-    }
-
-    void Component::makeDirty( Thread::Task task )
-    {
     }
 
     auto Component::getActor() -> SmartPtr<IActor> &
@@ -476,9 +471,6 @@ namespace fb::scene
         const auto enabled = isEnabled();
         properties->setProperty( enabledStr, enabled );
 
-        const auto dirty = isDirty();
-        properties->setProperty( dirtyStr, dirty );
-
         const u32 componentFlags = m_componentFlags;
         properties->setProperty( "ComponentFlags", componentFlags );
 
@@ -492,18 +484,11 @@ namespace fb::scene
         auto enabled = isEnabled();
         properties->getPropertyValue( enabledStr, enabled );
 
-        auto dirty = true;
-        properties->getPropertyValue( dirtyStr, dirty );
-
-        u32 componentFlags = 0;
+        auto componentFlags = getComponentFlags();
         properties->getPropertyValue( "ComponentFlags", componentFlags );
-        m_componentFlags = 0;
+        m_componentFlags = componentFlags;
 
-        if( isEnabled() != enabled )
-        {
-            setEnabled( enabled );
-            updateVisibility();
-        }
+        setEnabled( enabled );
     }
 
     void Component::updateTransform()

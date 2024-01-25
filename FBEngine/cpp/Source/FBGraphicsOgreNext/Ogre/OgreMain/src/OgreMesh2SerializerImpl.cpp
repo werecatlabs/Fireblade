@@ -253,7 +253,7 @@ namespace Ogre {
     void MeshSerializerImpl::writeSubMeshNameTable(const Mesh* pMesh)
     {
         // Header
-        writeChunkHeader(M_SUBMESH_NAME_TABLE, calSubMeshNameTableSize(pMesh));
+        writeChunkHeader(M_SUBMESH_NAME_TABLE, calcSubMeshNameTableSize(pMesh));
 
         // Loop through and save out the index and names.
         Mesh::SubMeshNameMap::const_iterator it = pMesh->mSubMeshNameMap.begin();
@@ -285,7 +285,7 @@ namespace Ogre {
                                            const LodLevelVertexBufferTable &lodVertexTable )
     {
         // Header
-        writeChunkHeader(M_SUBMESH, calSubMeshSize(s, lodVertexTable));
+        writeChunkHeader(M_SUBMESH, calcSubMeshSize(s, lodVertexTable));
 
         // char* materialName
         writeString(s->getMaterialName());
@@ -311,7 +311,7 @@ namespace Ogre {
         const bool skipVertexBuffer = (lodLevel != lodSource);
 
         pushInnerChunk(mStream);
-        writeChunkHeader( M_SUBMESH_LOD, calSubMeshLodSize( vao, skipVertexBuffer ) );
+        writeChunkHeader( M_SUBMESH_LOD, calcSubMeshLodSize( vao, skipVertexBuffer ) );
 
         writeIndexes( vao->getIndexBuffer() );
 
@@ -359,7 +359,7 @@ namespace Ogre {
     void MeshSerializerImpl::writeSubMeshLodOperation( const VertexArrayObject *vao )
     {
         // Header
-        writeChunkHeader(M_SUBMESH_LOD_OPERATION, calSubMeshLodOperationSize(vao));
+        writeChunkHeader(M_SUBMESH_LOD_OPERATION, calcSubMeshLodOperationSize(vao));
 
         // uint16 operationType
         uint16 opType = static_cast<uint16>(vao->getOperationType());
@@ -511,7 +511,7 @@ namespace Ogre {
         popInnerChunk(mStream);
     }
     //---------------------------------------------------------------------
-    size_t MeshSerializerImpl::calSubMeshNameTableSize(const Mesh* pMesh)
+    size_t MeshSerializerImpl::calcSubMeshNameTableSize(const Mesh* pMesh)
     {
         size_t size = MSTREAM_OVERHEAD_SIZE;
         // Figure out the size of the Name table.
@@ -544,7 +544,7 @@ namespace Ogre {
         // Submeshes
         for (unsigned i = 0; i < pMesh->getNumSubMeshes(); ++i)
         {
-            size += calSubMeshSize( pMesh->getSubMesh(i), lodVertexTable[i] );
+            size += calcSubMeshSize( pMesh->getSubMesh(i), lodVertexTable[i] );
         }
 
         // Skeleton link
@@ -558,7 +558,7 @@ namespace Ogre {
         size += calcBoundsInfoSize(pMesh);
 
         // Submesh name table
-        size += calSubMeshNameTableSize(pMesh);
+        size += calcSubMeshNameTableSize(pMesh);
 
         // Edge list
         /*if (pMesh->isEdgeListBuilt())
@@ -578,7 +578,7 @@ namespace Ogre {
         return size;
     }
     //---------------------------------------------------------------------
-    size_t MeshSerializerImpl::calSubMeshSize( const SubMesh* pSub,
+    size_t MeshSerializerImpl::calcSubMeshSize( const SubMesh* pSub,
                                                 const LodLevelVertexBufferTable &lodVertexTable )
     {
         size_t size = MSTREAM_OVERHEAD_SIZE;
@@ -598,18 +598,18 @@ namespace Ogre {
         for( uint8 i=0; i<numVaoPasses; ++i )
         {
             for( uint8 lodLevel=0; lodLevel<numLodLevels; ++lodLevel )
-                size += calSubMeshLodSize( pSub->mVao[i][lodLevel], lodVertexTable[lodLevel] != lodLevel );
+                size += calcSubMeshLodSize( pSub->mVao[i][lodLevel], lodVertexTable[lodLevel] != lodLevel );
         }
 
         return size;
     }
     //---------------------------------------------------------------------
-    size_t MeshSerializerImpl::calSubMeshLodSize( const VertexArrayObject *vao, bool skipVertexBuffer )
+    size_t MeshSerializerImpl::calcSubMeshLodSize( const VertexArrayObject *vao, bool skipVertexBuffer )
     {
         size_t size = MSTREAM_OVERHEAD_SIZE;
 
         if( vao->getOperationType() != OT_TRIANGLE_LIST )
-            size += calSubMeshLodOperationSize( vao );
+            size += calcSubMeshLodOperationSize( vao );
 
         // uint32 indexCount
         size += sizeof(uint32);
@@ -636,7 +636,7 @@ namespace Ogre {
         return size;
     }
     //---------------------------------------------------------------------
-    size_t MeshSerializerImpl::calSubMeshLodOperationSize(const VertexArrayObject *vao)
+    size_t MeshSerializerImpl::calcSubMeshLodOperationSize(const VertexArrayObject *vao)
     {
         return MSTREAM_OVERHEAD_SIZE + sizeof(uint16);
     }

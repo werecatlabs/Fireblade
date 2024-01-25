@@ -52,18 +52,6 @@ namespace fb
         ~IAnimation() override = default;
 
         /**
-         * @brief Gets the name of the animation.
-         * @return Returns the name of the animation as a String.
-         */
-        virtual String getName() const = 0;
-
-        /**
-         * @brief Sets the name of the animation.
-         * @param name The new name for the animation as a String.
-         */
-        virtual void setName( const String &name ) = 0;
-
-        /**
          * @brief Gets the total length of the animation.
          * @return Returns the length of the animation as a floating-point value.
          */

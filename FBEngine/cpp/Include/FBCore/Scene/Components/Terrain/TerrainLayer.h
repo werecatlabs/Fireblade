@@ -13,16 +13,16 @@ namespace fb
             TerrainLayer();
             ~TerrainLayer() override;
 
-            /** @copydoc BaseComponent::load */
+            /** @copydoc SubComponent::load */
             void load( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc BaseComponent::unload */
+            /** @copydoc SubComponent::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            /** @copydoc BaseComponent::getProperties */
+            /** @copydoc SubComponent::getProperties */
             SmartPtr<Properties> getProperties() const override;
 
-            /** @copydoc BaseComponent::setProperties */
+            /** @copydoc SubComponent::setProperties */
             void setProperties( SmartPtr<Properties> properties ) override;
 
             SmartPtr<render::ITexture> getBaseTexture() const;

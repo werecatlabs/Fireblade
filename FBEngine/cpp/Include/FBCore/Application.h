@@ -95,6 +95,8 @@ namespace fb
 
             SmartPtr<Properties> importScene( const String &filePath ) override;
 
+            FB_CLASS_REGISTER_DECL;
+
         protected:
             virtual void createLogManager();
             virtual void createFactoryManager();
@@ -163,16 +165,12 @@ namespace fb
             virtual bool createScriptManager();
 
             /** */
-            virtual bool createEntitySystem();
-
-            /** */
             virtual bool createSoundManager();
-
-            /** */
-            virtual bool createCameraCtrlManager();
 
             virtual void createPluginManager();
             virtual void createPlugins();
+
+            virtual void createProcessManager();
 
             // Optional to override this
             virtual void destroyScene();

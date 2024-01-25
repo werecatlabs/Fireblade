@@ -26,8 +26,6 @@ namespace fb
 
             SmartPtr<IMaterialPass> createPass() override;
 
-
-
             /** @copydoc IObject::getChildObjects */
             Array<SmartPtr<ISharedObject>> getChildObjects() const override;
 
@@ -41,7 +39,7 @@ namespace fb
             Ogre::Technique *m_technique = nullptr;
             hash32 m_scheme = 0;
         };
-    } // end namespace render
-}     // end namespace fb
+    }  // end namespace render
+}  // end namespace fb
 
 #endif  // CTechnique_h__

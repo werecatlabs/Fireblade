@@ -5,7 +5,7 @@
 
 namespace fb::render
 {
-    FB_CLASS_REGISTER_DERIVED( fb, IWindowListener, ISharedObject );
+    FB_CLASS_REGISTER_DERIVED( fb::render, IWindowListener, ISharedObject );
 
     const hash_type IWindowListener::windowClosingHash = StringUtil::getHash( "windowClosing" );
     const hash_type IWindowListener::windowResizedHash = StringUtil::getHash( "windowResized" );

@@ -27,4 +27,7 @@ namespace fb::scene
     const hash_type IComponent::triggerCollisionLeave = StringUtil::getHash( "triggerCollisionLeave" );
     const hash_type IComponent::componentLoaded = StringUtil::getHash( "componentLoaded" );
 
+    const u32 IComponent::ComponentReservedFlag = ( 1 << 0 );
+    const u32 IComponent::ComponentEnabledFlag = ( 1 << 1 );
+
 }  // namespace fb::scene

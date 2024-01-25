@@ -8,6 +8,7 @@ namespace fb
 {
     namespace render
     {
+
         /** An interface for a font. */
         class IFont : public IResource
         {
@@ -16,6 +17,7 @@ namespace fb
 
             FB_CLASS_REGISTER_DECL;
         };
+
     }  // namespace render
 }  // namespace fb
 

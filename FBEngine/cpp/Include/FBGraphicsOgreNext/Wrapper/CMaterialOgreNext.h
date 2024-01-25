@@ -38,8 +38,6 @@ namespace fb
             CMaterialOgreNext();
             ~CMaterialOgreNext() override;
 
-            void initialise( Ogre::MaterialPtr &material );
-
             void load( SmartPtr<ISharedObject> data ) override;
             void reload( SmartPtr<ISharedObject> data ) override;
             void unload( SmartPtr<ISharedObject> data ) override;

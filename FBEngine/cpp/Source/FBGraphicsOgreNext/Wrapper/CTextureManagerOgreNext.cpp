@@ -28,7 +28,6 @@
 
 namespace fb::render
 {
-
     CTextureManagerOgreNext::CTextureManagerOgreNext()
     {
         m_textureListener = fb::make_ptr<TextureListener>();
@@ -96,10 +95,10 @@ namespace fb::render
         }
     }
 
-    auto CTextureManagerOgreNext::createManual( const String &name, const String &group, u8 texType,
-                                                u32 width, u32 height, u32 depth, s32 num_mips,
-                                                u8 format, s32 usage /*= TU_DEFAULT*/ )
-        -> SmartPtr<ITexture>
+    SmartPtr<ITexture> CTextureManagerOgreNext::createManual( const String &name, const String &group,
+                                                              u8 texType, u32 width, u32 height,
+                                                              u32 depth, s32 num_mips, u8 format,
+                                                              s32 usage /*= TU_DEFAULT*/ )
     {
         //auto root = Ogre::Root::getSingletonPtr();
         //auto renderSystem = root->getRenderSystem();
@@ -118,7 +117,7 @@ namespace fb::render
         return nullptr;
     }
 
-    auto CTextureManagerOgreNext::create( const String &name ) -> SmartPtr<IResource>
+    SmartPtr<IResource> CTextureManagerOgreNext::create( const String &name )
     {
         try
         {
@@ -167,7 +166,7 @@ namespace fb::render
         return nullptr;
     }
 
-    auto CTextureManagerOgreNext::create( const String &uuid, const String &name ) -> SmartPtr<IResource>
+    SmartPtr<IResource> CTextureManagerOgreNext::create( const String &uuid, const String &name )
     {
         try
         {
@@ -214,7 +213,7 @@ namespace fb::render
         return nullptr;
     }
 
-    auto CTextureManagerOgreNext::loadResource( const String &name ) -> SmartPtr<IResource>
+    SmartPtr<IResource> CTextureManagerOgreNext::loadResource( const String &name )
     {
         try
         {
@@ -236,7 +235,7 @@ namespace fb::render
         return nullptr;
     }
 
-    auto CTextureManagerOgreNext::getByName( const String &name ) -> SmartPtr<IResource>
+    SmartPtr<IResource> CTextureManagerOgreNext::getByName( const String &name )
     {
         try
         {
@@ -262,7 +261,7 @@ namespace fb::render
         return nullptr;
     }
 
-    auto CTextureManagerOgreNext::getById( const String &uuid ) -> SmartPtr<IResource>
+    SmartPtr<IResource> CTextureManagerOgreNext::getById( const String &uuid )
     {
         try
         {
@@ -287,9 +286,9 @@ namespace fb::render
         return nullptr;
     }
 
-    auto CTextureManagerOgreNext::createOrRetrieve( const String &uuid, const String &path,
-                                                    const String &type )
-        -> Pair<SmartPtr<IResource>, bool>
+    Pair<SmartPtr<IResource>, bool> CTextureManagerOgreNext::createOrRetrieve( const String &uuid,
+                                                                               const String &path,
+                                                                               const String &type )
     {
         try
         {
@@ -312,8 +311,7 @@ namespace fb::render
         return Pair<SmartPtr<IResource>, bool>( nullptr, false );
     }
 
-    auto CTextureManagerOgreNext::createOrRetrieve( const String &path )
-        -> Pair<SmartPtr<IResource>, bool>
+    Pair<SmartPtr<IResource>, bool> CTextureManagerOgreNext::createOrRetrieve( const String &path )
     {
         try
         {
@@ -338,9 +336,13 @@ namespace fb::render
 
     void CTextureManagerOgreNext::saveToFile( const String &filePath, SmartPtr<IResource> resource )
     {
+        if( resource )
+        {
+            resource->saveToFile( filePath );
+        }
     }
 
-    auto CTextureManagerOgreNext::loadFromFile( const String &filePath ) -> SmartPtr<IResource>
+    SmartPtr<IResource> CTextureManagerOgreNext::loadFromFile( const String &filePath )
     {
         try
         {
@@ -393,17 +395,17 @@ namespace fb::render
         return nullptr;
     }
 
-    auto CTextureManagerOgreNext::createVideoTexture( const String &name ) -> SmartPtr<IVideoTexture>
+    SmartPtr<IVideoTexture> CTextureManagerOgreNext::createVideoTexture( const String &name )
     {
         return nullptr;
     }
 
-    auto CTextureManagerOgreNext::addCubemap() -> SmartPtr<ICubemap>
+    SmartPtr<ICubemap> CTextureManagerOgreNext::addCubemap()
     {
         return nullptr;
     }
 
-    auto CTextureManagerOgreNext::createRenderTexture() -> SmartPtr<ITexture>
+    SmartPtr<ITexture> CTextureManagerOgreNext::createRenderTexture()
     {
 #if defined FB_PLATFORM_WIN32
         auto texture = fb::make_ptr<CTextureOgreNext>();
@@ -436,11 +438,11 @@ namespace fb::render
         }
     }
 
-    auto CTextureManagerOgreNext::createSkyBoxCubeMap( Array<String> faceNames ) -> SmartPtr<ITexture>
+    SmartPtr<ITexture> CTextureManagerOgreNext::createSkyBoxCubeMap( Array<String> faceNames )
     {
         const uint8_t maxNumMipmaps = 2;  // (uint8_t)atoi(argv[3]) + 1u;
-        const char *extension = "";       // argv[2];
-        const char *outputFilename = "";  // argv[4];
+        auto extension = "";              // argv[2];
+        auto outputFilename = "";         // argv[4];
 
         if( StringUtil::isNullOrEmpty( faceNames[0] ) )
         {
@@ -504,13 +506,13 @@ namespace fb::render
         //auto uuid = StringUtil::getUUID() + Path::getFileExtension( faceNames[0] );
         auto uuid = StringUtil::getUUID() + ".dds";  // hack
 
-        auto root = Ogre::Root::getSingletonPtr();
+        auto root = Root::getSingletonPtr();
         auto renderSystem = root->getRenderSystem();
         auto textureManager = renderSystem->getTextureGpuManager();
 
         auto texture = textureManager->createTexture(
-            uuid, Ogre::GpuPageOutStrategy::Discard, Ogre::TextureFlags::RenderToTexture,
-            Ogre::TextureTypes::TypeCube, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
+            uuid, GpuPageOutStrategy::Discard, TextureFlags::RenderToTexture, TextureTypes::TypeCube,
+            ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
 
         texture->setResolution( faceImage.getWidth(), faceImage.getHeight(), 1u );
         texture->setPixelFormat( faceImage.getPixelFormat() );
@@ -524,8 +526,8 @@ namespace fb::render
         return t;
     }
 
-    auto CTextureManagerOgreNext::createSkyBoxCubeMap( Array<SmartPtr<ITexture>> skyboxTextures )
-        -> SmartPtr<ITexture>
+    SmartPtr<ITexture> CTextureManagerOgreNext::createSkyBoxCubeMap(
+        Array<SmartPtr<ITexture>> skyboxTextures )
     {
         try
         {
@@ -636,17 +638,38 @@ namespace fb::render
         return nullptr;
     }
 
-    auto CTextureManagerOgreNext::createSkyBoxCubeMap( SmartPtr<IMaterial> material )
-        -> SmartPtr<ITexture>
+    SmartPtr<ITexture> CTextureManagerOgreNext::createSkyBoxCubeMap( SmartPtr<IMaterial> material )
+    {
+        return nullptr;
+    }
+
+    SmartPtr<ITexture> CTextureManagerOgreNext::cloneTexture( SmartPtr<ITexture> texture,
+                                                              const String &clonedTextureName )
+    {
+        return nullptr;
+    }
+
+    SmartPtr<ITexture> CTextureManagerOgreNext::cloneTexture( const String &name,
+                                                              const String &clonedTextureName )
     {
         return nullptr;
     }
 
     void CTextureManagerOgreNext::_getObject( void **ppObject ) const
     {
+        FB_ASSERT( ppObject );
+
+        if( auto root = Ogre::Root::getSingletonPtr() )
+        {
+            if( auto renderSystem = root->getRenderSystem() )
+            {
+                auto textureManager = renderSystem->getTextureGpuManager();
+                *ppObject = textureManager;
+            }
+        }
     }
 
-    auto CTextureManagerOgreNext::getStateContext() const -> fb::SmartPtr<fb::IStateContext>
+    SmartPtr<IStateContext> CTextureManagerOgreNext::getStateContext() const
     {
         return nullptr;
     }
@@ -698,17 +721,14 @@ namespace fb::render
         m_textures = p;
     }
 
-    auto CTextureManagerOgreNext::getTextures() const -> SharedPtr<Array<SmartPtr<ITexture>>>
+    SharedPtr<Array<SmartPtr<ITexture>>> CTextureManagerOgreNext::getTextures() const
     {
         return m_textures;
     }
 
-    auto CTextureManagerOgreNext::TextureListener::handleEvent( IEvent::Type eventType,
-                                                                hash_type eventValue,
-                                                                const Array<Parameter> &arguments,
-                                                                SmartPtr<ISharedObject> sender,
-                                                                SmartPtr<ISharedObject> object,
-                                                                SmartPtr<IEvent> event ) -> fb::Parameter
+    Parameter CTextureManagerOgreNext::TextureListener::handleEvent(
+        IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
+        SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
     {
         return {};
     }
@@ -722,9 +742,8 @@ namespace fb::render
         }
     }
 
-    auto CTextureManagerOgreNext::TextureListener::destroy( void *ptr ) -> bool
+    bool CTextureManagerOgreNext::TextureListener::destroy( void *ptr )
     {
         return false;
     }
-
 }  // namespace fb::render

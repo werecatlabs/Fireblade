@@ -2,8 +2,10 @@
 #include <FBCore/Resource/ResourceDatabase.h>
 #include <FBCore/Database/AssetDatabaseManager.h>
 #include <FBCore/Scene/Director.h>
-#include "FBCore/Scene/Directors/MeshResourceDirector.h"
-#include "FBCore/Scene/Directors/TextureResourceDirector.h"
+#include <FBCore/Scene/Directors/MaterialResourceDirector.h>
+#include <FBCore/Scene/Directors/MeshResourceDirector.h>
+#include <FBCore/Scene/Directors/TextureResourceDirector.h>
+#include <FBCore/Scene/Directors/SoundResourceDirector.h>
 #include <FBCore/Scene/SceneManager.h>
 #include <FBCore/Interface/Database/IDatabase.h>
 #include <FBCore/Interface/Database/IDatabaseManager.h>
@@ -32,11 +34,9 @@
 #include <FBCore/IO/FileSystem.h>
 #include <FBCore/System/ApplicationManager.h>
 #include <FBCore/Core/Path.h>
-#include "FBCore/ApplicationUtil.h"
-#include "FBCore/Core/DataUtil.h"
-#include "FBCore/Core/LogManager.h"
-#include "FBCore/Scene/Directors/MaterialResourceDirector.h"
-#include "FBCore/Scene/Directors/SoundResourceDirector.h"
+#include <FBCore/ApplicationUtil.h>
+#include <FBCore/Core/DataUtil.h>
+#include <FBCore/Core/LogManager.h>
 
 namespace fb
 {

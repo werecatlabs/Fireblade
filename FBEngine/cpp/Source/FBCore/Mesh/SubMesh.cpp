@@ -1,11 +1,14 @@
 #include <FBCore/FBCorePCH.h>
-#include "FBCore/Mesh/SubMesh.h"
+#include <FBCore/Mesh/SubMesh.h>
 #include <FBCore/Math/Vector3.h>
+#include <FBCore/Interface/Mesh/IVertexBoneAssignment.h>
 #include <FBCore/Interface/Mesh/IVertexBuffer.h>
 #include <FBCore/Interface/Mesh/IIndexBuffer.h>
 #include <FBCore/Interface/Mesh/IVertexDeclaration.h>
 #include <FBCore/Interface/Mesh/IVertexElement.h>
-#include "FBCore/Memory/PointerUtil.h"
+#include <FBCore/Interface/System/IFactoryManager.h>
+#include <FBCore/Interface/IApplicationManager.h>
+#include <FBCore/Memory/PointerUtil.h>
 
 namespace fb
 {
@@ -95,7 +98,10 @@ namespace fb
 
     auto SubMesh::clone() const -> SmartPtr<ISubMesh>
     {
-        auto subMesh = fb::make_ptr<SubMesh>();
+        auto applicationManager = core::IApplicationManager::instance();
+        auto factoryManager = applicationManager->getFactoryManager();
+
+        auto subMesh = factoryManager->make_ptr<SubMesh>();
 
         subMesh->setMaterialName( m_materialName );
         subMesh->setVertexBuffer( m_vertexBuffer->clone() );
@@ -119,6 +125,22 @@ namespace fb
     {
         return m_vertexBuffer->compare( other->getVertexBuffer() ) &&
                m_indexBuffer->compare( other->getIndexBuffer() );
+    }
+
+    void SubMesh::addBoneAssignment( SmartPtr<IVertexBoneAssignment> vba )
+    {
+        m_boneAssignments.push_back( vba );
+    }
+
+    void SubMesh::removeBoneAssignment( SmartPtr<IVertexBoneAssignment> vba )
+    {
+        m_boneAssignments.erase( std::remove( m_boneAssignments.begin(), m_boneAssignments.end(), vba ),
+                                 m_boneAssignments.end() );
+    }
+
+    Array<SmartPtr<IVertexBoneAssignment>> SubMesh::getBoneAssignments() const
+    {
+        return m_boneAssignments;
     }
 
     void SubMesh::setAABB( const AABB3F &aabb )

@@ -11,45 +11,18 @@ namespace fb
     class ScaleAnimator3 : public BaseAnimator
     {
     public:
-        ScaleAnimator3() : m_start( Vector3F::unit() ), m_end( Vector3F::unit() ), m_object( NULL )
-        {
-        }
+        ScaleAnimator3();
 
         ScaleAnimator3( T *object, f32 animationLength, const Vector3F &startScale = Vector3F::unit(),
-                        const Vector3F &endScale = Vector3F::unit() ) :
-            m_start( startScale ),
-            m_end( endScale ),
-            m_object( object )
-        {
-            setAnimationLength( animationLength );
-            setAnimationTime( 0.0f );
-        }
+                        const Vector3F &endScale = Vector3F::unit() );
 
-        ~ScaleAnimator3()
-        {
-        }
+        ~ScaleAnimator3();
 
-        void update()
-        {
-            if( m_isPlaying )
-            {
-                m_animationTime += dt * ( 1.0f / m_animationLength );
-                m_animationTime = MathF::clamp( m_animationTime, 0.0f, 1.0f );
-                Vector3F scale = m_start + ( m_end - m_start ) * m_animationTime;
-                m_object->setScale( scale );
-            }
-        }
+        void update();
 
-        void start()
-        {
-            BaseAnimator::start();
-            m_animationTime = 0.0f;
-        }
+        void start();
 
-        bool isFinished() const
-        {
-            return m_animationTime >= ( 1.0 - MathF::epsilon() );
-        }
+        bool isFinished() const;
 
     protected:
         Vector3F m_start;
@@ -57,6 +30,56 @@ namespace fb
 
         T *m_object;
     };
+
+    template <class T>
+    ScaleAnimator3<T>::ScaleAnimator3() :
+        m_start( Vector3F::unit() ),
+        m_end( Vector3F::unit() ),
+        m_object( NULL )
+    {
+    }
+
+    template <class T>
+    ScaleAnimator3<T>::ScaleAnimator3( T *object, f32 animationLength,
+                                       const Vector3F &startScale = Vector3F::unit(),
+                                       const Vector3F &endScale = Vector3F::unit() ) :
+        m_start( startScale ),
+        m_end( endScale ),
+        m_object( object )
+    {
+        setAnimationLength( animationLength );
+        setAnimationTime( 0.0f );
+    }
+
+    template <class T>
+    ScaleAnimator3<T>::~ScaleAnimator3()
+    {
+    }
+
+    template <class T>
+    void ScaleAnimator3<T>::update()
+    {
+        if( m_isPlaying )
+        {
+            m_animationTime += dt * ( 1.0f / m_animationLength );
+            m_animationTime = MathF::clamp( m_animationTime, 0.0f, 1.0f );
+            Vector3F scale = m_start + ( m_end - m_start ) * m_animationTime;
+            m_object->setScale( scale );
+        }
+    }
+
+    template <class T>
+    void ScaleAnimator3<T>::start()
+    {
+        BaseAnimator::start();
+        m_animationTime = 0.0f;
+    }
+
+    template <class T>
+    bool ScaleAnimator3<T>::isFinished() const
+    {
+        return m_animationTime >= ( 1.0 - MathF::epsilon() );
+    }
 
 }  // end namespace fb
 

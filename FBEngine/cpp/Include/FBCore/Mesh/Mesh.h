@@ -32,12 +32,6 @@ namespace fb
         /** @copydoc IMesh::getSubMeshes */
         Array<SmartPtr<ISubMesh>> getSubMeshes() const override;
 
-        /** @copydoc IMesh::setName */
-        void setName( const String &name ) override;
-
-        /** @copydoc IMesh::getName */
-        String getName() const override;
-
         /** @copydoc IMesh::updateAABB */
         void updateAABB( bool forceSubMeshUpdate = false ) override;
 
@@ -60,7 +54,7 @@ namespace fb
         bool getHasSharedVertexData() const override;
 
         /** @copydoc IMesh::getSkeletonName */
-        void setHasSharedVertexData( bool val ) override;
+        void setHasSharedVertexData( bool hasSharedVertexData ) override;
 
         /** @copydoc IMesh::getSkeletonName */
         bool hasSkeleton() const override;
@@ -79,6 +73,8 @@ namespace fb
 
         /** @copydoc IMesh::compare */
         bool compare( SmartPtr<IMesh> other ) const override;
+
+        FB_CLASS_REGISTER_DECL;
 
     protected:
         // The animation interface.

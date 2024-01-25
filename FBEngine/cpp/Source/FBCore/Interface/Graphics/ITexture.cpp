@@ -5,7 +5,7 @@
 
 namespace fb::render
 {
-    FB_CLASS_REGISTER_DERIVED( fb, ITexture, IResource );
+    FB_CLASS_REGISTER_DERIVED( fb::render, ITexture, IResource );
 
     const hash_type ITexture::STATE_MESSAGE_TEXTURE_SIZE = StringUtil::getHash( "textureSize" );
 

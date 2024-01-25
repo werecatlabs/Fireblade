@@ -9,13 +9,9 @@ namespace fb
     class KeyFrameAnimator2 : public BaseAnimator
     {
     public:
-        KeyFrameAnimator2()
-        {
-        }
+        KeyFrameAnimator2();
 
-        ~KeyFrameAnimator2()
-        {
-        }
+        ~KeyFrameAnimator2();
 
     protected:
     };

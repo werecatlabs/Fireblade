@@ -6,6 +6,10 @@
 
 namespace fb
 {
+    KeyFrame::KeyFrame() = default;
+
+    KeyFrame::~KeyFrame() = default;
+
     auto KeyFrame::getTime() const -> f32
     {
         return m_time;

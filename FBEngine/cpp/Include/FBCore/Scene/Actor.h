@@ -15,6 +15,7 @@ namespace fb
 {
     namespace scene
     {
+
         /** Concrete actor implementation.
         @author	Zane Desir
         @version 1.0

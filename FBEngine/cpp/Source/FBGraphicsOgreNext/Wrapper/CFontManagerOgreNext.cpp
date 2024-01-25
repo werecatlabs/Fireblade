@@ -42,7 +42,11 @@ namespace fb::render
     auto CFontManagerOgreNext::cloneFont( const String &name, const String &clonedFontName )
         -> SmartPtr<IFont>
     {
-        return nullptr;
+        auto applicationManager = core::ApplicationManager::instance();
+        auto factoryManager = applicationManager->getFactoryManager();
+
+        auto clonedFont = factoryManager->make_ptr<CFontOgreNext>();
+        return clonedFont;
     }
 
     auto CFontManagerOgreNext::create( const String &name ) -> SmartPtr<IResource>

@@ -37,6 +37,13 @@ namespace fb
                 setLoadingState( LoadingState::Loading );
 
                 auto applicationManager = core::ApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto graphicsSystem = applicationManager->getGraphicsSystem();
+                FB_ASSERT( graphicsSystem );
+
+                ScopedLock lock( graphicsSystem );
+
                 auto ui = fb::static_pointer_cast<UIManager>( applicationManager->getRenderUI() );
 
                 auto window = ui->getLayoutWindow();
@@ -71,6 +78,14 @@ namespace fb
             try
             {
                 setLoadingState( LoadingState::Unloading );
+
+                auto applicationManager = core::ApplicationManager::instance();
+                FB_ASSERT( applicationManager );
+
+                auto graphicsSystem = applicationManager->getGraphicsSystem();
+                FB_ASSERT( graphicsSystem );
+
+                ScopedLock lock( graphicsSystem );
 
                 m_renderable = nullptr;
                 UIElement<ui::IUIImage>::unload( data );

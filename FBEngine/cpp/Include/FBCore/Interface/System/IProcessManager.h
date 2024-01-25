@@ -78,6 +78,8 @@ namespace fb
          * @return true if the process was terminated successfully, false otherwise.
          */
         virtual bool terminateProcess( const StringW &processName ) = 0;
+
+        FB_CLASS_REGISTER_DECL;
     };
 
 }  // end namespace fb

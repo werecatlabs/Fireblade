@@ -286,6 +286,12 @@ namespace fb::ui
         }
 
         m_treeSelectedNodes.clear();
+
+        if( m_selectedTreeNode )
+        {
+            m_selectedTreeNode->setSelected( false );
+            m_selectedTreeNode = nullptr;
+        }
     }
 
     auto ImGuiTreeCtrl::getSelectTreeNode() const -> SmartPtr<IUITreeNode>
@@ -366,8 +372,7 @@ namespace fb::ui
         auto treeCtrl = fb::static_pointer_cast<ImGuiTreeCtrl>( element );
         //treeCtrl->setSiblingIndex( -1 );
 
-        auto root = treeCtrl->getRoot();
-        if( root )
+        if( auto root = treeCtrl->getRoot() )
         {
             auto label = Util::getText( root );
             if( StringUtil::isNullOrEmpty( label ) )

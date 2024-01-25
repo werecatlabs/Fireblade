@@ -229,7 +229,7 @@ namespace fb::editor
                 auto project = editorManager->getProject();
                 FB_ASSERT( project );
 
-                auto sceneName = currentScene->getName();
+                auto sceneName = currentScene->getLabel();
 
                 auto selection = selectionManager->getSelection();
                 if( selection.size() == 1 )

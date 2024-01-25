@@ -4,5 +4,5 @@
 
 namespace fb::render
 {
-    FB_CLASS_REGISTER_DERIVED( fb, IRenderTarget, ISharedObject );
+    FB_CLASS_REGISTER_DERIVED( fb::render, IRenderTarget, ISharedObject );
 }  // namespace fb::render

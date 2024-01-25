@@ -9,6 +9,7 @@ namespace fb
 {
     namespace scene
     {
+
         /** Director implementation. */
         class Director : public Resource<IDirector>
         {

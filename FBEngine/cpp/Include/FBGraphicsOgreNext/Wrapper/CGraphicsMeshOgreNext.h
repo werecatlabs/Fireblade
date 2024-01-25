@@ -4,6 +4,7 @@
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
 #include <FBCore/Interface/Graphics/IGraphicsMesh.h>
 #include <FBGraphicsOgreNext/Wrapper/CGraphicsObjectOgreNext.h>
+#include <FBCore/Interface/System/IEventListener.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <OgreMesh.h>
 
@@ -26,8 +27,6 @@ namespace fb
             /** @copydoc ISharedObject::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            void initialise( Ogre::v1::Entity *entity );
-
             void setMaterialName( const String &materialName, s32 index = -1 ) override;
             String getMaterialName( s32 index = -1 ) const override;
 
@@ -47,10 +46,6 @@ namespace fb
             void checkVertexProcessing() override;
             SmartPtr<IAnimationController> getAnimationController() override;
 
-            hash32 getRenderTechnique() const override;
-
-            void setRenderTechnique( hash32 val ) override;
-
             String getMeshName() const override;
             void setMeshName( const String &meshName ) override;
 
@@ -66,7 +61,12 @@ namespace fb
             Ogre::v1::Entity *getEntity() const;
 
             Ogre::Item *getItem() const;
-            void setItem( Ogre::Item *val );
+
+            void setItem( Ogre::Item *item );
+
+            SmartPtr<ISkeleton> getSkeleton() const;
+
+            void setSkeleton( SmartPtr<ISkeleton> skeleton );
 
             FB_CLASS_REGISTER_DECL;
 
@@ -81,12 +81,6 @@ namespace fb
                 void handleStateChanged( const SmartPtr<IStateMessage> &message ) override;
                 void handleStateChanged( SmartPtr<IState> &state ) override;
                 void handleQuery( SmartPtr<IStateQuery> &query ) override;
-
-                CGraphicsMeshOgreNext *getOwner() const;
-                void setOwner( CGraphicsMeshOgreNext *owner );
-
-            protected:
-                CGraphicsMeshOgreNext *m_owner = nullptr;
             };
 
             class MaterialStateListener : public IStateListener
@@ -96,7 +90,7 @@ namespace fb
                 MaterialStateListener( CGraphicsMeshOgreNext *owner );
                 ~MaterialStateListener() override;
 
-                void unload(SmartPtr<ISharedObject> data) override;
+                void unload( SmartPtr<ISharedObject> data ) override;
 
                 void handleStateChanged( const SmartPtr<IStateMessage> &message ) override;
                 void handleStateChanged( SmartPtr<IState> &state ) override;
@@ -109,6 +103,24 @@ namespace fb
                 AtomicWeakPtr<CGraphicsMeshOgreNext> m_owner;
             };
 
+            class MaterialEventListener : public IEventListener
+            {
+            public:
+                MaterialEventListener();
+                ~MaterialEventListener() override;
+
+                Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                       const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
+
+                SmartPtr<CGraphicsMeshOgreNext> getOwner() const;
+
+                void setOwner( SmartPtr<CGraphicsMeshOgreNext> owner );
+
+            protected:
+                SmartPtr<CGraphicsMeshOgreNext> m_owner;
+            };
+
             void setupStateObject() override;
 
             void materialLoaded( SmartPtr<IMaterial> material );
@@ -119,11 +131,15 @@ namespace fb
 
             SmartPtr<IAnimationController> m_animationController;
 
+            SmartPtr<ISkeleton> m_skeleton;
+
             SmartPtr<IMaterial> m_material;
             Array<SmartPtr<IMaterial>> m_materials;
 
+            SmartPtr<MaterialEventListener> m_materialSharedObjectListener;
+
             Ogre::v1::Entity *m_entity = nullptr;
-            Atomic<Ogre::Item*> m_item = nullptr;
+            Atomic<Ogre::Item *> m_item = nullptr;
 
             int m_checkVertProcessing = 0;
             int m_hardwareAnimationEnabled = 0;
@@ -131,7 +147,7 @@ namespace fb
             String m_meshName;
             String m_materialName;
         };
-    }  // end namespace render
-}  // end namespace fb
+    } // end namespace render
+}     // end namespace fb
 
 #endif

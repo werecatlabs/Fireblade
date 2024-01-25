@@ -7,13 +7,17 @@
 namespace fb
 {
 
+    /** Implementation of a submesh. */
     class SubMesh : public ISubMesh
     {
     public:
+        /** Constructor. */
         SubMesh();
+
+        /** Destructor. */
         ~SubMesh() override;
 
-        /** @copydoc IObject::unload */
+        /** @copydoc ISubMesh::unload */
         void unload( SmartPtr<ISharedObject> data ) override;
 
         void setMaterialName( const String &materialName ) override;
@@ -37,7 +41,12 @@ namespace fb
 
         bool compare( SmartPtr<ISubMesh> other ) const override;
 
+        void addBoneAssignment( SmartPtr<IVertexBoneAssignment> vba );
+        void removeBoneAssignment( SmartPtr<IVertexBoneAssignment> vba );
+        Array<SmartPtr<IVertexBoneAssignment>> getBoneAssignments() const;
+
     protected:
+        Array<SmartPtr<IVertexBoneAssignment>> m_boneAssignments;
         SmartPtr<IVertexBuffer> m_vertexBuffer;
         SmartPtr<IIndexBuffer> m_indexBuffer;
         AABB3F m_aabb;

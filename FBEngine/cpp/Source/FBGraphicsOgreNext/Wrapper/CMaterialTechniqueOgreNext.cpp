@@ -8,7 +8,7 @@
 namespace fb::render
 {
 
-    FB_CLASS_REGISTER_DERIVED( fb, CMaterialTechniqueOgreNext, IMaterialTechnique );
+    FB_CLASS_REGISTER_DERIVED( fb, CMaterialTechniqueOgreNext, MaterialTechnique );
 
     CMaterialTechniqueOgreNext::CMaterialTechniqueOgreNext() = default;
 
@@ -67,10 +67,15 @@ namespace fb::render
         {
             setLoadingState( LoadingState::Unloading );
 
-            auto passes = getPasses();
-            for( auto pass : passes )
+            if( auto p = getPassesPtr() )
             {
-                pass->unload( nullptr );
+                auto &passes = *p;
+                for( auto pass : passes )
+                {
+                    pass->unload( nullptr );
+                }
+
+                passes.clear();
             }
 
             setLoadingState( LoadingState::Unloaded );

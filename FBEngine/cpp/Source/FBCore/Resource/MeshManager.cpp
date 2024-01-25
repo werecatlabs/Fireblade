@@ -12,7 +12,7 @@
 #include <FBCore/Mesh/Mesh.h>
 #include <FBCore/Mesh/MeshResource.h>
 #include <FBCore/Mesh/MeshSerializer.h>
-#include "FBCore/ApplicationUtil.h"
+#include <FBCore/ApplicationUtil.h>
 
 namespace fb
 {

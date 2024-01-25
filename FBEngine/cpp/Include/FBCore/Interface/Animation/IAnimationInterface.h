@@ -43,6 +43,8 @@ namespace fb
             0 means the shared vertex data, 1+ means a submesh vertex data (index+1)
         */
         virtual void *getVertexDataByTrackHandle( u16 handle ) = 0;
+
+        virtual SmartPtr<IAnimationInterface> clone() = 0;
     };
 }  // end namespace fb
 

@@ -13,6 +13,9 @@
 
 namespace fb
 {
+
+    FB_CLASS_REGISTER_DERIVED( fb, ProcessManager, IProcessManager );
+
     ProcessManager::ProcessManager() = default;
 
     ProcessManager::~ProcessManager() = default;

@@ -1,7 +1,6 @@
 #ifndef ISkybox_h__
 #define ISkybox_h__
 
-#include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 
 namespace fb
@@ -85,6 +84,8 @@ namespace fb
              * @param distance The distance of the skybox.
              */
             virtual void setDistance( f32 distance ) = 0;
+
+            FB_CLASS_REGISTER_DECL;
         };
 
     }  // end namespace render

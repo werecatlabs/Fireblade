@@ -53,14 +53,16 @@ namespace fb
 
         void setRootActor( SmartPtr<scene::IActor> rootActor );
 
+        bool getImportMesh() const;
+
+        void setImportMesh( bool importMesh );
+
         FB_CLASS_REGISTER_DECL;
 
     protected:
 #if FB_USE_ASSET_IMPORT
         void createMaterials( Array<render::IMaterial> &materials, const aiScene *mScene,
                               const aiNode *pNode, const String &mDir );
-
-        void loadDataFromNode( const aiScene *mScene, const aiNode *pNode, const String &mDir );
 
         void loadDataFromActor( SmartPtr<scene::IActor> actor, const aiScene *mScene,
                                 const aiNode *pNode, const String &mDir );
@@ -73,6 +75,8 @@ namespace fb
 
         bool createSubMesh( const String &name, int index, const aiNode *pNode, const aiMesh *mesh,
                             const aiMaterial *mat, SmartPtr<IMesh> mMesh, const String &mDir );
+
+        void loadAnimations( const aiScene *scene, SmartPtr<scene::IActor> actor );
 
         void createMaterial( SmartPtr<scene::Material> pMat, s32 index, const aiMaterial *mat,
                              const String &mDir );
@@ -92,8 +96,9 @@ namespace fb
         SmartPtr<scene::MeshResourceDirector> m_director;
 
         Array<SmartPtr<IMesh>> m_meshes;
-        bool m_useSingleMesh;
-        bool m_quietMode;
+        bool m_useSingleMesh = false;
+        bool m_quietMode = false;
+        bool m_importMesh = false;
 
         SmartPtr<IMeshResource> m_meshResource;
 

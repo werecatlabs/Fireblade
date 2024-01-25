@@ -17,8 +17,6 @@ namespace fb
 
             void initialise( Ogre::Viewport *viewport );
 
-            void update() override;
-
             void _getObject( void **ppObject ) const override;
 
         protected:

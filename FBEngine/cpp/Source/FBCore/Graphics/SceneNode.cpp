@@ -213,19 +213,6 @@ namespace fb::render
         return {};
     }
 
-    void SceneNode::setVisible( bool isVisible, bool cascade /*= true */ )
-    {
-    }
-
-    void SceneNode::setCulled( bool culled )
-    {
-    }
-
-    auto SceneNode::isCulled() const -> bool
-    {
-        return false;
-    }
-
     void SceneNode::attachObject( SmartPtr<IGraphicsObject> object )
     {
     }
@@ -241,11 +228,6 @@ namespace fb::render
     auto SceneNode::getObjects() const -> Array<SmartPtr<IGraphicsObject>>
     {
         return {};
-    }
-
-    auto SceneNode::getObjectsBuffer( SmartPtr<IGraphicsObject> *buffer, u32 bufferSize ) const -> u32
-    {
-        return 0;
     }
 
     auto SceneNode::getNumObjects() const -> u32
@@ -273,10 +255,6 @@ namespace fb::render
         return false;
     }
 
-    void SceneNode::add()
-    {
-    }
-
     void SceneNode::remove()
     {
     }
@@ -295,41 +273,22 @@ namespace fb::render
         return {};
     }
 
-    auto SceneNode::getChildrenBuffer( SmartPtr<ISceneNode> *children, u32 bufferSize ) const -> u32
-    {
-        return 0;
-    }
-
     auto SceneNode::getNumChildren() const -> u32
     {
         return 0;
     }
 
-    void SceneNode::needUpdate( bool forceParentUpdate /*= false */ )
+    void SceneNode::needUpdate( bool forceParentUpdate )
     {
     }
 
-    auto SceneNode::clone( SmartPtr<ISceneNode> parent /*= nullptr*/,
-                           const String &name /*= StringUtil::EmptyString */ ) const
+    auto SceneNode::clone( SmartPtr<ISceneNode> parent, const String &name ) const
         -> SmartPtr<ISceneNode>
     {
         return nullptr;
     }
 
-    void SceneNode::showBoundingBox( bool show )
-    {
-    }
-
-    auto SceneNode::getShowBoundingBox() const -> bool
-    {
-        return false;
-    }
-
     void SceneNode::updateBounds()
-    {
-    }
-
-    void SceneNode::setVisibilityFlags( u32 flags )
     {
     }
 
@@ -337,23 +296,15 @@ namespace fb::render
     {
     }
 
-    void SceneNode::setFlag( u32 flag, bool value )
-    {
-    }
-
-    auto SceneNode::getFlag( u32 flag ) const -> bool
-    {
-        return false;
-    }
-
     auto SceneNode::getProperties() const -> SmartPtr<Properties>
     {
-        auto properties = fb::make_ptr<Properties>();
+        auto properties = SharedGraphicsObject<ISceneNode>::getProperties();
         return properties;
     }
 
     void SceneNode::setProperties( SmartPtr<Properties> properties )
     {
+        SharedGraphicsObject<ISceneNode>::setProperties( properties );
     }
 
     auto SceneNode::getChildObjects() const -> Array<SmartPtr<ISharedObject>>
