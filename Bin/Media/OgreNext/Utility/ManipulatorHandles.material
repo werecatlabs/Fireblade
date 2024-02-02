@@ -1,0 +1,60 @@
+material ManipulatorHandlesRedMat
+{
+    technique
+    {
+        pass
+        {
+						depth_check off
+            ambient 0.0 0.0 0.0
+            diffuse 1.0 0.0 0.0
+            specular 0.0 0.0 0.0 0.0
+            emissive 1.0 0.0 0.0
+        }
+    }
+}
+
+material ManipulatorHandlesBlueMat
+{
+    technique
+    {
+        pass
+        {
+						depth_check off
+            ambient 0.0 0.0 0.0
+            diffuse 0.0 0.0 1.0
+            specular 0.0 0.0 0.0 0.0
+            emissive 0.0 0.0 1.0
+        }
+    }
+}
+
+material ManipulatorHandlesGreenMat
+{
+    technique
+    {
+        pass
+        {
+						depth_check off
+            ambient 0.0 0.0 0.0
+            diffuse 0.0 1.0 0.0
+            specular 0.0 0.0 0.0 0.0
+            emissive 0.0 1.0 0.0
+        }
+    }
+}
+
+material ManipulatorHandlesYellowMat
+{
+    technique
+    {
+        pass
+        {
+						depth_check off
+            ambient 0.0 0.0 0.0
+            diffuse 1.0 1.0 0.0
+            specular 0.0 0.0 0.0 0.0
+            emissive 1.0 1.0 0.0
+        }
+    }
+}
+

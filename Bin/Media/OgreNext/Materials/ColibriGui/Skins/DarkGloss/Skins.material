@@ -1,0 +1,74 @@
+hlms EmptyBg ui
+{
+	depth_check off
+}
+
+hlms Atlas ui
+{
+	depth_check off
+	diffuse_map Atlas.png
+}
+hlms AtlasTransparent ui
+{
+	depth_check off
+	scene_blend alpha_blend
+	diffuse_map Atlas.png
+}
+hlms AtlasDisabled ui
+{
+	depth_check off
+	diffuse 1 1 1 0.2
+	scene_blend alpha_blend
+	diffuse_map Atlas.png
+}
+hlms AtlasBrighter ui
+{
+	depth_check off
+	diffuse 2 2 2 1
+	diffuse_map Atlas.png
+}
+hlms AtlasBrighterTransparent ui
+{
+	depth_check off
+	diffuse 2 2 2 1
+	scene_blend alpha_blend
+	diffuse_map Atlas.png
+}
+hlms ProgressBarLayerProgress ui
+{
+	depth_check off
+	diffuse_map ProgressBar_l0.png
+}
+
+hlms AtlasRed ui
+{
+	depth_check off
+	diffuse 1 0.1 0.1 1
+	diffuse_map Atlas.png
+}
+hlms AtlasRedDisabled ui
+{
+	depth_check off
+	diffuse 1 0.1 0.1 0.2
+	scene_blend alpha_blend
+	diffuse_map Atlas.png
+}
+hlms AtlasRedBrighter ui
+{
+	depth_check off
+	diffuse 2 0.1 0.1 1
+	diffuse_map Atlas.png
+}
+
+hlms RadarChart ui
+{
+	depth_check off
+	cull_mode none
+}
+hlms RadarChartDisabled ui
+{
+	depth_check off
+	cull_mode none
+	diffuse 1 1 1 0.2
+	scene_blend alpha_blend
+}
