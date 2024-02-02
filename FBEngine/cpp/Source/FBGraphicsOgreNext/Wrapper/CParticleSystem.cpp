@@ -10,83 +10,76 @@
 #include <FBCore/Interface/Graphics/IParticleNode.h>
 #include <Ogre.h>
 
-namespace fb
+namespace fb::render
 {
-    namespace render
+
+    CParticleSystem::CParticleSystem() = default;
+
+    CParticleSystem::~CParticleSystem() = default;
+
+    void CParticleSystem::load( SmartPtr<ISharedObject> data )
     {
-
-        CParticleSystem::CParticleSystem()
+        try
         {
-        }
+            setLoadingState( LoadingState::Loading );
 
-        CParticleSystem::~CParticleSystem()
-        {
-        }
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
 
-        void CParticleSystem::load( SmartPtr<ISharedObject> data )
-        {
-            try
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            FB_ASSERT( graphicsSystem );
+
+            ScopedLock lock( graphicsSystem );
+
+            Ogre::SceneManager *smgr = nullptr;
+
+            if( auto creator = getCreator() )
             {
-                setLoadingState( LoadingState::Loading );
-
-                auto applicationManager = core::ApplicationManager::instance();
-                FB_ASSERT( applicationManager );
-
-                auto graphicsSystem = applicationManager->getGraphicsSystem();
-                FB_ASSERT( graphicsSystem );
-
-                ScopedLock lock( graphicsSystem );
-
-                Ogre::SceneManager *smgr = nullptr;
-
-                if( auto creator = getCreator() )
-                {
-                    creator->_getObject( reinterpret_cast<void **>( &smgr ) );
-                }
-
-                Ogre::ParticleSystem *particleSystem =
-                    smgr->createParticleSystem( 100, "MyParticleTemplate" );
-                m_particleSystem = particleSystem;
-
-                //auto *emitter = particleSystem->getEmitter( 0 );
-
-                //// Set emitter properties
-                //emitter->setEmissionRate( 100 );
-                //emitter->setParticleVelocity( 10 );
-                //// ... other properties
-
-                //// Set material for the particles
-                //particleSystem->setMaterialName( "Examples/Smoke" );
-
-                setLoadingState( LoadingState::Loaded );
+                creator->_getObject( reinterpret_cast<void **>( &smgr ) );
             }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
+
+            Ogre::ParticleSystem *particleSystem =
+                smgr->createParticleSystem( 100, "MyParticleTemplate" );
+            m_particleSystem = particleSystem;
+
+            //auto *emitter = particleSystem->getEmitter( 0 );
+
+            //// Set emitter properties
+            //emitter->setEmissionRate( 100 );
+            //emitter->setParticleVelocity( 10 );
+            //// ... other properties
+
+            //// Set material for the particles
+            //particleSystem->setMaterialName( "Examples/Smoke" );
+
+            setLoadingState( LoadingState::Loaded );
         }
-
-        void CParticleSystem::unload( SmartPtr<ISharedObject> data )
+        catch( std::exception &e )
         {
-            try
-            {
-                setLoadingState( LoadingState::Unloaded );
-            }
-            catch( std::exception &e )
-            {
-                FB_LOG_EXCEPTION( e );
-            }
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-        SmartPtr<IGraphicsObject> CParticleSystem::clone( const String &name ) const
+    void CParticleSystem::unload( SmartPtr<ISharedObject> data )
+    {
+        try
         {
-            return nullptr;
+            setLoadingState( LoadingState::Unloaded );
         }
-
-        void CParticleSystem::_getObject( void **ppObject ) const
+        catch( std::exception &e )
         {
-             *ppObject = m_particleSystem;
+            FB_LOG_EXCEPTION( e );
         }
+    }
 
-    }  // namespace render
-}  // end namespace fb
+    auto CParticleSystem::clone( const String &name ) const -> SmartPtr<IGraphicsObject>
+    {
+        return nullptr;
+    }
+
+    void CParticleSystem::_getObject( void **ppObject ) const
+    {
+        *ppObject = m_particleSystem;
+    }
+
+}  // namespace fb::render

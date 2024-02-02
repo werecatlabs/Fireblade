@@ -38,6 +38,8 @@
 #include <FBCore/Interface/Sound/ISoundManager.h>
 #include <FBCore/Interface/System/IAsyncOperation.h>
 #include <FBCore/Interface/System/IConsole.h>
+#include <FBCore/Interface/System/IEvent.h>
+#include <FBCore/Interface/System/IEventListener.h>
 #include <FBCore/Interface/System/IFactoryManager.h>
 #include <FBCore/Interface/System/IJobQueue.h>
 #include <FBCore/Interface/System/IProfiler.h>
@@ -57,8 +59,10 @@
 #include <algorithm>
 #include <cstdio>
 
+#include "FBCore/Jobs/EventJob.h"
+
 #if FB_ENABLE_MEMORY_TRACKER
-#include <boost/stacktrace/stacktrace.hpp>
+#    include <boost/stacktrace/stacktrace.hpp>
 #endif
 
 namespace fb::core
@@ -1219,6 +1223,15 @@ namespace fb::core
             return stateContext->triggerEvent( eventType, eventValue, arguments, sender, object, event );
         }
 
+        if( auto p = getObjectListenersPtr() )
+        {
+            auto &listeners = *p;
+            for( auto &listener : listeners )
+            {
+                listener->handleEvent( eventType, eventValue, arguments, sender, object, event );
+            }
+        }
+
         return {};
     }
 
@@ -1246,6 +1259,16 @@ namespace fb::core
         objects.emplace_back( getGraphicsSystem() );
         objects.emplace_back( getCameraManager() );
         return objects;
+    }
+
+    Thread::Task ApplicationManager::getCurrentTask() const
+    {
+        return Thread::getCurrentTask();
+    }
+
+    void ApplicationManager::setCurrentTask( Thread::Task task )
+    {
+        return Thread::setCurrentTask( task );
     }
 
     auto ApplicationManager::allocateMemory( size_t size ) -> void *

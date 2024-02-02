@@ -345,7 +345,6 @@ namespace fb::editor
         }
     }
 
-
     void EditorApplication::unload( SmartPtr<ISharedObject> data )
     {
         try
@@ -1249,11 +1248,14 @@ namespace fb::editor
         auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
-        auto sceneManager = fb::make_ptr<scene::SceneManager>();
+        auto factoryManager = applicationManager->getFactoryManager();
+        FB_ASSERT( factoryManager );
+
+        auto sceneManager = factoryManager->make_ptr<scene::SceneManager>();
         applicationManager->setSceneManager( sceneManager );
         sceneManager->load( nullptr );
 
-        auto scene = fb::make_ptr<scene::Scene>();
+        auto scene = factoryManager->make_ptr<scene::Scene>();
         scene->load( nullptr );
         scene->setLabel( "Untitled" );
         sceneManager->setCurrentScene( scene );

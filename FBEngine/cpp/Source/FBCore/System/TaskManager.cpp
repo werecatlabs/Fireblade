@@ -450,6 +450,14 @@ namespace fb
         return m_states[id];
     }
 
+    void TaskManager::addJobAllTasks( SmartPtr<IJob> job )
+    {
+        for( auto &task : m_tasks )
+        {
+            task->addJob( job );
+        }
+    }
+
     auto TaskManager::getTasks() const -> Array<SmartPtr<ITask>>
     {
         return Array<SmartPtr<ITask>>( m_tasks.begin(), m_tasks.end() );

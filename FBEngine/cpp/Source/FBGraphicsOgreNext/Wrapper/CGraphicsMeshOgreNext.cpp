@@ -3,7 +3,6 @@
 #include <FBGraphicsOgreNext/Wrapper/CSceneManagerOgreNext.h>
 #include <FBGraphicsOgreNext/Wrapper/CSceneNodeOgreNext.h>
 #include <FBGraphicsOgreNext/Wrapper/CAnimationControllerOgre.h>
-#include <FBGraphicsOgreNext/ShadowFrameListener.h>
 #include <FBGraphicsOgreNext/Wrapper/CMaterialOgreNext.h>
 #include <FBCore/FBCore.h>
 #include <OgreItem.h>
@@ -11,7 +10,6 @@
 #include <OgreMeshManager2.h>
 #include <OgreMesh2.h>
 #include <OgreEntity.h>
-#include <OgreSceneManager.h>
 #include <OgreSceneManager.h>
 #include <MeshLoader.h>
 
@@ -41,7 +39,7 @@ namespace fb::render
         destroyStateContext();
 
         const auto &loadingState = getLoadingState();
-        if(loadingState != LoadingState::Unloaded)
+        if( loadingState != LoadingState::Unloaded )
         {
             unload( nullptr );
         }
@@ -61,25 +59,25 @@ namespace fb::render
             auto task = Thread::getCurrentTask();
 
             const auto &loadingState = getLoadingState();
-            if(loadingState == LoadingState::Loaded && task == renderTask)
+            if( loadingState == LoadingState::Loaded && task == renderTask )
             {
-                if(index == -1)
+                if( index == -1 )
                 {
-                    if(m_entity)
+                    if( m_entity )
                     {
                         m_entity->setMaterialName( materialName.c_str() );
                     }
 
-                    if(auto item = getItem())
+                    if( auto item = getItem() )
                     {
                         auto material = materialManager->getByName( materialName );
-                        if(material)
+                        if( material )
                         {
                             auto pMaterial = fb::static_pointer_cast<CMaterialOgreNext>( material );
-                            if(pMaterial)
+                            if( pMaterial )
                             {
                                 auto datablock = pMaterial->getHlmsDatablock();
-                                if(datablock)
+                                if( datablock )
                                 {
                                     item->setDatablock( datablock );
                                 }
@@ -88,7 +86,7 @@ namespace fb::render
                             m_material = material;
 
                             auto materialStateObject = m_material->getStateContext();
-                            if(materialStateObject)
+                            if( materialStateObject )
                             {
                                 materialStateObject->addStateListener( m_materialStateListener );
                             }
@@ -97,10 +95,10 @@ namespace fb::render
                 }
                 else
                 {
-                    if(m_entity)
+                    if( m_entity )
                     {
                         auto subEntity = m_entity->getSubEntity( index );
-                        if(subEntity)
+                        if( subEntity )
                         {
                             subEntity->setMaterialName(
                                 materialName.c_str(),
@@ -108,19 +106,19 @@ namespace fb::render
                         }
                     }
 
-                    if(auto item = getItem())
+                    if( auto item = getItem() )
                     {
                         auto subItem = item->getSubItem( index );
-                        if(subItem)
+                        if( subItem )
                         {
                             auto material = materialManager->getByName( materialName );
-                            if(material)
+                            if( material )
                             {
                                 auto pMaterial = fb::static_pointer_cast<CMaterialOgreNext>( material );
-                                if(pMaterial)
+                                if( pMaterial )
                                 {
                                     auto datablock = pMaterial->getHlmsDatablock();
-                                    if(datablock)
+                                    if( datablock )
                                     {
                                         subItem->setDatablock( datablock );
                                     }
@@ -129,7 +127,7 @@ namespace fb::render
                                 m_materials[index] = material;
 
                                 auto materialStateObject = material->getStateContext();
-                                if(materialStateObject)
+                                if( materialStateObject )
                                 {
                                     materialStateObject->addStateListener( m_materialStateListener );
                                 }
@@ -144,23 +142,23 @@ namespace fb::render
                 message->setMaterialName( materialName );
                 message->setIndex( index );
 
-                if(auto stateContext = getStateContext())
+                if( auto stateContext = getStateContext() )
                 {
                     stateContext->addMessage( stateTask, message );
                 }
             }
         }
-        catch(std::exception &e)
+        catch( std::exception &e )
         {
             FB_LOG_EXCEPTION( e );
         }
     }
 
-    String CGraphicsMeshOgreNext::getMaterialName( s32 index ) const
+    auto CGraphicsMeshOgreNext::getMaterialName( s32 index ) const -> String
     {
-        if(auto material = getMaterial( index ))
+        if( auto material = getMaterial( index ) )
         {
-            if(auto handle = material->getHandle())
+            if( auto handle = material->getHandle() )
             {
                 return handle->getName();
             }
@@ -182,29 +180,29 @@ namespace fb::render
             auto stateTask = graphicsSystem->getStateTask();
             auto task = Thread::getCurrentTask();
 
-            if(isThreadSafe())
+            if( isThreadSafe() )
             {
-                if(material)
+                if( material )
                 {
-                    if(!material->isLoaded())
+                    if( !material->isLoaded() )
                     {
                         material->load( nullptr );
                     }
                 }
 
-                if(index == -1)
+                if( index == -1 )
                 {
                     //if( m_entity )
                     //{
                     //    m_entity->setMaterialName( materialName.c_str() );
                     //}
 
-                    if(auto item = getItem())
+                    if( auto item = getItem() )
                     {
-                        if(m_material)
+                        if( m_material )
                         {
                             auto materialStateObject = m_material->getStateContext();
-                            if(materialStateObject)
+                            if( materialStateObject )
                             {
                                 materialStateObject->removeStateListener( m_materialStateListener );
                             }
@@ -213,10 +211,10 @@ namespace fb::render
                         }
 
                         auto pMaterial = fb::static_pointer_cast<CMaterialOgreNext>( material );
-                        if(pMaterial)
+                        if( pMaterial )
                         {
                             auto datablock = pMaterial->getHlmsDatablock();
-                            if(datablock)
+                            if( datablock )
                             {
                                 item->setDatablock( datablock );
                             }
@@ -224,10 +222,10 @@ namespace fb::render
 
                         m_material = material;
 
-                        if(m_material)
+                        if( m_material )
                         {
                             auto materialStateObject = m_material->getStateContext();
-                            if(materialStateObject)
+                            if( materialStateObject )
                             {
                                 materialStateObject->addStateListener( m_materialStateListener );
                             }
@@ -238,16 +236,16 @@ namespace fb::render
                 }
                 else
                 {
-                    if(auto item = getItem())
+                    if( auto item = getItem() )
                     {
                         auto subItem = item->getSubItem( index );
-                        if(subItem)
+                        if( subItem )
                         {
                             auto currentMaterial = m_materials[index];
-                            if(currentMaterial)
+                            if( currentMaterial )
                             {
                                 auto materialStateObject = currentMaterial->getStateContext();
-                                if(materialStateObject)
+                                if( materialStateObject )
                                 {
                                     materialStateObject->removeStateListener( m_materialStateListener );
                                 }
@@ -256,10 +254,10 @@ namespace fb::render
                             }
 
                             auto pMaterial = fb::static_pointer_cast<CMaterialOgreNext>( material );
-                            if(pMaterial)
+                            if( pMaterial )
                             {
                                 auto datablock = pMaterial->getHlmsDatablock();
-                                if(datablock)
+                                if( datablock )
                                 {
                                     subItem->setDatablock( datablock );
                                 }
@@ -268,7 +266,7 @@ namespace fb::render
                             m_materials[index] = material;
 
                             auto materialStateObject = material->getStateContext();
-                            if(materialStateObject)
+                            if( materialStateObject )
                             {
                                 materialStateObject->addStateListener( m_materialStateListener );
                             }
@@ -284,21 +282,21 @@ namespace fb::render
                 message->setMaterial( material );
                 message->setIndex( index );
 
-                if(auto stateContext = getStateContext())
+                if( auto stateContext = getStateContext() )
                 {
                     stateContext->addMessage( stateTask, message );
                 }
             }
         }
-        catch(std::exception &e)
+        catch( std::exception &e )
         {
             FB_LOG_EXCEPTION( e );
         }
     }
 
-    SmartPtr<IMaterial> CGraphicsMeshOgreNext::getMaterial( s32 index ) const
+    auto CGraphicsMeshOgreNext::getMaterial( s32 index ) const -> SmartPtr<IMaterial>
     {
-        if(index < m_materials.size())
+        if( index < m_materials.size() )
         {
             return m_materials[index];
         }
@@ -306,7 +304,7 @@ namespace fb::render
         return nullptr;
     }
 
-    SmartPtr<IGraphicsObject> CGraphicsMeshOgreNext::clone( const String &name ) const
+    auto CGraphicsMeshOgreNext::clone( const String &name ) const -> SmartPtr<IGraphicsObject>
     {
         auto mesh = fb::make_ptr<CGraphicsMeshOgreNext>();
         auto data = toData();
@@ -316,11 +314,11 @@ namespace fb::render
 
     void CGraphicsMeshOgreNext::_getObject( void **ppObject ) const
     {
-        if(m_entity)
+        if( m_entity )
         {
             *ppObject = m_entity;
         }
-        else if(m_item)
+        else if( m_item )
         {
             *ppObject = m_item;
         }
@@ -335,9 +333,9 @@ namespace fb::render
         m_checkVertProcessing = true;
     }
 
-    SmartPtr<IAnimationController> CGraphicsMeshOgreNext::getAnimationController()
+    auto CGraphicsMeshOgreNext::getAnimationController() -> SmartPtr<IAnimationController>
     {
-        if(!m_animationController)
+        if( !m_animationController )
         {
             CAnimationControllerPtr animationController( new CAnimationController );
             animationController->Initialize( m_entity );
@@ -348,7 +346,7 @@ namespace fb::render
         return m_animationController;
     }
 
-    Ogre::v1::Entity *CGraphicsMeshOgreNext::getEntity() const
+    auto CGraphicsMeshOgreNext::getEntity() const -> Ogre::v1::Entity *
     {
         return m_entity;
     }
@@ -358,12 +356,12 @@ namespace fb::render
         m_hardwareAnimationEnabled = enabled;
     }
 
-    Ogre::MeshPtr CGraphicsMeshOgreNext::createMesh( const String &meshName )
+    auto CGraphicsMeshOgreNext::createMesh( const String &meshName ) -> Ogre::MeshPtr
     {
         try
         {
             Ogre::SceneManager *smgr = nullptr;
-            m_creator->_getObject( reinterpret_cast<void **>(&smgr) );
+            m_creator->_getObject( reinterpret_cast<void **>( &smgr ) );
 
             auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
@@ -374,16 +372,18 @@ namespace fb::render
 
             auto meshExtention = Path::getFileExtension( meshName );
             static const auto engineMeshExtention = String( ".fbmeshbin" );
-            if(meshExtention == engineMeshExtention)
+            static const auto ogreMeshExtention = String( ".mesh" );
+
+            if( meshExtention == engineMeshExtention )
             {
                 auto meshNameWithoutExtention = Path::getFileNameWithoutExtension( meshName );
                 auto resourceGroupName = Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME;
 
                 auto meshResult = meshManagerV2->getByName( meshName, resourceGroupName );
-                if(!meshResult)
+                if( !meshResult )
                 {
                     auto mesh = meshManagerV2->createManual( meshName, resourceGroupName );
-                    if(mesh)
+                    if( mesh )
                     {
                         MeshLoader::loadFBMesh( mesh, meshName );
                         return mesh;
@@ -392,28 +392,35 @@ namespace fb::render
                 else
                 {
                     auto mesh = meshManagerV2->load( meshName, resourceGroupName );
+                    if( !mesh )
+                    {
+                        auto fileName = Path::getFileNameWithoutExtension( meshName );
+                        mesh = meshManagerV2->load( fileName, resourceGroupName );
+                    }
+
                     return mesh;
                 }
             }
-            else
+            else if( meshExtention == ogreMeshExtention )
             {
                 auto meshManagerV1 = Ogre::v1::MeshManager::getSingletonPtr();
                 auto resourceGroupName = Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME;
 
                 auto meshResult = meshManagerV1->createOrRetrieve( meshName, resourceGroupName );
-                if(meshResult.second)
+                if( meshResult.second )
                 {
-                    auto planeMeshV1 = meshResult.first.dynamicCast<Ogre::v1::Mesh>();
+                    auto meshV1 = meshResult.first.dynamicCast<Ogre::v1::Mesh>();
 
-                    auto planeMesh = meshManagerV2->createManual( meshName, resourceGroupName );
-                    planeMesh->importV1( planeMeshV1.get(), false, false, false );
-                    return planeMesh;
+                    auto meshV2 = meshManagerV2->createManual( meshName, resourceGroupName );
+                    meshV2->importV1( meshV1.get(), false, false, false );
+                    return meshV2;
                 }
+
                 auto mesh = meshManagerV2->load( meshName, resourceGroupName );
                 return mesh;
             }
         }
-        catch(Ogre::Exception &e)
+        catch( Ogre::Exception &e )
         {
             auto error = e.getFullDescription();
             FB_LOG_ERROR( error );
@@ -440,21 +447,21 @@ namespace fb::render
 
             Ogre::SceneManager *smgr = nullptr;
 
-            if(auto creator = getCreator())
+            if( auto creator = getCreator() )
             {
-                creator->_getObject( reinterpret_cast<void **>(&smgr) );
+                creator->_getObject( reinterpret_cast<void **>( &smgr ) );
             }
 
             auto meshName = getMeshName();
-            if(!StringUtil::isNullOrEmpty( meshName ))
+            if( !StringUtil::isNullOrEmpty( meshName ) )
             {
                 auto mesh = createMesh( meshName );
-                if(!mesh)
+                if( !mesh )
                 {
                     FB_LOG_ERROR( "Unable to create mesh: " + meshName );
                 }
 
-                if(mesh)
+                if( mesh )
                 {
                     auto item = smgr->createItem( mesh );
                     setItem( item );
@@ -465,7 +472,7 @@ namespace fb::render
                 }
             }
 
-            if(auto item = getItem())
+            if( auto item = getItem() )
             {
                 auto numSubItems = item->getNumSubItems();
                 m_materials.resize( numSubItems );
@@ -473,7 +480,7 @@ namespace fb::render
 
             setLoadingState( LoadingState::Loaded );
         }
-        catch(Ogre::Exception &e)
+        catch( Ogre::Exception &e )
         {
             FB_LOG_ERROR( e.getFullDescription().c_str() );
         }
@@ -483,7 +490,7 @@ namespace fb::render
     {
         try
         {
-            if(isLoaded())
+            if( isLoaded() )
             {
                 setLoadingState( LoadingState::Unloading );
 
@@ -497,18 +504,18 @@ namespace fb::render
 
                 destroyStateContext();
 
-                if(m_creator)
+                if( m_creator )
                 {
                     SmartPtr<CSceneManagerOgreNext> smgr = m_creator.lock();
                     Ogre::SceneManager *ogreSmgr = smgr->getSceneManager();
 
-                    if(m_entity)
+                    if( m_entity )
                     {
                         m_entity->detachFromParent();
                         ogreSmgr->destroyEntity( m_entity );
                     }
 
-                    if(auto item = getItem())
+                    if( auto item = getItem() )
                     {
                         item->detachFromParent();
                         ogreSmgr->destroyItem( item );
@@ -518,7 +525,7 @@ namespace fb::render
 
                 //registerForUpdates( false );
 
-                if(m_materialStateListener)
+                if( m_materialStateListener )
                 {
                     m_materialStateListener->unload( data );
                     m_materialStateListener = nullptr;
@@ -532,13 +539,13 @@ namespace fb::render
                 setLoadingState( LoadingState::Unloaded );
             }
         }
-        catch(std::exception &e)
+        catch( std::exception &e )
         {
             FB_LOG_EXCEPTION( e );
         }
     }
 
-    Ogre::Item *CGraphicsMeshOgreNext::getItem() const
+    auto CGraphicsMeshOgreNext::getItem() const -> Ogre::Item *
     {
         return m_item;
     }
@@ -548,7 +555,7 @@ namespace fb::render
         m_item = item;
     }
 
-    String CGraphicsMeshOgreNext::getMeshName() const
+    auto CGraphicsMeshOgreNext::getMeshName() const -> String
     {
         return m_meshName;
     }
@@ -558,7 +565,7 @@ namespace fb::render
         m_meshName = meshName;
     }
 
-    SmartPtr<Properties> CGraphicsMeshOgreNext::getProperties() const
+    auto CGraphicsMeshOgreNext::getProperties() const -> SmartPtr<Properties>
     {
         auto properties = CGraphicsObjectOgreNext<IGraphicsMesh>::getProperties();
 
@@ -574,19 +581,19 @@ namespace fb::render
         properties->getPropertyValue( "MeshName", m_meshName );
     }
 
-    Array<SmartPtr<ISharedObject>> CGraphicsMeshOgreNext::getChildObjects() const
+    auto CGraphicsMeshOgreNext::getChildObjects() const -> Array<SmartPtr<ISharedObject>>
     {
         Array<SmartPtr<ISharedObject>> childObjects;
         childObjects.reserve( 4 );
 
-        if(m_material)
+        if( m_material )
         {
             childObjects.emplace_back( m_material );
         }
 
-        if(!m_materials.empty())
+        if( !m_materials.empty() )
         {
-            for(auto material : m_materials)
+            for( auto material : m_materials )
             {
                 childObjects.emplace_back( material );
             }
@@ -603,15 +610,15 @@ namespace fb::render
     {
         try
         {
-            if(material)
+            if( material )
             {
-                if(material == m_material)
+                if( material == m_material )
                 {
-                    if(auto item = getItem())
+                    if( auto item = getItem() )
                     {
                         auto pMaterial = fb::static_pointer_cast<CMaterialOgreNext>( material );
                         auto dataBlock = pMaterial->getHlmsDatablock();
-                        if(dataBlock)
+                        if( dataBlock )
                         {
                             item->setDatablock( dataBlock );
                         }
@@ -619,23 +626,23 @@ namespace fb::render
                 }
             }
 
-            for(size_t i = 0; i < m_materials.size(); ++i)
+            for( size_t i = 0; i < m_materials.size(); ++i )
             {
                 auto currentMaterial = m_materials[i];
 
-                if(material == currentMaterial)
+                if( material == currentMaterial )
                 {
-                    if(auto item = getItem())
+                    if( auto item = getItem() )
                     {
                         FB_ASSERT( i < item->getNumSubItems() );
                         auto subItem = item->getSubItem( i );
-                        if(subItem)
+                        if( subItem )
                         {
-                            if(material)
+                            if( material )
                             {
                                 auto pMaterial = fb::static_pointer_cast<CMaterialOgreNext>( material );
                                 auto dataBlock = pMaterial->getHlmsDatablock();
-                                if(dataBlock)
+                                if( dataBlock )
                                 {
                                     subItem->setDatablock( dataBlock );
                                 }
@@ -645,7 +652,7 @@ namespace fb::render
                 }
             }
         }
-        catch(std::exception &e)
+        catch( std::exception &e )
         {
             FB_LOG_EXCEPTION( e );
         }
@@ -689,7 +696,7 @@ namespace fb::render
         m_skeleton = skeleton;
     }
 
-    SmartPtr<ISkeleton> CGraphicsMeshOgreNext::getSkeleton() const
+    auto CGraphicsMeshOgreNext::getSkeleton() const -> SmartPtr<ISkeleton>
     {
         return m_skeleton;
     }
@@ -701,37 +708,37 @@ namespace fb::render
 
         FB_ASSERT( m_owner );
 
-        if(message->isExactly<StateMessageMaterialName>())
+        if( message->isExactly<StateMessageMaterialName>() )
         {
             auto materialMessage = fb::static_pointer_cast<StateMessageMaterialName>( message );
             auto materialName = materialMessage->getMaterialName();
             auto materialIndex = materialMessage->getIndex();
             m_owner->setMaterialName( materialName, materialIndex );
         }
-        else if(message->isExactly<StateMessageMaterial>())
+        else if( message->isExactly<StateMessageMaterial>() )
         {
             auto materialMessage = fb::static_pointer_cast<StateMessageMaterial>( message );
             auto material = materialMessage->getMaterial();
             auto materialIndex = materialMessage->getIndex();
             m_owner->setMaterial( material, materialIndex );
         }
-        else if(message->isExactly<StateMessageVisible>())
+        else if( message->isExactly<StateMessageVisible>() )
         {
             auto visibleMessage = fb::static_pointer_cast<StateMessageVisible>( message );
             auto bIsVisible = visibleMessage->isVisible();
             m_owner->setVisible( bIsVisible );
         }
-        else if(message->isExactly<StateMessageUIntValue>())
+        else if( message->isExactly<StateMessageUIntValue>() )
         {
             auto intValueMessage = fb::static_pointer_cast<StateMessageUIntValue>( message );
             auto type = intValueMessage->getType();
             auto value = intValueMessage->getValue();
 
-            if(type == RENDER_QUEUE_HASH)
+            if( type == RENDER_QUEUE_HASH )
             {
-                m_owner->setRenderQueueGroup( static_cast<u8>(value) );
+                m_owner->setRenderQueueGroup( static_cast<u8>( value ) );
             }
-            else if(type == VISIBILITY_FLAGS_HASH)
+            else if( type == VISIBILITY_FLAGS_HASH )
             {
                 m_owner->setVisibilityFlags( value );
             }
@@ -767,15 +774,15 @@ namespace fb::render
 
     void CGraphicsMeshOgreNext::MaterialStateListener::handleStateChanged( SmartPtr<IState> &state )
     {
-        if(auto owner = getOwner())
+        if( auto owner = getOwner() )
         {
-            if(owner->isLoaded())
+            if( owner->isLoaded() )
             {
                 auto materialObject = owner->getMaterial();
                 owner->materialLoaded( materialObject );
 
                 auto materials = owner->m_materials;
-                for(auto m : materials)
+                for( auto m : materials )
                 {
                     owner->materialLoaded( m );
                 }
@@ -786,16 +793,16 @@ namespace fb::render
     void CGraphicsMeshOgreNext::MaterialStateListener::handleStateChanged(
         const SmartPtr<IStateMessage> &message )
     {
-        if(auto owner = getOwner())
+        if( auto owner = getOwner() )
         {
-            if(message->isExactly<StateMessageLoad>())
+            if( message->isExactly<StateMessageLoad>() )
             {
                 auto stateMessageLoad = fb::static_pointer_cast<StateMessageLoad>( message );
                 auto eventType = stateMessageLoad->getType();
 
-                if(eventType == StateMessageLoad::LOADED_HASH)
+                if( eventType == StateMessageLoad::LOADED_HASH )
                 {
-                    if(owner->isLoaded())
+                    if( owner->isLoaded() )
                     {
                         auto materialObject = stateMessageLoad->getObject();
                         //owner->materialLoaded( materialObject );
@@ -809,7 +816,8 @@ namespace fb::render
     {
     }
 
-    SmartPtr<CGraphicsMeshOgreNext> CGraphicsMeshOgreNext::MaterialStateListener::getOwner() const
+    auto CGraphicsMeshOgreNext::MaterialStateListener::getOwner() const
+        -> SmartPtr<CGraphicsMeshOgreNext>
     {
         auto p = m_owner.load();
         return p.lock();
@@ -829,20 +837,24 @@ namespace fb::render
         m_owner = owner;
     }
 
-    SmartPtr<CGraphicsMeshOgreNext> CGraphicsMeshOgreNext::MaterialEventListener::getOwner() const
+    auto CGraphicsMeshOgreNext::MaterialEventListener::getOwner() const
+        -> SmartPtr<CGraphicsMeshOgreNext>
     {
         return m_owner;
     }
 
-    Parameter CGraphicsMeshOgreNext::MaterialEventListener::handleEvent(
-        IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
-        SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
+    auto CGraphicsMeshOgreNext::MaterialEventListener::handleEvent( IEvent::Type eventType,
+                                                                    hash_type eventValue,
+                                                                    const Array<Parameter> &arguments,
+                                                                    SmartPtr<ISharedObject> sender,
+                                                                    SmartPtr<ISharedObject> object,
+                                                                    SmartPtr<IEvent> event ) -> Parameter
     {
-        if(eventValue == IEvent::loadingStateChanged)
+        if( eventValue == IEvent::loadingStateChanged )
         {
-            if(auto owner = getOwner())
+            if( auto owner = getOwner() )
             {
-                if(owner->isLoaded())
+                if( owner->isLoaded() )
                 {
                     auto materialObject = fb::static_pointer_cast<IMaterial>( sender );
                     owner->materialLoaded( materialObject );
@@ -850,6 +862,6 @@ namespace fb::render
             }
         }
 
-        return Parameter();
+        return {};
     }
-} // namespace fb::render
+}  // namespace fb::render

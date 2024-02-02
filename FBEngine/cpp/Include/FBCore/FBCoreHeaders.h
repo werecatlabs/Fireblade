@@ -356,8 +356,7 @@
 #include <FBCore/Interface/Script/IScriptVariable.h>
 
 // sound
-#include <FBCore/Interface/Sound/ISound2.h>
-#include <FBCore/Interface/Sound/ISound3.h>
+#include <FBCore/Interface/Sound/ISound.h>
 #include <FBCore/Interface/Sound/ISoundEvent.h>
 #include <FBCore/Interface/Sound/ISoundEventGroup.h>
 #include <FBCore/Interface/Sound/ISoundEventParam.h>
@@ -642,6 +641,9 @@
 #include <FBCore/System/WorkerThread.h>
 #include <FBCore/System/WindowMessageData.h>
 
+#include <FBCore/Vehicle/VehicleBody.h>
+#include <FBCore/Vehicle/VehicleController.h>
 #include <FBCore/Vehicle/VehicleManager.h>
+#include <FBCore/Vehicle/WheelController.h>
 
 #endif  // FBCoreHeaders_h__

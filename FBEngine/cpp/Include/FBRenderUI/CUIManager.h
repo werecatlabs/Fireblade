@@ -133,7 +133,7 @@ namespace fb
 
             SmartPtr<IFactoryManager> m_factoryManager;
 
-            using SoundMap = std::map<String, SmartPtr<ISound2>>;
+            using SoundMap = std::map<String, SmartPtr<ISound>>;
             SoundMap m_sounds; // sounds
 
             using LayoutFileMap = std::map<String, String>;

@@ -5,7 +5,6 @@
 
 namespace fb
 {
-
     /** Simple vehicle controller implementation. */
     class VehicleController : public IVehicleController
     {
@@ -14,7 +13,7 @@ namespace fb
         VehicleController();
 
         /** Destructor. */
-        ~VehicleController();
+        ~VehicleController() override;
 
         /** @copydoc IVehicleController::load */
         void load( SmartPtr<ISharedObject> data ) override;
@@ -25,19 +24,19 @@ namespace fb
         /** @copydoc IVehicleController::update */
         void update() override;
 
-        void updateTransform();
+        void updateTransform() override;
 
         f32 getChannel( s32 idx ) const override;
         void setChannel( s32 idx, f32 channel ) override;
 
-        Vector3<real_Num> getScale() const;
+        Vector3<real_Num> getScale() const override;
 
         Vector3<real_Num> getPosition() const override;
 
         void setPosition( const Vector3<real_Num> &position ) override;
 
-        Quaternion<real_Num> getOrientation() const;
-        void setOrientation( const Quaternion<real_Num> &orientation );
+        Quaternion<real_Num> getOrientation() const override;
+        void setOrientation( const Quaternion<real_Num> &orientation ) override;
 
         bool isUserControlled() const override;
         void setUserControlled( bool val ) override;
@@ -84,12 +83,12 @@ namespace fb
         Vector3<real_Num> getCG() const override;
 
         /** @copydoc IVehicleController::setState */
-        virtual void setState( IVehicleController::State state ) override;
+        void setState( State state ) override;
 
         /** @copydoc IVehicleController::getState */
-        virtual IVehicleController::State getState() const override;
+        State getState() const override;
 
-        SmartPtr<IWheelController> getWheelController( u32 index ) const;
+        SmartPtr<IWheelController> getWheelController( u32 index ) const override;
 
     protected:
         void addForce( const Vector3<real_Num> &force );
@@ -98,7 +97,7 @@ namespace fb
 
         void clearForces();
 
-        Atomic<IVehicleController::State> m_vehicleState = IVehicleController::State::AWAKE;
+        Atomic<State> m_vehicleState = State::AWAKE;
 
         Transform3<real_Num> m_bodyTransform;
         Transform3<real_Num> m_worldTransform;
@@ -119,7 +118,6 @@ namespace fb
 
         Array<SmartPtr<IWheelController>> m_wheels;
     };
-
-}  // namespace fb
+} // namespace fb
 
 #endif  // VehicleController_h__

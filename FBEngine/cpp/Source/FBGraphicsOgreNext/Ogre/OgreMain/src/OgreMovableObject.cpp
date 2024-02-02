@@ -285,7 +285,12 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     const Matrix4& MovableObject::_getParentNodeFullTransform(void) const
     {
-        return mParentNode->_getFullTransform();
+        if (mParentNode)
+        {
+            return mParentNode->_getFullTransform();
+        }
+
+        return Matrix4::IDENTITY;
     }
     //-----------------------------------------------------------------------
     void MovableObject::setLocalAabb(const Aabb box)

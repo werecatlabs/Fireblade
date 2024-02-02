@@ -1,14 +1,12 @@
 #include <FBCore/FBCorePCH.h>
-#include "FBCore/State/Messages/StateMessageAnimationEnable.h"
+#include <FBCore/State/Messages/StateMessageAnimationEnable.h>
 #include <FBCore/System/RttiClassDefinition.h>
 
 namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageAnimationEnable, StateMessage );
 
-    StateMessageAnimationEnable::StateMessageAnimationEnable() : m_time( 0.f ), m_isEnabled( false )
-    {
-    }
+    StateMessageAnimationEnable::StateMessageAnimationEnable() = default;
 
     StateMessageAnimationEnable::~StateMessageAnimationEnable() = default;
 

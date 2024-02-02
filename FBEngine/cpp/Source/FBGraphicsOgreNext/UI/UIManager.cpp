@@ -142,15 +142,15 @@ namespace fb
             auto factoryManager = fb::make_ptr<FactoryManager>();
             setFactoryManager( factoryManager );
 
-            ApplicationUtil::addFactory<ui::UILayout>( factoryManager );
-            ApplicationUtil::addFactory<ui::UIText>( factoryManager );
-            ApplicationUtil::addFactory<ui::UIImage>( factoryManager );
-            ApplicationUtil::addFactory<ui::UISlider>( factoryManager );
-            ApplicationUtil::addFactory<ui::UIButton>( factoryManager );
-            ApplicationUtil::addFactory<ui::UIToggle>( factoryManager );
+            ApplicationUtil::addFactory<UILayout>( factoryManager );
+            ApplicationUtil::addFactory<UIText>( factoryManager );
+            ApplicationUtil::addFactory<UIImage>( factoryManager );
+            ApplicationUtil::addFactory<UISlider>( factoryManager );
+            ApplicationUtil::addFactory<UIButton>( factoryManager );
+            ApplicationUtil::addFactory<UIToggle>( factoryManager );
 
-            factoryManager->setPoolSizeByType<ui::UIButton>( 4 );
-            factoryManager->setPoolSizeByType<ui::UIImage>( 4 );
+            factoryManager->setPoolSizeByType<UIButton>( 4 );
+            factoryManager->setPoolSizeByType<UIImage>( 4 );
 
             struct ShaperSettings
             {
@@ -178,8 +178,8 @@ namespace fb
 
             auto applicationManager = core::ApplicationManager::instance();
             auto graphicsSystem = applicationManager->getGraphicsSystem();
-            auto sceneManager = graphicsSystem->getGraphicsScene();
-            FB_ASSERT( sceneManager );
+            //auto sceneManager = graphicsSystem->getGraphicsScene();
+            //FB_ASSERT( sceneManager );
 
             Ogre::String dataPath = applicationManager->getRenderMediaPath() + "/";
 
@@ -229,25 +229,14 @@ namespace fb
                                              Ogre::Vector2( static_cast<Ogre::Real>( canvasSize.x ),
                                                             static_cast<Ogre::Real>( canvasSize.y ) ) );
 
-            Ogre::SceneManager *smgr = nullptr;
-            sceneManager->_getObject( (void **)&smgr );
+            //Ogre::SceneManager *smgr = nullptr;
+            //sceneManager->_getObject( (void **)&smgr );
 
             //colibriManager = new Colibri::ColibriManager();
-            m_colibriManager->setOgre( root, root->getRenderSystem()->getVaoManager(), smgr );
+            //m_colibriManager->setOgre( root, root->getRenderSystem()->getVaoManager(), smgr );
+
             m_colibriManager->loadSkins(
                 ( resourcePath + "Materials/ColibriGui/Skins/DarkGloss/Skins.colibri.json" ).c_str() );
-
-            //createScene01();
-            //createScene02();
-
-            m_layoutWindow = m_colibriManager->createWindow( nullptr );
-            m_layoutWindow->setTransform( Ogre::Vector2( 0, 0 ), Ogre::Vector2( 1920, 1080 ) );
-            m_layoutWindow->setSkin( "EmptyBg" );
-            m_layoutWindow->setVisualsEnabled( false );
-            //m_layoutWindow->setColour( true, Ogre::ColourValue( 0, 0, 0, 0 ) );
-            m_layoutWindow->setHidden( false );
-            m_layoutWindow->setKeyboardNavigable( false );
-            m_layoutWindow->m_breadthFirst = true;
 
             auto inputMgr = applicationManager->getInputDeviceManager();
             if( inputMgr )
@@ -377,9 +366,17 @@ namespace fb
 
         void UIManager::update()
         {
+            //setupSceneManager();
+
+            //createLayoutWindow();
+
             if( m_colibriManager )
             {
-                m_layoutWindow->updateZOrderDirty();
+                if( m_layoutWindow )
+                {
+                    m_layoutWindow->updateZOrderDirty();
+                }
+
                 m_colibriManager->update( 1.0 / 60.0 );
             }
         }
@@ -469,414 +466,6 @@ namespace fb
             m_mainWindow = uiWindow;
         }
 
-        void UIManager::createScene02()
-        {
-            mainWindow = m_colibriManager->createWindow( nullptr );
-        }
-
-        void UIManager::createScene01()
-        {
-            auto applicationManager = core::ApplicationManager::instance();
-            auto graphicsSystem = applicationManager->getGraphicsSystem();
-            auto sceneManager = graphicsSystem->getGraphicsScene();
-
-            ////mCameraController = new CameraController( mGraphicsSystem, false );
-
-            //Vector2I canvasSize = Vector2I( 1280, 720 );
-
-            //auto root = Ogre::Root::getSingletonPtr();
-            ////Ogre::Window *window = mGraphicsSystem->getRenderWindow();
-
-            //auto resourcePath = applicationManager->getRenderMediaPath() + "/";
-
-            //const float aspectRatioColibri =
-            //    static_cast<float>( canvasSize.y ) / static_cast<float>( canvasSize.x );
-            //colibriManager->setCanvasSize( Ogre::Vector2( 1920.0f, 1920.0f * aspectRatioColibri ),
-            //                               Ogre::Vector2( canvasSize.x, canvasSize.y ) );
-
-            //Ogre::SceneManager *smgr = nullptr;
-            //sceneManager->_getObject( (void **)&smgr );
-
-            ////colibriManager = new Colibri::ColibriManager();
-            //colibriManager->setOgre( root, root->getRenderSystem()->getVaoManager(), smgr );
-            //colibriManager->loadSkins(
-            //    ( resourcePath + "Materials/ColibriGui/Skins/DarkGloss/Skins.colibri.json" ).c_str() );
-
-            // colibriManager->setTouchOnlyMode( true );
-
-            fullWindow = m_colibriManager->createWindow( nullptr );
-            mainWindow = m_colibriManager->createWindow( nullptr );
-            //mainWindow->setVisualsEnabled( false );
-            vertWindow = m_colibriManager->createWindow( nullptr );
-
-            mainWindow->setTransform( Ogre::Vector2( 0, 0 ), Ogre::Vector2( 450, 0 ) );
-            vertWindow->setTransform( Ogre::Vector2( m_colibriManager->getCanvasSize().x - 64, 0 ),
-                                      Ogre::Vector2( 64, 450 ) );
-
-            //When m_breadthFirst is set to true, it can cause significant performance
-            //increases for UI-heavy applications. But be sure you understand it i.e.
-            //it may not render correctly if your widgets have children and they overlap.
-            mainWindow->m_breadthFirst = true;
-            vertWindow->m_breadthFirst = true;
-
-            {
-                fullWindow->setSize( m_colibriManager->getCanvasSize() );
-                fullWindow->setSkin( "EmptyBg" );
-                fullWindow->setVisualsEnabled( false );
-                Colibri::Label *emojiText = m_colibriManager->createWidget<Colibri::Label>( fullWindow );
-                emojiText->setText(
-                    "By defining a BMP font you can easily use the private area\n"
-                    "to draw emoji-like icons. Big Coffe cup: \uE000 Pizza: \uE001\n"
-                    "This is a new line after emojis." );
-                emojiText->sizeToFit();
-                emojiText->setTopLeft( fullWindow->getSize() - emojiText->getSize() );
-            }
-
-            auto layout = new Colibri::LayoutLine( m_colibriManager );
-            //layout->addCell( &Colibri::LayoutSpacer::c_DefaultBlankSpacer );
-
-            Colibri::RadarChart *radarChart =
-                m_colibriManager->createWidget<Colibri::RadarChart>( mainWindow );
-            radarChart->m_minSize = Ogre::Vector2( 512, 512 );
-            const std::vector<Colibri::RadarChart::DataEntry> dataSeries = {
-                { 0.55f, 0.95f, "STR\n10" },
-                { 0.41f, 0.81f, "DEF\n5" },
-                { 0.65f, 0.7f, "HP\n100.00" },
-                { 0.4f, 0.9f, "MP\n50.00" },
-                { 0.75f, 0.85f, "CRT\n11" }
-            };
-            radarChart->setDataSeries( dataSeries, Colibri::RadarChart::LabelDisplayName );
-
-            button0 = m_colibriManager->createWidget<Colibri::Button>( mainWindow );
-            button0->m_minSize = Ogre::Vector2( 350, 64 );
-            button0->getLabel()->setText( "This \uE001 is a button" );
-            button0->sizeToFit();
-            layout->addCell( button0 );
-
-            toggleButton = m_colibriManager->createWidget<Colibri::ToggleButton>( mainWindow );
-            toggleButton->m_minSize = Ogre::Vector2( 350, 64 );
-            toggleButton->getLabel()->setText( "Toggle Button: Click me" );
-            layout->addCell( toggleButton );
-
-            checkbox0 = m_colibriManager->createWidget<Colibri::Checkbox>( mainWindow );
-            checkbox0->m_minSize = Ogre::Vector2( 350, 64 );
-            checkbox0->getButton()->getLabel()->setText( "This is a checkbox" );
-            layout->addCell( checkbox0 );
-
-            checkbox0 = m_colibriManager->createWidget<Colibri::Checkbox>( mainWindow );
-            checkbox0->m_minSize = Ogre::Vector2( 350, 64 );
-            checkbox0->getButton()->getLabel()->setText( "Left-aligned checkbox" );
-            checkbox0->getButton()->getLabel()->setTextHorizAlignment(
-                Colibri::TextHorizAlignment::Natural );
-            layout->addCell( checkbox0 );
-
-            checkbox0 = m_colibriManager->createWidget<Colibri::Checkbox>( mainWindow );
-            checkbox0->m_minSize = Ogre::Vector2( 350, 64 );
-            checkbox0->setStateMode( Colibri::Checkbox::TriState );
-            checkbox0->getButton()->getLabel()->setText( "This is a tri-state checkbox" );
-            //		checkbox0->sizeToFit();
-            //		checkbox0->setSize( checkbox0->getSize() + Ogre::Vector2( 0, 32 ) );
-            layout->addCell( checkbox0 );
-
-            checkbox0 = m_colibriManager->createWidget<Colibri::Checkbox>( mainWindow );
-            checkbox0->m_minSize = Ogre::Vector2( 350, 64 );
-            checkbox0->getButton()->getLabel()->setText( "This checkbox has the tickmark outside" );
-            checkbox0->setCheckboxMode( Colibri::Checkbox::TickButton );
-            layout->addCell( checkbox0 );
-
-            // By setting a Checkbox into Checkbox::NoState mode, it turns into
-            // a Button that has an icon on the left or right (depending on Checkbox::setHorizWidgetDir)
-            checkbox0 = m_colibriManager->createWidget<Colibri::Checkbox>( mainWindow );
-            checkbox0->m_minSize = Ogre::Vector2( 350, 64 );
-            checkbox0->getButton()->getLabel()->setText( "This button has an image" );
-            checkbox0->setStateMode( Colibri::Checkbox::NoState );
-            checkbox0->setTickmarkSkin( 0u, "EmptyBg" );
-            layout->addCell( checkbox0 );
-
-#if 1
-            spinner0 = m_colibriManager->createWidget<Colibri::Spinner>( mainWindow );
-            spinner0->setTopLeft( Ogre::Vector2::ZERO );
-            spinner0->m_minSize = Ogre::Vector2( 350, 64 );
-            spinner0->getLabel()->setText( "Options" );
-            {
-                std::vector<std::string> options;
-                options.push_back( "Test" );
-                options.push_back( "Low" );
-                options.push_back( "Medium" );
-                options.push_back( "High" );
-                //options.push_back( "Double\nLine" );
-                //options.push_back( "Triple\nLine\n3x" );
-                spinner0->setOptions( options );
-            }
-            //spinner0->sizeToFit();
-            //spinner0->setFixedWidth( true, 0 );
-            layout->addCell( spinner0 );
-
-            spinner0 = m_colibriManager->createWidget<Colibri::Spinner>( mainWindow );
-            spinner0->setTopLeft( Ogre::Vector2::ZERO );
-            spinner0->m_minSize = Ogre::Vector2( 350, 64 );
-            spinner0->getLabel()->setText( "Numeric Spinner" );
-            layout->addCell( spinner0 );
-
-            spinner0 = m_colibriManager->createWidget<Colibri::Spinner>( mainWindow );
-            spinner0->setTopLeft( Ogre::Vector2::ZERO );
-            spinner0->m_minSize = Ogre::Vector2( 350, 64 );
-            spinner0->setFixedWidths( true, 0.0f, 0.0f );
-            spinner0->setHorizWidgetDir( Colibri::HorizWidgetDir::AutoRTL );
-            spinner0->getLabel()->setText( "This spinner is on the other side" );
-            layout->addCell( spinner0 );
-
-            editbox0 = m_colibriManager->createWidget<Colibri::Editbox>( mainWindow );
-            editbox0->m_minSize = Ogre::Vector2( 350, 64 );
-            editbox0->setText( "You can edit this text" );
-            editbox0->setPlaceholder( "Tooltip visible when empty" );
-            editbox0->m_expand[0] = true;
-            layout->addCell( editbox0 );
-
-            progressBar0 = m_colibriManager->createWidget<Colibri::Progressbar>( mainWindow );
-            progressBar0->m_minSize = Ogre::Vector2( 350, 64 );
-            progressBar0->setProgress( 0.75f );
-            layout->addCell( progressBar0 );
-
-            progressBar1 = m_colibriManager->createWidget<Colibri::Progressbar>( mainWindow );
-            progressBar1->m_minSize = Ogre::Vector2( 350, 64 );
-            progressBar1->setProgress( 0.75f );
-            progressBar1->setVertical( true );
-            progressBar1->getProgressLayer()->setColour( true, Ogre::ColourValue( 0.0f, 0.7f, 0.2f ) );
-            layout->addCell( progressBar1 );
-
-            slider1 = m_colibriManager->createWidget<Colibri::Slider>( mainWindow );
-            slider1->m_minSize = Ogre::Vector2( 350, 32 );
-            layout->addCell( slider1 );
-
-            sliderLabel = m_colibriManager->createWidget<Colibri::Label>( mainWindow );
-            sliderLabel->sizeToFit();
-            sliderLabel->m_minSize = Ogre::Vector2( 350, 32 );
-            layout->addCell( sliderLabel );
-
-            layout->addCell( radarChart );
-
-            {
-                const Colibri::LayoutCellVec &cells = layout->getCells();
-                auto itor = cells.begin();
-                auto end = cells.end();
-
-                while( itor != end )
-                {
-                    // Leave a margin between adjacents cells so they're not too tight each other
-                    ( *itor )->m_margin = 5.0f;
-                    // Expend the width of the widget to cover all of the width that is left
-                    // available to us. In this case the layout is vertical, thus each widget
-                    // is not competing for horizontal space with other widgets, so it will
-                    // expand to cover the whole width of the layout
-                    //
-                    // Note that if we expand, then m_gridLocation left/center/right settings become
-                    // useless
-                    //
-                    // Watch https://www.youtube.com/watch?v=4c9KD9-asaQ for better understanding
-                    // of how layouts work and how layouts can be nested to achieve what you want.
-                    // If video tutorials are too boring for you, adjust the playback speed to
-                    // 1.5x or 2.0x
-                    //
-                    // Colibri closely follows wxWidgets' layout models (not 100% exact though)
-                    // thus what is done in wxFormBuilder can easily be reproduced in Colibri.
-                    // Notice that wxFormBuilder has m_proportion and m_expand flags just like
-                    // Colibri, although Colibri extends these flags to both X and Y axes, while
-                    // wxWidgets alternates the meaning depending on whether the layout they belong to
-                    // is vertical or horizontal (which can be very counterintuitive on grid-like layouts)
-                    //
-                    // That also means sometimes the settings are ignored. e.g. (*itor)->m_proportion[0]
-                    // is ignored in a vertical LineLayout.
-                    ( *itor )->m_expand[0] = true;
-
-                    ++itor;
-                }
-            }
-
-            // Do not put slider2 in the layout
-            slider2 = m_colibriManager->createWidget<Colibri::Slider>( vertWindow );
-            slider2->m_minSize = Ogre::Vector2( 32, 320 );
-            slider2->setSize( slider2->m_minSize );
-            slider2->setVertical( true );
-
-            layout->setAdjustableWindow( mainWindow );
-            layout->m_hardMaxSize = m_colibriManager->getCanvasSize();
-
-            auto layoutW = new Colibri::LayoutLine( m_colibriManager );
-            layoutW->setCellSize( m_colibriManager->getCanvasSize() );
-            layoutW->addCell( &Colibri::LayoutSpacer::c_DefaultBlankSpacer );
-            layoutW->addCell( layout );
-            layoutW->layout();
-
-            //Overlapping windows
-            demoActionListener = new DemoWidgetListener();
-
-            auto layoutOverlapping = new Colibri::LayoutLine( m_colibriManager );
-            overlapWindow1 = m_colibriManager->createWindow( nullptr );
-            overlapWindow1->setTransform( Ogre::Vector2( 650, 250 ), Ogre::Vector2( 300, 300 ) );
-            overlapWindow1->setZOrder( 3 );
-
-            orderButtonBack = m_colibriManager->createWidget<Colibri::Button>( overlapWindow1 );
-            orderButtonBack->m_minSize = Ogre::Vector2( 350, 64 );
-            orderButtonBack->getLabel()->setText( "Send to back" );
-            orderButtonBack->sizeToFit();
-
-            orderButtonBack->addActionListener( demoActionListener );
-            orderButtonFront = m_colibriManager->createWidget<Colibri::Button>( overlapWindow1 );
-            orderButtonFront->m_minSize = Ogre::Vector2( 350, 64 );
-            orderButtonFront->getLabel()->setText( "Bring to front" );
-            orderButtonFront->sizeToFit();
-            orderButtonFront->addActionListener( demoActionListener );
-
-            overlapWindow2 = m_colibriManager->createWindow( nullptr );
-            overlapWindow2->setTransform( Ogre::Vector2( 750, 450 ), Ogre::Vector2( 300, 300 ) );
-            overlapWindow2->setZOrder( 4 );
-
-            layoutOverlapping->addCell( orderButtonBack );
-            layoutOverlapping->addCell( orderButtonFront );
-            layoutOverlapping->layout();
-
-            {
-                innerOverlapWindow1 = m_colibriManager->createWindow( overlapWindow2 );
-                innerOverlapWindow1->setTransform( Ogre::Vector2( 10, 10 ), Ogre::Vector2( 100, 100 ) );
-                innerOverlapWindow1->setZOrder( 1 );
-                innerOverlapWindow2 = m_colibriManager->createWindow( overlapWindow2 );
-                innerOverlapWindow2->setTransform( Ogre::Vector2( 20, 20 ), Ogre::Vector2( 100, 100 ) );
-                innerOverlapWindow2->setZOrder( 4 );
-
-                innerOverlapButton1 = m_colibriManager->createWidget<Colibri::Button>( overlapWindow2 );
-                innerOverlapButton1->getLabel()->setText( "First" );
-                innerOverlapButton1->setTransform( Ogre::Vector2( 150, 10 ), Ogre::Vector2( 100, 100 ) );
-                innerOverlapButton1->setZOrder( 1 );
-                innerOverlapButton2 = m_colibriManager->createWidget<Colibri::Button>( overlapWindow2 );
-                innerOverlapButton2->setTransform( Ogre::Vector2( 160, 20 ), Ogre::Vector2( 100, 100 ) );
-                innerOverlapButton2->setZOrder( 2 );
-                innerOverlapButton2->getLabel()->setText( "Second" );
-
-                innerToggleOrder = m_colibriManager->createWidget<Colibri::Button>( overlapWindow2 );
-                innerToggleOrder->m_minSize = Ogre::Vector2( 350, 64 );
-                innerToggleOrder->getLabel()->setText( "Switch order" );
-                innerToggleOrder->setTopLeft( Ogre::Vector2( 0, 120 ) );
-                innerToggleOrder->addActionListener( demoActionListener );
-                innerToggleOrder->sizeToFit();
-            }
-
-#    if 0
-		//Colibri::LayoutLine *layout = new Colibri::LayoutLine( colibriManager );
-		Colibri::LayoutMultiline *layout = new Colibri::LayoutMultiline( colibriManager );
-		//Colibri::LayoutTableSameSize *layout = new Colibri::LayoutTableSameSize( colibriManager );
-
-		layout->m_numLines = 2;
-		//layout->m_numColumns = 3;
-		//layout->m_transpose = false;
-		//layout->m_softMaxSize = mainWindow->getSizeAfterClipping();
-		//layout->m_evenMarginSpaceAtEdges = false;
-
-		//layout->m_vertical = false;
-
-		for( int i=0 ;i<4; ++i )
-		{
-			button1 = colibriManager->createWidget<Colibri::Button>( mainWindow );
-			button1->setTopLeft( Ogre::Vector2( 192, 192 + 192 + 480 + i * 480 ) );
-			//button1->setSize( i == 1 ? Ogre::Vector2( 288, 180 ) : Ogre::Vector2( 96, 54 ) );
-			button1->setSize( Ogre::Vector2( 288, 180 ) );
-			button1->getLabel()->setText( "Button " + Ogre::StringConverter::toString( i ) );
-
-			//button1->setState( Colibri::States::Disabled );
-
-			/*button1->m_proportion[0] = 1;
-			button1->m_proportion[1] = 1;*/
-			/*button1->m_expand[0] = true;
-			button1->m_expand[1] = true;*/
-
-			//layout->addCell( &Colibri::LayoutSpacer::c_DefaultBlankSpacer );
-			//layout->addCell( new Colibri::LayoutSpacer() );
-			button1->m_margin = Ogre::Vector2( 38 );
-			//button1->m_gridLocation = Colibri::GridLocations::BottomRight;
-			//button1->m_gridLocation = Colibri::GridLocations::TopRight;
-			//button1->m_gridLocation = Colibri::GridLocations::Top;
-			//button1->m_gridLocation = Colibri::GridLocations::TopLeft;
-			//button1->m_gridLocation = Colibri::GridLocations::Center;
-			layout->addCell( button1 );
-		}
-
-		//layout->addCell( &Colibri::LayoutSpacer::c_DefaultBlankSpacer );
-
-		layout->layout();
-#    endif
-
-#    if 0
-		Colibri::Label *label = colibriManager->createWidget<Colibri::Label>( mainWindow );
-		label->setText( "The path of the righteous man is beset on all sides by the iniquities\n"
-						"of the selfish and the tyranny of evil men. Blessed is he who, in the\n"
-						"name of charity and good will, shepherds the weak through the valley \n"
-						"of darkness, for he is truly his brother's keeper and the finder of \n"
-						"lost children. And I will strike down upon thee with great vengeance \n"
-						"and furious anger those who would attempt to poison and destroy My \n"
-						"brothers. And you will know My name is the Lord when I lay My \n"
-						"vengeance upon thee." );
-		/*label->setText( "The path of the righteous man is beset on all sides by the iniquities "
-						"of the selfish and the tyranny of evil men. Blessed is he who, in the "
-						"name of charity and good will, shepherds the weak through the valley "
-						"of darkness, for he is truly his brother's keeper and the finder of "
-						"lost children. And I will strike down upon thee with great vengeance "
-						"and furious anger those who would attempt to poison and destroy My "
-						"brothers. And you will know My name is the Lord when I lay My "
-						"vengeance upon thee." );*/
-//		label->setText( "The path of the righteous man is beset on all sides by the iniquities "
-//						"of the selfish and the tyranny of evil men. Blessed is he who, in the" );
-		//label->setText( "The path of the righteous man is beset on all sides by the iniquities" );
-		//label->setText( "\tHola qué tal?\t\tHola2\n  Hola qué tal?\tHola2\n" );
-		//label->setText( "H\nH" );
-		//label->setText( "\tHola\t\tQ\nQue Tal\nHola2\nHola3" );
-		//label->setText( "懶惰的姜貓懶惰的姜貓懶惰97\t的姜貓懶惰的姜貓懶惰的姜貓Hola\n懶惰的姜貓Hello\n懶惰的姜貓" );
-		//label->setText( "H\tH" );
-		//label->setText( "aaa\naaa\n\naga\nagaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" );
-		//label->setText( "Hello\t\tTest\nHello2\t\tTest" );
-		//label->setText( "\tHello\n    asd" );
-		//label->setText( "من أنا لاستجواب أولئك الذين يكتبونh\nola" );
-//		label->setText( "من أنا لاستجواب ""\n\r"
-//						"أولئك الذين يكتبونhola" );
-		{
-			/*std::ifstream file( "/home/matias/Desktop/Text2", std::ios::in|std::ios::binary );
-			file.seekg( 0, std::ios::end );
-			const size_t fileSize = file.tellg();
-			file.seekg( 0, std::ios::beg );
-			std::string text;
-			text.resize( fileSize );
-			file.read( &text[0], fileSize );*/
-			//label->setText( text );
-			//label->setText( "Hola\nQue tal sin paragraph?" );
-			//label->setText( "Hola\u2029\nQue tal?" );
-			//label->setText( "تجوستجوستجThisتجوستجوستج is a ستجو word ستجوستجوستجوستج" );
-			//label->setText( "الذي يحيي ذكرى احتجاجات مواطنين فلسطينيين من مدن" );
-		}
-		//label->setTextHorizAlignment( Colibri::TextHorizAlignment::Left );
-//		label->setTextVertAlignment( Colibri::TextVertAlignment::Center );
-		//label->setTextHorizAlignment( Colibri::TextHorizAlignment::Left );
-		//label->setText( "The path of the righteous man is beset on all sides by" );
-		label->setSize( mainWindow->getSizeAfterClipping() );
-		//label->setVertReadingDir( Colibri::VertReadingDir::ForceTTBLTR );
-//		label->sizeToFit( Colibri::States::Idle, 0.5f,
-//						  Colibri::TextHorizAlignment::Center, Colibri::TextVertAlignment::Center );
-		label->setShadowOutline( true, Ogre::ColourValue::Black, Ogre::Vector2( 1.0f ) );
-#    endif
-#endif
-
-            mainWindow->sizeScrollToFit();
-        }
-
-        void UIManager::destroyScene()
-        {
-            m_colibriManager->destroyWindow( fullWindow );
-            m_colibriManager->destroyWindow( mainWindow );
-            m_colibriManager->destroyWindow( vertWindow );
-            m_colibriManager->destroyWindow( overlapWindow1 );
-            m_colibriManager->destroyWindow( overlapWindow2 );
-            delete demoActionListener;
-            delete m_colibriManager;
-        }
-
         Colibri::ColibriManager *UIManager::getColibriManager() const
         {
             return m_colibriManager;
@@ -897,7 +486,7 @@ namespace fb
             m_layoutWindow = layoutWindow;
         }
 
-        fb::SmartPtr<fb::IFactoryManager> UIManager::getFactoryManager() const
+        SmartPtr<IFactoryManager> UIManager::getFactoryManager() const
         {
             return m_factoryManager;
         }
@@ -907,7 +496,7 @@ namespace fb
             m_factoryManager = factoryManager;
         }
 
-        fb::Array<fb::SmartPtr<fb::ui::IUIElement>> UIManager::getElements() const
+        Array<SmartPtr<IUIElement>> UIManager::getElements() const
         {
             RecursiveMutex::ScopedLock lock( m_mutex );
             return m_elements;
@@ -917,6 +506,52 @@ namespace fb
         {
             RecursiveMutex::ScopedLock lock( m_mutex );
             m_elements = elements;
+        }
+
+        SmartPtr<render::IGraphicsScene> UIManager::getGraphicsScene() const
+        {
+            return m_graphicsScene;
+        }
+
+        void UIManager::setGraphicsScene( SmartPtr<render::IGraphicsScene> graphicsScene )
+        {
+            m_graphicsScene = graphicsScene;
+
+            if( m_graphicsScene )
+            {
+                setupSceneManager( m_graphicsScene );
+                createLayoutWindow();
+            }
+        }
+
+        void UIManager::setupSceneManager( SmartPtr<render::IGraphicsScene> sceneManager )
+        {
+            if( sceneManager )
+            {
+                auto root = Ogre::Root::getSingletonPtr();
+
+                Ogre::SceneManager *smgr = nullptr;
+                sceneManager->_getObject( (void **)&smgr );
+
+                if( smgr )
+                {
+                    auto renderSystem = root->getRenderSystem();
+                    auto vaoManager = renderSystem->getVaoManager();
+                    m_colibriManager->setOgre( root, vaoManager, smgr );
+                }
+            }
+        }
+
+        void UIManager::createLayoutWindow()
+        {
+            m_layoutWindow = m_colibriManager->createWindow( nullptr );
+            m_layoutWindow->setTransform( Ogre::Vector2( 0, 0 ), Ogre::Vector2( 1920, 1080 ) );
+            m_layoutWindow->setSkin( "EmptyBg" );
+            m_layoutWindow->setVisualsEnabled( false );
+            //m_layoutWindow->setColour( true, Ogre::ColourValue( 0, 0, 0, 0 ) );
+            m_layoutWindow->setHidden( false );
+            m_layoutWindow->setKeyboardNavigable( false );
+            m_layoutWindow->m_breadthFirst = true;
         }
 
         Parameter UIManager::InputListener::handleEvent( IEvent::Type eventType, hash_type eventValue,

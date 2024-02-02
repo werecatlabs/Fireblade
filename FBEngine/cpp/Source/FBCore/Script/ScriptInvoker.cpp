@@ -4,18 +4,15 @@
 #include <FBCore/Interface/Script/IScriptEvent.h>
 #include <FBCore/Core/LogManager.h>
 #include <FBCore/Core/StringUtil.h>
-
 #include <utility>
 
 namespace fb
 {
 
-    ScriptInvoker::ScriptInvoker() : m_object( nullptr )
-    {
-    }
+    ScriptInvoker::ScriptInvoker() = default;
 
     ScriptInvoker::ScriptInvoker( SmartPtr<ISharedObject> scriptObject ) :
-        m_object( std::move( scriptObject ) )
+        m_object( scriptObject )
     {
     }
 

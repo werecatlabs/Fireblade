@@ -90,7 +90,6 @@ static XcbWindowMap gXcbWindowToOgre;
 
 namespace fb::render
 {
-
     FB_CLASS_REGISTER_DERIVED( fb::render, CGraphicsSystemOgreNext, GraphicsSystem );
 
     class RenderSystemListener : public Ogre::RenderSystem::Listener
@@ -129,6 +128,9 @@ namespace fb::render
             FB_ASSERT( applicationManager->isValid() );
 
             auto factoryManager = applicationManager->getFactoryManager();
+
+            m_eventListener = fb::make_ptr<GraphicsSystemEventListener>();
+            applicationManager->addObjectListener( m_eventListener );
 
             auto mediaPath = applicationManager->getMediaPath();
             applicationManager->setRenderMediaPath( mediaPath + "/OgreNext" );
@@ -273,6 +275,8 @@ namespace fb::render
             {
                 setLoadingState( LoadingState::Unloading );
 
+                auto applicationManager = core::ApplicationManager::instance();
+
                 while( !m_loadQueue.empty() )
                 {
                     SmartPtr<ISharedObject> obj;
@@ -412,6 +416,12 @@ namespace fb::render
                 FB_SAFE_DELETE( m_root );
                 FB_SAFE_DELETE( m_resourceLoadingListener );
                 FB_SAFE_DELETE( m_frameListener );
+
+                if( m_eventListener )
+                {
+                    applicationManager->removeObjectListener( m_eventListener );
+                    m_eventListener = nullptr;
+                }
 
                 setLoadingState( LoadingState::Unloaded );
             }
@@ -702,8 +712,6 @@ namespace fb::render
             debug->load( nullptr );
         }
 
-        loadObject( m_compositorManager.load() );
-
         return true;
     }
 
@@ -918,51 +926,51 @@ namespace fb::render
         {
             return 100000;
         }
-        else if( obj->isDerived<IResourceGroupManager>() )
+        if( obj->isDerived<IResourceGroupManager>() )
         {
             return 95000;
         }
-        else if( obj->isDerived<CompositorManager>() )
+        if( obj->isDerived<CompositorManager>() )
         {
             return 94000;
         }
-        else if( obj->isDerived<Compositor>() )
+        if( obj->isDerived<Compositor>() )
         {
             return 93000;
         }
-        else if( obj->isDerived<IGraphicsScene>() )
+        if( obj->isDerived<IGraphicsScene>() )
         {
             return 90000;
         }
-        else if( obj->isDerived<ISceneNode>() )
+        if( obj->isDerived<ISceneNode>() )
         {
             return 85000;
         }
-        else if( obj->isDerived<ICamera>() )
+        if( obj->isDerived<ICamera>() )
         {
             return 80000;
         }
-        else if( obj->isDerived<IMaterial>() )
+        if( obj->isDerived<IMaterial>() )
         {
             return 78000;
         }
-        else if( obj->isDerived<CompositorManager>() )
+        if( obj->isDerived<CompositorManager>() )
         {
             return 75000;
         }
-        else if( obj->isDerived<IGraphicsMesh>() )
+        if( obj->isDerived<IGraphicsMesh>() )
         {
             return 70000;
         }
-        else if( obj->isDerived<ILight>() )
+        if( obj->isDerived<ILight>() )
         {
             return 65000;
         }
-        else if( obj->isDerived<IOverlayElement>() )
+        if( obj->isDerived<IOverlayElement>() )
         {
             return 1000;
         }
-        else if( obj->isDerived<ui::IUIManager>() )
+        if( obj->isDerived<ui::IUIManager>() )
         {
             return 1000;
         }
@@ -979,6 +987,14 @@ namespace fb::render
             if( isLoaded() )
             {
                 setUpdating( true );
+
+                if( auto compositorManager = getCompositorManager() )
+                {
+                    if( !compositorManager->isLoaded() )
+                    {
+                        compositorManager->load( nullptr );
+                    }
+                }
 
                 FB_ASSERT( getResourceGroupManager() );
                 FB_ASSERT( getResourceGroupManager() && getResourceGroupManager()->isLoaded() );
@@ -1051,16 +1067,16 @@ namespace fb::render
 
                 if( !m_unloadQueue.empty() )
                 {
-                    auto loadArray = Array<SmartPtr<ISharedObject>>();
-                    loadArray.reserve( 10 );
+                    auto unloadArray = Array<SmartPtr<ISharedObject>>();
+                    unloadArray.reserve( 10 );
 
                     SmartPtr<ISharedObject> obj;
                     while( m_unloadQueue.try_pop( obj ) )
                     {
-                        loadArray.push_back( obj );
+                        unloadArray.push_back( obj );
                     }
 
-                    for( auto loadObj : loadArray )
+                    for( auto loadObj : unloadArray )
                     {
                         loadObj->unload( nullptr );
                     }
@@ -1253,6 +1269,7 @@ namespace fb::render
     {
         //auto compositorManager = getCompositorManager();
         //FB_ASSERT( compositorManager );
+
         //compositorManager->setSceneManager( sceneManager );
         //compositorManager->setWindow( window );
         //compositorManager->setCamera( camera );
@@ -1317,27 +1334,26 @@ namespace fb::render
 
     void CGraphicsSystemOgreNext::loadObject( SmartPtr<ISharedObject> graphicsObject, bool forceQueue )
     {
-#if 0
-        if( graphicsObject )
-        {
-            RecursiveMutex::ScopedLock lock( m_mutex );
+        auto applicationManager = core::ApplicationManager::instance();
+        auto taskManager = applicationManager->getTaskManager();
+        auto renderTask = taskManager->getTask( Thread::Task::Render );
 
-            if( !graphicsObject->isLoaded() )
+        if( forceQueue || renderTask->isExecuting() )
+        {
+            const auto &graphicsObjectLoadingState = graphicsObject->getLoadingState();
+            if( !( graphicsObjectLoadingState == LoadingState::Loading ||
+                   graphicsObjectLoadingState == LoadingState::Loaded ) )
             {
-                graphicsObject->load( nullptr );
+                m_loadQueue.push( graphicsObject );
             }
         }
-#else
-        FB_ASSERT( graphicsObject );
-
-        const auto &loadingState = getLoadingState();
-        if( loadingState == LoadingState::Loaded )
+        else
         {
             auto stateTask = getStateTask();
             auto renderTask = getRenderTask();
             auto task = Thread::getCurrentTask();
 
-            if( forceQueue || task != stateTask )
+            if( task != stateTask )
             {
                 const auto &graphicsObjectLoadingState = graphicsObject->getLoadingState();
                 if( !( graphicsObjectLoadingState == LoadingState::Loading ||
@@ -1348,22 +1364,14 @@ namespace fb::render
             }
             else
             {
+                RecursiveMutex::ScopedLock lock( m_mutex );
+
                 if( !graphicsObject->isLoaded() )
                 {
                     graphicsObject->load( nullptr );
                 }
             }
         }
-        else
-        {
-            const auto &graphicsObjectLoadingState = graphicsObject->getLoadingState();
-            if( !( graphicsObjectLoadingState == LoadingState::Loading ||
-                   graphicsObjectLoadingState == LoadingState::Loaded ) )
-            {
-                m_loadQueue.push( graphicsObject );
-            }
-        }
-#endif
     }
 
     void CGraphicsSystemOgreNext::unloadObject( SmartPtr<ISharedObject> graphicsObject, bool forceQueue )
@@ -2203,4 +2211,51 @@ namespace fb::render
         }
     }  // namespace Ogre
 #endif
+
+    void CGraphicsSystemOgreNext::GraphicsSystemEventListener::setOwner(
+        SmartPtr<CGraphicsSystemOgreNext> owner )
+    {
+        m_owner = owner;
+    }
+
+    auto CGraphicsSystemOgreNext::GraphicsSystemEventListener::getOwner() const
+        -> SmartPtr<CGraphicsSystemOgreNext>
+    {
+        return m_owner;
+    }
+
+    auto CGraphicsSystemOgreNext::GraphicsSystemEventListener::handleEvent(
+        IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
+        SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
+        -> Parameter
+    {
+        auto task = Thread::getCurrentTask();
+        if( task == Thread::Task::Render )
+        {
+            if( eventValue == IEvent::loadingStateChanged )
+            {
+                if( arguments[1].getS32() == static_cast<s32>( LoadingState::Loaded ) )
+                {
+                    if( sender->isDerived<render::CSceneManagerOgreNext>() )
+                    {
+                        auto sceneManager =
+                            fb::static_pointer_cast<render::CSceneManagerOgreNext>( sender );
+
+                        auto applicationManager = core::ApplicationManager::instance();
+                        auto ui = applicationManager->getRenderUI();
+                        if( ui )
+                        {
+                            auto renderUI = fb::static_pointer_cast<ui::UIManager>( ui );
+                            renderUI->setGraphicsScene( sceneManager );
+                        }
+                    }
+                    else if( sender->isDerived<render::CSceneManagerOgreNext>() )
+                    {
+                    }
+                }
+            }
+        }
+
+        return {};
+    }
 }  // namespace fb::render

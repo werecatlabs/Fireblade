@@ -44,6 +44,8 @@ namespace fb
         /** @copydoc ISharedObject::update */
         void update() override;
 
+        void addJobAllTasks( SmartPtr<IJob> job );
+
         Array<SmartPtr<ITask>> getTasks() const override;
 
         void wait() override;

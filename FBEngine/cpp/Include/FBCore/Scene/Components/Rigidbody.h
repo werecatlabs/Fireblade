@@ -207,7 +207,7 @@ namespace fb
             SmartPtr<physics::IPhysicsMaterial3> m_material;
 
             /** @brief The mass space inertia tensor of the Rigidbody */
-            Vector3<real_Num> m_massSpaceInertiaTensor = Vector3<real_Num>( 1, 1, 1 );
+            Vector3<real_Num> m_massSpaceInertiaTensor = Vector3<real_Num>::unit();
 
             /** @brief The mass of the Rigidbody */
             real_Num m_mass = static_cast<real_Num>( 1000.0 );

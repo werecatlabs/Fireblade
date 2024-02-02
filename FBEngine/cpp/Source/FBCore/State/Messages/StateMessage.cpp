@@ -13,6 +13,9 @@ namespace fb
     const hash_type StateMessage::SET_CUBEMAP = StringUtil::getHash( "set_cubemap" );
     const hash_type StateMessage::SET_TEXTURES = StringUtil::getHash( "set_textures" );
 
+    StateMessage::StateMessage() = default;
+    StateMessage::~StateMessage() = default;
+
     void StateMessage::unload( SmartPtr<ISharedObject> data )
     {
         m_sender = nullptr;

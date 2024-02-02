@@ -1,8 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Sound/SoundManager.h>
 #include <FBCore/Interface/Sound/ISound.h>
-#include <FBCore/Interface/Sound/ISound2.h>
-#include <FBCore/Interface/Sound/ISound3.h>
 #include <FBCore/Interface/Sound/ISoundListener3.h>
 #include <FBCore/Interface/Resource/IResource.h>
 
@@ -13,17 +11,6 @@ namespace fb
     SoundManager::~SoundManager() = default;
 
     auto SoundManager::addSound( const String &name, bool loop /*= true */ ) -> SmartPtr<ISound>
-    {
-        return nullptr;
-    }
-
-    auto SoundManager::addSound2( const String &name, bool loop /*= true */ ) -> SmartPtr<ISound2>
-    {
-        return nullptr;
-    }
-
-    auto SoundManager::addSound3( const String &name, const Vector3F &position /*= Vector3F::zero()*/,
-                                  bool loop /*= true */ ) -> SmartPtr<ISound3>
     {
         return nullptr;
     }

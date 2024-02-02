@@ -305,7 +305,9 @@ namespace fb::scene
             if( !getMeshObject() )
             {
                 auto applicationManager = core::ApplicationManager::instance();
-                FB_ASSERT( applicationManager );
+                auto taskManager = applicationManager->getTaskManager();
+
+                auto renderLock = taskManager->lockTask( Thread::Task::Render );
 
                 auto graphicsSystem = applicationManager->getGraphicsSystem();
                 if( graphicsSystem )

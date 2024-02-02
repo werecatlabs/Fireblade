@@ -5,7 +5,6 @@
 #include <fstream>
 
 #include "FBAudio/Sound2.h"
-#include "FBAudio/Sound3.h"
 
 #if defined FB_PLATFORM_WIN32
 #    define FB_USE_WASAPI 0
@@ -514,51 +513,60 @@ namespace fb
         return false;
     }
 
-    SmartPtr<ISound2> FBAudioManager::addSound2( const String &name, bool bLoop )
+    SmartPtr<ISound> FBAudioManager::addSound( const String &name, bool bLoop )
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-
-        String filePath;
-
-        auto it = m_soundMap.find( name );
-        if( it != m_soundMap.end() )
-        {
-            filePath = it->second;
-        }
-        else
-        {
-            filePath = name;
-            FB_LOG_MESSAGE( "Sound", String( "Sound not found. Sound name: " ) + name );
-        }
-
-        auto sound2D = fb::make_ptr<Sound2>();
-        sound2D->Initialize( filePath, bLoop, false );
-        m_sounds2d.push_back( sound2D );
-        return sound2D;
+        return nullptr;
     }
 
-    SmartPtr<ISound3> FBAudioManager::addSound3( const String &name, const Vector3F &position,
-                                                 bool bLoop )
+    void FBAudioManager::removeSound( SmartPtr<ISound> sound )
     {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-
-        String filePath;
-
-        auto it = m_soundMap.find( name );
-        if( it != m_soundMap.end() )
-        {
-            filePath = it->second;
-        }
-        else
-        {
-            filePath = name;
-        }
-
-        auto sound3D = fb::make_ptr<Sound3>();
-        sound3D->Initialize( position, filePath, bLoop, false );
-        m_sounds3d.push_back( sound3D );
-        return sound3D;
     }
+
+    //SmartPtr<ISound2> FBAudioManager::addSound2( const String &name, bool bLoop )
+    //{
+    //    RecursiveMutex::ScopedLock lock( m_mutex );
+
+    //    String filePath;
+
+    //    auto it = m_soundMap.find( name );
+    //    if( it != m_soundMap.end() )
+    //    {
+    //        filePath = it->second;
+    //    }
+    //    else
+    //    {
+    //        filePath = name;
+    //        FB_LOG_MESSAGE( "Sound", String( "Sound not found. Sound name: " ) + name );
+    //    }
+
+    //    auto sound2D = fb::make_ptr<Sound2>();
+    //    sound2D->Initialize( filePath, bLoop, false );
+    //    m_sounds2d.push_back( sound2D );
+    //    return sound2D;
+    //}
+
+    //SmartPtr<ISound3> FBAudioManager::addSound3( const String &name, const Vector3F &position,
+    //                                             bool bLoop )
+    //{
+    //    RecursiveMutex::ScopedLock lock( m_mutex );
+
+    //    String filePath;
+
+    //    auto it = m_soundMap.find( name );
+    //    if( it != m_soundMap.end() )
+    //    {
+    //        filePath = it->second;
+    //    }
+    //    else
+    //    {
+    //        filePath = name;
+    //    }
+
+    //    auto sound3D = fb::make_ptr<Sound3>();
+    //    sound3D->Initialize( position, filePath, bLoop, false );
+    //    m_sounds3d.push_back( sound3D );
+    //    return sound3D;
+    //}
 
     SmartPtr<ISoundListener3> FBAudioManager::addListener3( const String &name,
                                                             const Vector3F &position )
@@ -610,74 +618,6 @@ namespace fb
         return nullptr;
     }
 
-    void FBAudioManager::setBGMusic( const String &file_path )
-    {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-
-        SmartPtr<ISound2> pBackGroundMusic = m_pBackGroundMusic;
-        if( pBackGroundMusic != nullptr )
-        {
-            //compare paths
-            //c8 FileName[260];
-            //extractFileName((c8*)file_path.c_str(), (c8*)FileName, 260);
-            //String fileName = FileName;
-            ////fileName = fileName.subString( 0, fileName.size() - 4 );
-
-            //if( !pBackGroundMusic->GetName()==(fileName) )
-            {
-                Remove2DSound( pBackGroundMusic );
-                pBackGroundMusic = addSound2( file_path, true );
-                pBackGroundMusic->play();
-            }
-        }
-        else
-        {
-            pBackGroundMusic = addSound2( file_path, true );
-            pBackGroundMusic->play();
-        }
-
-        m_pBackGroundMusic = pBackGroundMusic;
-    }
-
-    void FBAudioManager::setBGMusic( SmartPtr<ISound2> &bgMusic )
-    {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-
-        if( !m_pBackGroundMusic )
-        {
-            m_pBackGroundMusic = bgMusic;
-        }
-        else
-        {
-            m_pBackGroundMusic->stop();
-            //m_pBackGroundMusic->removeReference();
-        }
-    }
-
-    const SmartPtr<ISound2> &FBAudioManager::getBGMusic() const
-    {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-
-        return m_pBackGroundMusic;
-    }
-
-    SmartPtr<ISound2> &FBAudioManager::getBGMusic()
-    {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-
-        return m_pBackGroundMusic;
-    }
-
-    void FBAudioManager::stopBGMusic()
-    {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-
-        if( m_pBackGroundMusic != nullptr )
-        {
-            m_pBackGroundMusic->stop();
-        }
-    }
-
     void FBAudioManager::setVolume( f32 fVolume )
     {
     }
@@ -697,45 +637,9 @@ namespace fb
 
     void FBAudioManager::RemoveAll()
     {
-        m_sounds2d.clear();
-        m_sounds3d.clear();
+        //m_sounds2d.clear();
+        //m_sounds3d.clear();
         m_listeners.clear();
-    }
-
-    bool FBAudioManager::Remove2DSound( SmartPtr<ISound2> &pSoundEffect2D )
-    {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-
-        for( u32 i = 0; i < m_sounds2d.size(); ++i )
-        {
-            //FBFMODStudioSound2Ptr &pListedSoundEffect2D = m_sounds2d[i];
-            //if( pSoundEffect2D == pListedSoundEffect2D )
-            //{
-            //    pSoundEffect2D->stop();
-            //    //m_sounds2d.erase_element_index(i);
-            //    return true;
-            //}
-        }
-
-        return false;
-    }
-
-    bool FBAudioManager::Remove3DSound( SmartPtr<ISound3> &pSoundEffect3D )
-    {
-        RecursiveMutex::ScopedLock lock( m_mutex );
-
-        for( u32 i = 0; i < m_sounds3d.size(); i++ )
-        {
-            //FBFMODStudioSound3Ptr &pListedSoundEffect3D = m_sounds3d[i];
-            //if( pSoundEffect3D == pListedSoundEffect3D )
-            //{
-            //    pSoundEffect3D->stop();
-            //    //m_sounds3d.erase_element_index(i);
-            //    return true;
-            //}
-        }
-
-        return false;
     }
 
     const String &FBAudioManager::getType() const

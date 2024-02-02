@@ -61,10 +61,6 @@ namespace fb
 
             void setMainWindow( SmartPtr<IUIWindow> uiWindow ) override;
 
-            void createScene02();
-            void createScene01();
-            void destroyScene();
-
             Colibri::ColibriManager *getColibriManager() const;
 
             void setColibriManager( Colibri::ColibriManager *colibriManager );
@@ -80,6 +76,10 @@ namespace fb
             Array<SmartPtr<IUIElement>> getElements() const;
 
             void setElements( Array<SmartPtr<IUIElement>> elements );
+
+            SmartPtr<render::IGraphicsScene> getGraphicsScene() const;
+
+            void setGraphicsScene( SmartPtr<render::IGraphicsScene> graphicsScene );
 
             FB_CLASS_REGISTER_DECL;
 
@@ -101,6 +101,12 @@ namespace fb
                 AtomicSmartPtr<UIManager> m_owner;
             };
 
+            void setupSceneManager( SmartPtr<render::IGraphicsScene> sceneManager );
+
+            void createLayoutWindow();
+
+            SmartPtr<render::IGraphicsScene> m_graphicsScene;
+
             SmartPtr<IFactoryManager> m_factoryManager;
             SmartPtr<IEventListener> m_inputListener;
 
@@ -111,7 +117,7 @@ namespace fb
             Colibri::ColibriManager *m_colibriManager = nullptr;
             mutable RecursiveMutex m_mutex;
         };
-    } // namespace ui
-}     // namespace fb
+    }  // namespace ui
+}  // namespace fb
 
 #endif  // UIManager_h__

@@ -16,8 +16,8 @@ namespace fb
         static const hash_type SET_CUBEMAP;
         static const hash_type SET_TEXTURES;
 
-        StateMessage() = default;
-        ~StateMessage() override = default;
+        StateMessage();
+        ~StateMessage() override;
 
         void unload( SmartPtr<ISharedObject> data ) override;
 

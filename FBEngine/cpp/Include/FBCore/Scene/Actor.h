@@ -271,7 +271,7 @@ namespace fb
             bool isEnabled() const override;
 
             /** Used to know if the actor is enabled. */
-            void setEnabled( bool val ) override;
+            void setEnabled( bool enabled ) override;
 
             /** @copydoc IActor::isVisible */
             bool isVisible() const override;
@@ -283,7 +283,7 @@ namespace fb
             bool isDirty() const override;
 
             /** @copydoc IActor::setDirty */
-            void setDirty( bool val ) override;
+            void setDirty( bool dirty ) override;
 
             /** @copydoc ISharedObject::isValid */
             bool isValid() const override;

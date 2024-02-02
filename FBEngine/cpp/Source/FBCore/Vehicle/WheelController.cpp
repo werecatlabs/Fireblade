@@ -1,10 +1,9 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Vehicle/WheelController.h>
 #include <FBCore/Interface/Physics/IPhysicsShape3.h>
-#include <FBCore/Interface/Physics/IRigidbody3.h>
+#include <FBCore/Interface/Physics/IRigidBody3.h>
 #include <FBCore/Interface/Vehicle/IVehicleBody.h>
-#include <FBCore/Interface/Vehicle/IWheelController.h>
-#include "FBCore/Physics/RaycastHit.h"
+#include <FBCore/Physics/RaycastHit.h>
 #include <FBCore/Interface/System/ITimer.h>
 #include <FBCore/System/ApplicationManager.h>
 
@@ -12,22 +11,16 @@ namespace fb
 {
     WheelController::WheelController()
     {
-        hit = fb::make_ptr<physics::RaycastHit>();
-        hit->setCheckDynamic( false );
-        hit->setCheckStatic( true );
+        m_hit = fb::make_ptr<physics::RaycastHit>();
+        m_hit->setCheckDynamic( false );
+        m_hit->setCheckStatic( true );
     }
 
     WheelController::~WheelController() = default;
 
     void WheelController::update()
     {
-        auto applicationManager = core::ApplicationManager::instance();
-        auto timer = applicationManager->getTimer();
-
         auto task = Thread::getCurrentTask();
-        auto t = timer->getTime();
-        auto dt = timer->getDeltaTime();
-
         switch( task )
         {
         case Thread::Task::Physics:
@@ -61,21 +54,11 @@ namespace fb
 
     void WheelController::updateWheel()
     {
-        auto applicationManager = core::ApplicationManager::instance();
-        auto timer = applicationManager->getTimer();
-
-        auto task = Thread::getCurrentTask();
-        auto t = timer->getTime();
-        auto dt = timer->getDeltaTime();
-
-        auto vehicle = getOwner();
-        if( vehicle )
+        if( auto vehicle = getOwner() )
         {
             auto vehicleLocalTransform = vehicle->getLocalTransform();
             auto vehicleWorldTransform = vehicle->getWorldTransform();
             auto body = vehicle->getBody();
-
-            auto vehiclePos = vehicleWorldTransform.getPosition();
 
             auto localPos = m_localTransform.getPosition();
             auto pos = m_worldTransform.getPosition();
@@ -83,14 +66,14 @@ namespace fb
 
             auto onGround = false;
 
-            auto ray = Ray3<real_Num>( pos, -up );
+            auto ray = Ray3( pos, -up );
 
-            if( body->castWorldRay( ray, hit ) )
+            if( body->castWorldRay( ray, m_hit ) )
             {
-                auto hitDistance = hit->getDistance();
+                auto hitDistance = m_hit->getDistance();
                 if( hitDistance > std::numeric_limits<real_Num>::epsilon() )
                 {
-                    if( hitDistance < suspensionDistance + radius )
+                    if( hitDistance < m_suspensionDistance + m_radius )
                     {
                         onGround = true;
                     }
@@ -103,11 +86,11 @@ namespace fb
                 const Vector3<real_Num> gravity( 0.0, 9.81, 0.0 );
                 const auto mass = body->getMass();
                 auto fullCompressionSpringForce =
-                    mass * massFraction * static_cast<real_Num>( 2.0 ) * gravity.Y();
+                    mass * m_massFraction * static_cast<real_Num>( 2.0 ) * gravity.Y();
 
-                auto compression = suspensionDistance - ( hit->getDistance() - radius );
-                auto springForceMagnitude = compression * ( springForce + fullCompressionSpringForce );
-                auto dampingForceMagnitude = -damping * wheelVelocity.y;
+                auto compression = m_suspensionDistance - ( m_hit->getDistance() - m_radius );
+                auto springForceMagnitude = compression * ( m_springForce + fullCompressionSpringForce );
+                auto dampingForceMagnitude = -m_damping * m_wheelVelocity.y;
                 auto totalForceMagnitude = springForceMagnitude + dampingForceMagnitude;
 
                 // Apply the force to the car's Rigidbody.
@@ -127,7 +110,7 @@ namespace fb
                 body->addLocalForceAtLocalPosition( frictionForce, localPos );
 
                 // Update the wheel's linear velocity.
-                wheelVelocity = groundVelocity;
+                m_wheelVelocity = groundVelocity;
             }
         }
     }
@@ -165,11 +148,12 @@ namespace fb
 
     auto WheelController::getRadius() const -> real_Num
     {
-        return 0.0f;
+        return m_radius;
     }
 
     void WheelController::setRadius( real_Num radius )
     {
+        m_radius = radius;
     }
 
     auto WheelController::getSuspensionTravel() const -> real_Num
@@ -179,24 +163,27 @@ namespace fb
 
     void WheelController::setSuspensionTravel( real_Num suspensionTravel )
     {
+
     }
 
     auto WheelController::getDamping() const -> real_Num
     {
-        return 0.0f;
+        return m_damping;
     }
 
     void WheelController::setDamping( real_Num damping )
     {
+        m_damping = damping;
     }
 
     auto WheelController::getSuspensionDistance() const -> real_Num
     {
-        return 0.0f;
+        return m_suspensionDistance;
     }
 
     void WheelController::setSuspensionDistance( real_Num suspensionDistance )
     {
+        m_suspensionDistance = suspensionDistance;
     }
 
     auto WheelController::getSteeringAngle() const -> real_Num

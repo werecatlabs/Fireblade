@@ -10,31 +10,30 @@ namespace fb
     {
     public:
         StateFrameData();
-        StateFrameData( int videoBufferSize, int soundBufferSize );
+        StateFrameData( s32 videoBufferSize, s32 soundBufferSize );
         ~StateFrameData() override;
 
-        unsigned char *getVideoBuffer() const;
-        void setVideoBuffer( unsigned char *val );
+        u8 *getVideoBuffer() const;
+        void setVideoBuffer( u8 *val );
 
-        int getVideoBufferSize() const;
-        void setVideoBufferSize( int val );
+        s32 getVideoBufferSize() const;
+        void setVideoBufferSize( s32 val );
 
-        unsigned char *getSoundBuffer() const;
-        void setSoundBuffer( unsigned char *val );
+        u8 *getSoundBuffer() const;
+        void setSoundBuffer( u8 *val );
 
-        int getSoundBufferSize() const;
-        void setSoundBufferSize( int val );
+        s32 getSoundBufferSize() const;
+        void setSoundBufferSize( s32 val );
 
         FB_CLASS_REGISTER_DECL;
 
     protected:
-        unsigned char *m_videoBuffer;
-        unsigned char *m_soundBuffer;
-        int m_videoBufferSize;
-        int m_soundBufferSize;
+        u8 *m_videoBuffer = nullptr;
+        u8 *m_soundBuffer = nullptr;
+        s32 m_videoBufferSize = 0;
+        s32 m_soundBufferSize = 0;
     };
 
-    using StateFrameDataPtr = SmartPtr<StateFrameData>;
 }  // end namespace fb
 
 #endif  // StateFrameData_h__

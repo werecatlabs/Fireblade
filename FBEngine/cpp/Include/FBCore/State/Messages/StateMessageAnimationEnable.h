@@ -25,7 +25,7 @@ namespace fb
 
     protected:
         String m_name;
-        f32 m_time;
+        f32 m_time = 0.0f;
         bool m_isEnabled;
     };
 }  // end namespace fb

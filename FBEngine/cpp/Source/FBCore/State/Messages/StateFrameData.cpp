@@ -7,20 +7,14 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, StateFrameData, StateMessage );
 
-    StateFrameData::StateFrameData() :
-        m_videoBuffer( nullptr ),
-        m_soundBuffer( nullptr ),
-        m_videoBufferSize( 0 ),
-        m_soundBufferSize( 0 )
-    {
-    }
+    StateFrameData::StateFrameData() = default;
 
-    StateFrameData::StateFrameData( int videoBufferSize, int soundBufferSize )
+    StateFrameData::StateFrameData( s32 videoBufferSize, s32 soundBufferSize )
     {
         m_videoBuffer = static_cast<u8 *>( malloc( videoBufferSize ) );
         m_videoBufferSize = videoBufferSize;
 
-        m_soundBuffer = new unsigned char[soundBufferSize];
+        m_soundBuffer = new u8[soundBufferSize];
         m_soundBufferSize = soundBufferSize;
     }
 

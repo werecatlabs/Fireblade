@@ -5,6 +5,7 @@
 #include <FBCore/Graphics/GraphicsSystem.h>
 #include <FBCore/Interface/Graphics/IGraphicsSystem.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
+#include <FBCore/Interface/System/IEventListener.h>
 #include <OgreWindowEventUtilities.h>
 #include <OgreFrameListener.h>
 #include <FBCore/Core/Array.h>
@@ -17,7 +18,7 @@ namespace fb
 {
     namespace render
     {
-       
+
         /** Graphics system implementation to wrap ogre next functionality. */
         class CGraphicsSystemOgreNext : public GraphicsSystem
         {
@@ -53,7 +54,7 @@ namespace fb
             /** @copydoc IGraphicsSystem::getCompositorManager */
             SmartPtr<CompositorManager> getCompositorManager() const;
 
-            void setCompositorManager( SmartPtr<CompositorManager> compositorManager);
+            void setCompositorManager( SmartPtr<CompositorManager> compositorManager );
 
             /** @copydoc IGraphicsSystem::getResourceGroupManager */
             SmartPtr<IResourceGroupManager> getResourceGroupManager() const override;
@@ -151,12 +152,12 @@ namespace fb
 
             SmartPtr<IGraphicsSettings> createConfiguration() override;
 
-            SmartPtr<IDebug>& getDebug() override;
-            const SmartPtr<IDebug>& getDebug() const override;
+            SmartPtr<IDebug> &getDebug() override;
+            const SmartPtr<IDebug> &getDebug() const override;
             void setDebug( SmartPtr<IDebug> debug ) override;
 
-            RenderApi getRenderApi() const ;
-            void setRenderApi( RenderApi renderApi ) ;
+            RenderApi getRenderApi() const;
+            void setRenderApi( RenderApi renderApi );
 
             SmartPtr<IMeshConverter> getMeshConverter() const;
 
@@ -178,7 +179,7 @@ namespace fb
 
             SmartPtr<IFontManager> getFontManager() const override;
 
-            void setFontManager(SmartPtr<IFontManager> fontManager);
+            void setFontManager( SmartPtr<IFontManager> fontManager );
 
             void lock() override;
 
@@ -220,6 +221,23 @@ namespace fb
                 bool windowClosing( Ogre::RenderWindow *rw );
             };
 
+            class GraphicsSystemEventListener : public IEventListener
+            {
+            public:
+                GraphicsSystemEventListener() = default;
+
+                Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                       const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
+
+                SmartPtr<CGraphicsSystemOgreNext> getOwner() const;
+
+                void setOwner( SmartPtr<CGraphicsSystemOgreNext> owner );
+
+            protected:
+                SmartPtr<CGraphicsSystemOgreNext> m_owner;
+            };
+
             bool isUpdating() const;
             void setUpdating( bool val );
 
@@ -233,7 +251,8 @@ namespace fb
 
             void installPlugins( Ogre::Root *root );
 
-            
+            SmartPtr<GraphicsSystemEventListener> m_eventListener;
+
             SmartPtr<IFontManager> m_fontManager;
 
             RenderApi m_renderApi = RenderApi::None;
@@ -251,7 +270,7 @@ namespace fb
             AtomicSmartPtr<IOverlayManager> m_overlayMgr;
 
             ///
-            AtomicSmartPtr<CompositorManager> m_compositorManager;
+            SmartPtr<CompositorManager> m_compositorManager;
 
             ///
             AtomicSmartPtr<IResourceGroupManager> m_resGrpMgr;
@@ -322,7 +341,7 @@ namespace fb
 
             ///
             Array<SmartPtr<IDeferredShadingSystem>> m_deferredShadingSystems;
-            
+
             ///
             Array<SmartPtr<IGraphicsScene>> m_sceneManagers;
 

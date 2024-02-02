@@ -510,8 +510,6 @@ namespace fb
 
     // sound
     class ISound;
-    class ISound2;
-    class ISound3;
     class ISoundListener3;
     class ISoundManager;
     class ISoundPlayer;

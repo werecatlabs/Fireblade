@@ -79,6 +79,8 @@ namespace fb::render
     {
         try
         {
+            setLoadingState( LoadingState::Loading );
+
             auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
@@ -101,6 +103,8 @@ namespace fb::render
             //compositor->setCamera( this );
             //graphicsSystem->loadObject( compositor, true );
             //setCompositor( compositor );
+
+            setLoadingState( LoadingState::Loaded );
         }
         catch( std::exception &e )
         {
@@ -123,6 +127,7 @@ namespace fb::render
     {
         try
         {
+            setLoadingState( LoadingState::Unloaded );
         }
         catch( std::exception &e )
         {

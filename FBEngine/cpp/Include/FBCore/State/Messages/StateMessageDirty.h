@@ -5,12 +5,12 @@
 
 namespace fb
 {
-    //---------------------------------------------
+    
     class StateMessageDirty : public StateMessage
     {
     public:
-        StateMessageDirty() = default;
-        ~StateMessageDirty() override = default;
+        StateMessageDirty();
+        ~StateMessageDirty() override;
 
         bool isDirty() const;
         void setDirty( bool dirty );

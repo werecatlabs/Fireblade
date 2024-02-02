@@ -53,12 +53,6 @@ namespace fb
         */
         virtual bool getLoop() const = 0;
 
-        /** Gets the name of the sound.
-        @return
-        Returns the name of the sound.
-        */
-        virtual String getName() const = 0;
-
         /** Gets the spectrum from the sound.
         @param
         spectrum The spectrum data.

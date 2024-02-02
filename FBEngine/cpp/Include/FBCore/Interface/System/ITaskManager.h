@@ -34,6 +34,11 @@ namespace fb
         /** Virtual destructor. */
         ~ITaskManager() override = default;
 
+        /** Adds a job for processing.
+        @param job The job to be queued.
+        */
+        virtual void addJobAllTasks( SmartPtr<IJob> job ) = 0;
+
         /**
          * @brief Retrieves a task with the specified task ID.
          *

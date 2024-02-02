@@ -921,11 +921,6 @@ namespace fb::scene
 
     auto Rigidbody::getMassSpaceInertiaTensor() const -> Vector3<real_Num>
     {
-        if( m_rigidDynamic )
-        {
-            return m_rigidDynamic->getMassSpaceInertiaTensor();
-        }
-
         return m_massSpaceInertiaTensor;
     }
 

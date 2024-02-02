@@ -247,8 +247,6 @@ namespace fb
             String m_type;
             String m_name;
 
-            u32 nextRenderQueueUpdate;
-
             bool m_isClearing = false;
             bool m_enableShadows = false;
             bool m_depthShadows = false;

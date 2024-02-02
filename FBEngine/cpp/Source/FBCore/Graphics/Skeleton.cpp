@@ -1,6 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Graphics/Skeleton.h>
 #include <FBCore/Interface/Graphics/IBone.h>
+#include <FBCore/Core/Properties.h>
 
 namespace fb::render
 {

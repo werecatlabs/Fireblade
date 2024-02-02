@@ -43,6 +43,7 @@ namespace fb::editor
                 projectManager->addIncludeFolder( proprietaryPath + "/fireblade_proprietary/Libraries/cpp/Include" );
                 projectManager->addLibraryFolder( proprietaryPath + "/fireblade_proprietary/libs" );
                 projectManager->addLibrary("FBApplication");
+                projectManager->addLibrary("FBVehicle");
 
                 projectManager->generateProject();
             }

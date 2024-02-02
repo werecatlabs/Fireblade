@@ -4,7 +4,7 @@
 namespace fb
 {
 
-    FB_CLASS_REGISTER_DERIVED( fb, Sound2, ISound2 );
+    FB_CLASS_REGISTER_DERIVED( fb, Sound2, ISound );
 
     Sound2::Sound2()
     {

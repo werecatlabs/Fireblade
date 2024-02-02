@@ -8,14 +8,14 @@
 namespace fb
 {
 
-    SmartPtr<ISound2> _addSound2( ISoundManager *soundMgr, const char *name, bool loop )
+    SmartPtr<ISound> _addSound2( ISoundManager *soundMgr, const char *name, bool loop )
     {
-        return soundMgr->addSound2( name, loop );
+        return soundMgr->addSound( name, loop );
     }
 
-    SmartPtr<ISound3> _addSound3( ISoundManager *soundMgr, const char *name )
+    SmartPtr<ISound> _addSound3( ISoundManager *soundMgr, const char *name )
     {
-        return soundMgr->addSound3( name );
+        return soundMgr->addSound( name );
     }
 
     //
@@ -97,11 +97,6 @@ namespace fb
                         .def( "setLoop", &ISound::setLoop )
                         .def( "getLoop", &ISound::getLoop )
                         .def( "getName", &ISound::getName )];
-
-        module(
-            L )[class_<ISound2, ISound, SmartPtr<ISound>>( "Sound2" ).def( "setPan", &ISound2::setPan )];
-
-        module( L )[class_<ISound3, ISound, SmartPtr<ISound>>( "Sound3" )];
 
         module( L )[class_<ISoundManager, ISharedObject, SmartPtr<ISoundManager>>( "SoundManager" )
                         .def( "addSound2", _addSound2 )

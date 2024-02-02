@@ -28,24 +28,11 @@ namespace fb
          */
         virtual SmartPtr<ISound> addSound( const String &name, bool loop = true ) = 0;
 
-        /**
-         * @brief Adds a 2D sound to the sound manager.
-         * @param name The name of the sound (can also be a file path).
-         * @param loop A boolean indicating whether the sound loops.
-         * @return A shared pointer to the 2D sound.
-         */
-        virtual SmartPtr<ISound2> addSound2( const String &name, bool loop = true ) = 0;
-
-        /**
-         * @brief Adds a 3D sound to the sound manager.
-         * @param name The name of the sound (can also be a file path).
-         * @param position The initial position of the sound in 3D world space.
-         * @param loop A boolean indicating whether the sound loops.
-         * @return A shared pointer to the 3D sound.
-         */
-        virtual SmartPtr<ISound3> addSound3( const String &name,
-                                             const Vector3F &position = Vector3F::zero(),
-                                             bool loop = true ) = 0;
+        /** 
+        * @brief Remove a sound from the sound manager.
+        * @param sound The sound to remove.
+        */
+        virtual void removeSound( SmartPtr<ISound> sound ) = 0;
 
         /**
          * @brief Adds a sound listener to the sound manager.

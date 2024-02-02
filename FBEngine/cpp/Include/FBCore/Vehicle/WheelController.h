@@ -62,31 +62,31 @@ namespace fb
         void updateWheel();
 
         // The ray cast hit of the wheel.
-        SmartPtr<physics::IRaycastHit> hit;
+        SmartPtr<physics::IRaycastHit> m_hit;
 
         // The radius of the wheel.
-        real_Num radius = static_cast<real_Num>( 0.35 );
+        real_Num m_radius = static_cast<real_Num>( 0.35 );
 
         // The suspension distance.
-        real_Num suspensionDistance = static_cast<real_Num>( 0.52 );
+        real_Num m_suspensionDistance = static_cast<real_Num>( 0.52 );
 
         // The suspension spring force.
-        real_Num springForce = static_cast<real_Num>( 5000.0 );
+        real_Num m_springForce = static_cast<real_Num>( 5000.0 );
 
         // The suspension damping.
-        real_Num damping = static_cast<real_Num>( 1000.0 );
+        real_Num m_damping = static_cast<real_Num>( 1000.0 );
 
         // The mass fraction of the wheel.
-        real_Num massFraction = static_cast<real_Num>( 0.25 );
+        real_Num m_massFraction = static_cast<real_Num>( 0.25 );
 
         // The angular velocity of the wheel.
-        real_Num angularVelocity = static_cast<real_Num>( 0.0 );
+        real_Num m_angularVelocity = static_cast<real_Num>( 0.0 );
 
         // The steering angle of the wheel.
         real_Num m_steeringAngle = static_cast<real_Num>( 0.0 );
 
         // The linear velocity of the wheel.
-        Vector3<real_Num> wheelVelocity;
+        Vector3<real_Num> m_wheelVelocity;
 
         // To know if the wheel is a steering wheel.
         bool m_isSteeringWheel = false;

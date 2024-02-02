@@ -47,10 +47,7 @@ namespace fb::render
 
     u32 CSceneManagerOgreNext::m_nextGeneratedNameExt = 0;
 
-    CSceneManagerOgreNext::CSceneManagerOgreNext() :
-
-        nextRenderQueueUpdate( 0 ),
-        m_isClearing( false )
+    CSceneManagerOgreNext::CSceneManagerOgreNext() 
     {
         try
         {
@@ -106,10 +103,7 @@ namespace fb::render
         }
     }
 
-    CSceneManagerOgreNext::CSceneManagerOgreNext( Ogre::SceneManager *sceneManager ) :
-
-        nextRenderQueueUpdate( 0 ),
-        m_isClearing( false )
+    CSceneManagerOgreNext::CSceneManagerOgreNext( Ogre::SceneManager *sceneManager ) 
     {
         try
         {
@@ -313,9 +307,8 @@ namespace fb::render
             m_registeredSceneNodes = nullptr;
             m_registeredGfxObjects.clear();
 
-            if( m_sceneNodes )
+            if( auto pSceneNodes = getSceneNodes() )
             {
-                auto pSceneNodes = m_sceneNodes;
                 auto &sceneNodes = *pSceneNodes;
                 for( auto sceneNode : sceneNodes )
                 {
@@ -327,7 +320,7 @@ namespace fb::render
                     sceneNode->unload( nullptr );
                 }
 
-                m_sceneNodes = nullptr;
+                setSceneNodes( nullptr );
             }
 
             if( m_rootSceneNode )
@@ -401,7 +394,7 @@ namespace fb::render
         m_type = val;
     }
 
-    String CSceneManagerOgreNext::getName() const
+    auto CSceneManagerOgreNext::getName() const -> String
     {
         return m_name;
     }
@@ -411,7 +404,7 @@ namespace fb::render
         m_name = val;
     }
 
-    SmartPtr<IStateContext> CSceneManagerOgreNext::getStateContext() const
+    auto CSceneManagerOgreNext::getStateContext() const -> SmartPtr<IStateContext>
     {
         return m_stateContext;
     }
@@ -421,7 +414,7 @@ namespace fb::render
         m_stateContext = stateContext;
     }
 
-    SmartPtr<IGraphicsObject> CSceneManagerOgreNext::addGraphicsObjectByTypeId( u32 id )
+    auto CSceneManagerOgreNext::addGraphicsObjectByTypeId( u32 id ) -> SmartPtr<IGraphicsObject>
     {
         auto applicationManager = core::ApplicationManager::instance();
         auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -434,8 +427,8 @@ namespace fb::render
         return object;
     }
 
-    SmartPtr<IGraphicsObject> CSceneManagerOgreNext::addGraphicsObject( const String &name,
-                                                                        const String &type )
+    auto CSceneManagerOgreNext::addGraphicsObject( const String &name, const String &type )
+        -> SmartPtr<IGraphicsObject>
     {
         if( type == ( "Billboard" ) )
         {
@@ -471,7 +464,7 @@ namespace fb::render
         return nullptr;
     }
 
-    SmartPtr<IGraphicsObject> CSceneManagerOgreNext::addGraphicsObject( const String &type )
+    auto CSceneManagerOgreNext::addGraphicsObject( const String &type ) -> SmartPtr<IGraphicsObject>
     {
         auto name = getUniqueName( type );
         return addGraphicsObject( name, type );
@@ -510,7 +503,7 @@ namespace fb::render
         }
     }
 
-    bool CSceneManagerOgreNext::hasAnimation( const String &animationName )
+    auto CSceneManagerOgreNext::hasAnimation( const String &animationName ) -> bool
     {
         if( m_sceneManager )
         {
@@ -520,7 +513,7 @@ namespace fb::render
         return false;
     }
 
-    bool CSceneManagerOgreNext::destroyAnimation( const String &animationName )
+    auto CSceneManagerOgreNext::destroyAnimation( const String &animationName ) -> bool
     {
         if( m_sceneManager->hasAnimation( animationName.c_str() ) )
         {
@@ -536,7 +529,7 @@ namespace fb::render
         m_state->setAmbientLight( colour );
     }
 
-    bool CSceneManagerOgreNext::validateGfxObjName( const String &name ) const
+    auto CSceneManagerOgreNext::validateGfxObjName( const String &name ) const -> bool
     {
         if( name.length() == 0 )
         {
@@ -555,7 +548,7 @@ namespace fb::render
         return true;
     }
 
-    SmartPtr<ICamera> CSceneManagerOgreNext::addCamera( const String &name )
+    auto CSceneManagerOgreNext::addCamera( const String &name ) -> SmartPtr<ICamera>
     {
         try
         {
@@ -602,7 +595,7 @@ namespace fb::render
         return nullptr;
     }
 
-    SmartPtr<ICamera> CSceneManagerOgreNext::getCamera( const String &name )
+    auto CSceneManagerOgreNext::getCamera( const String &name ) -> SmartPtr<ICamera>
     {
         for( auto object : m_graphicsObjects )
         {
@@ -616,12 +609,12 @@ namespace fb::render
         return nullptr;
     }
 
-    SmartPtr<ICamera> CSceneManagerOgreNext::getCamera() const
+    auto CSceneManagerOgreNext::getCamera() const -> SmartPtr<ICamera>
     {
         return m_camera;
     }
 
-    SmartPtr<ICamera> CSceneManagerOgreNext::getActiveCamera() const
+    auto CSceneManagerOgreNext::getActiveCamera() const -> SmartPtr<ICamera>
     {
         return m_activeCamera;
     }
@@ -631,7 +624,7 @@ namespace fb::render
         m_activeCamera = camera;
     }
 
-    bool CSceneManagerOgreNext::hasCamera( const String &name )
+    auto CSceneManagerOgreNext::hasCamera( const String &name ) -> bool
     {
         for( auto object : m_graphicsObjects )
         {
@@ -645,7 +638,7 @@ namespace fb::render
         return false;
     }
 
-    SmartPtr<ILight> CSceneManagerOgreNext::addLight( const String &name )
+    auto CSceneManagerOgreNext::addLight( const String &name ) -> SmartPtr<ILight>
     {
         FB_ASSERT( validateGfxObjName( name ) );
 
@@ -663,7 +656,7 @@ namespace fb::render
         return light;
     }
 
-    SmartPtr<ILight> CSceneManagerOgreNext::getLight( const String &name ) const
+    auto CSceneManagerOgreNext::getLight( const String &name ) const -> SmartPtr<ILight>
     {
         for( auto object : m_graphicsObjects )
         {
@@ -677,44 +670,49 @@ namespace fb::render
         return nullptr;
     }
 
-    SmartPtr<ISceneNode> CSceneManagerOgreNext::getSceneNode( const String &name ) const
+    auto CSceneManagerOgreNext::getSceneNode( const String &name ) const -> SmartPtr<ISceneNode>
     {
-        auto pSceneNodes = m_sceneNodes;
-        auto &sceneNodes = *pSceneNodes;
-        for( auto sceneNode : sceneNodes )
+        if( auto pSceneNodes = getSceneNodes() )
         {
-            auto handle = sceneNode->getHandle();
-            if( handle->getName() == name )
+            auto &sceneNodes = *pSceneNodes;
+            for( auto sceneNode : sceneNodes )
             {
-                return sceneNode;
+                auto handle = sceneNode->getHandle();
+                if( handle->getName() == name )
+                {
+                    return sceneNode;
+                }
             }
         }
 
         return nullptr;
     }
 
-    SmartPtr<ISceneNode> CSceneManagerOgreNext::getSceneNodeById( hash32 id ) const
+    auto CSceneManagerOgreNext::getSceneNodeById( hash32 id ) const -> SmartPtr<ISceneNode>
     {
-        auto pSceneNodes = m_sceneNodes;
-        auto &sceneNodes = *pSceneNodes;
-        for( auto sceneNode : sceneNodes )
+        if( auto pSceneNodes = getSceneNodes() )
         {
-            auto handle = sceneNode->getHandle();
-            if( handle->getHash() == id )
+            auto &sceneNodes = *pSceneNodes;
+            for( auto sceneNode : sceneNodes )
             {
-                return sceneNode;
+                auto handle = sceneNode->getHandle();
+                if( handle->getHash() == id )
+                {
+                    return sceneNode;
+                }
             }
         }
 
         return nullptr;
     }
 
-    SmartPtr<ISceneNode> CSceneManagerOgreNext::getRootSceneNode() const
+    auto CSceneManagerOgreNext::getRootSceneNode() const -> SmartPtr<ISceneNode>
     {
         return m_rootSceneNode;
     }
 
-    SmartPtr<IGraphicsMesh> CSceneManagerOgreNext::addMesh( const String &name, const String &meshName )
+    auto CSceneManagerOgreNext::addMesh( const String &name, const String &meshName )
+        -> SmartPtr<IGraphicsMesh>
     {
         try
         {
@@ -743,7 +741,7 @@ namespace fb::render
         return nullptr;
     }
 
-    SmartPtr<IGraphicsMesh> CSceneManagerOgreNext::addMesh( const String &meshName )
+    auto CSceneManagerOgreNext::addMesh( const String &meshName ) -> SmartPtr<IGraphicsMesh>
     {
         try
         {
@@ -786,7 +784,7 @@ namespace fb::render
         return nullptr;
     }
 
-    SmartPtr<IGraphicsMesh> CSceneManagerOgreNext::createV1Mesh( const String &meshName )
+    auto CSceneManagerOgreNext::createV1Mesh( const String &meshName ) -> SmartPtr<IGraphicsMesh>
     {
         try
         {
@@ -873,7 +871,7 @@ namespace fb::render
         return nullptr;
     }
 
-    SmartPtr<IGraphicsMesh> CSceneManagerOgreNext::getMesh( const String &name ) const
+    auto CSceneManagerOgreNext::getMesh( const String &name ) const -> SmartPtr<IGraphicsMesh>
     {
         // GraphicsObjects::const_iterator it = m_graphicsObjects.find(name);
         // if( it != m_graphicsObjects.end() )
@@ -884,7 +882,8 @@ namespace fb::render
         return nullptr;
     }
 
-    SmartPtr<IBillboardSet> CSceneManagerOgreNext::addBillboardSet( const String &name, u32 poolSize )
+    auto CSceneManagerOgreNext::addBillboardSet( const String &name, u32 poolSize )
+        -> SmartPtr<IBillboardSet>
     {
         FB_ASSERT( validateGfxObjName( name ) );
 
@@ -897,7 +896,7 @@ namespace fb::render
         return billboardSet;
     }
 
-    SmartPtr<IBillboardSet> CSceneManagerOgreNext::getBillboardSet( const String &name )
+    auto CSceneManagerOgreNext::getBillboardSet( const String &name ) -> SmartPtr<IBillboardSet>
     {
         for( auto object : m_graphicsObjects )
         {
@@ -911,8 +910,8 @@ namespace fb::render
         return nullptr;
     }
 
-    SmartPtr<IParticleSystem> CSceneManagerOgreNext::addParticleSystem( const String &name,
-                                                                        const String &templateName )
+    auto CSceneManagerOgreNext::addParticleSystem( const String &name, const String &templateName )
+        -> SmartPtr<IParticleSystem>
     {
         FB_ASSERT( validateGfxObjName( name ) );
 
@@ -927,7 +926,8 @@ namespace fb::render
         return particleSystem;
     }
 
-    SmartPtr<IParticleSystem> CSceneManagerOgreNext::getParticleSystem( const String &name ) const
+    auto CSceneManagerOgreNext::getParticleSystem( const String &name ) const
+        -> SmartPtr<IParticleSystem>
     {
         for( auto object : m_graphicsObjects )
         {
@@ -941,15 +941,17 @@ namespace fb::render
         return nullptr;
     }
 
-    SmartPtr<IAnimationStateController> CSceneManagerOgreNext::createAnimationStateController()
+    auto CSceneManagerOgreNext::createAnimationStateController() -> SmartPtr<IAnimationStateController>
     {
         SmartPtr<IAnimationStateController>
             animStateCtrl;  // (new CAnimationStateController(this), true);
         return animStateCtrl;
     }
 
-    SmartPtr<IAnimationTextureControl> CSceneManagerOgreNext::createAnimationTextureCtrl(
-        SmartPtr<IMaterialTexture> textureUnit, bool clone, const String &clonedMaterialName )
+    auto CSceneManagerOgreNext::createAnimationTextureCtrl( SmartPtr<IMaterialTexture> textureUnit,
+                                                            bool clone,
+                                                            const String &clonedMaterialName )
+        -> SmartPtr<IAnimationTextureControl>
     {
         Ogre::TextureUnitState *textureUnitState = nullptr;
         // textureUnit->_getObject((void**)&textureUnitState);
@@ -961,35 +963,33 @@ namespace fb::render
         return animTextureCtrl;
     }
 
-    bool CSceneManagerOgreNext::removeSceneNode( SmartPtr<ISceneNode> sceneNode )
+    auto CSceneManagerOgreNext::removeSceneNode( SmartPtr<ISceneNode> sceneNode ) -> bool
     {
         if( m_isClearing )
         {
             return false;
         }
 
-        if( m_sceneNodes )
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto graphicsSystem = applicationManager->getGraphicsSystem();
+        FB_ASSERT( graphicsSystem );
+
+        ScopedLock lock( graphicsSystem );
+
+        if( auto pSceneNodes = getSceneNodes() )
         {
-            auto applicationManager = core::ApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto graphicsSystem = applicationManager->getGraphicsSystem();
-            FB_ASSERT( graphicsSystem );
-
-            ScopedLock lock( graphicsSystem );
-
-            auto pSceneNodes = m_sceneNodes;
             auto &sceneNodes = *pSceneNodes;
             auto sceneNodesArray = Array<SmartPtr<ISceneNode>>( sceneNodes.begin(), sceneNodes.end() );
 
-            auto it = std::find( sceneNodesArray.begin(), sceneNodesArray.end(), sceneNode );
+            auto it = sceneNodesArray.erase(
+                std::remove( sceneNodesArray.begin(), sceneNodesArray.end(), sceneNode ),
+                sceneNodesArray.end() );
             if( it != sceneNodesArray.end() )
             {
-                sceneNodesArray.erase( it );
-
-                auto newSceneNodes = fb::make_shared<ConcurrentArray<SmartPtr<ISceneNode>>>();
-                *newSceneNodes = ConcurrentArray<SmartPtr<ISceneNode>>( sceneNodesArray.begin(),
-                                                                        sceneNodesArray.end() );
+                auto newSceneNodes = fb::make_shared<ConcurrentArray<SmartPtr<ISceneNode>>>(
+                    sceneNodesArray.begin(), sceneNodesArray.end() );
                 setSceneNodes( newSceneNodes );
 
                 return true;
@@ -999,25 +999,25 @@ namespace fb::render
         return false;
     }
 
-    bool CSceneManagerOgreNext::removeGraphicsObject( SmartPtr<IGraphicsObject> graphicsObject )
+    auto CSceneManagerOgreNext::removeGraphicsObject( SmartPtr<IGraphicsObject> graphicsObject ) -> bool
     {
         if( m_isClearing )
         {
             return false;
         }
 
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto graphicsSystem = applicationManager->getGraphicsSystem();
+        FB_ASSERT( graphicsSystem );
+
+        ScopedLock lock( graphicsSystem );
+
         FB_ASSERT( graphicsObject );
 
         if( graphicsObject )
         {
-            auto applicationManager = core::ApplicationManager::instance();
-            FB_ASSERT( applicationManager );
-
-            auto graphicsSystem = applicationManager->getGraphicsSystem();
-            FB_ASSERT( graphicsSystem );
-
-            ScopedLock lock( graphicsSystem );
-
             graphicsSystem->unloadObject( graphicsObject );
 
             m_graphicsObjects.erase(
@@ -1030,7 +1030,7 @@ namespace fb::render
         return false;
     }
 
-    Array<SmartPtr<IGraphicsObject>> CSceneManagerOgreNext::getGraphicsObjects() const
+    auto CSceneManagerOgreNext::getGraphicsObjects() const -> Array<SmartPtr<IGraphicsObject>>
     {
         return m_graphicsObjects;
     }
@@ -1122,12 +1122,12 @@ namespace fb::render
         }
     }
 
-    bool CSceneManagerOgreNext::getEnableSkybox() const
+    auto CSceneManagerOgreNext::getEnableSkybox() const -> bool
     {
         return false;
     }
 
-    SmartPtr<ISceneNode> CSceneManagerOgreNext::addSceneNode()
+    auto CSceneManagerOgreNext::addSceneNode() -> SmartPtr<ISceneNode>
     {
         auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
@@ -1154,7 +1154,7 @@ namespace fb::render
         return sceneNode;
     }
 
-    SmartPtr<ISceneNode> CSceneManagerOgreNext::addSceneNode( const String &name )
+    auto CSceneManagerOgreNext::addSceneNode( const String &name ) -> SmartPtr<ISceneNode>
     {
         auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
@@ -1180,7 +1180,7 @@ namespace fb::render
         return sceneNode;
     }
 
-    SmartPtr<ISceneNode> CSceneManagerOgreNext::addStaticNode()
+    auto CSceneManagerOgreNext::addStaticNode() -> SmartPtr<ISceneNode>
     {
         auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
@@ -1208,7 +1208,7 @@ namespace fb::render
         m_registeredSceneNodes->push_back( sceneNode );
     }
 
-    bool CSceneManagerOgreNext::unregisteredForUpdates( SmartPtr<ISceneNode> sceneNode )
+    auto CSceneManagerOgreNext::unregisteredForUpdates( SmartPtr<ISceneNode> sceneNode ) -> bool
     {
         auto pSceneNodes = m_registeredSceneNodes;
         auto &sceneNodes = *pSceneNodes;
@@ -1226,7 +1226,7 @@ namespace fb::render
         return false;
     }
 
-    bool CSceneManagerOgreNext::unregisteredForUpdates( ISceneNode *sceneNode )
+    auto CSceneManagerOgreNext::unregisteredForUpdates( ISceneNode *sceneNode ) -> bool
     {
         auto pSceneNodes = m_registeredSceneNodes;
         auto &sceneNodes = *pSceneNodes;
@@ -1250,7 +1250,7 @@ namespace fb::render
         // m_registeredGfxObjects.push_back(gfxObject.get());
     }
 
-    bool CSceneManagerOgreNext::unregisteredForUpdates( SmartPtr<IGraphicsObject> gfxObject )
+    auto CSceneManagerOgreNext::unregisteredForUpdates( SmartPtr<IGraphicsObject> gfxObject ) -> bool
     {
         SpinRWMutex::ScopedLock lock( ListMutex );
         // return m_registeredGfxObjects.erase_element(gfxObject.get());
@@ -1258,7 +1258,7 @@ namespace fb::render
         return false;
     }
 
-    bool CSceneManagerOgreNext::unregisteredForUpdates( IGraphicsObject *gfxObject )
+    auto CSceneManagerOgreNext::unregisteredForUpdates( IGraphicsObject *gfxObject ) -> bool
     {
         SpinRWMutex::ScopedLock lock( ListMutex );
         // return m_registeredGfxObjects.erase_element(gfxObject);
@@ -1266,7 +1266,7 @@ namespace fb::render
         return false;
     }
 
-    Ogre::SceneManager *CSceneManagerOgreNext::getSceneManager() const
+    auto CSceneManagerOgreNext::getSceneManager() const -> Ogre::SceneManager *
     {
         return m_sceneManager;
     }
@@ -1319,12 +1319,12 @@ namespace fb::render
         }
     }
 
-    String CSceneManagerOgreNext::getUniqueName( const String &baseName ) const
+    auto CSceneManagerOgreNext::getUniqueName( const String &baseName ) const -> String
     {
         return baseName + StringUtil::toString( m_nextGeneratedNameExt++ );
     }
 
-    SmartPtr<ITerrain> CSceneManagerOgreNext::createTerrain()
+    auto CSceneManagerOgreNext::createTerrain() -> SmartPtr<ITerrain>
     {
         auto applicationManager = core::ApplicationManager::instance();
         auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -1356,9 +1356,9 @@ namespace fb::render
                           m_terrains.end() );
     }
 
-    SmartPtr<IDecalCursor> CSceneManagerOgreNext::addDecalCursor( const String &terrainMaterial,
-                                                                  const String &decalTextureName,
-                                                                  const Vector2F &size )
+    auto CSceneManagerOgreNext::addDecalCursor( const String &terrainMaterial,
+                                                const String &decalTextureName, const Vector2F &size )
+        -> SmartPtr<IDecalCursor>
     {
         SmartPtr<CDecalCursor> decalCursor;  // (new CDecalCursor, true);
         // decalCursor->initialise(this, terrainMaterial, decalTextureName, size);
@@ -1368,7 +1368,7 @@ namespace fb::render
     // raycast from a point in to the scene.
     // returns success or failure.
     // on success the point is returned in the result.
-    bool CSceneManagerOgreNext::castRay( const Ray3F &ray, Vector3F &result )
+    auto CSceneManagerOgreNext::castRay( const Ray3F &ray, Vector3F &result ) -> bool
     {
         // create the ray to test
         Vector3F start = ray.getOrigin();
@@ -1491,7 +1491,7 @@ namespace fb::render
         return ( false );
     }
 
-    SharedPtr<ConcurrentArray<SmartPtr<ISceneNode>>> CSceneManagerOgreNext::getSceneNodes() const
+    auto CSceneManagerOgreNext::getSceneNodes() const -> SharedPtr<ConcurrentArray<SmartPtr<ISceneNode>>>
     {
         return m_sceneNodes;
     }
@@ -1502,8 +1502,8 @@ namespace fb::render
         m_sceneNodes = sceneNodes;
     }
 
-    SharedPtr<ConcurrentArray<SmartPtr<ISceneNode>>> CSceneManagerOgreNext::getRegisteredSceneNodes()
-        const
+    auto CSceneManagerOgreNext::getRegisteredSceneNodes() const
+        -> SharedPtr<ConcurrentArray<SmartPtr<ISceneNode>>>
     {
         return m_registeredSceneNodes;
     }
@@ -1514,7 +1514,7 @@ namespace fb::render
         m_registeredSceneNodes = sceneNodes;
     }
 
-    u32 getMeshByIndex( const Array<unsigned int> &viIndexOffsets, unsigned int iIndexIndex )
+    auto getMeshByIndex( const Array<unsigned int> &viIndexOffsets, unsigned int iIndexIndex ) -> u32
     {
         // subset search
         int iRangeMin = 0;
@@ -1535,8 +1535,9 @@ namespace fb::render
         return iRangeMax;
     }
 
-    Array<SmartPtr<IGraphicsMesh>> CSceneManagerOgreNext::splitMesh(
-        SmartPtr<IGraphicsMesh> mesh, const SmartPtr<Properties> &properties )
+    auto CSceneManagerOgreNext::splitMesh( SmartPtr<IGraphicsMesh> mesh,
+                                           const SmartPtr<Properties> &properties )
+        -> Array<SmartPtr<IGraphicsMesh>>
     {
         Array<SmartPtr<IGraphicsMesh>> meshes;
 
@@ -1691,7 +1692,7 @@ namespace fb::render
         return meshes;
     }
 
-    bool CSceneManagerOgreNext::getEnableShadows() const
+    auto CSceneManagerOgreNext::getEnableShadows() const -> bool
     {
         return false;
     }
@@ -1888,9 +1889,11 @@ namespace fb::render
         m_sceneNodes->push_back( sceneNode );
     }
 
-    SmartPtr<IInstanceManager> CSceneManagerOgreNext::createInstanceManager(
-        const String &customName, const String &meshName, const String &groupName, u32 technique,
-        u32 numInstancesPerBatch, u16 flags /*=0*/, u16 subMeshIdx /*=0 */ )
+    auto CSceneManagerOgreNext::createInstanceManager( const String &customName, const String &meshName,
+                                                       const String &groupName, u32 technique,
+                                                       u32 numInstancesPerBatch, u16 flags /*=0*/,
+                                                       u16 subMeshIdx /*=0 */ )
+        -> SmartPtr<IInstanceManager>
     {
         // Ogre::InstanceManager* mgr = m_sceneManager->createInstanceManager(
         //	customName.c_str(), meshName.c_str(),
@@ -1906,8 +1909,9 @@ namespace fb::render
         return nullptr;
     }
 
-    SmartPtr<IInstancedObject> CSceneManagerOgreNext::createInstancedObject( const String &materialName,
-                                                                             const String &managerName )
+    auto CSceneManagerOgreNext::createInstancedObject( const String &materialName,
+                                                       const String &managerName )
+        -> SmartPtr<IInstancedObject>
     {
         //SmartPtr<CInstancedObject>
         //    instancedObject;  // (new CInstancedObject(this, materialName, managerName), true);
@@ -1921,7 +1925,7 @@ namespace fb::render
     {
     }
 
-    String CSceneManagerOgreNext::getType() const
+    auto CSceneManagerOgreNext::getType() const -> String
     {
         return m_type;
     }
@@ -1932,13 +1936,13 @@ namespace fb::render
         m_graphicsObjects.push_back( graphicsObject );
     }
 
-    Array<SmartPtr<IBillboardSet>> CSceneManagerOgreNext::getBillboardSets() const
+    auto CSceneManagerOgreNext::getBillboardSets() const -> Array<SmartPtr<IBillboardSet>>
     {
         Array<SmartPtr<IBillboardSet>> billboardSets;
         return billboardSets;
     }
 
-    SmartPtr<ITerrain> CSceneManagerOgreNext::getTerrain( u32 id ) const
+    auto CSceneManagerOgreNext::getTerrain( u32 id ) const -> SmartPtr<ITerrain>
     {
         return m_terrains[id];
     }
@@ -1948,7 +1952,7 @@ namespace fb::render
         m_animationNameSuffix = val;
     }
 
-    String CSceneManagerOgreNext::getAnimationNameSuffix() const
+    auto CSceneManagerOgreNext::getAnimationNameSuffix() const -> String
     {
         return m_animationNameSuffix;
     }
@@ -1958,7 +1962,7 @@ namespace fb::render
         m_animationNamePrefix = val;
     }
 
-    String CSceneManagerOgreNext::getAnimationNamePrefix() const
+    auto CSceneManagerOgreNext::getAnimationNamePrefix() const -> String
     {
         return m_animationNamePrefix;
     }
@@ -1968,7 +1972,7 @@ namespace fb::render
         m_factoryManager = factoryManager;
     }
 
-    SmartPtr<IFactoryManager> CSceneManagerOgreNext::getFactoryManager() const
+    auto CSceneManagerOgreNext::getFactoryManager() const -> SmartPtr<IFactoryManager>
     {
         return m_factoryManager;
     }
@@ -2061,7 +2065,7 @@ namespace fb::render
     {
     }
 
-    CSceneManagerOgreNext *CSceneManagerOgreNext::SceneManagerStateListener::getOwner() const
+    auto CSceneManagerOgreNext::SceneManagerStateListener::getOwner() const -> CSceneManagerOgreNext *
     {
         return m_owner;
     }

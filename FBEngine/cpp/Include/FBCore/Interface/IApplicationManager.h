@@ -872,6 +872,12 @@ namespace fb
             */
             virtual void setTypeManager( RawPtr<TypeManager> typeManager ) = 0;
 
+            /** Gets the current task. */
+            virtual Thread::Task getCurrentTask() const = 0;
+
+            /** Sets the current task. */
+            virtual void setCurrentTask( Thread::Task task ) = 0;
+
             /**
              * Gets a component by the template type.
              * @tparam T The type of the component.

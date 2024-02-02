@@ -29,13 +29,11 @@ namespace fb
 
         bool LoadSoundEvents( const String &filePath );
 
-        SmartPtr<ISound2> addSound2( const String &filePath, bool loop = true );
-        SmartPtr<ISound3> addSound3( const String &filePath, const Vector3F &position = Vector3F::zero(),
-                                     bool loop = true );
+        SmartPtr<ISound> addSound( const String &filePath, bool loop = true );
+        void removeSound( SmartPtr<ISound> sound );
+
         SmartPtr<ISoundListener3> addListener3( const String &name, const Vector3F &position );
 
-        bool Remove2DSound( SmartPtr<ISound2> &soundEffect2D );
-        bool Remove3DSound( SmartPtr<ISound3> &soundEffect3D );
 
         void RemoveAll();
 
@@ -45,9 +43,9 @@ namespace fb
         void *GetEventSystem() const;
 
         void setBGMusic( const String &filePath );
-        void setBGMusic( SmartPtr<ISound2> &bgMusic );
-        const SmartPtr<ISound2> &getBGMusic() const;
-        SmartPtr<ISound2> &getBGMusic();
+        //void setBGMusic( SmartPtr<ISound2> &bgMusic );
+        //const SmartPtr<ISound2> &getBGMusic() const;
+        //SmartPtr<ISound2> &getBGMusic();
         void stopBGMusic();
 
         void setVolume( f32 fVolume );
@@ -93,13 +91,10 @@ namespace fb
         IMMDevice *pDevice = nullptr;
 #endif
 
-        Array<SmartPtr<ISound2>> m_sounds2d;
-        Array<SmartPtr<ISound3>> m_sounds3d;
+        Array<SmartPtr<ISound>> m_sounds;
 
         typedef std::map<String, SmartPtr<ISoundListener3>> SoundListenerMap;
         SoundListenerMap m_listeners;
-
-        SmartPtr<ISound2> m_pBackGroundMusic;
 
         typedef std::map<String, String> SoundMap;
         SoundMap m_soundMap;

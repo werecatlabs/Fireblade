@@ -370,6 +370,9 @@ namespace fb
 
             Array<SmartPtr<ISharedObject>> getChildObjects() const override;
 
+            Thread::Task getCurrentTask() const;
+            void setCurrentTask( Thread::Task task );
+
             /** Allocate memory. */
             void *allocateMemory( size_t size ) override;
 

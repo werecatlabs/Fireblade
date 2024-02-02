@@ -1,13 +1,13 @@
 #ifndef _Sound2_H
 #define _Sound2_H
 
-#include <FBCore/Interface/Sound/ISound2.h>
+#include <FBCore/Interface/Sound/ISound.h>
 #include <FBCore/Resource/Resource.h>
 
 namespace fb
 {
 
-    class Sound2 : public Resource<ISound2>
+    class Sound2 : public Resource<ISound>
     {
     public:
         Sound2();

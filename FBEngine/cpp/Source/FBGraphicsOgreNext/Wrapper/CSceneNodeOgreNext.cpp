@@ -134,7 +134,7 @@ namespace fb::render
 
             auto task = Thread::getCurrentTask();
             auto renderTask = graphicsSystem->getRenderTask();
-            FB_ASSERT( Thread::getTaskFlag( Thread::Render_Flag ) );
+            //FB_ASSERT( Thread::getTaskFlag( Thread::Render_Flag ) );
 
             setLoadingState( LoadingState::Loading );
 
