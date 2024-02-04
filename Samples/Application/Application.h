@@ -2,33 +2,46 @@
 #define _MAINAPP_H
 
 #include <FBCore/FBCoreHeaders.h>
-#include <FBApplication/CApplicationClient.h>
+#include <FBCore/Application.h>
 
-using namespace fb;
-
-class Application : public application::CApplicationClient
+namespace fb
 {
-public:
-    Application();
-    ~Application() override;
 
-    void load( SmartPtr<ISharedObject> data ) override;
+    class Application : public core::Application
+    {
+    public:
+        enum class ElementId
+        {
+            Open,
+            Exit,
 
-protected:
-    void createPlugins() override;
+            Count
+        };
 
-    void createScene() override;
+        Application();
+        ~Application() override;
 
-    void createUI() override;
+        void load( SmartPtr<ISharedObject> data ) override;
+        void unload( SmartPtr<ISharedObject> data ) override;
 
-    void createRenderWindow();
-    SmartPtr<ui::IUIApplication> m_application;
-    SmartPtr<ui::IUIRenderWindow> m_renderWindow;
+    protected:
+        void createPlugins() override;
 
-    SmartPtr<render::IGraphicsObject> m_box;
-    SmartPtr<render::ISceneNode> m_node;
+        void createScene() override;
 
-    SmartPtr<IFrameStatistics> m_frameStatistics;
-};
+        void createUI() override;
+
+        void createRenderWindow();
+
+        SmartPtr<ui::IUIApplication> m_application;
+        SmartPtr<ui::IUIRenderWindow> m_renderWindow;
+
+        SmartPtr<render::IGraphicsObject> m_box;
+        SmartPtr<render::ISceneNode> m_node;
+
+        SmartPtr<IFrameStatistics> m_frameStatistics;
+    };
+
+}  // namespace fb
 
 #endif

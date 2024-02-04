@@ -65,16 +65,6 @@ endif()
 include_directories( ${FB_ROOT}/FBEngine/cpp/Include )
 include_directories(Source)
 
-
-
-if (WIN32)
-	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FB_ROOT}/Bin/windows/${FB_TOOLSET}/${FB_ARCH}/)
-elseif (APPLE)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FB_ROOT}/Bin/macOS/${CMAKE_BUILD_TYPE})
-elseif (UNIX)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FB_ROOT}/Bin/linux/${CMAKE_BUILD_TYPE})
-endif (WIN32)
-
 if (WIN32)
     link_directories(SampleVehicle ${CMAKE_SOURCE_DIR}/libs/windows/${FB_TOOLSET}/${FB_ARCH}/${FB_STATIC_LINK_CRT_TYPE}/${CMAKE_BUILD_TYPE})
     link_directories(SampleVehicle ${CMAKE_SOURCE_DIR}/AdditionalLibraries/lib/windows/${FB_TOOLSET}/${FB_ARCH}/${FB_STATIC_LINK_CRT_TYPE}/physx/)
@@ -138,15 +128,12 @@ add_executable(SampleVehicle ${HEADER_FILES} ${SOURCE_FILES})
 
 
 if (WIN32)
-    target_link_libraries(SampleVehicle FBCore.lib)
-    target_link_libraries(SampleVehicle FBFileSystem.lib)
+    target_link_libraries(SampleVehicle FBCore.lib)    
     target_link_libraries(SampleVehicle FBMesh.lib)
     target_link_libraries(SampleVehicle FBProcedural.lib)
     target_link_libraries(SampleVehicle FBPhysx.lib)
     target_link_libraries(SampleVehicle FBSQLite.lib)
-    target_link_libraries(SampleVehicle FBVehicle.lib)
     target_link_libraries(SampleVehicle FBWxWidgets.lib)
-    target_link_libraries(SampleVehicle FBApplication.lib)
     target_link_libraries(SampleVehicle FBGraphics.lib)
 
     if (FB_BUILD_OISINPUT)
@@ -168,6 +155,11 @@ if (WIN32)
         target_link_libraries(SampleVehicle FBGraphicsOgreNext.lib)
         target_link_libraries(SampleVehicle debug FreeImage_d.lib optimized FreeImage.lib)
         target_link_libraries(SampleVehicle debug freetype_d.lib optimized freetype.lib)
+
+        target_link_libraries(SampleVehicle harfbuzz.lib)
+        target_link_libraries(SampleVehicle harfbuzz-subset.lib)
+        target_link_libraries(SampleVehicle icucommon.lib)
+        target_link_libraries(SampleVehicle sds_library.lib)
 
         if (FB_BUILD_RENDERER_DX11)
             target_link_libraries(SampleVehicle d3d11.lib)
@@ -259,123 +251,111 @@ if (WIN32)
     if (FB_BUILD_PHYSX)
         target_link_libraries(SampleVehicle FBPhysx.lib)
 
-        if (FB_PLATFORM_X64)
-            target_link_libraries(SampleVehicle 
-                        debug PhysX3DEBUG_x64.lib
-                        optimized PhysX3_x64.lib)
-            target_link_libraries(SampleVehicle 
-                        debug PhysX3ExtensionsDEBUG.lib
-                        optimized PhysX3Extensions.lib)
-            target_link_libraries(SampleVehicle 
-                        debug PhysX3CommonDEBUG_x64.lib 
-                        optimized PhysX3Common_x64.lib)
-            target_link_libraries(SampleVehicle 
-                        debug PhysX3VehicleDEBUG.lib 
-                        optimized PhysX3Vehicle.lib)
-            target_link_libraries(SampleVehicle 
-                        debug PhysX3CookingDEBUG_x64.lib
-                        optimized PhysX3Cooking_x64.lib)
-            target_link_libraries(SampleVehicle 
-                        debug PhysXProfileSDKDEBUG.lib
-                        optimized PhysXProfileSDK.lib)
-            target_link_libraries(SampleVehicle 
-                        debug PxTaskDEBUG.lib
-                        optimized PxTask.lib)
-            target_link_libraries(SampleVehicle 
-                        debug PhysXVisualDebuggerSDKDEBUG.lib
-                        optimized PhysXVisualDebuggerSDK.lib)
-        else ()
-            target_link_libraries(SampleVehicle 
-                        debug PhysX3DEBUG_x86.lib
-                        optimized PhysX3_x86.lib)
-            target_link_libraries(SampleVehicle 
-                        debug PhysX3ExtensionsDEBUG.lib
-                        optimized PhysX3Extensions.lib)
-            target_link_libraries(SampleVehicle 
-                        debug PhysX3CommonDEBUG_x86.lib 
-                        optimized PhysX3Common_x86.lib)
-            target_link_libraries(SampleVehicle 
-                        debug PhysX3VehicleDEBUG.lib 
-                        optimized PhysX3Vehicle.lib)
-            target_link_libraries(SampleVehicle 
-                        debug PhysX3CookingDEBUG_x86.lib
-                        optimized PhysX3Cooking_x86.lib)
-            target_link_libraries(SampleVehicle 
-                        debug PhysXProfileSDKDEBUG.lib
-                        optimized PhysXProfileSDK.lib)
-            target_link_libraries(SampleVehicle 
-                        debug PxTaskDEBUG.lib
-                        optimized PxTask.lib)
-            target_link_libraries(SampleVehicle 
-                        debug PhysXVisualDebuggerSDKDEBUG.lib
-                        optimized PhysXVisualDebuggerSDK.lib)
-        endif()
+        target_link_libraries(SampleVehicle PhysX3.lib)
+        target_link_libraries(SampleVehicle PhysX3Extensions.lib)
+        target_link_libraries(SampleVehicle PhysX3Common.lib)
+        target_link_libraries(SampleVehicle PhysX3Vehicle.lib)
+        target_link_libraries(SampleVehicle PhysX3Cooking.lib)
+        target_link_libraries(SampleVehicle PhysXProfileSDK.lib)
+        target_link_libraries(SampleVehicle PxTask.lib)
+        target_link_libraries(SampleVehicle PhysXVisualDebuggerSDK.lib)
+        target_link_libraries(SampleVehicle PhysX3MetaData.lib)
+        target_link_libraries(SampleVehicle PhysX3Foundation.lib)
+        target_link_libraries(SampleVehicle PxSceneQuery.lib)
+        target_link_libraries(SampleVehicle PxSimulationController.lib)
+        target_link_libraries(SampleVehicle PhysX3LowLevel.lib)
+        target_link_libraries(SampleVehicle PhysX3LowLevelCloth.lib)
+    elseif(FB_BUILD_ODE)
+        target_link_libraries(SampleVehicle FBODE3.lib)
+    elseif(FB_BUILD_PHYSICS3)
+        target_link_libraries(SampleVehicle FBPhysics3.lib)
+    endif()
+
+    target_link_libraries(SampleVehicle bcrypt.lib)
+    target_link_libraries(SampleVehicle libboost_thread.lib)
+    target_link_libraries(SampleVehicle libboost_date_time.lib)
+    target_link_libraries(SampleVehicle libboost_chrono.lib)
+    target_link_libraries(SampleVehicle libboost_timer.lib)
+    target_link_libraries(SampleVehicle libboost_filesystem.lib)
+    target_link_libraries(SampleVehicle libboost_json.lib)
+    target_link_libraries(SampleVehicle minizip.lib)
+    target_link_libraries(SampleVehicle nativefiledialog.lib)
+    target_link_libraries(SampleVehicle rttr.lib)
+    target_link_libraries(SampleVehicle tinyxml.lib)   
+    target_link_libraries(SampleVehicle yaml-cpp.lib)
+    target_link_libraries(SampleVehicle zlib.lib)
+    target_link_libraries(SampleVehicle zzip.lib)
+
+    if (FB_USE_TBB)
+        target_link_libraries(SampleVehicle tbb_static.lib)
+        target_link_libraries(SampleVehicle tbbmalloc_static.lib)
     endif()
 elseif (APPLE)
     # fireblade libraries
     target_link_libraries(SampleVehicle libFBCore.a)
-    target_link_libraries(SampleVehicle libFBFileSystem.a)
     target_link_libraries(SampleVehicle libFBGraphics.a)
     target_link_libraries(SampleVehicle libFBMesh.a)
     target_link_libraries(SampleVehicle libFBProcedural.a)
     target_link_libraries(SampleVehicle libFBPhysx.a)
-    target_link_libraries(SampleVehicle libFBVehicle.a)
-    target_link_libraries(SampleVehicle libFBApplication.a)
     target_link_libraries(SampleVehicle libFBSQLite.a)
     target_link_libraries(SampleVehicle libFBOISInput.a)
 
-    if (WIN32)
-        target_link_libraries(SampleVehicle libboost_thread-gcc5-mt-s-x64-1_70.a)
-        target_link_libraries(SampleVehicle libboost_date_time-gcc5-mt-s-x64-1_70.a)
-        target_link_libraries(SampleVehicle libboost_chrono-gcc5-mt-s-x64-1_70.a)
-        target_link_libraries(SampleVehicle libboost_timer-gcc5-mt-s-x64-1_70.a)
-        target_link_libraries(SampleVehicle libboost_filesystem-gcc5-mt-s-x64-1_70.a)
-    elseif (APPLE)
-        target_link_libraries(SampleVehicle libboost_thread.a)
-        target_link_libraries(SampleVehicle libboost_date_time.a)
-        target_link_libraries(SampleVehicle libboost_chrono.a)
-        target_link_libraries(SampleVehicle libboost_timer.a)
-        target_link_libraries(SampleVehicle libboost_filesystem.a)
-    elseif (UNIX)
-        target_link_libraries(SampleVehicle libboost_thread-gcc5-mt-s-x64-1_70.a)
-        target_link_libraries(SampleVehicle libboost_date_time-gcc5-mt-s-x64-1_70.a)
-        target_link_libraries(SampleVehicle libboost_chrono-gcc5-mt-s-x64-1_70.a)
-        target_link_libraries(SampleVehicle libboost_timer-gcc5-mt-s-x64-1_70.a)
-        target_link_libraries(SampleVehicle libboost_filesystem-gcc5-mt-s-x64-1_70.a)
-    endif ()
+    if (FB_CODEC_FREEIMAGE)
+        target_link_libraries(SampleVehicle FreeImage.a)
+    endif()
+
+    if (FB_USE_FREETYPE)
+        target_link_libraries(SampleVehicle freetype.a)
+    endif()
 
     if (FB_GRAPHICS_SYSTEM_OGRENEXT)
         target_link_libraries(SampleVehicle FBGraphicsOgreNext.a)
-        target_link_libraries(SampleVehicle freetype.a)
+        target_link_libraries(SampleVehicle harfbuzz.a)
+        target_link_libraries(SampleVehicle harfbuzz-subset.a)
+        target_link_libraries(SampleVehicle icucommon.a)
+        target_link_libraries(SampleVehicle sds_library.a)
     elseif (FB_GRAPHICS_SYSTEM_OGRE)
         target_link_libraries(SampleVehicle FBGraphicsOgre.a)
-    elseif(FB_GRAPHICS_SYSTEM_SOFTWARE)
-        target_link_libraries(SampleVehicle libFBGraphicsSoftware.a)
     endif()
-
-    target_link_libraries(SampleVehicle debug libassimpd.a optimized libassimp.a)
 
     if (FB_BUILD_PHYSX)
-        target_link_libraries(SampleVehicle libFBPhysx.a)
-    elseif (FB_BUILD_ODE)
-        target_link_libraries(SampleVehicle libFBODE3.a)
+        target_link_libraries(SampleVehicle FBPhysx.a)
+
+        target_link_libraries(SampleVehicle PhysX3.a)
+        target_link_libraries(SampleVehicle PhysX3Extensions.a)
+        target_link_libraries(SampleVehicle PhysX3Common.a)
+        target_link_libraries(SampleVehicle PhysX3Vehicle.a)
+        target_link_libraries(SampleVehicle PhysX3Cooking.a)
+        target_link_libraries(SampleVehicle PhysXProfileSDK.a)
+        target_link_libraries(SampleVehicle PxTask.a)
+        target_link_libraries(SampleVehicle PhysXVisualDebuggerSDK.a)
+        target_link_libraries(SampleVehicle PhysX3MetaData.a)
+        target_link_libraries(SampleVehicle PhysX3Foundation.a)
+        target_link_libraries(SampleVehicle PxSceneQuery.a)
+        target_link_libraries(SampleVehicle PxSimulationController.a)
+        target_link_libraries(SampleVehicle PhysX3LowLevel.a)
+        target_link_libraries(SampleVehicle PhysX3LowLevelCloth.a)
     endif()
 
-    # physx libraries
-    if (WIN32)
-    elseif (APPLE)
-        target_link_libraries(SampleVehicle libLowLevel.a libLowLevelCloth.a libPhysXProfileSDK.a libPhysX3Common.a libSceneQuery.a libSimulationController.a libPhysX3Cooking.a libPhysX3Extensions.a libPhysX3.a libPhysX3Vehicle.a)
-    elseif (UNIX)
-        target_link_libraries(SampleVehicle -Wl,--start-group libLowLevel.a libLowLevelCloth.a libPhysXProfileSDK.a libPhysX3Common.a libSceneQuery.a libSimulationController.a libPhysX3Cooking.a libPhysX3Extensions.a libPhysX3.a libPhysX3Vehicle.a -Wl,--end-group )
-    endif (WIN32)
+    target_link_libraries(SampleVehicle libboost_thread.a)
+    target_link_libraries(SampleVehicle libboost_date_time.a)
+    target_link_libraries(SampleVehicle libboost_chrono.a)
+    target_link_libraries(SampleVehicle libboost_timer.a)
+    target_link_libraries(SampleVehicle libboost_filesystem.a)
+    target_link_libraries(SampleVehicle libboost_json.a)
 
-    target_link_libraries(SampleVehicle libPxTask.a)
-    target_link_libraries(SampleVehicle libPhysXVisualDebuggerSDK.a)
-    target_link_libraries(SampleVehicle libPvdRuntime.a)
+    target_link_libraries(SampleVehicle minizip.a)
+    target_link_libraries(SampleVehicle nativefiledialog.a)
+    target_link_libraries(SampleVehicle rttr.a)
+    target_link_libraries(SampleVehicle tinyxml.a)
+    target_link_libraries(SampleVehicle yaml-cpp.a)
+    target_link_libraries(SampleVehicle zlib.a)
+    target_link_libraries(SampleVehicle zzip.a)
 
-    target_link_libraries(SampleVehicle libtbb.a)
-    target_link_libraries(SampleVehicle libtbbmalloc.a)
-
+    if (FB_USE_TBB)
+        target_link_libraries(SampleVehicle tbb_static.a)
+        target_link_libraries(SampleVehicle tbbmalloc_static.a)
+    endif ()
 
     target_link_libraries(SampleVehicle debug libOIS_d.a optimized libOIS.a)
 
@@ -390,7 +370,7 @@ elseif (APPLE)
     set_target_properties(SampleVehicle PROPERTIES LINK_FLAGS "-Wl,-F/Library/Frameworks")
 else ()
     target_link_libraries(SampleVehicle -Wl,--start-group FBCore.a FBAero.a 
-        FBApplication.a FBFileSystem.a FBMath.a FBSystem.a FBVehicle.a FBData.a FBMesh.a 
+        FBApplication.a.a FBMath.a FBSystem.a FBVehicle.a FBData.a FBMesh.a 
         libFBObjectTemplates.a libFBVehicle.a libFBProcedural.a libFBSQLite.a libFBPhysx.a FBAudio.a         
         libboost_thread-gcc5-mt-s-x64-1_70.a
         libboost_date_time-gcc5-mt-s-x64-1_70.a
@@ -409,11 +389,10 @@ else ()
 endif ()
 
 if (WIN32)
-    set_property(TARGET SampleVehicle PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${FB_ROOT}/Bin/windows/${FB_TOOLSET}/${FB_ARCH}/Debug)
+    set_property(TARGET SampleVehicle PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/Bin/windows/${FB_TOOLSET}/${FB_ARCH}/${FB_STATIC_LINK_CRT_TYPE}/$(Configuration)")
 endif()
 
-
-add_dependencies(SampleVehicle FBAero FBAi FBApplication FBAudio FBCore FBFileSystem FBMesh FBProcedural FBSQLite FBVehicle)
+add_dependencies(SampleVehicle FBAudio FBCore FBMesh FBSQLite)
 
 add_dependencies(SampleVehicle FBOISInput)
 

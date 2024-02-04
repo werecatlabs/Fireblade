@@ -2,12 +2,12 @@
 #define _MAINAPP_H
 
 #include <FBCore/FBCoreHeaders.h>
-#include <FBApplication/CApplicationClient.h>
+#include <FBCore/Application.h>
 
 namespace fb
 {
 
-    class HelloWorld : public application::CApplicationClient
+    class HelloWorld : public core::Application
     {
     public:
         HelloWorld();

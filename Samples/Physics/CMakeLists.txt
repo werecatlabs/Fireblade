@@ -9,7 +9,7 @@ if (UNIX)
     endif()
 endif()
 
-add_compile_definitions (_FB_STATIC_LIB_)
+
 #ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
 
 include_directories( ${FB_ROOT}/Dependencies/boost)
@@ -25,16 +25,6 @@ include_directories( ${FB_ROOT}/AdditionalLibraries/cppsqlite/include)
 include_directories( ${FB_ROOT}/AdditionalLibraries/sqlite/include)
 include_directories( ${FB_ROOT}/FBEngine/cpp/Include )
 include_directories(Source)
-
-
-
-if (WIN32)
-	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FB_ROOT}/Bin/windows/${FB_TOOLSET}/${FB_ARCH}/)
-elseif (APPLE)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FB_ROOT}/Bin/macOS/${CMAKE_BUILD_TYPE})
-elseif (UNIX)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FB_ROOT}/Bin/linux/${CMAKE_BUILD_TYPE})
-endif ()
 
 if (WIN32)
     link_directories(SamplePhysics ${CMAKE_SOURCE_DIR}/libs/windows/${FB_TOOLSET}/${FB_ARCH}/${FB_STATIC_LINK_CRT_TYPE}/${CMAKE_BUILD_TYPE})
@@ -96,18 +86,15 @@ file(GLOB_RECURSE SOURCE_FILES "./*.c" "./*.cpp")
 
 add_executable(SamplePhysics ${HEADER_FILES} ${SOURCE_FILES})
 
-
-# fireblade libraries
 if (WIN32)
     target_link_libraries(SamplePhysics FBCore.lib)
-    target_link_libraries(SamplePhysics FBFileSystem.lib)
+    
     target_link_libraries(SamplePhysics FBMesh.lib)
     target_link_libraries(SamplePhysics FBProcedural.lib)
     target_link_libraries(SamplePhysics FBPhysx.lib)
     target_link_libraries(SamplePhysics FBSQLite.lib)
     target_link_libraries(SamplePhysics FBWxWidgets.lib)
     target_link_libraries(SamplePhysics FBGraphics.lib)
-    target_link_libraries(SamplePhysics FBApplication.lib)
     target_link_libraries(SamplePhysics FBVehicle.lib)
     target_link_libraries(SamplePhysics FBRenderUI.lib)
 
@@ -125,76 +112,54 @@ if (WIN32)
         target_link_libraries(SamplePhysics tinyxml2.lib)
     endif()
 
-    target_link_libraries(SamplePhysics 
-                        debug Wm5CoreD.lib
-                        optimized Wm5Core.lib)
-    target_link_libraries(SamplePhysics 
-                        debug Wm5MathematicsD.lib
-                        optimized Wm5Mathematics.lib)
-    target_link_libraries(SamplePhysics 
-                        debug Wm5PhysicsD.lib
-                        optimized Wm5Physics.lib)
+    if (FB_BUILD_WILDMAGIC5)
+        target_link_libraries(SamplePhysics 
+                            debug Wm5CoreD.lib
+                            optimized Wm5Core.lib)
+        target_link_libraries(SamplePhysics 
+                            debug Wm5MathematicsD.lib
+                            optimized Wm5Mathematics.lib)
+        target_link_libraries(SamplePhysics 
+                            debug Wm5PhysicsD.lib
+                            optimized Wm5Physics.lib)
+    endif()
 
     if (FB_BUILD_PHYSX)
         target_link_libraries(SamplePhysics FBPhysx.lib)
 
-        if (FB_PLATFORM_X64)
-            target_link_libraries(SamplePhysics 
-                        debug PhysX3DEBUG_x64.lib
-                        optimized PhysX3_x64.lib)
-            target_link_libraries(SamplePhysics 
-                        debug PhysX3ExtensionsDEBUG.lib
-                        optimized PhysX3Extensions.lib)
-            target_link_libraries(SamplePhysics 
-                        debug PhysX3CommonDEBUG_x64.lib 
-                        optimized PhysX3Common_x64.lib)
-            target_link_libraries(SamplePhysics 
-                        debug PhysX3VehicleDEBUG.lib 
-                        optimized PhysX3Vehicle.lib)
-            target_link_libraries(SamplePhysics 
-                        debug PhysX3CookingDEBUG_x64.lib
-                        optimized PhysX3Cooking_x64.lib)
-            target_link_libraries(SamplePhysics 
-                        debug PhysXProfileSDKDEBUG.lib
-                        optimized PhysXProfileSDK.lib)
-            target_link_libraries(SamplePhysics 
-                        debug PxTaskDEBUG.lib
-                        optimized PxTask.lib)
-            target_link_libraries(SamplePhysics 
-                        debug PhysXVisualDebuggerSDKDEBUG.lib
-                        optimized PhysXVisualDebuggerSDK.lib)
-        else ()
-            target_link_libraries(SamplePhysics 
-                        debug PhysX3DEBUG_x86.lib
-                        optimized PhysX3_x86.lib)
-            target_link_libraries(SamplePhysics 
-                        debug PhysX3ExtensionsDEBUG.lib
-                        optimized PhysX3Extensions.lib)
-            target_link_libraries(SamplePhysics 
-                        debug PhysX3CommonDEBUG_x86.lib 
-                        optimized PhysX3Common_x86.lib)
-            target_link_libraries(SamplePhysics 
-                        debug PhysX3VehicleDEBUG.lib 
-                        optimized PhysX3Vehicle.lib)
-            target_link_libraries(SamplePhysics 
-                        debug PhysX3CookingDEBUG_x86.lib
-                        optimized PhysX3Cooking_x86.lib)
-            target_link_libraries(SamplePhysics 
-                        debug PhysXProfileSDKDEBUG.lib
-                        optimized PhysXProfileSDK.lib)
-            target_link_libraries(SamplePhysics 
-                        debug PxTaskDEBUG.lib
-                        optimized PxTask.lib)
-            target_link_libraries(SamplePhysics 
-                        debug PhysXVisualDebuggerSDKDEBUG.lib
-                        optimized PhysXVisualDebuggerSDK.lib)
-        endif()
+        target_link_libraries(SamplePhysics PhysX3.lib)
+        target_link_libraries(SamplePhysics PhysX3Extensions.lib)
+        target_link_libraries(SamplePhysics PhysX3Common.lib)
+        target_link_libraries(SamplePhysics PhysX3Vehicle.lib)
+        target_link_libraries(SamplePhysics PhysX3Cooking.lib)
+        target_link_libraries(SamplePhysics PhysXProfileSDK.lib)
+        target_link_libraries(SamplePhysics PxTask.lib)
+        target_link_libraries(SamplePhysics PhysXVisualDebuggerSDK.lib)
+        target_link_libraries(SamplePhysics PhysX3MetaData.lib)
+        target_link_libraries(SamplePhysics PhysX3Foundation.lib)
+        target_link_libraries(SamplePhysics PxSceneQuery.lib)
+        target_link_libraries(SamplePhysics PxSimulationController.lib)
+        target_link_libraries(SamplePhysics PhysX3LowLevel.lib)
+        target_link_libraries(SamplePhysics PhysX3LowLevelCloth.lib)
+    endif()
+
+    if (FB_CODEC_FREEIMAGE)
+        target_link_libraries(SamplePhysics FreeImage.lib)
+    endif()
+
+    if (FB_USE_FREETYPE)
+        target_link_libraries(SamplePhysics freetype.lib)
     endif()
 
     if (FB_GRAPHICS_SYSTEM_OGRENEXT)
         target_link_libraries(SamplePhysics FBGraphicsOgreNext.lib)
         target_link_libraries(SamplePhysics debug FreeImage_d.lib optimized FreeImage.lib)
         target_link_libraries(SamplePhysics debug freetype_d.lib optimized freetype.lib)
+
+        target_link_libraries(SamplePhysics harfbuzz.lib)
+        target_link_libraries(SamplePhysics harfbuzz-subset.lib)
+        target_link_libraries(SamplePhysics icucommon.lib)
+        target_link_libraries(SamplePhysics sds_library.lib)
     
         if (FB_BUILD_RENDERER_DX11)
             target_link_libraries(SamplePhysics d3d11.lib)
@@ -283,9 +248,36 @@ if (WIN32)
     elseif(FB_BUILD_DX11)
         target_link_libraries(SamplePhysics FBGraphicsD3D11.lib)
     endif()
+
+    if (FB_USE_TBB)
+        target_link_libraries(SamplePhysics tbb.lib)
+        target_link_libraries(SamplePhysics tbbmalloc.lib)
+    endif()
+
+    target_link_libraries(SamplePhysics bcrypt.lib)
+    target_link_libraries(SamplePhysics libboost_thread.lib)
+    target_link_libraries(SamplePhysics libboost_date_time.lib)
+    target_link_libraries(SamplePhysics libboost_chrono.lib)
+    target_link_libraries(SamplePhysics libboost_timer.lib)
+    target_link_libraries(SamplePhysics libboost_filesystem.lib)
+    target_link_libraries(SamplePhysics libboost_json.lib)
+    target_link_libraries(SamplePhysics nativefiledialog.lib)
+    target_link_libraries(SamplePhysics rttr.lib)
+    target_link_libraries(SamplePhysics tinyxml.lib)    
+    target_link_libraries(SamplePhysics yaml-cpp.lib)
+    target_link_libraries(SamplePhysics minizip.lib)
+    target_link_libraries(SamplePhysics zlib.lib)
+    target_link_libraries(SamplePhysics zzip.lib)
+
+    target_link_libraries(SamplePhysics minizip.lib)
+    target_link_libraries(SamplePhysics nativefiledialog.lib)
+    target_link_libraries(SamplePhysics rttr.lib)
+    target_link_libraries(SamplePhysics tinyxml.lib)
+    target_link_libraries(SamplePhysics yaml-cpp.lib)
+    target_link_libraries(SamplePhysics zlib.lib)
+    target_link_libraries(SamplePhysics zzip.lib)
 elseif (APPLE)
     target_link_libraries(SamplePhysics libFBCore.a)
-    target_link_libraries(SamplePhysics libFBFileSystem.a)
     target_link_libraries(SamplePhysics libFBGraphics.a)
     target_link_libraries(SamplePhysics libFBMesh.a)
     target_link_libraries(SamplePhysics libFBProcedural.a)
@@ -293,16 +285,27 @@ elseif (APPLE)
     target_link_libraries(SamplePhysics libFBAero.a)
     target_link_libraries(SamplePhysics libFBVehicle.a)
     target_link_libraries(SamplePhysics libFBAudio.a)
-    target_link_libraries(SamplePhysics libFBApplication.a)
     target_link_libraries(SamplePhysics libFBRenderUI.a)
 
     if (FB_BUILD_OISINPUT)
         target_link_libraries(SamplePhysics FBOISInput.a)
     endif()
 
+    if (FB_CODEC_FREEIMAGE)
+        target_link_libraries(SamplePhysics FreeImage.a)
+    endif()
+
+    if (FB_USE_FREETYPE)
+        target_link_libraries(SamplePhysics freetype.a)
+    endif()
+
     if (FB_GRAPHICS_SYSTEM_OGRENEXT)
         target_link_libraries(SamplePhysics FBGraphicsOgreNext.a)
-        target_link_libraries(SamplePhysics freetype.a)
+
+        target_link_libraries(SamplePhysics harfbuzz.a)
+        target_link_libraries(SamplePhysics harfbuzz-subset.a)
+        target_link_libraries(SamplePhysics icucommon.a)
+        target_link_libraries(SamplePhysics sds_library.a)
     elseif (FB_GRAPHICS_SYSTEM_OGRE)
         target_link_libraries(SamplePhysics FBGraphicsOgre.a)
     elseif(FB_GRAPHICS_SYSTEM_SOFTWARE)
@@ -310,7 +313,22 @@ elseif (APPLE)
     endif()
 
     if (FB_BUILD_PHYSX)
-        target_link_libraries(SamplePhysics libFBPhysx.a)
+        target_link_libraries(SamplePhysics FBPhysx.a)
+
+        target_link_libraries(SamplePhysics PhysX3.a)
+        target_link_libraries(SamplePhysics PhysX3Extensions.a)
+        target_link_libraries(SamplePhysics PhysX3Common.a)
+        target_link_libraries(SamplePhysics PhysX3Vehicle.a)
+        target_link_libraries(SamplePhysics PhysX3Cooking.a)
+        target_link_libraries(SamplePhysics PhysXProfileSDK.a)
+        target_link_libraries(SamplePhysics PxTask.a)
+        target_link_libraries(SamplePhysics PhysXVisualDebuggerSDK.a)
+        target_link_libraries(SamplePhysics PhysX3MetaData.a)
+        target_link_libraries(SamplePhysics PhysX3Foundation.a)
+        target_link_libraries(SamplePhysics PxSceneQuery.a)
+        target_link_libraries(SamplePhysics PxSimulationController.a)
+        target_link_libraries(SamplePhysics PhysX3LowLevel.a)
+        target_link_libraries(SamplePhysics PhysX3LowLevelCloth.a)
     elseif (FB_BUILD_ODE)
         target_link_libraries(SamplePhysics libFBODE3.a)
     endif()
@@ -323,14 +341,20 @@ elseif (APPLE)
     target_link_libraries(SamplePhysics libboost_timer.a)
     target_link_libraries(SamplePhysics libboost_filesystem.a)
     target_link_libraries(SamplePhysics libboost_unit_test_framework.a)
-    target_link_libraries(SamplePhysics libboost_system.a)
+    target_link_libraries(SamplePhysics libboost_json.a)
 
-    target_link_libraries(SamplePhysics libPxTask.a)
-    target_link_libraries(SamplePhysics libPhysXVisualDebuggerSDK.a)
-    target_link_libraries(SamplePhysics libPvdRuntime.a)
+    target_link_libraries(SamplePhysics minizip.a)
+    target_link_libraries(SamplePhysics nativefiledialog.a)
+    target_link_libraries(SamplePhysics rttr.a)
+    target_link_libraries(SamplePhysics tinyxml.a)
+    target_link_libraries(SamplePhysics yaml-cpp.a)
+    target_link_libraries(SamplePhysics zlib.a)
+    target_link_libraries(SamplePhysics zzip.a)
 
-    target_link_libraries(SamplePhysics libtbb.a)
-    target_link_libraries(SamplePhysics libtbbmalloc.a)
+    if (FB_USE_TBB)
+        target_link_libraries(SamplePhysics libtbb_static.a)
+        target_link_libraries(SamplePhysics libtbbmalloc_static.a)
+    endif()
 
     if (FB_BUILD_WILDMAGIC5)
         target_link_libraries(SamplePhysics libWm5Core.a)
@@ -348,7 +372,7 @@ elseif (APPLE)
     set_target_properties(SamplePhysics PROPERTIES LINK_FLAGS "-Wl,-F/Library/Frameworks")
 else (UNIX)
     target_link_libraries(SamplePhysics -Wl,--start-group FBCore.a FBAero.a
-        FBApplication.a FBFileSystem.a FBMath.a FBState.a FBVehicle.a FBData.a FBMesh.a FBGraphics.a
+        FBApplication.a.a FBMath.a FBState.a FBVehicle.a FBData.a FBMesh.a FBGraphics.a
         libFBObjectTemplates.a libFBVehicle.a libFBProcedural.a libFBSQLite.a libFBPhysx.a FBPhysics3.a FBAudio.a FBRenderUI.a  
         FBGraphicsOgreNext.a ${X11_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
         png Xaw Xrandr Xt xcb GL
@@ -379,11 +403,11 @@ else (UNIX)
 endif ()
 
 if (WIN32)
-    set_property(TARGET SamplePhysics PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${FB_ROOT}/Bin/windows/${FB_TOOLSET}/${FB_ARCH}/Debug)
+    set_property(TARGET SamplePhysics PROPERTY VS_DEBUGGER_WORKING_DIRECTORY 
+        "${CMAKE_SOURCE_DIR}/Bin/windows/${FB_TOOLSET}/${FB_ARCH}/${FB_STATIC_LINK_CRT_TYPE}/$(Configuration)")
 endif()
 
-
-add_dependencies(SamplePhysics FBAero FBApplication FBAi FBAudio FBCore FBFileSystem FBMesh FBProcedural FBSQLite FBVehicle)
+add_dependencies(SamplePhysics FBAudio FBCore FBMesh FBSQLite)
 
 if (FB_GRAPHICS_SYSTEM_OGRENEXT) 
     add_dependencies(SamplePhysics FBGraphicsOgreNext)

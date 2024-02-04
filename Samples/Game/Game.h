@@ -1,12 +1,12 @@
 #ifndef __Game_h__
 #define __Game_h__
 
-#include <FBApplication/CApplicationClient.h>
+#include <FBCore/Application.h>
 
 namespace fb
 {
     
-    class Game : public application::CApplicationClient
+    class Game : public core::Application
     {
     public:
         Game();

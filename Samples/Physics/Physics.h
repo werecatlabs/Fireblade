@@ -2,12 +2,12 @@
 #define Physics_h__
 
 #include <FBCore/FBCorePrerequisites.h>
-#include <FBApplication/CApplicationClient.h>
+#include <FBCore/Application.h>
 
 namespace fb
 {
 
-    class Physics : public application::CApplicationClient
+    class Physics : public core::Application
     {
     public:
         Physics();

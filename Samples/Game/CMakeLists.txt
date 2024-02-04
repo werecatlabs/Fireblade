@@ -9,7 +9,7 @@ if (UNIX)
     endif()
 endif()
 
-add_compile_definitions (_FB_STATIC_LIB_)
+
 #ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
 
 include_directories( ${FB_ROOT}/Dependencies/boost)
@@ -65,16 +65,6 @@ endif()
 
 include_directories( ${FB_ROOT}/FBEngine/cpp/Include )
 include_directories(Source)
-
-
-
-if (WIN32)
-	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FB_ROOT}/Bin/windows/${FB_TOOLSET}/${FB_ARCH}/)
-elseif (APPLE)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FB_ROOT}/Bin/macOS/${CMAKE_BUILD_TYPE})
-elseif (UNIX)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FB_ROOT}/Bin/linux/${CMAKE_BUILD_TYPE})
-endif (WIN32)
 
 if (WIN32)
     link_directories(SampleGame ${CMAKE_SOURCE_DIR}/libs/windows/${FB_TOOLSET}/${FB_ARCH}/${FB_STATIC_LINK_CRT_TYPE}/${CMAKE_BUILD_TYPE})
@@ -143,14 +133,13 @@ add_executable(SampleGame ${HEADER_FILES} ${SOURCE_FILES})
 
 if (WIN32)
     target_link_libraries(SampleGame FBCore.lib)
-    target_link_libraries(SampleGame FBFileSystem.lib)
+    
     target_link_libraries(SampleGame FBMesh.lib)
     target_link_libraries(SampleGame FBProcedural.lib)
     target_link_libraries(SampleGame FBPhysx.lib)
     target_link_libraries(SampleGame FBSQLite.lib)
     target_link_libraries(SampleGame FBVehicle.lib)
     target_link_libraries(SampleGame FBWxWidgets.lib)
-    target_link_libraries(SampleGame FBApplication.lib)
     target_link_libraries(SampleGame FBGraphics.lib)
 
     if (FB_BUILD_OISINPUT)
@@ -171,6 +160,11 @@ if (WIN32)
         target_link_libraries(SampleGame FBGraphicsOgreNext.lib)
         target_link_libraries(SampleGame debug FreeImage_d.lib optimized FreeImage.lib)
         target_link_libraries(SampleGame debug freetype_d.lib optimized freetype.lib)
+
+        target_link_libraries(SampleGame harfbuzz.lib)
+        target_link_libraries(SampleGame harfbuzz-subset.lib)
+        target_link_libraries(SampleGame icucommon.lib)
+        target_link_libraries(SampleGame sds_library.lib)
 
         if (FB_BUILD_RENDERER_DX11)
             target_link_libraries(SampleGame d3d11.lib)
@@ -255,128 +249,109 @@ if (WIN32)
     if (FB_BUILD_PHYSX)
         target_link_libraries(SampleGame FBPhysx.lib)
 
-        if (FB_PLATFORM_X64)
-            target_link_libraries(SampleGame 
-                        debug PhysX3DEBUG_x64.lib
-                        optimized PhysX3_x64.lib)
-            target_link_libraries(SampleGame 
-                        debug PhysX3ExtensionsDEBUG.lib
-                        optimized PhysX3Extensions.lib)
-            target_link_libraries(SampleGame 
-                        debug PhysX3CommonDEBUG_x64.lib 
-                        optimized PhysX3Common_x64.lib)
-            target_link_libraries(SampleGame 
-                        debug PhysX3VehicleDEBUG.lib 
-                        optimized PhysX3Vehicle.lib)
-            target_link_libraries(SampleGame 
-                        debug PhysX3CookingDEBUG_x64.lib
-                        optimized PhysX3Cooking_x64.lib)
-            target_link_libraries(SampleGame 
-                        debug PhysXProfileSDKDEBUG.lib
-                        optimized PhysXProfileSDK.lib)
-            target_link_libraries(SampleGame 
-                        debug PxTaskDEBUG.lib
-                        optimized PxTask.lib)
-            target_link_libraries(SampleGame 
-                        debug PhysXVisualDebuggerSDKDEBUG.lib
-                        optimized PhysXVisualDebuggerSDK.lib)
-        else ()
-            target_link_libraries(SampleGame 
-                        debug PhysX3DEBUG_x86.lib
-                        optimized PhysX3_x86.lib)
-            target_link_libraries(SampleGame 
-                        debug PhysX3ExtensionsDEBUG.lib
-                        optimized PhysX3Extensions.lib)
-            target_link_libraries(SampleGame 
-                        debug PhysX3CommonDEBUG_x86.lib 
-                        optimized PhysX3Common_x86.lib)
-            target_link_libraries(SampleGame 
-                        debug PhysX3VehicleDEBUG.lib 
-                        optimized PhysX3Vehicle.lib)
-            target_link_libraries(SampleGame 
-                        debug PhysX3CookingDEBUG_x86.lib
-                        optimized PhysX3Cooking_x86.lib)
-            target_link_libraries(SampleGame 
-                        debug PhysXProfileSDKDEBUG.lib
-                        optimized PhysXProfileSDK.lib)
-            target_link_libraries(SampleGame 
-                        debug PxTaskDEBUG.lib
-                        optimized PxTask.lib)
-            target_link_libraries(SampleGame 
-                        debug PhysXVisualDebuggerSDKDEBUG.lib
-                        optimized PhysXVisualDebuggerSDK.lib)
-        endif()
+        target_link_libraries(SampleGame PhysX3.lib)
+        target_link_libraries(SampleGame PhysX3Extensions.lib)
+        target_link_libraries(SampleGame PhysX3Common.lib)
+        target_link_libraries(SampleGame PhysX3Vehicle.lib)
+        target_link_libraries(SampleGame PhysX3Cooking.lib)
+        target_link_libraries(SampleGame PhysXProfileSDK.lib)
+        target_link_libraries(SampleGame PxTask.lib)
+        target_link_libraries(SampleGame PhysXVisualDebuggerSDK.lib)
+        target_link_libraries(SampleGame PhysX3MetaData.lib)
+        target_link_libraries(SampleGame PhysX3Foundation.lib)
+        target_link_libraries(SampleGame PxSceneQuery.lib)
+        target_link_libraries(SampleGame PxSimulationController.lib)
+        target_link_libraries(SampleGame PhysX3LowLevel.lib)
+        target_link_libraries(SampleGame PhysX3LowLevelCloth.lib)
+    endif()
+
+    target_link_libraries(SampleGame bcrypt.lib)
+    target_link_libraries(SampleGame libboost_thread.lib)
+    target_link_libraries(SampleGame libboost_date_time.lib)
+    target_link_libraries(SampleGame libboost_chrono.lib)
+    target_link_libraries(SampleGame libboost_timer.lib)
+    target_link_libraries(SampleGame libboost_filesystem.lib)
+    target_link_libraries(SampleGame libboost_unit_test_framework.lib)
+    target_link_libraries(SampleGame libboost_json.lib)
+
+    target_link_libraries(SampleGame minizip.lib)
+    target_link_libraries(SampleGame nativefiledialog.lib)
+    target_link_libraries(SampleGame rttr.lib)
+    target_link_libraries(SampleGame tinyxml.lib)
+    target_link_libraries(SampleGame yaml-cpp.lib)
+    target_link_libraries(SampleGame zlib.lib)
+    target_link_libraries(SampleGame zzip.lib)
+
+    if (FB_USE_TBB)
+        target_link_libraries(SampleGame tbb_static.lib)
+        target_link_libraries(SampleGame tbbmalloc_static.lib)
     endif()
 elseif (APPLE)
     # fireblade libraries
     target_link_libraries(SampleGame libFBCore.a)
-    target_link_libraries(SampleGame libFBFileSystem.a)
     target_link_libraries(SampleGame libFBGraphics.a)
     target_link_libraries(SampleGame libFBMesh.a)
     target_link_libraries(SampleGame libFBProcedural.a)
     target_link_libraries(SampleGame libFBPhysx.a)
     target_link_libraries(SampleGame libFBVehicle.a)
-    target_link_libraries(SampleGame libFBApplication.a)
     target_link_libraries(SampleGame libFBSQLite.a)
     target_link_libraries(SampleGame libFBOISInput.a)
 
-    if (WIN32)
-        target_link_libraries(SampleGame libboost_thread-gcc5-mt-s-x64-1_70.a)
-        target_link_libraries(SampleGame libboost_date_time-gcc5-mt-s-x64-1_70.a)
-        target_link_libraries(SampleGame libboost_chrono-gcc5-mt-s-x64-1_70.a)
-        target_link_libraries(SampleGame libboost_timer-gcc5-mt-s-x64-1_70.a)
-        target_link_libraries(SampleGame libboost_filesystem-gcc5-mt-s-x64-1_70.a)
-    elseif (APPLE)
-        target_link_libraries(SampleGame libboost_thread.a)
-        target_link_libraries(SampleGame libboost_date_time.a)
-        target_link_libraries(SampleGame libboost_chrono.a)
-        target_link_libraries(SampleGame libboost_timer.a)
-        target_link_libraries(SampleGame libboost_filesystem.a)
-    elseif (UNIX)
-        target_link_libraries(SampleGame libboost_thread-gcc5-mt-s-x64-1_70.a)
-        target_link_libraries(SampleGame libboost_date_time-gcc5-mt-s-x64-1_70.a)
-        target_link_libraries(SampleGame libboost_chrono-gcc5-mt-s-x64-1_70.a)
-        target_link_libraries(SampleGame libboost_timer-gcc5-mt-s-x64-1_70.a)
-        target_link_libraries(SampleGame libboost_filesystem-gcc5-mt-s-x64-1_70.a)
-    endif ()
+    if (FB_USE_FREETYPE)
+        target_link_libraries(SampleGame freetype.a)
+    endif()
 
     if (FB_GRAPHICS_SYSTEM_OGRENEXT)
         target_link_libraries(SampleGame FBGraphicsOgreNext.a)
-        target_link_libraries(SampleGame freetype.a)
+
+        target_link_libraries(SampleGame harfbuzz.a)
+        target_link_libraries(SampleGame harfbuzz-subset.a)
+        target_link_libraries(SampleGame icucommon.a)
+        target_link_libraries(SampleGame sds_library.a)
     elseif (FB_GRAPHICS_SYSTEM_OGRE)
         target_link_libraries(SampleGame FBGraphicsOgre.a)
-    elseif(FB_GRAPHICS_SYSTEM_SOFTWARE)
-        target_link_libraries(SampleGame libFBGraphicsSoftware.a)
     endif()
 
     target_link_libraries(SampleGame debug libassimpd.a optimized libassimp.a)
 
     if (FB_BUILD_PHYSX)
-        target_link_libraries(SampleGame libFBPhysx.a)
-    elseif (FB_BUILD_ODE)
-        target_link_libraries(SampleGame libFBODE3.a)
+        target_link_libraries(SampleGame FBPhysx.a)
+
+        target_link_libraries(SampleGame PhysX3.a)
+        target_link_libraries(SampleGame PhysX3Extensions.a)
+        target_link_libraries(SampleGame PhysX3Common.a)
+        target_link_libraries(SampleGame PhysX3Vehicle.a)
+        target_link_libraries(SampleGame PhysX3Cooking.a)
+        target_link_libraries(SampleGame PhysXProfileSDK.a)
+        target_link_libraries(SampleGame PxTask.a)
+        target_link_libraries(SampleGame PhysXVisualDebuggerSDK.a)
+        target_link_libraries(SampleGame PhysX3MetaData.a)
+        target_link_libraries(SampleGame PhysX3Foundation.a)
+        target_link_libraries(SampleGame PxSceneQuery.a)
+        target_link_libraries(SampleGame PxSimulationController.a)
+        target_link_libraries(SampleGame PhysX3LowLevel.a)
+        target_link_libraries(SampleGame PhysX3LowLevelCloth.a)
     endif()
 
-    # physx libraries
-    if (WIN32)
-    elseif (APPLE)
-        target_link_libraries(SampleGame libLowLevel.a libLowLevelCloth.a libPhysXProfileSDK.a libPhysX3Common.a libSceneQuery.a libSimulationController.a libPhysX3Cooking.a libPhysX3Extensions.a libPhysX3.a libPhysX3Vehicle.a)
-    elseif (UNIX)
-        target_link_libraries(SampleGame -Wl,--start-group libLowLevel.a libLowLevelCloth.a libPhysXProfileSDK.a libPhysX3Common.a libSceneQuery.a libSimulationController.a libPhysX3Cooking.a libPhysX3Extensions.a libPhysX3.a libPhysX3Vehicle.a -Wl,--end-group )
-    endif (WIN32)
+    target_link_libraries(SampleGame libboost_thread.a)
+    target_link_libraries(SampleGame libboost_date_time.a)
+    target_link_libraries(SampleGame libboost_chrono.a)
+    target_link_libraries(SampleGame libboost_timer.a)
+    target_link_libraries(SampleGame libboost_filesystem.a)
+    target_link_libraries(SampleGame libboost_json.a)
 
-    target_link_libraries(SampleGame libPxTask.a)
-    target_link_libraries(SampleGame libPhysXVisualDebuggerSDK.a)
-    target_link_libraries(SampleGame libPvdRuntime.a)
+    target_link_libraries(SampleGame minizip.a)
+    target_link_libraries(SampleGame nativefiledialog.a)
+    target_link_libraries(SampleGame rttr.a)
+    target_link_libraries(SampleGame tinyxml.a)
+    target_link_libraries(SampleGame yaml-cpp.a)
+    target_link_libraries(SampleGame zlib.a)
+    target_link_libraries(SampleGame zzip.a)
 
-    target_link_libraries(SampleGame libtbb.a)
-    target_link_libraries(SampleGame libtbbmalloc.a)
-    target_link_libraries(SampleGame debug libOIS_d.a optimized libOIS.a)
-
-    if (FB_BUILD_WILDMAGIC5)
-        target_link_libraries(SampleGame libWm5Core.a)
-        target_link_libraries(SampleGame libWm5Mathematics.a)
-    endif()
+    if (FB_USE_TBB)
+        target_link_libraries(SampleGame tbb_static.a)
+        target_link_libraries(SampleGame tbbmalloc_static.a)
+    endif ()
 
     #target_link_libraries(SampleGame stdc++ "-framework CoreGraphics" objc)
     #target_link_libraries(SampleGame ${AUDIO_UNIT})
@@ -384,7 +359,7 @@ elseif (APPLE)
     set_target_properties(SampleGame PROPERTIES LINK_FLAGS "-Wl,-F/Library/Frameworks")
 else ()
     target_link_libraries(SampleGame -Wl,--start-group FBCore.a FBSampleGame.a 
-        FBApplication.a FBFileSystem.a FBMath.a FBVehicle.a FBData.a FBMesh.a 
+        FBApplication.a.a FBMath.a FBVehicle.a FBData.a FBMesh.a 
         libFBObjectTemplates.a libFBVehicle.a libFBProcedural.a libFBSQLite.a libFBPhysx.a FBAudio.a         
         libboost_thread-gcc5-mt-s-x64-1_70.a
         libboost_date_time-gcc5-mt-s-x64-1_70.a
@@ -403,12 +378,11 @@ else ()
 endif ()
 
 if (WIN32)
-    set_property(TARGET SampleGame PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${FB_ROOT}/Bin/windows/${FB_TOOLSET}/${FB_ARCH}/Debug)
+    set_property(TARGET SampleGame PROPERTY VS_DEBUGGER_WORKING_DIRECTORY 
+        "${CMAKE_SOURCE_DIR}/Bin/windows/${FB_TOOLSET}/${FB_ARCH}/${FB_STATIC_LINK_CRT_TYPE}/$(Configuration)")
 endif()
 
-
-add_dependencies(SampleGame FBAero FBAi FBApplication FBAudio FBCore FBFileSystem FBMesh FBProcedural FBSQLite FBVehicle)
-
+add_dependencies(SampleGame FBAudio FBCore FBMesh FBSQLite)
 
 if (FB_GRAPHICS_SYSTEM_OGRENEXT) 
     add_dependencies(SampleGame FBGraphicsOgreNext)

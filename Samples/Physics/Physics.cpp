@@ -1,10 +1,9 @@
 #include "Physics.h"
 #include <FBCore/FBCore.h>
-#include <FBApplication/FBApplication.h>
 #include "FBOISInput/FBOISInput.h"
 
 #ifdef _FB_STATIC_LIB_
-#    include <FBFileSystem/FBFileSystem.h>
+
 #endif
 
 #ifdef _FB_STATIC_LIB_
@@ -25,7 +24,6 @@
 
 namespace fb
 {
-
 
     Physics::Physics()
     {
@@ -48,16 +46,20 @@ namespace fb
             const auto threadId = Thread::ThreadId::Primary;
             Thread::setCurrentThreadId( threadId );
 
-            auto applicationManager = fb::make_ptr<core::ApplicationManagerMT>();
+            auto taskFlags = std::numeric_limits<u32>::max();
+            Thread::setTaskFlags( taskFlags );
+
+            auto applicationManager = fb::make_ptr<core::ApplicationManager>();
+            applicationManager->load( data );
             FB_ASSERT( applicationManager );
 
-            core::IApplicationManager::setInstance( applicationManager );
-            FB_ASSERT( core::IApplicationManager::instance() );
+            core::ApplicationManager::setInstance( applicationManager );
+            FB_ASSERT( core::ApplicationManager::instance() );
 
             applicationManager->setLoadingState( LoadingState::Loading );
             FB_ASSERT( applicationManager->isValid() );
 
-            CApplicationClient::load( data );
+            Application::load( data );
 
             FB_ASSERT( applicationManager->isValid() );
 
@@ -88,7 +90,7 @@ namespace fb
             {
                 setLoadingState( LoadingState::Unloading );
 
-                auto applicationManager = core::IApplicationManager::instance();
+                auto applicationManager = core::ApplicationManager::instance();
                 FB_ASSERT( applicationManager );
                 FB_ASSERT( applicationManager->isValid() );
 
@@ -103,7 +105,7 @@ namespace fb
                     m_frameStatistics = nullptr;
                 }
 
-                CApplicationClient::unload( data );
+                Application::unload( data );
 
                 setLoadingState( LoadingState::Unloaded );
             }
@@ -118,22 +120,20 @@ namespace fb
     {
         // ApplicationUtil::create();
 
-        auto &gc = GarbageCollector::instance();
-
         auto sceneIdx = 3;
 
         switch( sceneIdx )
         {
         case 0:
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             FB_ASSERT( graphicsSystem );
 
-            auto sceneManager = graphicsSystem->getSceneManager( "GameSceneManager" );
+            auto sceneManager = graphicsSystem->getGraphicsScene( "GameSceneManager" );
             FB_ASSERT( sceneManager );
 
             auto physicsManager = applicationManager->getPhysicsManager();
@@ -143,7 +143,7 @@ namespace fb
             // resourceDatabase->importAssets();
             FB_ASSERT( resourceDatabase );
 
-            auto physicsScene = physicsManager->createScene();
+            auto physicsScene = physicsManager->addScene();
             FB_ASSERT( physicsScene );
 
             applicationManager->setPhysicsScene( physicsScene );
@@ -152,13 +152,11 @@ namespace fb
 
             m_boxGround = ApplicationUtil::createDefaultGround();
             FB_ASSERT( m_boxGround );
-
-            gc.update();
         }
         break;
         case 1:
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
@@ -171,7 +169,7 @@ namespace fb
             auto physicsMgr = applicationManager->getPhysicsManager();
             FB_ASSERT( physicsMgr );
 
-            auto physicsScene = physicsMgr->createScene();
+            auto physicsScene = physicsMgr->addScene();
             applicationManager->setPhysicsScene( physicsScene );
 
             auto sceneManager = applicationManager->getSceneManager();
@@ -183,7 +181,7 @@ namespace fb
             auto meshComponent = prefab->addComponent<scene::Mesh>();
             if( meshComponent )
             {
-                meshComponent->setMeshPath( "cube.fbmeshbin" );
+                meshComponent->setMeshPath( "cube_internal.fbmeshbin" );
             }
 
             auto meshRenderer = prefab->addComponent<scene::MeshRenderer>();
@@ -222,7 +220,7 @@ namespace fb
         break;
         case 2:
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
@@ -235,7 +233,7 @@ namespace fb
             auto physicsMgr = applicationManager->getPhysicsManager();
             FB_ASSERT( physicsMgr );
 
-            auto physicsScene = physicsMgr->createScene();
+            auto physicsScene = physicsMgr->addScene();
             applicationManager->setPhysicsScene( physicsScene );
 
             auto sceneManager = applicationManager->getSceneManager();
@@ -247,7 +245,7 @@ namespace fb
             auto meshComponent = prefab->addComponent<scene::Mesh>();
             if( meshComponent )
             {
-                meshComponent->setMeshPath( "cube.fbmeshbin" );
+                meshComponent->setMeshPath( "cube_internal.fbmeshbin" );
             }
 
             auto meshRenderer = prefab->addComponent<scene::MeshRenderer>();
@@ -292,7 +290,7 @@ namespace fb
         break;
         case 3:
         {
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
@@ -305,11 +303,14 @@ namespace fb
             auto physicsMgr = applicationManager->getPhysicsManager();
             FB_ASSERT( physicsMgr );
 
-            auto physicsScene = physicsMgr->createScene();
+            auto physicsScene = physicsMgr->addScene();
             applicationManager->setPhysicsScene( physicsScene );
 
             auto sceneManager = applicationManager->getSceneManager();
             auto scene = sceneManager->getCurrentScene();
+
+            auto light = ApplicationUtil::createDirectionalLight();
+            light->setOrientation( QuaternionF::eulerDegrees(-90, 0, 0) );
 
             m_boxGround = ApplicationUtil::createDefaultGround();
 
@@ -317,7 +318,7 @@ namespace fb
             auto meshComponent = prefab->addComponent<scene::Mesh>();
             if( meshComponent )
             {
-                meshComponent->setMeshPath( "cube.fbmeshbin" );
+                meshComponent->setMeshPath( "cube_internal.fbmeshbin" );
             }
 
             auto meshRenderer = prefab->addComponent<scene::MeshRenderer>();
@@ -333,7 +334,7 @@ namespace fb
             u32 seed = 1;
             Math<s32>::SetRandomSeed( seed );
 
-            auto numBoxes = static_cast<size_t>( 4 );
+            auto numBoxes = static_cast<size_t>( 7 );
             for( size_t x = 0; x < numBoxes; ++x )
             {
                 for( size_t y = 0; y < numBoxes; ++y )
@@ -368,7 +369,13 @@ namespace fb
         }
         }
 
-        gc.update();
+        for( auto box : m_boxes )
+        {
+            if( box )
+            {
+                box->updateTransform();
+            }
+        }
     }
 
     void Physics::createPlugins()
@@ -377,7 +384,7 @@ namespace fb
         {
             FB_DEBUG_TRACE;
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
@@ -387,13 +394,8 @@ namespace fb
 #endif
 
 #ifdef _FB_STATIC_LIB_
-            auto applicationPlugin = fb::make_ptr<ApplicationPlugin>();
-            applicationManager->addPlugin( applicationPlugin );
-#endif
-
-#ifdef _FB_STATIC_LIB_
-            auto fileSystemPlugin = fb::make_ptr<FBFileSystem>();
-            fileSystemPlugin->load( nullptr );
+            //auto applicationPlugin = fb::make_ptr<ApplicationPlugin>();
+            //applicationManager->addPlugin( applicationPlugin );
 #endif
 
 #ifdef _FB_STATIC_LIB_
@@ -447,7 +449,10 @@ int main( int argc, char *argv[] )
 #if 1
     try
     {
-        app.setActiveThreads( 4 );
+        const auto threads = Thread::hardware_concurrency();
+        app.setActiveThreads( threads );
+        //app.setActiveThreads( 0 );
+
         app.load( nullptr );
         app.run();
         app.unload( nullptr );

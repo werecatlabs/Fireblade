@@ -8,10 +8,10 @@ namespace fb
     class Types
     {
     public:
-        static const u32 INPUT_UP;
-        static const u32 INPUT_DOWN;
-        static const u32 INPUT_RIGHT;
-        static const u32 INPUT_LEFT;
+        static const hash_type INPUT_UP;
+        static const hash_type INPUT_DOWN;
+        static const hash_type INPUT_RIGHT;
+        static const hash_type INPUT_LEFT;
 
         static const u32 RESERVED_MASK = ( 0 << 31 );
         static const u32 SCENE_OBJECTS_MASK = ( 0 << 1 );

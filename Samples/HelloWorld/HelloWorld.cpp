@@ -1,9 +1,6 @@
 #include "HelloWorld.h"
 #include <FBCore/FBCore.h>
-#include <FBFileSystem/FBFileSystem.h>
-#include <FBApplication/FBApplication.h>
 #include <FBSQLite/FBSQLite.h>
-
 #include "FBRenderUI/FBRenderUI.h"
 
 #if FB_GRAPHICS_SYSTEM_CLAW
@@ -20,9 +17,9 @@
 #    include <FBODE3/CPhysicsManagerODE.h>
 #endif
 
-
 namespace fb
 {
+
 
     HelloWorld::HelloWorld()
     {
@@ -45,21 +42,21 @@ namespace fb
             auto threadId = Thread::ThreadId::Primary;
             Thread::setCurrentThreadId( threadId );
 
-            auto applicationManager = fb::make_ptr<core::ApplicationManagerMT>();
-            core::IApplicationManager::setInstance( applicationManager );
+            auto taskFlags = std::numeric_limits<u32>::max();
+            Thread::setTaskFlags( taskFlags );
+
+            auto applicationManager = fb::make_ptr<core::ApplicationManager>();
+            applicationManager->load( data );
+            core::ApplicationManager::setInstance( applicationManager );
 
             applicationManager->setApplication( this );
 
-            CApplicationClient::load( data );
+            Application::load( data );
 
             auto graphicsSystem = applicationManager->getGraphicsSystem();
             auto debug = graphicsSystem->getDebug();
 
             debug->drawText( 0, Vector2F::unit() * 0.5f, "Hello world!", 0 );
-
-            auto renderUI = ui::FBRenderUI::createUIManager();
-            applicationManager->setRenderUI( renderUI );
-            graphicsSystem->loadObject( renderUI );
 
             setLoadingState( LoadingState::Loaded );
         }
@@ -87,7 +84,7 @@ namespace fb
 
     void HelloWorld::createPlugins()
     {
-        auto applicationManager = core::IApplicationManager::instance();
+        auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
 #ifdef _FB_STATIC_LIB_
@@ -96,14 +93,11 @@ namespace fb
 #endif
 
 #ifdef _FB_STATIC_LIB_
-        auto applicationPlugin = fb::make_ptr<ApplicationPlugin>();
-        applicationManager->addPlugin( applicationPlugin );
+        //auto applicationPlugin = fb::make_ptr<ApplicationPlugin>();
+        //applicationManager->addPlugin( applicationPlugin );
 #endif
 
-#ifdef _FB_STATIC_LIB_
-        auto fileSystemPlugin = fb::make_ptr<FBFileSystem>();
-        applicationManager->addPlugin( fileSystemPlugin );
-#endif
+
 
 #ifdef _FB_STATIC_LIB_
         auto databasePlugin = fb::make_ptr<SQLitePlugin>();

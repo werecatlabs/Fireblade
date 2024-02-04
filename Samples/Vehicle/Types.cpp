@@ -1,5 +1,5 @@
 #include "Types.h"
-#include <FBCore/Base/StringUtil.h>
+#include <FBCore/Core/StringUtil.h>
 
 namespace fb
 {

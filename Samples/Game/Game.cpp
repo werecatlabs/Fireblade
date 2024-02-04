@@ -1,11 +1,8 @@
 #include "Game.h"
 #include "Types.h"
 #include <FBCore/FBCore.h>
-#include <FBFileSystem/FBFileSystem.h>
-#include <FBApplication/FBApplication.h>
 #include <FBAero/FBAero.h>
 #include <FBOISInput/FBOISInput.h>
-#include <FBFileSystem/FBFileSystem.h>
 #include "FBSQLite/FBSQLite.h"
 
 #if FB_GRAPHICS_SYSTEM_OGRENEXT
@@ -15,27 +12,23 @@
 #endif
 
 #if FB_BUILD_PHYSX
-
 #    include <FBPhysx/FBPhysx.h>
-
 #elif FB_BUILD_ODE
 #    include <FBODE3/CPhysicsManagerODE.h>
 #endif
 
 namespace fb
 {
-    //--------------------------------------------
+
     Game::Game()
     {
     }
 
-    //--------------------------------------------
     Game::~Game()
     {
         unload( nullptr );
     }
 
-    //--------------------------------------------
     void Game::load( SmartPtr<ISharedObject> data )
     {
         try
@@ -48,10 +41,10 @@ namespace fb
             auto threadId = Thread::ThreadId::Primary;
             Thread::setCurrentThreadId( threadId );
 
-            auto applicationManager = fb::make_ptr<core::ApplicationManagerMT>();
-            core::IApplicationManager::setInstance( applicationManager );
+            auto applicationManager = fb::make_ptr<core::ApplicationManager>();
+            core::ApplicationManager::setInstance( applicationManager );
 
-            CApplicationClient::load( data );
+            Application::load( data );
 
             auto factoryManager = applicationManager->getFactoryManager();
 
@@ -71,7 +64,7 @@ namespace fb
             //auto prefabManager = fb::make_ptr<scene::CPrefabManager>();
             //applicationManager->setPrefabManager( prefabManager );
 
-           // m_cameraActor = ApplicationUtil::createCamera();
+            // m_cameraActor = ApplicationUtil::createCamera();
 
             // auto vehicleManager = fb::make_ptr<CAeroManager>();
             // applicationManager->setAeroManager(vehicleManager);
@@ -148,20 +141,19 @@ namespace fb
         }
     }
 
-    //--------------------------------------------
     void Game::unload( SmartPtr<ISharedObject> data )
     {
         try
         {
             setLoadingState( LoadingState::Unloading );
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
             applicationManager->unload( nullptr );
-            core::IApplicationManager::setInstance( nullptr );
+            core::ApplicationManager::setInstance( nullptr );
             applicationManager = nullptr;
-            FB_ASSERT( core::IApplicationManager::instance() == nullptr );
+            FB_ASSERT( core::ApplicationManager::instance() == nullptr );
 
             setLoadingState( LoadingState::Unloaded );
         }
@@ -177,7 +169,7 @@ namespace fb
         {
             FB_DEBUG_TRACE;
 
-            auto applicationManager = core::IApplicationManager::instance();
+            auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
             FB_ASSERT( applicationManager->isValid() );
 
@@ -187,14 +179,11 @@ namespace fb
 #endif
 
 #ifdef _FB_STATIC_LIB_
-            auto applicationPlugin = fb::make_ptr<ApplicationPlugin>();
-            applicationManager->addPlugin( applicationPlugin );
+            //auto applicationPlugin = fb::make_ptr<ApplicationPlugin>();
+            //applicationManager->addPlugin( applicationPlugin );
 #endif
 
-#ifdef _FB_STATIC_LIB_
-            auto fileSystemPlugin = fb::make_ptr<FBFileSystem>();
-            fileSystemPlugin->load( nullptr );
-#endif
+
 
 #ifdef _FB_STATIC_LIB_
             auto databasePlugin = fb::make_ptr<SQLitePlugin>();
@@ -227,7 +216,7 @@ namespace fb
 #    endif
 #endif
 
-            ApplicationUtil::createFactories();
+            //ApplicationUtil::createFactories();
         }
         catch( std::exception &e )
         {
@@ -237,7 +226,6 @@ namespace fb
 
 }  // end namespace fb
 
-//--------------------------------------------
 int main( int argc, char *argv[] )
 {
     using namespace fb;
@@ -245,7 +233,6 @@ int main( int argc, char *argv[] )
     // Create application object
     Game app;
 
-#if 1
     try
     {
         app.load( nullptr );
@@ -254,14 +241,8 @@ int main( int argc, char *argv[] )
     }
     catch( Exception &e )
     {
-        FB_LOG_EXCEPTION( e );
+        std::cout << e.what() << std::endl;
     }
-
-#else
-    app.load( nullptr );
-    app.run();
-    app.unload( nullptr );
-#endif
 
     return 1;
 }
