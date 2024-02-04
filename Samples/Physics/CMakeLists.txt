@@ -87,15 +87,11 @@ file(GLOB_RECURSE SOURCE_FILES "./*.c" "./*.cpp")
 add_executable(SamplePhysics ${HEADER_FILES} ${SOURCE_FILES})
 
 if (WIN32)
-    target_link_libraries(SamplePhysics FBCore.lib)
-    
+    target_link_libraries(SamplePhysics FBCore.lib)    
     target_link_libraries(SamplePhysics FBMesh.lib)
-    target_link_libraries(SamplePhysics FBProcedural.lib)
     target_link_libraries(SamplePhysics FBPhysx.lib)
     target_link_libraries(SamplePhysics FBSQLite.lib)
-    target_link_libraries(SamplePhysics FBWxWidgets.lib)
     target_link_libraries(SamplePhysics FBGraphics.lib)
-    target_link_libraries(SamplePhysics FBVehicle.lib)
     target_link_libraries(SamplePhysics FBRenderUI.lib)
 
     if (FB_BUILD_OISINPUT)
@@ -110,18 +106,6 @@ if (WIN32)
         target_link_libraries(SamplePhysics libfbxsdk-mt.lib)
         target_link_libraries(SamplePhysics libxml2-mt.lib)
         target_link_libraries(SamplePhysics tinyxml2.lib)
-    endif()
-
-    if (FB_BUILD_WILDMAGIC5)
-        target_link_libraries(SamplePhysics 
-                            debug Wm5CoreD.lib
-                            optimized Wm5Core.lib)
-        target_link_libraries(SamplePhysics 
-                            debug Wm5MathematicsD.lib
-                            optimized Wm5Mathematics.lib)
-        target_link_libraries(SamplePhysics 
-                            debug Wm5PhysicsD.lib
-                            optimized Wm5Physics.lib)
     endif()
 
     if (FB_BUILD_PHYSX)
@@ -153,8 +137,6 @@ if (WIN32)
 
     if (FB_GRAPHICS_SYSTEM_OGRENEXT)
         target_link_libraries(SamplePhysics FBGraphicsOgreNext.lib)
-        target_link_libraries(SamplePhysics debug FreeImage_d.lib optimized FreeImage.lib)
-        target_link_libraries(SamplePhysics debug freetype_d.lib optimized freetype.lib)
 
         target_link_libraries(SamplePhysics harfbuzz.lib)
         target_link_libraries(SamplePhysics harfbuzz-subset.lib)
@@ -171,10 +153,6 @@ if (WIN32)
             target_link_libraries(SamplePhysics opengl32.lib)
             target_link_libraries(SamplePhysics glu32.lib)
         endif ()
-
-        if (FB_PLATFORM_X64)
-            target_link_libraries(SamplePhysics amd_ags_x64.lib)
-        endif()
     elseif(FB_GRAPHICS_SYSTEM_OGRE)
         target_link_libraries(SamplePhysics FBGraphicsOgre.lib)
 
@@ -209,11 +187,6 @@ if (WIN32)
             target_link_libraries(SamplePhysics debug OgreBitesStatic_d.lib
                                        optimized OgreBitesStatic.lib)
         endif()
-    
-        if (FB_CODEC_FREEIMAGE)
-            target_link_libraries(SamplePhysics debug FreeImage_d.lib
-                                optimized FreeImage.lib)
-        endif ()
 
         #target_link_libraries(SamplePhysics freetype.lib)   
         
@@ -231,19 +204,11 @@ if (WIN32)
         if (FB_BUILD_RENDERER_OPENGL)
             target_link_libraries(SamplePhysics opengl32.lib)
             target_link_libraries(SamplePhysics glu32.lib)
-            
-            if (FB_PLATFORM_X64)
-                target_link_libraries(SamplePhysics amd_ags_x64.lib)
-            endif ()
         endif ()
 
         if (FB_BUILD_RENDERER_GL3PLUS)
             target_link_libraries(SamplePhysics opengl32.lib)
             target_link_libraries(SamplePhysics glu32.lib)
-
-            if (FB_PLATFORM_X64)
-                target_link_libraries(SamplePhysics amd_ags_x64.lib)
-            endif ()
         endif ()
     elseif(FB_BUILD_DX11)
         target_link_libraries(SamplePhysics FBGraphicsD3D11.lib)
@@ -280,10 +245,7 @@ elseif (APPLE)
     target_link_libraries(SamplePhysics libFBCore.a)
     target_link_libraries(SamplePhysics libFBGraphics.a)
     target_link_libraries(SamplePhysics libFBMesh.a)
-    target_link_libraries(SamplePhysics libFBProcedural.a)
     target_link_libraries(SamplePhysics libFBPhysx.a)
-    target_link_libraries(SamplePhysics libFBAero.a)
-    target_link_libraries(SamplePhysics libFBVehicle.a)
     target_link_libraries(SamplePhysics libFBAudio.a)
     target_link_libraries(SamplePhysics libFBRenderUI.a)
 
@@ -371,9 +333,8 @@ elseif (APPLE)
     target_link_libraries(SamplePhysics stdc++ "-framework Metal" "-framework OpenGL" "-framework Foundation" "-framework QuartzCore" "-framework CoreGraphics" "-framework CoreServices" "-framework Cocoa" "-framework Carbon" "-framework IOKit" objc)
     set_target_properties(SamplePhysics PROPERTIES LINK_FLAGS "-Wl,-F/Library/Frameworks")
 else (UNIX)
-    target_link_libraries(SamplePhysics -Wl,--start-group FBCore.a FBAero.a
-        FBApplication.a.a FBMath.a FBState.a FBVehicle.a FBData.a FBMesh.a FBGraphics.a
-        libFBObjectTemplates.a libFBVehicle.a libFBProcedural.a libFBSQLite.a libFBPhysx.a FBPhysics3.a FBAudio.a FBRenderUI.a  
+    target_link_libraries(SamplePhysics -Wl,--start-group FBCore.a FBGraphics.a
+        libFBSQLite.a libFBPhysx.a FBPhysics3.a FBAudio.a FBRenderUI.a  
         FBGraphicsOgreNext.a ${X11_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
         png Xaw Xrandr Xt xcb GL
         libboost_thread-gcc5-mt-s-x64-1_70.a

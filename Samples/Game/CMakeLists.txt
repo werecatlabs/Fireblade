@@ -133,13 +133,9 @@ add_executable(SampleGame ${HEADER_FILES} ${SOURCE_FILES})
 
 if (WIN32)
     target_link_libraries(SampleGame FBCore.lib)
-    
     target_link_libraries(SampleGame FBMesh.lib)
-    target_link_libraries(SampleGame FBProcedural.lib)
     target_link_libraries(SampleGame FBPhysx.lib)
     target_link_libraries(SampleGame FBSQLite.lib)
-    target_link_libraries(SampleGame FBVehicle.lib)
-    target_link_libraries(SampleGame FBWxWidgets.lib)
     target_link_libraries(SampleGame FBGraphics.lib)
 
     if (FB_BUILD_OISINPUT)
@@ -156,10 +152,16 @@ if (WIN32)
         target_link_libraries(SampleGame tinyxml2.lib)
     endif()
 
+    if (FB_CODEC_FREEIMAGE)
+        target_link_libraries(SampleGame FreeImage.a)
+    endif()
+
+    if (FB_USE_FREETYPE)
+        target_link_libraries(SampleGame freetype.a)
+    endif()
+
     if (FB_GRAPHICS_SYSTEM_OGRENEXT)
         target_link_libraries(SampleGame FBGraphicsOgreNext.lib)
-        target_link_libraries(SampleGame debug FreeImage_d.lib optimized FreeImage.lib)
-        target_link_libraries(SampleGame debug freetype_d.lib optimized freetype.lib)
 
         target_link_libraries(SampleGame harfbuzz.lib)
         target_link_libraries(SampleGame harfbuzz-subset.lib)
@@ -176,10 +178,6 @@ if (WIN32)
             target_link_libraries(SampleGame opengl32.lib)
             target_link_libraries(SampleGame glu32.lib)
         endif ()
-
-        if (FB_PLATFORM_X64)
-            target_link_libraries(SampleGame amd_ags_x64.lib)
-        endif()
     elseif(FB_GRAPHICS_SYSTEM_OGRE)
         target_link_libraries(SampleGame FBGraphicsOgre.lib)
 

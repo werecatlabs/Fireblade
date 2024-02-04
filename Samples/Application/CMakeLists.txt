@@ -111,12 +111,9 @@ add_executable(SampleApplication ${HEADER_FILES} ${SOURCE_FILES})
 
 if (WIN32)
     target_link_libraries(SampleApplication FBCore.lib)
-    
     target_link_libraries(SampleApplication FBMesh.lib)
-    target_link_libraries(SampleApplication FBProcedural.lib)
     target_link_libraries(SampleApplication FBPhysx.lib)
     target_link_libraries(SampleApplication FBSQLite.lib)
-    target_link_libraries(SampleApplication FBVehicle.lib)
     target_link_libraries(SampleApplication FBWxWidgets.lib)
     target_link_libraries(SampleApplication FBGraphics.lib)
 
@@ -143,10 +140,16 @@ if (WIN32)
         target_link_libraries(SampleApplication imgui.lib)
     endif()
 
+    if (FB_CODEC_FREEIMAGE)
+        target_link_libraries(SampleApplication FreeImage.a)
+    endif()
+
+    if (FB_USE_FREETYPE)
+        target_link_libraries(SampleApplication freetype.a)
+    endif()
+
     if (FB_GRAPHICS_SYSTEM_OGRENEXT)
         target_link_libraries(SampleApplication FBGraphicsOgreNext.lib)
-        target_link_libraries(SampleApplication debug FreeImage_d.lib optimized FreeImage.lib)
-        target_link_libraries(SampleApplication debug freetype_d.lib optimized freetype.lib)
 
         target_link_libraries(SampleApplication harfbuzz.lib)
         target_link_libraries(SampleApplication harfbuzz-subset.lib)
@@ -163,10 +166,6 @@ if (WIN32)
             target_link_libraries(SampleApplication opengl32.lib)
             target_link_libraries(SampleApplication glu32.lib)
         endif ()
-
-        if (FB_PLATFORM_X64)
-            target_link_libraries(SampleApplication amd_ags_x64.lib)
-        endif()
     elseif(FB_GRAPHICS_SYSTEM_OGRE)
         target_link_libraries(SampleApplication FBGraphicsOgre.lib)
 
@@ -215,19 +214,11 @@ if (WIN32)
         if (FB_BUILD_RENDERER_OPENGL)
             target_link_libraries(SampleApplication opengl32.lib)
             target_link_libraries(SampleApplication glu32.lib)
-            
-            if (FB_PLATFORM_X64)
-                target_link_libraries(SampleApplication amd_ags_x64.lib)
-            endif ()
         endif ()
 
         if (FB_BUILD_RENDERER_GL3PLUS)
             target_link_libraries(SampleApplication opengl32.lib)
             target_link_libraries(SampleApplication glu32.lib)
-
-            if (FB_PLATFORM_X64)
-                target_link_libraries(SampleApplication amd_ags_x64.lib)
-            endif ()
         endif ()
     elseif(FB_BUILD_DX11)
         target_link_libraries(SampleApplication FBGraphicsD3D11.lib)
@@ -280,9 +271,7 @@ elseif (APPLE)
     target_link_libraries(SampleApplication libFBCore.a)
     target_link_libraries(SampleApplication libFBGraphics.a)
     target_link_libraries(SampleApplication libFBMesh.a)
-    target_link_libraries(SampleApplication libFBProcedural.a)
     target_link_libraries(SampleApplication libFBPhysx.a)
-    target_link_libraries(SampleApplication libFBVehicle.a)
     target_link_libraries(SampleApplication libFBSQLite.a)
 
     target_link_libraries(SampleApplication libFBAssimp.a)
@@ -367,9 +356,8 @@ elseif (APPLE)
     target_link_libraries(SampleApplication stdc++ "-framework Metal" "-framework OpenGL" "-framework Foundation" "-framework QuartzCore" "-framework CoreGraphics" "-framework CoreServices" "-framework Cocoa" "-framework Carbon" "-framework IOKit" "-framework GameController" objc)
     set_target_properties(SampleApplication PROPERTIES LINK_FLAGS "-Wl,-F/Library/Frameworks")
 else ()
-    target_link_libraries(SampleApplication -Wl,--start-group FBCore.a FBAero.a FBGraphics.a FBGraphicsOgreNext.a
-        FBApplication.a.a FBMath.a FBState.a FBVehicle.a FBData.a FBImGui.a 
-        libFBObjectTemplates.a libFBVehicle.a FBProcedural.a FBMesh.a       
+    target_link_libraries(SampleApplication -Wl,--start-group FBCore.a 
+        FBGraphics.a FBGraphicsOgreNext.a FBImGui.a FBMesh.a       
         libboost_thread-gcc5-mt-s-x64-1_70.a
         libboost_date_time-gcc5-mt-s-x64-1_70.a
         libboost_chrono-gcc5-mt-s-x64-1_70.a

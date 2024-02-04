@@ -125,15 +125,11 @@ file(GLOB_RECURSE SOURCE_FILES "./*.c" "./*.cpp")
 
 add_executable(SampleVehicle ${HEADER_FILES} ${SOURCE_FILES})
 
-
-
 if (WIN32)
     target_link_libraries(SampleVehicle FBCore.lib)    
     target_link_libraries(SampleVehicle FBMesh.lib)
-    target_link_libraries(SampleVehicle FBProcedural.lib)
     target_link_libraries(SampleVehicle FBPhysx.lib)
     target_link_libraries(SampleVehicle FBSQLite.lib)
-    target_link_libraries(SampleVehicle FBWxWidgets.lib)
     target_link_libraries(SampleVehicle FBGraphics.lib)
 
     if (FB_BUILD_OISINPUT)
@@ -151,10 +147,16 @@ if (WIN32)
         target_link_libraries(SampleVehicle tinyxml2.lib)
     endif()
 
+    if (FB_CODEC_FREEIMAGE)
+        target_link_libraries(SampleVehicle FreeImage.a)
+    endif()
+
+    if (FB_USE_FREETYPE)
+        target_link_libraries(SampleVehicle freetype.a)
+    endif()
+
     if (FB_GRAPHICS_SYSTEM_OGRENEXT)
         target_link_libraries(SampleVehicle FBGraphicsOgreNext.lib)
-        target_link_libraries(SampleVehicle debug FreeImage_d.lib optimized FreeImage.lib)
-        target_link_libraries(SampleVehicle debug freetype_d.lib optimized freetype.lib)
 
         target_link_libraries(SampleVehicle harfbuzz.lib)
         target_link_libraries(SampleVehicle harfbuzz-subset.lib)
@@ -171,10 +173,6 @@ if (WIN32)
             target_link_libraries(SampleVehicle opengl32.lib)
             target_link_libraries(SampleVehicle glu32.lib)
         endif ()
-
-        if (FB_PLATFORM_X64)
-            target_link_libraries(SampleVehicle amd_ags_x64.lib)
-        endif()
     elseif(FB_GRAPHICS_SYSTEM_OGRE)
         target_link_libraries(SampleVehicle FBGraphicsOgre.lib)
 
@@ -209,11 +207,6 @@ if (WIN32)
                                        optimized OgreBitesStatic.lib)
         endif()
 
-        if (FB_CODEC_FREEIMAGE)
-            target_link_libraries(SampleVehicle debug FreeImage_d.lib
-                                optimized FreeImage.lib)
-        endif ()
-
         #target_link_libraries(SampleVehicle freetype.lib)
 
         if (FB_BUILD_RENDERER_DX9)
@@ -230,19 +223,11 @@ if (WIN32)
         if (FB_BUILD_RENDERER_OPENGL)
             target_link_libraries(SampleVehicle opengl32.lib)
             target_link_libraries(SampleVehicle glu32.lib)
-            
-            if (FB_PLATFORM_X64)
-                target_link_libraries(SampleVehicle amd_ags_x64.lib)
-            endif ()
         endif ()
 
         if (FB_BUILD_RENDERER_GL3PLUS)
             target_link_libraries(SampleVehicle opengl32.lib)
             target_link_libraries(SampleVehicle glu32.lib)
-            
-            if (FB_PLATFORM_X64)
-                target_link_libraries(SampleVehicle amd_ags_x64.lib)
-            endif ()
         endif ()
     elseif(FB_BUILD_DX11)
         target_link_libraries(SampleVehicle FBGraphicsD3D11.lib)
@@ -295,7 +280,6 @@ elseif (APPLE)
     target_link_libraries(SampleVehicle libFBCore.a)
     target_link_libraries(SampleVehicle libFBGraphics.a)
     target_link_libraries(SampleVehicle libFBMesh.a)
-    target_link_libraries(SampleVehicle libFBProcedural.a)
     target_link_libraries(SampleVehicle libFBPhysx.a)
     target_link_libraries(SampleVehicle libFBSQLite.a)
     target_link_libraries(SampleVehicle libFBOISInput.a)
@@ -369,9 +353,8 @@ elseif (APPLE)
     target_link_libraries(SampleVehicle stdc++ "-framework Metal" "-framework OpenGL" "-framework Foundation" "-framework QuartzCore" "-framework CoreGraphics" "-framework CoreServices" "-framework Cocoa" "-framework Carbon" "-framework IOKit" objc)
     set_target_properties(SampleVehicle PROPERTIES LINK_FLAGS "-Wl,-F/Library/Frameworks")
 else ()
-    target_link_libraries(SampleVehicle -Wl,--start-group FBCore.a FBAero.a 
-        FBApplication.a.a FBMath.a FBSystem.a FBVehicle.a FBData.a FBMesh.a 
-        libFBObjectTemplates.a libFBVehicle.a libFBProcedural.a libFBSQLite.a libFBPhysx.a FBAudio.a         
+    target_link_libraries(SampleVehicle -Wl,--start-group FBCore.a FBMesh.a 
+        libFBSQLite.a libFBPhysx.a FBAudio.a         
         libboost_thread-gcc5-mt-s-x64-1_70.a
         libboost_date_time-gcc5-mt-s-x64-1_70.a
         libboost_chrono-gcc5-mt-s-x64-1_70.a

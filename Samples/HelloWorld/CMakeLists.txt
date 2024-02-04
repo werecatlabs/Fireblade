@@ -98,10 +98,8 @@ add_executable(SampleHelloWorld ${HEADER_FILES} ${SOURCE_FILES})
 if (WIN32)
     target_link_libraries(SampleHelloWorld FBCore.lib)
     target_link_libraries(SampleHelloWorld FBMesh.lib)
-    target_link_libraries(SampleHelloWorld FBProcedural.lib)
     target_link_libraries(SampleHelloWorld FBPhysx.lib)
     target_link_libraries(SampleHelloWorld FBSQLite.lib)
-    target_link_libraries(SampleHelloWorld FBVehicle.lib)
     target_link_libraries(SampleHelloWorld FBOISInput.lib)
     target_link_libraries(SampleHelloWorld FBGraphics.lib)
     target_link_libraries(SampleHelloWorld FBRenderUI.lib)
@@ -122,17 +120,15 @@ if (WIN32)
     endif()
 
     if (FB_CODEC_FREEIMAGE)
-        target_link_libraries(SampleHelloWorld debug FreeImage_d.lib optimized FreeImage.lib)
+        target_link_libraries(SampleHelloWorld FreeImage.lib)
     endif()
 
     if (FB_USE_FREETYPE)
-        target_link_libraries(SampleHelloWorld debug freetype_d.lib optimized freetype.lib)
+        target_link_libraries(SampleHelloWorld freetype.lib)
     endif()
 
     if (FB_GRAPHICS_SYSTEM_OGRENEXT)
         target_link_libraries(SampleHelloWorld FBGraphicsOgreNext.lib)
-        target_link_libraries(SampleHelloWorld debug FreeImage_d.lib optimized FreeImage.lib)
-        target_link_libraries(SampleHelloWorld debug freetype_d.lib optimized freetype.lib)
 
         target_link_libraries(SampleHelloWorld harfbuzz.lib)
         target_link_libraries(SampleHelloWorld harfbuzz-subset.lib)
@@ -149,10 +145,6 @@ if (WIN32)
             target_link_libraries(SampleHelloWorld opengl32.lib)
             target_link_libraries(SampleHelloWorld glu32.lib)
         endif ()
-
-        if (FB_PLATFORM_X64)
-            target_link_libraries(SampleHelloWorld amd_ags_x64.lib)
-        endif()
     elseif(FB_GRAPHICS_SYSTEM_OGRE)
         target_link_libraries(SampleHelloWorld FBGraphicsOgre.lib)
 
@@ -210,10 +202,6 @@ if (WIN32)
         if (FB_BUILD_RENDERER_GL3PLUS)
             target_link_libraries(SampleHelloWorld opengl32.lib)
             target_link_libraries(SampleHelloWorld glu32.lib)
-
-            if (FB_PLATFORM_X64)
-                target_link_libraries(SampleHelloWorld amd_ags_x64.lib)
-            endif ()
         endif ()
 
         if (FB_USE_FREETYPE)
@@ -266,7 +254,6 @@ elseif (APPLE)
     target_link_libraries(SampleHelloWorld libFBCore.a)
     target_link_libraries(SampleHelloWorld libFBGraphics.a)
     target_link_libraries(SampleHelloWorld libFBMesh.a)
-    target_link_libraries(SampleHelloWorld libFBProcedural.a)
     target_link_libraries(SampleHelloWorld libFBPhysx.a)
     target_link_libraries(SampleHelloWorld libFBVehicle.a)
     target_link_libraries(SampleHelloWorld FBRenderUI.a)
@@ -335,9 +322,7 @@ elseif (APPLE)
     target_link_libraries(SampleHelloWorld stdc++ "-framework Metal" "-framework OpenGL" "-framework Foundation" "-framework QuartzCore" "-framework CoreGraphics" "-framework CoreServices" "-framework Cocoa" "-framework Carbon" "-framework IOKit" objc)
     set_target_properties(SampleHelloWorld PROPERTIES LINK_FLAGS "-Wl,-F/Library/Frameworks")
 else ()
-    target_link_libraries(SampleHelloWorld -Wl,--start-group FBCore.a FBAero.a 
-        FBApplication.a.a FBMath.a FBMesh.a FBVehicle.a FBData.a FBState.a 
-        libFBObjectTemplates.a libFBVehicle.a FBGraphics.a
+    target_link_libraries(SampleHelloWorld -Wl,--start-group FBCore.a FBMesh.a FBGraphics.a
         FBGraphicsOgreNext.a ${X11_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
         png Xaw Xrandr Xt xcb
         libboost_thread-gcc5-mt-s-x64-1_70.a
@@ -347,7 +332,6 @@ else ()
         libboost_filesystem-gcc5-mt-s-x64-1_70.a
         debug libtbb_debug.a optimized libtbb.a
         debug libtbbmalloc_debug.a optimized libtbbmalloc.a
-        libWm5Core.a libWm5Mathematics.a
         -Wl,--end-group )
 
     if (FB_GRAPHICS_SYSTEM_OGRENEXT)
