@@ -15,7 +15,7 @@ namespace fb
         CollisionSubMesh( SmartPtr<IMesh> mesh, SmartPtr<ISubMesh> subMesh, Matrix4F transform );
         ~CollisionSubMesh() override;
 
-        bool rayCast( const Vector3F &origin, const Vector3F &dir, Array<float> &hits );
+        bool rayCast( const Vector3<real_Num> &origin, const Vector3<real_Num> &dir, Array<float> &hits );
 
         void *getUserData() const override;
         void setUserData( void *val ) override;

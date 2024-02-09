@@ -65,14 +65,14 @@ namespace fb
              *
              * @return The position vector.
              */
-            virtual Vector3F getPosition() const = 0;
+            virtual Vector3<real_Num> getPosition() const = 0;
 
             /**
              * Sets the position of the node relative to its parent.
              *
              * @param position The position vector.
              */
-            virtual void setPosition( const Vector3F &position ) = 0;
+            virtual void setPosition( const Vector3<real_Num> &position ) = 0;
 
             FB_CLASS_REGISTER_DECL;
         };

@@ -43,11 +43,11 @@
 
 namespace fb::render
 {
-    FB_CLASS_REGISTER_DERIVED( fb, CSceneManagerOgreNext, IGraphicsScene );
+    FB_CLASS_REGISTER_DERIVED( fb, CSceneManagerOgreNext, GraphicsScene );
 
     u32 CSceneManagerOgreNext::m_nextGeneratedNameExt = 0;
 
-    CSceneManagerOgreNext::CSceneManagerOgreNext() 
+    CSceneManagerOgreNext::CSceneManagerOgreNext()
     {
         try
         {
@@ -81,12 +81,12 @@ namespace fb::render
             m_sceneNodes = boost::make_shared<ConcurrentArray<SmartPtr<ISceneNode>>>();
             m_registeredSceneNodes = boost::make_shared<ConcurrentArray<SmartPtr<ISceneNode>>>();
 
-            m_state = fb::make_ptr<SceneManagerState>();
+            m_state = fb::make_ptr<GraphicsSceneState>();
 
             m_stateContext = stateManager->addStateObject();
             m_stateContext->addState( m_state );
 
-            auto sceneManagerStateListener = factoryManager->make_ptr<SceneManagerStateListener>();
+            auto sceneManagerStateListener = factoryManager->make_ptr<GraphicsSceneStateListener>();
             sceneManagerStateListener->setOwner( this );
             m_stateListener = sceneManagerStateListener;
             m_stateContext->addStateListener( m_stateListener );
@@ -103,7 +103,7 @@ namespace fb::render
         }
     }
 
-    CSceneManagerOgreNext::CSceneManagerOgreNext( Ogre::SceneManager *sceneManager ) 
+    CSceneManagerOgreNext::CSceneManagerOgreNext( Ogre::SceneManager *sceneManager )
     {
         try
         {
@@ -131,12 +131,12 @@ namespace fb::render
             m_animationNamePrefix = StringUtil::EmptyString;
             m_animationNameSuffix = StringUtil::EmptyString;
 
-            m_state = fb::make_ptr<SceneManagerState>();
+            m_state = fb::make_ptr<GraphicsSceneState>();
 
             m_stateContext = stateManager->addStateObject();
             m_stateContext->addState( m_state );
 
-            auto sceneManagerStateListener = factoryManager->make_ptr<SceneManagerStateListener>();
+            auto sceneManagerStateListener = factoryManager->make_ptr<GraphicsSceneStateListener>();
             sceneManagerStateListener->setOwner( this );
             m_stateListener = sceneManagerStateListener;
             m_stateContext->addStateListener( m_stateListener );
@@ -389,30 +389,7 @@ namespace fb::render
         }
     }
 
-    void CSceneManagerOgreNext::setType( const String &val )
-    {
-        m_type = val;
-    }
 
-    auto CSceneManagerOgreNext::getName() const -> String
-    {
-        return m_name;
-    }
-
-    void CSceneManagerOgreNext::setName( const String &val )
-    {
-        m_name = val;
-    }
-
-    auto CSceneManagerOgreNext::getStateContext() const -> SmartPtr<IStateContext>
-    {
-        return m_stateContext;
-    }
-
-    void CSceneManagerOgreNext::setStateContext( SmartPtr<IStateContext> stateContext )
-    {
-        m_stateContext = stateContext;
-    }
 
     auto CSceneManagerOgreNext::addGraphicsObjectByTypeId( u32 id ) -> SmartPtr<IGraphicsObject>
     {
@@ -1925,10 +1902,7 @@ namespace fb::render
     {
     }
 
-    auto CSceneManagerOgreNext::getType() const -> String
-    {
-        return m_type;
-    }
+
 
     void CSceneManagerOgreNext::_addGraphicsObject( SmartPtr<IGraphicsObject> graphicsObject )
     {
@@ -1996,11 +1970,11 @@ namespace fb::render
         setLoadingState( LoadingState::Unloaded );
     }
 
-    CSceneManagerOgreNext::SceneManagerStateListener::SceneManagerStateListener() = default;
+    CSceneManagerOgreNext::GraphicsSceneStateListener::GraphicsSceneStateListener() = default;
 
-    CSceneManagerOgreNext::SceneManagerStateListener::~SceneManagerStateListener() = default;
+    CSceneManagerOgreNext::GraphicsSceneStateListener::~GraphicsSceneStateListener() = default;
 
-    void CSceneManagerOgreNext::SceneManagerStateListener::handleStateChanged( SmartPtr<IState> &state )
+    void CSceneManagerOgreNext::GraphicsSceneStateListener::handleStateChanged( SmartPtr<IState> &state )
     {
         Ogre::SceneManager *smgr = nullptr;
         m_owner->_getObject( reinterpret_cast<void **>( &smgr ) );
@@ -2016,7 +1990,7 @@ namespace fb::render
                 FB_ASSERT( task == renderTask );
 #endif
 
-                auto sceneManagerState = fb::static_pointer_cast<SceneManagerState>( state );
+                auto sceneManagerState = fb::static_pointer_cast<GraphicsSceneState>( state );
                 if( sceneManagerState )
                 {
                     // if (sceneManagerState->getEnableSkybox())
@@ -2048,7 +2022,7 @@ namespace fb::render
         }
     }
 
-    void CSceneManagerOgreNext::SceneManagerStateListener::handleStateChanged(
+    void CSceneManagerOgreNext::GraphicsSceneStateListener::handleStateChanged(
         const SmartPtr<IStateMessage> &message )
     {
         if( message->isExactly<StateMessageSkyBox>() )
@@ -2061,16 +2035,16 @@ namespace fb::render
         }
     }
 
-    void CSceneManagerOgreNext::SceneManagerStateListener::handleQuery( SmartPtr<IStateQuery> &query )
+    void CSceneManagerOgreNext::GraphicsSceneStateListener::handleQuery( SmartPtr<IStateQuery> &query )
     {
     }
 
-    auto CSceneManagerOgreNext::SceneManagerStateListener::getOwner() const -> CSceneManagerOgreNext *
+    auto CSceneManagerOgreNext::GraphicsSceneStateListener::getOwner() const -> CSceneManagerOgreNext *
     {
         return m_owner;
     }
 
-    void CSceneManagerOgreNext::SceneManagerStateListener::setOwner( CSceneManagerOgreNext *val )
+    void CSceneManagerOgreNext::GraphicsSceneStateListener::setOwner( CSceneManagerOgreNext *val )
     {
         m_owner = val;
     }

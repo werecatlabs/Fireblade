@@ -29,8 +29,8 @@ namespace fb
         SmartPtr<KeyFrameTransform3> m_currentKeyFrame;
         Array<SmartPtr<KeyFrameTransform3>> m_keyFrames;
 
-        LinearSpline3F m_positionSpline;
-        RotationalSpline3F m_orientationSpline;
+        LinearSpline3<real_Num> m_positionSpline;
+        RotationalSpline3<real_Num> m_orientationSpline;
     };
 
 }  // end namespace fb

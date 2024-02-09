@@ -137,114 +137,131 @@ namespace fb
 
         void UIManager::load( SmartPtr<ISharedObject> data )
         {
-            setLoadingState( LoadingState::Loading );
-
-            auto factoryManager = fb::make_ptr<FactoryManager>();
-            setFactoryManager( factoryManager );
-
-            ApplicationUtil::addFactory<UILayout>( factoryManager );
-            ApplicationUtil::addFactory<UIText>( factoryManager );
-            ApplicationUtil::addFactory<UIImage>( factoryManager );
-            ApplicationUtil::addFactory<UISlider>( factoryManager );
-            ApplicationUtil::addFactory<UIButton>( factoryManager );
-            ApplicationUtil::addFactory<UIToggle>( factoryManager );
-
-            factoryManager->setPoolSizeByType<UIButton>( 4 );
-            factoryManager->setPoolSizeByType<UIImage>( 4 );
-
-            struct ShaperSettings
+            try
             {
-                const char *locale;
-                const char *fullpath;
-                hb_script_t script;
-                Colibri::HorizReadingDir::HorizReadingDir horizReadingDir;
-                bool useKerning;
-                bool allowsVerticalLayout;
+                setLoadingState( LoadingState::Loading );
 
-                ShaperSettings( const char *_locale, const char *_fullpath, hb_script_t _script,
-                                bool _useKerning = false,
-                                Colibri::HorizReadingDir::HorizReadingDir _horizReadingDir =
-                                    Colibri::HorizReadingDir::LTR,
-                                bool _allowsVerticalLayout = false ) :
-                    locale( _locale ),
-                    fullpath( _fullpath ),
-                    script( _script ),
-                    horizReadingDir( _horizReadingDir ),
-                    useKerning( _useKerning ),
-                    allowsVerticalLayout( _allowsVerticalLayout )
+                auto factoryManager = fb::make_ptr<FactoryManager>();
+                setFactoryManager( factoryManager );
+
+                ApplicationUtil::addFactory<UILayout>( factoryManager );
+                ApplicationUtil::addFactory<UIText>( factoryManager );
+                ApplicationUtil::addFactory<UIImage>( factoryManager );
+                ApplicationUtil::addFactory<UISlider>( factoryManager );
+                ApplicationUtil::addFactory<UIButton>( factoryManager );
+                ApplicationUtil::addFactory<UIToggle>( factoryManager );
+
+                factoryManager->setPoolSizeByType<UIButton>( 4 );
+                factoryManager->setPoolSizeByType<UIImage>( 4 );
+
+                struct ShaperSettings
                 {
+                    const char *locale;
+                    const char *fullpath;
+                    hb_script_t script;
+                    Colibri::HorizReadingDir::HorizReadingDir horizReadingDir;
+                    bool useKerning;
+                    bool allowsVerticalLayout;
+
+                    ShaperSettings( const char *_locale, const char *_fullpath, hb_script_t _script,
+                                    bool _useKerning = false,
+                                    Colibri::HorizReadingDir::HorizReadingDir _horizReadingDir =
+                                        Colibri::HorizReadingDir::LTR,
+                                    bool _allowsVerticalLayout = false ) :
+                        locale( _locale ),
+                        fullpath( _fullpath ),
+                        script( _script ),
+                        horizReadingDir( _horizReadingDir ),
+                        useKerning( _useKerning ),
+                        allowsVerticalLayout( _allowsVerticalLayout )
+                    {
+                    }
+                };
+
+                auto applicationManager = core::ApplicationManager::instance();
+                auto graphicsSystem = applicationManager->getGraphicsSystem();
+                //auto sceneManager = graphicsSystem->getGraphicsScene();
+                //FB_ASSERT( sceneManager );
+
+                Ogre::String dataPath = applicationManager->getRenderMediaPath() + "/";
+
+                m_colibriManager =
+                    new Colibri::ColibriManager( &g_colibriLogListener, &g_colibriListener );
+                m_colibriManager->setCanvasSize( Ogre::Vector2( 1920, 1080 ),
+                                                 Ogre::Vector2( 1920, 1080 ) );
+
+                ShaperSettings shaperSettings[3] = {
+                    ShaperSettings( "en", "Fonts/DejaVuSerif.ttf", HB_SCRIPT_LATIN, true ),
+                    ShaperSettings( "ar", "Fonts/amiri-0.104/amiri-regular.ttf", HB_SCRIPT_ARABIC, false,
+                                    Colibri::HorizReadingDir::RTL ),
+                    ShaperSettings( "ch", "Fonts/fireflysung-1.3.0/fireflysung.ttf", HB_SCRIPT_HAN,
+                                    false, Colibri::HorizReadingDir::LTR, true )
+                };
+
+                Colibri::ShaperManager *shaperManager = m_colibriManager->getShaperManager();
+
+                for( size_t i = 0; i < sizeof( shaperSettings ) / sizeof( shaperSettings[0] ); ++i )
+                {
+                    Colibri::Shaper *shaper;
+                    const Ogre::String fullPath = dataPath + shaperSettings[i].fullpath;
+                    shaper = shaperManager->addShaper( shaperSettings[i].script, fullPath.c_str(),
+                                                       shaperSettings[i].locale );
+                    if( shaperSettings[i].useKerning )
+                        shaper->addFeatures( Colibri::Shaper::KerningOn );
                 }
-            };
 
-            auto applicationManager = core::ApplicationManager::instance();
-            auto graphicsSystem = applicationManager->getGraphicsSystem();
-            //auto sceneManager = graphicsSystem->getGraphicsScene();
-            //FB_ASSERT( sceneManager );
+                size_t defaultFont = 0;  //"en"
+                shaperManager->setDefaultShaper( defaultFont + 1u,
+                                                 shaperSettings[defaultFont].horizReadingDir,
+                                                 shaperSettings[defaultFont].allowsVerticalLayout );
 
-            Ogre::String dataPath = applicationManager->getRenderMediaPath() + "/";
+                shaperManager->addBmpFont( ( dataPath + "Fonts/ExampleBmpFont.fnt" ).c_str() );
+                shaperManager->setDefaultBmpFontForRaster( 0u );
 
-            m_colibriManager = new Colibri::ColibriManager( &g_colibriLogListener, &g_colibriListener );
-            m_colibriManager->setCanvasSize( Ogre::Vector2( 1920, 1080 ), Ogre::Vector2( 1920, 1080 ) );
+                //mCameraController = new CameraController( mGraphicsSystem, false );
 
-            ShaperSettings shaperSettings[3] = {
-                ShaperSettings( "en", "Fonts/DejaVuSerif.ttf", HB_SCRIPT_LATIN, true ),
-                ShaperSettings( "ar", "Fonts/amiri-0.104/amiri-regular.ttf", HB_SCRIPT_ARABIC, false,
-                                Colibri::HorizReadingDir::RTL ),
-                ShaperSettings( "ch", "Fonts/fireflysung-1.3.0/fireflysung.ttf", HB_SCRIPT_HAN, false,
-                                Colibri::HorizReadingDir::LTR, true )
-            };
+                auto canvasSize = Vector2I( 1280, 720 );
 
-            Colibri::ShaperManager *shaperManager = m_colibriManager->getShaperManager();
+                auto root = Ogre::Root::getSingletonPtr();
+                //Ogre::Window *window = mGraphicsSystem->getRenderWindow();
 
-            for( size_t i = 0; i < sizeof( shaperSettings ) / sizeof( shaperSettings[0] ); ++i )
-            {
-                Colibri::Shaper *shaper;
-                const Ogre::String fullPath = dataPath + shaperSettings[i].fullpath;
-                shaper = shaperManager->addShaper( shaperSettings[i].script, fullPath.c_str(),
-                                                   shaperSettings[i].locale );
-                if( shaperSettings[i].useKerning )
-                    shaper->addFeatures( Colibri::Shaper::KerningOn );
+                auto resourcePath = applicationManager->getRenderMediaPath() + "/";
+
+                const float aspectRatioColibri =
+                    static_cast<float>( canvasSize.y ) / static_cast<float>( canvasSize.x );
+                m_colibriManager->setCanvasSize(
+                    Ogre::Vector2( 1920.0f, 1920.0f * aspectRatioColibri ),
+                    Ogre::Vector2( static_cast<Ogre::Real>( canvasSize.x ),
+                                   static_cast<Ogre::Real>( canvasSize.y ) ) );
+
+                //Ogre::SceneManager *smgr = nullptr;
+                //sceneManager->_getObject( (void **)&smgr );
+
+                //colibriManager = new Colibri::ColibriManager();
+                //m_colibriManager->setOgre( root, root->getRenderSystem()->getVaoManager(), smgr );
+
+                m_colibriManager->loadSkins(
+                    ( resourcePath + "Materials/ColibriGui/Skins/DarkGloss/Skins.colibri.json" )
+                        .c_str() );
+
+                auto inputMgr = applicationManager->getInputDeviceManager();
+                if( inputMgr )
+                {
+                    inputMgr->addListener( m_inputListener );
+                }
+
+                if( auto sceneManager = getGraphicsScene() )
+                {
+                    setupSceneManager( sceneManager );
+                    createLayoutWindow();
+                }
+
+                setLoadingState( LoadingState::Loaded );
             }
-
-            size_t defaultFont = 0;  //"en"
-            shaperManager->setDefaultShaper( defaultFont + 1u,
-                                             shaperSettings[defaultFont].horizReadingDir,
-                                             shaperSettings[defaultFont].allowsVerticalLayout );
-
-            shaperManager->addBmpFont( ( dataPath + "Fonts/ExampleBmpFont.fnt" ).c_str() );
-            shaperManager->setDefaultBmpFontForRaster( 0u );
-
-            //mCameraController = new CameraController( mGraphicsSystem, false );
-
-            auto canvasSize = Vector2I( 1280, 720 );
-
-            auto root = Ogre::Root::getSingletonPtr();
-            //Ogre::Window *window = mGraphicsSystem->getRenderWindow();
-
-            auto resourcePath = applicationManager->getRenderMediaPath() + "/";
-
-            const float aspectRatioColibri =
-                static_cast<float>( canvasSize.y ) / static_cast<float>( canvasSize.x );
-            m_colibriManager->setCanvasSize( Ogre::Vector2( 1920.0f, 1920.0f * aspectRatioColibri ),
-                                             Ogre::Vector2( static_cast<Ogre::Real>( canvasSize.x ),
-                                                            static_cast<Ogre::Real>( canvasSize.y ) ) );
-
-            //Ogre::SceneManager *smgr = nullptr;
-            //sceneManager->_getObject( (void **)&smgr );
-
-            //colibriManager = new Colibri::ColibriManager();
-            //m_colibriManager->setOgre( root, root->getRenderSystem()->getVaoManager(), smgr );
-
-            m_colibriManager->loadSkins(
-                ( resourcePath + "Materials/ColibriGui/Skins/DarkGloss/Skins.colibri.json" ).c_str() );
-
-            auto inputMgr = applicationManager->getInputDeviceManager();
-            if( inputMgr )
+            catch( std::exception &e )
             {
-                inputMgr->addListener( m_inputListener );
+                FB_LOG_EXCEPTION( e );
             }
-
-            setLoadingState( LoadingState::Loaded );
         }
 
         void UIManager::reload( SmartPtr<ISharedObject> data )
@@ -253,9 +270,34 @@ namespace fb
 
         void UIManager::unload( SmartPtr<ISharedObject> data )
         {
-            setLoadingState( LoadingState::Unloading );
+            try
+            {
+                setLoadingState( LoadingState::Unloading );
 
-            setLoadingState( LoadingState::Unloaded );
+                auto applicationManager = core::ApplicationManager::instance();
+
+                if( m_colibriManager )
+                {
+                    delete m_colibriManager;
+                    m_colibriManager = nullptr;
+                }
+
+                auto inputMgr = applicationManager->getInputDeviceManager();
+                if( inputMgr )
+                {
+                    if( m_inputListener )
+                    {
+                        inputMgr->removeListener( m_inputListener );
+                        m_inputListener = nullptr;
+                    }
+                }
+
+                setLoadingState( LoadingState::Unloaded );
+            }
+            catch( std::exception &e )
+            {
+                FB_LOG_EXCEPTION( e );
+            }
         }
 
         bool UIManager::handleEvent( const SmartPtr<IInputEvent> &event )
@@ -375,9 +417,8 @@ namespace fb
                 if( m_layoutWindow )
                 {
                     m_layoutWindow->updateZOrderDirty();
+                    m_colibriManager->update( 1.0 / 60.0 );
                 }
-
-                m_colibriManager->update( 1.0 / 60.0 );
             }
         }
 
@@ -515,12 +556,15 @@ namespace fb
 
         void UIManager::setGraphicsScene( SmartPtr<render::IGraphicsScene> graphicsScene )
         {
-            m_graphicsScene = graphicsScene;
-
-            if( m_graphicsScene )
+            if( m_graphicsScene != graphicsScene )
             {
-                setupSceneManager( m_graphicsScene );
-                createLayoutWindow();
+                m_graphicsScene = graphicsScene;
+
+                if( m_graphicsScene )
+                {
+                    setupSceneManager( m_graphicsScene );
+                    createLayoutWindow();
+                }
             }
         }
 
@@ -537,21 +581,28 @@ namespace fb
                 {
                     auto renderSystem = root->getRenderSystem();
                     auto vaoManager = renderSystem->getVaoManager();
-                    m_colibriManager->setOgre( root, vaoManager, smgr );
+
+                    if( m_colibriManager )
+                    {
+                        m_colibriManager->setOgre( root, vaoManager, smgr );
+                    }
                 }
             }
         }
 
         void UIManager::createLayoutWindow()
         {
-            m_layoutWindow = m_colibriManager->createWindow( nullptr );
-            m_layoutWindow->setTransform( Ogre::Vector2( 0, 0 ), Ogre::Vector2( 1920, 1080 ) );
-            m_layoutWindow->setSkin( "EmptyBg" );
-            m_layoutWindow->setVisualsEnabled( false );
-            //m_layoutWindow->setColour( true, Ogre::ColourValue( 0, 0, 0, 0 ) );
-            m_layoutWindow->setHidden( false );
-            m_layoutWindow->setKeyboardNavigable( false );
-            m_layoutWindow->m_breadthFirst = true;
+            if( m_colibriManager )
+            {
+                m_layoutWindow = m_colibriManager->createWindow( nullptr );
+                m_layoutWindow->setTransform( Ogre::Vector2( 0, 0 ), Ogre::Vector2( 1920, 1080 ) );
+                m_layoutWindow->setSkin( "EmptyBg" );
+                m_layoutWindow->setVisualsEnabled( false );
+                //m_layoutWindow->setColour( true, Ogre::ColourValue( 0, 0, 0, 0 ) );
+                m_layoutWindow->setHidden( false );
+                m_layoutWindow->setKeyboardNavigable( false );
+                m_layoutWindow->m_breadthFirst = true;
+            }
         }
 
         Parameter UIManager::InputListener::handleEvent( IEvent::Type eventType, hash_type eventValue,

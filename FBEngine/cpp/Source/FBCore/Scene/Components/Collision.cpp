@@ -226,8 +226,8 @@ namespace fb::scene
                     if( shape )
                     {
                         auto localTransform = actor->getWorldTransform();
-                        localTransform.setPosition( Vector3F::zero() );
-                        localTransform.setOrientation( QuaternionF::identity() );
+                        localTransform.setPosition( Vector3<real_Num>::zero() );
+                        localTransform.setOrientation( Quaternion<real_Num>::identity() );
                         shape->setLocalPose( localTransform );
                     }
                 }

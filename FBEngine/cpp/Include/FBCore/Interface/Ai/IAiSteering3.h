@@ -33,7 +33,7 @@ namespace fb
         ~IAiSteering3() override = default;
 
         // calculates and sums the steering forces from any active behaviors
-        virtual Vector3F calculate() = 0;
+        virtual Vector3<real_Num> calculate() = 0;
 
         // calculates the component of the steering force that is parallel
         // with the entity heading
@@ -43,18 +43,18 @@ namespace fb
         // with the entity heading
         virtual f32 sideComponent() = 0;
 
-        virtual Vector3F getTarget() const = 0;
-        virtual void setTarget( const Vector3F &target ) = 0;
+        virtual Vector3<real_Num> getTarget() const = 0;
+        virtual void setTarget( const Vector3<real_Num> &target ) = 0;
 
-        virtual Vector3F getDirection() const = 0;
+        virtual Vector3<real_Num> getDirection() const = 0;
 
-        virtual Vector3F getPosition() const = 0;
-        virtual void setPosition( const Vector3F &position ) = 0;
+        virtual Vector3<real_Num> getPosition() const = 0;
+        virtual void setPosition( const Vector3<real_Num> &position ) = 0;
 
         virtual void setTargetAgent1( SmartPtr<scene::IActor> agent ) = 0;
         virtual void setTargetAgent2( SmartPtr<scene::IActor> agent ) = 0;
 
-        virtual Vector3F getForce() const = 0;
+        virtual Vector3<real_Num> getForce() const = 0;
 
         virtual void setSummingMethod( u32 sm ) = 0;
 
@@ -76,7 +76,7 @@ namespace fb
         virtual bool getSeparationIsOn() = 0;
         virtual bool getWallAvoidanceIsOn() = 0;
 
-        virtual Array<Vector3F> getFeelers() const = 0;
+        virtual Array<Vector3<real_Num>> getFeelers() const = 0;
 
         virtual f32 getWanderJitter() const = 0;
         virtual f32 getWanderDistance() const = 0;

@@ -3,6 +3,9 @@
 
 namespace fb
 {
+
+    FB_CLASS_REGISTER_DERIVED( fb::scene, Sound, Resource<ISound> );
+
     Sound::Sound() = default;
 
     Sound::~Sound() = default;
@@ -51,13 +54,13 @@ namespace fb
     {
     }
 
-    void Sound::setPosition( const Vector3F &position )
+    void Sound::setPosition( const Vector3<real_Num> &position )
     {
     }
 
-    auto Sound::getPosition() const -> Vector3F
+    auto Sound::getPosition() const -> Vector3<real_Num>
     {
-        return Vector3F::zero();
+        return Vector3<real_Num>::zero();
     }
 
     void Sound::setMinMaxDistance( f32 minDistance, f32 maxDistance )

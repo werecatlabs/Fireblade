@@ -6,6 +6,8 @@
 
 namespace fb
 {
+    FB_CLASS_REGISTER_DERIVED( fb::scene, SoundManager, ISoundManager );
+
     SoundManager::SoundManager() = default;
 
     SoundManager::~SoundManager() = default;
@@ -16,7 +18,7 @@ namespace fb
     }
 
     auto SoundManager::addListener3( const String &name,
-                                     const Vector3F &position /*= Vector3F::zero() */ )
+                                     const Vector3<real_Num> &position /*= Vector3<real_Num>::zero() */ )
         -> SmartPtr<ISoundListener3>
     {
         return nullptr;

@@ -34,4 +34,4 @@ namespace fb::render
     {
         return nullptr;
     }
-} // namespace fb::render
+}  // namespace fb::render

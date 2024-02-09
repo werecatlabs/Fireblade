@@ -13,27 +13,27 @@ namespace fb
     public:
         KeyFrameTransform3();
 
-        KeyFrameTransform3( f32 time, const Vector3F &position, const QuaternionF &orientation,
-                            const Vector3F &scale );
+        KeyFrameTransform3( f32 time, const Vector3<real_Num> &position, const Quaternion<real_Num> &orientation,
+                            const Vector3<real_Num> &scale );
 
         ~KeyFrameTransform3();
 
-        Vector3F getPosition() const;
+        Vector3<real_Num> getPosition() const;
 
-        void setPosition( const Vector3F &position );
+        void setPosition( const Vector3<real_Num> &position );
 
-        QuaternionF getOrientation() const;
+        Quaternion<real_Num> getOrientation() const;
 
-        void setOrientation( const QuaternionF &orientation );
+        void setOrientation( const Quaternion<real_Num> &orientation );
 
-        Vector3F getScale() const;
+        Vector3<real_Num> getScale() const;
 
-        void setScale( const Vector3F &scale );
+        void setScale( const Vector3<real_Num> &scale );
 
     private:
-        QuaternionF m_orientation;
-        Vector3F m_position;
-        Vector3F m_scale;
+        Quaternion<real_Num> m_orientation;
+        Vector3<real_Num> m_position;
+        Vector3<real_Num> m_scale;
     };
 
 }  // end namespace fb

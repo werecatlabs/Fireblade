@@ -58,6 +58,8 @@ namespace fb
         /** @copydoc IWheelController::setSteeringWheel */
         void setSteeringWheel( bool steeringWheel ) override;
 
+        FB_CLASS_REGISTER_DECL;
+
     protected:
         void updateWheel();
 

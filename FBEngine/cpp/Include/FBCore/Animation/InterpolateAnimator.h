@@ -113,8 +113,8 @@ namespace fb
     };
 
     typedef InterpolateAnimator<f32> InterpolateFloat;
-    typedef InterpolateAnimator<Vector2F> InterpolateVector2f;
-    typedef InterpolateAnimator<Vector3F> InterpolateVector3f;
+    typedef InterpolateAnimator<Vector2<real_Num>> InterpolateVector2f;
+    typedef InterpolateAnimator<Vector3<real_Num>> InterpolateVector3f;
 
     typedef SmartPtr<InterpolateFloat> InterpolateFloatPtr;
     typedef SmartPtr<InterpolateVector2f> InterpolateVector2fPtr;

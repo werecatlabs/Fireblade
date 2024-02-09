@@ -8,8 +8,8 @@ namespace fb
     class OverlayTextState : public OverlayElementState
     {
     public:
-        OverlayTextState() = default;
-        ~OverlayTextState() override = default;
+        OverlayTextState();
+        ~OverlayTextState() override;
 
         String getText() const;
         void setText( const String &text );

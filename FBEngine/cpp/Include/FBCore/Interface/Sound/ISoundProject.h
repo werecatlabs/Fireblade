@@ -60,6 +60,8 @@ namespace fb
          * @param enableReverb True to enable reverb, false to disable.
          */
         virtual void setEnableReverb( bool enableReverb ) = 0;
+
+        FB_CLASS_REGISTER_DECL;
     };
 
 }  // end namespace fb

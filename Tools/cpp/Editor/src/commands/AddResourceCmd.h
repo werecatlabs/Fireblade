@@ -22,6 +22,7 @@ namespace fb
             {
                 None,
                 Script,
+                LightingPreset,
                 Material,
                 Scene,
                 Director,

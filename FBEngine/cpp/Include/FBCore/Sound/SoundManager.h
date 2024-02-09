@@ -17,7 +17,7 @@ namespace fb
         SmartPtr<ISound> addSound( const String &name, bool loop = true ) override;
 
         SmartPtr<ISoundListener3> addListener3( const String &name,
-                                                const Vector3F &position = Vector3F::zero() ) override;
+                                                const Vector3<real_Num> &position = Vector3<real_Num>::zero() ) override;
 
         SmartPtr<ISoundListener3> findListener3( const String &name ) override;
 
@@ -59,6 +59,8 @@ namespace fb
         SmartPtr<IResource> getById( const String &uuid ) override;
 
         void _getObject( void **ppObject ) const override;
+
+        FB_CLASS_REGISTER_DECL;
 
     protected:
         Array<SmartPtr<ISound>> m_sounds;

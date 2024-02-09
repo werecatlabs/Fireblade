@@ -32,4 +32,4 @@ namespace fb::scene
     {
         m_length = length;
     }
-} // namespace fb::scene
+}  // namespace fb::scene

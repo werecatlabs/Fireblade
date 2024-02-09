@@ -5,6 +5,7 @@
 #include <FBCore/Scene/Directors/MaterialResourceDirector.h>
 #include <FBCore/Scene/Directors/MeshResourceDirector.h>
 #include <FBCore/Scene/Directors/TextureResourceDirector.h>
+#include <FBCore/Scene/Directors/SceneLightingDirector.h>
 #include <FBCore/Scene/Directors/SoundResourceDirector.h>
 #include <FBCore/Scene/SceneManager.h>
 #include <FBCore/Interface/Database/IDatabase.h>
@@ -543,7 +544,15 @@ namespace fb
 
         auto job = factoryManager->make_ptr<ImportFileJob>();
         job->setFilePath( filePath );
-        jobQueue->addJob( job );
+
+        if( jobQueue )
+        {
+            jobQueue->addJob( job );
+        }
+        else
+        {
+            job->execute();
+        }
     }
 
     void ResourceDatabase::importCache()
@@ -1069,7 +1078,7 @@ namespace fb
             assetDatabaseManager->addResourceEntry( meshResult );
             return meshResult;
         }
-        if( ext == ".jpg" || ext == ".jpeg" || ext == ".tiff" || ext == ".png" )
+        if( ApplicationUtil::isSupportedTexture( path ) )
         {
             auto textureResult = textureManager->createOrRetrieve( path );
             assetDatabaseManager->addResourceEntry( textureResult.first );
@@ -1237,6 +1246,8 @@ namespace fb
         auto applicationManager = core::ApplicationManager::instance();
         FB_ASSERT( applicationManager );
 
+        auto factoryManager = applicationManager->getFactoryManager();
+
         auto databaseManager = getDatabaseManager();
         FB_ASSERT( databaseManager );
 
@@ -1292,6 +1303,22 @@ namespace fb
             }
 
             return textureResult.first;
+        }
+        else
+        {
+            auto object = factoryManager->createObjectFromType<IResource>( type );
+            if( object )
+            {
+                auto handle = object->getHandle();
+                if( handle )
+                {
+                    handle->setUUID( uuid );
+                }
+
+                object->loadFromFile( path );
+
+                return object;
+            }
         }
 
         return nullptr;
@@ -1509,6 +1536,8 @@ namespace fb
             auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
+            auto factoryManager = applicationManager->getFactoryManager();
+
             auto databaseManager = getDatabaseManager();
             auto assetDatabaseManager = fb::static_pointer_cast<AssetDatabaseManager>( databaseManager );
 
@@ -1534,13 +1563,29 @@ namespace fb
                         auto materialResult = materialManager->createOrRetrieve( uuid, path, type );
                         return materialResult.first;
                     }
-                    if( type == "Texture" )
+                    else if( type == "Texture" )
                     {
                         auto graphicsSystem = applicationManager->getGraphicsSystem();
                         auto textureManager = graphicsSystem->getTextureManager();
 
                         auto textureResult = textureManager->createOrRetrieve( uuid, path, type );
                         return textureResult.first;
+                    }
+                    else
+                    {
+                        auto resource = factoryManager->createObjectFromType<IResource>( type );
+                        if( resource )
+                        {
+                            auto handle = resource->getHandle();
+                            if( handle )
+                            {
+                                handle->setUUID( uuid );
+                            }
+
+                            resource->loadFromFile( path );
+
+                            return resource;
+                        }
                     }
 
                     query->nextRow();
@@ -1953,6 +1998,38 @@ namespace fb
                         {
                             assetDatabaseManager->addResourceEntry( texture );
                         }
+                    }
+                }
+            }
+            else if( fileExt == ".lightingpreset" )
+            {
+                auto lightingpreset = fb::make_ptr<scene::SceneLightingDirector>();
+                if( lightingpreset )
+                {
+                    auto handle = lightingpreset->getHandle();
+                    auto uuid = handle->getUUID();
+                    if( StringUtil::isNullOrEmpty( uuid ) )
+                    {
+                        uuid = StringUtil::getUUID();
+                        handle->setUUID( uuid );
+                    }
+
+                    lightingpreset->setFilePath( filePath );
+
+                    auto dataStr = fileSystem->readAllText( filePath );
+
+                    auto properties = fb::make_ptr<Properties>();
+                    DataUtil::parse( dataStr, properties.get() );
+
+                    lightingpreset->setProperties( properties );
+
+                    if( assetDatabaseManager->hasResourceEntry( lightingpreset ) )
+                    {
+                        assetDatabaseManager->updateResourceEntry( lightingpreset );
+                    }
+                    else
+                    {
+                        assetDatabaseManager->addResourceEntry( lightingpreset );
                     }
                 }
             }

@@ -25,7 +25,8 @@ namespace fb::scene
     const f32 SphericalCameraController::DEFAULT_ZOOM_SPEED = 1.0f;
     const f32 SphericalCameraController::DEFAULT_MOVE_SPEED = 1.0f;
 
-    const Vector3F SphericalCameraController::DEFAULT_SPHERICAL_COORDS = Vector3F( 1.0f, 0.0f, 0.5f );
+    const Vector3<real_Num> SphericalCameraController::DEFAULT_SPHERICAL_COORDS =
+        Vector3<real_Num>( 1.0f, 0.0f, 0.5f );
 
     SphericalCameraController::SphericalCameraController() :
         m_rotationSpeed( 1.0f ),
@@ -250,13 +251,13 @@ namespace fb::scene
                     if( auto mainWindow = applicationManager->getWindow() )
                     {
                         auto mainWindowSize = mainWindow->getSize();
-                        auto mainWindowSizeF = Vector2F( static_cast<f32>( mainWindowSize.x ),
-                                                         static_cast<f32>( mainWindowSize.y ) );
+                        auto mainWindowSizeF = Vector2<real_Num>( static_cast<f32>( mainWindowSize.x ),
+                                                                  static_cast<f32>( mainWindowSize.y ) );
 
                         auto pos = uiWindow->getPosition() / mainWindowSizeF;
                         auto size = uiWindow->getSize() / mainWindowSizeF;
 
-                        auto aabb = AABB2F( pos, size, true );
+                        auto aabb = AABB2<real_Num>( pos, size, true );
                         if( !aabb.isInside( relativePosition ) )
                         {
                             for( auto &&m_mouseKey : m_mouseKeys )
@@ -377,29 +378,29 @@ namespace fb::scene
         return m_target;
     }
 
-    void SphericalCameraController::setOrientation( const QuaternionF &orientation )
+    void SphericalCameraController::setOrientation( const Quaternion<real_Num> &orientation )
     {
     }
 
-    auto SphericalCameraController::getOrientation() const -> QuaternionF
+    auto SphericalCameraController::getOrientation() const -> Quaternion<real_Num>
     {
-        QuaternionF yaw;
-        yaw.fromAngleAxis( MathF::DegToRad( m_rotation.Y() ), Vector3F::UNIT_Y );
+        Quaternion<real_Num> yaw;
+        yaw.fromAngleAxis( MathF::DegToRad( m_rotation.Y() ), Vector3<real_Num>::UNIT_Y );
 
-        QuaternionF pitch;
-        pitch.fromAngleAxis( MathF::DegToRad( m_rotation.X() ), Vector3F::UNIT_X );
+        Quaternion<real_Num> pitch;
+        pitch.fromAngleAxis( MathF::DegToRad( m_rotation.X() ), Vector3<real_Num>::UNIT_X );
 
         // the orientation
         return yaw * pitch;
     }
 
-    void SphericalCameraController::setDirection( const Vector3F &direction )
+    void SphericalCameraController::setDirection( const Vector3<real_Num> &direction )
     {
     }
 
-    auto SphericalCameraController::getDirection() const -> Vector3F
+    auto SphericalCameraController::getDirection() const -> Vector3<real_Num>
     {
-        return getOrientation() * -Vector3F::UNIT_Z;
+        return getOrientation() * -Vector3<real_Num>::UNIT_Z;
     }
 
     void SphericalCameraController::setPropertyValue( const String &name, const String &value )
@@ -454,8 +455,8 @@ namespace fb::scene
         }
     }
 
-    auto SphericalCameraController::getCameraToViewportRay( const Vector2F &screenPosition ) const
-        -> Ray3F
+    auto SphericalCameraController::getCameraToViewportRay(
+        const Vector2<real_Num> &screenPosition ) const -> Ray3F
     {
         // SmartPtr<render::ICamera> selectedCamera;
 
@@ -470,7 +471,7 @@ namespace fb::scene
         //	auto width = viewport->getActualWidth();
         //	auto height = viewport->getActualHeight();
 
-        //	Vector2F normalizedScreenCoords;
+        //	Vector2<real_Num> normalizedScreenCoords;
         //	normalizedScreenCoords.X() = screenPosition.X() / width;
         //	normalizedScreenCoords.Y() = screenPosition.Y() / height;
 
@@ -478,11 +479,6 @@ namespace fb::scene
         //}
 
         return {};
-    }
-
-    auto SphericalCameraController::isInFrustum( const AABB3F &box ) const -> bool
-    {
-        return true;
     }
 
     auto SphericalCameraController::getSphericalCoords() const -> Vector3<real_Num>
@@ -529,7 +525,7 @@ namespace fb::scene
         return cart;
     }
 
-    auto SphericalCameraController::getSphericalCoords( Vector3F &vec ) -> Vector3F
+    auto SphericalCameraController::getSphericalCoords( Vector3<real_Num> &vec ) -> Vector3<real_Num>
     {
         auto coords = Vector3<real_Num>::zero();
         coords.X() = Math<real_Num>::Abs( vec.length() );
@@ -564,14 +560,14 @@ namespace fb::scene
         return m_rotationSpeed;
     }
 
-    auto SphericalCameraController::getRight() const -> Vector3F
+    auto SphericalCameraController::getRight() const -> Vector3<real_Num>
     {
-        return Vector3F::zero();
+        return Vector3<real_Num>::zero();
     }
 
-    auto SphericalCameraController::getUp() const -> Vector3F
+    auto SphericalCameraController::getUp() const -> Vector3<real_Num>
     {
-        return Vector3F::zero();
+        return Vector3<real_Num>::zero();
     }
 
     void SphericalCameraController::focusSelection()

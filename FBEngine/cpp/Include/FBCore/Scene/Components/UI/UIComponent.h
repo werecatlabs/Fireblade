@@ -147,6 +147,10 @@ namespace fb
 
             void removeListener( SmartPtr<IComponent> component );
 
+            ColourF getColour() const;
+
+            void setColour( const ColourF &colour );
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
@@ -262,6 +266,10 @@ namespace fb
              */
             virtual void updateElementState();
 
+            void updateColour();
+
+            ColourF m_colour = ColourF::White;
+
             Array<SmartPtr<IActor>> m_actorListeners;
             Array<SmartPtr<IComponent>> m_componentListeners;
 
@@ -293,7 +301,7 @@ namespace fb
              */
             bool m_cascadeInput = true;
         };
-    }  // namespace scene
-}  // namespace fb
+    } // namespace scene
+}     // namespace fb
 
 #endif  // UIComponent_h__

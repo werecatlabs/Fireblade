@@ -133,7 +133,7 @@ namespace fb::render
         m_texture = texture;
     }
 
-    void MaterialTexture::setScale( const Vector3F &scale )
+    void MaterialTexture::setScale( const Vector3<real_Num> &scale )
     {
         m_scale = scale;
     }
@@ -167,7 +167,18 @@ namespace fb::render
     {
         try
         {
-            auto properties = fb::make_ptr<Properties>();
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            FB_ASSERT( graphicsSystem );
+
+            auto factoryManager = applicationManager->getFactoryManager();
+            FB_ASSERT( factoryManager );
+
+            ISharedObject::ScopedLock lock( graphicsSystem );
+
+            auto properties = factoryManager->make_ptr<Properties>();
 
             if( auto texture = getTexture() )
             {
@@ -189,10 +200,15 @@ namespace fb::render
     {
         try
         {
-            auto properties = fb::static_pointer_cast<Properties>( data );
-
             auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
+
+            auto graphicsSystem = applicationManager->getGraphicsSystem();
+            FB_ASSERT( graphicsSystem );
+
+            ISharedObject::ScopedLock lock( graphicsSystem );
+
+            auto properties = fb::static_pointer_cast<Properties>( data );
 
             auto resourceDatabase = applicationManager->getResourceDatabase();
             if( !resourceDatabase )
@@ -202,7 +218,7 @@ namespace fb::render
 
             if( resourceDatabase )
             {
-                auto texturePath = properties->getProperty( "texture" );
+                auto texturePath = properties->getProperty( texturePathStr );
                 if( !StringUtil::isNullOrEmpty( texturePath ) )
                 {
                     if( auto textureResource = resourceDatabase->loadResourceById( texturePath ) )
@@ -231,10 +247,8 @@ namespace fb::render
         {
             auto properties = MaterialNode<IMaterialTexture>::getProperties();
 
-            static const auto texturePathStr = String( "texture" );
-
-            properties->setProperty( "scale", m_scale );
-            properties->setProperty( "tint", m_tint );
+            properties->setProperty( scaleStr, m_scale );
+            properties->setProperty( tintStr, m_tint );
 
             auto texture = getTexture();
             properties->setProperty( texturePathStr, texture );
@@ -305,10 +319,8 @@ namespace fb::render
             auto textureManager = graphicsSystem->getTextureManager();
             FB_ASSERT( textureManager );
 
-            static const auto texturePathStr = String( "texture" );
-
-            properties->getPropertyValue( "scale", m_scale );
-            properties->getPropertyValue( "tint", m_tint );
+            properties->getPropertyValue( scaleStr, m_scale );
+            properties->getPropertyValue( tintStr, m_tint );
 
             auto texture = SmartPtr<ITexture>();
             properties->getPropertyValue( texturePathStr, texture );
@@ -350,6 +362,8 @@ namespace fb::render
         try
         {
             auto objects = MaterialNode<IMaterialTexture>::getChildObjects();
+            objects.reserve( 2 );
+
             objects.emplace_back( m_animator );
             objects.emplace_back( m_texture );
             return objects;

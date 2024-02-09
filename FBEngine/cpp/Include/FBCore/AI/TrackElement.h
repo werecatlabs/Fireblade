@@ -12,27 +12,27 @@ namespace fb
         TrackElement();
         ~TrackElement() override;
 
-        Vector3F getCenter() const override;
-        void setCenter( const Vector3F &val ) override;
+        Vector3<real_Num> getCenter() const override;
+        void setCenter( const Vector3<real_Num> &val ) override;
 
-        Vector3F getStart() const override;
-        void setStart( const Vector3F &val ) override;
+        Vector3<real_Num> getStart() const override;
+        void setStart( const Vector3<real_Num> &val ) override;
 
-        Vector3F getEnd() const override;
-        void setEnd( const Vector3F &val ) override;
+        Vector3<real_Num> getEnd() const override;
+        void setEnd( const Vector3<real_Num> &val ) override;
 
-        Vector3F getDirection() const override;
-        void setDirection( const Vector3F &val ) override;
+        Vector3<real_Num> getDirection() const override;
+        void setDirection( const Vector3<real_Num> &val ) override;
 
-        Vector3F getExtents() const override;
-        void setExtents( const Vector3F &val ) override;
+        Vector3<real_Num> getExtents() const override;
+        void setExtents( const Vector3<real_Num> &val ) override;
 
     protected:
-        Vector3F m_center;
-        Vector3F m_start;
-        Vector3F m_end;
-        Vector3F m_direction;
-        Vector3F m_extents;
+        Vector3<real_Num> m_center;
+        Vector3<real_Num> m_start;
+        Vector3<real_Num> m_end;
+        Vector3<real_Num> m_direction;
+        Vector3<real_Num> m_extents;
     };
 }  // end namespace fb
 

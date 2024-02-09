@@ -54,31 +54,31 @@ namespace fb
              * Gets the position of the viewport, which is expressed as a value between 0.0 and 1.0.
              * @return The position of the viewport.
              */
-            virtual Vector2F getPosition() const = 0;
+            virtual Vector2<real_Num> getPosition() const = 0;
 
             /** Gets the actual position of the viewport */
-            virtual Vector2F getActualPosition() const = 0;
+            virtual Vector2<real_Num> getActualPosition() const = 0;
 
             /**
              * Sets the position of the viewport, which is expressed as a value between 0.0 and 1.0.
              * @param position The position to set.
              */
-            virtual void setPosition( const Vector2F &position ) = 0;
+            virtual void setPosition( const Vector2<real_Num> &position ) = 0;
 
             /**
              * Gets the size of the viewport, which is expressed as a value between 0.0 and 1.0.
              * @return The size of the viewport.
              */
-            virtual Vector2F getSize() const = 0;
+            virtual Vector2<real_Num> getSize() const = 0;
 
             /** Gets the actual size of the viewport */
-            virtual Vector2F getActualSize() const = 0;
+            virtual Vector2<real_Num> getActualSize() const = 0;
 
             /**
              * Sets the size of the viewport, which is expressed as a value between 0.0 and 1.0.
              * @param size The size to set.
              */
-            virtual void setSize( const Vector2F &size ) = 0;
+            virtual void setSize( const Vector2<real_Num> &size ) = 0;
 
             /**
              * Sets the initial background colour of the viewport (before rendering).

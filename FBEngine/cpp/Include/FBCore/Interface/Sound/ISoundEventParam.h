@@ -7,9 +7,11 @@
 namespace fb
 {
 
+    /** Interface for a sound event parameter. */
     class ISoundEventParam : public ISharedObject
     {
     public:
+        /** Destructor. */
         ~ISoundEventParam() override = default;
 
         /** Gets the parameter value. */
@@ -17,6 +19,8 @@ namespace fb
 
         /** Sets the parameter value. */
         virtual void setValue( f32 value ) = 0;
+
+        FB_CLASS_REGISTER_DECL;
     };
 }  // end namespace fb
 

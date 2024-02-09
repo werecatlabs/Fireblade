@@ -25,10 +25,10 @@ namespace fb
         static SmartPtr<ISubMesh> clean( SmartPtr<ISubMesh> submesh, real_Num weldTolerance );
 
         /** Gets points from a mesh. */
-        static Array<Vector3F> getPoints( SmartPtr<IMesh> mesh );
+        static Array<Vector3<real_Num>> getPoints( SmartPtr<IMesh> mesh );
 
         /** Gets points from a submesh. */
-        static Array<Vector3F> getPoints( SmartPtr<ISubMesh> submesh );
+        static Array<Vector3<real_Num>> getPoints( SmartPtr<ISubMesh> submesh );
 
         /** Gets indices from a mesh. */
         static Array<u32> getIndices( SmartPtr<IMesh> mesh );
@@ -41,13 +41,13 @@ namespace fb
                                      const Vector2I &textureSize );
 
         /** Builds a mesh from an array of points and uvs. */
-        static SmartPtr<IMesh> buildMesh( const Array<Vector3F> &positions, const Array<Vector2F> &uvs,
-                                          const Array<Vector2F> &uvs2 );
+        static SmartPtr<IMesh> buildMesh( const Array<Vector3<real_Num>> &positions, const Array<Vector2<real_Num>> &uvs,
+                                          const Array<Vector2<real_Num>> &uvs2 );
 
         /** Builds a sub mesh from an array of points and uvs. */
-        static SmartPtr<ISubMesh> buildSubMesh( const Array<Vector3F> &positions,
-                                                const Array<Vector2F> &uvs,
-                                                const Array<Vector2F> &uvs2 );
+        static SmartPtr<ISubMesh> buildSubMesh( const Array<Vector3<real_Num>> &positions,
+                                                const Array<Vector2<real_Num>> &uvs,
+                                                const Array<Vector2<real_Num>> &uvs2 );
 
         /** Creates a merged mesh from transform data. */
         static SmartPtr<IMesh> mergeMeshes( const Array<MeshTransformData> &meshTransformData );
@@ -57,7 +57,7 @@ namespace fb
 
         /** Creates a merged mesh from an array of meshes and transform matrices. */
         static SmartPtr<IMesh> mergeMeshes( const Array<SmartPtr<IMesh>> &meshes,
-                                            const Array<Matrix4F> &transformations );
+                                            const Array<Matrix4<real_Num>> &transformations );
 
         /** Merges sub meshes by material. */
         static SmartPtr<IMesh> mergeSubMeshesByMaterial( SmartPtr<IMesh> mesh );

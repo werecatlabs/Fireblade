@@ -75,13 +75,13 @@ namespace fb
             return String();
         }
 
-        void ParticleSystem::setScale( const Vector3F &scale )
+        void ParticleSystem::setScale( const Vector3<real_Num> &scale )
         {
         }
 
-        Vector3F ParticleSystem::getScale() const
+        Vector3<real_Num> ParticleSystem::getScale() const
         {
-            return Vector3F();
+            return Vector3<real_Num>();
         }
 
         u32 ParticleSystem::getState() const

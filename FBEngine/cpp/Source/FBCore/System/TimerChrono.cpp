@@ -37,7 +37,7 @@ namespace fb
 
     auto TimerChrono::getTimeIntervalMilliseconds() const -> u32
     {
-        return static_cast<u32>( getTimeInterval() * 1000.0 );
+        return static_cast<u32>( getDeltaTime() * 1000.0 );
     }
 
     auto TimerChrono::now() const -> time_interval
@@ -52,7 +52,7 @@ namespace fb
         return *reinterpret_cast<time_interval *>( &time );
     }
 
-    auto TimerChrono::getTimeInterval() const -> time_interval
+    auto TimerChrono::getDeltaTime() const -> time_interval
     {
         u32 deltaTime = m_deltaTime;
         return *reinterpret_cast<time_interval *>( &deltaTime );

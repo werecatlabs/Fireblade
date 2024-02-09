@@ -35,23 +35,23 @@ namespace fb
         return m_backgroundColour;
     }
 
-    auto ViewportState::getPosition() const -> Vector2F
+    auto ViewportState::getPosition() const -> Vector2<real_Num>
     {
         return m_position;
     }
 
-    void ViewportState::setPosition( const Vector2F &position )
+    void ViewportState::setPosition( const Vector2<real_Num> &position )
     {
         m_position = position;
         setDirty( true );
     }
 
-    auto ViewportState::getSize() const -> Vector2F
+    auto ViewportState::getSize() const -> Vector2<real_Num>
     {
         return m_size;
     }
 
-    void ViewportState::setSize( const Vector2F &size )
+    void ViewportState::setSize( const Vector2<real_Num> &size )
     {
         m_size = size;
         setDirty( true );

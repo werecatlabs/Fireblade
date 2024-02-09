@@ -123,7 +123,7 @@ namespace fb
                 return false;
             }
 
-            Vector2F getPosition() const override
+            Vector2<real_Num> getPosition() const override
             {
                 if( auto stateContext = getStateContext() )
                 {
@@ -133,10 +133,10 @@ namespace fb
                     }
                 }
 
-                return Vector2F::zero();
+                return Vector2<real_Num>::zero();
             }
 
-            void setPosition( const Vector2F &position ) override
+            void setPosition( const Vector2<real_Num> &position ) override
             {
                 if( auto stateContext = getStateContext() )
                 {
@@ -147,7 +147,7 @@ namespace fb
                 }
             }
 
-            Vector2F getSize() const override
+            Vector2<real_Num> getSize() const override
             {
                 if( auto stateContext = getStateContext() )
                 {
@@ -157,10 +157,10 @@ namespace fb
                     }
                 }
 
-                return Vector2F::zero();
+                return Vector2<real_Num>::zero();
             }
 
-            void setSize( const Vector2F &size ) override
+            void setSize( const Vector2<real_Num> &size ) override
             {
                 if( auto stateContext = getStateContext() )
                 {

@@ -15,16 +15,16 @@ namespace fb
     {
         MeshTransformData();
 
-        MeshTransformData( const Vector3F &position, const Vector3F &scale,
-                           const QuaternionF &orientation, const SmartPtr<IMesh> &mesh );
+        MeshTransformData( const Vector3<real_Num> &position, const Vector3<real_Num> &scale,
+                           const Quaternion<real_Num> &orientation, const SmartPtr<IMesh> &mesh );
 
-        Vector3F Position;
-        Vector3F Scale;
-        QuaternionF Orientation;
+        Vector3<real_Num> Position;
+        Vector3<real_Num> Scale;
+        Quaternion<real_Num> Orientation;
         SmartPtr<IMesh> Mesh;
 
-        Array<Vector2F> UVOffsets;
-        Array<Vector2F> UVScaleData;
+        Array<Vector2<real_Num>> UVOffsets;
+        Array<Vector2<real_Num>> UVScaleData;
     };
 }  // end namespace fb
 

@@ -99,6 +99,9 @@ namespace fb::editor
             m_applicationAddMenu = ui->addElementByType<ui::IUIMenu>();
             m_applicationAddMenu->setLabel( "Add" );
 
+            Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::AddLightingPreset ),
+                               "Lighting Preset", "Creates a lighting preset file." );
+
             Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::AddMaterial ), "Material",
                                "Material" );
 
@@ -588,6 +591,21 @@ namespace fb::editor
 
         switch( menuId )
         {
+        case MenuId::AddLightingPreset:
+        {
+            auto filePath = owner->getSelectedPath();
+
+            const auto materialName = String( "NewLightingPreset.lightingpreset" );
+
+            auto cmd = fb::make_ptr<AddResourceCmd>();
+
+            auto materialPath = filePath + "/" + materialName;
+            cmd->setFilePath( materialPath );
+
+            cmd->setResourceType( AddResourceCmd::ResourceType::LightingPreset );
+            commandManager->addCommand( cmd );
+        }
+        break;
         case MenuId::AddMaterial:
         {
             auto filePath = owner->getSelectedPath();

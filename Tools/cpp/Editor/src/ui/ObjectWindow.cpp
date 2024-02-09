@@ -218,6 +218,10 @@ namespace fb::editor
                 {
                     m_resourceType = ObjectType::Resource;
                 }
+                else if( fileExt == ".lightingpreset" )
+                {
+                    m_resourceType = ObjectType::Resource;
+                }
                 else
                 {
                     m_resourceType = ObjectType::FileUnknown;

@@ -350,14 +350,14 @@ namespace fb
         actorImageParent->setName( "Transform" );
 
         auto actorImageParentCanvasTransform = actorImageParent->addComponent<scene::LayoutTransform>();
-        actorImageParentCanvasTransform->setSize( Vector2F( 1920.0f, 1080.0f ) );
+        actorImageParentCanvasTransform->setSize( Vector2<real_Num>( 1920.0f, 1080.0f ) );
 
         auto actorImage = sceneManager->createActor();
         actorImageParent->addChild( actorImage );
         actorImage->setName( "Image" );
 
         auto actorImageCanvasTransform = actorImage->addComponent<scene::LayoutTransform>();
-        actorImageCanvasTransform->setSize( Vector2F( 1280.0f, 720.0f ) * 1.0f );
+        actorImageCanvasTransform->setSize( Vector2<real_Num>( 1280.0f, 720.0f ) * 1.0f );
 
         auto image = actorImage->addComponent<scene::Image>();
         // image->setImagePath(mediaPath + "/checker.png");
@@ -405,14 +405,14 @@ namespace fb
         actorImageParent->setName( "Transform" );
 
         auto actorImageParentCanvasTransform = actorImageParent->addComponent<scene::LayoutTransform>();
-        actorImageParentCanvasTransform->setSize( Vector2F( 1920.0f, 1080.0f ) );
+        actorImageParentCanvasTransform->setSize( Vector2<real_Num>( 1920.0f, 1080.0f ) );
 
         auto actorImage = sceneManager->createActor();
         actorImageParent->addChild( actorImage );
         actorImage->setName( "Image" );
 
         auto actorImageCanvasTransform = actorImage->addComponent<scene::LayoutTransform>();
-        actorImageCanvasTransform->setSize( Vector2F( 1280.0f, 720.0f ) * 1.0f );
+        actorImageCanvasTransform->setSize( Vector2<real_Num>( 1280.0f, 720.0f ) * 1.0f );
 
         auto actorText = sceneManager->createActor();
         actorImage->addChild( actorText );
@@ -420,7 +420,7 @@ namespace fb
         auto actorTextCanvasTransform = actorText->addComponent<scene::LayoutTransform>();
         if( actorTextCanvasTransform )
         {
-            actorTextCanvasTransform->setSize( Vector2F( 300, 200 ) );
+            actorTextCanvasTransform->setSize( Vector2<real_Num>( 300, 200 ) );
         }
 
         auto textComponent = actorText->addComponent<scene::Text>();
@@ -472,7 +472,7 @@ namespace fb
         actorImageParent->setName( "Transform" );
 
         auto actorImageParentCanvasTransform = actorImageParent->addComponent<scene::LayoutTransform>();
-        actorImageParentCanvasTransform->setSize( Vector2F( 1920.0f, 1080.0f ) );
+        actorImageParentCanvasTransform->setSize( Vector2<real_Num>( 1920.0f, 1080.0f ) );
 
         auto actorButton = sceneManager->createActor();
         actorImageParent->addChild( actorButton );
@@ -483,7 +483,7 @@ namespace fb
         auto actorImageCanvasTransform = actorButton->addComponent<scene::LayoutTransform>();
         if( actorImageCanvasTransform )
         {
-            actorImageCanvasTransform->setSize( Vector2F( 300, 100 ) );
+            actorImageCanvasTransform->setSize( Vector2<real_Num>( 300, 100 ) );
         }
 
         auto actorButtonImageComponent = actorButton->addComponent<scene::Image>();
@@ -1212,7 +1212,7 @@ namespace fb
         FB_ASSERT( collisionBox );
         if( collisionBox )
         {
-            collisionBox->setExtents( Vector3F::unit() * 1.0f );
+            collisionBox->setExtents( Vector3<real_Num>::unit() * 1.0f );
         }
 
         auto rigidbody = actor->addComponent<scene::Rigidbody>();
@@ -1235,7 +1235,7 @@ namespace fb
         //}
 
         auto groundPosition = Vector3<real_Num>::unitY() * static_cast<real_Num>( -250.0 );
-        // groundPosition += Vector3F::unitZ() * -250.0f;
+        // groundPosition += Vector3<real_Num>::unitZ() * -250.0f;
 
         auto groundScale = Vector3<real_Num>::unit() * static_cast<real_Num>( 500.0 );
 
@@ -1499,7 +1499,7 @@ namespace fb
         auto c = actor->addComponent<scene::CollisionBox>();
         FB_ASSERT( c );
 
-        auto bodyDimensions = Vector3F( length, height, width ) * 0.5f;
+        auto bodyDimensions = Vector3<real_Num>( length, height, width ) * 0.5f;
         c->setExtents( bodyDimensions );
 
         auto rigidbody = actor->addComponent<scene::Rigidbody>();
@@ -1533,20 +1533,20 @@ namespace fb
 
         actor->addChild( meshActor );
 
-        Array<Vector3F> wheelPositions;
+        Array<Vector3<real_Num>> wheelPositions;
         wheelPositions.resize( 4 );
 
         auto wheelOffset = -1.0f;
         wheelPositions[static_cast<u32>( scene::CarController::Wheels::FRONT_LEFT )] =
-            Vector3F( -width / 2.0f, wheelOffset, wheelBase / 2.0f );
+            Vector3<real_Num>( -width / 2.0f, wheelOffset, wheelBase / 2.0f );
         wheelPositions[static_cast<u32>( scene::CarController::Wheels::FRONT_RIGHT )] =
-            Vector3F( width / 2.0f, wheelOffset, wheelBase / 2.0f );
+            Vector3<real_Num>( width / 2.0f, wheelOffset, wheelBase / 2.0f );
         wheelPositions[static_cast<u32>( scene::CarController::Wheels::REAR_LEFT )] =
-            Vector3F( -width / 2.0f, wheelOffset, -wheelBase / 2.0f );
+            Vector3<real_Num>( -width / 2.0f, wheelOffset, -wheelBase / 2.0f );
         wheelPositions[static_cast<u32>( scene::CarController::Wheels::REAR_RIGHT )] =
-            Vector3F( width / 2.0f, wheelOffset, -wheelBase / 2.0f );
+            Vector3<real_Num>( width / 2.0f, wheelOffset, -wheelBase / 2.0f );
 
-        auto wheelMeshSize = Vector3F( 0.1f, 0.3f, 0.3f );
+        auto wheelMeshSize = Vector3<real_Num>( 0.1f, 0.3f, 0.3f );
 
         for( u32 i = 0; i < 4; ++i )
         {
@@ -1604,7 +1604,7 @@ namespace fb
         //	//auto vehicleMeshTransform = vehicleMesh->getLocalTransform();
         //	//if (vehicleMeshTransform)
         //	//{
-        //	//	vehicleMeshTransform->setScale(Vector3F::unit() * 0.0254f);
+        //	//	vehicleMeshTransform->setScale(Vector3<real_Num>::unit() * 0.0254f);
         //	//}
 
         //	vehicleMesh->setName("F40");
@@ -1723,7 +1723,7 @@ namespace fb
         //    // auto vehicleMeshTransform = vehicleMesh->getLocalTransform();
         //    // if (vehicleMeshTransform)
         //    //{
-        //    //	vehicleMeshTransform->setScale(Vector3F::unit() * 0.0254f);
+        //    //	vehicleMeshTransform->setScale(Vector3<real_Num>::unit() * 0.0254f);
         //    // }
 
         //    vehicleMesh->setName( "F40" );
@@ -1840,7 +1840,7 @@ namespace fb
             // auto vehicleMeshTransform = vehicleMesh->getLocalTransform();
             // if (vehicleMeshTransform)
             //{
-            //	vehicleMeshTransform->setScale(Vector3F::unit() * 0.0254f);
+            //	vehicleMeshTransform->setScale(Vector3<real_Num>::unit() * 0.0254f);
             // }
 
             vehicleMesh->setName( "F40" );
@@ -2100,7 +2100,8 @@ namespace fb
         return actor;
     }
 
-    auto ApplicationUtil::getRelativeMousePos( Vector2F relativeMousePosition ) -> Vector2F
+    auto ApplicationUtil::getRelativeMousePos( Vector2<real_Num> relativeMousePosition )
+        -> Vector2<real_Num>
     {
         auto applicationManager = core::ApplicationManager::instance();
         auto ui = applicationManager->getUI();
@@ -2111,13 +2112,13 @@ namespace fb
                 if( auto mainWindow = applicationManager->getWindow() )
                 {
                     auto mainWindowSize = mainWindow->getSize();
-                    auto mainWindowSizeF = Vector2F( static_cast<f32>( mainWindowSize.x ),
-                                                     static_cast<f32>( mainWindowSize.y ) );
+                    auto mainWindowSizeF = Vector2<real_Num>( static_cast<f32>( mainWindowSize.x ),
+                                                              static_cast<f32>( mainWindowSize.y ) );
 
                     auto pos = uiWindow->getPosition() / mainWindowSizeF;
                     auto size = uiWindow->getSize() / mainWindowSizeF;
 
-                    auto aabb = AABB2F( pos, size, true );
+                    auto aabb = AABB2<real_Num>( pos, size, true );
                     if( aabb.isInside( relativeMousePosition ) )
                     {
                         return ( relativeMousePosition - pos ) / size;
@@ -2126,7 +2127,7 @@ namespace fb
             }
         }
 
-        return Vector2F::zero();
+        return Vector2<real_Num>::zero();
     }
 
 }  // end namespace fb

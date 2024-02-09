@@ -13,32 +13,32 @@ namespace fb
     public:
         ScaleAnimator2();
 
-        ScaleAnimator2( T *object, f32 animationLength, const Vector2F &startScale = Vector2F::UNIT,
-                        const Vector2F &endScale = Vector2F::UNIT );
+        ScaleAnimator2( T *object, f32 animationLength, const Vector2<real_Num> &startScale = Vector2<real_Num>::UNIT,
+                        const Vector2<real_Num> &endScale = Vector2<real_Num>::UNIT );
 
         ~ScaleAnimator2();
 
         void update();
 
     protected:
-        Vector2F m_start;
-        Vector2F m_end;
+        Vector2<real_Num> m_start;
+        Vector2<real_Num> m_end;
 
         T *m_object;
     };
 
     template <class T>
     ScaleAnimator2<T>::ScaleAnimator2() :
-        m_start( Vector2F::UNIT ),
-        m_end( Vector2F::UNIT ),
+        m_start( Vector2<real_Num>::UNIT ),
+        m_end( Vector2<real_Num>::UNIT ),
         m_object( NULL )
     {
     }
 
     template <class T>
     ScaleAnimator2<T>::ScaleAnimator2( T *object, f32 animationLength,
-                                       const Vector2F &startScale = Vector2F::UNIT,
-                                       const Vector2F &endScale = Vector2F::UNIT ) :
+                                       const Vector2<real_Num> &startScale = Vector2<real_Num>::UNIT,
+                                       const Vector2<real_Num> &endScale = Vector2<real_Num>::UNIT ) :
         m_start( startScale ),
         m_end( endScale ),
         m_object( object ),
@@ -57,7 +57,7 @@ namespace fb
     {
         m_animationTime += dt;
         MathF::clamp( m_animationTime, 0.0f, 1.0f );
-        Vector2F scale = m_start + ( m_end - m_start ) * ( m_animationTime * 1.0f / m_animationLength );
+        Vector2<real_Num> scale = m_start + ( m_end - m_start ) * ( m_animationTime * 1.0f / m_animationLength );
         m_object->setScale( scale );
     }
 

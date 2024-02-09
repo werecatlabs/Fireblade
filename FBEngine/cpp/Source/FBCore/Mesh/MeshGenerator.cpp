@@ -10,8 +10,9 @@
 
 namespace fb
 {
-    auto MeshGenerator::createVertexBuffer( const Array<Vector3F> &positions,
-                                            const Array<Vector3F> &normals, const Array<Vector2F> &uvs )
+    auto MeshGenerator::createVertexBuffer( const Array<Vector3<real_Num>> &positions,
+                                            const Array<Vector3<real_Num>> &normals,
+                                            const Array<Vector2<real_Num>> &uvs )
         -> SmartPtr<IVertexBuffer>
     {
         auto numVertices = positions.size();
@@ -134,8 +135,9 @@ namespace fb
         return subMesh;
     }
 
-    auto MeshGenerator::createMesh( const Array<Vector3F> &vertices, const Array<Vector3F> &normals,
-                                    const Array<Vector2F> &uvs, const Array<u32> &indices )
+    auto MeshGenerator::createMesh( const Array<Vector3<real_Num>> &vertices,
+                                    const Array<Vector3<real_Num>> &normals,
+                                    const Array<Vector2<real_Num>> &uvs, const Array<u32> &indices )
         -> SmartPtr<IMesh>
     {
         auto vertexBuffer = MeshGenerator::createVertexBuffer( vertices, normals, uvs );
@@ -148,23 +150,27 @@ namespace fb
         return mesh;
     }
 
-    auto MeshGenerator::createMesh( const Array<Vector3F> &vertices, const Array<Vector3F> &normals,
-                                    const Array<Vector4F> &tangents, const Array<Vector3F> &uvs,
+    auto MeshGenerator::createMesh( const Array<Vector3<real_Num>> &vertices,
+                                    const Array<Vector3<real_Num>> &normals,
+                                    const Array<Vector4F> &tangents, const Array<Vector3<real_Num>> &uvs,
                                     const Array<u32> &indices ) -> SmartPtr<IMesh>
     {
         return nullptr;
     }
 
-    auto MeshGenerator::createMesh( const Array<Vector3F> &vertices, const Array<Vector3F> &normals,
-                                    const Array<Vector4F> &tangents, const Array<Vector3F> &uvs0,
-                                    const Array<Vector3F> &uvs1, const Array<u32> &indices )
+    auto MeshGenerator::createMesh( const Array<Vector3<real_Num>> &vertices,
+                                    const Array<Vector3<real_Num>> &normals,
+                                    const Array<Vector4F> &tangents,
+                                    const Array<Vector3<real_Num>> &uvs0,
+                                    const Array<Vector3<real_Num>> &uvs1, const Array<u32> &indices )
         -> SmartPtr<IMesh>
     {
         return nullptr;
     }
 
-    auto MeshGenerator::createPlane( const Vector3F &halfExtent, const Vector3F &normal,
-                                     const Vector3F &right ) -> SmartPtr<IMesh>
+    auto MeshGenerator::createPlane( const Vector3<real_Num> &halfExtent,
+                                     const Vector3<real_Num> &normal, const Vector3<real_Num> &right )
+        -> SmartPtr<IMesh>
     {
         Vertex v[4];
 
@@ -187,12 +193,12 @@ namespace fb
         v[2].normal = normal;
         v[3].normal = normal;
 
-        auto texCoordScale = Vector2F::unit() * 1.0f;
+        auto texCoordScale = Vector2<real_Num>::unit() * 1.0f;
 
-        v[0].texCoord = Vector2F( 0, 0 ) * texCoordScale;
-        v[1].texCoord = Vector2F( 1, 0 ) * texCoordScale;
-        v[2].texCoord = Vector2F( 0, 1 ) * texCoordScale;
-        v[3].texCoord = Vector2F( 1, 1 ) * texCoordScale;
+        v[0].texCoord = Vector2<real_Num>( 0, 0 ) * texCoordScale;
+        v[1].texCoord = Vector2<real_Num>( 1, 0 ) * texCoordScale;
+        v[2].texCoord = Vector2<real_Num>( 0, 1 ) * texCoordScale;
+        v[3].texCoord = Vector2<real_Num>( 1, 1 ) * texCoordScale;
 
         auto planeMesh = fb::make_ptr<Mesh>();
 
@@ -270,9 +276,9 @@ namespace fb
     auto MeshGenerator::createCylinder( f32 radius, f32 height, u32 numSegBase, u32 numSegHeight,
                                         bool capped ) -> SmartPtr<IMesh>
     {
-        Array<Vector3F> vertices;
-        Array<Vector3F> normals;
-        Array<Vector2F> uvs;
+        Array<Vector3<real_Num>> vertices;
+        Array<Vector3<real_Num>> normals;
+        Array<Vector2<real_Num>> uvs;
         Array<u32> indices;
 
         vertices.reserve( 1000 );
@@ -291,10 +297,10 @@ namespace fb
                 auto x0 = radius * Math<real_Num>::Cos( j * deltaAngle );
                 auto z0 = radius * Math<real_Num>::Sin( j * deltaAngle );
 
-                auto position = Vector3F( x0, i * deltaHeight, z0 );
-                auto normal = Vector3F( x0, 0, z0 ).normaliseCopy();
-                auto texCoord =
-                    Vector2F( j / static_cast<f32>( numSegBase ), i / static_cast<f32>( numSegHeight ) );
+                auto position = Vector3<real_Num>( x0, i * deltaHeight, z0 );
+                auto normal = Vector3<real_Num>( x0, 0, z0 ).normaliseCopy();
+                auto texCoord = Vector2<real_Num>( j / static_cast<f32>( numSegBase ),
+                                                   i / static_cast<f32>( numSegHeight ) );
 
                 vertices.push_back( position );
                 normals.push_back( normal );
@@ -317,13 +323,13 @@ namespace fb
         return MeshGenerator::createMesh( vertices, normals, uvs, indices );
     }
 
-    auto MeshGenerator::createCylinderFromSpline( SmartPtr<LinearSpline3F> spline, f32 radius,
+    auto MeshGenerator::createCylinderFromSpline( SmartPtr<LinearSpline3<real_Num>> spline, f32 radius,
                                                   f32 height, u32 numSegBase, u32 numSegHeight,
                                                   bool capped ) -> SmartPtr<IMesh>
     {
-        Array<Vector3F> vertices;
-        Array<Vector3F> normals;
-        Array<Vector2F> uvs;
+        Array<Vector3<real_Num>> vertices;
+        Array<Vector3<real_Num>> normals;
+        Array<Vector2<real_Num>> uvs;
         Array<u32> indices;
 
         vertices.reserve( 1000 );
@@ -342,10 +348,10 @@ namespace fb
                 auto x0 = radius * Math<real_Num>::Cos( j * deltaAngle );
                 auto z0 = radius * Math<real_Num>::Sin( j * deltaAngle );
 
-                auto position = Vector3F( x0, i * deltaHeight, z0 );
-                auto normal = Vector3F( x0, 0, z0 ).normaliseCopy();
-                auto texCoord =
-                    Vector2F( j / static_cast<f32>( numSegBase ), i / static_cast<f32>( numSegHeight ) );
+                auto position = Vector3<real_Num>( x0, i * deltaHeight, z0 );
+                auto normal = Vector3<real_Num>( x0, 0, z0 ).normaliseCopy();
+                auto texCoord = Vector2<real_Num>( j / static_cast<f32>( numSegBase ),
+                                                   i / static_cast<f32>( numSegHeight ) );
 
                 vertices.push_back( position );
                 normals.push_back( normal );
@@ -368,13 +374,13 @@ namespace fb
         return MeshGenerator::createMesh( vertices, normals, uvs, indices );
     }
 
-    auto MeshGenerator::createRoadFromSpline( SmartPtr<LinearSpline3F> spline, f32 radius, f32 height,
-                                              u32 numSegBase, u32 numSegHeight, bool capped )
+    auto MeshGenerator::createRoadFromSpline( SmartPtr<LinearSpline3<real_Num>> spline, f32 radius,
+                                              f32 height, u32 numSegBase, u32 numSegHeight, bool capped )
         -> SmartPtr<IMesh>
     {
-        Array<Vector3F> vertices;
-        Array<Vector3F> normals;
-        Array<Vector2F> uvs;
+        Array<Vector3<real_Num>> vertices;
+        Array<Vector3<real_Num>> normals;
+        Array<Vector2<real_Num>> uvs;
         Array<u32> indices;
 
         vertices.reserve( 12 );
@@ -391,11 +397,11 @@ namespace fb
             auto d0 = i / segments;
             auto d1 = ( i + 1 ) / segments;
 
-            auto pointA = spline->interpolate( static_cast<f32>( d0 ) );
-            auto pointB = spline->interpolate( static_cast<f32>( d1 ) );
+            auto pointA = spline->interpolate( static_cast<real_Num>( d0 ) );
+            auto pointB = spline->interpolate( static_cast<real_Num>( d1 ) );
 
             auto vec = ( pointB - pointA ).normaliseCopy();
-            auto tangentA = vec.crossProduct( Vector3F::up() );
+            auto tangentA = vec.crossProduct( Vector3<real_Num>::up() );
             auto tangentB = -tangentA;
 
             auto p0 = pointA - tangentA * widthA;
@@ -411,13 +417,13 @@ namespace fb
             vertices.emplace_back( p3.X(), p3.Y(), p3.Z() );
             vertices.emplace_back( p0.X(), p0.Y(), p0.Z() );
 
-            normals.push_back( Vector3F::up() );
-            normals.push_back( Vector3F::up() );
-            normals.push_back( Vector3F::up() );
+            normals.push_back( Vector3<real_Num>::up() );
+            normals.push_back( Vector3<real_Num>::up() );
+            normals.push_back( Vector3<real_Num>::up() );
 
-            normals.push_back( Vector3F::up() );
-            normals.push_back( Vector3F::up() );
-            normals.push_back( Vector3F::up() );
+            normals.push_back( Vector3<real_Num>::up() );
+            normals.push_back( Vector3<real_Num>::up() );
+            normals.push_back( Vector3<real_Num>::up() );
 
             const auto segXRatio = 0.0f;
             const auto segYRatio = 0.0f;
@@ -445,7 +451,8 @@ namespace fb
         return MeshGenerator::createMesh( vertices, normals, uvs, indices );
     }
 
-    auto MeshGenerator::createMeshFromSplines( const Array<LinearSpline3F> &splines ) -> SmartPtr<IMesh>
+    auto MeshGenerator::createMeshFromSplines( const Array<LinearSpline3<real_Num>> &splines )
+        -> SmartPtr<IMesh>
     {
         return createCylinder();
         return nullptr;

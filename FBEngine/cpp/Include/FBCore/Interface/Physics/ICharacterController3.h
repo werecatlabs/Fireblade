@@ -13,11 +13,11 @@ namespace fb
         public:
             ~ICharacterController3() override = default;
 
-            virtual void setPosition( const Vector3F &position ) = 0;
-            virtual Vector3F getPosition() const = 0;
+            virtual void setPosition( const Vector3<real_Num> &position ) = 0;
+            virtual Vector3<real_Num> getPosition() const = 0;
 
-            virtual void setOrientation( const QuaternionF &orientation ) = 0;
-            virtual QuaternionF getOrientation() const = 0;
+            virtual void setOrientation( const Quaternion<real_Num> &orientation ) = 0;
+            virtual Quaternion<real_Num> getOrientation() const = 0;
 
             virtual f32 getMoveSpeed() const = 0;
             virtual void setMoveSpeed( f32 moveSpeed ) = 0;
@@ -29,7 +29,7 @@ namespace fb
             virtual void _getObject( void **ppObject ) = 0;
 
             // temp interface
-            virtual void setWalkVector( const Vector3F &vector ) = 0;
+            virtual void setWalkVector( const Vector3<real_Num> &vector ) = 0;
             virtual void stop() = 0;
         };
 

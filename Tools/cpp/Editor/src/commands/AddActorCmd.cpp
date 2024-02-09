@@ -552,6 +552,7 @@ namespace fb::editor
         }
         break;
         case ActorType::ToggleButton:
+        case ActorType::ToggleWithText:
         {
             auto actor = sceneManager->createActor();
 
@@ -561,14 +562,15 @@ namespace fb::editor
             auto canvasTransform = actor->addComponent<scene::LayoutTransform>();
             if( canvasTransform )
             {
+                auto pos = Vector2F( 0, 0 );
+                canvasTransform->setPosition( pos );
+
                 auto size = Vector2F( 100, 10 );
                 canvasTransform->setSize( size );
             }
 
             auto bgImage = actor->addComponent<scene::Image>();
             bgImage->setTextureName( "rounded_filled_1024.png" );
-
-            auto material = actor->addComponent<scene::Material>();
 
             auto toggle = actor->addComponent<scene::Toggle>();
 
@@ -589,6 +591,28 @@ namespace fb::editor
             }
 
             toggle->setToggleTransform( toggleCanvasTransform );
+
+            if( actorType == ActorType::ToggleWithText )
+            {
+                auto textActor = sceneManager->createActor();
+                actor->addChild( textActor );
+
+                auto textActorName = String( "Text" );
+                textActor->setName( textActorName );
+
+                auto text = textActor->addComponent<scene::Text>();
+                text->setText( "Toggle" );
+
+                auto textCanvasTransform = textActor->addComponent<scene::LayoutTransform>();
+                if( textCanvasTransform )
+                {
+                    auto pos = Vector2F( -150, 0 );
+                    textCanvasTransform->setPosition( pos );
+
+                    auto size = Vector2F( 120, 40 );
+                    textCanvasTransform->setSize( size );
+                }
+            }
 
             toggleActor->addComponent<scene::Material>();
 

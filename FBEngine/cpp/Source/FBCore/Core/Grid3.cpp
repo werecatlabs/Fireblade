@@ -8,8 +8,8 @@ namespace fb
 
     Grid3::~Grid3() = default;
 
-    void Grid3::initialise( const Vector3F &center, const Vector3F &areaSize,
-                            const Vector3F &areaBoundry )
+    void Grid3::initialise( const Vector3<real_Num> &center, const Vector3<real_Num> &areaSize,
+                            const Vector3<real_Num> &areaBoundry )
     {
         m_center.X() = center.X();
         m_center.Y() = center.Y();
@@ -41,24 +41,24 @@ namespace fb
         m_maxIndex.Z() = m_numBoundingboxes.Z() - 1;*/
     }
 
-    auto Grid3::getCenter() const -> const Vector3F &
+    auto Grid3::getCenter() const -> const Vector3<real_Num> &
     {
         return m_center;
     }
 
-    auto Grid3::getExtents() const -> const Vector3F &
+    auto Grid3::getExtents() const -> const Vector3<real_Num> &
     {
         return m_gridExtents;
     }
 
-    auto Grid3::getCellSize() const -> const Vector3F &
+    auto Grid3::getCellSize() const -> const Vector3<real_Num> &
     {
         return m_cellSize;
     }
 
     auto Grid3::getNumCells() const -> Vector3I
     {
-        Vector3F numCells = ( m_gridExtents / m_cellSize ) * 2.0f;
+        Vector3<real_Num> numCells = ( m_gridExtents / m_cellSize ) * 2.0f;
         return { MathF::Round( numCells.X() ), MathF::Round( numCells.Y() ),
                  MathF::Round( numCells.Z() ) };
     }

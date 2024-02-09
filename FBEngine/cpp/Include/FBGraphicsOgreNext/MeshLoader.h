@@ -26,6 +26,8 @@ namespace fb
             MeshLoader();
             ~MeshLoader();
 
+            static void createV2Mesh( Ogre::Mesh *mesh, SmartPtr<IMesh> fbmesh );
+
             static void loadFBMesh( Ogre::MeshPtr mesh, const String &meshPath );
             static Ogre::Mesh *loadFBMesh( SmartPtr<IStream> stream );
             static void loadFBMesh( Ogre::MeshPtr mesh, SmartPtr<IMesh> fbMesh );
@@ -71,7 +73,7 @@ namespace fb
 #if FB_USE_ASSET_IMPORT
             bool createSubMesh( const String &name, int index, const aiNode *pNode, const aiMesh *mesh,
                                 const aiMaterial *mat, SmartPtr<IMesh> mMesh, const String &mDir );
-
+            
             typedef std::map<String, const aiNode *> BoneNodeMap;
             BoneNodeMap mBoneNodesByName;
 

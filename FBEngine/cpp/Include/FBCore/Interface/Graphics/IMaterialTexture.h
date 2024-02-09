@@ -17,8 +17,13 @@ namespace fb
         class IMaterialTexture : public IMaterialNode
         {
         public:
+            static const String texturePathStr;
+            static const String scaleStr;
+            static const String tintStr;
+            static const String textureTypeStr;
+
             /** Virtual destructor. */
-            ~IMaterialTexture() override = default;
+            ~IMaterialTexture() override;
 
             /** Gets the texture name.
             @return A string object containing the name.
@@ -43,7 +48,7 @@ namespace fb
             /** Sets the scale of the texture.
             @param scale The scaling factor as a 3D vector.
             */
-            virtual void setScale( const Vector3F &scale ) = 0;
+            virtual void setScale( const Vector3<real_Num> &scale ) = 0;
 
             /** Gets the animator for the texture.
             @return A pointer to the animator.

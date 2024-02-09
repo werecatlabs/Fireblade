@@ -11,7 +11,7 @@ namespace fb
     protected:
         int m_iValue;
         f32 m_fValue;
-        Vector3F m_vector3Value;
+        Vector3<real_Num> m_vector3Value;
         Vector4F m_vector4Value;
         String m_sValue;
     };

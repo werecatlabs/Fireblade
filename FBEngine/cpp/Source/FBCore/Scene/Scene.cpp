@@ -71,6 +71,8 @@ namespace fb::scene
     {
         try
         {
+            setSceneLoadingState( SceneLoadingState::None );
+
             setFilePath( path );
 
             auto applicationManager = core::ApplicationManager::instance();
@@ -819,8 +821,7 @@ namespace fb::scene
     {
         auto properties = fb::make_ptr<Properties>();
 
-        auto lightingData = String();
-        properties->setProperty( "lighting", lightingData );
+        properties->setPropertyAsType( "lighting", m_sceneLightingDirector );
 
         auto actors = getActors();
         for( auto actor : actors )
@@ -851,6 +852,8 @@ namespace fb::scene
 
         auto graphicsScene = graphicsSystem->getGraphicsScene();
         FB_ASSERT( graphicsScene );
+
+        properties->getPropertyAsType( "lighting", m_sceneLightingDirector );
 
         //graphicsSceneManager->setAmbientLight( ColourF::White * 0.5f );
         //graphicsSceneManager->setEnableShadows( true );
@@ -928,7 +931,7 @@ namespace fb::scene
     SmartPtr<Properties> Scene::getProperties() const
     {
         auto properties = Resource<IScene>::getProperties();
-        properties->setPropertyAsType( "sceneLightingDirector", m_sceneLightingDirector );
+        properties->setPropertyAsType( "lighting", m_sceneLightingDirector );
         return properties;
     }
 
@@ -936,6 +939,22 @@ namespace fb::scene
     {
         Resource<IScene>::setProperties( properties );
 
-        properties->getPropertyAsType( "sceneLightingDirector", m_sceneLightingDirector );
+        properties->getPropertyAsType( "lighting", m_sceneLightingDirector );
+    }
+
+    void Scene::updateLighting()
+    {
+        auto applicationManager = core::ApplicationManager::instance();
+        FB_ASSERT( applicationManager );
+
+        auto graphicsSystem = applicationManager->getGraphicsSystem();
+        FB_ASSERT( graphicsSystem );
+
+        auto graphicsScene = graphicsSystem->getGraphicsScene();
+        FB_ASSERT( graphicsScene );
+
+        graphicsScene->setAmbientLight( m_sceneLightingDirector->getAmbientColour() );
+        graphicsScene->setUpperHemisphere( m_sceneLightingDirector->getUpperHemisphere() );
+        graphicsScene->setLowerHemisphere( m_sceneLightingDirector->getLowerHemisphere() );
     }
 }  // namespace fb::scene

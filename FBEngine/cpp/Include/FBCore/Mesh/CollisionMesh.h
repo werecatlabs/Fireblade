@@ -34,8 +34,8 @@ namespace fb
         /** @copydoc IObject::unload */
         void unload( SmartPtr<ISharedObject> data ) override;
 
-        bool rayCast( const Vector3F &origin, const Vector3F &dir, Array<f32> &hits );
-        bool rayCast( const Vector3F &origin, const Vector3F &dir, Array<HitData> &hits );
+        bool rayCast( const Vector3<real_Num> &origin, const Vector3<real_Num> &dir, Array<f32> &hits );
+        bool rayCast( const Vector3<real_Num> &origin, const Vector3<real_Num> &dir, Array<HitData> &hits );
 
     private:
         Array<SmartPtr<CollisionSubMesh>> m_subMeshes;

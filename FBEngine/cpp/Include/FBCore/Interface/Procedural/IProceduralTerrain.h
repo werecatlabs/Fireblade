@@ -16,10 +16,10 @@ namespace fb
             ~IProceduralTerrain() override = default;
 
             /** Get the size of the terrain. */
-            virtual Vector3F getSize() const = 0;
+            virtual Vector3<real_Num> getSize() const = 0;
 
             /** Get the size of the terrain. */
-            virtual void setSize( const Vector3F &size ) = 0;
+            virtual void setSize( const Vector3<real_Num> &size ) = 0;
 
             /** Get the size of the terrain. */
             virtual Vector2I getHeightmapResolution() const = 0;

@@ -10,16 +10,16 @@ namespace fb
     class OverlayElementState : public BaseState
     {
     public:
-        OverlayElementState() = default;
-        ~OverlayElementState() override = default;
+        OverlayElementState();
+        ~OverlayElementState() override;
 
-        Vector2F getPosition() const;
+        Vector2<real_Num> getPosition() const;
 
-        void setPosition( const Vector2F &position );
+        void setPosition( const Vector2<real_Num> &position );
 
-        Vector2F getSize() const;
+        Vector2<real_Num> getSize() const;
 
-        void setSize( const Vector2F &size );
+        void setSize( const Vector2<real_Num> &size );
 
         String getName() const;
 
@@ -70,8 +70,8 @@ namespace fb
         atomic_u8 m_gha = 0;
         atomic_u8 m_gva = 0;
 
-        Vector2F m_position = Vector2F::zero();
-        Vector2F m_size = Vector2F::unit();
+        Vector2<real_Num> m_position = Vector2<real_Num>::zero();
+        Vector2<real_Num> m_size = Vector2<real_Num>::unit();
         String m_name;
         String m_caption;
 

@@ -13,13 +13,13 @@ namespace fb
         StateMessageOrientation() = default;
         ~StateMessageOrientation() override = default;
 
-        QuaternionF getOrientation() const;
-        void setOrientation( const QuaternionF &val );
+        Quaternion<real_Num> getOrientation() const;
+        void setOrientation( const Quaternion<real_Num> &val );
 
         FB_CLASS_REGISTER_DECL;
 
     protected:
-        QuaternionF m_orientation;
+        Quaternion<real_Num> m_orientation;
     };
 }  // end namespace fb
 

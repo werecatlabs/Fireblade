@@ -28,38 +28,38 @@ namespace fb
              * @brief Gets the position of the camera.
              * @return The position of the camera.
              */
-            virtual Vector3F getPosition() const = 0;
+            virtual Vector3<real_Num> getPosition() const = 0;
 
             /**
              * @brief Sets the position of the camera.
              * @param position The new position of the camera.
              */
-            virtual void setPosition( const Vector3F &position ) = 0;
+            virtual void setPosition( const Vector3<real_Num> &position ) = 0;
 
             /**
              * @brief Gets the orientation of the camera.
              * @return The orientation of the camera.
              */
-            virtual QuaternionF getOrientation() const = 0;
+            virtual Quaternion<real_Num> getOrientation() const = 0;
 
             /**
              * @brief Sets the orientation of the camera.
              * @param orientation The new orientation of the camera.
              */
-            virtual void setOrientation( const QuaternionF &orientation ) = 0;
+            virtual void setOrientation( const Quaternion<real_Num> &orientation ) = 0;
 
             /**
              * @brief Gets the direction the camera is facing.
              * @return The direction the camera is facing.
              */
-            virtual Vector3F getDirection() const = 0;
+            virtual Vector3<real_Num> getDirection() const = 0;
 
             /**
              * @brief Gets the direction from the relative screen coordinates.
              * @param screenPosition The relative screen coordinates.
              * @return The direction from the relative screen coordinates.
              */
-            virtual Vector3F getDirection( const Vector2F &screenPosition ) const = 0;
+            virtual Vector3<real_Num> getDirection( const Vector2<real_Num> &screenPosition ) const = 0;
 
             /**
              * @brief Gets the direction from the relative screen coordinates and returns a world position.
@@ -67,20 +67,20 @@ namespace fb
              * @param worldPosition The world position.
              * @return The direction from the relative screen coordinates.
              */
-            virtual Vector3F getDirection( const Vector2F &screenPosition,
-                                           Vector3F &worldPosition ) const = 0;
+            virtual Vector3<real_Num> getDirection( const Vector2<real_Num> &screenPosition,
+                                           Vector3<real_Num> &worldPosition ) const = 0;
 
             /**
              * @brief Gets the up vector of the camera.
              * @return The up vector of the camera.
              */
-            virtual Vector3F getUp() const = 0;
+            virtual Vector3<real_Num> getUp() const = 0;
 
             /**
              * @brief Gets the right vector of the camera.
              * @return The right vector of the camera.
              */
-            virtual Vector3F getRight() const = 0;
+            virtual Vector3<real_Num> getRight() const = 0;
 
             /**
              * @brief Sets the level-of-detail bias factor for this camera.
@@ -100,14 +100,14 @@ namespace fb
              * @param screeny The y position at which the ray should intersect the viewport, in normalized screen coordinates [0,1].
              * @return The world space ray as cast from the camera through the viewport position.
              */
-            virtual Ray3F getRay( f32 screenx, f32 screeny ) const = 0;
+            virtual Ray3<real_Num> getRay( f32 screenx, f32 screeny ) const = 0;
 
             /**
              * @brief Gets the screen position from the given world position.
              * @param position The world position.
              * @return The screen position from the given world position.
              */
-            virtual Vector2F getScreenPosition( const Vector3F &position ) = 0;
+            virtual Vector2<real_Num> getScreenPosition( const Vector3<real_Num> &position ) = 0;
 
             /**
              * @brief Sets the viewing window inside of the viewport.

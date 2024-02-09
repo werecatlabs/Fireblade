@@ -19,18 +19,18 @@ namespace fb
 
             bool handleInputEvent( const SmartPtr<IInputEvent> &event );
 
-            void setPosition( const Vector3F &position );
-            Vector3F getPosition() const;
+            void setPosition( const Vector3<real_Num> &position );
+            Vector3<real_Num> getPosition() const;
 
-            void setTargetPosition( const Vector3F &position );
-            Vector3F getTargetPosition() const;
+            void setTargetPosition( const Vector3<real_Num> &position );
+            Vector3<real_Num> getTargetPosition() const;
 
-            void setOrientation( const QuaternionF &orientation );
-            QuaternionF getOrientation() const;
+            void setOrientation( const Quaternion<real_Num> &orientation );
+            Quaternion<real_Num> getOrientation() const;
 
-            Vector3F getDirection() const;
+            Vector3<real_Num> getDirection() const;
 
-            Ray3F getCameraToViewportRay( const Vector2F &screenPosition ) const;
+            Ray3F getCameraToViewportRay( const Vector2<real_Num> &screenPosition ) const;
 
             bool isInFrustum( const AABB3F &box ) const;
 
@@ -60,16 +60,16 @@ namespace fb
 
             Array<SmartPtr<render::ICamera>> m_cameras;
             SmartPtr<render::ICamera> m_selectedCamera;
-            Vector3F TargetVector;
-            Vector2F PrevCursor;
-            Vector2F CursorPos;
-            Vector2F MousePos;
+            Vector3<real_Num> TargetVector;
+            Vector2<real_Num> PrevCursor;
+            Vector2<real_Num> CursorPos;
+            Vector2<real_Num> MousePos;
 
-            Vector3F m_position;
-            mutable Vector3F m_targetPosition;
-            Vector3F m_targetDirection;
+            Vector3<real_Num> m_position;
+            mutable Vector3<real_Num> m_targetPosition;
+            Vector3<real_Num> m_targetDirection;
 
-            mutable QuaternionF m_orientation;
+            mutable Quaternion<real_Num> m_orientation;
 
             f32 MoveSpeed;
             f32 m_rotationSpeed;

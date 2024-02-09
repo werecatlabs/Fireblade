@@ -943,6 +943,19 @@ namespace fb
         return false;
     }
 
+    auto Properties::getPropertyValue( const String &name, Vector2D &value ) const -> bool
+    {
+        if( hasProperty( name ) )
+        {
+            const auto &property = getPropertyObject( name );
+            auto str = property.getValue();
+            value = StringUtil::parseVector2<f64>( str );
+            return true;
+        }
+
+        return false;
+    }
+
     auto Properties::getPropertyValue( const String &name, Vector3I &value ) const -> bool
     {
         if( hasProperty( name ) )

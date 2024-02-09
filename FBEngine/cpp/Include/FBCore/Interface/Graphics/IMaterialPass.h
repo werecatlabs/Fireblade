@@ -78,10 +78,10 @@ namespace fb
             virtual void setFragmentParam( const String &name, f32 value ) = 0;
 
             /** */
-            virtual void setFragmentParam( const String &name, const Vector2F &value ) = 0;
+            virtual void setFragmentParam( const String &name, const Vector2<real_Num> &value ) = 0;
 
             /** */
-            virtual void setFragmentParam( const String &name, const Vector3F &value ) = 0;
+            virtual void setFragmentParam( const String &name, const Vector3<real_Num> &value ) = 0;
 
             /** */
             virtual void setFragmentParam( const String &name, const Vector4F &value ) = 0;

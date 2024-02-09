@@ -14,32 +14,32 @@ namespace fb
             Camera();
             ~Camera() override;
 
-            Vector3F getPosition() const override;
+            Vector3<real_Num> getPosition() const override;
 
-            void setPosition( const Vector3F &position ) override;
+            void setPosition( const Vector3<real_Num> &position ) override;
 
-            QuaternionF getOrientation() const override;
+            Quaternion<real_Num> getOrientation() const override;
 
-            void setOrientation( const QuaternionF &orientation ) override;
+            void setOrientation( const Quaternion<real_Num> &orientation ) override;
 
-            Vector3F getDirection() const override;
+            Vector3<real_Num> getDirection() const override;
 
-            Vector3F getDirection( const Vector2F &screenPosition ) const override;
+            Vector3<real_Num> getDirection( const Vector2<real_Num> &screenPosition ) const override;
 
-            Vector3F getDirection( const Vector2F &screenPosition,
-                                   Vector3F &worldPosition ) const override;
+            Vector3<real_Num> getDirection( const Vector2<real_Num> &screenPosition,
+                                   Vector3<real_Num> &worldPosition ) const override;
 
-            Vector3F getUp() const override;
+            Vector3<real_Num> getUp() const override;
 
-            Vector3F getRight() const override;
+            Vector3<real_Num> getRight() const override;
 
             void setLodBias( f32 factor = 1.0 ) override;
 
             f32 getLodBias() const override;
 
-            Ray3F getRay( f32 screenx, f32 screeny ) const override;
+            Ray3<real_Num> getRay( f32 screenx, f32 screeny ) const override;
 
-            Vector2F getScreenPosition( const Vector3F &position ) override;
+            Vector2<real_Num> getScreenPosition( const Vector3<real_Num> &position ) override;
 
             void setWindow( f32 Left, f32 Top, f32 Right, f32 Bottom ) override;
 
@@ -91,7 +91,7 @@ namespace fb
 
             bool isVisible( const Sphere3F &bound ) const override;
 
-            bool isVisible( const Vector3F &vert ) const override;
+            bool isVisible( const Vector3<real_Num> &vert ) const override;
         };
     } // namespace render
 }     // namespace fb

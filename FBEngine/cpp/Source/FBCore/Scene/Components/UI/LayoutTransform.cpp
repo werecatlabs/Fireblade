@@ -62,17 +62,17 @@ namespace fb::scene
         }
     }
 
-    auto LayoutTransform::getPosition() const -> Vector2F
+    auto LayoutTransform::getPosition() const -> Vector2<real_Num>
     {
         if( auto data = getComponentStateByType<UITransformState>() )
         {
             return data->getPosition();
         }
 
-        return Vector2F::zero();
+        return Vector2<real_Num>::zero();
     }
 
-    void LayoutTransform::setPosition( const Vector2F &position )
+    void LayoutTransform::setPosition( const Vector2<real_Num> &position )
     {
         if( auto data = getComponentStateByType<UITransformState>() )
         {
@@ -81,13 +81,13 @@ namespace fb::scene
         }
     }
 
-    auto LayoutTransform::getSize() const -> Vector2F
+    auto LayoutTransform::getSize() const -> Vector2<real_Num>
     {
         auto data = getComponentStateByType<UITransformState>();
         return data->getSize();
     }
 
-    void LayoutTransform::setSize( const Vector2F &size )
+    void LayoutTransform::setSize( const Vector2<real_Num> &size )
     {
         if( auto data = getComponentStateByType<UITransformState>() )
         {
@@ -96,17 +96,17 @@ namespace fb::scene
         }
     }
 
-    auto LayoutTransform::getAnchor() const -> Vector2F
+    auto LayoutTransform::getAnchor() const -> Vector2<real_Num>
     {
         if( auto data = getComponentStateByType<UITransformState>() )
         {
             return data->getAnchor();
         }
 
-        return Vector2F::zero();
+        return Vector2<real_Num>::zero();
     }
 
-    void LayoutTransform::setAnchor( const Vector2F &anchor )
+    void LayoutTransform::setAnchor( const Vector2<real_Num> &anchor )
     {
         if( auto data = getComponentStateByType<UITransformState>() )
         {
@@ -114,17 +114,17 @@ namespace fb::scene
         }
     }
 
-    auto LayoutTransform::getAnchorMin() const -> Vector2F
+    auto LayoutTransform::getAnchorMin() const -> Vector2<real_Num>
     {
         if( auto data = getComponentStateByType<UITransformState>() )
         {
             return data->getAnchorMin();
         }
 
-        return Vector2F::zero();
+        return Vector2<real_Num>::zero();
     }
 
-    void LayoutTransform::setAnchorMin( const Vector2F &anchorMin )
+    void LayoutTransform::setAnchorMin( const Vector2<real_Num> &anchorMin )
     {
         if( auto data = getComponentStateByType<UITransformState>() )
         {
@@ -132,17 +132,17 @@ namespace fb::scene
         }
     }
 
-    auto LayoutTransform::getAnchorMax() const -> Vector2F
+    auto LayoutTransform::getAnchorMax() const -> Vector2<real_Num>
     {
         if( auto data = getComponentStateByType<UITransformState>() )
         {
             return data->getAnchorMax();
         }
 
-        return Vector2F::zero();
+        return Vector2<real_Num>::zero();
     }
 
-    void LayoutTransform::setAnchorMax( const Vector2F &anchorMax )
+    void LayoutTransform::setAnchorMax( const Vector2<real_Num> &anchorMax )
     {
         if( auto data = getComponentStateByType<UITransformState>() )
         {
@@ -226,8 +226,8 @@ namespace fb::scene
             static const auto horizontalStr = String( "Horizontal" );
             static const auto verticalStr = String( "Vertical" );
 
-            auto position = Vector2F::zero();
-            auto size = Vector2F( 1920.0f, 1080.0f );
+            auto position = Vector2<real_Num>::zero();
+            auto size = Vector2<real_Num>( 1920.0f, 1080.0f );
 
             properties->getPropertyValue( "Position", position );
             properties->getPropertyValue( "Size", size );
@@ -305,13 +305,13 @@ namespace fb::scene
 
             if( data )
             {
-                if( !MathUtil<f32>::equals( data->getPosition(), position ) )
+                if( !MathUtil<real_Num>::equals( data->getPosition(), position ) )
                 {
                     data->setPosition( position );
                     dirty = true;
                 }
 
-                if( !MathUtil<f32>::equals( data->getSize(), size ) )
+                if( !MathUtil<real_Num>::equals( data->getSize(), size ) )
                 {
                     data->setSize( size );
                     dirty = true;
@@ -377,17 +377,17 @@ namespace fb::scene
         return VerticalAlignment::CENTER;
     }
 
-    auto LayoutTransform::getAbsolutePosition() const -> Vector2F
+    auto LayoutTransform::getAbsolutePosition() const -> Vector2<real_Num>
     {
         if( auto data = getComponentStateByType<UITransformState>() )
         {
             return data->getAbsolutePosition();
         }
 
-        return Vector2F::zero();
+        return Vector2<real_Num>::zero();
     }
 
-    void LayoutTransform::setAbsolutePosition( const Vector2F &absolutePosition )
+    void LayoutTransform::setAbsolutePosition( const Vector2<real_Num> &absolutePosition )
     {
         if( auto data = getComponentStateByType<UITransformState>() )
         {
@@ -395,17 +395,17 @@ namespace fb::scene
         }
     }
 
-    auto LayoutTransform::getAbsoluteSize() const -> Vector2F
+    auto LayoutTransform::getAbsoluteSize() const -> Vector2<real_Num>
     {
         if( auto data = getComponentStateByType<UITransformState>() )
         {
             return data->getAbsoluteSize();
         }
 
-        return Vector2F::zero();
+        return Vector2<real_Num>::zero();
     }
 
-    void LayoutTransform::setAbsoluteSize( const Vector2F &absoluteSize )
+    void LayoutTransform::setAbsoluteSize( const Vector2<real_Num> &absoluteSize )
     {
         if( auto data = getComponentStateByType<UITransformState>() )
         {

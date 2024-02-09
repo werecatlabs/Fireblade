@@ -43,8 +43,8 @@ namespace fb
             void setCubicTexture( const String &fileName, bool uvw, u32 layerIdx = 0 ) override;
 
             virtual void setFragmentParam( const String &name, f32 value );
-            virtual void setFragmentParam( const String &name, const Vector2F &value );
-            virtual void setFragmentParam( const String &name, const Vector3F &value );
+            virtual void setFragmentParam( const String &name, const Vector2<real_Num> &value );
+            virtual void setFragmentParam( const String &name, const Vector3<real_Num> &value );
             virtual void setFragmentParam( const String &name, const Vector4F &value );
             virtual void setFragmentParam( const String &name, const ColourF &value );
 
@@ -64,7 +64,7 @@ namespace fb
 
             u32 getNumTechniques() const override;
 
-            void setScale( const Vector3F &scale, u32 textureIndex = 0, u32 passIndex = 0,
+            void setScale( const Vector3<real_Num> &scale, u32 textureIndex = 0, u32 passIndex = 0,
                            u32 techniqueIndex = 0 ) override;
 
             SmartPtr<IMaterialNode> getRoot() const override;

@@ -53,6 +53,20 @@ namespace fb::editor
                 dataStr = "";
             }
             break;
+            case ResourceType::LightingPreset:
+            {
+                auto director = fb::make_ptr<scene::SceneLightingDirector>();
+                FB_ASSERT( director );
+
+                director->load( nullptr );
+
+                data = director->toData();
+                FB_ASSERT( data );
+
+                dataStr = DataUtil::toString( data.get(), true );
+                FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );
+            }
+            break;
             case ResourceType::Material:
             {
                 resource = application->createDefaultMaterial();

@@ -12,7 +12,6 @@ namespace fb
 {
     namespace render
     {
-
         /**
          * @class IGraphicsScene
          * @brief Interface representing a graphics scene manager.
@@ -28,9 +27,11 @@ namespace fb
              */
             enum FrameBufferType
             {
-                FBT_COLOUR = 0x1,  ///< Color frame buffer.
-                FBT_DEPTH = 0x2,   ///< Depth frame buffer.
-                FBT_STENCIL = 0x4  ///< Stencil frame buffer.
+                FBT_COLOUR = 0x1,
+                ///< Color frame buffer.
+                FBT_DEPTH = 0x2,
+                ///< Depth frame buffer.
+                FBT_STENCIL = 0x4 ///< Stencil frame buffer.
             };
 
             /**
@@ -39,16 +40,19 @@ namespace fb
              */
             enum FogMode
             {
-                FOG_NONE,   ///< No fog.
-                FOG_EXP,    ///< Exponential fog.
-                FOG_EXP2,   ///< Exponential squared fog.
-                FOG_LINEAR  ///< Linear fog.
+                FOG_NONE,
+                ///< No fog.
+                FOG_EXP,
+                ///< Exponential fog.
+                FOG_EXP2,
+                ///< Exponential squared fog.
+                FOG_LINEAR ///< Linear fog.
             };
 
-            static const u32 VIEWPORT_MASK_TERRAIN;   ///< Viewport mask for terrain.
-            static const u32 VIEWPORT_MASK_OCCLUDER;  ///< Viewport mask for occluders.
-            static const u32 VIEWPORT_MASK_USER;      ///< Viewport mask for user-defined.
-            static const u32 VIEWPORT_MASK_SHADOW;    ///< Viewport mask for shadows.
+            static const u32 VIEWPORT_MASK_TERRAIN;  ///< Viewport mask for terrain.
+            static const u32 VIEWPORT_MASK_OCCLUDER; ///< Viewport mask for occluders.
+            static const u32 VIEWPORT_MASK_USER;     ///< Viewport mask for user-defined.
+            static const u32 VIEWPORT_MASK_SHADOW;   ///< Viewport mask for shadows.
 
             /**
              * @brief Virtual destructor.
@@ -59,13 +63,13 @@ namespace fb
              * @brief Gets the scene manager name.
              * @return A string containing the scene manager name.
              */
-            virtual String getName() const = 0;
+            String getName() const override = 0;
 
             /**
              * @brief Sets the scene manager name.
              * @param name A string containing the new scene manager name.
              */
-            virtual void setName( const String &name ) = 0;
+            void setName( const String &name ) override = 0;
 
             /**
              * @brief Clears the contents of the scene.
@@ -120,6 +124,18 @@ namespace fb
              * @param colour The colour of the ambient light.
              */
             virtual void setAmbientLight( const ColourF &colour ) = 0;
+
+            virtual ColourF getUpperHemisphere() const = 0;
+            virtual void setUpperHemisphere( const ColourF &upperHemisphere ) = 0;
+
+            virtual ColourF getLowerHemisphere() const = 0;
+            virtual void setLowerHemisphere( const ColourF &lowerHemisphere ) = 0;
+
+            virtual Vector3<real_Num> getHemisphereDir() const = 0;
+            virtual void setHemisphereDir( Vector3<real_Num> hemisphereDir ) = 0;
+
+            virtual f32 getEnvmapScale() const = 0;
+            virtual void setEnvmapScale( f32 envmapScale ) = 0;
 
             /** Adds a camera to the scene manager. */
             virtual SmartPtr<ICamera> addCamera( const String &name ) = 0;
@@ -347,7 +363,7 @@ namespace fb
              */
             virtual SmartPtr<IDecalCursor> addDecalCursor( const String &terrainMaterial,
                                                            const String &decalTextureName,
-                                                           const Vector2F &size ) = 0;
+                                                           const Vector2<real_Num> &size ) = 0;
 
             /**
              * @brief Cast a ray into the scene and retrieve the intersection point.
@@ -355,7 +371,7 @@ namespace fb
              * @param result The intersection point if the ray hits an object.
              * @return True if the ray hits an object, false otherwise.
              */
-            virtual bool castRay( const Ray3F &ray, Vector3F &result ) = 0;
+            virtual bool castRay( const Ray3F &ray, Vector3<real_Num> &result ) = 0;
 
             /**
              * @brief Split a graphics mesh into multiple sub-meshes based on properties.
@@ -397,7 +413,7 @@ namespace fb
              * @return A SmartPtr to the created InstancedEntity.
              */
             virtual SmartPtr<IInstancedObject> createInstancedObject( const String &materialName,
-                                                                      const String &managerName ) = 0;
+                const String &managerName ) = 0;
 
             /** Removes an InstancedEntity. */
             virtual void destroyInstancedObject( SmartPtr<IInstancedObject> instancedObject ) = 0;
@@ -429,11 +445,11 @@ namespace fb
             objectsByType.reserve( 8 );
 
             auto objects = getGraphicsObjects();
-            for( auto obj : objects )
+            for(auto obj : objects)
             {
-                if( obj )
+                if(obj)
                 {
-                    if( obj->isDerived<T>() )
+                    if(obj->isDerived<T>())
                     {
                         objectsByType.push_back( obj );
                     }
@@ -447,9 +463,9 @@ namespace fb
         SmartPtr<T> IGraphicsScene::getGraphicsObjectByType() const
         {
             auto objects = getGraphicsObjects();
-            for( auto obj : objects )
+            for(auto obj : objects)
             {
-                if( obj->isDerived<T>() )
+                if(obj->isDerived<T>())
                 {
                     return obj;
                 }
@@ -457,8 +473,7 @@ namespace fb
 
             return nullptr;
         }
-
-    }  // end namespace render
-}  // end namespace fb
+    } // end namespace render
+}     // end namespace fb
 
 #endif

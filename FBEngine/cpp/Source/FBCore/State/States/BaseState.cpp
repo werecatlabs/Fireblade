@@ -8,6 +8,7 @@
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Core/Properties.h>
 #include <FBCore/Core/LogManager.h>
+#include <FBCore/System/Timer.h>
 
 namespace fb
 {
@@ -39,28 +40,31 @@ namespace fb
 
     auto BaseState::getTime() const -> time_interval
     {
-        return m_time;
+        return m_updateTime;
     }
 
     void BaseState::setTime( time_interval time )
     {
-        m_time = time;
+        m_updateTime = time;
     }
 
     auto BaseState::isDirty() const -> bool
     {
-        return m_dirty > 0;
+        return m_dirtyTime > m_updateTime;
     }
 
     void BaseState::setDirty( bool dirty )
     {
+        auto &applicationManager = core::ApplicationManager::instance();
+        auto &timer = applicationManager->getTimer();
+
         if( dirty )
         {
-            ++m_dirty;
+            m_dirtyTime = timer->now();
 
             if( auto &stateContext = getStateContext() )
             {
-                auto &applicationManager = core::ApplicationManager::instance();
+                
                 auto &stateManager = applicationManager->getStateManager();
 
                 auto task = getTaskId();
@@ -69,10 +73,7 @@ namespace fb
         }
         else
         {
-            if( m_dirty > 0 )
-            {
-                --m_dirty;
-            }
+            m_updateTime = timer->now();
         }
     }
 
@@ -118,7 +119,7 @@ namespace fb
 
         auto properties = factoryManager->make_ptr<Properties>();
 
-        auto time = static_cast<f32>( m_time );
+        auto time = static_cast<f32>( m_updateTime );
         properties->setProperty( "time", time );
 
         return properties;
@@ -128,7 +129,7 @@ namespace fb
     {
         auto time = 0.f;
         properties->getPropertyValue( "time", time );
-        m_time = time;
+        m_updateTime = time;
     }
 
     auto BaseState::getOwner() const -> SmartPtr<ISharedObject>
@@ -159,8 +160,7 @@ namespace fb
             state->m_owner = m_owner;
             state->m_stateContext = m_stateContext;
             state->m_taskId = m_taskId.load();
-            state->m_time = m_time;
-            state->m_dirty = m_dirty;
+            state->m_updateTime = m_updateTime;
             state->m_isRegistered = m_isRegistered;
         }
     }

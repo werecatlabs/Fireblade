@@ -21,9 +21,9 @@ namespace fb
         ColourF getSpecularColour() const;
         void setSpecularColour( const ColourF &specularColour );
 
-        Vector3F getDirection() const;
+        Vector3<real_Num> getDirection() const;
 
-        void setDirection( const Vector3F &direction );
+        void setDirection( const Vector3<real_Num> &direction );
 
         Vector4F getAttenuation() const;
         void setAttenuation( const Vector4F &attenuation );
@@ -54,7 +54,7 @@ namespace fb
     protected:
         ColourF m_diffuseColour;
         ColourF m_specularColour;
-        Vector3F m_direction = Vector3F::unitY();
+        Vector3<real_Num> m_direction = Vector3<real_Num>::unitY();
 
         Vector4F m_attenuation;
         hash32 m_lightType = 0;

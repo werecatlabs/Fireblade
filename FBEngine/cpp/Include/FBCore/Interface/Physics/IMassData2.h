@@ -23,10 +23,10 @@ namespace fb
             virtual f32 getMass() const = 0;
 
             /// The position of the shape's centroid relative to the shape's origin.
-            virtual void setCenter( Vector2F val ) = 0;
+            virtual void setCenter( Vector2<real_Num> val ) = 0;
 
             /// The position of the shape's centroid relative to the shape's origin.
-            virtual Vector2F getCenter() const = 0;
+            virtual Vector2<real_Num> getCenter() const = 0;
 
             /// The rotational inertia of the shape about the local origin.
             virtual void setInertia( f32 val ) = 0;

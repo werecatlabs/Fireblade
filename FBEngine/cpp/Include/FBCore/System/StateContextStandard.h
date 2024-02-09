@@ -3,6 +3,7 @@
 
 #include <FBCore/FBCorePrerequisites.h>
 #include <FBCore/Interface/System/IStateContext.h>
+#include <FBCore/Interface/System/IEventListener.h>
 #include <FBCore/System/StateQueueStandard.h>
 #include <FBCore/System/Job.h>
 #include <FBCore/Core/ConcurrentArray.h>
@@ -141,6 +142,24 @@ namespace fb
         FB_CLASS_REGISTER_DECL;
 
     protected:
+        class SharedObjectListener : public IEventListener
+        {
+        public:
+            SharedObjectListener();
+            ~SharedObjectListener();
+
+            Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
+                                       const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
+                                       SmartPtr<ISharedObject> object, SmartPtr<IEvent> event );
+
+            SmartPtr<StateContextStandard> getOwner() const;
+
+            void setOwner( SmartPtr<StateContextStandard> owner );
+
+        private:
+            WeakPtr<StateContextStandard> m_owner;
+        };
+
         bool isBitSet( u32 flags, s32 bitIdx ) const;
 
         u32 getDirtyFlags() const;
@@ -154,6 +173,8 @@ namespace fb
 
         SharedPtr<ConcurrentArray<SmartPtr<IStateQueue>>> getStateQueuesPtr() const;
         void setStateQueuesPtr( SharedPtr<ConcurrentArray<SmartPtr<IStateQueue>>> ptr );
+
+        SmartPtr<IEventListener> m_sharedObjectListener;
 
         SmartPtr<ISharedObject> m_owner;
 

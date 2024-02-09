@@ -25,6 +25,22 @@ namespace fb
 
         void setOrientation( const Quaternion<real_Num> &orientation );
 
+        Vector3<real_Num> getDerivedPosition() const;
+
+        void setDerivedPosition( const Vector3<real_Num> &position );
+
+        Vector3<real_Num> getDerivedScale() const;
+
+        void setDerivedScale( const Vector3<real_Num> &scale );
+
+        Quaternion<real_Num> getDerivedOrientation() const;
+
+        void setDerivedOrientation( const Quaternion<real_Num> &orientation );
+
+        Transform3<real_Num> getDerivedTransform() const;
+
+        void setDerivedTransform( const Transform3<real_Num> &derivedTransform );
+
         Transform3<real_Num> getActualTransform() const;
 
         void setActualTransform( const Transform3<real_Num> &actualTransform );
@@ -35,12 +51,19 @@ namespace fb
 
         SmartPtr<IState> clone();
 
+        SmartPtr<Properties> getProperties() const override;
+
+        void setProperties( SmartPtr<Properties> properties ) override;
+
+        SmartPtr<IState> clone() const override;
+
         FB_CLASS_REGISTER_DECL;
 
     protected:
         Transform3<real_Num> m_localTransform;
+        Transform3<real_Num> m_derivedTransform;
         Transform3<real_Num> m_actualTransform;
     };
-}  // end namespace fb
+} // end namespace fb
 
 #endif  // TransformState_h__

@@ -7,12 +7,12 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, StateMessageOrientation, StateMessage );
 
-    void StateMessageOrientation::setOrientation( const QuaternionF &val )
+    void StateMessageOrientation::setOrientation( const Quaternion<real_Num> &val )
     {
         m_orientation = val;
     }
 
-    auto StateMessageOrientation::getOrientation() const -> QuaternionF
+    auto StateMessageOrientation::getOrientation() const -> Quaternion<real_Num>
     {
         return m_orientation;
     }

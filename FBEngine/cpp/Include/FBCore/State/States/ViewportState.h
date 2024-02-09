@@ -19,11 +19,11 @@ namespace fb
         void setBackgroundColour( const ColourF &colour );
         ColourF getBackgroundColour() const;
 
-        Vector2F getPosition() const;
-        void setPosition( const Vector2F &position );
+        Vector2<real_Num> getPosition() const;
+        void setPosition( const Vector2<real_Num> &position );
 
-        Vector2F getSize() const;
-        void setSize( const Vector2F &size );
+        Vector2<real_Num> getSize() const;
+        void setSize( const Vector2<real_Num> &size );
 
         bool getOverlaysEnabled() const;
 
@@ -96,8 +96,8 @@ namespace fb
 
         AtomicSmartPtr<render::ICamera> m_camera;
         AtomicValue<ColourF> m_backgroundColour;
-        AtomicValue<Vector2F> m_position;
-        AtomicValue<Vector2F> m_size;
+        AtomicValue<Vector2<real_Num>> m_position;
+        AtomicValue<Vector2<real_Num>> m_size;
         atomic_bool m_overlaysEnabled = true;
         atomic_bool m_skiesEnabled = true;
         atomic_bool m_active = true;

@@ -85,7 +85,7 @@ namespace fb
         // We add data using the "<<" operator, similar to iostreams.
         float myValue = 0.238723f;
         MyOutPacket << myValue;
-        MyOutPacket << Vector3F(23,354,35);
+        MyOutPacket << Vector3<real_Num>(23,354,35);
         MyOutPacket << 43988434;
 
         // And now to send.

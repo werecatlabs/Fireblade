@@ -56,14 +56,18 @@ namespace fb
 
         void sendMessage( SmartPtr<IStateMessage> message ) override;
 
+        /** @copydoc ISelectionManager::getProperties */
         SmartPtr<Properties> getProperties() const override;
 
+        /** @copydoc ISelectionManager::setProperties */
         void setProperties( SmartPtr<Properties> properties ) override;
 
         /** @copydoc StateObject::triggerEvent */
         Parameter triggerEvent( IEvent::Type eventType, hash_type eventValue,
                                 const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
                                 SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
+
+        FB_CLASS_REGISTER_DECL;
 
     protected:
         SmartPtr<ISharedObject> m_owner;

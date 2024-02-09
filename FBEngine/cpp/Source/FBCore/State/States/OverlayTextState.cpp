@@ -8,6 +8,9 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, OverlayTextState, OverlayElementState );
 
+    OverlayTextState::OverlayTextState() = default;
+    OverlayTextState::~OverlayTextState() = default;
+
     auto OverlayTextState::getText() const -> String
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );

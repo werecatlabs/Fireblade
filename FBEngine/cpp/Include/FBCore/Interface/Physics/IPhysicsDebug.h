@@ -18,7 +18,7 @@ namespace fb
             ~IPhysicsDebug() override = default;
 
             /** */
-            virtual void drawLine( const Vector3F &start, const Vector3F &end,
+            virtual void drawLine( const Vector3<real_Num> &start, const Vector3<real_Num> &end,
                                    const ColourF &color ) = 0;
 
             FB_CLASS_REGISTER_DECL;

@@ -18,7 +18,7 @@ namespace fb
         return { params[0].data.fData, params[1].data.fData };
     }
 
-    auto ParameterUtil::getVector3( const Parameters &params ) -> Vector3F
+    auto ParameterUtil::getVector3( const Parameters &params ) -> Vector3<real_Num>
     {
         return { params[0].data.fData, params[1].data.fData, params[2].data.fData };
     }

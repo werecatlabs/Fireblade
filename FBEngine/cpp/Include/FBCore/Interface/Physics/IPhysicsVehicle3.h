@@ -42,22 +42,22 @@ namespace fb
             virtual void setSteeringValue( f32 steeringValue, u32 wheelIndex ) = 0;
 
             /** */
-            virtual void setPosition( const Vector3F &position ) = 0;
+            virtual void setPosition( const Vector3<real_Num> &position ) = 0;
 
             /** */
-            virtual Vector3F getPosition() const = 0;
+            virtual Vector3<real_Num> getPosition() const = 0;
 
             /** */
-            virtual void setOrientation( const QuaternionF &orientation ) = 0;
+            virtual void setOrientation( const Quaternion<real_Num> &orientation ) = 0;
 
             /** */
-            virtual QuaternionF getOrientation() const = 0;
+            virtual Quaternion<real_Num> getOrientation() const = 0;
 
             /** */
-            virtual void setVelocity( const Vector3F &velocity ) = 0;
+            virtual void setVelocity( const Vector3<real_Num> &velocity ) = 0;
 
             /** */
-            virtual Vector3F getVelocity() const = 0;
+            virtual Vector3<real_Num> getVelocity() const = 0;
 
             /** */
             virtual void setMaterialId( u32 materialId ) = 0;

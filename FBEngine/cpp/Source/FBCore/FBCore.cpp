@@ -95,6 +95,13 @@ namespace fb
         FactoryUtil::addFactory<scene::HorizontalLayout>();
         FactoryUtil::addFactory<scene::VerticalLayout>();
 
+        FactoryUtil::addFactory<scene::GraphicsSettingsDirector>();
+        FactoryUtil::addFactory<scene::MaterialResourceDirector>();
+        FactoryUtil::addFactory<scene::MeshResourceDirector>();
+        FactoryUtil::addFactory<scene::SceneLightingDirector>();
+        FactoryUtil::addFactory<scene::SoundResourceDirector>();
+        FactoryUtil::addFactory<scene::TextureResourceDirector>();
+
         FactoryUtil::addFactory<StateMessageVector3>();
         FactoryUtil::addFactory<StateMessageVector4>();
         FactoryUtil::addFactory<StateMessageUIntValue>();

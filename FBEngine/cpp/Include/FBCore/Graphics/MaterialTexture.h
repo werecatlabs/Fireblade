@@ -36,7 +36,7 @@ namespace fb
             void setTexture( SmartPtr<ITexture> texture ) override;
 
             /** @copydoc IMaterialTexture::setScale */
-            void setScale( const Vector3F &scale ) override;
+            void setScale( const Vector3<real_Num> &scale ) override;
 
             /** @copydoc IMaterialTexture::getAnimator */
             SmartPtr<IAnimator> getAnimator() const override;
@@ -90,7 +90,7 @@ namespace fb
 
             void createTextureUnitState();
 
-            Vector3F m_scale = Vector3F::unit();
+            Vector3<real_Num> m_scale = Vector3<real_Num>::unit();
             ColourF m_tint = ColourF::White;
             SmartPtr<IAnimator> m_animator;
             SmartPtr<ITexture> m_texture;

@@ -64,8 +64,8 @@ namespace fb
         SmartPtr<ISharedObject> m_owner;
         SmartPtr<IStateContext> m_stateContext;
         Atomic<Thread::Task> m_taskId = Thread::Task::Primary;
-        atomic_f64 m_time = 0.0;
-        atomic_s32 m_dirty = 0;
+        atomic_f64 m_updateTime = 0.0;
+        atomic_f64 m_dirtyTime = 0.0;
         atomic_bool m_isRegistered = false;
     };
 }  // end namespace fb

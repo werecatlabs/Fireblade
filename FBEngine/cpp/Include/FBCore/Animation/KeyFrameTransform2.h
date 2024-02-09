@@ -14,13 +14,13 @@ namespace fb
 
         ~KeyFrameTransform2();
 
-        Vector2F getPosition() const;
+        Vector2<real_Num> getPosition() const;
 
-        void setPosition( const Vector2F& position );
+        void setPosition( const Vector2<real_Num>& position );
 
-        Vector2F getScale() const;
+        Vector2<real_Num> getScale() const;
 
-        void setScale( const Vector2F& scale );
+        void setScale( const Vector2<real_Num>& scale );
 
         f32 getRotation() const;
 
@@ -28,10 +28,10 @@ namespace fb
 
     private:
         ///
-        Vector2F m_position;
+        Vector2<real_Num> m_position;
 
         ///
-        Vector2F m_scale;
+        Vector2<real_Num> m_scale;
 
         ///
         f32 m_rotation;

@@ -712,8 +712,8 @@ namespace fb::core
             m_cameraSceneNode->attachObject( m_camera );
 
             auto cameraPosition = Vector3<real_Num>::zero();
-            cameraPosition += Vector3F::unitY() * 5.0;
-            cameraPosition += Vector3F::unitZ() * 20.0;
+            cameraPosition += Vector3<real_Num>::unitY() * 5.0;
+            cameraPosition += Vector3<real_Num>::unitZ() * 20.0;
             m_cameraSceneNode->setPosition( cameraPosition );
 
             m_camera->setNearClipDistance( 0.01f );
@@ -1080,7 +1080,7 @@ namespace fb::core
         FB_ASSERT( collisionBox );
         if( collisionBox )
         {
-            collisionBox->setExtents( Vector3F::unit() * 500.0f );
+            collisionBox->setExtents( Vector3<real_Num>::unit() * 500.0f );
         }
 
         auto rigidbody = actor->addComponent<scene::Rigidbody>();
@@ -1103,7 +1103,7 @@ namespace fb::core
         }
 
         auto groundPosition = Vector3<real_Num>::unitY() * static_cast<real_Num>( -250.0 );
-        // groundPosition += Vector3F::unitZ() * -250.0f;
+        // groundPosition += Vector3<real_Num>::unitZ() * -250.0f;
 
         auto groundScale = Vector3<real_Num>::unit() * static_cast<real_Num>( 500.0 );
 
@@ -1367,7 +1367,7 @@ namespace fb::core
         auto c = actor->addComponent<scene::CollisionBox>();
         FB_ASSERT( c );
 
-        auto bodyDimensions = Vector3F( length, height, width ) * 0.5f;
+        auto bodyDimensions = Vector3<real_Num>( length, height, width ) * 0.5f;
         c->setExtents( bodyDimensions );
 
         auto rigidbody = actor->addComponent<scene::Rigidbody>();
@@ -1401,20 +1401,20 @@ namespace fb::core
 
         actor->addChild( meshActor );
 
-        Array<Vector3F> wheelPositions;
+        Array<Vector3<real_Num>> wheelPositions;
         wheelPositions.resize( 4 );
 
         auto wheelOffset = -1.0f;
         wheelPositions[static_cast<u32>( scene::CarController::Wheels::FRONT_LEFT )] =
-            Vector3F( -width / 2.0f, wheelOffset, wheelBase / 2.0f );
+            Vector3<real_Num>( -width / 2.0f, wheelOffset, wheelBase / 2.0f );
         wheelPositions[static_cast<u32>( scene::CarController::Wheels::FRONT_RIGHT )] =
-            Vector3F( width / 2.0f, wheelOffset, wheelBase / 2.0f );
+            Vector3<real_Num>( width / 2.0f, wheelOffset, wheelBase / 2.0f );
         wheelPositions[static_cast<u32>( scene::CarController::Wheels::REAR_LEFT )] =
-            Vector3F( -width / 2.0f, wheelOffset, -wheelBase / 2.0f );
+            Vector3<real_Num>( -width / 2.0f, wheelOffset, -wheelBase / 2.0f );
         wheelPositions[static_cast<u32>( scene::CarController::Wheels::REAR_RIGHT )] =
-            Vector3F( width / 2.0f, wheelOffset, -wheelBase / 2.0f );
+            Vector3<real_Num>( width / 2.0f, wheelOffset, -wheelBase / 2.0f );
 
-        auto wheelMeshSize = Vector3F( 0.1f, 0.3f, 0.3f );
+        auto wheelMeshSize = Vector3<real_Num>( 0.1f, 0.3f, 0.3f );
 
         for( u32 i = 0; i < 4; ++i )
         {
@@ -1472,7 +1472,7 @@ namespace fb::core
         //	//auto vehicleMeshTransform = vehicleMesh->getLocalTransform();
         //	//if (vehicleMeshTransform)
         //	//{
-        //	//	vehicleMeshTransform->setScale(Vector3F::unit() * 0.0254f);
+        //	//	vehicleMeshTransform->setScale(Vector3<real_Num>::unit() * 0.0254f);
         //	//}
 
         //	vehicleMesh->setName("F40");
@@ -1591,7 +1591,7 @@ namespace fb::core
         //    // auto vehicleMeshTransform = vehicleMesh->getLocalTransform();
         //    // if (vehicleMeshTransform)
         //    //{
-        //    //	vehicleMeshTransform->setScale(Vector3F::unit() * 0.0254f);
+        //    //	vehicleMeshTransform->setScale(Vector3<real_Num>::unit() * 0.0254f);
         //    // }
 
         //    vehicleMesh->setName( "F40" );
@@ -1708,7 +1708,7 @@ namespace fb::core
             // auto vehicleMeshTransform = vehicleMesh->getLocalTransform();
             // if (vehicleMeshTransform)
             //{
-            //	vehicleMeshTransform->setScale(Vector3F::unit() * 0.0254f);
+            //	vehicleMeshTransform->setScale(Vector3<real_Num>::unit() * 0.0254f);
             // }
 
             vehicleMesh->setName( "F40" );

@@ -8,7 +8,7 @@ namespace fb
 
     StateMessageMaterialName::StateMessageMaterialName() = default;
 
-    StateMessageMaterialName::~StateMessageMaterialName()  = default;
+    StateMessageMaterialName::~StateMessageMaterialName() = default;
 
     auto StateMessageMaterialName::getMaterialName() const -> String
     {

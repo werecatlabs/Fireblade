@@ -16,4 +16,7 @@ namespace fb::render
     const hash_type IMaterial::FRAGMENT_VECTOR4F_HASH = StringUtil::getHash( "fragmentVector4f" );
     const hash_type IMaterial::FRAGMENT_COLOUR_HASH = StringUtil::getHash( "fragmentColour" );
     const hash_type IMaterial::LIGHTING_ENABLED_HASH = StringUtil::getHash( "lightingEnabled" );
+
+    IMaterial::~IMaterial() = default;
+
 }  // namespace fb::render

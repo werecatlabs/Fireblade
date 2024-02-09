@@ -135,6 +135,7 @@ namespace fb::scene
     {
         if( auto properties = Component::getProperties() )
         {
+            properties->setProperty( "colour", m_colour );
             properties->setProperty( "order", m_zOrder );
             properties->setProperty( "handleInputEvents", m_cascadeInput );
             properties->setProperty( "Reset", "ResetButton", "button", false );
@@ -155,6 +156,8 @@ namespace fb::scene
         auto sceneManager =
             fb::static_pointer_cast<SceneManager>( applicationManager->getSceneManager() );
         FB_ASSERT( sceneManager );
+
+        properties->getPropertyValue( "colour", m_colour );
 
         properties->getPropertyValue( "order", m_zOrder );
         properties->getPropertyValue( "handleInputEvents", m_cascadeInput );
@@ -192,6 +195,7 @@ namespace fb::scene
         }
 
         updateVisibility();
+        updateColour();
     }
 
     void UIComponent::updateFlags( u32 flags, u32 oldFlags )
@@ -266,10 +270,10 @@ namespace fb::scene
                     //    auto position = canvasTransform->getAbsolutePosition();
                     //    auto size = canvasTransform->getSize();
                     //    auto relativeSize =
-                    //        Vector2F( size.X() / static_cast<f32>( referenceSize.X() ),
+                    //        Vector2<real_Num>( size.X() / static_cast<f32>( referenceSize.X() ),
                     //                  size.Y() / static_cast<f32>( referenceSize.Y() ) );
 
-                    //    position = Vector2F::zero();
+                    //    position = Vector2<real_Num>::zero();
 
                     //    element->setPosition( position );
                     //    element->setSize( size );
@@ -633,6 +637,24 @@ namespace fb::scene
 
     void UIComponent::updateElementState()
     {
+    }
+
+    void UIComponent::updateColour()
+    {
+        if( m_element )
+        {
+            m_element->setColour( m_colour );
+        }
+    }
+
+    void UIComponent::setColour( const ColourF &colour )
+    {
+        m_colour = colour;
+    }
+
+    ColourF UIComponent::getColour() const
+    {
+        return m_colour;
     }
 
     auto UIComponent::UIElementListener::handleEvent( IEvent::Type eventType, hash_type eventValue,

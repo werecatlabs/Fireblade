@@ -71,14 +71,14 @@ namespace fb
          *
          * @return The AABB of the submesh.
          */
-        virtual AABB3F getAABB() const = 0;
+        virtual AABB3<real_Num> getAABB() const = 0;
 
         /**
          * @brief Sets the AABB for this submesh.
          *
          * @param aabb The new AABB for the submesh.
          */
-        virtual void setAABB( const AABB3F &aabb ) = 0;
+        virtual void setAABB( const AABB3<real_Num> &aabb ) = 0;
 
         /**
          * @brief Clones this submesh.

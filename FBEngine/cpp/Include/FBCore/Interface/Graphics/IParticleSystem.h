@@ -137,14 +137,14 @@ namespace fb
              *
              * @param scale The new scale.
              */
-            virtual void setScale( const Vector3F &scale ) = 0;
+            virtual void setScale( const Vector3<real_Num> &scale ) = 0;
 
             /**
              * @brief Returns the scale.
              *
              * @return The scale.
              */
-            virtual Vector3F getScale() const = 0;
+            virtual Vector3<real_Num> getScale() const = 0;
 
             /**
              * @brief Returns the state of the particle system.

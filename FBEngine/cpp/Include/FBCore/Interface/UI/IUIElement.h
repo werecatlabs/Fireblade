@@ -60,31 +60,31 @@ namespace fb
              * @brief Sets the position of the GUI item.
              * @param position The new position of the GUI item in 2D space.
              */
-            virtual void setPosition( const Vector2F &position ) = 0;
+            virtual void setPosition( const Vector2<real_Num> &position ) = 0;
 
             /**
              * @brief Returns the position of the GUI item.
              * @return Returns the position of the GUI item in 2D space.
              */
-            virtual Vector2F getPosition() const = 0;
+            virtual Vector2<real_Num> getPosition() const = 0;
 
             /**
              * @brief Returns the absolute position of the GUI item.
              * @return Returns the absolute position of the GUI item in 2D space.
              */
-            virtual Vector2F getAbsolutePosition() const = 0;
+            virtual Vector2<real_Num> getAbsolutePosition() const = 0;
 
             /**
              * @brief Sets the size of the GUI item.
              * @param size The new size of the GUI item in 2D space.
              */
-            virtual void setSize( const Vector2F &size ) = 0;
+            virtual void setSize( const Vector2<real_Num> &size ) = 0;
 
             /**
              * @brief Gets the size of the GUI item.
              * @return Returns the size of the GUI item in 2D space.
              */
-            virtual Vector2F getSize() const = 0;
+            virtual Vector2<real_Num> getSize() const = 0;
 
             /**
              * @brief Sets whether the GUI item is visible or not.

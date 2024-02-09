@@ -54,7 +54,7 @@ namespace fb
             static const hash_type SPECULAR_COLOUR_HASH;  ///< Hash code for the light's specular colour.
 
             /** Virtual destructor. */
-            ~ILight() override = default;
+            ~ILight() override;
 
             /**
              * Sets the type of the light.

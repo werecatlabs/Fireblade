@@ -26,16 +26,14 @@ namespace fb
             CST_COUNT
         };
 
-        static const hash32 FRAME_EVENT_PRE_RENDER;
-        static const hash32 FRAME_EVENT_RENDER_QUEUED;
-        static const hash32 FRAME_EVENT_POST_RENDER;
-
-        static const hash32 VISIBILITY_MASK_HASH;
-        static const hash32 STATE_MESSAGE_CAST_SHADOWS;
-        static const hash32 STATE_MESSAGE_RENDER_QUEUE;
-
-        static const hash32 STATE_MESSAGE_ATTENUATION;
-        static const hash32 STATE_MESSAGE_DIRECTION;
+        static const hash_type FRAME_EVENT_PRE_RENDER;
+        static const hash_type FRAME_EVENT_RENDER_QUEUED;
+        static const hash_type FRAME_EVENT_POST_RENDER;
+        static const hash_type VISIBILITY_MASK_HASH;
+        static const hash_type STATE_MESSAGE_CAST_SHADOWS;
+        static const hash_type STATE_MESSAGE_RENDER_QUEUE;
+        static const hash_type STATE_MESSAGE_ATTENUATION;
+        static const hash_type STATE_MESSAGE_DIRECTION;
     };
 
 }  // end namespace fb

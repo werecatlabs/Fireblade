@@ -828,11 +828,11 @@ namespace fb::render
     {
     }
 
-    void MaterialPass::setFragmentParam( const String &name, const Vector2F &value )
+    void MaterialPass::setFragmentParam( const String &name, const Vector2<real_Num> &value )
     {
     }
 
-    void MaterialPass::setFragmentParam( const String &name, const Vector3F &value )
+    void MaterialPass::setFragmentParam( const String &name, const Vector3<real_Num> &value )
     {
     }
 

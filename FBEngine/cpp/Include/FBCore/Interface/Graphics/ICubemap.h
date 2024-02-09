@@ -73,13 +73,13 @@ namespace fb
              * @brief Get the position.
              * @return The position.
              */
-            virtual Vector3F getPosition() const = 0;
+            virtual Vector3<real_Num> getPosition() const = 0;
 
             /**
              * @brief Set the position.
              * @param position The new position.
              */
-            virtual void setPosition( const Vector3F &position ) = 0;
+            virtual void setPosition( const Vector3<real_Num> &position ) = 0;
 
             /**
              * @brief Get the enable state.

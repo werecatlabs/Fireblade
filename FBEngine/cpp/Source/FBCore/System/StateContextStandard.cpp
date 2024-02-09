@@ -69,6 +69,8 @@ namespace fb
 
             setStateQueuesPtr( pStateQueues );
 
+            m_sharedObjectListener = factoryManager->make_ptr<SharedObjectListener>();
+
             setLoadingState( LoadingState::Loaded );
         }
         catch( std::exception &e )
@@ -129,6 +131,8 @@ namespace fb
                 m_listeners = nullptr;
                 m_owner = nullptr;
 
+                m_sharedObjectListener = nullptr;
+
                 setLoadingState( LoadingState::Unloaded );
             }
         }
@@ -162,45 +166,15 @@ namespace fb
                                     listener->handleStateChanged( state );
                                 }
                             }
-
-                            if( state->isDirty() )
-                            {
-                                int stop = 0;
-                                stop = 0;
-                            }
                         }
-                    }
 
-                    if( state->isDirty() )
-                    {
-                        auto &applicationManager = core::ApplicationManager::instance();
-                        auto &stateManager = applicationManager->getStateManager();
-                        stateManager->addDirty( this, task );
-
-                        if( auto pListeners = getStateListeners() )
+                        if( state->isDirty() )
                         {
-                            auto &listeners = *pListeners;
-                            for( auto listener : listeners )
-                            {
-                                if( listener )
-                                {
-                                    int stop = 0;
-                                    stop = 0;
-                                }
-                            }
+                            auto &applicationManager = core::ApplicationManager::instance();
+                            auto &stateManager = applicationManager->getStateManager();
+                            stateManager->addDirty( this, task );
                         }
                     }
-                }
-            }
-
-            if( auto owner = getOwner() )
-            {
-                if( !owner->isLoaded() )
-                {
-                    auto &applicationManager = core::ApplicationManager::instance();
-                    auto &stateManager = applicationManager->getStateManager();
-                    stateManager->addDirty( this, task );
-                    return;
                 }
             }
 
@@ -375,7 +349,17 @@ namespace fb
 
     void StateContextStandard::setOwner( SmartPtr<ISharedObject> owner )
     {
+        if( m_owner )
+        {
+            m_owner->removeObjectListener( m_sharedObjectListener );
+        }
+
         m_owner = owner;
+
+        if( m_owner )
+        {
+            m_owner->addObjectListener( m_sharedObjectListener );
+        }
     }
 
     auto StateContextStandard::getOwner() -> SmartPtr<ISharedObject> &
@@ -763,4 +747,77 @@ namespace fb
 
         return false;
     }
+
+    StateContextStandard::SharedObjectListener::SharedObjectListener() = default;
+    StateContextStandard::SharedObjectListener::~SharedObjectListener() = default;
+
+    //void StateContextStandard::SharedObjectListener::loadingStateChanged( ISharedObject *sharedObject,
+    //                                                                      LoadingState oldState,
+    //                                                                      LoadingState newState )
+    //{
+    //    auto context = getOwner();
+    //    if( context )
+    //    {
+    //        if( auto owner = context->getOwner() )
+    //        {
+    //            if( !owner->isLoaded() )
+    //            {
+    //                auto states = context->getStates();
+    //                for( auto state : states )
+    //                {
+    //                    auto task = state->getTaskId();
+
+    //                    auto &applicationManager = core::ApplicationManager::instance();
+    //                    auto &stateManager = applicationManager->getStateManager();
+    //                    stateManager->addDirty( this, task );
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
+
+    Parameter StateContextStandard::SharedObjectListener::handleEvent(
+        IEvent::Type eventType, hash_type eventValue, const Array<Parameter> &arguments,
+        SmartPtr<ISharedObject> sender, SmartPtr<ISharedObject> object, SmartPtr<IEvent> event )
+    {
+        if( eventValue == IEvent::loadingStateChanged )
+        {
+            auto loadingState = (LoadingState)arguments[1].getU32();
+            if( loadingState == LoadingState::Loaded )
+            {
+                if( auto context = getOwner() )
+                {
+                    if( auto owner = context->getOwner() )
+                    {
+                        if( !owner->isLoaded() )
+                        {
+                            auto states = context->getStates();
+                            for( auto state : states )
+                            {
+                                auto task = state->getTaskId();
+
+                                auto &applicationManager = core::ApplicationManager::instance();
+                                auto &stateManager = applicationManager->getStateManager();
+                                stateManager->addDirty( this, task );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return {};
+    }
+
+    fb::SmartPtr<fb::StateContextStandard> StateContextStandard::SharedObjectListener::getOwner() const
+    {
+        auto p = m_owner.lock();
+        return p;
+    }
+
+    void StateContextStandard::SharedObjectListener::setOwner( SmartPtr<StateContextStandard> owner )
+    {
+        m_owner = owner;
+    }
+
 }  // end namespace fb

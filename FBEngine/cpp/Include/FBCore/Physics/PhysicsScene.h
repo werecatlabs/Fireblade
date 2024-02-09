@@ -27,11 +27,11 @@ namespace fb
 
             Vector3<real_Num> getSize() const override;
 
-            bool rayTest( const Vector3F &start, const Vector3F &direction, Vector3F &hitPos,
-                          Vector3F &hitNormal, u32 collisionType = 0, u32 collisionMask = 0 ) override;
+            bool rayTest( const Vector3<real_Num> &start, const Vector3<real_Num> &direction, Vector3<real_Num> &hitPos,
+                          Vector3<real_Num> &hitNormal, u32 collisionType = 0, u32 collisionMask = 0 ) override;
 
-            bool intersects( const Vector3F &start, const Vector3F &end, Vector3F &hitPos,
-                             Vector3F &hitNormal, SmartPtr<ISharedObject> &object, u32 collisionType = 0,
+            bool intersects( const Vector3<real_Num> &start, const Vector3<real_Num> &end, Vector3<real_Num> &hitPos,
+                             Vector3<real_Num> &hitNormal, SmartPtr<ISharedObject> &object, u32 collisionType = 0,
                              u32 collisionMask = 0 ) override;
 
             bool castRay( const Vector3<real_Num> &origin, const Vector3<real_Num> &dir,

@@ -23,21 +23,21 @@ namespace fb
              * @brief Add a point to the point list.
              * @param point The point to be added.
              */
-            virtual void addPoint( const Vector3F &point ) = 0;
+            virtual void addPoint( const Vector3<real_Num> &point ) = 0;
 
             /**
              * @brief Change the location of an existing point in the point list.
              * @param index The index of the point to be updated.
              * @param point The new location of the point.
              */
-            virtual void setPoint( u32 index, const Vector3F &point ) = 0;
+            virtual void setPoint( u32 index, const Vector3<real_Num> &point ) = 0;
 
             /**
              * @brief Return the location of an existing point in the point list.
              * @param index The index of the point.
              * @return The location of the point.
              */
-            virtual Vector3F getPoint( u32 index ) const = 0;
+            virtual Vector3<real_Num> getPoint( u32 index ) const = 0;
 
             /**
              * @brief Return the total number of points in the point list.

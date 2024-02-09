@@ -47,6 +47,8 @@ namespace fb
         /** @copydoc IVertexBuffer::compare */
         bool compare( SmartPtr<IVertexBuffer> other ) const override;
 
+        FB_CLASS_REGISTER_DECL;
+
     protected:
         // The vertex declaration.
         SmartPtr<IVertexDeclaration> m_vertexDeclaration;

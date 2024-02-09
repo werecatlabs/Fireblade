@@ -58,7 +58,10 @@ namespace fb
                         {
                             if( auto movableObject = owner->getMovableObject() )
                             {
-                                movableObject->setVisible( visible );
+                                if( auto parentSceneNode = movableObject->getParentSceneNode() )
+                                {
+                                    movableObject->setVisible( visible );
+                                }
                             }
                         }
                     }

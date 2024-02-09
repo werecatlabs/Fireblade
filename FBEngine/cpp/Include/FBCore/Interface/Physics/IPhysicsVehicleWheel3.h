@@ -18,18 +18,18 @@ namespace fb
             /** */
             ~IPhysicsVehicleWheel3() override = default;
 
-            virtual void initialise( const Vector3F &pos, f32 radius, f32 width,
+            virtual void initialise( const Vector3<real_Num> &pos, f32 radius, f32 width,
                                      f32 suspensionRestLength, f32 suspension_Ks, f32 suspension_Kd,
                                      bool powered, bool steering, bool brakes ) = 0;
 
             /** */
-            virtual Vector3F getPosition() const = 0;
+            virtual Vector3<real_Num> getPosition() const = 0;
 
             /** */
-            virtual QuaternionF getOrientation() const = 0;
+            virtual Quaternion<real_Num> getOrientation() const = 0;
 
             /** */
-            virtual Vector3F getVelocity() const = 0;
+            virtual Vector3<real_Num> getVelocity() const = 0;
 
             /** */
             virtual void setMaterialId( u32 materialId ) = 0;

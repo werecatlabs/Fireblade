@@ -27,7 +27,7 @@ namespace fb
 
     protected:
         // The command to run.
-        AtomicSmartPtr<ICommand> m_command;
+        SmartPtr<ICommand> m_command;
     };
 
 }  // end namespace fb

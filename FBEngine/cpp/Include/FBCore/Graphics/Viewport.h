@@ -54,17 +54,17 @@ namespace fb
 
             bool getShadowsEnabled() const override;
 
-            Vector2F getPosition() const override;
+            Vector2<real_Num> getPosition() const override;
 
-            Vector2F getActualPosition() const override;
+            Vector2<real_Num> getActualPosition() const override;
 
-            void setPosition( const Vector2F &position ) override;
+            void setPosition( const Vector2<real_Num> &position ) override;
 
-            Vector2F getSize() const override;
+            Vector2<real_Num> getSize() const override;
 
-            Vector2F getActualSize() const override;
+            Vector2<real_Num> getActualSize() const override;
 
-            void setSize( const Vector2F &size ) override;
+            void setSize( const Vector2<real_Num> &size ) override;
 
             SmartPtr<ITexture> getBackgroundTexture() const override;
 

@@ -5,9 +5,7 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, Timer, ITimer );
 
-    Timer::Timer() : m_maxDeltaTime( 1e10 ), m_enableSmoothing( false )
-    {
-    }
+    Timer::Timer() = default;
 
     Timer::~Timer() = default;
 
@@ -267,11 +265,6 @@ namespace fb
     auto Timer::getTimeIntervalMilliseconds() const -> u32
     {
         return static_cast<u32>( getDeltaTime() * 1000.0 );
-    }
-
-    auto Timer::getTimeInterval() const -> time_interval
-    {
-        return getDeltaTime();  // todo remove
     }
 
     void Timer::setFrameSmoothingPeriod( u32 milliSeconds )

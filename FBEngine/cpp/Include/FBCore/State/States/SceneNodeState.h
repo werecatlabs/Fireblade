@@ -12,26 +12,8 @@ namespace fb
         SceneNodeState();
         SceneNodeState( const SceneNodeState &state );
 
-        Vector3<real_Num> getPosition() const;
-        void setPosition( const Vector3<real_Num> &position );
-
-        Vector3<real_Num> getScale() const;
-        void setScale( const Vector3<real_Num> &scale );
-
-        Quaternion<real_Num> getOrientation() const;
-        void setOrientation( const Quaternion<real_Num> &orientation );
-
         Vector3<real_Num> getLookAt() const;
         void setLookAt( const Vector3<real_Num> &lookAt );
-
-        Vector3<real_Num> getAbsolutePosition() const;
-        void setAbsolutePosition( const Vector3<real_Num> &position );
-
-        Vector3<real_Num> getAbsoluteScale() const;
-        void setAbsoluteScale( const Vector3<real_Num> &scale );
-
-        Quaternion<real_Num> getAbsoluteOrientation() const;
-        void setAbsoluteOrientation( const Quaternion<real_Num> &orientation );
 
         AABB3<real_Num> getLocalAABB() const;
         void setLocalAABB( const AABB3<real_Num> &localAABB );
@@ -60,13 +42,6 @@ namespace fb
     protected:
         AABB3<real_Num> m_localAABB;
         AABB3<real_Num> m_worldAABB;
-
-        Transform3<real_Num> m_localTransform;
-
-        // derived transforms
-        Vector3<real_Num> m_absolutePosition;
-        Vector3<real_Num> m_absoluteScale;
-        Quaternion<real_Num> m_absoluteOrientation;
 
         Vector3<real_Num> m_lookAt;
 

@@ -9,6 +9,9 @@
 
 namespace fb
 {
+
+    FB_CLASS_REGISTER_DERIVED( fb, WheelController, VehicleComponent<IWheelController> );
+
     WheelController::WheelController()
     {
         m_hit = fb::make_ptr<physics::RaycastHit>();
@@ -94,7 +97,8 @@ namespace fb
                 auto totalForceMagnitude = springForceMagnitude + dampingForceMagnitude;
 
                 // Apply the force to the car's Rigidbody.
-                body->addLocalForceAtLocalPosition( totalForceMagnitude * Vector3F::unitY(), localPos );
+                body->addLocalForceAtLocalPosition( totalForceMagnitude * Vector3<real_Num>::unitY(),
+                                                    localPos );
 
                 // Calculate and apply the tire friction.
                 auto steeringAngle = getSteeringAngle();
@@ -163,7 +167,6 @@ namespace fb
 
     void WheelController::setSuspensionTravel( real_Num suspensionTravel )
     {
-
     }
 
     auto WheelController::getDamping() const -> real_Num

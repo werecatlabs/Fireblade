@@ -85,7 +85,8 @@ namespace fb
             }
 
             posElem->getElementData( fbVertexDataPtr, &fbElementData );
-            auto vertexPosition1 = Vector3F( fbElementData[0], fbElementData[1], fbElementData[2] );
+            auto vertexPosition1 =
+                Vector3<real_Num>( fbElementData[0], fbElementData[1], fbElementData[2] );
 
             auto welded = false;
             auto fbVertexDataPtr2 = static_cast<u8 *>( vertexBuffer->getVertexData() );
@@ -99,7 +100,7 @@ namespace fb
 
                 posElem->getElementData( fbVertexDataPtr2, &fbElementData2 );
                 auto vertexPosition2 =
-                    Vector3F( fbElementData2[0], fbElementData2[1], fbElementData2[2] );
+                    Vector3<real_Num>( fbElementData2[0], fbElementData2[1], fbElementData2[2] );
 
                 auto diff = ( vertexPosition2 - vertexPosition1 ).length();
                 if( diff < weldTolerance )
@@ -127,7 +128,8 @@ namespace fb
             if( std::find( cleanVertices.begin(), cleanVertices.end(), x ) != cleanVertices.end() )
             {
                 posElem->getElementData( fbVertexDataPtr, &fbElementData );
-                auto vertexPosition1 = Vector3F( fbElementData[0], fbElementData[1], fbElementData[2] );
+                auto vertexPosition1 =
+                    Vector3<real_Num>( fbElementData[0], fbElementData[1], fbElementData[2] );
 
                 cleanVertexDataPtr[0] = fbElementData[0];
                 cleanVertexDataPtr[1] = fbElementData[1];
@@ -220,14 +222,14 @@ namespace fb
         return cleanSubMesh;
     }
 
-    auto MeshUtil::getPoints( SmartPtr<IMesh> mesh ) -> Array<Vector3F>
+    auto MeshUtil::getPoints( SmartPtr<IMesh> mesh ) -> Array<Vector3<real_Num>>
     {
         return {};
     }
 
-    auto MeshUtil::getPoints( SmartPtr<ISubMesh> submesh ) -> Array<Vector3F>
+    auto MeshUtil::getPoints( SmartPtr<ISubMesh> submesh ) -> Array<Vector3<real_Num>>
     {
-        auto points = Array<Vector3F>();
+        auto points = Array<Vector3<real_Num>>();
 
         auto fbVertexBuffer = submesh->getVertexBuffer();
         auto fbIndexBuffer = submesh->getIndexBuffer();
@@ -255,7 +257,8 @@ namespace fb
         {
             posElem->getElementData( fbVertexDataPtr, &fbElementData );
 
-            auto vertexPosition = Vector3F( fbElementData[0], fbElementData[1], fbElementData[2] );
+            auto vertexPosition =
+                Vector3<real_Num>( fbElementData[0], fbElementData[1], fbElementData[2] );
             points.push_back( vertexPosition );
         }
 
@@ -338,8 +341,9 @@ namespace fb
         // rigidBody->setMass(physics_Num(0.0));
     }
 
-    auto MeshUtil::buildMesh( const Array<Vector3F> &positions, const Array<Vector2F> &uvs,
-                              const Array<Vector2F> &uvs2 ) -> SmartPtr<IMesh>
+    auto MeshUtil::buildMesh( const Array<Vector3<real_Num>> &positions,
+                              const Array<Vector2<real_Num>> &uvs, const Array<Vector2<real_Num>> &uvs2 )
+        -> SmartPtr<IMesh>
     {
         SmartPtr<IMesh> mesh( new Mesh );
         SmartPtr<ISubMesh> subMesh( new SubMesh );
@@ -349,16 +353,16 @@ namespace fb
 
         // create sub mesh data
         SmartPtr<IVertexDeclaration> vertexDeclaration = fb::make_ptr<VertexDeclaration>();
-        vertexDeclaration->addElement( 0, sizeof( Vector3F ),
+        vertexDeclaration->addElement( 0, sizeof( Vector3<real_Num> ),
                                        VertexDeclaration::VertexElementSemantic::VES_POSITION,
                                        IVertexElement::VertexElementType::VET_FLOAT3 );
-        vertexDeclaration->addElement( 0, sizeof( Vector3F ),
+        vertexDeclaration->addElement( 0, sizeof( Vector3<real_Num> ),
                                        VertexDeclaration::VertexElementSemantic::VES_NORMAL,
                                        IVertexElement::VertexElementType::VET_FLOAT3 );
-        vertexDeclaration->addElement( 0, sizeof( Vector2F ),
+        vertexDeclaration->addElement( 0, sizeof( Vector2<real_Num> ),
                                        VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
                                        IVertexElement::VertexElementType::VET_FLOAT2, 0 );
-        vertexDeclaration->addElement( 0, sizeof( Vector2F ),
+        vertexDeclaration->addElement( 0, sizeof( Vector2<real_Num> ),
                                        VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
                                        IVertexElement::VertexElementType::VET_FLOAT2, 1 );
 
@@ -371,21 +375,21 @@ namespace fb
 
         for( u32 vertIdx = 0; vertIdx < numVertices; ++vertIdx )
         {
-            Vector3F position = positions[vertIdx];
+            Vector3<real_Num> position = positions[vertIdx];
             *vertexDataPtr++ = position.X();
             *vertexDataPtr++ = position.Y();
             *vertexDataPtr++ = position.Z();
 
-            Vector3F normal( 0, 1, 0 );
+            Vector3<real_Num> normal( 0, 1, 0 );
             *vertexDataPtr++ = normal.X();
             *vertexDataPtr++ = normal.Y();
             *vertexDataPtr++ = normal.Z();
 
-            Vector2F uv = uvs[vertIdx];
+            Vector2<real_Num> uv = uvs[vertIdx];
             *vertexDataPtr++ = uv.X();
             *vertexDataPtr++ = uv.Y();
 
-            Vector2F uv2 = uvs2[vertIdx];
+            Vector2<real_Num> uv2 = uvs2[vertIdx];
             *vertexDataPtr++ = uv2.X();
             *vertexDataPtr++ = uv2.Y();
         }
@@ -405,8 +409,9 @@ namespace fb
         return mesh;
     }
 
-    auto MeshUtil::buildSubMesh( const Array<Vector3F> &positions, const Array<Vector2F> &uvs,
-                                 const Array<Vector2F> &uvs2 ) -> SmartPtr<ISubMesh>
+    auto MeshUtil::buildSubMesh( const Array<Vector3<real_Num>> &positions,
+                                 const Array<Vector2<real_Num>> &uvs,
+                                 const Array<Vector2<real_Num>> &uvs2 ) -> SmartPtr<ISubMesh>
     {
         SmartPtr<ISubMesh> subMesh( new SubMesh );
 
@@ -414,16 +419,16 @@ namespace fb
 
         // create sub mesh data
         SmartPtr<IVertexDeclaration> vertexDeclaration = fb::make_ptr<VertexDeclaration>();
-        vertexDeclaration->addElement( 0, sizeof( Vector3F ),
+        vertexDeclaration->addElement( 0, sizeof( Vector3<real_Num> ),
                                        VertexDeclaration::VertexElementSemantic::VES_POSITION,
                                        IVertexElement::VertexElementType::VET_FLOAT3 );
-        vertexDeclaration->addElement( 0, sizeof( Vector3F ),
+        vertexDeclaration->addElement( 0, sizeof( Vector3<real_Num> ),
                                        VertexDeclaration::VertexElementSemantic::VES_NORMAL,
                                        IVertexElement::VertexElementType::VET_FLOAT3 );
-        vertexDeclaration->addElement( 0, sizeof( Vector2F ),
+        vertexDeclaration->addElement( 0, sizeof( Vector2<real_Num> ),
                                        VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
                                        IVertexElement::VertexElementType::VET_FLOAT2, 0 );
-        vertexDeclaration->addElement( 0, sizeof( Vector2F ),
+        vertexDeclaration->addElement( 0, sizeof( Vector2<real_Num> ),
                                        VertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
                                        IVertexElement::VertexElementType::VET_FLOAT2, 1 );
 
@@ -436,21 +441,21 @@ namespace fb
 
         for( u32 vertIdx = 0; vertIdx < numVertices; ++vertIdx )
         {
-            Vector3F position = positions[vertIdx];
+            Vector3<real_Num> position = positions[vertIdx];
             *vertexDataPtr++ = position.X();
             *vertexDataPtr++ = position.Y();
             *vertexDataPtr++ = position.Z();
 
-            Vector3F normal( 0, 1, 0 );
+            Vector3<real_Num> normal( 0, 1, 0 );
             *vertexDataPtr++ = normal.X();
             *vertexDataPtr++ = normal.Y();
             *vertexDataPtr++ = normal.Z();
 
-            Vector2F uv = uvs[vertIdx];
+            Vector2<real_Num> uv = uvs[vertIdx];
             *vertexDataPtr++ = uv.X();
             *vertexDataPtr++ = uv.Y();
 
-            Vector2F uv2 = uvs2[vertIdx];
+            Vector2<real_Num> uv2 = uvs2[vertIdx];
             *vertexDataPtr++ = uv2.X();
             *vertexDataPtr++ = uv2.Y();
         }
@@ -510,7 +515,7 @@ namespace fb
                 for( u32 j = 0; j < vertexCount; ++j, fbVertexDataPtr += fbVertexSize )
                 {
                     posElem->getElementData( fbVertexDataPtr, &fbElementData );
-                    Vector3F position( fbElementData[0], fbElementData[1], fbElementData[2] );
+                    Vector3<real_Num> position( fbElementData[0], fbElementData[1], fbElementData[2] );
 
                     position = transformData.Scale * position;
                     position = transformData.Orientation * position;
@@ -522,7 +527,7 @@ namespace fb
                     fbElementData[2] = position.Z();
 
                     normalElem->getElementData( fbVertexDataPtr, &fbElementData );
-                    Vector3F normal( fbElementData[0], fbElementData[1], fbElementData[2] );
+                    Vector3<real_Num> normal( fbElementData[0], fbElementData[1], fbElementData[2] );
                     normal = transformData.Orientation * normal;
 
                     fbElementData[0] = normal.X();
@@ -532,7 +537,7 @@ namespace fb
                     if( texCoordElem0 )
                     {
                         texCoordElem0->getElementData( fbVertexDataPtr, &fbElementData );
-                        Vector2F texCoord0( fbElementData[0], fbElementData[1] );
+                        Vector2<real_Num> texCoord0( fbElementData[0], fbElementData[1] );
                         fbElementData[0] = texCoord0.X() * transformData.UVScaleData[0].X();
                         fbElementData[1] = texCoord0.Y() * transformData.UVScaleData[0].Y();
                         fbElementData[0] += transformData.UVOffsets[0].X();
@@ -542,7 +547,7 @@ namespace fb
                     if( texCoordElem1 )
                     {
                         texCoordElem1->getElementData( fbVertexDataPtr, &fbElementData );
-                        Vector2F texCoord1( fbElementData[0], fbElementData[1] );
+                        Vector2<real_Num> texCoord1( fbElementData[0], fbElementData[1] );
                         texCoord1.X() = MathF::Mod( texCoord1.X(), 1.0f );
                         texCoord1.Y() = MathF::Mod( texCoord1.Y(), 1.0f );
                         if( texCoord1.X() < 0.0f )
@@ -602,7 +607,7 @@ namespace fb
                 for( u32 j = 0; j < vertexCount; ++j, fbVertexDataPtr += fbVertexSize )
                 {
                     posElem->getElementData( fbVertexDataPtr, &fbElementData );
-                    Vector3F position( fbElementData[0], fbElementData[1], fbElementData[2] );
+                    Vector3<real_Num> position( fbElementData[0], fbElementData[1], fbElementData[2] );
                     fbElementData[0] = position.X();
                     fbElementData[1] = position.Y();
                     fbElementData[2] = position.Z();
@@ -614,7 +619,7 @@ namespace fb
     }
 
     auto MeshUtil::mergeMeshes( const Array<SmartPtr<IMesh>> &meshes,
-                                const Array<Matrix4F> &transformations ) -> SmartPtr<IMesh>
+                                const Array<Matrix4<real_Num>> &transformations ) -> SmartPtr<IMesh>
     {
         SmartPtr<IMesh> newMesh( new Mesh );
 
@@ -627,7 +632,7 @@ namespace fb
         for( u32 meshIdx = 0; meshIdx < meshes.size() && meshIdx < transformations.size(); ++meshIdx )
         {
             const SmartPtr<IMesh> &curMesh = meshes[meshIdx];
-            const Matrix4F &transformation = transformations[meshIdx];
+            const Matrix4<real_Num> &transformation = transformations[meshIdx];
 
             const Array<SmartPtr<ISubMesh>> subMeshes = curMesh->getSubMeshes();
             for( auto subMesh : subMeshes )
@@ -654,7 +659,7 @@ namespace fb
                 for( u32 j = 0; j < vertexCount; ++j, fbVertexDataPtr += fbVertexSize )
                 {
                     posElem->getElementData( fbVertexDataPtr, &fbElementData );
-                    Vector3F position( fbElementData[0], fbElementData[1], fbElementData[2] );
+                    Vector3<real_Num> position( fbElementData[0], fbElementData[1], fbElementData[2] );
                     position = transformation * position;
 
                     fbElementData[0] = position.X();
@@ -707,18 +712,18 @@ namespace fb
 
             // create sub mesh vertex data
             SmartPtr<IVertexDeclaration> vertexDeclaration = fb::make_ptr<VertexDeclaration>();
-            vertexDeclaration->addElement( 0, sizeof( Vector3F ),
+            vertexDeclaration->addElement( 0, sizeof( Vector3<real_Num> ),
                                            IVertexDeclaration::VertexElementSemantic::VES_POSITION,
                                            IVertexElement::VertexElementType::VET_FLOAT3 );
-            vertexDeclaration->addElement( 0, sizeof( Vector3F ),
+            vertexDeclaration->addElement( 0, sizeof( Vector3<real_Num> ),
                                            IVertexDeclaration::VertexElementSemantic::VES_NORMAL,
                                            IVertexElement::VertexElementType::VET_FLOAT3 );
             vertexDeclaration->addElement(
-                0, sizeof( Vector2F ),
+                0, sizeof( Vector2<real_Num> ),
                 IVertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
                 IVertexElement::VertexElementType::VET_FLOAT2, 0 );
             vertexDeclaration->addElement(
-                0, sizeof( Vector2F ),
+                0, sizeof( Vector2<real_Num> ),
                 IVertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES,
                 IVertexElement::VertexElementType::VET_FLOAT2, 1 );
 
@@ -820,24 +825,24 @@ namespace fb
                 Vertex vertex;
 
                 posElem->getElementData( fbVertexDataPtr, &fbElementData );
-                Vector3F position( fbElementData[0], fbElementData[1], fbElementData[2] );
+                Vector3<real_Num> position( fbElementData[0], fbElementData[1], fbElementData[2] );
                 vertex.Position = position;
 
                 normalElem->getElementData( fbVertexDataPtr, &fbElementData );
-                Vector3F normal( fbElementData[0], fbElementData[1], fbElementData[2] );
+                Vector3<real_Num> normal( fbElementData[0], fbElementData[1], fbElementData[2] );
                 vertex.Normal = normal;
 
                 if( texCoordElem0 )
                 {
                     texCoordElem0->getElementData( fbVertexDataPtr, &fbElementData );
-                    Vector2F texCoord0( fbElementData[0], fbElementData[1] );
+                    Vector2<real_Num> texCoord0( fbElementData[0], fbElementData[1] );
                     vertex.TexCoord0 = texCoord0;
                 }
 
                 if( texCoordElem1 )
                 {
                     texCoordElem1->getElementData( fbVertexDataPtr, &fbElementData );
-                    Vector2F texCoord1( fbElementData[0], fbElementData[1] );
+                    Vector2<real_Num> texCoord1( fbElementData[0], fbElementData[1] );
                     vertex.TexCoord1 = texCoord1;
                 }
 
@@ -886,13 +891,13 @@ namespace fb
 
         // create sub mesh data
         SmartPtr<IVertexDeclaration> vertexDeclaration( new VertexDeclaration );
-        vertexDeclaration->addElement( 0, sizeof( Vector3F ),
+        vertexDeclaration->addElement( 0, sizeof( Vector3<real_Num> ),
                                        VertexDeclaration::VertexElementSemantic::VES_POSITION,
                                        IVertexElement::VertexElementType::VET_FLOAT3 );
-        // vertexDeclaration->addElement(sizeof(Vector3F), VertexDeclaration::VES_NORMAL,
-        // VertexDeclaration::VET_FLOAT3); vertexDeclaration->addElement(sizeof(Vector2F),
+        // vertexDeclaration->addElement(sizeof(Vector3<real_Num>), VertexDeclaration::VES_NORMAL,
+        // VertexDeclaration::VET_FLOAT3); vertexDeclaration->addElement(sizeof(Vector2<real_Num>),
         // VertexDeclaration::VES_TEXTURE_COORDINATES, VertexDeclaration::VET_FLOAT2, 0);
-        // vertexDeclaration->addElement(sizeof(Vector2F), VertexDeclaration::VES_TEXTURE_COORDINATES,
+        // vertexDeclaration->addElement(sizeof(Vector2<real_Num>), VertexDeclaration::VES_TEXTURE_COORDINATES,
         // VertexDeclaration::VET_FLOAT2, 1);
 
         SmartPtr<IVertexBuffer> vertexBuffer( new VertexBuffer );
@@ -917,7 +922,7 @@ namespace fb
 
                 f32 height = heightData[x + z * tileSize];
 
-                Vector3F position;
+                Vector3<real_Num> position;
                 position.X() = static_cast<f32>( x );
                 position.Y() = height * heightScale;
                 position.Z() = static_cast<f32>( z );
@@ -927,19 +932,19 @@ namespace fb
                 *vertexDataPtr++ = position.Y();
                 *vertexDataPtr++ = position.Z();
 
-                /*				Vector3F normal;
-                                normal = Vector3F::UNIT_Y;
+                /*				Vector3<real_Num> normal;
+                                normal = Vector3<real_Num>::UNIT_Y;
                                 *vertexDataPtr++ = normal.X();
                                 *vertexDataPtr++ = normal.Y();
                                 *vertexDataPtr++ = normal.Z();
 
-                                Vector2F texCoord0;
+                                Vector2<real_Num> texCoord0;
                                 texCoord0.X() = x;
                                 texCoord0.Y() = z;
                                 *vertexDataPtr++ = texCoord0.X();
                                 *vertexDataPtr++ = texCoord0.Y();
 
-                                Vector2F texCoord1;
+                                Vector2<real_Num> texCoord1;
                                 texCoord1.X() = (f32)x / (f32)tileSize;
                                 texCoord1.Y() = (f32)z / (f32)tileSize;
                                 *vertexDataPtr++ = texCoord1.X();

@@ -32,78 +32,78 @@ namespace fb
         setDirty( true );
     }
 
-    auto UITransformState::getPosition() const -> Vector2F
+    auto UITransformState::getPosition() const -> Vector2<real_Num>
     {
         return m_position;
     }
 
-    void UITransformState::setPosition( const Vector2F &position )
+    void UITransformState::setPosition( const Vector2<real_Num> &position )
     {
         m_position = position;
         setDirty( true );
     }
 
-    auto UITransformState::getSize() const -> Vector2F
+    auto UITransformState::getSize() const -> Vector2<real_Num>
     {
         return m_size;
     }
 
-    void UITransformState::setSize( const Vector2F &size )
+    void UITransformState::setSize( const Vector2<real_Num> &size )
     {
         m_size = size;
         setDirty( true );
     }
 
-    auto UITransformState::getAbsolutePosition() const -> Vector2F
+    auto UITransformState::getAbsolutePosition() const -> Vector2<real_Num>
     {
         return m_absolutePosition;
     }
 
-    void UITransformState::setAbsolutePosition( const Vector2F &absolutePosition )
+    void UITransformState::setAbsolutePosition( const Vector2<real_Num> &absolutePosition )
     {
         m_absolutePosition = absolutePosition;
         setDirty( true );
     }
 
-    auto UITransformState::getAbsoluteSize() const -> Vector2F
+    auto UITransformState::getAbsoluteSize() const -> Vector2<real_Num>
     {
         return m_absoluteSize;
     }
 
-    void UITransformState::setAbsoluteSize( const Vector2F &absoluteSize )
+    void UITransformState::setAbsoluteSize( const Vector2<real_Num> &absoluteSize )
     {
         m_absoluteSize = absoluteSize;
         setDirty( true );
     }
 
-    auto UITransformState::getAnchor() const -> Vector2F
+    auto UITransformState::getAnchor() const -> Vector2<real_Num>
     {
         return m_anchor;
     }
 
-    void UITransformState::setAnchor( const Vector2F &anchor )
+    void UITransformState::setAnchor( const Vector2<real_Num> &anchor )
     {
         m_anchor = anchor;
         setDirty( true );
     }
 
-    auto UITransformState::getAnchorMin() const -> Vector2F
+    auto UITransformState::getAnchorMin() const -> Vector2<real_Num>
     {
         return m_anchorMin;
     }
 
-    void UITransformState::setAnchorMin( const Vector2F &anchorMin )
+    void UITransformState::setAnchorMin( const Vector2<real_Num> &anchorMin )
     {
         m_anchorMin = anchorMin;
         setDirty( true );
     }
 
-    auto UITransformState::getAnchorMax() const -> Vector2F
+    auto UITransformState::getAnchorMax() const -> Vector2<real_Num>
     {
         return m_anchorMax;
     }
 
-    void UITransformState::setAnchorMax( const Vector2F &anchorMax )
+    void UITransformState::setAnchorMax( const Vector2<real_Num> &anchorMax )
     {
         m_anchorMax = anchorMax;
         setDirty( true );

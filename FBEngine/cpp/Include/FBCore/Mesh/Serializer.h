@@ -80,8 +80,8 @@ namespace fb
         void writeShorts( const u16 *pShort, u32 count );
         void writeInts( const u32 *pInt, u32 count );
         void writeBools( const bool *pLong, u32 count );
-        void writeObject( const Vector3F &vec );
-        void writeObject( const QuaternionF &q );
+        void writeObject( const Vector3<real_Num> &vec );
+        void writeObject( const Quaternion<real_Num> &q );
 
         void writeString( const String &string );
         void writeData( const void *buf, u32 size, u32 count );
@@ -94,8 +94,8 @@ namespace fb
         void readFloats( SmartPtr<IStream> &stream, double *pDest, u32 count );
         void readShorts( SmartPtr<IStream> &stream, u16 *pDest, u32 count );
         void readInts( SmartPtr<IStream> &stream, u32 *pDest, u32 count );
-        void readObject( SmartPtr<IStream> &stream, Vector3F &pDest );
-        void readObject( SmartPtr<IStream> &stream, QuaternionF &pDest );
+        void readObject( SmartPtr<IStream> &stream, Vector3<real_Num> &pDest );
+        void readObject( SmartPtr<IStream> &stream, Quaternion<real_Num> &pDest );
 
         String readString( SmartPtr<IStream> &stream );
         String readString( SmartPtr<IStream> &stream, u32 numChars );

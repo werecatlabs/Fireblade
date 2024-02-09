@@ -92,9 +92,9 @@ namespace fb::render
     {
         if( auto &stateContext = getStateContext() )
         {
-            if( auto &state = stateContext->getStateByType<SceneNodeState>() )
+            if( auto &state = stateContext->getStateByType<TransformState>() )
             {
-                return state->getAbsolutePosition();
+                return state->getDerivedPosition();
             }
         }
 
@@ -137,9 +137,9 @@ namespace fb::render
     {
         if( auto &stateContext = getStateContext() )
         {
-            if( auto &state = stateContext->getStateByType<SceneNodeState>() )
+            if( auto &state = stateContext->getStateByType<TransformState>() )
             {
-                return state->getAbsoluteOrientation();
+                return state->getDerivedOrientation();
             }
         }
 
@@ -176,9 +176,9 @@ namespace fb::render
     {
         if( auto &stateContext = getStateContext() )
         {
-            if( auto &state = stateContext->getStateByType<SceneNodeState>() )
+            if( auto &state = stateContext->getStateByType<TransformState>() )
             {
-                return state->getAbsoluteScale();
+                return state->getDerivedScale();
             }
         }
 
@@ -193,8 +193,8 @@ namespace fb::render
     void SceneNode::lookAt( const Vector3<real_Num> &targetPoint )
     {
         auto direction = targetPoint - getPosition();
-        auto orientation = MathUtilF::getOrientationFromDirection( direction, -Vector3F::unitZ(), true,
-                                                                   Vector3<real_Num>::unitY() );
+        auto orientation = MathUtil<real_Num>::getOrientationFromDirection(
+            direction, -Vector3<real_Num>::unitZ(), true, Vector3<real_Num>::unitY() );
         setOrientation( orientation );
     }
 

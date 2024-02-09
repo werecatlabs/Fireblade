@@ -32,10 +32,10 @@ namespace fb
         virtual void updateAABB( bool forceSubMeshUpdate = false ) = 0;
 
         /** Gets the axis-aligned bounding box of the mesh. */
-        virtual AABB3F getAABB() const = 0;
+        virtual AABB3<real_Num> getAABB() const = 0;
 
         /** Sets the axis-aligned bounding box of the mesh. */
-        virtual void setAABB( const AABB3F &aabb ) = 0;
+        virtual void setAABB( const AABB3<real_Num> &aabb ) = 0;
 
         /** Clones the mesh. */
         virtual SmartPtr<IMesh> clone() const = 0;

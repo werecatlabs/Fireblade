@@ -50,8 +50,8 @@ namespace fb
     {
     }
 
-    auto CollisionMesh::rayCast( const Vector3F &origin, const Vector3F &dir, Array<HitData> &hits )
-        -> bool
+    auto CollisionMesh::rayCast( const Vector3<real_Num> &origin, const Vector3<real_Num> &dir,
+                                 Array<HitData> &hits ) -> bool
     {
         bool retValue = false;
 
@@ -70,7 +70,8 @@ namespace fb
         return retValue;
     }
 
-    auto CollisionMesh::rayCast( const Vector3F &origin, const Vector3F &dir, Array<f32> &hits ) -> bool
+    auto CollisionMesh::rayCast( const Vector3<real_Num> &origin, const Vector3<real_Num> &dir,
+                                 Array<f32> &hits ) -> bool
     {
         bool retValue = false;
 

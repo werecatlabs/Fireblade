@@ -11,8 +11,7 @@ namespace fb
 
     ScriptInvoker::ScriptInvoker() = default;
 
-    ScriptInvoker::ScriptInvoker( SmartPtr<ISharedObject> scriptObject ) :
-        m_object( scriptObject )
+    ScriptInvoker::ScriptInvoker( SmartPtr<ISharedObject> scriptObject ) : m_object( scriptObject )
     {
     }
 

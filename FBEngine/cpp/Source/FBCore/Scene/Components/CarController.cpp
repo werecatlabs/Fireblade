@@ -79,7 +79,7 @@ namespace fb::scene
             m_wheels.reserve( 4 );
             m_poweredWheels.reserve( 4 );
 
-            auto moi = Vector3F::unit() * 1000.0f;
+            auto moi = Vector3<real_Num>::unit() * 1000.0f;
             setMOI( moi );
 
             setLoadingState( LoadingState::Loaded );
@@ -785,12 +785,12 @@ namespace fb::scene
         m_steering = steering;
     }
 
-    auto CarController::getMOI() const -> Vector3F
+    auto CarController::getMOI() const -> Vector3<real_Num>
     {
         return m_moi;
     }
 
-    void CarController::setMOI( const Vector3F &moi )
+    void CarController::setMOI( const Vector3<real_Num> &moi )
     {
         m_moi = moi;
 

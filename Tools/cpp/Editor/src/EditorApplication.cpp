@@ -761,7 +761,7 @@ namespace fb::editor
             }
 
             timer->update();
-            auto dt = timer->getTimeInterval();
+            auto dt = timer->getDeltaTime();
             auto time = timer->getTime();
 
             if( time > 3.0 )

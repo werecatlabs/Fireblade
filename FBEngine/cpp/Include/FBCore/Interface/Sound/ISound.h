@@ -73,13 +73,13 @@ namespace fb
         @param
         position The position of the 3d sound.
         */
-        virtual void setPosition( const Vector3F &position ) = 0;
+        virtual void setPosition( const Vector3<real_Num> &position ) = 0;
 
         /** Return the position of the sound.
         @return
         Returns the position of the 3d sound.
         */
-        virtual Vector3F getPosition() const = 0;
+        virtual Vector3<real_Num> getPosition() const = 0;
 
         /** Sets the minimum and maximum distance of the sound. */
         virtual void setMinMaxDistance( f32 minDistance, f32 maxDistance ) = 0;

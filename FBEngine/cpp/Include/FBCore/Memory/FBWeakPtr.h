@@ -167,7 +167,7 @@ namespace fb
          * Pointer to the owned object of the weak pointer.
          * Will be null if the weak pointer is empty.
          */
-        T *m_pointer = nullptr;
+        std::atomic<T *> m_pointer = nullptr;
     };
 
     template <class T>

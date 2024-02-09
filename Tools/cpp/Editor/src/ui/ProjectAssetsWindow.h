@@ -18,6 +18,7 @@ namespace fb
         public:
             enum class MenuId
             {
+                AddLightingPreset,
                 AddMaterial,
                 AddScript,
                 AddTerrainDirector,

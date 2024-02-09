@@ -27,9 +27,9 @@ namespace fb
         virtual void read( f32 &value ) = 0;
 
         virtual void read( Vector2I &value ) = 0;
-        virtual void read( Vector2F &value ) = 0;
+        virtual void read( Vector2<real_Num> &value ) = 0;
         virtual void read( Vector3I &value ) = 0;
-        virtual void read( Vector3F &value ) = 0;
+        virtual void read( Vector3<real_Num> &value ) = 0;
 
         virtual void read( String &value ) = 0;
 
@@ -46,9 +46,9 @@ namespace fb
         virtual void write( f32 value ) = 0;
 
         virtual void write( const Vector2I &value ) = 0;
-        virtual void write( const Vector2F &value ) = 0;
+        virtual void write( const Vector2<real_Num> &value ) = 0;
         virtual void write( const Vector3I &value ) = 0;
-        virtual void write( const Vector3F &value ) = 0;
+        virtual void write( const Vector3<real_Num> &value ) = 0;
 
         virtual void write( const String &value ) = 0;
 

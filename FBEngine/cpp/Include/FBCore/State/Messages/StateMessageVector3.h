@@ -11,16 +11,16 @@ namespace fb
     {
     public:
         StateMessageVector3();
-        explicit StateMessageVector3( const Vector3F &position );
+        explicit StateMessageVector3( const Vector3<real_Num> &position );
         ~StateMessageVector3() override;
 
-        Vector3F getValue() const;
-        void setValue( const Vector3F &val );
+        Vector3<real_Num> getValue() const;
+        void setValue( const Vector3<real_Num> &val );
 
         FB_CLASS_REGISTER_DECL;
 
     protected:
-        Vector3F m_position;
+        Vector3<real_Num> m_position;
     };
 }  // end namespace fb
 

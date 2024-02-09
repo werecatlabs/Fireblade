@@ -12,17 +12,17 @@ namespace fb
         public:
             ~IParticleEmitter() override = default;
 
-            virtual Vector3F getParticleSize() const = 0;
-            virtual void setParticleSize( const Vector3F &val ) = 0;
+            virtual Vector3<real_Num> getParticleSize() const = 0;
+            virtual void setParticleSize( const Vector3<real_Num> &val ) = 0;
 
-            virtual Vector3F getParticleSizeMin() const = 0;
-            virtual void setParticleSizeMin( const Vector3F &val ) = 0;
+            virtual Vector3<real_Num> getParticleSizeMin() const = 0;
+            virtual void setParticleSizeMin( const Vector3<real_Num> &val ) = 0;
 
-            virtual Vector3F getParticleSizeMax() const = 0;
-            virtual void setParticleSizeMax( const Vector3F &val ) = 0;
+            virtual Vector3<real_Num> getParticleSizeMax() const = 0;
+            virtual void setParticleSizeMax( const Vector3<real_Num> &val ) = 0;
 
-            virtual Vector3F getDirection() const = 0;
-            virtual void setDirection( const Vector3F &val ) = 0;
+            virtual Vector3<real_Num> getDirection() const = 0;
+            virtual void setDirection( const Vector3<real_Num> &val ) = 0;
 
             virtual f32 getEmissionRate() const = 0;
             virtual void setEmissionRate( f32 val ) = 0;

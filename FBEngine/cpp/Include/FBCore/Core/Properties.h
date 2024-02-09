@@ -426,6 +426,13 @@ namespace fb
         @param value A reference to the value.
         @return Returns true if the property was found. Returns false if the property was not found.
         */
+        bool getPropertyValue( const String &name, Vector2D &value ) const;
+
+        /** Gets a property value. Returns true if the property was found.
+        @param name The name of the property.
+        @param value A reference to the value.
+        @return Returns true if the property was found. Returns false if the property was not found.
+        */
         bool getPropertyValue( const String &name, Vector3I &value ) const;
 
         /** Gets a property value. Returns true if the property was found.

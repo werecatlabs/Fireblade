@@ -63,6 +63,7 @@ namespace fb::scene
                     setElement( image );
 
                     updateVisibility();
+                    updateColour();
                 }
             }
         }

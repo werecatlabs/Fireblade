@@ -131,6 +131,8 @@ namespace fb
 
         Array<Array<SmartPtr<IState>>> getStates2D( u32 typeInfo );
 
+        FB_CLASS_REGISTER_DECL;
+
     protected:
         SharedPtr<ConcurrentArray<SmartPtr<IStateContext>>> getStateContextsPtr() const;
         void setStateContextsPtr( SharedPtr<ConcurrentArray<SmartPtr<IStateContext>>> stateObjects );

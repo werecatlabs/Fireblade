@@ -13,20 +13,20 @@ namespace fb
         /** Virtual destructor. */
         ~ITrackElement() override = default;
 
-        virtual Vector3F getCenter() const = 0;
-        virtual void setCenter( const Vector3F &val ) = 0;
+        virtual Vector3<real_Num> getCenter() const = 0;
+        virtual void setCenter( const Vector3<real_Num> &val ) = 0;
 
-        virtual Vector3F getStart() const = 0;
-        virtual void setStart( const Vector3F &val ) = 0;
+        virtual Vector3<real_Num> getStart() const = 0;
+        virtual void setStart( const Vector3<real_Num> &val ) = 0;
 
-        virtual Vector3F getEnd() const = 0;
-        virtual void setEnd( const Vector3F &val ) = 0;
+        virtual Vector3<real_Num> getEnd() const = 0;
+        virtual void setEnd( const Vector3<real_Num> &val ) = 0;
 
-        virtual Vector3F getDirection() const = 0;
-        virtual void setDirection( const Vector3F &val ) = 0;
+        virtual Vector3<real_Num> getDirection() const = 0;
+        virtual void setDirection( const Vector3<real_Num> &val ) = 0;
 
-        virtual Vector3F getExtents() const = 0;
-        virtual void setExtents( const Vector3F &val ) = 0;
+        virtual Vector3<real_Num> getExtents() const = 0;
+        virtual void setExtents( const Vector3<real_Num> &val ) = 0;
 
         FB_CLASS_REGISTER_DECL;
     };

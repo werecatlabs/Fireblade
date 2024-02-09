@@ -47,7 +47,7 @@ namespace fb::scene
 
         allKeysUp();
 
-        m_targetDirection = Vector3F::UNIT_Z;
+        m_targetDirection = Vector3<real_Num>::UNIT_Z;
     }
 
     FpsCameraController::~FpsCameraController() = default;
@@ -60,7 +60,7 @@ namespace fb::scene
         if(IApplicationManager::instance()->getCameraManager()->getCurrentCamera() !=
         SmartPtr<scene::CameraController>(this)) return;
 
-        Vector3F position = m_position;
+        Vector3<real_Num> position = m_position;
 
         if (CursorKeys[0])
         position += m_targetDirection * dt * MoveSpeed * m_translationSpeed;
@@ -70,10 +70,10 @@ namespace fb::scene
 
         // strafing
         Ogre::Vector3 ogreCamUp = m_selectedCamera->getDerivedUp();
-        Vector3F upVector(&ogreCamUp[0]);
+        Vector3<real_Num> upVector(&ogreCamUp[0]);
         upVector.Z() = -upVector.Z();
 
-        Vector3F strafevect = m_targetDirection.crossProduct(upVector);
+        Vector3<real_Num> strafevect = m_targetDirection.crossProduct(upVector);
         strafevect.normalise();
         if (CursorKeys[2])
         position += strafevect * dt * MoveSpeed * m_translationSpeed;
@@ -83,7 +83,7 @@ namespace fb::scene
 
         m_position = position;
 
-        Vector3F ogreCameraPosition = m_position;
+        Vector3<real_Num> ogreCameraPosition = m_position;
         ogreCameraPosition.Z() = -ogreCameraPosition.Z();
         m_selectedCamera->setPosition(Ogre::Vector3(ogreCameraPosition));	*/
     }
@@ -148,23 +148,23 @@ namespace fb::scene
 
         // update position
         Ogre::Vector3 ogreCameraPos = m_selectedCamera->getPosition();
-        Vector3F cameraPos(&ogreCameraPos[0]);
+        Vector3<real_Num> cameraPos(&ogreCameraPos[0]);
 
         CursorPos.set(MousePos.X(),MousePos.Y());
 
-        Vector3F cameraTarget = cameraPos + Vector3F::UNIT_Z;
+        Vector3<real_Num> cameraTarget = cameraPos + Vector3<real_Num>::UNIT_Z;
 
         // Update rotation
         Ogre::Vector3 ogreTargetDir = m_selectedCamera->getDerivedDirection();
-        Vector3F targetDir(&ogreTargetDir[0]);
+        Vector3<real_Num> targetDir(&ogreTargetDir[0]);
         //targetDir = m_targetDirection;
         targetDir.Z() = -targetDir.Z();
-        Vector3F relativeRotation = targetDir.getHorizontalAngle();
+        Vector3<real_Num> relativeRotation = targetDir.getHorizontalAngle();
 
         if(isMouseKeyDown(2))
         {
         static f32 ratio = 10.01;
-        Vector2F relativeMouse = (PrevCursor - CursorPos) * ratio;
+        Vector2<real_Num> relativeMouse = (PrevCursor - CursorPos) * ratio;
         if(relativeMouse.squaredLength() > 0.0f)
         {
         relativeRotation.X() -= relativeMouse.Y() * RotateSpeed;
@@ -175,7 +175,7 @@ namespace fb::scene
         targetDir.set(0,0,1);
 
         Matrix4F mat;
-        mat.setRotationDegrees(Vector3F(relativeRotation.X(), relativeRotation.Y(), 0));
+        mat.setRotationDegrees(Vector3<real_Num>(relativeRotation.X(), relativeRotation.Y(), 0));
         mat.transformVect(targetDir);
         targetDir.normalise();
 
@@ -195,32 +195,32 @@ namespace fb::scene
         return false;
     }
 
-    void FpsCameraController::setPosition( const Vector3F &position )
+    void FpsCameraController::setPosition( const Vector3<real_Num> &position )
     {
         m_position = position;
     }
 
-    auto FpsCameraController::getPosition() const -> Vector3F
+    auto FpsCameraController::getPosition() const -> Vector3<real_Num>
     {
         return m_position;
     }
 
-    void FpsCameraController::setTargetPosition( const Vector3F &position )
+    void FpsCameraController::setTargetPosition( const Vector3<real_Num> &position )
     {
     }
 
-    auto FpsCameraController::getTargetPosition() const -> Vector3F
+    auto FpsCameraController::getTargetPosition() const -> Vector3<real_Num>
     {
         m_targetPosition = m_position + m_targetDirection;
         return m_targetPosition;
     }
 
-    void FpsCameraController::setOrientation( const QuaternionF &orientation )
+    void FpsCameraController::setOrientation( const Quaternion<real_Num> &orientation )
     {
         m_orientation = orientation;
     }
 
-    auto FpsCameraController::getOrientation() const -> QuaternionF
+    auto FpsCameraController::getOrientation() const -> Quaternion<real_Num>
     {
         /*Ogre::Quaternion ogreOrientation = m_selectedCamera->getOrientation();
         Ogre::Matrix3 ogreMatrix;
@@ -234,12 +234,12 @@ namespace fb::scene
         return m_orientation;
     }
 
-    auto FpsCameraController::getDirection() const -> Vector3F
+    auto FpsCameraController::getDirection() const -> Vector3<real_Num>
     {
         // Ogre::Vector3 dir = m_selectedCamera->getRealDirection();
-        // return Vector3F(&dir[0]);
+        // return Vector3<real_Num>(&dir[0]);
 
-        return Vector3F::zero();
+        return Vector3<real_Num>::zero();
     }
 
     void FpsCameraController::setPropertyValue( const String &name, const String &value )
@@ -260,7 +260,7 @@ namespace fb::scene
 
     void FpsCameraController::setProperties( const Properties &propertyGroup )
     {
-        Vector3F position;
+        Vector3<real_Num> position;
 
         const Array<Property> &properties = propertyGroup.getPropertiesAsArray();
 
@@ -269,12 +269,12 @@ namespace fb::scene
         {
             if( key.getName() == ( "Position" ) )
             {
-                position = StringUtil::parseVector3<f32>( key.getValue() );
+                position = StringUtil::parseVector3<real_Num>( key.getValue() );
             }
         }
 
         setPosition( position );
-        setTargetPosition( position + Vector3F( 0, 0, 1 ) );
+        setTargetPosition( position + Vector3<real_Num>( 0, 0, 1 ) );
 
         m_propertyGroup = propertyGroup;
     }
@@ -298,7 +298,8 @@ namespace fb::scene
         }
     }
 
-    auto FpsCameraController::getCameraToViewportRay( const Vector2F &screenPosition ) const -> Ray3F
+    auto FpsCameraController::getCameraToViewportRay( const Vector2<real_Num> &screenPosition ) const
+        -> Ray3F
     {
         Ray3F ray;
 
@@ -308,7 +309,7 @@ namespace fb::scene
         f32 width = viewport->getActualWidth();
         f32 height = viewport->getActualHeight();
 
-        Vector2F normalisedScreenCoords;
+        Vector2<real_Num> normalisedScreenCoords;
         normalisedScreenCoords.X() = screenPosition.X() / width;
         normalisedScreenCoords.Y() = screenPosition.Y() / height;
 
@@ -318,8 +319,8 @@ namespace fb::scene
         Ogre::Vector3 ogreCameraPosition = m_selectedCamera->getDerivedPosition();
         Ogre::Vector3 rayOrigin = ogreRay.getOrigin();
         Ogre::Vector3 rayDirection = ogreRay.getDirection();
-        ray.Start = Vector3F(&rayOrigin[0]);
-        ray.Direction = Vector3F(&rayDirection[0]);
+        ray.Start = Vector3<real_Num>(&rayOrigin[0]);
+        ray.Direction = Vector3<real_Num>(&rayDirection[0]);
 
         ray.Start.Z() = -ray.Start.Z();
         ray.Direction.Z() = -ray.Direction.Z();

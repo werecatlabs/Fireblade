@@ -414,7 +414,7 @@ namespace fb::scene
             //f32 width = viewport->getActualWidth();
             //f32 height = viewport->getActualHeight();
 
-            //Vector2F normalizedScreenCoords;
+            //Vector2<real_Num> normalizedScreenCoords;
             //normalizedScreenCoords.X() = screenPosition.X() / width;
             //normalizedScreenCoords.Y() = screenPosition.Y() / height;
 
@@ -424,8 +424,8 @@ namespace fb::scene
             //Ogre::Vector3 ogreCameraPosition = m_selectedCamera->getDerivedPosition();
             //Ogre::Vector3 rayOrigin = ogreRay.getOrigin();
             //Ogre::Vector3 rayDirection = ogreRay.getDirection();
-            //ray.Start = Vector3F( &rayOrigin[0] );
-            //ray.Direction = Vector3F( &rayDirection[0] );
+            //ray.Start = Vector3<real_Num>( &rayOrigin[0] );
+            //ray.Direction = Vector3<real_Num>( &rayDirection[0] );
 
             //ray.Start.Z() = -ray.Start.Z();
             //ray.Direction.Z() = -ray.Direction.Z();
@@ -438,7 +438,7 @@ namespace fb::scene
         return {};
     }
 
-    auto Camera::isInFrustum( const AABB3F &box ) const -> bool
+    auto Camera::isInFrustum( const AABB3<real_Num> &box ) const -> bool
     {
         return true;
     }

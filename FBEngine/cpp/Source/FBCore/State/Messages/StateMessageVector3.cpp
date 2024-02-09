@@ -9,18 +9,19 @@ namespace fb
 
     StateMessageVector3::StateMessageVector3() = default;
 
-    StateMessageVector3::StateMessageVector3( const Vector3F &position ) : m_position( position )
+    StateMessageVector3::StateMessageVector3( const Vector3<real_Num> &position ) :
+        m_position( position )
     {
     }
 
     StateMessageVector3::~StateMessageVector3() = default;
 
-    auto StateMessageVector3::getValue() const -> Vector3F
+    auto StateMessageVector3::getValue() const -> Vector3<real_Num>
     {
         return m_position;
     }
 
-    void StateMessageVector3::setValue( const Vector3F &val )
+    void StateMessageVector3::setValue( const Vector3<real_Num> &val )
     {
         m_position = val;
     }

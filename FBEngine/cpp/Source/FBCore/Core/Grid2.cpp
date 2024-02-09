@@ -6,7 +6,8 @@ namespace fb
 
     Grid2::Grid2() = default;
 
-    Grid2::Grid2( const Vector2F &center, const Vector2F &areaSize, const Vector2F &areaBoundry )
+    Grid2::Grid2( const Vector2<real_Num> &center, const Vector2<real_Num> &areaSize,
+                  const Vector2<real_Num> &areaBoundry )
     {
         m_center.X() = center.X();
         m_center.Y() = center.Y();
@@ -33,39 +34,39 @@ namespace fb
 
     Grid2::~Grid2() = default;
 
-    void Grid2::setCenter( const Vector2F &center )
+    void Grid2::setCenter( const Vector2<real_Num> &center )
     {
         m_center = center;
     }
 
-    auto Grid2::getCenter() const -> const Vector2F &
+    auto Grid2::getCenter() const -> const Vector2<real_Num> &
     {
         return m_center;
     }
 
-    void Grid2::setExtents( const Vector2F &halfExtents )
+    void Grid2::setExtents( const Vector2<real_Num> &halfExtents )
     {
         m_halfExtents = halfExtents;
     }
 
-    auto Grid2::getExtents() const -> const Vector2F &
+    auto Grid2::getExtents() const -> const Vector2<real_Num> &
     {
         return m_halfExtents;
     }
 
-    void Grid2::setCellSize( const Vector2F &cellSize )
+    void Grid2::setCellSize( const Vector2<real_Num> &cellSize )
     {
         m_cellSize = cellSize;
     }
 
-    auto Grid2::getCellSize() const -> const Vector2F &
+    auto Grid2::getCellSize() const -> const Vector2<real_Num> &
     {
         return m_cellSize;
     }
 
     auto Grid2::getNumCells() const -> Vector2I
     {
-        Vector2F numCells = ( m_halfExtents / m_cellSize ) * 2.0f;
+        Vector2<real_Num> numCells = ( m_halfExtents / m_cellSize ) * 2.0f;
         return { MathF::Round( numCells.X() ), MathF::Round( numCells.Y() ) };
     }
 }  // end namespace fb

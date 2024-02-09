@@ -5,4 +5,7 @@
 namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, IVertexBoneAssignment, ISharedObject );
+
+    IVertexBoneAssignment::~IVertexBoneAssignment() = default;
+
 }  // end namespace fb

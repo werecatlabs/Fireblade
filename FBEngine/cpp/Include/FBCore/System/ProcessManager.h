@@ -21,23 +21,32 @@ namespace fb
         /** Destructor */
         ~ProcessManager() override;
 
+        /** @copydoc IProcessManager::createProcess */
         void createProcess( const String &applicationName ) override;
 
+        /** @copydoc IProcessManager::createProcess */
         void createProcess( const StringW &applicationName ) override;
 
+        /** @copydoc IProcessManager::shellExecute */
         void shellExecute( const String &applicationName ) override;
 
+        /** @copydoc IProcessManager::shellExecute */
         void shellExecute( const StringW &applicationName, const Array<StringW> &args ) override;
 
+        /** @copydoc IProcessManager::shellExecute */
         void shellExecute( const StringW &applicationName, const StringW &directory,
                            const Array<StringW> &args ) override;
 
+        /** @copydoc IProcessManager::isProcessRunning */
         bool isProcessRunning( const String &processName ) override;
 
+        /** @copydoc IProcessManager::terminateProcess */
         bool terminateProcess( const String &processName ) override;
 
+        /** @copydoc IProcessManager::isProcessRunning */
         bool isProcessRunning( const StringW &processName ) override;
 
+        /** @copydoc IProcessManager::terminateProcess */
         bool terminateProcess( const StringW &processName ) override;
 
         FB_CLASS_REGISTER_DECL;

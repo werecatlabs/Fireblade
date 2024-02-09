@@ -20,7 +20,7 @@ namespace fb
         /**
          * @brief Virtual destructor.
          */
-        ~ITimer() override = default;
+        ~ITimer() override;
 
         /**
          * @brief Updates the timer with a fixed time interval.
@@ -33,7 +33,7 @@ namespace fb
          * @brief Gets the time since level load in seconds.
          * @return A time interval value.
          */
-        virtual f64 getTimeSinceLevelLoad() = 0;
+        virtual time_interval getTimeSinceLevelLoad() = 0;
 
         /**
          * @brief Sets the time since level load in seconds.
@@ -51,13 +51,13 @@ namespace fb
          * @brief Gets the current smooth time in seconds.
          * @return A double value.
          */
-        virtual double getSmoothTime() const = 0;
+        virtual time_interval getSmoothTime() const = 0;
 
         /**
          * @brief Gets the current smooth delta time in seconds.
          * @return A double value.
          */
-        virtual double getSmoothDeltaTime() const = 0;
+        virtual time_interval getSmoothDeltaTime() const = 0;
 
         /**
          * @brief Sets the smoothing period for delta time.
@@ -103,13 +103,7 @@ namespace fb
          * @brief Gets the current delta time in seconds.
          * @return A double value.
          */
-        virtual double getDeltaTime() const = 0;
-
-        /**
-         * @brief Gets the current time interval in seconds.
-         * @return A time interval value.
-         */
-        virtual time_interval getTimeInterval() const = 0;
+        virtual time_interval getDeltaTime() const = 0;
 
         /**
          * @brief Sets the frame smoothing period.
@@ -265,7 +259,7 @@ namespace fb
         /**
          * @brief Sets the fixed offset for the specified task.
          * @param task The task to set the fixed offset for.
-         * @param val The fixed offset as a double-precision floating point value.
+         * @param offset The fixed offset as a double-precision floating point value.
          */
         virtual void setFixedOffset( Thread::Task task, f64 offset ) = 0;
 

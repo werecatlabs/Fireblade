@@ -21,20 +21,20 @@ namespace fb
 
             bool handleInputEvent( const SmartPtr<IInputEvent> &event );
 
-            void setPosition( const Vector3F &position );
-            Vector3F getPosition() const;
+            void setPosition( const Vector3<real_Num> &position );
+            Vector3<real_Num> getPosition() const;
 
-            void setTargetPosition( const Vector3F &position );
-            Vector3F getTargetPosition() const;
+            void setTargetPosition( const Vector3<real_Num> &position );
+            Vector3<real_Num> getTargetPosition() const;
 
-            void setOrientation( const QuaternionF &orientation );
-            QuaternionF getOrientation() const;
+            void setOrientation( const Quaternion<real_Num> &orientation );
+            Quaternion<real_Num> getOrientation() const;
 
-            void setDirection( const Vector3F &direction );
-            Vector3F getDirection() const;
+            void setDirection( const Vector3<real_Num> &direction );
+            Vector3<real_Num> getDirection() const;
 
-            Vector3F getUp() const;
-            Vector3F getRight() const;
+            Vector3<real_Num> getUp() const;
+            Vector3<real_Num> getRight() const;
 
             void addCamera( SmartPtr<render::ICamera> camera );
             bool removeCamera( SmartPtr<render::ICamera> camera );
@@ -81,15 +81,15 @@ namespace fb
 
             Array<SmartPtr<render::ICamera>> m_cameras;
 
-            Vector3F m_targetVector;
-            Vector2F m_prevCursorPos;
-            Vector2F m_cursorPos;
-            Vector2F m_mousePos;
-            Vector2F m_relativeMouse;
+            Vector3<real_Num> m_targetVector;
+            Vector2<real_Num> m_prevCursorPos;
+            Vector2<real_Num> m_cursorPos;
+            Vector2<real_Num> m_mousePos;
+            Vector2<real_Num> m_relativeMouse;
 
-            Vector3F m_position;
-            mutable Vector3F m_targetPosition;
-            Vector3F m_rotation;
+            Vector3<real_Num> m_position;
+            mutable Vector3<real_Num> m_targetPosition;
+            Vector3<real_Num> m_rotation;
 
             f32 m_moveSpeed;
             f32 m_rotationSpeed;

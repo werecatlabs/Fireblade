@@ -36,7 +36,7 @@ namespace fb::render
 
     MeshLoader::~MeshLoader() = default;
 
-    void createV2Mesh( Ogre::Mesh *mesh, SmartPtr<IMesh> fbmesh )
+    void MeshLoader::createV2Mesh( Ogre::Mesh *mesh, SmartPtr<IMesh> fbmesh )
     {
         Ogre::RenderSystem *renderSystem = Ogre::Root::getSingleton().getRenderSystem();
         Ogre::VaoManager *vaoManager = renderSystem->getVaoManager();
@@ -86,11 +86,14 @@ namespace fb::render
             Array<SmartPtr<IVertexElement>> texCoordElems;
             texCoordElems.reserve( 8 );
 
-            for( size_t i = -0; i < 8; ++i )
+            for( size_t i = 0; i < 8; ++i )
             {
-                auto texCoordElem0 = fbVertexDeclaration->findElementBySemantic(
+                auto texCoordElem = fbVertexDeclaration->findElementBySemantic(
                     IVertexDeclaration::VertexElementSemantic::VES_TEXTURE_COORDINATES, i );
-                texCoordElems.push_back( texCoordElem0 );
+                if( texCoordElem )
+                {
+                    texCoordElems.push_back( texCoordElem );
+                }
             }
 
             const auto diffuseElem = fbVertexDeclaration->findElementBySemantic(
@@ -114,11 +117,13 @@ namespace fb::render
             {
                 if( texCoordElem )
                 {
-                    if( texCoordElem->getType() == IVertexElement::VertexElementType::VET_FLOAT3 )
+                    auto texCoordElemType = texCoordElem->getType();
+
+                    if( texCoordElemType == IVertexElement::VertexElementType::VET_FLOAT3 )
                     {
                         vertexElements.emplace_back( Ogre::VET_FLOAT3, Ogre::VES_TEXTURE_COORDINATES );
                     }
-                    else if( texCoordElem->getType() == IVertexElement::VertexElementType::VET_FLOAT2 )
+                    else if( texCoordElemType == IVertexElement::VertexElementType::VET_FLOAT2 )
                     {
                         vertexElements.emplace_back( Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES );
                     }
@@ -170,7 +175,9 @@ namespace fb::render
                 {
                     if( texCoordElem )
                     {
-                        if( texCoordElem->getType() == IVertexElement::VertexElementType::VET_FLOAT3 )
+                        auto texCoordElemType = texCoordElem->getType();
+
+                        if( texCoordElemType == IVertexElement::VertexElementType::VET_FLOAT3 )
                         {
                             texCoordElem->getElementData( fbVertexDataPtr, &fbElementData );
                             *pVertex++ = fbElementData[0];
@@ -183,8 +190,7 @@ namespace fb::render
                                     Vector2F( fbElementData[0], fbElementData[1] ) ) );
                             }
                         }
-                        else if( texCoordElem->getType() ==
-                                 IVertexElement::VertexElementType::VET_FLOAT2 )
+                        else if( texCoordElemType == IVertexElement::VertexElementType::VET_FLOAT2 )
                         {
                             texCoordElem->getElementData( fbVertexDataPtr, &fbElementData );
                             *pVertex++ = fbElementData[0];

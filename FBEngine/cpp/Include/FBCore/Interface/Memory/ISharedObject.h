@@ -365,7 +365,7 @@ namespace fb
 
         SmartPtr<ISharedObject> m_scriptData;
 
-        AtomicRawPtr<ISharedObjectListener> m_sharedObjectListener;
+        RawPtr<ISharedObjectListener> m_sharedObjectListener;
         SharedPtr<ConcurrentArray<SmartPtr<IEventListener>>> m_sharedEventListeners;
     };
 

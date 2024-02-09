@@ -36,10 +36,10 @@ namespace fb
         void updateAABB( bool forceSubMeshUpdate = false ) override;
 
         /** @copydoc IMesh::getAABB */
-        AABB3F getAABB() const override;
+        AABB3<real_Num> getAABB() const override;
 
         /** @copydoc IMesh::setAABB */
-        void setAABB( const AABB3F &aabb ) override;
+        void setAABB( const AABB3<real_Num> &aabb ) override;
 
         /** @copydoc IMesh::clone */
         SmartPtr<IMesh> clone() const override;
@@ -84,7 +84,7 @@ namespace fb
         Array<SmartPtr<ISubMesh>> m_subMeshes;
 
         // The bounding box.
-        AABB3F m_aabb;
+        AABB3<real_Num> m_aabb;
 
         // To know if the vertex data is shared between submeshes.
         bool m_hasSharedVertexData = false;

@@ -67,9 +67,6 @@ namespace fb
 
             ~Listener() override;
 
-            void loadingStateChanged( ISharedObject *sharedObject, LoadingState oldState,
-                                      LoadingState newState ) override;
-
             bool destroy( void *ptr ) override;
 
             Factory *getFactory() const;

@@ -64,11 +64,6 @@ namespace fb::render
     {
         try
         {
-            FB_ASSERT( isLoaded() == false );
-            FB_ASSERT( getTexture() == nullptr );
-
-            setLoadingState( LoadingState::Loading );
-
             auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
@@ -79,6 +74,11 @@ namespace fb::render
             FB_ASSERT( factoryManager );
 
             ISharedObject::ScopedLock lock( graphicsSystem );
+
+            FB_ASSERT( isLoaded() == false );
+            FB_ASSERT( getTexture() == nullptr );
+
+            setLoadingState( LoadingState::Loading );
 
             auto usageFlags = getUsageFlags();
             if( usageFlags == TU_RENDERTARGET )

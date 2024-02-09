@@ -61,6 +61,9 @@ namespace fb::render
         //sceneNodeState->setSceneNode( this );
         stateContext->addState( sceneNodeState );
 
+        auto boundingBoxState = factoryManager->make_ptr<BoundingBoxState>();
+        stateContext->addState( boundingBoxState );
+
         auto renderTask = graphicsSystem->getStateTask();
         sceneNodeState->setTaskId( renderTask );
         transformState->setTaskId( renderTask );
@@ -334,41 +337,20 @@ namespace fb::render
 
     auto CSceneNodeOgreNext::getLocalAABB() const -> AABB3F
     {
-        return calculateAABB();
+        auto localAABB = calculateAABB();
+        return localAABB;
     }
 
     auto CSceneNodeOgreNext::getWorldAABB() const -> AABB3F
     {
-        // auto applicationManager = core::ApplicationManager::instance();
-        // auto graphicsSystem = applicationManager->getGraphicsSystem();
-        // auto factoryManager = applicationManager->getFactoryManager();
-        // auto renderTask = graphicsSystem->getRenderTask();
+        auto localAABB = calculateAABB();
 
-        // SmartPtr<SceneNodeState> state = m_stateContext->getState();
-        // if (state)
-        //{
-        //	return state->getWorldAABB();
-        // }
+        Matrix4<real_Num> transform;
+        transform.makeTransform( getPosition(), getScale(), getOrientation() );
+        auto worldAABB = localAABB;
+        worldAABB.transform(transform);
 
-        Ogre::AxisAlignedBox box;
-
-        // auto currentTaskId = Thread::getCurrentTask();
-        // if (currentTaskId != renderTask)
-        //{
-        //
-        //	m_sceneNode->_update(true, true);
-        //	box = m_sceneNode->_getWorldAABB();
-        // }
-        // else
-        //{
-        //	m_sceneNode->_update(true, true);
-        //	box = m_sceneNode->_getWorldAABB();
-        // }
-
-        const Ogre::Vector3 &minPoint = box.getMinimum();
-        const Ogre::Vector3 &maxPoint = box.getMaximum();
-
-        return { minPoint.x, minPoint.y, minPoint.z, maxPoint.x, maxPoint.y, maxPoint.z };
+        return worldAABB;
     }
 
     void CSceneNodeOgreNext::attachObject( SmartPtr<IGraphicsObject> object )
@@ -1141,17 +1123,15 @@ namespace fb::render
 
     auto CSceneNodeOgreNext::calculateAABB() const -> AABB3F
     {
-        Ogre::AxisAlignedBox box;
+        Ogre::Aabb box;
 
-        // for (u32 i = 0; i < m_sceneNode->numAttachedObjects(); ++i)
-        //{
-        //	Ogre::MovableObject* object = m_sceneNode->getAttachedObject(i);
-        //	if (object->getTypeFlags() & Ogre::SceneManager::ENTITY_TYPE_MASK)
-        //	{
-        //		Ogre::Entity* entity = (Ogre::Entity*)object;
-        //		box.merge(entity->getBoundingBox());
-        //	}
-        // }
+        for( u32 i = 0; i < m_sceneNode->numAttachedObjects(); ++i )
+        {
+            Ogre::MovableObject *object = m_sceneNode->getAttachedObject( i );
+            auto aabb = object->getLocalAabb();
+
+            box.merge( aabb );
+        }
 
         const Ogre::Vector3 &minPoint = box.getMinimum();
         const Ogre::Vector3 &maxPoint = box.getMaximum();

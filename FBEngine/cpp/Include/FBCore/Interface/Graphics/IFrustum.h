@@ -41,7 +41,7 @@ namespace fb
             virtual bool isVisible( const Sphere3F &bound ) const = 0;
 
             /** Tests whether the given vertex is visible in the Frustum. */
-            virtual bool isVisible( const Vector3F &vert ) const = 0;
+            virtual bool isVisible( const Vector3<real_Num> &vert ) const = 0;
 
             FB_CLASS_REGISTER_DECL;
         };

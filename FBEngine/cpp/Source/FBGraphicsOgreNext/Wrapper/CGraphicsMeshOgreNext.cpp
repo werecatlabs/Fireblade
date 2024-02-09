@@ -108,28 +108,32 @@ namespace fb::render
 
                     if( auto item = getItem() )
                     {
-                        auto subItem = item->getSubItem( index );
-                        if( subItem )
+                        if( index < item->getNumSubItems() )
                         {
-                            auto material = materialManager->getByName( materialName );
-                            if( material )
+                            auto subItem = item->getSubItem( index );
+                            if( subItem )
                             {
-                                auto pMaterial = fb::static_pointer_cast<CMaterialOgreNext>( material );
-                                if( pMaterial )
+                                auto material = materialManager->getByName( materialName );
+                                if( material )
                                 {
-                                    auto datablock = pMaterial->getHlmsDatablock();
-                                    if( datablock )
+                                    auto pMaterial =
+                                        fb::static_pointer_cast<CMaterialOgreNext>( material );
+                                    if( pMaterial )
                                     {
-                                        subItem->setDatablock( datablock );
+                                        auto datablock = pMaterial->getHlmsDatablock();
+                                        if( datablock )
+                                        {
+                                            subItem->setDatablock( datablock );
+                                        }
                                     }
-                                }
 
-                                m_materials[index] = material;
+                                    m_materials[index] = material;
 
-                                auto materialStateObject = material->getStateContext();
-                                if( materialStateObject )
-                                {
-                                    materialStateObject->addStateListener( m_materialStateListener );
+                                    auto materialStateObject = material->getStateContext();
+                                    if( materialStateObject )
+                                    {
+                                        materialStateObject->addStateListener( m_materialStateListener );
+                                    }
                                 }
                             }
                         }
@@ -238,40 +242,45 @@ namespace fb::render
                 {
                     if( auto item = getItem() )
                     {
-                        auto subItem = item->getSubItem( index );
-                        if( subItem )
+                        if( index < item->getNumSubItems() )
                         {
-                            auto currentMaterial = m_materials[index];
-                            if( currentMaterial )
+                            auto subItem = item->getSubItem( index );
+                            if( subItem )
                             {
-                                auto materialStateObject = currentMaterial->getStateContext();
+                                auto currentMaterial = m_materials[index];
+                                if( currentMaterial )
+                                {
+                                    auto materialStateObject = currentMaterial->getStateContext();
+                                    if( materialStateObject )
+                                    {
+                                        materialStateObject->removeStateListener(
+                                            m_materialStateListener );
+                                    }
+
+                                    currentMaterial->removeObjectListener(
+                                        m_materialSharedObjectListener );
+                                }
+
+                                auto pMaterial = fb::static_pointer_cast<CMaterialOgreNext>( material );
+                                if( pMaterial )
+                                {
+                                    auto datablock = pMaterial->getHlmsDatablock();
+                                    if( datablock )
+                                    {
+                                        subItem->setDatablock( datablock );
+                                    }
+                                }
+
+                                m_materials[index] = material;
+
+                                auto materialStateObject = material->getStateContext();
                                 if( materialStateObject )
                                 {
-                                    materialStateObject->removeStateListener( m_materialStateListener );
+                                    materialStateObject->addStateListener( m_materialStateListener );
                                 }
 
-                                currentMaterial->removeObjectListener( m_materialSharedObjectListener );
+                                material->addObjectListener( m_materialSharedObjectListener );
                             }
-
-                            auto pMaterial = fb::static_pointer_cast<CMaterialOgreNext>( material );
-                            if( pMaterial )
-                            {
-                                auto datablock = pMaterial->getHlmsDatablock();
-                                if( datablock )
-                                {
-                                    subItem->setDatablock( datablock );
-                                }
-                            }
-
-                            m_materials[index] = material;
-
-                            auto materialStateObject = material->getStateContext();
-                            if( materialStateObject )
-                            {
-                                materialStateObject->addStateListener( m_materialStateListener );
-                            }
-
-                            material->addObjectListener( m_materialSharedObjectListener );
                         }
                     }
                 }
@@ -455,6 +464,12 @@ namespace fb::render
             auto meshName = getMeshName();
             if( !StringUtil::isNullOrEmpty( meshName ) )
             {
+                if( StringUtil::contains( meshName, "LOD0_5460296883734790039.fbmeshbin" ) )
+                {
+                    int i = 0;
+                    i = 0;
+                }
+
                 auto mesh = createMesh( meshName );
                 if( !mesh )
                 {
@@ -634,17 +649,20 @@ namespace fb::render
                 {
                     if( auto item = getItem() )
                     {
-                        FB_ASSERT( i < item->getNumSubItems() );
-                        auto subItem = item->getSubItem( i );
-                        if( subItem )
+                        if( i < item->getNumSubItems() )
                         {
-                            if( material )
+                            auto subItem = item->getSubItem( i );
+                            if( subItem )
                             {
-                                auto pMaterial = fb::static_pointer_cast<CMaterialOgreNext>( material );
-                                auto dataBlock = pMaterial->getHlmsDatablock();
-                                if( dataBlock )
+                                if( material )
                                 {
-                                    subItem->setDatablock( dataBlock );
+                                    auto pMaterial =
+                                        fb::static_pointer_cast<CMaterialOgreNext>( material );
+                                    auto dataBlock = pMaterial->getHlmsDatablock();
+                                    if( dataBlock )
+                                    {
+                                        subItem->setDatablock( dataBlock );
+                                    }
                                 }
                             }
                         }
@@ -748,6 +766,8 @@ namespace fb::render
     void CGraphicsMeshOgreNext::MeshStateListener::handleStateChanged( SmartPtr<IState> &state )
     {
         CStateListener::handleStateChanged( state );
+
+        state->setDirty( false );
     }
 
     void CGraphicsMeshOgreNext::MeshStateListener::handleQuery( SmartPtr<IStateQuery> &query )

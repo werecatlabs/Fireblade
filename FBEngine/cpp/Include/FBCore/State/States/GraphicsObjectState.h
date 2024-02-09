@@ -9,6 +9,11 @@ namespace fb
     class GraphicsObjectState : public BaseState
     {
     public:
+        static const u8 isAttachedFlag;
+        static const u8 receiveShadowsFlag;
+        static const u8 visibleFlag;
+        static const u8 castShadowsFlag;
+
         GraphicsObjectState();
         ~GraphicsObjectState() override;
 
@@ -40,8 +45,8 @@ namespace fb
         bool isAttached() const;
         void setAttached( bool attached );
 
-        u32 getRenderTechnique() const;
-        void setRenderTechnique( u32 val );
+        hash_type getRenderTechnique() const;
+        void setRenderTechnique( hash_type renderTechnique );
 
         u32 getZorder() const;
 
@@ -52,7 +57,7 @@ namespace fb
     protected:
         AABB3F m_localAABB;
 
-        u32 m_renderTechnique = 0;
+        hash_type m_renderTechnique = 0;
         u32 m_flags = 0;
 
         u32 m_visibiltyFlags = 0;
@@ -63,7 +68,6 @@ namespace fb
         u32 m_visibilityMask = std::numeric_limits<u32>::max();
 
         bool m_isAttached = false;
-
         bool m_receiveShadows = true;
         bool m_visible = true;
         bool m_castShadows = false;

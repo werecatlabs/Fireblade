@@ -1027,9 +1027,9 @@ namespace fb
      * @return The result of scalar multiplication.
      */
     template <class S, class T>
-    Vector3<T> operator*( const S scalar, const Vector3<T> &vector )
+    Vector3<T> operator*( S scalar, const Vector3<T> &vector )
     {
-        return vector * static_cast<T>( scalar );
+        return vector * scalar;
     }
 
     /**

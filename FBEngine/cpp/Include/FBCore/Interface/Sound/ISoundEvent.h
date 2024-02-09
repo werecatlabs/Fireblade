@@ -9,6 +9,7 @@
 
 namespace fb
 {
+
     /**
      * @brief An interface for a sound event class.
      */
@@ -55,7 +56,7 @@ namespace fb
 
         /**
          * @brief Sets the volume of the sound event.
-         * @param val The new volume of the sound event.
+         * @param volume The new volume of the sound event.
          */
         virtual void setVolume( f32 volume ) = 0;
 
@@ -74,6 +75,8 @@ namespace fb
          */
         virtual void set3DAttributes( Vector3<real_Num> pos, Vector3<real_Num> vel,
                                       Quaternion<real_Num> ori ) = 0;
+
+        FB_CLASS_REGISTER_DECL;
     };
 }  // end namespace fb
 

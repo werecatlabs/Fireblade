@@ -16,8 +16,8 @@ namespace fb
 
             /** Creates a new Bone as a child of this bone. */
             virtual SmartPtr<IBone> createChild(
-                u16 handle, const Vector3F &translate = Vector3F::zero(),
-                const QuaternionF &rotate = QuaternionF::identity() ) = 0;
+                u16 handle, const Vector3<real_Num> &translate = Vector3<real_Num>::zero(),
+                const Quaternion<real_Num> &rotate = Quaternion<real_Num>::identity() ) = 0;
 
             /** Sets the current position / orientation to be the 'binding pose' ie the layout in which
                 bones were originally bound to a mesh.

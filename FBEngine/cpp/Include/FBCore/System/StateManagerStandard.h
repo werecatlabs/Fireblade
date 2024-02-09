@@ -63,6 +63,8 @@ namespace fb
         /** @copydoc IStateManager::addDirty */
         void addDirty( SmartPtr<IStateContext> context, Thread::Task task ) override;
 
+        FB_CLASS_REGISTER_DECL;
+
     protected:
         u32 getNumStateQueues() const;
 

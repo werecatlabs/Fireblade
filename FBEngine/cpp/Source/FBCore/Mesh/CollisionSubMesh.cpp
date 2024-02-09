@@ -107,7 +107,7 @@ namespace fb
                 {
                     posElem->getElementData( vertexDataPtr, &elementData );
 
-                    Vector3F position;
+                    Vector3<real_Num> position;
                     position.X() = *elementData++;
                     position.Y() = *elementData++;
                     position.Z() = *elementData++;
@@ -251,7 +251,7 @@ namespace fb
         int temp_vertex_counter = 0;
         for( int i = 0; i < vertexCount; ++i )
         {
-            Vector3F vec;
+            Vector3<real_Num> vec;
             m_points[i] =
                 IceMaths::HPoint( vertices[i * 3], vertices[( i * 3 ) + 1], vertices[( i * 3 ) + 2] );
         }
@@ -276,8 +276,8 @@ namespace fb
     }
 
     //--------------------------------------------
-    auto CollisionSubMesh::rayCast( const Vector3F &origin, const Vector3F &dir, Array<float> &hits )
-        -> bool
+    auto CollisionSubMesh::rayCast( const Vector3<real_Num> &origin, const Vector3<real_Num> &dir,
+                                    Array<float> &hits ) -> bool
     {
         // IceMaths::Ray worldRay;
         // worldRay.mOrig.x = origin.x;

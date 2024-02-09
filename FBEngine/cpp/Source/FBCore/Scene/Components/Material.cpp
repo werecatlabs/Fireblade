@@ -358,7 +358,8 @@ namespace fb::scene
         auto material = getMaterial();
         if( !material )
         {
-            auto newMaterial = resourceDatabase->createOrRetrieveByType<render::IMaterial>( getMaterialPath() );
+            auto newMaterial =
+                resourceDatabase->createOrRetrieveByType<render::IMaterial>( getMaterialPath() );
             setMaterial( newMaterial.first );
         }
         else

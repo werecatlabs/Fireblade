@@ -14,6 +14,9 @@
 
 namespace fb
 {
+
+    FB_CLASS_REGISTER_DERIVED( fb, StateManagerStandard, IStateManager );
+
     StateManagerStandard::StateManagerStandard()
     {
         if( auto handle = getHandle() )

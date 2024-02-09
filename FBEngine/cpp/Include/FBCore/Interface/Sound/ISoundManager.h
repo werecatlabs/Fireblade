@@ -41,7 +41,7 @@ namespace fb
          * @return A shared pointer to the sound listener.
          */
         virtual SmartPtr<ISoundListener3> addListener3(
-            const String &name, const Vector3F &position = Vector3F::zero() ) = 0;
+            const String &name, const Vector3<real_Num> &position = Vector3<real_Num>::zero() ) = 0;
 
         /**
          * @brief Finds a sound listener by name.

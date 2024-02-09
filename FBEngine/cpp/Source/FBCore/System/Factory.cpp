@@ -1,7 +1,7 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/Factory.h>
 #include <FBCore/Memory/Memory.h>
-#include "FBCore/Memory/MemoryTracker.h"
+#include <FBCore/Memory/MemoryTracker.h>
 
 #if FB_ENABLE_TRACE
 #    include <boost/stacktrace.hpp>
@@ -177,11 +177,6 @@ namespace fb
     }
 
     Factory::Listener::~Listener() = default;
-
-    void Factory::Listener::loadingStateChanged( ISharedObject *sharedObject, LoadingState oldState,
-                                                 LoadingState newState )
-    {
-    }
 
     auto Factory::Listener::destroy( void *ptr ) -> bool
     {

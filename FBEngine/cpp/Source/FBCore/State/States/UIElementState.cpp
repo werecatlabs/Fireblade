@@ -13,13 +13,13 @@ namespace fb
 
     UIElementState::~UIElementState() = default;
 
-    auto UIElementState::getPosition() const -> Vector2F
+    auto UIElementState::getPosition() const -> Vector2<real_Num>
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_position;
     }
 
-    void UIElementState::setPosition( const Vector2F &position )
+    void UIElementState::setPosition( const Vector2<real_Num> &position )
     {
         if( getPosition() != position )
         {
@@ -29,13 +29,13 @@ namespace fb
         }
     }
 
-    auto UIElementState::getSize() const -> Vector2F
+    auto UIElementState::getSize() const -> Vector2<real_Num>
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_size;
     }
 
-    void UIElementState::setSize( const Vector2F &size )
+    void UIElementState::setSize( const Vector2<real_Num> &size )
     {
         if( getSize() != size )
         {
@@ -128,7 +128,7 @@ namespace fb
     {
         SpinRWMutex::ScopedLock lock( m_mutex, true );
 
-        if( m_colour != colour )
+        //if( m_colour != colour )
         {
             m_colour = colour;
             setDirty( true );

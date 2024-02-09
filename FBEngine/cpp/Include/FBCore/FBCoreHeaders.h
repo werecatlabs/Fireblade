@@ -513,7 +513,9 @@
 #include <FBCore/Scene/Components/UI/VerticalLayout.h>
 
 #include <FBCore/Scene/Directors/GraphicsSettingsDirector.h>
+#include <FBCore/Scene/Directors/MaterialResourceDirector.h>
 #include <FBCore/Scene/Directors/MeshResourceDirector.h>
+#include <FBCore/Scene/Directors/SceneLightingDirector.h>
 #include <FBCore/Scene/Directors/SoundResourceDirector.h>
 #include <FBCore/Scene/Directors/TextureResourceDirector.h>
 
@@ -576,6 +578,7 @@
 
 #include <FBCore/State/States/ApplicationState.h>
 #include <FBCore/State/States/InputState.h>
+#include <FBCore/State/States/BoundingBoxState.h>
 #include <FBCore/State/States/BoxShapeState.h>
 #include <FBCore/State/States/CameraState.h>
 #include <FBCore/State/States/CompositorState.h>
@@ -588,7 +591,7 @@
 #include <FBCore/State/States/PhysicsSceneState.h>
 #include <FBCore/State/States/RenderTextureState.h>
 #include <FBCore/State/States/SceneNodeState.h>
-#include <FBCore/State/States/SceneManagerState.h>
+#include <FBCore/State/States/GraphicsSceneState.h>
 #include <FBCore/State/States/TerrainState.h>
 #include <FBCore/State/States/TextureState.h>
 #include <FBCore/State/States/UIElementState.h>

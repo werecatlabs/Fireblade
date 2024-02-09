@@ -24,29 +24,29 @@ namespace fb
 
         protected:
             /** Calculates the position of an element. */
-            Vector2F calculateElementPosition( const Vector2F &parentPosition,
-                                               const Vector2F &parentSize, const Vector2F &position,
-                                               const Vector2F &size, const Vector2F &anchor,
-                                               const Vector2F &anchorMin, const Vector2F &anchorMax );
+            Vector2<real_Num> calculateElementPosition( const Vector2<real_Num> &parentPosition,
+                                               const Vector2<real_Num> &parentSize, const Vector2<real_Num> &position,
+                                               const Vector2<real_Num> &size, const Vector2<real_Num> &anchor,
+                                               const Vector2<real_Num> &anchorMin, const Vector2<real_Num> &anchorMax );
 
             /** Calculates the size of an element. */
-            void calculateElementPositionAndSize( const Vector2F &parentPosition,
-                                                  const Vector2F &parentSize, const Vector2F &position,
-                                                  const Vector2F &size, const Vector2F &anchor,
-                                                  const Vector2F &anchorMin, const Vector2F &anchorMax,
-                                                  Vector2F &elementPosition, Vector2F &elementSize );
+            void calculateElementPositionAndSize( const Vector2<real_Num> &parentPosition,
+                                                  const Vector2<real_Num> &parentSize, const Vector2<real_Num> &position,
+                                                  const Vector2<real_Num> &size, const Vector2<real_Num> &anchor,
+                                                  const Vector2<real_Num> &anchorMin, const Vector2<real_Num> &anchorMax,
+                                                  Vector2<real_Num> &elementPosition, Vector2<real_Num> &elementSize );
 
             /** Calculates the size of an element. */
-            void calculateElementPositionAndSize( const Vector2F &position, const Vector2F &size,
-                                                  const Vector2F &anchor, const Vector2F &anchorMin,
-                                                  const Vector2F &anchorMax, Vector2F &elementPosition,
-                                                  Vector2F &elementSize );
+            void calculateElementPositionAndSize( const Vector2<real_Num> &position, const Vector2<real_Num> &size,
+                                                  const Vector2<real_Num> &anchor, const Vector2<real_Num> &anchorMin,
+                                                  const Vector2<real_Num> &anchorMax, Vector2<real_Num> &elementPosition,
+                                                  Vector2<real_Num> &elementSize );
 
             /** Calculates the size of an element. */
-            void calculateElementPositionAndSize( const Vector2F &parentPosition,
-                                                  const Vector2F &parentSize, const Vector2F &position,
-                                                  const Vector2F &size, const Vector2F &anchor,
-                                                  const Vector2F &anchorMin, const Vector2F &anchorMax,
+            void calculateElementPositionAndSize( const Vector2<real_Num> &parentPosition,
+                                                  const Vector2<real_Num> &parentSize, const Vector2<real_Num> &position,
+                                                  const Vector2<real_Num> &size, const Vector2<real_Num> &anchor,
+                                                  const Vector2<real_Num> &anchorMin, const Vector2<real_Num> &anchorMax,
                                                   f32 &left, f32 &right, f32 &top, f32 &bottom );
         };
     } // namespace scene

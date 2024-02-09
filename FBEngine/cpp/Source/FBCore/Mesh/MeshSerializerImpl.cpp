@@ -1434,8 +1434,8 @@ namespace fb
         // float maxx, maxy, maxz
         readFloats( stream, fMax, 3 );
 
-        auto min = Vector3F( fMin[0], fMin[1], fMin[2] );
-        auto max = Vector3F( fMax[0], fMax[1], fMax[2] );
+        auto min = Vector3<real_Num>( fMin[0], fMin[1], fMin[2] );
+        auto max = Vector3<real_Num>( fMax[0], fMax[1], fMax[2] );
 
         auto box = AABB3( min, max );
         pMesh->setAABB( box );

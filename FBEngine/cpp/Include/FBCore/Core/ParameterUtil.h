@@ -16,7 +16,7 @@ namespace fb
         static Vector2F getVector2( const Parameters &params );
 
         /** Creates a 3d vector from the properties in the parameter list. */
-        static Vector3F getVector3( const Parameters &params );
+        static Vector3<real_Num> getVector3( const Parameters &params );
 
         /** Creates a 2d aabb from the properties in the parameter list. */
         static AABB2F getAABB2( const Parameters &params );

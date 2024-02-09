@@ -36,6 +36,7 @@ namespace fb
                 SimpleButton,
                 Slider,
                 ToggleButton,
+                ToggleWithText,
                 Terrain,
                 Text,
                 Vehicle,

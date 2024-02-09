@@ -10,35 +10,35 @@ namespace fb::render
 
     Camera::~Camera() = default;
 
-    auto Camera::getPosition() const -> Vector3F
+    auto Camera::getPosition() const -> Vector3<real_Num>
     {
         return {};
     }
 
-    void Camera::setPosition( const Vector3F &position )
+    void Camera::setPosition( const Vector3<real_Num> &position )
     {
     }
 
-    auto Camera::getOrientation() const -> QuaternionF
-    {
-        return {};
-    }
-
-    void Camera::setOrientation( const QuaternionF &orientation )
-    {
-    }
-
-    auto Camera::getDirection() const -> Vector3F
+    auto Camera::getOrientation() const -> Quaternion<real_Num>
     {
         return {};
     }
 
-    auto Camera::getUp() const -> Vector3F
+    void Camera::setOrientation( const Quaternion<real_Num> &orientation )
+    {
+    }
+
+    auto Camera::getDirection() const -> Vector3<real_Num>
     {
         return {};
     }
 
-    auto Camera::getRight() const -> Vector3F
+    auto Camera::getUp() const -> Vector3<real_Num>
+    {
+        return {};
+    }
+
+    auto Camera::getRight() const -> Vector3<real_Num>
     {
         return {};
     }
@@ -52,12 +52,12 @@ namespace fb::render
         return 0.0f;
     }
 
-    auto Camera::getRay( f32 screenx, f32 screeny ) const -> Ray3F
+    auto Camera::getRay( f32 screenx, f32 screeny ) const -> Ray3<real_Num>
     {
         return {};
     }
 
-    auto Camera::getScreenPosition( const Vector3F &position ) -> Vector2F
+    auto Camera::getScreenPosition( const Vector3<real_Num> &position ) -> Vector2<real_Num>
     {
         return {};
     }
@@ -172,7 +172,7 @@ namespace fb::render
         return false;
     }
 
-    auto Camera::isVisible( const Vector3F &vert ) const -> bool
+    auto Camera::isVisible( const Vector3<real_Num> &vert ) const -> bool
     {
         return false;
     }
@@ -182,13 +182,13 @@ namespace fb::render
         return false;
     }
 
-    auto Camera::getDirection( const Vector2F &screenPosition, Vector3F &worldPosition ) const
-        -> Vector3F
+    auto Camera::getDirection( const Vector2<real_Num> &screenPosition,
+                               Vector3<real_Num> &worldPosition ) const -> Vector3<real_Num>
     {
         return {};
     }
 
-    auto Camera::getDirection( const Vector2F &screenPosition ) const -> Vector3F
+    auto Camera::getDirection( const Vector2<real_Num> &screenPosition ) const -> Vector3<real_Num>
     {
         return {};
     }

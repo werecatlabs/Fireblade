@@ -123,5 +123,3 @@ namespace fb::scene
         return m_particleSystem;
     }
 }  // namespace fb::scene
-
-

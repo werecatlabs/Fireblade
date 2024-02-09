@@ -51,8 +51,8 @@ namespace fb::scene
 
                     // Add a transform component to the cell
                     auto transform = cell->addComponent<LayoutTransform>();
-                    transform->setSize( Vector2F( cellWidth, cellHeight ) );
-                    transform->setPosition( Vector2F( col * cellWidth, row * cellHeight ) );
+                    transform->setSize( Vector2<real_Num>( cellWidth, cellHeight ) );
+                    transform->setPosition( Vector2<real_Num>( col * cellWidth, row * cellHeight ) );
 
                     dirty = true;
                 }

@@ -727,8 +727,7 @@ namespace fb::scene
 
     void SceneManager::play()
     {
-        auto scene = fb::static_pointer_cast<Scene>( getCurrentScene() );
-        if( scene )
+        if( auto scene = getCurrentScene() )
         {
             scene->setState( scene::IScene::State::Play );
         }
@@ -736,8 +735,7 @@ namespace fb::scene
 
     void SceneManager::edit()
     {
-        auto scene = fb::static_pointer_cast<Scene>( getCurrentScene() );
-        if( scene )
+        if( auto scene = getCurrentScene() )
         {
             scene->setState( scene::IScene::State::Edit );
         }
@@ -745,8 +743,7 @@ namespace fb::scene
 
     void SceneManager::stop()
     {
-        auto scene = fb::static_pointer_cast<Scene>( getCurrentScene() );
-        if( scene )
+        if( auto scene = getCurrentScene() )
         {
             scene->setState( scene::IScene::State::None );
         }

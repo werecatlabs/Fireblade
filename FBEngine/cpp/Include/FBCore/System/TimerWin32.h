@@ -53,7 +53,7 @@ namespace fb
         u32 getTimeIntervalMilliseconds() const override;
 
         time_interval getTime() const override;
-        time_interval getTimeInterval() const override;
+        time_interval getDeltaTime() const override;
 
         void setFrameSmoothingPeriod( u32 milliSeconds ) override;
         u32 getFrameSmoothingPeriod() const override;

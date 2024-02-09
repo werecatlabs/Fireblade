@@ -43,7 +43,7 @@ namespace fb
                 ADD_SLIDER,
                 ADD_TEXT,
                 ADD_TOGGLE_BUTTON,
-
+                ADD_TOGGLE_WITH_TEXT,
 
                 SCENE_REMOVE_ACTOR
             };

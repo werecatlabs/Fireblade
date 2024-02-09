@@ -37,12 +37,12 @@ namespace fb
         setDirty( true );
     }
 
-    auto LightState::getDirection() const -> Vector3F
+    auto LightState::getDirection() const -> Vector3<real_Num>
     {
         return m_direction;
     }
 
-    void LightState::setDirection( const Vector3F &direction )
+    void LightState::setDirection( const Vector3<real_Num> &direction )
     {
         m_direction = direction;
     }

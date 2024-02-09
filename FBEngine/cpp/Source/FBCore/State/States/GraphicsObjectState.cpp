@@ -6,6 +6,11 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, GraphicsObjectState, BaseState );
 
+    const u8 GraphicsObjectState::isAttachedFlag = (1 << 1);
+    const u8 GraphicsObjectState::receiveShadowsFlag = (1 << 2);
+    const u8 GraphicsObjectState::visibleFlag = (1 << 3);
+    const u8 GraphicsObjectState::castShadowsFlag = (1 << 4);
+
     GraphicsObjectState::GraphicsObjectState() = default;
 
     GraphicsObjectState::~GraphicsObjectState() = default;
@@ -122,16 +127,16 @@ namespace fb
         setDirty( true );
     }
 
-    auto GraphicsObjectState::getRenderTechnique() const -> u32
+    auto GraphicsObjectState::getRenderTechnique() const -> hash_type
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_renderTechnique;
     }
 
-    void GraphicsObjectState::setRenderTechnique( u32 val )
+    void GraphicsObjectState::setRenderTechnique( hash_type renderTechnique )
     {
         SpinRWMutex::ScopedLock lock( m_mutex, true );
-        m_renderTechnique = val;
+        m_renderTechnique = renderTechnique;
         setDirty( true );
     }
 

@@ -44,9 +44,9 @@ namespace fb
 
             String getTemplateName() const override;
 
-            void setScale( const Vector3F &scale ) override;
+            void setScale( const Vector3<real_Num> &scale ) override;
 
-            Vector3F getScale() const override;
+            Vector3<real_Num> getScale() const override;
 
             u32 getState() const override;
 

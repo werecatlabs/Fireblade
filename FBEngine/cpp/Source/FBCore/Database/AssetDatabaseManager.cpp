@@ -10,10 +10,9 @@
 #include <FBCore/Interface/Scene/IActor.h>
 #include <FBCore/Interface/Scene/IComponent.h>
 #include <FBCore/Scene/Director.h>
+#include <FBCore/Scene/Directors/ResourceDirector.h>
 #include <FBCore/Core/FileInfo.h>
 #include <FBCore/Core/LogManager.h>
-
-#include "FBCore/Scene/Directors/ResourceDirector.h"
 
 namespace fb
 {
@@ -181,11 +180,17 @@ namespace fb
             {
                 auto resource = fb::static_pointer_cast<IResource>( object );
                 auto fileSystemId = resource->getFileSystemId();
-
-                FileInfo fileInfo;
-                if( fileSystem->findFileInfo( fileSystemId, fileInfo ) )
+                if( fileSystemId != 0 )
                 {
-                    filePath = fileInfo.filePath.c_str();
+                    FileInfo fileInfo;
+                    if( fileSystem->findFileInfo( fileSystemId, fileInfo ) )
+                    {
+                        filePath = fileInfo.filePath.c_str();
+                    }
+                }
+                else
+                {
+                    filePath = resource->getFilePath();
                 }
             }
             else
@@ -243,11 +248,17 @@ namespace fb
         {
             auto resource = fb::static_pointer_cast<IResource>( object );
             auto fileSystemId = resource->getFileSystemId();
-
-            FileInfo fileInfo;
-            if( fileSystem->findFileInfo( fileSystemId, fileInfo ) )
+            if( fileSystemId != 0 )
             {
-                filePath = fileInfo.filePath.c_str();
+                FileInfo fileInfo;
+                if( fileSystem->findFileInfo( fileSystemId, fileInfo ) )
+                {
+                    filePath = fileInfo.filePath.c_str();
+                }
+            }
+            else
+            {
+                filePath = resource->getFilePath();
             }
         }
         else

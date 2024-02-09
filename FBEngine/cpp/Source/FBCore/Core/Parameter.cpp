@@ -34,13 +34,13 @@ namespace fb
         array[1].data.fData = data.y;
     }
 
-    auto Parameter::getVector3() const -> Vector3F
+    auto Parameter::getVector3() const -> Vector3<real_Num>
     {
         FB_ASSERT( array.size() >= 3 );
         return { array[0].data.fData, array[1].data.fData, array[2].data.fData };
     }
 
-    void Parameter::setVector3( const Vector3F &data )
+    void Parameter::setVector3( const Vector3<real_Num> &data )
     {
         array.resize( 3 );
         array[0].data.fData = data.x;
@@ -48,13 +48,13 @@ namespace fb
         array[2].data.fData = data.z;
     }
 
-    auto Parameter::getQuaternion() const -> QuaternionF
+    auto Parameter::getQuaternion() const -> Quaternion<real_Num>
     {
         FB_ASSERT( array.size() >= 4 );
         return { array[0].data.fData, array[1].data.fData, array[2].data.fData, array[3].data.fData };
     }
 
-    void Parameter::setQuaternion( const QuaternionF &data )
+    void Parameter::setQuaternion( const Quaternion<real_Num> &data )
     {
         array.resize( 4 );
 

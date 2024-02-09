@@ -27,7 +27,7 @@ namespace fb
             virtual void setTexture( u32 index, SmartPtr<ITexture> val ) = 0;
             virtual void addTexture( SmartPtr<ITexture> val ) = 0;
 
-            virtual void setScale( const Vector3F &scale ) = 0;
+            virtual void setScale( const Vector3<real_Num> &scale ) = 0;
 
             virtual SmartPtr<IAnimator> &getAnimator() = 0;
             virtual const SmartPtr<IAnimator> &getAnimator() const = 0;

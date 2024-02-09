@@ -55,12 +55,12 @@ namespace fb
     {
         if( m_subMeshes.size() > 0 )
         {
-            m_aabb.setMinimum( Vector3F( 1e10, 1e10, 1e10 ) );
-            m_aabb.setMaximum( Vector3F( -1e10, -1e10, -1e10 ) );
+            m_aabb.setMinimum( Vector3<real_Num>( 1e10, 1e10, 1e10 ) );
+            m_aabb.setMaximum( Vector3<real_Num>( -1e10, -1e10, -1e10 ) );
         }
         else
         {
-            m_aabb.reset( Vector3F::zero() );
+            m_aabb.reset( Vector3<real_Num>::zero() );
         }
 
         for( auto &subMesh : m_subMeshes )
@@ -75,12 +75,12 @@ namespace fb
         }
     }
 
-    auto Mesh::getAABB() const -> AABB3F
+    auto Mesh::getAABB() const -> AABB3<real_Num>
     {
         return m_aabb;
     }
 
-    void Mesh::setAABB( const AABB3F &aabb )
+    void Mesh::setAABB( const AABB3<real_Num> &aabb )
     {
         m_aabb = aabb;
     }

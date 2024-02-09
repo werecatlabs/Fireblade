@@ -1,8 +1,7 @@
 #ifndef TimerCPU_h__
 #define TimerCPU_h__
 
-#include <FBCore/Interface/System/ITimer.h>
-
+#include <FBCore/System/Timer.h>
 #include <deque>
 
 #ifdef FB_USE_BOOST
@@ -14,7 +13,7 @@ namespace fb
 
     /** CPU timer implementation.
      */
-    class TimerCPU : public ITimer
+    class TimerCPU : public Timer
     {
     public:
         TimerCPU();
@@ -29,7 +28,7 @@ namespace fb
         u32 getTimeIntervalMilliseconds() const override;
 
         time_interval getTime() const override;
-        time_interval getTimeInterval() const override;
+        time_interval getDeltaTime() const override;
 
         void setFrameSmoothingPeriod( u32 milliSeconds ) override;
         u32 getFrameSmoothingPeriod() const override;

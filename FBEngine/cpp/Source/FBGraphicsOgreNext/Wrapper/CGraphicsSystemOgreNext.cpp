@@ -1335,25 +1335,11 @@ namespace fb::render
     void CGraphicsSystemOgreNext::loadObject( SmartPtr<ISharedObject> graphicsObject, bool forceQueue )
     {
         auto applicationManager = core::ApplicationManager::instance();
-        auto taskManager = applicationManager->getTaskManager();
-        auto renderTask = taskManager->getTask( Thread::Task::Render );
-
-        if( forceQueue || renderTask->isExecuting() )
+        if( auto taskManager = applicationManager->getTaskManager() )
         {
-            const auto &graphicsObjectLoadingState = graphicsObject->getLoadingState();
-            if( !( graphicsObjectLoadingState == LoadingState::Loading ||
-                   graphicsObjectLoadingState == LoadingState::Loaded ) )
-            {
-                m_loadQueue.push( graphicsObject );
-            }
-        }
-        else
-        {
-            auto stateTask = getStateTask();
-            auto renderTask = getRenderTask();
-            auto task = Thread::getCurrentTask();
+            auto renderTask = taskManager->getTask( Thread::Task::Render );
 
-            if( task != stateTask )
+            if( forceQueue || ( renderTask && renderTask->isExecuting() ) )
             {
                 const auto &graphicsObjectLoadingState = graphicsObject->getLoadingState();
                 if( !( graphicsObjectLoadingState == LoadingState::Loading ||
@@ -1364,12 +1350,36 @@ namespace fb::render
             }
             else
             {
-                RecursiveMutex::ScopedLock lock( m_mutex );
+                auto stateTask = getStateTask();
+                auto task = Thread::getCurrentTask();
 
-                if( !graphicsObject->isLoaded() )
+                if( task != stateTask )
                 {
-                    graphicsObject->load( nullptr );
+                    const auto &graphicsObjectLoadingState = graphicsObject->getLoadingState();
+                    if( !( graphicsObjectLoadingState == LoadingState::Loading ||
+                           graphicsObjectLoadingState == LoadingState::Loaded ) )
+                    {
+                        m_loadQueue.push( graphicsObject );
+                    }
                 }
+                else
+                {
+                    RecursiveMutex::ScopedLock lock( m_mutex );
+
+                    if( !graphicsObject->isLoaded() )
+                    {
+                        graphicsObject->load( nullptr );
+                    }
+                }
+            }
+        }
+        else
+        {
+            RecursiveMutex::ScopedLock lock( m_mutex );
+
+            if( !graphicsObject->isLoaded() )
+            {
+                graphicsObject->load( nullptr );
             }
         }
     }

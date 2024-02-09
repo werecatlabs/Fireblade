@@ -6,11 +6,11 @@
 
 namespace fb
 {
-    class SceneManagerState : public BaseState
+    class GraphicsSceneState : public BaseState
     {
     public:
-        SceneManagerState();
-        ~SceneManagerState() override;
+        GraphicsSceneState();
+        ~GraphicsSceneState() override;
 
         String getSkyboxMaterialName() const;
         void setSkyboxMaterialName( const String &skyboxMaterialName );

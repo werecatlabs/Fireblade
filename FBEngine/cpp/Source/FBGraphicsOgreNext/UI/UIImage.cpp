@@ -1,18 +1,18 @@
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPCH.h>
 #include <FBGraphicsOgreNext/UI/UIImage.h>
 #include "FBGraphicsOgreNext/UI/UIManager.h"
+#include "FBGraphicsOgreNext/Wrapper/CTextureOgreNext.h"
+#include "FBGraphicsOgreNext/Wrapper/CMaterialOgreNext.h"
+#include <FBCore/FBCore.h>
 #include "ColibriGui/ColibriCustomShape.h"
 #include "ColibriGui/ColibriWindow.h"
 #include "ColibriGui/ColibriLabel.h"
 #include "ColibriGui/ColibriManager.h"
-#include "Wrapper/CMaterialOgreNext.h"
 #include "ColibriGui/Ogre/OgreHlmsColibri.h"
 #include "ColibriGui/Ogre/OgreHlmsColibriDatablock.h"
 #include "OgreHlmsManager.h"
 #include "OgreHlms.h"
 #include "OgreRoot.h"
-#include "Wrapper/CTextureOgreNext.h"
-#include <FBCore/FBCore.h>
 
 namespace fb
 {
@@ -65,6 +65,11 @@ namespace fb
 
                 setWidget( m_renderable );
 
+                if( auto stateContext = getStateContext() )
+                {
+                    stateContext->setDirty( true );
+                }
+
                 setLoadingState( LoadingState::Loaded );
             }
             catch( std::exception &e )
@@ -100,28 +105,31 @@ namespace fb
 
         void UIImage::createDatablock()
         {
-            auto root = Ogre::Root::getSingletonPtr();
+            if( !m_datablock )
+            {
+                auto root = Ogre::Root::getSingletonPtr();
 
-            Ogre::HlmsManager *hlmsManager = root->getHlmsManager();
-            Ogre::Hlms *hlms = hlmsManager->getHlms( Ogre::HLMS_USER0 );
-            COLIBRI_ASSERT_HIGH( dynamic_cast<Ogre::HlmsColibri *>( hlms ) );
-            auto hlmsColibri = static_cast<Ogre::HlmsColibri *>( hlms );
+                Ogre::HlmsManager *hlmsManager = root->getHlmsManager();
+                Ogre::Hlms *hlms = hlmsManager->getHlms( Ogre::HLMS_USER0 );
+                COLIBRI_ASSERT_HIGH( dynamic_cast<Ogre::HlmsColibri *>( hlms ) );
+                auto hlmsColibri = static_cast<Ogre::HlmsColibri *>( hlms );
 
-            Ogre::HlmsMacroblock macroblock;
-            Ogre::HlmsBlendblock blendblock;
+                Ogre::HlmsMacroblock macroblock;
+                Ogre::HlmsBlendblock blendblock;
 
-            macroblock.mDepthCheck = false;
-            macroblock.mDepthWrite = false;
-            blendblock.setBlendType( Ogre::SBT_TRANSPARENT_ALPHA );
+                macroblock.mDepthCheck = false;
+                macroblock.mDepthWrite = false;
+                blendblock.setBlendType( Ogre::SBT_TRANSPARENT_ALPHA );
 
-            m_datablockName = StringUtil::getUUID();
-            auto datablock = hlms->createDatablock( m_datablockName, m_datablockName, macroblock,
-                                                    blendblock, Ogre::HlmsParamVec() );
+                m_datablockName = StringUtil::getUUID();
+                auto datablock = hlms->createDatablock( m_datablockName, m_datablockName, macroblock,
+                                                        blendblock, Ogre::HlmsParamVec() );
 
-            m_datablock = (Ogre::HlmsColibriDatablock *)datablock;
+                m_datablock = (Ogre::HlmsColibriDatablock *)datablock;
 
-            m_datablock->setUseColour( true );
-            m_datablock->setColour( Ogre::ColourValue::White );
+                m_datablock->setUseColour( true );
+                m_datablock->setColour( Ogre::ColourValue::White );
+            }
         }
 
         void UIImage::setTexture( SmartPtr<render::ITexture> texture )
@@ -156,6 +164,12 @@ namespace fb
 
         String UIImage::getMaterialName() const
         {
+            if( m_material )
+            {
+                auto pMaterial = fb::static_pointer_cast<render::CMaterialOgreNext>( m_material );
+                return pMaterial->getDatablockName();
+            }
+
             return "";
         }
 
@@ -189,7 +203,7 @@ namespace fb
 
         SmartPtr<render::IMaterial> UIImage::getMaterial() const
         {
-            return nullptr;
+            return m_material;
         }
 
         void UIImage::handleStateChanged( SmartPtr<IState> &state )
@@ -198,6 +212,7 @@ namespace fb
             {
                 UIElement<IUIImage>::handleStateChanged( state );
 
+                createDatablock();
                 updateMaterial();
             }
         }
@@ -303,7 +318,9 @@ namespace fb
 
             if( m_datablock )
             {
-                //m_renderable->setSkin( "EmptyBg" );
+                auto colour = getColour();
+                auto colourValue = Ogre::ColourValue( colour.r, colour.g, colour.b, colour.a );
+                m_datablock->setColour( colourValue );
 
                 auto ogreTexture = fb::static_pointer_cast<render::CTextureOgreNext>( getTexture() );
                 if( ogreTexture )
@@ -316,7 +333,7 @@ namespace fb
                     auto pOgreTexture = ogreTexture->getTexture();
                     m_datablock->setTexture( 0, pOgreTexture, &hlmsSamplerblock );
 
-                    m_renderable->setDatablock( m_datablock );
+                    //m_renderable->setDatablock( m_datablock );
                     //m_renderable->setSkin( m_datablockName );
 
                     //m_renderable->setSizeAfterClipping( Ogre::Vector2::UNIT_SCALE * 512 );

@@ -23,12 +23,6 @@ namespace fb
             /** @copydoc UIComponent::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
-            /** Gets the toggle. */
-            SmartPtr<ui::IUIToggle> getToggle() const;
-
-            /** Sets the toggle. */
-            void setToggle( SmartPtr<ui::IUIToggle> toggle );
-
             /** @copydoc UIComponent::getProperties
              */
             SmartPtr<Properties> getProperties() const override;
@@ -41,30 +35,39 @@ namespace fb
 
             void setToggled( bool toggled );
 
+            void updateColour();
+
             SmartPtr<LayoutTransform> getToggleTransform() const;
 
             void setToggleTransform( SmartPtr<LayoutTransform> toggleTransform );
 
             void updateTransform() override;
 
+            ColourF getToggledColour() const;
+
+            void setToggledColour( const ColourF &toggledColour );
+
+            ColourF getUntoggledColour() const;
+
+            void setUntoggledColour( const ColourF &untoggledColour );
+
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            /** @copydoc UIComponent::createUI */
-            void createUI() override;
-
             Parameter handleEvent( IEvent::Type eventType, hash_type eventValue,
                                    const Array<Parameter> &arguments, SmartPtr<ISharedObject> sender,
                                    SmartPtr<ISharedObject> object, SmartPtr<IEvent> event ) override;
 
-            // The toggle ui object.
-            SmartPtr<ui::IUIToggle> m_toggle;
+            auto handleComponentEvent( u32 state, IFSM::Event eventType ) -> IFSM::ReturnType;
 
             SmartPtr<LayoutTransform> m_toggleTransform;
 
+            ColourF m_toggledColour = ColourF::Green;
+            ColourF m_untoggledColour = ColourF::White;
+
             bool m_isToggled = true;
         };
-    }  // namespace scene
-}  // end namespace fb
+    } // namespace scene
+}     // end namespace fb
 
 #endif  // ToggleComponent_h__

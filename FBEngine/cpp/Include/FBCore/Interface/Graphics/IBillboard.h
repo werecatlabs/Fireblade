@@ -21,22 +21,22 @@ namespace fb
             ~IBillboard() override = default;
 
             /** Sets the position of the billboard. */
-            virtual void setPosition( const Vector3F &position ) = 0;
+            virtual void setPosition( const Vector3<real_Num> &position ) = 0;
 
             /** Gets the position of the billboard. */
-            virtual Vector3F getPosition() const = 0;
+            virtual Vector3<real_Num> getPosition() const = 0;
 
             /** Sets the orientation of the billboard. */
-            virtual void setOrientation( const QuaternionF &orientation ) = 0;
+            virtual void setOrientation( const Quaternion<real_Num> &orientation ) = 0;
 
             /** Gets the orientation of the billboard. */
-            virtual QuaternionF getOrientation() const = 0;
+            virtual Quaternion<real_Num> getOrientation() const = 0;
 
             /** Sets the dimensions of the billboard. */
-            virtual void setScale( const Vector3F &dimensions ) = 0;
+            virtual void setScale( const Vector3<real_Num> &dimensions ) = 0;
 
             /** Gets the dimensions of the billboard. */
-            virtual Vector3F getScale() const = 0;
+            virtual Vector3<real_Num> getScale() const = 0;
 
             /** Gets the transformation cached for the render system. */
             virtual void *_getRenderSystemTransform() const = 0;

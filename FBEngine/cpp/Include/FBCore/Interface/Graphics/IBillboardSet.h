@@ -21,7 +21,7 @@ namespace fb
 
             /** Create a billboard that belongs to this set. */
             virtual SmartPtr<IBillboard> createBillboard(
-                const Vector3F &position = Vector3F::zero() ) = 0;
+                const Vector3<real_Num> &position = Vector3<real_Num>::zero() ) = 0;
 
             /** Remove a billboard thats part of this set. */
             virtual bool removeBillboard( SmartPtr<IBillboard> billboard ) = 0;
@@ -42,7 +42,7 @@ namespace fb
             virtual void setBounds( const AABB3F &box, f32 radius ) = 0;
 
             /** Sets the default dimensions of the billboards in this set. */
-            virtual void setDefaultDimensions( const Vector3F &dimension ) = 0;
+            virtual void setDefaultDimensions( const Vector3<real_Num> &dimension ) = 0;
 
             /** Sets the material name. */
             virtual void setMaterialName( const String &materialName, s32 index = -1 ) = 0;

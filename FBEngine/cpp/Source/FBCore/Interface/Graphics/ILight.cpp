@@ -12,4 +12,6 @@ namespace fb::render
     const hash_type ILight::DIFFUSE_COLOUR_HASH = StringUtil::getHash( "diffuseColour" );
     const hash_type ILight::SPECULAR_COLOUR_HASH = StringUtil::getHash( "specularColour" );
 
+    ILight::~ILight() = default;
+
 }  // namespace fb::render

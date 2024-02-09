@@ -33,13 +33,15 @@ namespace fb
 
         void setPan( f32 pan ) override;
 
-        void setPosition( const Vector3F &position ) override;
+        void setPosition( const Vector3<real_Num> &position ) override;
 
-        Vector3F getPosition() const override;
+        Vector3<real_Num> getPosition() const override;
 
         void setMinMaxDistance( f32 minDistance, f32 maxDistance ) override;
 
         void getMinMaxDistance( f32 &minDistance, f32 &maxDistance ) override;
+
+        FB_CLASS_REGISTER_DECL;
     };
 }  // namespace fb
 

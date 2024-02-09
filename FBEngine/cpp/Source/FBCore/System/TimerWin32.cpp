@@ -192,7 +192,7 @@ namespace fb
         return static_cast<f64>( StaticTime ) / 1000.0;
     }
 
-    auto TimerWin32::getTimeInterval() const -> time_interval
+    auto TimerWin32::getDeltaTime() const -> time_interval
     {
         return static_cast<f64>( TimeDelta ) / 1000.0;
     }

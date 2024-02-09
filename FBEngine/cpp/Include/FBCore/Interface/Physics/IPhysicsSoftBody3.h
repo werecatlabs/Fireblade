@@ -18,10 +18,10 @@ namespace fb
             ~IPhysicsSoftBody3() override = default;
 
             /** */
-            virtual void setPosition( const Vector3F &position ) = 0;
+            virtual void setPosition( const Vector3<real_Num> &position ) = 0;
 
             /** */
-            virtual const Vector3F &getPosition() const = 0;
+            virtual const Vector3<real_Num> &getPosition() const = 0;
 
             FB_CLASS_REGISTER_DECL;
         };

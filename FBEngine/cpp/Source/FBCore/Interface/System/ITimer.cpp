@@ -5,4 +5,7 @@
 namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, ITimer, ISharedObject );
+
+    ITimer::~ITimer() = default;
+
 }  // end namespace fb

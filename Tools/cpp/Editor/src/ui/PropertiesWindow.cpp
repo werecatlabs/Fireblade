@@ -643,7 +643,7 @@ namespace fb::editor
                             }
                         }
                     }
-                    else if( ext == resourceExt )
+                    else 
                     {
                         auto resource = resourceDatabase->loadResource( filePath );
                         if( resource )

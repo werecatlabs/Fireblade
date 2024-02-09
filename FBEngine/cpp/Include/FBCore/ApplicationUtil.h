@@ -84,7 +84,7 @@ namespace fb
 
         static SmartPtr<scene::IActor> loadVehicleFromDB( s32 id );
 
-        static Vector2F getRelativeMousePos( Vector2F relativeMousePosition );
+        static Vector2<real_Num> getRelativeMousePos( Vector2<real_Num> relativeMousePosition );
 
         static void createRigidStaticMesh();
         static void createRigidDynamicMesh();

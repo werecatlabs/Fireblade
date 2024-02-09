@@ -10,7 +10,7 @@ namespace fb
 
     Job::Job() = default;
 
-    Job::~Job()  = default;
+    Job::~Job() = default;
 
     auto Job::getState() const -> IJob::State
     {

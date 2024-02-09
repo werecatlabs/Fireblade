@@ -825,7 +825,6 @@ namespace fb
         }
     }
 
-
     template <>
     void BasePath<String>::copyFile( const String &srcPath, const String &dstPath )
     {

@@ -350,7 +350,6 @@ namespace fb
                  .def( "getTime", ( time_interval( ITimer::* )( void ) const ) & ITimer::getTime )
                  .def( "getDeltaTime",
                        ( time_interval( ITimer::* )( void ) const ) & ITimer::getDeltaTime )
-                 .def( "getTimeInterval", &ITimer::getTimeInterval )
                  .def( "setFrameSmoothingPeriod", &ITimer::setFrameSmoothingPeriod )
                  .def( "getFrameSmoothingPeriod", &ITimer::getFrameSmoothingPeriod )
                  .def( "resetSmoothing", &ITimer::resetSmoothing )

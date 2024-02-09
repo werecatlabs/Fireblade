@@ -14,8 +14,8 @@ namespace fb
         /** Virtual destructor. */
         ~IAiTargeting3() override = default;
 
-        virtual Vector3F getTargetPosition() const = 0;
-        virtual void setTargetPosition( const Vector3F &targetPosition ) = 0;
+        virtual Vector3<real_Num> getTargetPosition() const = 0;
+        virtual void setTargetPosition( const Vector3<real_Num> &targetPosition ) = 0;
 
         virtual SmartPtr<scene::IActor> getOwner() const = 0;
         virtual void setOwner( SmartPtr<scene::IActor> owner ) = 0;

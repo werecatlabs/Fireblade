@@ -98,7 +98,7 @@ namespace fb
 
             auto cameraManager = applicationManager->getCameraManager();
 
-            auto scale = Vector3F::unit();
+            auto scale = Vector3<real_Num>::unit();
 
             auto cameraActor = cameraManager->getEditorCamera();
             if( cameraActor )
@@ -129,15 +129,15 @@ namespace fb
 
             auto orientation = Quaternion<real_Num>::identity();
 
-            m_lines[0] =
-                debug->drawLine( hash + static_cast<hash_type>( AT_X ), pos,
-                                 pos + ( orientation * Vector3F::unitX() * m_fScale ), colours[0] );
-            m_lines[1] =
-                debug->drawLine( hash + static_cast<hash_type>( AT_Y ), pos,
-                                 pos + ( orientation * Vector3F::unitY() * m_fScale ), colours[1] );
-            m_lines[2] =
-                debug->drawLine( hash + static_cast<hash_type>( AT_Z ), pos,
-                                 pos + ( orientation * Vector3F::unitZ() * m_fScale ), colours[2] );
+            m_lines[0] = debug->drawLine( hash + static_cast<hash_type>( AT_X ), pos,
+                                          pos + ( orientation * Vector3<real_Num>::unitX() * m_fScale ),
+                                          colours[0] );
+            m_lines[1] = debug->drawLine( hash + static_cast<hash_type>( AT_Y ), pos,
+                                          pos + ( orientation * Vector3<real_Num>::unitY() * m_fScale ),
+                                          colours[1] );
+            m_lines[2] = debug->drawLine( hash + static_cast<hash_type>( AT_Z ), pos,
+                                          pos + ( orientation * Vector3<real_Num>::unitZ() * m_fScale ),
+                                          colours[2] );
 
             for( auto line : m_lines )
             {
@@ -382,9 +382,9 @@ namespace fb
         lines.resize( 3 );
 
         auto pos = getPosition();
-        lines[0] = Line3<real_Num>( pos, pos + Vector3F::unitX() * m_fScale );
-        lines[1] = Line3<real_Num>( pos, pos + Vector3F::unitY() * m_fScale );
-        lines[2] = Line3<real_Num>( pos, pos + Vector3F::unitZ() * m_fScale );
+        lines[0] = Line3<real_Num>( pos, pos + Vector3<real_Num>::unitX() * m_fScale );
+        lines[1] = Line3<real_Num>( pos, pos + Vector3<real_Num>::unitY() * m_fScale );
+        lines[2] = Line3<real_Num>( pos, pos + Vector3<real_Num>::unitZ() * m_fScale );
 
         return lines;
     }

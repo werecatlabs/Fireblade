@@ -5,13 +5,12 @@
 
 namespace fb
 {
-
     class VertexBoneAssignment : public IVertexBoneAssignment
     {
     public:
         VertexBoneAssignment();
         VertexBoneAssignment( u32 vertexIndex, u16 boneIndex, f32 weight );
-        ~VertexBoneAssignment();
+        ~VertexBoneAssignment() override;
 
         u32 getVertexIndex() const override;
 
@@ -31,7 +30,6 @@ namespace fb
         u16 m_boneIndex = 0;
         f32 m_weight = 0.0f;
     };
-
-}  // namespace fb
+} // namespace fb
 
 #endif

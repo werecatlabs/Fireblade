@@ -35,26 +35,26 @@ namespace fb
     }
 
     //--------------------------------------------
-    auto StateMessageFragmentParam::getVector2f() const -> Vector2F
+    auto StateMessageFragmentParam::getVector2f() const -> Vector2<real_Num>
     {
         return { m_data.fData[0], m_data.fData[1] };
     }
 
     //--------------------------------------------
-    void StateMessageFragmentParam::setVector2f( const Vector2F &val )
+    void StateMessageFragmentParam::setVector2f( const Vector2<real_Num> &val )
     {
         m_data.fData[0] = val[0];
         m_data.fData[1] = val[1];
     }
 
     //--------------------------------------------
-    auto StateMessageFragmentParam::getVector3f() const -> Vector3F
+    auto StateMessageFragmentParam::getVector3f() const -> Vector3<real_Num>
     {
         return { m_data.fData[0], m_data.fData[1], m_data.fData[2] };
     }
 
     //--------------------------------------------
-    void StateMessageFragmentParam::setVector3f( const Vector3F &val )
+    void StateMessageFragmentParam::setVector3f( const Vector3<real_Num> &val )
     {
         m_data.fData[0] = val[0];
         m_data.fData[1] = val[1];

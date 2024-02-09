@@ -25,16 +25,18 @@ namespace fb::scene
                 if( child->isEnabled() )
                 {
                     auto transform = child->getComponent<LayoutTransform>();
+                    if( transform )
+                    {
+                        // Position the child vertically
+                        auto childPosition = transform->getPosition();
+                        auto childSize = transform->getSize();
 
-                    // Position the child vertically
-                    auto childPosition = transform->getPosition();
-                    auto childSize = transform->getSize();
+                        childPosition.y = offset;
+                        transform->setPosition( childPosition );
 
-                    childPosition.y = offset;
-                    transform->setPosition( childPosition );
-
-                    // Update the offset for the next child
-                    offset += childSize.y + m_spacing;
+                        // Update the offset for the next child
+                        offset += childSize.y + m_spacing;
+                    }
                 }
             }
         }

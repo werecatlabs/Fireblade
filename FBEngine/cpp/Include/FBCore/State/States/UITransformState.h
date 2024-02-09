@@ -22,33 +22,33 @@ namespace fb
 
         void setOwner( ISharedObject *owner );
 
-        Vector2F getPosition() const;
+        Vector2<real_Num> getPosition() const;
 
-        void setPosition( const Vector2F &position );
+        void setPosition( const Vector2<real_Num> &position );
 
-        Vector2F getSize() const;
+        Vector2<real_Num> getSize() const;
 
-        void setSize( const Vector2F &size );
+        void setSize( const Vector2<real_Num> &size );
 
-        Vector2F getAbsolutePosition() const;
+        Vector2<real_Num> getAbsolutePosition() const;
 
-        void setAbsolutePosition( const Vector2F &absolutePosition );
+        void setAbsolutePosition( const Vector2<real_Num> &absolutePosition );
 
-        Vector2F getAbsoluteSize() const;
+        Vector2<real_Num> getAbsoluteSize() const;
 
-        void setAbsoluteSize( const Vector2F &absoluteSize );
+        void setAbsoluteSize( const Vector2<real_Num> &absoluteSize );
 
-        Vector2F getAnchor() const;
+        Vector2<real_Num> getAnchor() const;
 
-        void setAnchor( const Vector2F &anchor );
+        void setAnchor( const Vector2<real_Num> &anchor );
 
-        Vector2F getAnchorMin() const;
+        Vector2<real_Num> getAnchorMin() const;
 
-        void setAnchorMin( const Vector2F &anchorMin );
+        void setAnchorMin( const Vector2<real_Num> &anchorMin );
 
-        Vector2F getAnchorMax() const;
+        Vector2<real_Num> getAnchorMax() const;
 
-        void setAnchorMax( const Vector2F &anchorMax );
+        void setAnchorMax( const Vector2<real_Num> &anchorMax );
 
         u8 getVerticalAlignment() const;
         void setVerticalAlignment( u8 verticalAlignment );
@@ -62,16 +62,16 @@ namespace fb
         ISharedObject *m_uiComponent = nullptr;
         ISharedObject *m_owner = nullptr;
 
-        Vector2F m_position = Vector2F::zero();
-        Vector2F m_size = Vector2F( 300.0f, 100.0f );
+        Vector2<real_Num> m_position = Vector2<real_Num>::zero();
+        Vector2<real_Num> m_size = Vector2<real_Num>( 300.0f, 100.0f );
 
-        Vector2F m_absolutePosition = Vector2F::zero();
-        Vector2F m_absoluteSize = Vector2F::zero();
+        Vector2<real_Num> m_absolutePosition = Vector2<real_Num>::zero();
+        Vector2<real_Num> m_absoluteSize = Vector2<real_Num>::zero();
 
-        Vector2F m_anchor = Vector2F( 0.5f, 0.5f );
+        Vector2<real_Num> m_anchor = Vector2<real_Num>( 0.5f, 0.5f );
 
-        Vector2F m_anchorMin = Vector2F( 0.5f, 0.5f );
-        Vector2F m_anchorMax = Vector2F( 0.5f, 0.5f );
+        Vector2<real_Num> m_anchorMin = Vector2<real_Num>( 0.5f, 0.5f );
+        Vector2<real_Num> m_anchorMax = Vector2<real_Num>( 0.5f, 0.5f );
 
         u8 m_verticalAlignment = 0;
         u8 m_horizontalAlignment = 0;

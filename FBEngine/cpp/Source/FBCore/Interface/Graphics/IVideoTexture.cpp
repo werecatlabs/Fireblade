@@ -5,4 +5,4 @@
 namespace fb::render
 {
     FB_CLASS_REGISTER_DERIVED( fb::render, IVideoTexture, render::ITexture );
-}  // end namespace fb
+}  // namespace fb::render

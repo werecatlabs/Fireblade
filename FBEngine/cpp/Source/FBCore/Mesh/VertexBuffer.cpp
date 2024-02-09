@@ -4,6 +4,9 @@
 
 namespace fb
 {
+
+    FB_CLASS_REGISTER_DERIVED( fb, VertexBuffer, IVertexBuffer );
+
     VertexBuffer::VertexBuffer() : m_vertexData( 0 )
     {
         m_vertexData.resize( 1 );

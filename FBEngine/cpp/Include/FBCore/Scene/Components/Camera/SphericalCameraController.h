@@ -17,7 +17,7 @@ namespace fb
             static const f32 DEFAULT_ZOOM_SPEED;
             static const f32 DEFAULT_MOVE_SPEED;
 
-            static const Vector3F DEFAULT_SPHERICAL_COORDS;
+            static const Vector3<real_Num> DEFAULT_SPHERICAL_COORDS;
 
             /** Constructor. */
             SphericalCameraController();
@@ -45,18 +45,16 @@ namespace fb
             void setTargetPosition( const Vector3<real_Num> &position );
             Vector3<real_Num> getTargetPosition() const;
 
-            void setOrientation( const QuaternionF &orientation );
-            QuaternionF getOrientation() const;
+            void setOrientation( const Quaternion<real_Num> &orientation );
+            Quaternion<real_Num> getOrientation() const;
 
-            void setDirection( const Vector3F &direction );
-            Vector3F getDirection() const;
+            void setDirection( const Vector3<real_Num> &direction );
+            Vector3<real_Num> getDirection() const;
 
-            Vector3F getUp() const;
-            Vector3F getRight() const;
+            Vector3<real_Num> getUp() const;
+            Vector3<real_Num> getRight() const;
 
-            Ray3F getCameraToViewportRay( const Vector2F &screenPosition ) const;
-
-            bool isInFrustum( const AABB3F &box ) const;
+            Ray3F getCameraToViewportRay( const Vector2<real_Num> &screenPosition ) const;
 
             void setPropertyValue( const String &name, const String &value );
             void setProperties( const Properties &propertyGroup );
@@ -106,7 +104,7 @@ namespace fb
             void allKeysUp();
 
             Vector3<real_Num> getCartCoords( Vector3<real_Num> &spherical );
-            Vector3F getSphericalCoords( Vector3F &cartCoords );
+            Vector3<real_Num> getSphericalCoords( Vector3<real_Num> &cartCoords );
             void wrapSphericalCoords( Vector3<real_Num> &spherical );
 
             SmartPtr<ui::IUIWindow> m_uiWindow;

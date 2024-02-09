@@ -123,7 +123,7 @@ namespace fb
          * This is a non-owning pointer, and the object it points to is not automatically
          * deleted when this `RawPtr` is destroyed.
          */
-        T *m_pointer = nullptr;
+        std::atomic<T *> m_pointer = nullptr;
     };
 
     template <class T>
@@ -224,7 +224,7 @@ namespace fb
     template <class T>
     RawPtr<T> &RawPtr<T>::operator=( const RawPtr &pointer ) throw()
     {
-        m_pointer = pointer.m_pointer;
+        m_pointer = pointer.m_pointer.load();
         return *this;
     }
 

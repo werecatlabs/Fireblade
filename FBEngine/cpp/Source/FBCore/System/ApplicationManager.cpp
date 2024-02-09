@@ -3,6 +3,7 @@
 #include <FBCore/Core/DebugTrace.h>
 #include <FBCore/Core/Path.h>
 #include <FBCore/Core/LogManager.h>
+#include <FBCore/Jobs/EventJob.h>
 #include <FBCore/Memory/MemoryTracker.h>
 #include <FBCore/Memory/PointerUtil.h>
 #include <FBCore/Interface/Scene/IActor.h>
@@ -58,8 +59,6 @@
 #include <FBCore/System/RttiClassDefinition.h>
 #include <algorithm>
 #include <cstdio>
-
-#include "FBCore/Jobs/EventJob.h"
 
 #if FB_ENABLE_MEMORY_TRACKER
 #    include <boost/stacktrace/stacktrace.hpp>

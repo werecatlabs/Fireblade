@@ -48,22 +48,22 @@ namespace fb
             /** @copydoc Component::updateTransform */
             void updateTransform() override;
 
-            Vector2F getPosition() const;
-            void setPosition( const Vector2F &position );
+            Vector2<real_Num> getPosition() const;
+            void setPosition( const Vector2<real_Num> &position );
 
-            Vector2F getSize() const;
-            void setSize( const Vector2F &size );
+            Vector2<real_Num> getSize() const;
+            void setSize( const Vector2<real_Num> &size );
 
-            Vector2F getAnchor() const;
-            void setAnchor( const Vector2F &anchor );
+            Vector2<real_Num> getAnchor() const;
+            void setAnchor( const Vector2<real_Num> &anchor );
 
-            Vector2F getAnchorMin() const;
+            Vector2<real_Num> getAnchorMin() const;
 
-            void setAnchorMin( const Vector2F &anchorMin );
+            void setAnchorMin( const Vector2<real_Num> &anchorMin );
 
-            Vector2F getAnchorMax() const;
+            Vector2<real_Num> getAnchorMax() const;
 
-            void setAnchorMax( const Vector2F &anchorMax );
+            void setAnchorMax( const Vector2<real_Num> &anchorMax );
 
             /** @copydoc Component::getProperties */
             SmartPtr<Properties> getProperties() const override;
@@ -79,13 +79,13 @@ namespace fb
 
             VerticalAlignment getVerticalAlignment() const;
 
-            Vector2F getAbsolutePosition() const;
+            Vector2<real_Num> getAbsolutePosition() const;
 
-            void setAbsolutePosition( const Vector2F &absolutePosition );
+            void setAbsolutePosition( const Vector2<real_Num> &absolutePosition );
 
-            Vector2F getAbsoluteSize() const;
+            Vector2<real_Num> getAbsoluteSize() const;
 
-            void setAbsoluteSize( const Vector2F &absoluteSize );
+            void setAbsoluteSize( const Vector2<real_Num> &absoluteSize );
 
             SmartPtr<UIComponent> getLayout() const;
 

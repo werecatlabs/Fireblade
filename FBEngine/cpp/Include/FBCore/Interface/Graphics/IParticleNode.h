@@ -72,17 +72,17 @@ namespace fb
             /**
              * @brief Sets the position of the node.
              */
-            virtual void setPosition( const Vector3F &position ) = 0;
+            virtual void setPosition( const Vector3<real_Num> &position ) = 0;
 
             /**
              * @brief Returns the position of the node.
              */
-            virtual Vector3F getPosition() const = 0;
+            virtual Vector3<real_Num> getPosition() const = 0;
 
             /**
              * @brief Returns the absolute position of the node.
              */
-            virtual Vector3F getAbsolutePosition() const = 0;
+            virtual Vector3<real_Num> getAbsolutePosition() const = 0;
 
             /**
              * @brief Returns the particle system this node belongs to.

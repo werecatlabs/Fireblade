@@ -18,58 +18,58 @@ namespace fb
         ~Grid3();
 
         /** */
-        void initialise( const Vector3F &center, const Vector3F &cellSize, const Vector3F &halfExtents );
+        void initialise( const Vector3<real_Num> &center, const Vector3<real_Num> &cellSize, const Vector3<real_Num> &halfExtents );
 
         /** */
-        void calculatePosition( const Vector3I &cellIdx, Vector3F &position );
+        void calculatePosition( const Vector3I &cellIdx, Vector3<real_Num> &position );
 
         /** */
-        void calculateGridSlot( const Vector3F &position, Vector3I &cellIndex ) const;
+        void calculateGridSlot( const Vector3<real_Num> &position, Vector3I &cellIndex ) const;
 
         /** */
-        AABB3F getCellBox( const Vector3I &cellIdx ) const;
+        AABB3<real_Num> getCellBox( const Vector3I &cellIdx ) const;
 
         /** */
-        const Vector3F &getCenter() const;
+        const Vector3<real_Num> &getCenter() const;
 
         /** */
-        const Vector3F &getExtents() const;
+        const Vector3<real_Num> &getExtents() const;
 
         /** */
-        const Vector3F &getCellSize() const;
+        const Vector3<real_Num> &getCellSize() const;
 
         /** */
         Vector3I getNumCells() const;
 
     private:
         /// The grid's m_center position.
-        Vector3F m_center;
+        Vector3<real_Num> m_center;
 
         /// The boundaries of the grid.
-        Vector3F m_gridExtents;
+        Vector3<real_Num> m_gridExtents;
 
         /// The size of each cell.
-        Vector3F m_cellSize;
+        Vector3<real_Num> m_cellSize;
     };
 
-    inline void Grid3::calculatePosition( const Vector3I &cellIdx, Vector3F &position )
+    inline void Grid3::calculatePosition( const Vector3I &cellIdx, Vector3<real_Num> &position )
     {
         position.X() = ( cellIdx.X() * m_cellSize.X() ) - m_gridExtents.X();
         position.Y() = ( cellIdx.Y() * m_cellSize.Y() ) - m_gridExtents.Y();
         position.Z() = ( cellIdx.Z() * m_cellSize.Z() ) - m_gridExtents.Z();
     }
 
-    inline void Grid3::calculateGridSlot( const Vector3F &position, Vector3I &cellIndex ) const
+    inline void Grid3::calculateGridSlot( const Vector3<real_Num> &position, Vector3I &cellIndex ) const
     {
-        Vector3F offset = ( position - m_center ) + m_gridExtents;
-        Vector3F result = offset / m_cellSize;
+        Vector3<real_Num> offset = ( position - m_center ) + m_gridExtents;
+        Vector3<real_Num> result = offset / m_cellSize;
         cellIndex.set( static_cast<s32>( result.X() ), static_cast<s32>( result.Y() ),
                        static_cast<s32>( result.Z() ) );
     }
 
-    inline AABB3F Grid3::getCellBox( const Vector3I &cellIdx ) const
+    inline AABB3<real_Num> Grid3::getCellBox( const Vector3I &cellIdx ) const
     {
-        Vector3F position;
+        Vector3<real_Num> position;
         position.X() = ( cellIdx.X() * m_cellSize.X() ) - m_gridExtents.X();
         position.Y() = ( cellIdx.Y() * m_cellSize.Y() ) - m_gridExtents.Y();
         position.Z() = ( cellIdx.Z() * m_cellSize.Z() ) - m_gridExtents.Z();
@@ -78,7 +78,7 @@ namespace fb
         auto minimum = position - halfCellSize;
         auto maximum = position + halfCellSize;
 
-        return AABB3F( minimum, maximum );
+        return AABB3<real_Num>( minimum, maximum );
     }
 
 }  // end namespace fb

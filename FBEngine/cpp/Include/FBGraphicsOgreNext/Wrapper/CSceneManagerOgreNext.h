@@ -2,7 +2,7 @@
 #define __CSceneManagerOgreNext_H_
 
 #include <FBGraphicsOgreNext/FBGraphicsOgreNextPrerequisites.h>
-#include <FBCore/Interface/Graphics/IGraphicsScene.h>
+#include <FBCore/Graphics/GraphicsScene.h>
 #include <FBCore/Interface/Memory/ISharedObject.h>
 #include <FBCore/Interface/System/IStateListener.h>
 #include <FBCore/Core/Array.h>
@@ -19,7 +19,7 @@ namespace fb
     {
 
         /** @brief SceneManager for OgreNext */
-        class CSceneManagerOgreNext : public IGraphicsScene
+        class CSceneManagerOgreNext : public GraphicsScene
         {
         public:
             CSceneManagerOgreNext();
@@ -146,15 +146,6 @@ namespace fb
                                                               const String &managerName ) override;
             void destroyInstancedObject( SmartPtr<IInstancedObject> instancedObject ) override;
 
-            String getType() const;
-            void setType( const String &val );
-
-            String getName() const override;
-            void setName( const String &val ) override;
-
-            SmartPtr<IStateContext> getStateContext() const;
-            void setStateContext( SmartPtr<IStateContext> stateContext );
-
             SmartPtr<IGraphicsObject> addGraphicsObjectByTypeId( u32 id ) override;
 
             SmartPtr<IFactoryManager> getFactoryManager() const;
@@ -164,11 +155,11 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            class SceneManagerStateListener : public IStateListener
+            class GraphicsSceneStateListener : public IStateListener
             {
             public:
-                SceneManagerStateListener();
-                ~SceneManagerStateListener() override;
+                GraphicsSceneStateListener();
+                ~GraphicsSceneStateListener() override;
 
                 void handleStateChanged( const SmartPtr<IStateMessage> &message ) override;
                 void handleStateChanged( SmartPtr<IState> &state ) override;
@@ -244,9 +235,6 @@ namespace fb
             String m_animationNamePrefix;
             String m_animationNameSuffix;
 
-            String m_type;
-            String m_name;
-
             bool m_isClearing = false;
             bool m_enableShadows = false;
             bool m_depthShadows = false;
@@ -258,9 +246,7 @@ namespace fb
 
             Array<SmartPtr<ITerrain>> m_terrains;
 
-            SmartPtr<IStateContext> m_stateContext;
-            SmartPtr<IStateListener> m_stateListener;
-            SmartPtr<SceneManagerState> m_state;
+            SmartPtr<GraphicsSceneState> m_state;
 
             /// Value used to generate a unique entity name.
             static u32 m_nextGeneratedNameExt;

@@ -141,8 +141,8 @@ namespace fb::scene
         {
             if( auto transform = actor->getComponent<LayoutTransform>() )
             {
-                auto sz = Vector2F( static_cast<f32>( m_referenceSize.X() ),
-                                    static_cast<f32>( m_referenceSize.Y() ) );
+                auto sz = Vector2<real_Num>( static_cast<f32>( m_referenceSize.X() ),
+                                             static_cast<f32>( m_referenceSize.Y() ) );
                 transform->setSize( sz );
             }
         }
@@ -311,7 +311,7 @@ namespace fb::scene
 
                     if( auto transform = actor->getComponent<LayoutTransform>() )
                     {
-                        transform->setSize( Vector2F( 1920, 1080 ) );
+                        transform->setSize( Vector2<real_Num>( 1920, 1080 ) );
                     }
                 }
             }

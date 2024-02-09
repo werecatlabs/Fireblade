@@ -14,10 +14,10 @@ namespace fb
 
         bool isFinite() const;
 
-        Vector3F Position;
-        Vector3F Normal;
-        Vector2F TexCoord0;
-        Vector2F TexCoord1;
+        Vector3<real_Num> Position;
+        Vector3<real_Num> Normal;
+        Vector2<real_Num> TexCoord0;
+        Vector2<real_Num> TexCoord1;
     };
 }  // namespace fb
 

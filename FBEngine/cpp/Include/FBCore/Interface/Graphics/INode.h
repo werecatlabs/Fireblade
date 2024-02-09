@@ -26,14 +26,14 @@ namespace fb
              */
             virtual SmartPtr<INode> getParent() const = 0;
 
-            virtual QuaternionF getOrientation() const = 0;
-            virtual void setOrientation( const QuaternionF &q ) = 0;
+            virtual Quaternion<real_Num> getOrientation() const = 0;
+            virtual void setOrientation( const Quaternion<real_Num> &q ) = 0;
 
-            virtual Vector3F getPosition() const = 0;
-            virtual void setPosition( const Vector3F &pos ) = 0;
+            virtual Vector3<real_Num> getPosition() const = 0;
+            virtual void setPosition( const Vector3<real_Num> &pos ) = 0;
 
-            virtual Vector3F getScale() const = 0;
-            virtual void setScale( const Vector3F &scale ) = 0;
+            virtual Vector3<real_Num> getScale() const = 0;
+            virtual void setScale( const Vector3<real_Num> &scale ) = 0;
 
             FB_CLASS_REGISTER_DECL;
         };

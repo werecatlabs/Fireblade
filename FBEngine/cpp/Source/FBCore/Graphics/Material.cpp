@@ -599,7 +599,7 @@ namespace fb::render
         }
     }
 
-    void Material::setFragmentParam( const String &name, const Vector2F &value )
+    void Material::setFragmentParam( const String &name, const Vector2<real_Num> &value )
     {
         auto applicationManager = core::ApplicationManager::instance();
         auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -642,7 +642,7 @@ namespace fb::render
         }
     }
 
-    void Material::setFragmentParam( const String &name, const Vector3F &value )
+    void Material::setFragmentParam( const String &name, const Vector3<real_Num> &value )
     {
         auto applicationManager = core::ApplicationManager::instance();
         auto graphicsSystem = applicationManager->getGraphicsSystem();
@@ -879,8 +879,8 @@ namespace fb::render
         return 0;
     }
 
-    void Material::setScale( const Vector3F &scale, u32 textureIndex /*= 0*/, u32 passIndex /*= 0*/,
-                             u32 techniqueIndex /*= 0 */ )
+    void Material::setScale( const Vector3<real_Num> &scale, u32 textureIndex /*= 0*/,
+                             u32 passIndex /*= 0*/, u32 techniqueIndex /*= 0 */ )
     {
         //if( m_material )
         //{

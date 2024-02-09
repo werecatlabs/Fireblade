@@ -1,7 +1,6 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/System/JobYield.h>
 #include <FBCore/System/Job.h>
-
 #include <utility>
 
 namespace fb::core
@@ -11,7 +10,6 @@ namespace fb::core
     }
 
     JobYield::JobYield( SmartPtr<IObjectYield> &jobYield )
-
     {
     }
 

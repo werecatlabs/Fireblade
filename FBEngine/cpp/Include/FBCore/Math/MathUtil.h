@@ -109,11 +109,11 @@ namespace fb
                                               const Vector2<T> &centerPoint, u8 pointOrdering = 0 );
 
         /** Calculates polygon intervals along an axis. */
-        static void getPolygonIntervals( const Polygon2F &polygon, const Vector2F &axis, f32 &min,
+        static void getPolygonIntervals( const Polygon2<real_Num> &polygon, const Vector2<real_Num> &axis, f32 &min,
                                          f32 &max );
 
         /** Calculates polygon intervals along an axis. */
-        static void getPolygonIntervals( const Polygon3F &polygon, const Vector3F &axis, f32 &min,
+        static void getPolygonIntervals( const Polygon3<real_Num> &polygon, const Vector3<real_Num> &axis, f32 &min,
                                          f32 &max );
 
         /** Calculates interval distance. */
@@ -292,7 +292,7 @@ namespace fb
     }
 
     template <class T>
-    void MathUtil<T>::getPolygonIntervals( const Polygon2F &polygon, const Vector2F &axis, f32 &min,
+    void MathUtil<T>::getPolygonIntervals( const Polygon2<real_Num> &polygon, const Vector2<real_Num> &axis, f32 &min,
                                            f32 &max )
     {
         min = 1e10;
@@ -317,7 +317,7 @@ namespace fb
     }
 
     template <class T>
-    void MathUtil<T>::getPolygonIntervals( const Polygon3F &polygon, const Vector3F &axis, f32 &min,
+    void MathUtil<T>::getPolygonIntervals( const Polygon3<real_Num> &polygon, const Vector3<real_Num> &axis, f32 &min,
                                            f32 &max )
     {
         min = 1e10;

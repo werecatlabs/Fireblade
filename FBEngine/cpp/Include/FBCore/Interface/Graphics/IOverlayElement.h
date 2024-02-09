@@ -206,28 +206,28 @@ namespace fb
              *
              * @return The position of this overlay element.
              */
-            virtual Vector2F getPosition() const = 0;
+            virtual Vector2<real_Num> getPosition() const = 0;
 
             /**
              * Sets the position of this overlay element.
              *
              * @param position The position to set.
              */
-            virtual void setPosition( const Vector2F &position ) = 0;
+            virtual void setPosition( const Vector2<real_Num> &position ) = 0;
 
             /**
              * Gets the size of this overlay element.
              *
              * @return The size of this overlay element.
              */
-            virtual Vector2F getSize() const = 0;
+            virtual Vector2<real_Num> getSize() const = 0;
 
             /**
              * Sets the size of this overlay element.
              *
              * @param size The size to set.
              */
-            virtual void setSize( const Vector2F &size ) = 0;
+            virtual void setSize( const Vector2<real_Num> &size ) = 0;
 
             /**
              * Gets the Z-order of this overlay element relative to its siblings.

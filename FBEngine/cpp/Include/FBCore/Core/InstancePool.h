@@ -27,11 +27,6 @@ namespace fb
             Listener( const Listener &other );
             ~Listener() override;
 
-            void loadingStateChanged( ISharedObject *sharedObject, LoadingState oldState,
-                                      LoadingState newState ) override
-            {
-            }
-
             bool destroy( void *ptr ) override;
 
             InstancePool *getOwner() const

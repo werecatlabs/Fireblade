@@ -25,32 +25,32 @@ namespace fb
             /** Sets the position.
              * @param position The position to set.
              */
-            virtual void setPosition( const Vector3F &position ) = 0;
+            virtual void setPosition( const Vector3<real_Num> &position ) = 0;
 
             /** Gets the position.
              * @return The position of the instance.
              */
-            virtual Vector3F getPosition() const = 0;
+            virtual Vector3<real_Num> getPosition() const = 0;
 
             /** Sets the orientation of this node via Quaternion parameters.
              * @param orientation The orientation to set.
              */
-            virtual void setOrientation( const QuaternionF &orientation ) = 0;
+            virtual void setOrientation( const Quaternion<real_Num> &orientation ) = 0;
 
             /** Returns a Quaternion representing the nodes orientation.
              * @return The orientation of the instance.
              */
-            virtual QuaternionF getOrientation() const = 0;
+            virtual Quaternion<real_Num> getOrientation() const = 0;
 
             /** Sets the scaling factor applied to this node.
              * @param scale The scaling factor to set.
              */
-            virtual void setScale( const Vector3F &scale ) = 0;
+            virtual void setScale( const Vector3<real_Num> &scale ) = 0;
 
             /** Gets the scaling factor of this node.
              * @return The scaling factor of the instance.
              */
-            virtual Vector3F getScale() const = 0;
+            virtual Vector3<real_Num> getScale() const = 0;
 
             /** Sets the custom parameter for this instance.
              * @param idx The index of the parameter to set.

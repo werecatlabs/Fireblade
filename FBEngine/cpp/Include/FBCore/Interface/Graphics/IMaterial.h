@@ -59,17 +59,27 @@ namespace fb
              */
             enum class TerrainTextureTypes
             {
-                Base,      ///< Base texture.
-                Splat,     ///< Splat texture.
-                Diffuse1,  ///< First diffuse texture.
-                Diffuse2,  ///< Second diffuse texture.
-                Diffuse3,  ///< Third diffuse texture.
-                Diffuse4,  ///< Fourth diffuse texture.
-                Normal1,   ///< First normal texture.
-                Normal2,   ///< Second normal texture.
-                Normal3,   ///< Third normal texture.
-                Normal4,   ///< Fourth normal texture.
-                Count      ///< Count of texture types.
+                Base,
+                ///< Base texture.
+                Splat,
+                ///< Splat texture.
+                Diffuse1,
+                ///< First diffuse texture.
+                Diffuse2,
+                ///< Second diffuse texture.
+                Diffuse3,
+                ///< Third diffuse texture.
+                Diffuse4,
+                ///< Fourth diffuse texture.
+                Normal1,
+                ///< First normal texture.
+                Normal2,
+                ///< Second normal texture.
+                Normal3,
+                ///< Third normal texture.
+                Normal4,
+                ///< Fourth normal texture.
+                Count ///< Count of texture types.
             };
 
             /**
@@ -77,24 +87,41 @@ namespace fb
              */
             enum class PbsTextureTypes
             {
-                PBSM_DIFFUSE,                        ///< Diffuse texture.
-                PBSM_NORMAL,                         ///< Normal texture.
-                PBSM_SPECULAR,                       ///< Specular texture.
-                PBSM_METALLIC = PBSM_SPECULAR,       ///< Metallic texture.
-                PBSM_ROUGHNESS,                      ///< Roughness texture.
-                PBSM_DETAIL_WEIGHT,                  ///< Detail weight texture.
-                PBSM_DETAIL0,                        ///< First detail texture.
-                PBSM_DETAIL1,                        ///< Second detail texture.
-                PBSM_DETAIL2,                        ///< Third detail texture.
-                PBSM_DETAIL3,                        ///< Fourth detail texture.
-                PBSM_DETAIL0_NM,                     ///< First detail normal map texture.
-                PBSM_DETAIL1_NM,                     ///< Second detail normal map texture.
-                PBSM_DETAIL2_NM,                     ///< Third detail normal map texture.
-                PBSM_DETAIL3_NM,                     ///< Fourth detail normal map texture.
-                PBSM_EMISSIVE,                       ///< Emissive texture.
-                PBSM_REFLECTION,                     ///< Reflection texture.
-                NUM_PBSM_SOURCES = PBSM_REFLECTION,  ///< Number of PBSM sources.
-                NUM_PBSM_TEXTURE_TYPES               ///< Number of PBSM texture types.
+                PBSM_DIFFUSE,
+                ///< Diffuse texture.
+                PBSM_NORMAL,
+                ///< Normal texture.
+                PBSM_SPECULAR,
+                ///< Specular texture.
+                PBSM_METALLIC = PBSM_SPECULAR,
+                ///< Metallic texture.
+                PBSM_ROUGHNESS,
+                ///< Roughness texture.
+                PBSM_DETAIL_WEIGHT,
+                ///< Detail weight texture.
+                PBSM_DETAIL0,
+                ///< First detail texture.
+                PBSM_DETAIL1,
+                ///< Second detail texture.
+                PBSM_DETAIL2,
+                ///< Third detail texture.
+                PBSM_DETAIL3,
+                ///< Fourth detail texture.
+                PBSM_DETAIL0_NM,
+                ///< First detail normal map texture.
+                PBSM_DETAIL1_NM,
+                ///< Second detail normal map texture.
+                PBSM_DETAIL2_NM,
+                ///< Third detail normal map texture.
+                PBSM_DETAIL3_NM,
+                ///< Fourth detail normal map texture.
+                PBSM_EMISSIVE,
+                ///< Emissive texture.
+                PBSM_REFLECTION,
+                ///< Reflection texture.
+                NUM_PBSM_SOURCES = PBSM_REFLECTION,
+                ///< Number of PBSM sources.
+                NUM_PBSM_TEXTURE_TYPES ///< Number of PBSM texture types.
             };
 
             /**
@@ -102,14 +129,22 @@ namespace fb
              */
             enum class PbsBlendModes
             {
-                PBSM_BLEND_NORMAL_NON_PREMUL,  ///< Normal blend mode.
-                PBSM_BLEND_NORMAL_PREMUL,      ///< Normal premultiplied blend mode.
-                PBSM_BLEND_ADD,                ///< Add blend mode.
-                PBSM_BLEND_SUBTRACT,           ///< Subtract blend mode.
-                PBSM_BLEND_MULTIPLY,           ///< Multiply blend mode.
-                PBSM_BLEND_MULTIPLY2X,         ///< Multiply 2x blend mode.
-                PBSM_BLEND_SCREEN,             ///< Screen blend mode.
-                PBSM_BLEND_OVERLAY,            ///< Overlay blend mode.
+                PBSM_BLEND_NORMAL_NON_PREMUL,
+                ///< Normal blend mode.
+                PBSM_BLEND_NORMAL_PREMUL,
+                ///< Normal premultiplied blend mode.
+                PBSM_BLEND_ADD,
+                ///< Add blend mode.
+                PBSM_BLEND_SUBTRACT,
+                ///< Subtract blend mode.
+                PBSM_BLEND_MULTIPLY,
+                ///< Multiply blend mode.
+                PBSM_BLEND_MULTIPLY2X,
+                ///< Multiply 2x blend mode.
+                PBSM_BLEND_SCREEN,
+                ///< Screen blend mode.
+                PBSM_BLEND_OVERLAY,
+                ///< Overlay blend mode.
                 PBSM_BLEND_LIGHTEN,
                 PBSM_BLEND_DARKEN,
                 PBSM_BLEND_GRAIN_EXTRACT,
@@ -177,7 +212,7 @@ namespace fb
              *
              * This virtual destructor is responsible for deallocating memory for derived classes.
              */
-            virtual ~IMaterial() override = default;
+            ~IMaterial() override;
 
             /**
              * @brief Gets the root node of the material.
@@ -328,7 +363,7 @@ namespace fb
              * @param textures An array of smart pointers to the textures to set.
              * @param layerIdx The index of the layer to set the cubic texture for.
              */
-            virtual void setCubicTexture( Array<SmartPtr<render::ITexture>> textures,
+            virtual void setCubicTexture( Array<SmartPtr<ITexture>> textures,
                                           u32 layerIdx = 0 ) = 0;
 
             /**
@@ -353,8 +388,8 @@ namespace fb
              * @param passIndex The index of the pass to set the scale for.
              * @param techniqueIndex The index of the technique to set the scale for.
              */
-            virtual void setScale( const Vector3F &scale, u32 textureIndex = 0, u32 passIndex = 0,
-                                   u32 techniqueIndex = 0 ) = 0;
+            virtual void setScale( const Vector3<real_Num> &scale, u32 textureIndex = 0,
+                                   u32 passIndex = 0, u32 techniqueIndex = 0 ) = 0;
 
             /**
              * @brief Gets the material type.
@@ -376,7 +411,7 @@ namespace fb
 
             FB_CLASS_REGISTER_DECL;
         };
-    }  // end namespace render
-}  // end namespace fb
+    } // end namespace render
+}     // end namespace fb
 
 #endif  // IMaterial_h__

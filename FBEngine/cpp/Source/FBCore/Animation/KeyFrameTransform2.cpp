@@ -4,7 +4,7 @@
 namespace fb
 {
 
- KeyFrameTransform2::KeyFrameTransform2()
+    KeyFrameTransform2::KeyFrameTransform2()
     {
     }
 
@@ -12,22 +12,22 @@ namespace fb
     {
     }
 
-    fb::Vector2F KeyFrameTransform2::getPosition() const
+    fb::Vector2<real_Num> KeyFrameTransform2::getPosition() const
     {
         return m_position;
     }
 
-    void KeyFrameTransform2::setPosition( const Vector2F &position )
+    void KeyFrameTransform2::setPosition( const Vector2<real_Num> &position )
     {
         m_position = position;
     }
 
-    fb::Vector2F KeyFrameTransform2::getScale() const
+    fb::Vector2<real_Num> KeyFrameTransform2::getScale() const
     {
         return m_scale;
     }
 
-    void KeyFrameTransform2::setScale( const Vector2F &scale )
+    void KeyFrameTransform2::setScale( const Vector2<real_Num> &scale )
     {
         m_scale = scale;
     }

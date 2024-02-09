@@ -272,7 +272,7 @@ namespace fb::render
         return false;
     }
 
-    auto Viewport::getPosition() const -> Vector2F
+    auto Viewport::getPosition() const -> Vector2<real_Num>
     {
         if( auto stateContext = getStateContext() )
         {
@@ -282,15 +282,15 @@ namespace fb::render
             }
         }
 
-        return Vector2F::zero();
+        return Vector2<real_Num>::zero();
     }
 
-    auto Viewport::getActualPosition() const -> Vector2F
+    auto Viewport::getActualPosition() const -> Vector2<real_Num>
     {
-        return Vector2F::zero();
+        return Vector2<real_Num>::zero();
     }
 
-    void Viewport::setPosition( const Vector2F &position )
+    void Viewport::setPosition( const Vector2<real_Num> &position )
     {
         if( auto stateContext = getStateContext() )
         {
@@ -301,7 +301,7 @@ namespace fb::render
         }
     }
 
-    auto Viewport::getSize() const -> Vector2F
+    auto Viewport::getSize() const -> Vector2<real_Num>
     {
         if( auto stateContext = getStateContext() )
         {
@@ -311,15 +311,15 @@ namespace fb::render
             }
         }
 
-        return Vector2F::zero();
+        return Vector2<real_Num>::zero();
     }
 
-    auto Viewport::getActualSize() const -> fb::Vector2F
+    auto Viewport::getActualSize() const -> fb::Vector2<real_Num>
     {
-        return Vector2F::zero();
+        return Vector2<real_Num>::zero();
     }
 
-    void Viewport::setSize( const Vector2F &size )
+    void Viewport::setSize( const Vector2<real_Num> &size )
     {
         if( auto stateContext = getStateContext() )
         {

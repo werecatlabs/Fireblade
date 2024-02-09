@@ -31,8 +31,8 @@ namespace fb
 
         void updateAABB() override;
 
-        AABB3F getAABB() const override;
-        void setAABB( const AABB3F &aabb ) override;
+        AABB3<real_Num> getAABB() const override;
+        void setAABB( const AABB3<real_Num> &aabb ) override;
 
         SmartPtr<ISubMesh> clone() const override;
 
@@ -49,7 +49,7 @@ namespace fb
         Array<SmartPtr<IVertexBoneAssignment>> m_boneAssignments;
         SmartPtr<IVertexBuffer> m_vertexBuffer;
         SmartPtr<IIndexBuffer> m_indexBuffer;
-        AABB3F m_aabb;
+        AABB3<real_Num> m_aabb;
         bool m_useSharedVertices = false;
         String m_materialName;
     };

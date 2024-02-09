@@ -107,13 +107,13 @@ namespace fb
 
         void setVector2( const Vector2F &data );
 
-        Vector3F getVector3() const;
+        Vector3<real_Num> getVector3() const;
 
-        void setVector3( const Vector3F &data );
+        void setVector3( const Vector3<real_Num> &data );
 
-        QuaternionF getQuaternion() const;
+        Quaternion<real_Num> getQuaternion() const;
 
-        void setQuaternion( const QuaternionF &data );
+        void setQuaternion( const Quaternion<real_Num> &data );
 
         SmartPtr<ISharedObject> getObject() const;
 

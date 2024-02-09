@@ -18,21 +18,20 @@ namespace fb::scene
 
     LayoutTransformSystem::~LayoutTransformSystem() = default;
 
-    auto LayoutTransformSystem::calculateElementPosition( const Vector2F &parentPosition,
-                                                          const Vector2F &parentSize,
-                                                          const Vector2F &position, const Vector2F &size,
-                                                          const Vector2F &anchor,
-                                                          const Vector2F &anchorMin,
-                                                          const Vector2F &anchorMax ) -> Vector2F
+    auto LayoutTransformSystem::calculateElementPosition(
+        const Vector2<real_Num> &parentPosition, const Vector2<real_Num> &parentSize,
+        const Vector2<real_Num> &position, const Vector2<real_Num> &size,
+        const Vector2<real_Num> &anchor, const Vector2<real_Num> &anchorMin,
+        const Vector2<real_Num> &anchorMax ) -> Vector2<real_Num>
     {
-        Vector2F elementPosition;
+        Vector2<real_Num> elementPosition;
 
         // Calculate the absolute position of the element within the parent's coordinate system
         elementPosition.x = parentPosition.x + ( parentSize.x * anchorMin.x ) + position.x;
         elementPosition.y = parentPosition.y + ( parentSize.y * anchorMin.y ) + position.y;
 
         // Calculate the size of the element relative to the parent's size
-        Vector2F relativeSize;
+        Vector2<real_Num> relativeSize;
         relativeSize.x = size.x + ( parentSize.x * ( anchorMax.x - anchorMin.x ) );
         relativeSize.y = size.y + ( parentSize.y * ( anchorMax.y - anchorMin.y ) );
 
@@ -44,17 +43,18 @@ namespace fb::scene
     }
 
     void LayoutTransformSystem::calculateElementPositionAndSize(
-        const Vector2F &parentPosition, const Vector2F &parentSize, const Vector2F &position,
-        const Vector2F &size, const Vector2F &anchor, const Vector2F &anchorMin,
-        const Vector2F &anchorMax, f32 &left, f32 &right, f32 &top, f32 &bottom )
+        const Vector2<real_Num> &parentPosition, const Vector2<real_Num> &parentSize,
+        const Vector2<real_Num> &position, const Vector2<real_Num> &size,
+        const Vector2<real_Num> &anchor, const Vector2<real_Num> &anchorMin,
+        const Vector2<real_Num> &anchorMax, f32 &left, f32 &right, f32 &top, f32 &bottom )
     {
         // Calculate the absolute position of the element within the parent's coordinate system
-        Vector2F elementPosition;
+        Vector2<real_Num> elementPosition;
         elementPosition.x = parentPosition.x + ( parentSize.x * anchorMin.x ) + position.x;
         elementPosition.y = parentPosition.y + ( parentSize.y * anchorMin.y ) + position.y;
 
         // Calculate the size of the element relative to the parent's size
-        Vector2F relativeSize;
+        Vector2<real_Num> relativeSize;
         relativeSize.x = size.x + ( parentSize.x * ( anchorMax.x - anchorMin.x ) );
         relativeSize.y = size.y + ( parentSize.y * ( anchorMax.y - anchorMin.y ) );
 
@@ -66,9 +66,11 @@ namespace fb::scene
     }
 
     void LayoutTransformSystem::calculateElementPositionAndSize(
-        const Vector2F &parentPosition, const Vector2F &parentSize, const Vector2F &position,
-        const Vector2F &size, const Vector2F &anchor, const Vector2F &anchorMin,
-        const Vector2F &anchorMax, Vector2F &elementPosition, Vector2F &elementSize )
+        const Vector2<real_Num> &parentPosition, const Vector2<real_Num> &parentSize,
+        const Vector2<real_Num> &position, const Vector2<real_Num> &size,
+        const Vector2<real_Num> &anchor, const Vector2<real_Num> &anchorMin,
+        const Vector2<real_Num> &anchorMax, Vector2<real_Num> &elementPosition,
+        Vector2<real_Num> &elementSize )
     {
         // Calculate the absolute position of the element within the parent's coordinate system
         elementPosition.x = parentPosition.x + ( parentSize.x * anchorMin.x ) + position.x;
@@ -83,10 +85,13 @@ namespace fb::scene
         elementPosition.y -= elementSize.y * anchor.y;
     }
 
-    void LayoutTransformSystem::calculateElementPositionAndSize(
-        const Vector2F &position, const Vector2F &size, const Vector2F &anchor,
-        const Vector2F &anchorMin, const Vector2F &anchorMax, Vector2F &elementPosition,
-        Vector2F &elementSize )
+    void LayoutTransformSystem::calculateElementPositionAndSize( const Vector2<real_Num> &position,
+                                                                 const Vector2<real_Num> &size,
+                                                                 const Vector2<real_Num> &anchor,
+                                                                 const Vector2<real_Num> &anchorMin,
+                                                                 const Vector2<real_Num> &anchorMax,
+                                                                 Vector2<real_Num> &elementPosition,
+                                                                 Vector2<real_Num> &elementSize )
     {
         // Calculate the absolute position of the element
         elementPosition.x = position.x - ( anchor.x * size.x );
@@ -144,8 +149,8 @@ namespace fb::scene
                                     stop = 0;
                                 }
 
-                                auto parentAbsolutePos = Vector2F::zero();
-                                auto parentAbsoluteSize = Vector2F( 1920.0f, 1080.0f );
+                                auto parentAbsolutePos = Vector2<real_Num>::zero();
+                                auto parentAbsoluteSize = Vector2<real_Num>( 1920.0f, 1080.0f );
 
                                 SmartPtr<LayoutTransform> parentCanvasTransform;
 
@@ -170,7 +175,7 @@ namespace fb::scene
                                     }
                                 }
 
-                                auto screenPos = Vector2F::zero();
+                                auto screenPos = Vector2<real_Num>::zero();
                                 auto position = transform.getPosition();
                                 auto size = transform.getSize();
 
@@ -181,17 +186,17 @@ namespace fb::scene
                                 auto verticalAlignment = static_cast<LayoutTransform::VerticalAlignment>(
                                     transform.getVerticalAlignment() );
 
-                                auto relativePos = Vector2F::zero();
-                                auto relativeSize = Vector2F::zero();
+                                auto relativePos = Vector2<real_Num>::zero();
+                                auto relativeSize = Vector2<real_Num>::zero();
 
                                 if( !( MathF::equals( parentAbsoluteSize.X(), 0.0f ) &&
                                        MathF::equals( parentAbsoluteSize.Y(), 0.0f ) ) )
                                 {
-                                    relativePos = Vector2F(
+                                    relativePos = Vector2<real_Num>(
                                         screenPos.X() / static_cast<f32>( parentAbsoluteSize.X() ),
                                         screenPos.Y() / static_cast<f32>( parentAbsoluteSize.Y() ) );
 
-                                    relativeSize = Vector2F(
+                                    relativeSize = Vector2<real_Num>(
                                         size.X() / static_cast<f32>( parentAbsoluteSize.X() ),
                                         size.Y() / static_cast<f32>( parentAbsoluteSize.Y() ) );
                                 }
@@ -200,8 +205,8 @@ namespace fb::scene
                                 auto anchorMin = transform.getAnchorMin();
                                 auto anchorMax = transform.getAnchorMax();
 
-                                auto elementPos = Vector2F::zero();
-                                auto elementSize = Vector2F::zero();
+                                auto elementPos = Vector2<real_Num>::zero();
+                                auto elementSize = Vector2<real_Num>::zero();
 
                                 f32 left = 0.0f;
                                 f32 right = 0.0f;
@@ -218,17 +223,18 @@ namespace fb::scene
                                         parentAbsolutePos, parentAbsoluteSize, position, size, anchor,
                                         anchorMin, anchorMax, left, right, top, bottom );
 
-                                    elementPos = Vector2F( left, top );
-                                    elementSize = Vector2F( right, bottom ) - elementPos;
+                                    elementPos = Vector2<real_Num>( left, top );
+                                    elementSize = Vector2<real_Num>( right, bottom ) - elementPos;
                                 }
                                 else
                                 {
                                     calculateElementPositionAndSize(
-                                        Vector2F::zero(), Vector2F( 1920.0f, 1080.0f ), position, size,
-                                        anchor, anchorMin, anchorMax, left, right, top, bottom );
+                                        Vector2<real_Num>::zero(), Vector2<real_Num>( 1920.0f, 1080.0f ),
+                                        position, size, anchor, anchorMin, anchorMax, left, right, top,
+                                        bottom );
 
-                                    elementPos = Vector2F( left, top );
-                                    elementSize = Vector2F( right, bottom ) - elementPos;
+                                    elementPos = Vector2<real_Num>( left, top );
+                                    elementSize = Vector2<real_Num>( right, bottom ) - elementPos;
                                 }
 
                                 if( elementSize.x < 0.0f )
@@ -246,16 +252,17 @@ namespace fb::scene
                                 if( canvas )
                                 {
                                     auto canvasSize = canvas->getReferenceSize();
-                                    auto fCanvasSize = Vector2F( static_cast<f32>( canvasSize.X() ),
-                                                                 static_cast<f32>( canvasSize.Y() ) );
+                                    auto fCanvasSize =
+                                        Vector2<real_Num>( static_cast<f32>( canvasSize.X() ),
+                                                           static_cast<f32>( canvasSize.Y() ) );
 
                                     if( !( MathF::equals( static_cast<f32>( canvasSize.X() ), 0.0f ) &&
                                            MathF::equals( static_cast<f32>( canvasSize.Y() ), 0.0f ) ) )
                                     {
-                                        relativePos = Vector2F(
+                                        relativePos = Vector2<real_Num>(
                                             elementPos.X() / static_cast<f32>( canvasSize.X() ),
                                             elementPos.Y() / static_cast<f32>( canvasSize.Y() ) );
-                                        relativeSize = Vector2F(
+                                        relativeSize = Vector2<real_Num>(
                                             elementSize.X() / static_cast<f32>( canvasSize.X() ),
                                             elementSize.Y() / static_cast<f32>( canvasSize.Y() ) );
                                     }

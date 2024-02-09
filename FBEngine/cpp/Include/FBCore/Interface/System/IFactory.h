@@ -123,7 +123,7 @@ namespace fb
         }
 
         auto object = new( ptr ) T( std::forward<_Types>( _Args )... );
-        object->setSharedObjectListener( getListener() );
+        object->addSharedObjectListener( getListener() );
 
         SmartPtr<T> p( object );
         object->removeReference();

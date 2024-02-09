@@ -354,29 +354,29 @@ namespace fb
     }
 
     //---------------------------------------------------------------------
-    void Serializer::writeObject( const Vector3F &vec )
+    void Serializer::writeObject( const Vector3<real_Num> &vec )
     {
         float tmp[3] = { vec.X(), vec.Y(), vec.Z() };
         writeFloats( tmp, 3 );
     }
 
     //---------------------------------------------------------------------
-    void Serializer::writeObject( const QuaternionF &q )
+    void Serializer::writeObject( const Quaternion<real_Num> &q )
     {
         float tmp[4] = { q.W(), q.Y(), q.Z(), q.W() };
         writeFloats( tmp, 4 );
     }
 
     //---------------------------------------------------------------------
-    void Serializer::readObject( SmartPtr<IStream> &stream, Vector3F &pDest )
+    void Serializer::readObject( SmartPtr<IStream> &stream, Vector3<real_Num> &pDest )
     {
         float tmp[3];
         readFloats( stream, tmp, 3 );
-        pDest = Vector3F( tmp[0], tmp[1], tmp[2] );
+        pDest = Vector3<real_Num>( tmp[0], tmp[1], tmp[2] );
     }
 
     //---------------------------------------------------------------------
-    void Serializer::readObject( SmartPtr<IStream> &stream, QuaternionF &pDest )
+    void Serializer::readObject( SmartPtr<IStream> &stream, Quaternion<real_Num> &pDest )
     {
         float tmp[4];
         readFloats( stream, tmp, 4 );

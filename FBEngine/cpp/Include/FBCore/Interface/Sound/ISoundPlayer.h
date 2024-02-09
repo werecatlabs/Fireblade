@@ -109,7 +109,7 @@ namespace fb
 
         /**
          * @brief Sets the delay time between beeps in the sound.
-         * @param val The new delay time in milliseconds.
+         * @param delayTime The new delay time in milliseconds.
          */
         virtual void setDelayTime( s32 delayTime ) = 0;
 
@@ -124,6 +124,8 @@ namespace fb
          * @return The ID tag of the sound.
          */
         virtual String getIdTag() = 0;
+
+        FB_CLASS_REGISTER_DECL;
     };
 
 }  // namespace fb

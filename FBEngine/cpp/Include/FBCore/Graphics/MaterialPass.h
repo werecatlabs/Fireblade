@@ -81,10 +81,10 @@ namespace fb
             void setFragmentParam( const String &name, f32 value ) override;
 
             /** @copydoc IMaterialPass::toJson */
-            void setFragmentParam( const String &name, const Vector2F &value ) override;
+            void setFragmentParam( const String &name, const Vector2<real_Num> &value ) override;
 
             /** @copydoc IMaterialPass::toJson */
-            void setFragmentParam( const String &name, const Vector3F &value ) override;
+            void setFragmentParam( const String &name, const Vector3<real_Num> &value ) override;
 
             /** @copydoc IMaterialPass::toJson */
             void setFragmentParam( const String &name, const Vector4F &value ) override;

@@ -1,22 +1,22 @@
 #include <FBCore/FBCorePCH.h>
-#include <FBCore/State/States/SceneManagerState.h>
+#include <FBCore/State/States/GraphicsSceneState.h>
 #include <FBCore/Interface/System/IStateContext.h>
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, SceneManagerState, BaseState );
+    FB_CLASS_REGISTER_DERIVED( fb, GraphicsSceneState, BaseState );
 
-    SceneManagerState::SceneManagerState() = default;
+    GraphicsSceneState::GraphicsSceneState() = default;
 
-    SceneManagerState::~SceneManagerState() = default;
+    GraphicsSceneState::~GraphicsSceneState() = default;
 
-    auto SceneManagerState::getSkyboxMaterialName() const -> String
+    auto GraphicsSceneState::getSkyboxMaterialName() const -> String
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_skyboxMaterialName;
     }
 
-    void SceneManagerState::setSkyboxMaterialName( const String &skyboxMaterialName )
+    void GraphicsSceneState::setSkyboxMaterialName( const String &skyboxMaterialName )
     {
         if( getSkyboxMaterialName() != skyboxMaterialName )
         {
@@ -26,12 +26,12 @@ namespace fb
         }
     }
 
-    auto SceneManagerState::getEnableSkybox() const -> bool
+    auto GraphicsSceneState::getEnableSkybox() const -> bool
     {
         return m_enableSkybox;
     }
 
-    void SceneManagerState::setEnableSkybox( bool enableSkybox )
+    void GraphicsSceneState::setEnableSkybox( bool enableSkybox )
     {
         if( getEnableSkybox() != enableSkybox )
         {
@@ -40,13 +40,13 @@ namespace fb
         }
     }
 
-    auto SceneManagerState::getAmbientLight() const -> ColourF
+    auto GraphicsSceneState::getAmbientLight() const -> ColourF
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_ambientLight;
     }
 
-    void SceneManagerState::setAmbientLight( const ColourF &ambientLight )
+    void GraphicsSceneState::setAmbientLight( const ColourF &ambientLight )
     {
         //if( getAmbientLight() != ambientLight )
         {
@@ -56,12 +56,12 @@ namespace fb
         }
     }
 
-    auto SceneManagerState::getEnableShadows() const -> bool
+    auto GraphicsSceneState::getEnableShadows() const -> bool
     {
         return m_enableShadows;
     }
 
-    void SceneManagerState::setEnableShadows( bool enableShadows )
+    void GraphicsSceneState::setEnableShadows( bool enableShadows )
     {
         m_enableShadows = enableShadows;
     }

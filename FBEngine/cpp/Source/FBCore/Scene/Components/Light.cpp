@@ -128,7 +128,7 @@ namespace fb::scene
         if( auto actor = getActor() )
         {
             auto pos = actor->getPosition();
-            debug->drawLine( lightHash, pos, pos + Vector3F::unitX(), 0xFFFFFF );
+            debug->drawLine( lightHash, pos, pos + Vector3<real_Num>::unitX(), 0xFFFFFF );
         }
     }
 

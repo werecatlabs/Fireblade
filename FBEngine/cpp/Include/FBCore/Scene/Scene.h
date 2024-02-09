@@ -146,6 +146,8 @@ namespace fb
 
             /** Sets the actor array pointer. */
             void setActorsPtr( SharedPtr<Array<SmartPtr<IActor>>> ptr );
+            
+            void updateLighting();
 
             // The scene mutex.
             mutable RecursiveMutex m_mutex;
@@ -157,7 +159,7 @@ namespace fb
             State m_state = State::None;
 
             // The scene loading state.
-            SceneLoadingState m_sceneLoadingState = SceneLoadingState::None;
+            SceneLoadingState m_sceneLoadingState = SceneLoadingState::Loaded;
 
             // The scene label.
             String m_label;

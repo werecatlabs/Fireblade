@@ -111,7 +111,7 @@ namespace fb
         auto selectionManager = applicationManager->getSelectionManager();
 
         auto cameraManager = applicationManager->getCameraManager();
-        auto scale = Vector3F( 1.f, 1.f, 1.f );
+        auto scale = Vector3<real_Num>( 1.f, 1.f, 1.f );
 
         auto cameraActor = cameraManager->getEditorCamera();
         if( cameraActor )
@@ -167,7 +167,7 @@ namespace fb
                 auto rotationSpeed = 1.0f;
 
                 // Rotate the object based on user input
-                auto rotation = Vector3F( -mouse.y, mouse.x, 0 ) * rotationSpeed;
+                auto rotation = Vector3<real_Num>( -mouse.y, mouse.x, 0 ) * rotationSpeed;
                 auto selection = selectionManager->getSelection();
 
                 for( auto selected : selection )
@@ -237,12 +237,13 @@ namespace fb
 
                     for( size_t i = 0; i < 3; ++i )
                     {
-                        auto line = Line3F( position - ( orientation * m_orientations[i] *
-                                                         Vector3F::unitY() * m_controlWidth ),
-                                            position + ( orientation * m_orientations[i] *
-                                                         Vector3F::unitY() * m_controlWidth ) );
-                        auto cylinder = Cylinder3F( line, m_fScale, curControlWidth );
-                        auto cylinderResultX = MathUtilF::intersects( ray, cylinder );
+                        auto line = Line3<real_Num>(
+                            position - ( orientation * m_orientations[i] * Vector3<real_Num>::unitY() *
+                                         m_controlWidth ),
+                            position + ( orientation * m_orientations[i] * Vector3<real_Num>::unitY() *
+                                         m_controlWidth ) );
+                        auto cylinder = Cylinder3<real_Num>( line, m_fScale, curControlWidth );
+                        auto cylinderResultX = MathUtil<real_Num>::intersects( ray, cylinder );
                         if( cylinderResultX.first )
                         {
                             auto intersectionPoint =

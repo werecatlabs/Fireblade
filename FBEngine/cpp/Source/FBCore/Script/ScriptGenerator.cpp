@@ -44,24 +44,24 @@ namespace fb
         m_classMap.push_back( std::make_pair( "List<float>", "Array<f32>" ) );
         m_classMap.push_back( std::make_pair( "List<string>", "Array<String>" ) );
         m_classMap.push_back( std::make_pair( "List<Object>", "Array<Object>" ) );
-        m_classMap.push_back( std::make_pair( "List<Vector2>", "Array<Vector2F>" ) );
-        m_classMap.push_back( std::make_pair( "List<Vector3>", "Array<Vector3F>" ) );
-        m_classMap.push_back( std::make_pair( "List<Quaternion>", "Array<QuaternionF>" ) );
+        m_classMap.push_back( std::make_pair( "List<Vector2>", "Array<Vector2<real_Num>>" ) );
+        m_classMap.push_back( std::make_pair( "List<Vector3>", "Array<Vector3<real_Num>>" ) );
+        m_classMap.push_back( std::make_pair( "List<Quaternion>", "Array<Quaternion<real_Num>>" ) );
         m_classMap.push_back( std::make_pair( "List<GameObject>", "Array<SmartPtr<scene::IActor>>" ) );
 
         m_classMap.push_back( std::make_pair( "string[]", "Array<String>" ) );
         m_classMap.push_back( std::make_pair( "int[]", "Array<s32>" ) );
         m_classMap.push_back( std::make_pair( "float[]", "Array<f32>" ) );
         m_classMap.push_back( std::make_pair( "Object[]", "Array<SmartPtr<ISharedObject>>" ) );
-        m_classMap.push_back( std::make_pair( "Vector2[]", "Array<Vector2F>" ) );
-        m_classMap.push_back( std::make_pair( "Vector3[]", "Array<Vector3F>" ) );
-        m_classMap.push_back( std::make_pair( "Quaternion[]", "Array<QuaternionF>" ) );
+        m_classMap.push_back( std::make_pair( "Vector2[]", "Array<Vector2<real_Num>>" ) );
+        m_classMap.push_back( std::make_pair( "Vector3[]", "Array<Vector3<real_Num>>" ) );
+        m_classMap.push_back( std::make_pair( "Quaternion[]", "Array<Quaternion<real_Num>>" ) );
         m_classMap.push_back( std::make_pair( "GameObject[]", "Array<SmartPtr<scene::IActor>>" ) );
 
         m_classMap.push_back( std::make_pair( "System.Type", "TypeInfo" ) );
-        m_classMap.push_back( std::make_pair( "Vector2", "Vector2F" ) );
-        m_classMap.push_back( std::make_pair( "Vector3", "Vector3F" ) );
-        m_classMap.push_back( std::make_pair( "Quaternion", "QuaternionF" ) );
+        m_classMap.push_back( std::make_pair( "Vector2", "Vector2<real_Num>" ) );
+        m_classMap.push_back( std::make_pair( "Vector3", "Vector3<real_Num>" ) );
+        m_classMap.push_back( std::make_pair( "Quaternion", "Quaternion<real_Num>" ) );
         m_classMap.push_back( std::make_pair( "Matrix4x4", "Matrix4F" ) );
         m_classMap.push_back( std::make_pair( "Transform", "SmartPtr<ITransform>" ) );
 

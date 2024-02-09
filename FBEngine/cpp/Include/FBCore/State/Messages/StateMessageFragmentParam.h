@@ -24,11 +24,11 @@ namespace fb
         f32 getFloat() const;
         void setFloat( f32 val );
 
-        Vector2F getVector2f() const;
-        void setVector2f( const Vector2F &val );
+        Vector2<real_Num> getVector2f() const;
+        void setVector2f( const Vector2<real_Num> &val );
 
-        Vector3F getVector3f() const;
-        void setVector3f( const Vector3F &val );
+        Vector3<real_Num> getVector3f() const;
+        void setVector3f( const Vector3<real_Num> &val );
 
         Vector4F getVector4f() const;
         void setVector4f( const Vector4F &val );

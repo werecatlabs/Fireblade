@@ -2,27 +2,23 @@
 #define __AsyncOperation_h__
 
 #include <FBCore/Interface/System/IAsyncOperation.h>
-#include <FBCore/Memory/ObjectYield.h>
-#include <FBCore/Core/ConcurrentArray.h>
 
 namespace fb
 {
-
     class AsyncOperation : public IAsyncOperation
     {
     public:
-        AsyncOperation() = default;
-        ~AsyncOperation() override = default;
+        AsyncOperation();
+        ~AsyncOperation() override;
 
-        void removeCompleteEvent( std::function<void()> func );
-        void addCompleteEvent( std::function<void()> func );
+        void removeCompleteEvent( std::function<void()> func ) override;
+        void addCompleteEvent( std::function<void()> func ) override;
 
         FB_CLASS_REGISTER_DECL;
 
     protected:
-        std::function<void()> m_completeEvent;
+        Array<std::function<void()>> m_completeEvents;
     };
-
-}  // end namespace fb
+} // end namespace fb
 
 #endif  // __AsyncOperation_h__

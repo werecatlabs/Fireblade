@@ -64,10 +64,10 @@ namespace fb::scene
         //		return;
         // }
 
-        Vector3F position = m_position;
-        QuaternionF orientation = getOrientation();
+        auto position = m_position;
+        auto orientation = getOrientation();
 
-        Vector3F targetDirection = orientation * -Vector3F::UNIT_Z;
+        auto targetDirection = orientation * -Vector3<real_Num>::UNIT_Z;
 
         if( m_cursorKeys[0] )
         {
@@ -80,8 +80,8 @@ namespace fb::scene
         }
 
         // strafing
-        Vector3F upVector = orientation * Vector3F::UNIT_Y;
-        Vector3F strafevect = targetDirection.crossProduct( upVector );
+        auto upVector = orientation * Vector3<real_Num>::UNIT_Y;
+        auto strafevect = targetDirection.crossProduct( upVector );
         strafevect.normalise();
         if( m_cursorKeys[2] )
         {
@@ -103,7 +103,7 @@ namespace fb::scene
             }
         }
 
-        if( m_relativeMouse != Vector2F::ZERO )
+        if( m_relativeMouse != Vector2<real_Num>::ZERO )
         {
             if( m_bInvert )
             {
@@ -116,7 +116,7 @@ namespace fb::scene
                 m_rotation.Y() += m_relativeMouse.X() * m_rotationSpeed * static_cast<f32>( dt );
             }
 
-            m_relativeMouse = Vector2F::ZERO;
+            m_relativeMouse = Vector2<real_Num>::ZERO;
         }
 
         for( auto camera : m_cameras )
@@ -201,77 +201,78 @@ namespace fb::scene
         return eventHandled;
     }
 
-    void EditorCameraController::setPosition( const Vector3F &position )
+    void EditorCameraController::setPosition( const Vector3<real_Num> &position )
     {
         m_position = position;
     }
 
-    auto EditorCameraController::getPosition() const -> Vector3F
+    auto EditorCameraController::getPosition() const -> Vector3<real_Num>
     {
         return m_position;
     }
 
-    void EditorCameraController::setTargetPosition( const Vector3F &position )
+    void EditorCameraController::setTargetPosition( const Vector3<real_Num> &position )
     {
-        Vector3F direction = ( position - m_position ).normaliseCopy();
+        auto direction = ( position - m_position ).normaliseCopy();
 
-        Matrix3F currentRot;
+        Matrix3<real_Num> currentRot;
         currentRot.fromEulerAnglesXYZ( m_rotation.X(), m_rotation.Y(), m_rotation.Z() );
 
-        QuaternionF orientation;
+        Quaternion<real_Num> orientation;
         orientation.toRotationMatrix( currentRot );
 
-        Vector3F currentDirection = orientation * -Vector3F::UNIT_Z;
-        QuaternionF orientationDiff;  // = MathUtilF::getRotationTo(currentDirection, direction);
+        auto currentDirection = orientation * -Vector3<real_Num>::UNIT_Z;
+        Quaternion<real_Num>
+            orientationDiff;  // = MathUtilF::getRotationTo(currentDirection, direction);
 
-        QuaternionF newRot = orientationDiff * orientation;
+        auto newRot = orientationDiff * orientation;
 
-        Vector3F newDirection_ = newRot * -Vector3F::UNIT_Z;
+        auto newDirection_ = newRot * -Vector3<real_Num>::UNIT_Z;
         if( newDirection_ != direction )
         {
             int halt = 0;
             halt = 0;
         }
 
-        Matrix3F rot;
+        Matrix3<real_Num> rot;
         newRot.toRotationMatrix( rot );
         rot.toEulerAnglesXYZ( m_rotation.X(), m_rotation.Y(), m_rotation.Z() );
         // m_rotation *= MathF::RAD_TO_DEG;
     }
 
-    auto EditorCameraController::getTargetPosition() const -> Vector3F
+    auto EditorCameraController::getTargetPosition() const -> Vector3<real_Num>
     {
-        return m_position + getOrientation() * -Vector3F::UNIT_Z;
+        return m_position + getOrientation() * -Vector3<real_Num>::UNIT_Z;
     }
 
-    void EditorCameraController::setOrientation( const QuaternionF &orientation )
+    void EditorCameraController::setOrientation( const Quaternion<real_Num> &orientation )
     {
     }
 
-    auto EditorCameraController::getOrientation() const -> QuaternionF
+    auto EditorCameraController::getOrientation() const -> Quaternion<real_Num>
     {
-        QuaternionF yaw;
-        yaw.fromAngleAxis( MathF::DegToRad( m_rotation.Y() ), Vector3F::UNIT_Y );
+        Quaternion<real_Num> yaw;
+        yaw.fromAngleAxis( MathF::DegToRad( m_rotation.Y() ), Vector3<real_Num>::UNIT_Y );
 
-        QuaternionF pitch;
-        pitch.fromAngleAxis( MathF::DegToRad( m_rotation.X() ), Vector3F::UNIT_X );
+        Quaternion<real_Num> pitch;
+        pitch.fromAngleAxis( MathF::DegToRad( m_rotation.X() ), Vector3<real_Num>::UNIT_X );
 
         // the orientation
         return yaw * pitch;
     }
 
-    void EditorCameraController::setDirection( const Vector3F &direction )
+    void EditorCameraController::setDirection( const Vector3<real_Num> &direction )
     {
     }
 
-    auto EditorCameraController::getDirection() const -> Vector3F
+    auto EditorCameraController::getDirection() const -> Vector3<real_Num>
     {
-        return getOrientation() * -Vector3F::UNIT_Z;
+        return getOrientation() * -Vector3<real_Num>::UNIT_Z;
     }
 
-    auto EditorCameraController::getUp() const -> Vector3F
+    auto EditorCameraController::getUp() const -> Vector3<real_Num>
     {
-        return Vector3F::zero();
+        return Vector3<real_Num>::zero();
     }
 
     auto EditorCameraController::isMouseKeyDown( s32 key ) -> bool
@@ -287,9 +288,9 @@ namespace fb::scene
         }
     }
 
-    auto EditorCameraController::getRight() const -> Vector3F
+    auto EditorCameraController::getRight() const -> Vector3<real_Num>
     {
-        return Vector3F::zero();
+        return Vector3<real_Num>::zero();
     }
 
     void EditorCameraController::addCamera( SmartPtr<render::ICamera> camera )

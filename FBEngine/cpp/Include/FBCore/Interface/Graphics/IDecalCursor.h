@@ -31,30 +31,30 @@ namespace fb
             virtual void setVisible( bool visible ) = 0;
 
             /** Returns the current position of the cursor. */
-            virtual Vector3F getPosition() const = 0;
+            virtual Vector3<real_Num> getPosition() const = 0;
 
             /**
              * Sets the position of the cursor.
              * @param position The new position of the cursor.
              */
-            virtual void setPosition( const Vector3F &position ) = 0;
+            virtual void setPosition( const Vector3<real_Num> &position ) = 0;
 
             /** Returns the current size of the cursor. */
-            virtual Vector2F getSize() const = 0;
+            virtual Vector2<real_Num> getSize() const = 0;
 
             /**
              * Sets the size of the cursor.
              * @param size The new size of the cursor.
              */
-            virtual void setSize( const Vector2F &size ) = 0;
+            virtual void setSize( const Vector2<real_Num> &size ) = 0;
 
             /**
              * Adds a debug entity to the cursor for visualization purposes.
              * @param entityName The name of the debug entity.
-             * @param scale The scale of the debug entity (default: Vector3F::unit()).
+             * @param scale The scale of the debug entity (default: Vector3<real_Num>::unit()).
              */
             virtual void addDebugEntity( const String &entityName,
-                                         const Vector3F &scale = Vector3F::unit() ) = 0;
+                                         const Vector3<real_Num> &scale = Vector3<real_Num>::unit() ) = 0;
 
             /** Removes the debug entity from the cursor. */
             virtual void removeDebugEntity() = 0;

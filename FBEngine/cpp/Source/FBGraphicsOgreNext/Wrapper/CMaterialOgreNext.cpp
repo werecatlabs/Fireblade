@@ -920,6 +920,10 @@ namespace fb::render
 
                 state->setDirty( false );
             }
+            else
+            {
+                state->setDirty( false );
+            }
         }
     }
 

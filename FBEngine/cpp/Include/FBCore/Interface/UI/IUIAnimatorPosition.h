@@ -17,16 +17,16 @@ namespace fb
             ~IUIAnimatorPosition() override = default;
 
             /** */
-            virtual void setStart( const Vector2F &position ) = 0;
+            virtual void setStart( const Vector2<real_Num> &position ) = 0;
 
             /** */
-            virtual Vector2F getStart() const = 0;
+            virtual Vector2<real_Num> getStart() const = 0;
 
             /** */
-            virtual void setEnd( const Vector2F &position ) = 0;
+            virtual void setEnd( const Vector2<real_Num> &position ) = 0;
 
             /** */
-            virtual Vector2F getEnd() const = 0;
+            virtual Vector2<real_Num> getEnd() const = 0;
         };
 
     }  // end namespace ui

@@ -5,7 +5,7 @@
 
 namespace fb
 {
-    FB_CLASS_REGISTER_DERIVED( fb, TimerCPU, ITimer );
+    FB_CLASS_REGISTER_DERIVED( fb, TimerCPU, Timer );
 
     TimerCPU::TimerCPU()
     {
@@ -44,7 +44,7 @@ namespace fb
         return static_cast<u32>( m_deltaTime * 1000.0 );
     }
 
-    auto TimerCPU::getTimeInterval() const -> time_interval
+    auto TimerCPU::getDeltaTime() const -> time_interval
     {
         return m_deltaTime;
     }

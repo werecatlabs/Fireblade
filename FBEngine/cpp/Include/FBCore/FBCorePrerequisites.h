@@ -640,7 +640,7 @@ namespace fb
     class RenderTextureState;
     class RenderWindowState;
     class RigidbodyState;
-    class SceneManagerState;
+    class GraphicsSceneState;
     class SceneNodeState;
     class SkyboxState;
     class TerrainState;

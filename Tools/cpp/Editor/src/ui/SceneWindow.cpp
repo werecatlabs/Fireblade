@@ -152,6 +152,8 @@ namespace fb::editor
                                "Text" );
             Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_TOGGLE_BUTTON ),
                                "Toggle Button", "Toggle Button" );
+            Util::addMenuItem( m_applicationAddMenu, static_cast<s32>( MenuId::ADD_TOGGLE_WITH_TEXT ),
+                               "Toggle With Text", "Toggle With Text" );
 
             m_applicationMenu->addMenuItem( m_applicationAddMenu );
 
@@ -914,6 +916,13 @@ namespace fb::editor
             {
                 auto cmd = fb::make_ptr<AddActorCmd>();
                 cmd->setActorType( AddActorCmd::ActorType::ToggleButton );
+                commandManager->addCommand( cmd );
+            }
+            break;
+            case MenuId::ADD_TOGGLE_WITH_TEXT:
+            {
+                auto cmd = fb::make_ptr<AddActorCmd>();
+                cmd->setActorType( AddActorCmd::ActorType::ToggleWithText );
                 commandManager->addCommand( cmd );
             }
             break;

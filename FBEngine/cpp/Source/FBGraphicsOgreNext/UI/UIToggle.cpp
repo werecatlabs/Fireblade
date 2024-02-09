@@ -11,10 +11,10 @@ namespace fb
 {
     namespace ui
     {
-
         FB_CLASS_REGISTER_DERIVED( fb::ui, UIToggle, UIElement<IUIToggle> );
 
-        UIToggle::UIToggle() : m_text( "Text" )
+        UIToggle::UIToggle() :
+            m_text( "Text" )
         {
             createStateContext();
         }
@@ -51,7 +51,7 @@ namespace fb
 
                 setLoadingState( LoadingState::Loaded );
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -72,9 +72,9 @@ namespace fb
                 ScopedLock lock( graphicsSystem );
 
                 m_checkbox = nullptr;
-                UIElement<ui::IUIToggle>::unload( data );
+                UIElement<IUIToggle>::unload( data );
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -83,7 +83,7 @@ namespace fb
         void UIToggle::setLabel( const String &text )
         {
             m_text = text;
-            if( m_checkbox )
+            if(m_checkbox)
             {
                 //m_checkbox->setText( text );
             }
@@ -97,7 +97,7 @@ namespace fb
         void UIToggle::setToggled( bool checked )
         {
             m_checked = checked;
-            if( m_checkbox )
+            if(m_checkbox)
             {
                 //m_checkbox->setChecked( checked );
             }
@@ -114,16 +114,16 @@ namespace fb
             {
                 UIElement<IUIToggle>::handleStateChanged( state );
 
-                if( auto stateContext = getStateContext() )
+                if(auto stateContext = getStateContext())
                 {
-                    if( m_checkbox )
+                    if(m_checkbox)
                     {
                         //m_checkbox->setText( m_text );
                         //m_checkbox->setChecked( m_checked );
                     }
                 }
             }
-            catch( std::exception &e )
+            catch(std::exception &e)
             {
                 FB_LOG_EXCEPTION( e );
             }
@@ -133,12 +133,12 @@ namespace fb
         {
         }
 
-        fb::f32 UIToggle::getTextSize() const
+        f32 UIToggle::getTextSize() const
         {
             return 0.0f;
         }
 
-        fb::ui::IUIToggle::ToggleType UIToggle::getToggleType() const
+        IUIToggle::ToggleType UIToggle::getToggleType() const
         {
             return m_toggleType;
         }
@@ -148,7 +148,7 @@ namespace fb
             m_toggleType = toggleType;
         }
 
-        fb::ui::IUIToggle::ToggleState UIToggle::getToggleState() const
+        IUIToggle::ToggleState UIToggle::getToggleState() const
         {
             return m_toggleState;
         }
@@ -167,6 +167,5 @@ namespace fb
         {
             m_showLabel = showLabel;
         }
-
-    }  // namespace ui
-}  // namespace fb
+    } // namespace ui
+}     // namespace fb

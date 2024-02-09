@@ -9,7 +9,7 @@ namespace fb
     {
     public:
         OverlayState();
-        ~OverlayState();
+        ~OverlayState() override;
 
         bool isVisible() const;
 
@@ -20,6 +20,6 @@ namespace fb
     protected:
         atomic_bool m_visible = true;
     };
-}  // end namespace fb
+} // end namespace fb
 
 #endif  // FB_OVERLAYSTATE_H

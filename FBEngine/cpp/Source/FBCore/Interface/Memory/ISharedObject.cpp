@@ -409,7 +409,7 @@ namespace fb
 
     auto ISharedObject::getSharedObjectListener() const -> ISharedObjectListener *
     {
-        return m_sharedObjectListener.load();
+        return m_sharedObjectListener;
     }
 
     void ISharedObject::setSharedObjectListener( ISharedObjectListener *listener )

@@ -4,7 +4,7 @@
 
 namespace fb::scene
 {
-    FB_CLASS_REGISTER_DERIVED( fb::scene, WheelController, IComponent );
+    FB_CLASS_REGISTER_DERIVED( fb::scene, WheelController, VehicleComponent<IWheelController> );
 
     WheelController::WheelController()
     {

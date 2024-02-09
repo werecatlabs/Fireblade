@@ -52,14 +52,14 @@ namespace fb
              *
              * @return A vector representing the position of the intersection point.
              */
-            virtual Vector3F getPosition() const = 0;
+            virtual Vector3<real_Num> getPosition() const = 0;
 
             /**
              * @brief Sets the position of the intersection point in world space.
              *
              * @param position A vector representing the position of the intersection point.
              */
-            virtual void setPosition( const Vector3F &position ) = 0;
+            virtual void setPosition( const Vector3<real_Num> &position ) = 0;
         };
 
     }  // end namespace render

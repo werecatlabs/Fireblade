@@ -10,6 +10,9 @@
 
 namespace fb
 {
+
+    FB_CLASS_REGISTER_DERIVED( fb, StateContext, IStateContext );
+
     StateContext::StateContext() = default;
 
     StateContext::~StateContext() = default;

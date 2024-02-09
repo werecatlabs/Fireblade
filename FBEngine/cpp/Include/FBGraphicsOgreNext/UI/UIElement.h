@@ -1533,10 +1533,12 @@ namespace fb
         SmartPtr<Properties> UIElement<T>::getProperties() const
         {
             auto properties = core::Prototype<T>::getProperties();
+
             properties->setProperty( "size", getSize() );
             properties->setProperty( "position", getPosition() );
             properties->setProperty( "enabled", m_isEnabled );
             properties->setProperty( "visible", isVisible() );
+            properties->setProperty( "colour", getColour() );
             return properties;
         }
 
@@ -1547,13 +1549,16 @@ namespace fb
 
             auto enabled = isEnabled();
             auto visible = isVisible();
+            auto colour = getColour();
             //properties->getPropertyValue( "size", m_size );
             //properties->getPropertyValue( "position", m_position );
             properties->getPropertyValue( "enabled", enabled );
             properties->getPropertyValue( "visible", visible );
+            properties->getPropertyValue( "colour", colour );
 
             setEnabled( enabled );
             setVisible( visible );
+            setColour( colour );
         }
 
         template <class T>
@@ -1874,6 +1879,8 @@ namespace fb
         template <class T>
         void UIElement<T>::createStateContext()
         {
+            FB_ASSERT( getStateContext() == nullptr );
+
             auto applicationManager = core::ApplicationManager::instance();
             FB_ASSERT( applicationManager );
 
@@ -1925,7 +1932,7 @@ namespace fb
             {
                 if( auto state = stateContext->template getStateByType<UIElementState>() )
                 {
-                    return state->setColour( colour );
+                    state->setColour( colour );
                 }
             }
         }

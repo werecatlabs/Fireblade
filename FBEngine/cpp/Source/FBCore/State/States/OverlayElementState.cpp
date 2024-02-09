@@ -9,13 +9,16 @@ namespace fb
 {
     FB_CLASS_REGISTER_DERIVED( fb, OverlayElementState, BaseState );
 
-    auto OverlayElementState::getPosition() const -> Vector2F
+    OverlayElementState::OverlayElementState() = default;
+    OverlayElementState::~OverlayElementState() = default;
+
+    auto OverlayElementState::getPosition() const -> Vector2<real_Num>
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_position;
     }
 
-    void OverlayElementState::setPosition( const Vector2F &position )
+    void OverlayElementState::setPosition( const Vector2<real_Num> &position )
     {
         SpinRWMutex::ScopedLock lock( m_mutex, true );
         if( m_position != position )
@@ -25,13 +28,13 @@ namespace fb
         }
     }
 
-    auto OverlayElementState::getSize() const -> Vector2F
+    auto OverlayElementState::getSize() const -> Vector2<real_Num>
     {
         SpinRWMutex::ScopedLock lock( m_mutex, false );
         return m_size;
     }
 
-    void OverlayElementState::setSize( const Vector2F &size )
+    void OverlayElementState::setSize( const Vector2<real_Num> &size )
     {
         SpinRWMutex::ScopedLock lock( m_mutex, true );
         if( m_size != size )

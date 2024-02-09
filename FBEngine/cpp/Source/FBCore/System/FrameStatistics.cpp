@@ -129,12 +129,12 @@ namespace fb
                     static_cast<u8>( render::IOverlayElement::GuiMetricsMode::GMM_PIXELS ) );
                     */
 
-                auto referenceScreenSize = Vector2F( 1920.0f, 1080.0f );
+                auto referenceScreenSize = Vector2<real_Num>( 1920.0f, 1080.0f );
 
                 m_fpsText = overlayManager->addElement( "TextArea", "fpsText" );
                 //m_fpsText->setFontName( "SdkTrays/Caption" );
-                m_fpsText->setPosition( Vector2F( 0, 0 ) / referenceScreenSize );
-                m_fpsText->setSize( Vector2F( 100, 40 ) / referenceScreenSize );
+                m_fpsText->setPosition( Vector2<real_Num>( 0, 0 ) / referenceScreenSize );
+                m_fpsText->setSize( Vector2<real_Num>( 100, 40 ) / referenceScreenSize );
                 m_fpsText->setHorizontalAlignment( 0 );
                 m_fpsText->setVerticalAlignment( 0 );
                 m_statsOverlay->addElement( m_fpsText );
@@ -143,21 +143,21 @@ namespace fb
                 //m_physicsFPSText->setFontName( "SdkTrays/Caption" );
                 m_physicsFPSText->setHorizontalAlignment( 0 );
                 m_physicsFPSText->setVerticalAlignment( 0 );
-                m_physicsFPSText->setPosition( Vector2F( 0, 20 ) / referenceScreenSize );
+                m_physicsFPSText->setPosition( Vector2<real_Num>( 0, 20 ) / referenceScreenSize );
                 m_statsOverlay->addElement( m_physicsFPSText );
 
                 m_applicationFPSText = overlayManager->addElement( "TextArea", "applicationFPSText" );
                 //m_applicationFPSText->setFontName( "SdkTrays/Caption" );
                 m_applicationFPSText->setHorizontalAlignment( 0 );
                 m_applicationFPSText->setVerticalAlignment( 0 );
-                m_applicationFPSText->setPosition( Vector2F( 0, 40 ) / referenceScreenSize );
+                m_applicationFPSText->setPosition( Vector2<real_Num>( 0, 40 ) / referenceScreenSize );
                 m_statsOverlay->addElement( m_applicationFPSText );
 
                 m_renderText = overlayManager->addElement( "TextArea", "renderText" );
                 //m_renderText->setFontName( "SdkTrays/Caption" );
                 m_renderText->setHorizontalAlignment( 0 );
                 m_renderText->setVerticalAlignment( 0 );
-                m_renderText->setPosition( Vector2F( 0, 60 ) / referenceScreenSize );
+                m_renderText->setPosition( Vector2<real_Num>( 0, 60 ) / referenceScreenSize );
                 m_statsOverlay->addElement( m_renderText );
 
                 m_statsOverlay->setVisible( true );

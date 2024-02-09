@@ -61,9 +61,9 @@ namespace fb
             f32 getSteering() const;
             void setSteering( f32 steering );
 
-            Vector3F getMOI() const;
+            Vector3<real_Num> getMOI() const;
 
-            void setMOI( const Vector3F &moi );
+            void setMOI( const Vector3<real_Num> &moi );
 
             FB_CLASS_REGISTER_DECL;
 
@@ -152,8 +152,8 @@ namespace fb
 
             IFSM::ReturnType handleComponentEvent( u32 state, IFSM::Event eventType ) override;
 
-            Vector3F m_moi = Vector3F::unit();
-            Vector3F m_cg = Vector3F::zero();
+            Vector3<real_Num> m_moi = Vector3<real_Num>::unit();
+            Vector3<real_Num> m_cg = Vector3<real_Num>::zero();
             f32 m_wheelBase = 2.530f;
             f32 m_length = 4.405f;
             f32 m_width = 1.810f;
