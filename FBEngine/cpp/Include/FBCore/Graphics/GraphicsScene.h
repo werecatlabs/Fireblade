@@ -44,11 +44,6 @@ namespace fb
             FB_CLASS_REGISTER_DECL;
 
         protected:
-            ColourF m_upperHemisphere = ColourF::White;
-            ColourF m_lowerHemisphere = ColourF::White;
-            Vector3<real_Num> m_hemisphereDir = Vector3<real_Num>::unitY();
-            f32 m_envmapScale = 1.0f;
-
             String m_type;
 
             mutable RecursiveMutex m_mutex;

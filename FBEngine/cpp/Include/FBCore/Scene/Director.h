@@ -26,6 +26,12 @@ namespace fb
             /** @copydoc IDirector::unload */
             void unload( SmartPtr<ISharedObject> data ) override;
 
+            /** Saves the resource to a file. */
+            void saveToFile( const String &filePath );
+
+            /** Loads the resource from a file. */
+            void loadFromFile( const String &filePath );
+
             /** @copydoc IDirector::save */
             void save() override;
 

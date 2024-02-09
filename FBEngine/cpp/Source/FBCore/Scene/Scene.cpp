@@ -113,6 +113,8 @@ namespace fb::scene
                 fromData( sceneData );
             }
 
+            updateLighting();
+
             auto applicationTask = taskManager->getTask( Thread::Task::Application );
             auto cameraManagerResetJob = fb::make_ptr<CameraManagerReset>();
             applicationTask->addJob( cameraManagerResetJob );
@@ -940,6 +942,8 @@ namespace fb::scene
         Resource<IScene>::setProperties( properties );
 
         properties->getPropertyAsType( "lighting", m_sceneLightingDirector );
+
+        updateLighting();
     }
 
     void Scene::updateLighting()

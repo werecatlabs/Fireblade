@@ -27,6 +27,57 @@ namespace fb::scene
         }
     }
 
+    void Director::saveToFile( const String &filePath )
+    {
+        try
+        {
+            auto applicationManager = core::ApplicationManager::instance();
+            FB_ASSERT( applicationManager );
+
+            auto fileSystem = applicationManager->getFileSystem();
+            FB_ASSERT( fileSystem );
+
+            auto data = fb::static_pointer_cast<Properties>( getProperties() );
+            FB_ASSERT( data );
+
+            auto dataStr = DataUtil::toString( data.get(), true );
+            FB_ASSERT( !StringUtil::isNullOrEmpty( dataStr ) );
+
+            auto filePath = getFilePath();
+            if( !StringUtil::isNullOrEmpty( filePath ) )
+            {
+                fileSystem->writeAllText( filePath, dataStr );
+            }
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
+    void Director::loadFromFile( const String &filePath )
+    {
+        try
+        {
+	        auto applicationManager = core::ApplicationManager::instance();
+	        FB_ASSERT( applicationManager );
+	
+	        auto fileSystem = applicationManager->getFileSystem();
+	        FB_ASSERT( fileSystem );
+	
+	        auto dataStr = fileSystem->readAllText( filePath );
+	
+	        auto properties = fb::make_ptr<Properties>();
+	        DataUtil::parse( dataStr, properties.get() );
+	
+	        setProperties( properties );
+        }
+        catch( std::exception &e )
+        {
+            FB_LOG_EXCEPTION( e );
+        }
+    }
+
     void Director::save()
     {
         try
@@ -49,12 +100,19 @@ namespace fb::scene
             FileInfo fileInfo;
             if( fileSystem->findFileInfo( fileId, fileInfo ) )
             {
-                fileSystem->writeAllText( fileInfo.filePath.c_str(), dataStr );
+                auto filePath = fileInfo.filePath;
+                if( !StringUtil::isNullOrEmpty( filePath ) )
+                {
+                    fileSystem->writeAllText( filePath, dataStr );
+                }
             }
             else
             {
                 auto filePath = getFilePath();
-                fileSystem->writeAllText( filePath, dataStr );
+                if( !StringUtil::isNullOrEmpty( filePath ) )
+                {
+                    fileSystem->writeAllText( filePath, dataStr );
+                }
             }
         }
         catch( std::exception &e )
@@ -118,4 +176,5 @@ namespace fb::scene
     {
         return nullptr;
     }
+
 }  // namespace fb::scene

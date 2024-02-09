@@ -3,10 +3,6 @@
 #include "FBOISInput/FBOISInput.h"
 
 #ifdef _FB_STATIC_LIB_
-
-#endif
-
-#ifdef _FB_STATIC_LIB_
 #    include <FBSQLite/FBSQLite.h>
 #endif
 
@@ -394,11 +390,6 @@ namespace fb
 #endif
 
 #ifdef _FB_STATIC_LIB_
-            //auto applicationPlugin = fb::make_ptr<ApplicationPlugin>();
-            //applicationManager->addPlugin( applicationPlugin );
-#endif
-
-#ifdef _FB_STATIC_LIB_
             auto databasePlugin = fb::make_ptr<SQLitePlugin>();
             applicationManager->addPlugin( databasePlugin );
 #endif
@@ -450,8 +441,8 @@ int main( int argc, char *argv[] )
     try
     {
         const auto threads = Thread::hardware_concurrency();
-        app.setActiveThreads( threads );
-        //app.setActiveThreads( 0 );
+        //app.setActiveThreads( threads );
+        app.setActiveThreads( 0 );
 
         app.load( nullptr );
         app.run();

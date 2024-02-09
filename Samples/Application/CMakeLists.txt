@@ -141,11 +141,11 @@ if (WIN32)
     endif()
 
     if (FB_CODEC_FREEIMAGE)
-        target_link_libraries(SampleApplication FreeImage.a)
+        target_link_libraries(SampleApplication FreeImage.lib)
     endif()
 
     if (FB_USE_FREETYPE)
-        target_link_libraries(SampleApplication freetype.a)
+        target_link_libraries(SampleApplication freetype.lib)
     endif()
 
     if (FB_GRAPHICS_SYSTEM_OGRENEXT)

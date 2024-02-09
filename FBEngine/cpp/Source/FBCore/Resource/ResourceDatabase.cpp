@@ -1315,6 +1315,7 @@ namespace fb
                     handle->setUUID( uuid );
                 }
 
+                object->setFilePath( path );
                 object->loadFromFile( path );
 
                 return object;

@@ -643,7 +643,7 @@ namespace fb::editor
                             }
                         }
                     }
-                    else 
+                    else
                     {
                         auto resource = resourceDatabase->loadResource( filePath );
                         if( resource )
@@ -1199,6 +1199,21 @@ namespace fb::editor
                                 textureResource->setProperties( properties );
                                 textureResource->save();
                             }
+                        }
+                    }
+                    else
+                    {
+                        auto resource = resourceDatabase->loadResource( filePath );
+                        if( resource )
+                        {
+                            auto properties = resource->getProperties();
+                            if( properties )
+                            {
+                                properties->setProperty( name, value );
+                                resource->setProperties( properties );
+                            }
+
+                            resource->save();
                         }
                     }
                 }

@@ -26,6 +26,8 @@ namespace fb
         f32 getEnvmapScale() const;
         void setEnvmapScale( f32 envmapScale );
 
+        FB_CLASS_REGISTER_DECL;
+
     protected:
         ColourF m_ambientColour = ColourF::White;
 

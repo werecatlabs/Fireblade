@@ -1,6 +1,8 @@
 #include <FBCore/FBCorePCH.h>
 #include <FBCore/Graphics/GraphicsScene.h>
 
+#include "FBCore/State/States/AmbientLightState.h"
+
 namespace fb::render
 {
 
@@ -49,42 +51,98 @@ namespace fb::render
 
     ColourF GraphicsScene::getUpperHemisphere() const
     {
-        return m_upperHemisphere;
+        if( auto context = getStateContext() )
+        {
+            if( auto state = context->getStateByType<AmbientLightState>() )
+            {
+                return state->getUpperHemisphere();
+            }
+        }
+
+        return ColourF::White;
     }
 
     void GraphicsScene::setUpperHemisphere( const ColourF &upperHemisphere )
     {
-        m_upperHemisphere = upperHemisphere;
+        if( auto context = getStateContext() )
+        {
+            if( auto state = context->getStateByType<AmbientLightState>() )
+            {
+                state->setUpperHemisphere( upperHemisphere );
+            }
+        }
     }
 
     ColourF GraphicsScene::getLowerHemisphere() const
     {
-        return m_lowerHemisphere;
+        if( auto context = getStateContext() )
+        {
+            if( auto state = context->getStateByType<AmbientLightState>() )
+            {
+                return state->getLowerHemisphere();
+            }
+        }
+
+        return ColourF::White;
     }
 
     void GraphicsScene::setLowerHemisphere( const ColourF &lowerHemisphere )
     {
-        m_lowerHemisphere = lowerHemisphere;
+        if( auto context = getStateContext() )
+        {
+            if( auto state = context->getStateByType<AmbientLightState>() )
+            {
+                state->setLowerHemisphere( lowerHemisphere );
+            }
+        }
     }
 
     Vector3<real_Num> GraphicsScene::getHemisphereDir() const
     {
-        return m_hemisphereDir;
+        if( auto context = getStateContext() )
+        {
+            if( auto state = context->getStateByType<AmbientLightState>() )
+            {
+                return state->getHemisphereDir();
+            }
+        }
+
+        return Vector3<real_Num>::unit();
     }
 
     void GraphicsScene::setHemisphereDir( Vector3<real_Num> hemisphereDir )
     {
-        m_hemisphereDir = hemisphereDir;
+        if( auto context = getStateContext() )
+        {
+            if( auto state = context->getStateByType<AmbientLightState>() )
+            {
+                state->setHemisphereDir( hemisphereDir );
+            }
+        }
     }
 
     f32 GraphicsScene::getEnvmapScale() const
     {
-        return m_envmapScale;
+        if( auto context = getStateContext() )
+        {
+            if( auto state = context->getStateByType<AmbientLightState>() )
+            {
+                return state->getEnvmapScale();
+            }
+        }
+
+        return 1.0f;
     }
 
     void GraphicsScene::setEnvmapScale( f32 envmapScale )
     {
-        m_envmapScale = envmapScale;
+        if( auto context = getStateContext() )
+        {
+            if( auto state = context->getStateByType<AmbientLightState>() )
+            {
+                state->setEnvmapScale( envmapScale );
+            }
+        }
     }
 
     void GraphicsScene::unlock()

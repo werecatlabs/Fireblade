@@ -14,7 +14,7 @@ namespace fb::scene
         auto properties = ResourceDirector::getProperties();
         properties->setProperty( "ambientColour", m_ambientColour );
         properties->setProperty( "upperHemisphere", m_upperHemisphere );
-        properties->setProperty( "lowerHemisphere", getLowerHemisphere() );
+        properties->setProperty( "lowerHemisphere", m_lowerHemisphere );
 
         return properties;
     }
@@ -25,7 +25,7 @@ namespace fb::scene
 
         properties->getPropertyValue( "ambientColour", m_ambientColour );
         properties->getPropertyValue( "upperHemisphere", m_upperHemisphere );
-        properties->getPropertyValue( "lowerHemisphere", getLowerHemisphere() );
+        properties->getPropertyValue( "lowerHemisphere", m_lowerHemisphere );
     }
 
     void SceneLightingDirector::setEnvmapScale( f32 envmapScale )
@@ -77,4 +77,4 @@ namespace fb::scene
     {
         return m_lowerHemisphere;
     }
-} // namespace fb::scene
+}  // namespace fb::scene

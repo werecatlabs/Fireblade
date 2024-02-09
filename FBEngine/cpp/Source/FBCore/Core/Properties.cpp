@@ -94,11 +94,14 @@ namespace fb
 
     auto Properties::hasProperty( const String &name ) const -> bool
     {
-        for( auto &currentProperty : m_properties )
+        if( !m_properties.empty() )
         {
-            if( currentProperty.getName() == name )
+            for( auto &currentProperty : m_properties )
             {
-                return true;
+                if( currentProperty.getName() == name )
+                {
+                    return true;
+                }
             }
         }
 

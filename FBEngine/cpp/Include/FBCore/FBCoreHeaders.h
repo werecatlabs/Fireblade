@@ -576,6 +576,7 @@
 #include <FBCore/State/Messages/StateMessageText.h>
 #include <FBCore/State/Messages/StateMessageTransform3.h>
 
+#include <FBCore/State/States/AmbientLightState.h>
 #include <FBCore/State/States/ApplicationState.h>
 #include <FBCore/State/States/InputState.h>
 #include <FBCore/State/States/BoundingBoxState.h>
